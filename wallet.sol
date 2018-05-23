@@ -10,14 +10,14 @@ interface Token {
 
 contract Wallet {
     // Emitted contract events.
+    event TopUpGas(address sender, address owner, uint amount);
     event Transfer(address to, address token, uint amount);
     event Deposit(address from, uint amount);
 
-    // Owner of the wallet.
+    uint private constant GAS_TOPUP_LIMIT = 10 finney;
+
     address public controller;
     address public owner;
-    address public newOwner;
-    address[] public whitelist;
 
     // Construct a wallet with an owner and a controller.
     constructor(address o, address c) public {
@@ -53,60 +53,37 @@ contract Wallet {
         return address(this).balance;
     }
 
-    // Transfer contract ownership to another Ethereum address.
-    function transferOwnership(address account) public only(owner) {
-        newOwner = account;
-    }
-
-    // Accept contract ownership.
-    function acceptOwnership() public only(newOwner) {
-        owner = newOwner;
-    }
-
-    // Add an address to a whitelist.
-    // TODO: This should be multi sig to prevent attacker changing the addresses.
-    function addWhitelistAddress(address address_) public only(owner) returns (bool) {
-        return true;
-    }
-
-    // TODO: This should be multi sig to prevent attacker changing the addresses.
-    function removeWhitelistAddress(address address_) public only(owner) returns (bool) {
-        return true;
-    }
-
     // Transfer asset to an address.
-    function transfer(address to, address token, uint amount) public only(owner) {
+    function transfer(address to, address token, uint amount) public only(owner) returns (bool) {
         if (amount == 0) {
             return;
         }
         require(Token(token).transfer(to, amount));
 
         emit Transfer(to, token, amount);
+        return true;
     }
 
     // Transfer ether to an address.
-    function transfer(address to, uint amount) public only(owner) {
+    function transfer(address to, uint amount) public only(owner) returns (bool) {
         if (amount == 0) {
             return;
         }
         to.transfer(amount);
 
         emit Transfer(to, 0x0, amount);
+        return true;
     }
-
-    // TODO: When we have a list of private addresses, these addresses should be able to top up user's gas and cover the transaction cost.
-    function changeController(address newController) public only(controller) {
-        controller = newController;
-    }
-
 
     // Refill owner's gas balance.
-    function refillGas(uint256 amount) public either(owner, controller) {
-        // TODO: Set cap to how much ether can be transferred.
+    function topUpGas(uint amount) public either(owner, controller) returns (bool) {
+        // Require that the amount not exceed the cap.
+        require(amount <= GAS_TOPUP_LIMIT);
 
+        // Transfer ether to owner's account
+        owner.transfer(amount);
 
-
-        // TODO: Transfer ether to owner's account
-
+        emit TopUpGas(tx.origin, owner, amount);
+        return true;
     }
 }
