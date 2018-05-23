@@ -9,7 +9,8 @@
   "dependencies": {
     "chai": "^4.1.2",
     "chai-as-promised": "^7.1.1",
-    "ganache-cli": "^6.1.0",
+    "ganache-core": "^2.1.0",
+    "memdown": "^3.0.0",
     "mocha": "^5.2.0",
     "solc": "0.4.23",
     "web3": "^1.0.0-beta.34"
