@@ -15,7 +15,6 @@ contract Wallet {
 
     // Owner of the wallet.
     address public controller;
-    address public newController;
     address public owner;
     address public newOwner;
     address[] public whitelist;
@@ -39,7 +38,7 @@ contract Wallet {
     }
 
     // Ether can be deposited from any source, so this contract must be payable by anyone.
-    function () external payable {
+    function() external payable {
         if (msg.value > 0) {
             emit Deposit(msg.sender, msg.value);
         }
@@ -66,13 +65,13 @@ contract Wallet {
 
     // Add an address to a whitelist.
     // TODO: This should be multi sig to prevent attacker changing the addresses.
-    function addWhitelistAddress(address a) public only(owner) {
-        whitelist.push(a);
+    function addWhitelistAddress(address address_) public only(owner) returns (bool) {
+        return true;
     }
 
     // TODO: This should be multi sig to prevent attacker changing the addresses.
-    function removeWhitelistAddress(address a) public only(owner) {
-        whitelist.push(a);
+    function removeWhitelistAddress(address address_) public only(owner) returns (bool) {
+        return true;
     }
 
     // Transfer asset to an address.
@@ -95,23 +94,17 @@ contract Wallet {
         emit Transfer(to, 0x0, amount);
     }
 
-    // TODO: We have a list of private addresses, these addresses should be able to top up user's gas and cover the transaction cost.
-    function transferControl(address a) public only(controller) {
-        newController = a;
-    }
-
-    function acceptControl() public only(newController) {
+    // TODO: When we have a list of private addresses, these addresses should be able to top up user's gas and cover the transaction cost.
+    function changeController(address newController) public only(controller) {
         controller = newController;
     }
 
 
-    // Top up owner's gas.
-    // TODO: Callable by the controller address and the owner address.
-    function addGas() public either(owner, controller) {
-
-        // TODO: Check if the owner already has enough gas.
-
+    // Refill owner's gas balance.
+    function refillGas(uint256 amount) public either(owner, controller) {
         // TODO: Set cap to how much ether can be transferred.
+
+
 
         // TODO: Transfer ether to owner's account
 
