@@ -22,7 +22,7 @@ function compile(fileName, key) {
 
 
 module.exports = {
-  card: compile('../../card.sol',':Card'),
-  controller: compile('../../controller.sol',':Controller'),
-  wallet: compile('../../wallet.sol',':Wallet')
+  card: compile('../../v1/card.sol',':Card'),
+  controller: compile('../../v1/controller.sol',':Controller'),
+  wallet: compile('../../v1/wallet.sol',':Wallet')
 }
