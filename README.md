@@ -6,3 +6,12 @@
   npm install
   npm run test
 ```
+
+
+## Code coverage reports
+
+Running tests will create coverage reports that can be viewed in a browser.
+
+```sh
+  open coverage/index.html
+```

@@ -1,4 +1,4 @@
-const { card } = require('../compile')
+const { card } = require('./support/compile')
 
 let accounts
 let inbox
@@ -16,9 +16,8 @@ beforeEach(async () => {
   neitherOwnerNorController = accounts[3]
   inbox = await new web3.eth.Contract(JSON.parse(card.interface))
     .deploy({ data: card.bytecode, arguments: [controller]})
-    .send({ from: owner, gas: '1000000'})
+    .send({ from: owner, gas: '5000000'})
 })
-
 
 describe('Card', () => {
   it('deploys contract', () => {
