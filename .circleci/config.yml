@@ -7,12 +7,23 @@ jobs:
     steps:
       - checkout
       - run: npm install && npm run lint && npm test
+  mythril:
+    docker:
+      - image: quay.io/token/mythril:2018-05-25
+    working_directory: /src
+    steps:
+      - checkout
+      - run: myth -x *.sol
 
 workflows:
   version: 2
   build_deploy:
     jobs:
       - build_test:
+          filters:
+            tags:
+              ignore: ""
+      - mythril:
           filters:
             tags:
               ignore: ""
