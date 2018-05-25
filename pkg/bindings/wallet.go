@@ -16,18 +16,18 @@ import (
 )
 
 // WalletABI is the input ABI used to generate the binding from.
-const WalletABI = "[{\"constant\":true,\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"to\",\"type\":\"address\"},{\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"transfer\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"balance\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"to\",\"type\":\"address\"},{\"name\":\"token\",\"type\":\"address\"},{\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"transfer\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"token\",\"type\":\"address\"}],\"name\":\"balance\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"topUpGas\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"controller\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"name\":\"o\",\"type\":\"address\"},{\"name\":\"c\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"payable\":true,\"stateMutability\":\"payable\",\"type\":\"fallback\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"sender\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"owner\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"TopUpGas\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"to\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"token\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"Transfer\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"from\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"Deposit\",\"type\":\"event\"}]"
+const WalletABI = "[{\"constant\":true,\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"o\",\"type\":\"address\"}],\"name\":\"changeOwner\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"to\",\"type\":\"address\"},{\"name\":\"token\",\"type\":\"address\"},{\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"transfer\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"token\",\"type\":\"address\"}],\"name\":\"balance\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"payable\":true,\"stateMutability\":\"payable\",\"type\":\"fallback\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"to\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"token\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"Transfer\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"from\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"Deposit\",\"type\":\"event\"}]"
 
 // WalletBin is the compiled bytecode used for deploying new contracts.
-const WalletBin = `0x608060405234801561001057600080fd5b50604051604080610aeb833981018060405281019080805190602001909291908051906020019092919050505081600160006101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff160217905550806000806101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff1602179055505050610a1c806100cf6000396000f300608060405260043610610083576000357c0100000000000000000000000000000000000000000000000000000000900463ffffffff1680638da5cb5b146100fa578063a9059cbb14610151578063b69ef8a8146101b6578063beabacc8146101e1578063e3d670d714610266578063e61c51ca146102bd578063f77c479114610302575b60003411156100f8577fe1fffcc4923d04b559f4d29a8bfc6cda04eb5b0d3c460751c2402c5c5cc9109c3334604051808373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1681526020018281526020019250505060405180910390a15b005b34801561010657600080fd5b5061010f610359565b604051808273ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200191505060405180910390f35b34801561015d57600080fd5b5061019c600480360381019080803573ffffffffffffffffffffffffffffffffffffffff1690602001909291908035906020019092919050505061037f565b604051808215151515815260200191505060405180910390f35b3480156101c257600080fd5b506101cb6104c9565b6040518082815260200191505060405180910390f35b3480156101ed57600080fd5b5061024c600480360381019080803573ffffffffffffffffffffffffffffffffffffffff169060200190929190803573ffffffffffffffffffffffffffffffffffffffff169060200190929190803590602001909291905050506104e8565b604051808215151515815260200191505060405180910390f35b34801561027257600080fd5b506102a7600480360381019080803573ffffffffffffffffffffffffffffffffffffffff1690602001909291905050506106ea565b6040518082815260200191505060405180910390f35b3480156102c957600080fd5b506102e8600480360381019080803590602001909291905050506107c9565b604051808215151515815260200191505060405180910390f35b34801561030e57600080fd5b506103176109cb565b604051808273ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200191505060405180910390f35b600160009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1681565b6000600160009054906101000a900473ffffffffffffffffffffffffffffffffffffffff168073ffffffffffffffffffffffffffffffffffffffff163373ffffffffffffffffffffffffffffffffffffffff161415156103de57600080fd5b60008314156103ec576104c2565b8373ffffffffffffffffffffffffffffffffffffffff166108fc849081150290604051600060405180830381858888f19350505050158015610432573d6000803e3d6000fd5b507fddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef84600085604051808473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1681526020018373ffffffffffffffffffffffffffffffffffffffff168152602001828152602001935050505060405180910390a1600191505b5092915050565b60003073ffffffffffffffffffffffffffffffffffffffff1631905090565b6000600160009054906101000a900473ffffffffffffffffffffffffffffffffffffffff168073ffffffffffffffffffffffffffffffffffffffff163373ffffffffffffffffffffffffffffffffffffffff1614151561054757600080fd5b6000831415610555576106e2565b8373ffffffffffffffffffffffffffffffffffffffff1663a9059cbb86856040518363ffffffff167c0100000000000000000000000000000000000000000000000000000000028152600401808373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200182815260200192505050602060405180830381600087803b1580156105f857600080fd5b505af115801561060c573d6000803e3d6000fd5b505050506040513d602081101561062257600080fd5b8101908080519060200190929190505050151561063e57600080fd5b7fddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef858585604051808473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1681526020018373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff168152602001828152602001935050505060405180910390a1600191505b509392505050565b60008173ffffffffffffffffffffffffffffffffffffffff166370a08231306040518263ffffffff167c0100000000000000000000000000000000000000000000000000000000028152600401808273ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff168152602001915050602060405180830381600087803b15801561078757600080fd5b505af115801561079b573d6000803e3d6000fd5b505050506040513d60208110156107b157600080fd5b81019080805190602001909291905050509050919050565b6000600160009054906101000a900473ffffffffffffffffffffffffffffffffffffffff166000809054906101000a900473ffffffffffffffffffffffffffffffffffffffff168173ffffffffffffffffffffffffffffffffffffffff163373ffffffffffffffffffffffffffffffffffffffff16148061087557508073ffffffffffffffffffffffffffffffffffffffff163373ffffffffffffffffffffffffffffffffffffffff16145b151561088057600080fd5b662386f26fc10000841115151561089657600080fd5b600160009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff166108fc859081150290604051600060405180830381858888f193505050501580156108fe573d6000803e3d6000fd5b507f2235de9f3363e464311d990c51aeef966703c87d1c77e80737831d6944d87c8632600160009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1686604051808473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1681526020018373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff168152602001828152602001935050505060405180910390a1600192505050919050565b6000809054906101000a900473ffffffffffffffffffffffffffffffffffffffff16815600a165627a7a72305820bc879848ee6461ca3c8abd5929158be0fa73efb8bf22a802ebc846a8250d8a420029`
+const WalletBin = `0x608060405234801561001057600080fd5b50336000806101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff1602179055506105f2806100606000396000f300608060405260043610610062576000357c0100000000000000000000000000000000000000000000000000000000900463ffffffff1680638da5cb5b146100d9578063a6f9dae114610130578063beabacc814610173578063e3d670d7146101e0575b60003411156100d7577fe1fffcc4923d04b559f4d29a8bfc6cda04eb5b0d3c460751c2402c5c5cc9109c3334604051808373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1681526020018281526020019250505060405180910390a15b005b3480156100e557600080fd5b506100ee610237565b604051808273ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200191505060405180910390f35b34801561013c57600080fd5b50610171600480360381019080803573ffffffffffffffffffffffffffffffffffffffff16906020019092919050505061025c565b005b34801561017f57600080fd5b506101de600480360381019080803573ffffffffffffffffffffffffffffffffffffffff169060200190929190803573ffffffffffffffffffffffffffffffffffffffff1690602001909291908035906020019092919050505061029f565b005b3480156101ec57600080fd5b50610221600480360381019080803573ffffffffffffffffffffffffffffffffffffffff1690602001909291905050506104a8565b6040518082815260200191505060405180910390f35b6000809054906101000a900473ffffffffffffffffffffffffffffffffffffffff1681565b806000806101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff16021790555050565b60008114156102ad576104a3565b60008273ffffffffffffffffffffffffffffffffffffffff161415156103bb578173ffffffffffffffffffffffffffffffffffffffff1663a9059cbb84836040518363ffffffff167c0100000000000000000000000000000000000000000000000000000000028152600401808373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200182815260200192505050602060405180830381600087803b15801561037057600080fd5b505af1158015610384573d6000803e3d6000fd5b505050506040513d602081101561039a57600080fd5b810190808051906020019092919050505015156103b657600080fd5b610403565b8273ffffffffffffffffffffffffffffffffffffffff166108fc829081150290604051600060405180830381858888f19350505050158015610401573d6000803e3d6000fd5b505b7fddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef838383604051808473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1681526020018373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff168152602001828152602001935050505060405180910390a15b505050565b6000808273ffffffffffffffffffffffffffffffffffffffff161415156105a6578173ffffffffffffffffffffffffffffffffffffffff166370a08231306040518263ffffffff167c0100000000000000000000000000000000000000000000000000000000028152600401808273ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff168152602001915050602060405180830381600087803b15801561056457600080fd5b505af1158015610578573d6000803e3d6000fd5b505050506040513d602081101561058e57600080fd5b810190808051906020019092919050505090506105c1565b3073ffffffffffffffffffffffffffffffffffffffff163190505b9190505600a165627a7a723058206d198b9f0a7e942777732413e884598449bb369538d7215a53e65c035bd7b4d30029`
 
 // DeployWallet deploys a new Ethereum contract, binding an instance of Wallet to it.
-func DeployWallet(auth *bind.TransactOpts, backend bind.ContractBackend, o common.Address, c common.Address) (common.Address, *types.Transaction, *Wallet, error) {
+func DeployWallet(auth *bind.TransactOpts, backend bind.ContractBackend) (common.Address, *types.Transaction, *Wallet, error) {
 	parsed, err := abi.JSON(strings.NewReader(WalletABI))
 	if err != nil {
 		return common.Address{}, nil, nil, err
 	}
-	address, tx, contract, err := bind.DeployContract(auth, parsed, common.FromHex(WalletBin), backend, o, c)
+	address, tx, contract, err := bind.DeployContract(auth, parsed, common.FromHex(WalletBin), backend)
 	if err != nil {
 		return common.Address{}, nil, nil, err
 	}
@@ -202,32 +202,6 @@ func (_Wallet *WalletCallerSession) Balance(token common.Address) (*big.Int, err
 	return _Wallet.Contract.Balance(&_Wallet.CallOpts, token)
 }
 
-// Controller is a free data retrieval call binding the contract method 0xf77c4791.
-//
-// Solidity: function controller() constant returns(address)
-func (_Wallet *WalletCaller) Controller(opts *bind.CallOpts) (common.Address, error) {
-	var (
-		ret0 = new(common.Address)
-	)
-	out := ret0
-	err := _Wallet.contract.Call(opts, out, "controller")
-	return *ret0, err
-}
-
-// Controller is a free data retrieval call binding the contract method 0xf77c4791.
-//
-// Solidity: function controller() constant returns(address)
-func (_Wallet *WalletSession) Controller() (common.Address, error) {
-	return _Wallet.Contract.Controller(&_Wallet.CallOpts)
-}
-
-// Controller is a free data retrieval call binding the contract method 0xf77c4791.
-//
-// Solidity: function controller() constant returns(address)
-func (_Wallet *WalletCallerSession) Controller() (common.Address, error) {
-	return _Wallet.Contract.Controller(&_Wallet.CallOpts)
-}
-
 // Owner is a free data retrieval call binding the contract method 0x8da5cb5b.
 //
 // Solidity: function owner() constant returns(address)
@@ -254,44 +228,44 @@ func (_Wallet *WalletCallerSession) Owner() (common.Address, error) {
 	return _Wallet.Contract.Owner(&_Wallet.CallOpts)
 }
 
-// TopUpGas is a paid mutator transaction binding the contract method 0xe61c51ca.
+// ChangeOwner is a paid mutator transaction binding the contract method 0xa6f9dae1.
 //
-// Solidity: function topUpGas(amount uint256) returns(bool)
-func (_Wallet *WalletTransactor) TopUpGas(opts *bind.TransactOpts, amount *big.Int) (*types.Transaction, error) {
-	return _Wallet.contract.Transact(opts, "topUpGas", amount)
+// Solidity: function changeOwner(o address) returns()
+func (_Wallet *WalletTransactor) ChangeOwner(opts *bind.TransactOpts, o common.Address) (*types.Transaction, error) {
+	return _Wallet.contract.Transact(opts, "changeOwner", o)
 }
 
-// TopUpGas is a paid mutator transaction binding the contract method 0xe61c51ca.
+// ChangeOwner is a paid mutator transaction binding the contract method 0xa6f9dae1.
 //
-// Solidity: function topUpGas(amount uint256) returns(bool)
-func (_Wallet *WalletSession) TopUpGas(amount *big.Int) (*types.Transaction, error) {
-	return _Wallet.Contract.TopUpGas(&_Wallet.TransactOpts, amount)
+// Solidity: function changeOwner(o address) returns()
+func (_Wallet *WalletSession) ChangeOwner(o common.Address) (*types.Transaction, error) {
+	return _Wallet.Contract.ChangeOwner(&_Wallet.TransactOpts, o)
 }
 
-// TopUpGas is a paid mutator transaction binding the contract method 0xe61c51ca.
+// ChangeOwner is a paid mutator transaction binding the contract method 0xa6f9dae1.
 //
-// Solidity: function topUpGas(amount uint256) returns(bool)
-func (_Wallet *WalletTransactorSession) TopUpGas(amount *big.Int) (*types.Transaction, error) {
-	return _Wallet.Contract.TopUpGas(&_Wallet.TransactOpts, amount)
+// Solidity: function changeOwner(o address) returns()
+func (_Wallet *WalletTransactorSession) ChangeOwner(o common.Address) (*types.Transaction, error) {
+	return _Wallet.Contract.ChangeOwner(&_Wallet.TransactOpts, o)
 }
 
 // Transfer is a paid mutator transaction binding the contract method 0xbeabacc8.
 //
-// Solidity: function transfer(to address, token address, amount uint256) returns(bool)
+// Solidity: function transfer(to address, token address, amount uint256) returns()
 func (_Wallet *WalletTransactor) Transfer(opts *bind.TransactOpts, to common.Address, token common.Address, amount *big.Int) (*types.Transaction, error) {
 	return _Wallet.contract.Transact(opts, "transfer", to, token, amount)
 }
 
 // Transfer is a paid mutator transaction binding the contract method 0xbeabacc8.
 //
-// Solidity: function transfer(to address, token address, amount uint256) returns(bool)
+// Solidity: function transfer(to address, token address, amount uint256) returns()
 func (_Wallet *WalletSession) Transfer(to common.Address, token common.Address, amount *big.Int) (*types.Transaction, error) {
 	return _Wallet.Contract.Transfer(&_Wallet.TransactOpts, to, token, amount)
 }
 
 // Transfer is a paid mutator transaction binding the contract method 0xbeabacc8.
 //
-// Solidity: function transfer(to address, token address, amount uint256) returns(bool)
+// Solidity: function transfer(to address, token address, amount uint256) returns()
 func (_Wallet *WalletTransactorSession) Transfer(to common.Address, token common.Address, amount *big.Int) (*types.Transaction, error) {
 	return _Wallet.Contract.Transfer(&_Wallet.TransactOpts, to, token, amount)
 }
@@ -399,130 +373,6 @@ func (_Wallet *WalletFilterer) WatchDeposit(opts *bind.WatchOpts, sink chan<- *W
 				// New log arrived, parse the event and forward to the user
 				event := new(WalletDeposit)
 				if err := _Wallet.contract.UnpackLog(event, "Deposit", log); err != nil {
-					return err
-				}
-				event.Raw = log
-
-				select {
-				case sink <- event:
-				case err := <-sub.Err():
-					return err
-				case <-quit:
-					return nil
-				}
-			case err := <-sub.Err():
-				return err
-			case <-quit:
-				return nil
-			}
-		}
-	}), nil
-}
-
-// WalletTopUpGasIterator is returned from FilterTopUpGas and is used to iterate over the raw logs and unpacked data for TopUpGas events raised by the Wallet contract.
-type WalletTopUpGasIterator struct {
-	Event *WalletTopUpGas // Event containing the contract specifics and raw log
-
-	contract *bind.BoundContract // Generic contract to use for unpacking event data
-	event    string              // Event name to use for unpacking event data
-
-	logs chan types.Log        // Log channel receiving the found contract events
-	sub  ethereum.Subscription // Subscription for errors, completion and termination
-	done bool                  // Whether the subscription completed delivering logs
-	fail error                 // Occurred error to stop iteration
-}
-
-// Next advances the iterator to the subsequent event, returning whether there
-// are any more events found. In case of a retrieval or parsing error, false is
-// returned and Error() can be queried for the exact failure.
-func (it *WalletTopUpGasIterator) Next() bool {
-	// If the iterator failed, stop iterating
-	if it.fail != nil {
-		return false
-	}
-	// If the iterator completed, deliver directly whatever's available
-	if it.done {
-		select {
-		case log := <-it.logs:
-			it.Event = new(WalletTopUpGas)
-			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
-				it.fail = err
-				return false
-			}
-			it.Event.Raw = log
-			return true
-
-		default:
-			return false
-		}
-	}
-	// Iterator still in progress, wait for either a data or an error event
-	select {
-	case log := <-it.logs:
-		it.Event = new(WalletTopUpGas)
-		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
-			it.fail = err
-			return false
-		}
-		it.Event.Raw = log
-		return true
-
-	case err := <-it.sub.Err():
-		it.done = true
-		it.fail = err
-		return it.Next()
-	}
-}
-
-// Error returns any retrieval or parsing error occurred during filtering.
-func (it *WalletTopUpGasIterator) Error() error {
-	return it.fail
-}
-
-// Close terminates the iteration process, releasing any pending underlying
-// resources.
-func (it *WalletTopUpGasIterator) Close() error {
-	it.sub.Unsubscribe()
-	return nil
-}
-
-// WalletTopUpGas represents a TopUpGas event raised by the Wallet contract.
-type WalletTopUpGas struct {
-	Sender common.Address
-	Owner  common.Address
-	Amount *big.Int
-	Raw    types.Log // Blockchain specific contextual infos
-}
-
-// FilterTopUpGas is a free log retrieval operation binding the contract event 0x2235de9f3363e464311d990c51aeef966703c87d1c77e80737831d6944d87c86.
-//
-// Solidity: event TopUpGas(sender address, owner address, amount uint256)
-func (_Wallet *WalletFilterer) FilterTopUpGas(opts *bind.FilterOpts) (*WalletTopUpGasIterator, error) {
-
-	logs, sub, err := _Wallet.contract.FilterLogs(opts, "TopUpGas")
-	if err != nil {
-		return nil, err
-	}
-	return &WalletTopUpGasIterator{contract: _Wallet.contract, event: "TopUpGas", logs: logs, sub: sub}, nil
-}
-
-// WatchTopUpGas is a free log subscription operation binding the contract event 0x2235de9f3363e464311d990c51aeef966703c87d1c77e80737831d6944d87c86.
-//
-// Solidity: event TopUpGas(sender address, owner address, amount uint256)
-func (_Wallet *WalletFilterer) WatchTopUpGas(opts *bind.WatchOpts, sink chan<- *WalletTopUpGas) (event.Subscription, error) {
-
-	logs, sub, err := _Wallet.contract.WatchLogs(opts, "TopUpGas")
-	if err != nil {
-		return nil, err
-	}
-	return event.NewSubscription(func(quit <-chan struct{}) error {
-		defer sub.Unsubscribe()
-		for {
-			select {
-			case log := <-logs:
-				// New log arrived, parse the event and forward to the user
-				event := new(WalletTopUpGas)
-				if err := _Wallet.contract.UnpackLog(event, "TopUpGas", log); err != nil {
 					return err
 				}
 				event.Raw = log
