@@ -10,9 +10,9 @@ interface Token {
 
 contract Wallet {
     // Emitted contract events.
-    event TopUpGas(address sender, address owner, uint amount);
-    event Transfer(address to, address token, uint amount);
-    event Deposit(address from, uint amount);
+    event TopUpGas(address _sender, address _owner, uint _amount);
+    event Transfer(address _to, address _token, uint _amount);
+    event Deposit(address _from, uint _amount);
 
     uint private constant GAS_TOPUP_LIMIT = 10 finney;
 
@@ -20,20 +20,20 @@ contract Wallet {
     address public owner;
 
     // Construct a wallet with an owner and a controller.
-    constructor(address o, address c) public {
-        owner = o;
-        controller = c;
+    constructor(address _owner, address _controller) public {
+        owner = _owner;
+        controller = _controller;
     }
 
     // Executable only by the specified address.
-    modifier only(address a) {
-        require(msg.sender == a);
+    modifier only(address _a) {
+        require(msg.sender == _a);
         _;
     }
 
     // Executable by either of the two addresses.
-    modifier either(address a, address b) {
-        require(msg.sender == a || msg.sender == b);
+    modifier either(address _a, address _b) {
+        require(msg.sender == _a || msg.sender == _b);
         _;
     }
 
@@ -45,45 +45,37 @@ contract Wallet {
     }
 
     // Returns the amount of a token owned by the contract.
-    function balance(address token) public constant returns (uint) {
-        return Token(token).balanceOf(this);
+    function balance(address _token) public view returns (uint) {
+        return Token(_token).balanceOf(this);
     }
     // Returns the amount of ether owned by the contract.
-    function balance() public constant returns (uint) {
+    function balance() public view returns (uint) {
         return address(this).balance;
     }
 
     // Transfer asset to an address.
-    function transfer(address to, address token, uint amount) public only(owner) returns (bool) {
-        if (amount == 0) {
-            return;
-        }
-        require(Token(token).transfer(to, amount));
+    function transfer(address _to, uint _amount, address _token) public only(owner) {
+        require(_amount != 0);
+        require(Token(_token).transfer(_to, _amount));
 
-        emit Transfer(to, token, amount);
-        return true;
+        emit Transfer(_to, _token, _amount);
     }
 
     // Transfer ether to an address.
-    function transfer(address to, uint amount) public only(owner) returns (bool) {
-        if (amount == 0) {
-            return;
-        }
-        to.transfer(amount);
-
-        emit Transfer(to, 0x0, amount);
-        return true;
+    function transfer(address _to, uint _amount) public only(owner) {
+        require(_amount != 0);
+        _to.transfer(_amount);
+        emit Transfer(_to, 0x0, _amount);
     }
 
     // Refill owner's gas balance.
-    function topUpGas(uint amount) public either(owner, controller) returns (bool) {
-        // Require that the amount not exceed the cap.
-        require(amount <= GAS_TOPUP_LIMIT);
+    function topUpGas(uint _amount) public either(owner, controller) {
+        // Require that the amount not exceed the top up limit.
+        require(_amount <= GAS_TOPUP_LIMIT);
 
         // Transfer ether to owner's account
-        owner.transfer(amount);
+        owner.transfer(_amount);
 
-        emit TopUpGas(tx.origin, owner, amount);
-        return true;
+        emit TopUpGas(tx.origin, owner, _amount);
     }
 }

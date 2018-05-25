@@ -5,6 +5,7 @@
   ],
   "rules": {
     "security/no-assign-params": "off",
+    "security/no-tx-origin": "off",
     "quotes": [
       "error",
       "double"
