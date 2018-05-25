@@ -1,0 +1,18 @@
+{
+  "extends": "solium:all",
+  "plugins": [
+    "security"
+  ],
+  "rules": {
+    "security/no-assign-params": "off",
+    "quotes": [
+      "error",
+      "double"
+    ]
+    ,
+    "indentation": [
+      "error",
+      4
+    ]
+  }
+}
