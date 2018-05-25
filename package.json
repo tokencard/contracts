@@ -14,7 +14,7 @@
     "lodash": "^4.17.10",
     "memdown": "^3.0.0",
     "mocha": "^5.2.0",
-    "solc": "0.4.23",
+    "solc": "0.4.24",
     "solidity-coverage": "^0.5.4",
     "web3": "^1.0.0-beta.34"
   }
