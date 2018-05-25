@@ -6,7 +6,7 @@ jobs:
     working_directory: /go/src/github.com/tokencard/bis
     steps:
       - checkout
-      - run: npm install && npm test
+      - run: npm install && npm run lint && npm test
 
 workflows:
   version: 2

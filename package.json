@@ -4,7 +4,8 @@
   "description": "Tokencard Solidity Contracts",
   "private": true,
   "scripts": {
-    "test": "mocha --require ./test/support/setup"
+    "test": "mocha --require ./test/support/setup",
+    "lint": "solium -d ."
   },
   "dependencies": {
     "chai": "^4.1.2",
@@ -16,6 +17,7 @@
     "mocha": "^5.2.0",
     "solc": "0.4.24",
     "solidity-coverage": "^0.5.4",
+    "solium": "^1.1.7",
     "web3": "^1.0.0-beta.34"
   }
 }
