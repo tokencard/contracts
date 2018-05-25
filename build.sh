@@ -13,11 +13,11 @@ function confirm {
     esac
 }
 
-# Compile solidity contracts.
-solc --overwrite --bin --abi wallet.sol     -o ./build/wallet
-solc --overwrite --bin --abi controller.sol -o ./build/controller
-solc --overwrite --bin --abi token.sol      -o ./build/token
-solc --overwrite --bin --abi card.sol       -o ./build/card
+# Compile solidity contracts and hex prefix bytecode string.
+solc --overwrite --bin --abi wallet.sol     -o ./build/wallet     && bin=$(awk '{print "0x" $0}' ./build/wallet/Wallet.bin)         && echo $bin > ./build/wallet/Wallet.bin
+solc --overwrite --bin --abi controller.sol -o ./build/controller && bin=$(awk '{print "0x" $0}' ./build/controller/Controller.bin) && echo $bin > ./build/controller/Controller.bin
+solc --overwrite --bin --abi token.sol      -o ./build/token      && bin=$(awk '{print "0x" $0}' ./build/token/Token.bin)           && echo $bin > ./build/token/Token.bin
+solc --overwrite --bin --abi card.sol       -o ./build/card       && bin=$(awk '{print "0x" $0}' ./build/card/Card.bin)             && echo $bin > ./build/card/Card.bin
 
 
 # Generate Go bindings from solidity contracts.
