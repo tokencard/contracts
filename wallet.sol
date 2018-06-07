@@ -95,7 +95,12 @@ contract Wallet {
         // If address is not whitelisted, take daily limit into account.
         if (!whitelisted[_to]) {
             // Convert token amount to ether value.
-            uint etherValue = _tokenToEther(_token, _amount);
+            uint etherValue;
+            if (_token != 0x0) {
+                 etherValue = _tokenToEther(_token, _amount);
+            } else {
+                etherValue = _amount;
+            }
             // Require that the value is under remaining limit.
             if (now > currentDay + 24 hours) {
                 uint extraDays = (now - currentDay) / 24 hours;
