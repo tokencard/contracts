@@ -4,7 +4,12 @@ pragma solidity ^0.4.24;
 /// @title The Token interface is a subset of the ERC20 specification.
 interface Token {
     function transfer(address, uint) external returns (bool);
-    function balanceOf(address) external constant returns (uint);
+    function balanceOf(address) external view returns (uint);
+}
+
+/// @title The Oracle interface provides exchange rates for ERC20 tokens in wei.
+interface Oracle {
+    function rates(address) external view returns (uint);
 }
 
 /// @title Control handles wallet access control.
@@ -165,13 +170,17 @@ contract Wallet is Whitelist, DailyLimit {
     // Constants
     uint private constant GAS_TOPUP_LIMIT = 10 finney;
 
+    // Storage
+    address public oracle;
+
     /// @dev Construct a wallet with an owner and a controller.
-    constructor(address _owner, address _controller) public {
+    constructor(address _owner, address _controller, address _oracle) public {
         owner = _owner;
         controller = _controller;
         currentDay = now;
         dailyLimit = 2 ether;
         availableToday = dailyLimit;
+        oracle = _oracle;
     }
 
     /// @dev Checks if the value is not zero.
@@ -218,7 +227,7 @@ contract Wallet is Whitelist, DailyLimit {
             // Convert token amount to ether value.
             uint etherValue;
             if (_token != 0x0) {
-                etherValue = _tokenToEther(_token, _amount);
+                etherValue = Oracle(oracle).rates(_token) * _amount;
             } else {
                 etherValue = _amount;
             }
@@ -251,10 +260,5 @@ contract Wallet is Whitelist, DailyLimit {
         owner.transfer(_amount);
 
         emit TopUpGas(tx.origin, owner, _amount);
-    }
-
-    function _tokenToEther(address _token, uint _amount) internal returns (uint) {
-        // TODO: Use Bancor to get current Token/ETH rate.
-        return 1000;
     }
 }
