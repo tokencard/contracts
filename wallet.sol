@@ -17,7 +17,7 @@ contract Control {
     mapping (address => bool) public isController;
     address public owner;
 
-    /// @dev Executable only by the specified address.
+    /// @dev Executable only by the owner.
     modifier onlyOwner {
         require(msg.sender == owner);
         _;
@@ -29,20 +29,20 @@ contract Control {
         _;
     }
 
-    /// @dev Executable by either controller or owner.
+    /// @dev Executable by either owner or controller.
     modifier eitherOwnerOrController() {
         require(isController[msg.sender] || msg.sender == owner);
         _;
     }
 
     /// @dev Add a new controller to the list of controllers.
-    function addController(address _address) public onlyController {
-        isController[_address] = true;
+    function addController(address _account) public onlyController {
+        isController[_account] = true;
     }
 
     /// @dev Remove a controller from the list of controllers.
-    function removeController(address _address) public onlyController {
-        isController[_address] = false;
+    function removeController(address _account) public onlyController {
+        isController[_account] = false;
     }
 }
 
