@@ -1,51 +1,16 @@
 pragma solidity ^0.4.24;
 
 
-// The Token interface is a subset of the ERC20 specification.
+/// @title The Token interface is a subset of the ERC20 specification.
 interface Token {
     function transfer(address, uint) external returns (bool);
     function balanceOf(address) external constant returns (uint);
 }
 
-/// @title Asset wallet with extra security features.
-/// @author TokenCard
-contract Wallet {
-    // Events
-    event Deposit(address _from, uint _amount);
-    event Transfer(address _to, address _token, uint _amount);
-    event AddToWhitelist(address[] _addresses);
-    event RemoveFromWhitelist(address[] _addresses);
-    event SetDailyLimit(uint _amount);
-    event TopUpGas(address _sender, address _owner, uint _amount);
-
-    // Constants
-    uint private constant GAS_TOPUP_LIMIT = 10 finney;
-
-    // Storage
+/// @title Control handles wallet access control.
+contract Control {
     address public controller;
     address public owner;
-
-    uint public dailyLimit;
-    uint public currentDay;
-    uint private availableToday;
-    uint private pendingSetDailyLimit;
-
-    mapping(address => bool) public whitelisted;
-    address[] private pendingAddToWhitelist;
-    address[] private pendingRemoveFromWhitelist;
-
-    /// @dev Construct a wallet with an owner and a controller.
-    constructor(address _owner, address _controller) public {
-        owner = _owner;
-        controller = _controller;
-        currentDay = now;
-    }
-
-    /// @dev Checks if the value is not zero.
-    modifier notZero(uint _value) {
-        require(_value != 0);
-        _;
-    }
 
     /// @dev Executable only by the specified address.
     modifier only(address _a) {
@@ -56,6 +21,162 @@ contract Wallet {
     /// @dev Executable by either of the two addresses.
     modifier either(address _a, address _b) {
         require(msg.sender == _a || msg.sender == _b);
+        _;
+    }
+}
+
+/// @title Whitelist provides payee-whitelist functionality.
+contract Whitelist is Control {
+
+    event WhitelistAddition(address[] _addresses);
+    event WhitelistRemoval(address[] _addresses);
+
+    mapping(address => bool) public whitelist;
+    address[] public pendingAddition;
+    address[] public pendingRemoval;
+    bool internal submittedAddition;
+    bool internal submittedRemoval;
+
+    /// @dev Add addresses to the whitelist.
+    /// @param _addresses are the Ethereum addresses to be whitelisted.
+    function addToWhitelist(address[] _addresses) public only(owner) {
+        // Check if this operation has been already submitted.
+        require(!submittedAddition);
+        // Limit the amount of addresses that can be whitelisted at one time.
+        require(_addresses.length <= 20);
+        // Add each of the addresses to the pending addition list.
+        for (uint i = 0; i < _addresses.length; i++) {
+            pendingAddition.push(_addresses[i]);
+        }
+        // Flag the operation as submitted.
+        submittedAddition = true;
+    }
+
+    /// @dev Confirm pending whitelist addition.
+    function addToWhitelistConfirm() public only(controller) {
+        require(pendingAddition.length > 0 && submittedAddition);
+        // Whitelist pending addresses.
+        for (uint i = 0; i < pendingAddition.length; i++) {
+            whitelist[pendingAddition[i]] = true;
+        }
+        // Reset the submission flag.
+        submittedAddition = false;
+        emit WhitelistAddition(pendingAddition);
+    }
+
+    /// @dev Cancel pending whitelist addition.
+    function addToWhitelistCancel() public only(controller) {
+        // Reset pending addresses.
+        delete pendingAddition;
+        // Reset the submitted operation flag.
+        submittedAddition = false;
+    }
+
+    /// @dev Remove addresses from the whitelist.
+    /// @param _addresses are the Ethereum addresses to be removed.
+    function removeFromWhitelist(address[] _addresses) public only(owner) {
+        // Check if this operation has been already submitted.
+        require(!submittedRemoval);
+        // Limit the amount of addresses that can be removed at one time.
+        require(_addresses.length <= 20);
+        // Add each of the addresses to the pending removal list.
+        for (uint i = 0; i < _addresses.length; i++) {
+            pendingRemoval.push(_addresses[i]);
+        }
+        // Flag the operation as submitted.
+        submittedRemoval = true;
+    }
+
+    /// @dev Confirm pending removal of whitelisted addresses.
+    function removeFromWhitelistConfirm() public only(controller) {
+        require(pendingRemoval.length > 0 && submittedRemoval);
+        // Remove pending addresses.
+        for (uint i = 0; i < pendingRemoval.length; i++) {
+            whitelist[pendingRemoval[i]] = false;
+        }
+        // Reset the submission flag.
+        submittedRemoval = false;
+        emit WhitelistRemoval(pendingRemoval);
+    }
+
+    /// @dev Cancel pending removal of whitelisted addresses.
+    function removeFromWhitelistCancel() public only(controller) {
+        // Reset pending addresses.
+        delete pendingRemoval;
+        // Reset the submitted operation flag.
+        submittedRemoval = false;
+    }
+}
+
+/// @title DailyLimit provides daily spend limit functionality.
+contract DailyLimit is Control {
+
+    event SetDailyLimit(uint _amount);
+
+    uint public dailyLimit;
+    uint public currentDay;
+    uint internal availableToday;
+
+    uint public pendingDailyLimit;
+    bool internal submittedDailyLimit;
+
+    /// @dev Set a daily transfer limit for non-whitelisted addresses.
+    /// @param _amount is the daily limit amount in wei.
+    function setDailyLimit(uint _amount) public only(owner) {
+        // Check if this operation has been already submitted.
+        require(!submittedDailyLimit);
+        // Assign the provided amount to pending daily limit change.
+        pendingDailyLimit = _amount;
+        // Flag the operation as submitted.
+        submittedDailyLimit = true;
+    }
+
+    /// @dev Confirm pending set daily limit operation.
+    function setDailyLimitConfirm() public only(controller) {
+        require(submittedDailyLimit);
+        // Set the daily limit to the pending amount.
+        dailyLimit = pendingDailyLimit;
+        // Lower the available balance if it exceeds the new daily limit.
+        if (availableToday > dailyLimit) {
+            availableToday = dailyLimit;
+        }
+        // Reset the submission flag.
+        submittedDailyLimit = false;
+        emit SetDailyLimit(pendingDailyLimit);
+    }
+
+    /// @dev Cancel pending set daily limit operation.
+    function setDailyLimitCancel() public only(controller) {
+        // Reset pending daily limit change.
+        pendingDailyLimit = 0;
+        // Reset the submitted operation flag.
+        submittedDailyLimit = false;
+    }
+}
+
+/// @title Asset wallet with extra security features.
+/// @author TokenCard
+contract Wallet is Whitelist, DailyLimit {
+    // Events
+    event Deposit(address _from, uint _amount);
+    event Transfer(address _to, address _token, uint _amount);
+    event TopUpGas(address _sender, address _owner, uint _amount);
+
+    // Constants
+    uint private constant GAS_TOPUP_LIMIT = 10 finney;
+
+    /// @dev Construct a wallet with an owner and a controller.
+    constructor(address _owner, address _controller) public {
+        owner = _owner;
+        controller = _controller;
+        currentDay = now;
+        dailyLimit = 2 ether;
+        availableToday = dailyLimit;
+    }
+
+    /// @dev Checks if the value is not zero.
+    modifier notZero(uint _value) {
+        require(_value != 0);
         _;
     }
 
@@ -77,7 +198,7 @@ contract Wallet {
         }
     }
 
-    /// @dev Returns the available daily limit - accounts for daily reset.
+    /// @dev Returns the available daily balance - accounts for daily limit reset.
     /// @return amount of ether in wei.
     function available() public view returns (uint) {
         if (now > currentDay + 24 hours) {
@@ -93,11 +214,11 @@ contract Wallet {
     /// @param _amount is the amount of tokens to be transferred in base units.
     function transfer(address _to, address _token, uint _amount) public only(owner) notZero(_amount) {
         // If address is not whitelisted, take daily limit into account.
-        if (!whitelisted[_to]) {
+        if (!whitelist[_to]) {
             // Convert token amount to ether value.
             uint etherValue;
             if (_token != 0x0) {
-                 etherValue = _tokenToEther(_token, _amount);
+                etherValue = _tokenToEther(_token, _amount);
             } else {
                 etherValue = _amount;
             }
@@ -108,7 +229,7 @@ contract Wallet {
                 availableToday = dailyLimit;
             }
             require(etherValue <= availableToday);
-            // Update the remaining limit.
+            // Update the available limit.
             availableToday -= etherValue;
         }
         // Transfer token or ether based on the provided address.
@@ -121,61 +242,6 @@ contract Wallet {
         emit Transfer(_to, _token, _amount);
     }
 
-    /// @dev Convert tokens to the corresponding ether value in wei.
-    /// @param _token address of an ERC20 token.
-    /// @param _amount is the amount of tokens in base units.
-    /// @return token value converted to ether (wei).
-    function _tokenToEther(address _token, uint _amount) private returns (uint) {
-        // TODO: Use Bancor to get current Token/ETH rate.
-        return 1000;
-    }
-
-    /// @dev Add pending Ethereum addresses to be whitelisted.
-    /// @param _addresses are the Ethereum addresses to be whitelisted.
-    function addToWhitelist(address[] _addresses) public only(owner) {
-        for (uint i = 0; i < _addresses.length; i++) {
-            pendingAddToWhitelist.push(_addresses[i]);
-        }
-    }
-
-    /// @dev Confirm pending whitelist addresses and update the whitelist (controller only).
-    function confirmAddToWhitelist() public only(controller) {
-        require(pendingAddToWhitelist.length > 0);
-        for (uint i = 0; i < pendingAddToWhitelist.length; i++) {
-            whitelisted[pendingAddToWhitelist[i]] = true;
-        }
-        emit AddToWhitelist(pendingAddToWhitelist);
-    }
-
-    /// @dev Add a pending removal of whitelisted addresses.
-    /// @param _addresses are the Ethereum addresses to be removed.
-    function removeFromWhitelist(address[] _addresses) public only(owner) {
-        for (uint i = 0; i < _addresses.length; i++) {
-            pendingRemoveFromWhitelist.push(_addresses[i]);
-        }
-    }
-
-    /// @dev Confirm pending removal of whitelisted addresses (controller only).
-    function confirmRemoveFromWhitelist() public only(controller) {
-        require(pendingRemoveFromWhitelist.length > 0);
-        for (uint i = 0; i < pendingRemoveFromWhitelist.length; i++) {
-            whitelisted[pendingRemoveFromWhitelist[i]] = false;
-        }
-        emit RemoveFromWhitelist(pendingRemoveFromWhitelist);
-    }
-
-    /// @dev Set a daily transfer limit for non-whitelisted addresses.
-    /// @param _amount is the daily limit amount in wei.
-    function setDailyLimit(uint _amount) public only(owner) {
-        pendingSetDailyLimit = _amount;
-    }
-
-    /// @dev Confirm the pending set daily limit operation.
-    function confirmSetDailyLimit() public only(controller) {
-        dailyLimit = pendingSetDailyLimit;
-        emit SetDailyLimit(pendingSetDailyLimit);
-    }
-
     /// @dev Refill owner's gas balance.
     /// @param _amount the amount of ether to transfer to the owner account in wei.
     function topUpGas(uint _amount) public either(owner, controller) notZero(_amount) {
@@ -185,5 +251,10 @@ contract Wallet {
         owner.transfer(_amount);
 
         emit TopUpGas(tx.origin, owner, _amount);
+    }
+
+    function _tokenToEther(address _token, uint _amount) internal returns (uint) {
+        // TODO: Use Bancor to get current Token/ETH rate.
+        return 1000;
     }
 }
