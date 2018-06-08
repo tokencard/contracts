@@ -14,19 +14,35 @@ interface Oracle {
 
 /// @title Control handles wallet access control.
 contract Control {
-    address public controller;
+    mapping (address => bool) public isController;
     address public owner;
 
     /// @dev Executable only by the specified address.
-    modifier only(address _a) {
-        require(msg.sender == _a);
+    modifier onlyOwner {
+        require(msg.sender == owner);
         _;
     }
 
-    /// @dev Executable by either of the two addresses.
-    modifier either(address _a, address _b) {
-        require(msg.sender == _a || msg.sender == _b);
+    /// @dev Executable only by the controller.
+    modifier onlyController {
+        require(isController[msg.sender]);
         _;
+    }
+
+    /// @dev Executable by either controller or owner.
+    modifier eitherOwnerOrController() {
+        require(isController[msg.sender] || msg.sender == owner);
+        _;
+    }
+
+    /// @dev Add a new controller to the list of controllers.
+    function addController(address _address) public onlyController {
+        isController[_address] = true;
+    }
+
+    /// @dev Remove a controller from the list of controllers.
+    function removeController(address _address) public onlyController {
+        isController[_address] = false;
     }
 }
 
@@ -36,7 +52,7 @@ contract Whitelist is Control {
     event WhitelistAddition(address[] _addresses);
     event WhitelistRemoval(address[] _addresses);
 
-    mapping(address => bool) public whitelist;
+    mapping(address => bool) public isWhitelisted;
     address[] public pendingAddition;
     address[] public pendingRemoval;
     bool internal submittedAddition;
@@ -44,7 +60,7 @@ contract Whitelist is Control {
 
     /// @dev Add addresses to the whitelist.
     /// @param _addresses are the Ethereum addresses to be whitelisted.
-    function addToWhitelist(address[] _addresses) public only(owner) {
+    function addToWhitelist(address[] _addresses) public onlyOwner {
         // Check if this operation has been already submitted.
         require(!submittedAddition);
         // Limit the amount of addresses that can be whitelisted at one time.
@@ -58,11 +74,11 @@ contract Whitelist is Control {
     }
 
     /// @dev Confirm pending whitelist addition.
-    function addToWhitelistConfirm() public only(controller) {
+    function addToWhitelistConfirm() public onlyController {
         require(pendingAddition.length > 0 && submittedAddition);
         // Whitelist pending addresses.
         for (uint i = 0; i < pendingAddition.length; i++) {
-            whitelist[pendingAddition[i]] = true;
+            isWhitelisted[pendingAddition[i]] = true;
         }
         // Reset the submission flag.
         submittedAddition = false;
@@ -70,7 +86,7 @@ contract Whitelist is Control {
     }
 
     /// @dev Cancel pending whitelist addition.
-    function addToWhitelistCancel() public only(controller) {
+    function addToWhitelistCancel() public onlyController {
         // Reset pending addresses.
         delete pendingAddition;
         // Reset the submitted operation flag.
@@ -79,7 +95,7 @@ contract Whitelist is Control {
 
     /// @dev Remove addresses from the whitelist.
     /// @param _addresses are the Ethereum addresses to be removed.
-    function removeFromWhitelist(address[] _addresses) public only(owner) {
+    function removeFromWhitelist(address[] _addresses) public onlyOwner {
         // Check if this operation has been already submitted.
         require(!submittedRemoval);
         // Limit the amount of addresses that can be removed at one time.
@@ -93,11 +109,11 @@ contract Whitelist is Control {
     }
 
     /// @dev Confirm pending removal of whitelisted addresses.
-    function removeFromWhitelistConfirm() public only(controller) {
+    function removeFromWhitelistConfirm() public onlyController {
         require(pendingRemoval.length > 0 && submittedRemoval);
         // Remove pending addresses.
         for (uint i = 0; i < pendingRemoval.length; i++) {
-            whitelist[pendingRemoval[i]] = false;
+            isWhitelisted[pendingRemoval[i]] = false;
         }
         // Reset the submission flag.
         submittedRemoval = false;
@@ -105,7 +121,7 @@ contract Whitelist is Control {
     }
 
     /// @dev Cancel pending removal of whitelisted addresses.
-    function removeFromWhitelistCancel() public only(controller) {
+    function removeFromWhitelistCancel() public onlyController {
         // Reset pending addresses.
         delete pendingRemoval;
         // Reset the submitted operation flag.
@@ -127,7 +143,7 @@ contract DailyLimit is Control {
 
     /// @dev Set a daily transfer limit for non-whitelisted addresses.
     /// @param _amount is the daily limit amount in wei.
-    function setDailyLimit(uint _amount) public only(owner) {
+    function setDailyLimit(uint _amount) public onlyOwner {
         // Check if this operation has been already submitted.
         require(!submittedDailyLimit);
         // Assign the provided amount to pending daily limit change.
@@ -137,7 +153,7 @@ contract DailyLimit is Control {
     }
 
     /// @dev Confirm pending set daily limit operation.
-    function setDailyLimitConfirm() public only(controller) {
+    function setDailyLimitConfirm() public onlyController {
         require(submittedDailyLimit);
         // Set the daily limit to the pending amount.
         dailyLimit = pendingDailyLimit;
@@ -151,7 +167,7 @@ contract DailyLimit is Control {
     }
 
     /// @dev Cancel pending set daily limit operation.
-    function setDailyLimitCancel() public only(controller) {
+    function setDailyLimitCancel() public onlyController {
         // Reset pending daily limit change.
         pendingDailyLimit = 0;
         // Reset the submitted operation flag.
@@ -176,7 +192,7 @@ contract Wallet is Whitelist, DailyLimit {
     /// @dev Construct a wallet with an owner and a controller.
     constructor(address _owner, address _controller, address _oracle) public {
         owner = _owner;
-        controller = _controller;
+        isController[_controller] = true;
         currentDay = now;
         dailyLimit = 2 ether;
         availableToday = dailyLimit;
@@ -221,13 +237,14 @@ contract Wallet is Whitelist, DailyLimit {
     /// @param _to recipient address.
     /// @param _token address of an ERC20 token, 0x0 is used for ether.
     /// @param _amount is the amount of tokens to be transferred in base units.
-    function transfer(address _to, address _token, uint _amount) public only(owner) notZero(_amount) {
+    function transfer(address _to, address _token, uint _amount) public onlyOwner notZero(_amount) {
         // If address is not whitelisted, take daily limit into account.
-        if (!whitelist[_to]) {
+        if (!isWhitelisted[_to]) {
             // Convert token amount to ether value.
             uint etherValue;
             if (_token != 0x0) {
                 etherValue = Oracle(oracle).rates(_token) * _amount;
+                assert(etherValue != 0);
             } else {
                 etherValue = _amount;
             }
@@ -253,7 +270,7 @@ contract Wallet is Whitelist, DailyLimit {
 
     /// @dev Refill owner's gas balance.
     /// @param _amount the amount of ether to transfer to the owner account in wei.
-    function topUpGas(uint _amount) public either(owner, controller) notZero(_amount) {
+    function topUpGas(uint _amount) public eitherOwnerOrController notZero(_amount) {
         // Require that the amount not exceed the top up limit.
         require(_amount <= GAS_TOPUP_LIMIT);
         // Transfer ether to owner's account
