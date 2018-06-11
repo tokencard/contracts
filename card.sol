@@ -33,9 +33,9 @@ contract Card {
     }
 
     // Construct a card contract owned by the sender with the given controller.
-    constructor(address c) public {
+    constructor(address c, address o) public {
         controller = c;
-        owner = msg.sender;
+        owner = o;
     }
 
     // Card contracts may be topped up from any source, so this contract must be payable by anyone.
