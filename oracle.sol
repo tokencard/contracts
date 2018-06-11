@@ -5,7 +5,7 @@ pragma solidity ^0.4.24;
 contract Oracle {
 
     address public controller;
-    mapping(address => uint) public rates;
+    mapping(address => uint) public rate;
 
     constructor() public {
         controller = msg.sender;

@@ -9,7 +9,7 @@ interface Token {
 
 /// @title The Oracle interface provides exchange rates for ERC20 tokens in wei.
 interface Oracle {
-    function rates(address) external view returns (uint);
+    function rate(address) external view returns (uint);
 }
 
 /// @title Control handles wallet access control.
@@ -243,7 +243,7 @@ contract Wallet is Whitelist, DailyLimit {
             // Convert token amount to ether value.
             uint etherValue;
             if (_token != 0x0) {
-                etherValue = Oracle(oracle).rates(_token) * _amount;
+                etherValue = Oracle(oracle).rate(_token) * _amount;
                 assert(etherValue != 0);
             } else {
                 etherValue = _amount;
