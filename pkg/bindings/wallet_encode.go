@@ -28,3 +28,19 @@ func (_Wallet *WalletCaller) OwnerEncode() ([]byte, error) {
 	}
 	return walletABI.Pack("owner")
 }
+
+func (_Wallet *WalletCaller) DailyLimitEncode() ([]byte, error) {
+	walletABI, err := abi.JSON(strings.NewReader(WalletABI))
+	if err != nil {
+		return nil, err
+	}
+	return walletABI.Pack("dailyLimit")
+}
+
+func (_Wallet *WalletCaller) AvailableEncode() ([]byte, error) {
+	walletABI, err := abi.JSON(strings.NewReader(WalletABI))
+	if err != nil {
+		return nil, err
+	}
+	return walletABI.Pack("available")
+}
