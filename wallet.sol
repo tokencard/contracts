@@ -75,7 +75,7 @@ contract Whitelist is Control {
             // Limit the amount of addresses that can be whitelisted at one time.
             require(_addresses.length <= 20);
             // Add each of the provided addresses to the pending addition list.
-            for (uint i = 0; i < _addresses.length; i++) {
+            for (i = 0; i < _addresses.length; i++) {
                 pendingAddition.push(_addresses[i]);
             }
             // Flag the operation as submitted.
