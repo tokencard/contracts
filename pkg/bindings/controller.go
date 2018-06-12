@@ -7,10 +7,10 @@ import (
 	"math/big"
 	"strings"
 
-	"github.com/nostdm/go-ethereum/accounts/abi"
-	"github.com/nostdm/go-ethereum/accounts/abi/bind"
-	"github.com/nostdm/go-ethereum/common"
-	"github.com/nostdm/go-ethereum/core/types"
+	"github.com/ethereum/go-ethereum/accounts/abi"
+	"github.com/ethereum/go-ethereum/accounts/abi/bind"
+	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/core/types"
 )
 
 // ControllerABI is the input ABI used to generate the binding from.
