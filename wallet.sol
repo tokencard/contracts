@@ -144,9 +144,9 @@ contract DailyLimit is Control {
 
     event SetDailyLimit(uint _amount);
 
-    uint public dailyLimit;
     uint public currentDay;
-    uint internal availableToday;
+    uint public dailyLimit;
+    uint internal dailyAvailable;
 
     uint public pendingDailyLimit;
     bool internal submittedDailyLimit;
@@ -207,7 +207,7 @@ contract Wallet is Whitelist, DailyLimit {
     constructor(address _owner, address _oracle, address[] _controllers) public {
         currentDay = now;
         dailyLimit = 1 ether;
-        availableToday = dailyLimit;
+        dailyAvailable = dailyLimit;
         owner = _owner;
         oracle = _oracle;
         for (uint i = 0; i < _controllers.length; i++) {
@@ -245,7 +245,7 @@ contract Wallet is Whitelist, DailyLimit {
         if (now > currentDay + 24 hours) {
             return dailyLimit;
         } else {
-            return availableToday;
+            return dailyAvailable;
         }
     }
 
@@ -268,11 +268,11 @@ contract Wallet is Whitelist, DailyLimit {
             if (now > currentDay + 24 hours) {
                 uint extraDays = (now - currentDay) / 24 hours;
                 currentDay += extraDays * 24 hours;
-                availableToday = dailyLimit;
+                dailyAvailable = dailyLimit;
             }
-            require(etherValue <= availableToday);
+            require(etherValue <= dailyAvailable);
             // Update the available limit.
-            availableToday -= etherValue;
+            dailyAvailable -= etherValue;
         }
         // Transfer token or ether based on the provided address.
         if (_token != 0x0) {
