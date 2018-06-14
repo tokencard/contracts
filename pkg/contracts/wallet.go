@@ -11,9 +11,9 @@ import (
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/tokencard/contracts/pkg/bindings"
 
-	"github.com/pkg/errors"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/core/types"
+	"github.com/pkg/errors"
 )
 
 var ErrFailedContractCall = errors.New("calling smart contract failed")
@@ -21,7 +21,7 @@ var ErrFailedContractCall = errors.New("calling smart contract failed")
 type Wallet interface {
 }
 
-func New(ethereum *ethclient.Client, address common.Address) (Wallet, error) {
+func New(ethereum *ethclient.Client, opts *bind.TransactOpts, address common.Address) (Wallet, error) {
 	walletBindings, err := bindings.NewWallet(address, ethereum)
 	if err != nil {
 		return nil, err
@@ -35,6 +35,7 @@ func New(ethereum *ethclient.Client, address common.Address) (Wallet, error) {
 		bindings: walletBindings,
 		abi:      walletABI,
 		ethereum: ethereum,
+		opts:     opts,
 	}, nil
 }
 
@@ -43,10 +44,11 @@ type wallet struct {
 	bindings *bindings.Wallet
 	abi      abi.ABI
 	ethereum *ethclient.Client
+	opts     *bind.TransactOpts
 }
 
-func (w *wallet) Deploy(auth *bind.TransactOpts, _owner common.Address, _oracle common.Address, _controllers []common.Address) (common.Address, *types.Transaction, *bindings.Wallet, error) {
-	return bindings.DeployWallet(auth, w.ethereum,  _owner, _oracle, _controllers)
+func (w *wallet) Deploy(owner common.Address, oracle common.Address, controllers []common.Address) (common.Address, *types.Transaction, *bindings.Wallet, error) {
+	return bindings.DeployWallet(w.opts, w.ethereum, owner, oracle, controllers)
 }
 
 func (w *wallet) Balance(ctx context.Context, block *big.Int, asset common.Address) (*big.Int, error) {
@@ -361,13 +363,92 @@ func (w *wallet) PendingGasLimit(ctx context.Context, block *big.Int) (*big.Int,
 	return res, nil
 }
 
-func (w *wallet) AddController(opts *bind.TransactOpts, account common.Address) (*types.Transaction, error) {
-	return w.bindings.AddController(opts, account)
+func (w *wallet) AddController( account common.Address) (*types.Transaction, error) {
+	return w.bindings.AddController(w.opts, account)
 }
 
-func (w *wallet) AddToWhitelist(opts *bind.TransactOpts, addresses []common.Address) (*types.Transaction, error) {
-	return w.bindings.AddToWhitelist(opts, addresses)
+func (w *wallet) RemoveController(account common.Address) (*types.Transaction, error) {
+	return w.bindings.RemoveController(w.opts, account)
 }
+
+func (w *wallet) InitializeWhitelist(addresses []common.Address) (*types.Transaction, error) {
+	return w.bindings.InitializeWhitelist(w.opts, addresses)
+}
+
+func (w *wallet) AddToWhitelist(addresses []common.Address) (*types.Transaction, error) {
+	return w.bindings.AddToWhitelist(w.opts, addresses)
+}
+
+func (w *wallet) AddToWhitelistConfirm() (*types.Transaction, error) {
+	return w.bindings.AddToWhitelistConfirm(w.opts)
+}
+
+func (w *wallet) AddToWhitelistCancel() (*types.Transaction, error) {
+	return w.bindings.AddToWhitelistCancel(w.opts)
+}
+
+func (w *wallet) RemoveFromWhitelist(opts *bind.TransactOpts, addresses []common.Address) (*types.Transaction, error) {
+	return w.bindings.RemoveFromWhitelist(opts, addresses)
+}
+
+func (w *wallet) RemoveFromWhitelistConfirm() (*types.Transaction, error) {
+	return w.bindings.RemoveFromWhitelistConfirm(w.opts)
+}
+
+func (w *wallet) RemoveFromWhitelistCancel() (*types.Transaction, error) {
+	return w.bindings.RemoveFromWhitelistCancel(w.opts)
+}
+
+func (w *wallet) InitializeDailyLimit(amount *big.Int) (*types.Transaction, error) {
+	return w.bindings.InitializeDailyLimit(w.opts, amount)
+}
+
+func (w *wallet) SetDailyLimit(amount *big.Int) (*types.Transaction, error) {
+	return w.bindings.SetDailyLimit(w.opts, amount)
+}
+
+func (w *wallet) SetDailyLimitConfirm() (*types.Transaction, error) {
+	return w.bindings.SetDailyLimitConfirm(w.opts)
+}
+
+func (w *wallet) SetDailyLimitCancel() (*types.Transaction, error) {
+	return w.bindings.SetDailyLimitCancel(w.opts)
+}
+
+func (w *wallet) InitializeGasLimit(amount *big.Int) (*types.Transaction, error) {
+	return w.bindings.InitializeGasLimit(w.opts, amount)
+}
+
+func (w *wallet) SetGasLimit(amount *big.Int) (*types.Transaction, error) {
+	return w.bindings.SetGasLimit(w.opts, amount)
+}
+
+func (w *wallet) SetGasLimitConfirm() (*types.Transaction, error) {
+	return w.bindings.SetGasLimitConfirm(w.opts)
+}
+
+func (w *wallet) SetGasLimitCancel() (*types.Transaction, error) {
+	return w.bindings.SetGasLimitCancel(w.opts)
+}
+
+func (w *wallet) Transfer(to common.Address, asset common.Address, amount *big.Int) (*types.Transaction, error) {
+	return w.bindings.Transfer(w.opts, )
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

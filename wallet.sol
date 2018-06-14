@@ -219,7 +219,7 @@ contract DailyLimit is Control {
 contract Vault is Whitelist, DailyLimit {
     // Events
     event Deposit(address _from, uint _amount);
-    event Transfer(address _to, address _token, uint _amount);
+    event Transfer(address _to, address _asset, uint _amount);
 
     // Storage
     address public oracle;
@@ -250,11 +250,11 @@ contract Vault is Whitelist, DailyLimit {
     }
 
     /// @dev Returns the amount of an asset owned by the contract.
-    /// @param _token address of an ERC20 token, 0x0 is used for ether.
+    /// @param _asset address of an ERC20 token or 0x0 for ether.
     /// @return balance associated with the wallet address in wei.
-    function balance(address _token) public view returns (uint) {
-        if (_token != 0x0) {
-            return Token(_token).balanceOf(this);
+    function balance(address _asset) public view returns (uint) {
+        if (_asset != 0x0) {
+            return Token(_asset).balanceOf(this);
         } else {
             return address(this).balance;
         }
@@ -262,15 +262,15 @@ contract Vault is Whitelist, DailyLimit {
 
     /// @dev Transfer asset to an address.
     /// @param _to recipient address.
-    /// @param _token address of an ERC20 token, 0x0 is used for ether.
+    /// @param _asset address of an ERC20 token or 0x0 for ether.
     /// @param _amount is the amount of tokens to be transferred in base units.
-    function transfer(address _to, address _token, uint _amount) public onlyOwner notZero(_amount) {
+    function transfer(address _to, address _asset, uint _amount) public onlyOwner notZero(_amount) {
         // If address is not whitelisted, take daily limit into account.
         if (!isWhitelisted[_to]) {
             // Convert token amount to ether value.
             uint etherValue;
-            if (_token != 0x0) {
-                etherValue = Oracle(oracle).rate(_token) * _amount;
+            if (_asset != 0x0) {
+                etherValue = Oracle(oracle).rate(_asset) * _amount;
                 assert(etherValue != 0);
             } else {
                 etherValue = _amount;
@@ -286,12 +286,12 @@ contract Vault is Whitelist, DailyLimit {
             _dailyAvailable -= etherValue;
         }
         // Transfer token or ether based on the provided address.
-        if (_token != 0x0) {
-            require(Token(_token).transfer(_to, _amount));
+        if (_asset != 0x0) {
+            require(Token(_asset).transfer(_to, _amount));
         } else {
             _to.transfer(_amount);
         }
-        emit Transfer(_to, _token, _amount);
+        emit Transfer(_to, _asset, _amount);
     }
 }
 
