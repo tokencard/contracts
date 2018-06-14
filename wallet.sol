@@ -298,8 +298,8 @@ contract Wallet is Vault {
     uint private gasAvailable;
 
     uint public pendingGasLimit;
-    bool internal submittedGasLimit;
-    bool internal initializedGasLimit;
+    bool private submittedGasLimit;
+    bool private initializedGasLimit;
 
     constructor(address _owner, address _oracle, address[] _controllers) Wallet(_owner, _oracle, _controllers) public {
         gasLimit = MAXIMUM_GAS_LIMIT;
