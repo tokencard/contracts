@@ -79,7 +79,7 @@ contract Whitelist is Control {
         // Limit the amount of addresses that can be whitelisted at one time.
         require(_addresses.length <= 20);
         // Add each of the provided addresses to the pending addition list.
-        for (i = 0; i < _addresses.length; i++) {
+        for (uint i = 0; i < _addresses.length; i++) {
             pendingAddition.push(_addresses[i]);
         }
         // Flag the operation as submitted.
@@ -301,7 +301,7 @@ contract Wallet is Vault {
     bool private submittedGasLimit;
     bool private initializedGasLimit;
 
-    constructor(address _owner, address _oracle, address[] _controllers) Wallet(_owner, _oracle, _controllers) public {
+    constructor(address _owner, address _oracle, address[] _controllers) Vault(_owner, _oracle, _controllers) public {
         gasLimit = MAXIMUM_GAS_LIMIT;
         gasAvailable = gasLimit;
     }
@@ -353,14 +353,14 @@ contract Wallet is Vault {
     /// @dev Refill owner's gas balance.
     /// @param _amount the amount of ether to transfer to the owner account in wei.
     function topUpGas(uint _amount) public eitherOwnerOrController notZero(_amount) {
+        // Make sure the available gas is not zero.
+        require(gasAvailable > 0);
         // Account for the gas limit daily reset.
         if (now > currentDay + 24 hours) {
             uint extraDays = (now - currentDay) / 24 hours;
             currentDay += extraDays * 24 hours;
             gasAvailable = gasLimit;
         }
-        // Make sure the available gas is not zero.
-        require(gasAvailable > 0);
         // If amount is above available balance, use the entire balance.
         if (_amount > gasAvailable) {
             _amount = gasAvailable;
