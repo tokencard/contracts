@@ -16,7 +16,19 @@ import (
 	"github.com/pkg/errors"
 )
 
-var ErrFailedContractCall = errors.New("calling smart contract failed")
+var (
+	ErrFailedContractCall = errors.New("calling smart contract failed")
+	ErrInvalidEventData   = errors.New("event data could not be parsed")
+)
+
+const (
+	depositTopic           = "0xe1fffcc4923d04b559f4d29a8bfc6cda04eb5b0d3c460751c2402c5c5cc9109c"
+	transferTopic          = "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef"
+	dailyLimitTopic        = "0x4c6fb4d469797cfdfb4ac382c2fe84a494711f5b9676334ff9fac5f7601aef70"
+	whitelistAdditionTopic = "0xc76dd62bd7d0b2212e0d3445c1703a522dd816a749fe499b3bcb0f51b2500434"
+	whitelistRemovalTopic  = "0x4b089aff1cdd9a6984aa832d4a013996b3acd3d6244ce3de5e07e6ab050d2b94"
+	topUpGasTopic          = "0x2235de9f3363e464311d990c51aeef966703c87d1c77e80737831d6944d87c86"
+)
 
 func New(ethereum *ethclient.Client, address common.Address) (*Wallet, error) {
 	walletBindings, err := bindings.NewWallet(address, ethereum)
@@ -42,7 +54,13 @@ type Wallet struct {
 	ethereum *ethclient.Client
 }
 
-func DeployWallet(opts *bind.TransactOpts, eth *ethclient.Client ,owner common.Address, oracle common.Address, controllers []common.Address) (common.Address, *types.Transaction, *bindings.Wallet, error) {
+type Event struct {
+	TxHash    common.Hash
+	BlockHash common.Hash
+	Data      [][]byte
+}
+
+func DeployWallet(opts *bind.TransactOpts, eth *ethclient.Client, owner common.Address, oracle common.Address, controllers []common.Address) (common.Address, *types.Transaction, *bindings.Wallet, error) {
 	return bindings.DeployWallet(opts, eth, owner, oracle, controllers)
 }
 
@@ -374,11 +392,11 @@ func (w *Wallet) AddToWhitelist(opts *bind.TransactOpts, addresses []common.Addr
 	return w.bindings.AddToWhitelist(opts, addresses)
 }
 
-func (w *Wallet) AddToWhitelistConfirm(opts *bind.TransactOpts, ) (*types.Transaction, error) {
+func (w *Wallet) AddToWhitelistConfirm(opts *bind.TransactOpts) (*types.Transaction, error) {
 	return w.bindings.AddToWhitelistConfirm(opts)
 }
 
-func (w *Wallet) AddToWhitelistCancel(opts *bind.TransactOpts, ) (*types.Transaction, error) {
+func (w *Wallet) AddToWhitelistCancel(opts *bind.TransactOpts) (*types.Transaction, error) {
 	return w.bindings.AddToWhitelistCancel(opts)
 }
 
@@ -386,11 +404,11 @@ func (w *Wallet) RemoveFromWhitelist(opts *bind.TransactOpts, addresses []common
 	return w.bindings.RemoveFromWhitelist(opts, addresses)
 }
 
-func (w *Wallet) RemoveFromWhitelistConfirm(opts *bind.TransactOpts, ) (*types.Transaction, error) {
+func (w *Wallet) RemoveFromWhitelistConfirm(opts *bind.TransactOpts) (*types.Transaction, error) {
 	return w.bindings.RemoveFromWhitelistConfirm(opts)
 }
 
-func (w *Wallet) RemoveFromWhitelistCancel(opts *bind.TransactOpts, ) (*types.Transaction, error) {
+func (w *Wallet) RemoveFromWhitelistCancel(opts *bind.TransactOpts) (*types.Transaction, error) {
 	return w.bindings.RemoveFromWhitelistCancel(opts)
 }
 
@@ -402,11 +420,11 @@ func (w *Wallet) SetDailyLimit(opts *bind.TransactOpts, amount *big.Int) (*types
 	return w.bindings.SetDailyLimit(opts, amount)
 }
 
-func (w *Wallet) SetDailyLimitConfirm(opts *bind.TransactOpts, ) (*types.Transaction, error) {
+func (w *Wallet) SetDailyLimitConfirm(opts *bind.TransactOpts) (*types.Transaction, error) {
 	return w.bindings.SetDailyLimitConfirm(opts)
 }
 
-func (w *Wallet) SetDailyLimitCancel(opts *bind.TransactOpts, ) (*types.Transaction, error) {
+func (w *Wallet) SetDailyLimitCancel(opts *bind.TransactOpts) (*types.Transaction, error) {
 	return w.bindings.SetDailyLimitCancel(opts)
 }
 
@@ -418,11 +436,11 @@ func (w *Wallet) SetGasLimit(opts *bind.TransactOpts, amount *big.Int) (*types.T
 	return w.bindings.SetGasLimit(opts, amount)
 }
 
-func (w *Wallet) SetGasLimitConfirm(opts *bind.TransactOpts, ) (*types.Transaction, error) {
+func (w *Wallet) SetGasLimitConfirm(opts *bind.TransactOpts) (*types.Transaction, error) {
 	return w.bindings.SetGasLimitConfirm(opts)
 }
 
-func (w *Wallet) SetGasLimitCancel(opts *bind.TransactOpts, ) (*types.Transaction, error) {
+func (w *Wallet) SetGasLimitCancel(opts *bind.TransactOpts) (*types.Transaction, error) {
 	return w.bindings.SetGasLimitCancel(opts)
 }
 
@@ -434,23 +452,200 @@ func (w *Wallet) TopUpGas(opts *bind.TransactOpts, amount *big.Int) (*types.Tran
 	return w.bindings.TopUpGas(opts, amount)
 }
 
+func (w *Wallet) WhitelistAdditionEvents(ctx context.Context, block *big.Int) ([]*Event, error) {
+	// Create a query for top up gas events.
+	query := ethereum.FilterQuery{
+		FromBlock: nil,
+		ToBlock:   block,
+		Addresses: []common.Address{w.address},
+		Topics:    [][]common.Hash{{common.HexToHash(whitelistAdditionTopic)}},
+	}
+	// Get the contract logs.
+	logs, err := w.ethereum.FilterLogs(ctx, query)
+	if err != nil {
+		return nil, err
+	}
+	// Create a list of logged outgoing events.
+	var events []*Event
+	for _, v := range logs {
+		// Decode event parameters.
+		if len(v.Data) < 64 {
+			return nil, ErrInvalidEventData
+		}
+		var data [][]byte
+		for i := 0; i < len(v.Data); i += 32 {
+			data = append(data, v.Data[i:i+32])
+		}
+		events = append(events, &Event{
+			BlockHash: v.BlockHash,
+			Data:      data,
+			TxHash:    v.TxHash,
+		})
+	}
+	return events, nil
+}
 
+func (w *Wallet) WhitelistRemovalEvents(ctx context.Context, block *big.Int) ([]*Event, error) {
+	// Create a query for top up gas events.
+	query := ethereum.FilterQuery{
+		FromBlock: nil,
+		ToBlock:   block,
+		Addresses: []common.Address{w.address},
+		Topics:    [][]common.Hash{{common.HexToHash(whitelistRemovalTopic)}},
+	}
+	// Get the contract logs.
+	logs, err := w.ethereum.FilterLogs(ctx, query)
+	if err != nil {
+		return nil, err
+	}
+	// Create a list of logged outgoing events.
+	var events []*Event
+	for _, v := range logs {
+		// Decode event parameters.
+		if len(v.Data) < 64 {
+			return nil, ErrInvalidEventData
+		}
+		var data [][]byte
+		for i := 0; i < len(v.Data); i += 32 {
+			data = append(data, v.Data[i:i+32])
+		}
+		events = append(events, &Event{
+			BlockHash: v.BlockHash,
+			Data:      data,
+			TxHash:    v.TxHash,
+		})
+	}
+	return events, nil
+}
 
+func (w *Wallet) SetDailyLimitEvents(ctx context.Context, block *big.Int) ([]*Event, error) {
+	// Create a query for set daily limit events.
+	query := ethereum.FilterQuery{
+		FromBlock: nil,
+		ToBlock:   block,
+		Addresses: []common.Address{w.address},
+		Topics:    [][]common.Hash{{common.HexToHash(dailyLimitTopic)}},
+	}
+	// Get the contract logs.
+	logs, err := w.ethereum.FilterLogs(ctx, query)
+	if err != nil {
+		return nil, err
+	}
+	// Create a list of logged outgoing events.
+	var events []*Event
+	for _, v := range logs {
+		// Decode event parameters.
+		if len(v.Data) != 32 {
+			return nil, ErrInvalidEventData
+		}
+		var data [][]byte
+		for i := 0; i < len(v.Data); i += 32 {
+			data = append(data, v.Data[i:i+32])
+		}
+		events = append(events, &Event{
+			BlockHash: v.BlockHash,
+			Data:      data,
+			TxHash:    v.TxHash,
+		})
+	}
+	return events, nil
+}
 
+func (w *Wallet) TopUpGasEvents(ctx context.Context, block *big.Int) ([]*Event, error) {
+	// Create a query for top up gas events.
+	query := ethereum.FilterQuery{
+		FromBlock: nil,
+		ToBlock:   block,
+		Addresses: []common.Address{w.address},
+		Topics:    [][]common.Hash{{common.HexToHash(topUpGasTopic)}},
+	}
+	// Get the contract logs.
+	logs, err := w.ethereum.FilterLogs(ctx, query)
+	if err != nil {
+		return nil, err
+	}
+	// Create a list of logged outgoing events.
+	var events []*Event
+	for _, v := range logs {
+		// Decode event parameters.
+		if len(v.Data) != 96 {
+			return nil, ErrInvalidEventData
+		}
+		var data [][]byte
+		for i := 0; i < len(v.Data); i += 32 {
+			data = append(data, v.Data[i:i+32])
+		}
+		events = append(events, &Event{
+			BlockHash: v.BlockHash,
+			Data:      data,
+			TxHash:    v.TxHash,
+		})
+	}
+	return events, nil
+}
 
+func (w *Wallet) TransferEvents(ctx context.Context, block *big.Int) ([]*Event, error) {
+	// Create a query for top up gas events.
+	query := ethereum.FilterQuery{
+		FromBlock: nil,
+		ToBlock:   block,
+		Addresses: []common.Address{w.address},
+		Topics:    [][]common.Hash{{common.HexToHash(transferTopic)}},
+	}
+	// Get the contract logs.
+	logs, err := w.ethereum.FilterLogs(ctx, query)
+	if err != nil {
+		return nil, err
+	}
+	// Create a list of logged outgoing events.
+	var events []*Event
+	for _, v := range logs {
+		// Decode event parameters.
+		if len(v.Data) != 96 {
+			return nil, ErrInvalidEventData
+		}
+		var data [][]byte
+		for i := 0; i < len(v.Data); i += 32 {
+			data = append(data, v.Data[i:i+32])
+		}
+		events = append(events, &Event{
+			BlockHash: v.BlockHash,
+			Data:      data,
+			TxHash:    v.TxHash,
+		})
+	}
+	return events, nil
+}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+func (w *Wallet) DepositEvents(ctx context.Context, block *big.Int) ([]*Event, error) {
+	// Create a query for top up gas events.
+	query := ethereum.FilterQuery{
+		FromBlock: nil,
+		ToBlock:   block,
+		Addresses: []common.Address{w.address},
+		Topics:    [][]common.Hash{{common.HexToHash(depositTopic)}},
+	}
+	// Get the contract logs.
+	logs, err := w.ethereum.FilterLogs(ctx, query)
+	if err != nil {
+		return nil, err
+	}
+	// Create a list of logged outgoing events.
+	var events []*Event
+	for _, v := range logs {
+		// Decode event parameters.
+		if len(v.Data) != 64 {
+			return nil, ErrInvalidEventData
+		}
+		var data [][]byte
+		for i := 0; i < len(v.Data); i += 32 {
+			data = append(data, v.Data[i:i+32])
+		}
+		events = append(events, &Event{
+			BlockHash: v.BlockHash,
+			Data:      data,
+			TxHash:    v.TxHash,
+		})
+	}
+	return events, nil
+}

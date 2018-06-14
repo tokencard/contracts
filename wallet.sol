@@ -14,6 +14,9 @@ interface Oracle {
 
 /// @title Control handles wallet access control.
 contract Control {
+    event AddController(address _account);
+    event RemoveController(address _account);
+
     mapping (address => bool) public isController;
     address public owner;
 
@@ -38,11 +41,13 @@ contract Control {
     /// @dev Add a new controller to the list of controllers.
     function addController(address _account) public onlyController {
         isController[_account] = true;
+        emit AddController(_account);
     }
 
     /// @dev Remove a controller from the list of controllers.
     function removeController(address _account) public onlyController {
         isController[_account] = false;
+        emit RemoveController(_account);
     }
 }
 
