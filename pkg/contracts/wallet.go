@@ -18,7 +18,7 @@ import (
 
 var ErrFailedContractCall = errors.New("calling smart contract failed")
 
-func New(ethereum *ethclient.Client, opts *bind.TransactOpts, address common.Address) (*Wallet, error) {
+func New(ethereum *ethclient.Client, address common.Address) (*Wallet, error) {
 	walletBindings, err := bindings.NewWallet(address, ethereum)
 	if err != nil {
 		return nil, err
@@ -32,7 +32,6 @@ func New(ethereum *ethclient.Client, opts *bind.TransactOpts, address common.Add
 		bindings: walletBindings,
 		abi:      walletABI,
 		ethereum: ethereum,
-		opts:     opts,
 	}, nil
 }
 
@@ -41,7 +40,6 @@ type Wallet struct {
 	bindings *bindings.Wallet
 	abi      abi.ABI
 	ethereum *ethclient.Client
-	opts     *bind.TransactOpts
 }
 
 func DeployWallet(opts *bind.TransactOpts, eth *ethclient.Client ,owner common.Address, oracle common.Address, controllers []common.Address) (common.Address, *types.Transaction, *bindings.Wallet, error) {
@@ -360,80 +358,80 @@ func (w *Wallet) PendingGasLimit(ctx context.Context, block *big.Int) (*big.Int,
 	return res, nil
 }
 
-func (w *Wallet) AddController( account common.Address) (*types.Transaction, error) {
-	return w.bindings.AddController(w.opts, account)
+func (w *Wallet) AddController(opts *bind.TransactOpts, account common.Address) (*types.Transaction, error) {
+	return w.bindings.AddController(opts, account)
 }
 
-func (w *Wallet) RemoveController(account common.Address) (*types.Transaction, error) {
-	return w.bindings.RemoveController(w.opts, account)
+func (w *Wallet) RemoveController(opts *bind.TransactOpts, account common.Address) (*types.Transaction, error) {
+	return w.bindings.RemoveController(opts, account)
 }
 
-func (w *Wallet) InitializeWhitelist(addresses []common.Address) (*types.Transaction, error) {
-	return w.bindings.InitializeWhitelist(w.opts, addresses)
+func (w *Wallet) InitializeWhitelist(opts *bind.TransactOpts, addresses []common.Address) (*types.Transaction, error) {
+	return w.bindings.InitializeWhitelist(opts, addresses)
 }
 
-func (w *Wallet) AddToWhitelist(addresses []common.Address) (*types.Transaction, error) {
-	return w.bindings.AddToWhitelist(w.opts, addresses)
+func (w *Wallet) AddToWhitelist(opts *bind.TransactOpts, addresses []common.Address) (*types.Transaction, error) {
+	return w.bindings.AddToWhitelist(opts, addresses)
 }
 
-func (w *Wallet) AddToWhitelistConfirm() (*types.Transaction, error) {
-	return w.bindings.AddToWhitelistConfirm(w.opts)
+func (w *Wallet) AddToWhitelistConfirm(opts *bind.TransactOpts, ) (*types.Transaction, error) {
+	return w.bindings.AddToWhitelistConfirm(opts)
 }
 
-func (w *Wallet) AddToWhitelistCancel() (*types.Transaction, error) {
-	return w.bindings.AddToWhitelistCancel(w.opts)
+func (w *Wallet) AddToWhitelistCancel(opts *bind.TransactOpts, ) (*types.Transaction, error) {
+	return w.bindings.AddToWhitelistCancel(opts)
 }
 
 func (w *Wallet) RemoveFromWhitelist(opts *bind.TransactOpts, addresses []common.Address) (*types.Transaction, error) {
 	return w.bindings.RemoveFromWhitelist(opts, addresses)
 }
 
-func (w *Wallet) RemoveFromWhitelistConfirm() (*types.Transaction, error) {
-	return w.bindings.RemoveFromWhitelistConfirm(w.opts)
+func (w *Wallet) RemoveFromWhitelistConfirm(opts *bind.TransactOpts, ) (*types.Transaction, error) {
+	return w.bindings.RemoveFromWhitelistConfirm(opts)
 }
 
-func (w *Wallet) RemoveFromWhitelistCancel() (*types.Transaction, error) {
-	return w.bindings.RemoveFromWhitelistCancel(w.opts)
+func (w *Wallet) RemoveFromWhitelistCancel(opts *bind.TransactOpts, ) (*types.Transaction, error) {
+	return w.bindings.RemoveFromWhitelistCancel(opts)
 }
 
-func (w *Wallet) InitializeDailyLimit(amount *big.Int) (*types.Transaction, error) {
-	return w.bindings.InitializeDailyLimit(w.opts, amount)
+func (w *Wallet) InitializeDailyLimit(opts *bind.TransactOpts, amount *big.Int) (*types.Transaction, error) {
+	return w.bindings.InitializeDailyLimit(opts, amount)
 }
 
-func (w *Wallet) SetDailyLimit(amount *big.Int) (*types.Transaction, error) {
-	return w.bindings.SetDailyLimit(w.opts, amount)
+func (w *Wallet) SetDailyLimit(opts *bind.TransactOpts, amount *big.Int) (*types.Transaction, error) {
+	return w.bindings.SetDailyLimit(opts, amount)
 }
 
-func (w *Wallet) SetDailyLimitConfirm() (*types.Transaction, error) {
-	return w.bindings.SetDailyLimitConfirm(w.opts)
+func (w *Wallet) SetDailyLimitConfirm(opts *bind.TransactOpts, ) (*types.Transaction, error) {
+	return w.bindings.SetDailyLimitConfirm(opts)
 }
 
-func (w *Wallet) SetDailyLimitCancel() (*types.Transaction, error) {
-	return w.bindings.SetDailyLimitCancel(w.opts)
+func (w *Wallet) SetDailyLimitCancel(opts *bind.TransactOpts, ) (*types.Transaction, error) {
+	return w.bindings.SetDailyLimitCancel(opts)
 }
 
-func (w *Wallet) InitializeGasLimit(amount *big.Int) (*types.Transaction, error) {
-	return w.bindings.InitializeGasLimit(w.opts, amount)
+func (w *Wallet) InitializeGasLimit(opts *bind.TransactOpts, amount *big.Int) (*types.Transaction, error) {
+	return w.bindings.InitializeGasLimit(opts, amount)
 }
 
-func (w *Wallet) SetGasLimit(amount *big.Int) (*types.Transaction, error) {
-	return w.bindings.SetGasLimit(w.opts, amount)
+func (w *Wallet) SetGasLimit(opts *bind.TransactOpts, amount *big.Int) (*types.Transaction, error) {
+	return w.bindings.SetGasLimit(opts, amount)
 }
 
-func (w *Wallet) SetGasLimitConfirm() (*types.Transaction, error) {
-	return w.bindings.SetGasLimitConfirm(w.opts)
+func (w *Wallet) SetGasLimitConfirm(opts *bind.TransactOpts, ) (*types.Transaction, error) {
+	return w.bindings.SetGasLimitConfirm(opts)
 }
 
-func (w *Wallet) SetGasLimitCancel() (*types.Transaction, error) {
-	return w.bindings.SetGasLimitCancel(w.opts)
+func (w *Wallet) SetGasLimitCancel(opts *bind.TransactOpts, ) (*types.Transaction, error) {
+	return w.bindings.SetGasLimitCancel(opts)
 }
 
-func (w *Wallet) Transfer(to common.Address, asset common.Address, amount *big.Int) (*types.Transaction, error) {
-	return w.bindings.Transfer(w.opts, to, asset, amount)
+func (w *Wallet) Transfer(opts *bind.TransactOpts, to common.Address, asset common.Address, amount *big.Int) (*types.Transaction, error) {
+	return w.bindings.Transfer(opts, to, asset, amount)
 }
 
-func (w *Wallet) TopUpGas(amount *big.Int) (*types.Transaction, error) {
-	return w.bindings.TopUpGas(w.opts, amount)
+func (w *Wallet) TopUpGas(opts *bind.TransactOpts, amount *big.Int) (*types.Transaction, error) {
+	return w.bindings.TopUpGas(opts, amount)
 }
 
 
