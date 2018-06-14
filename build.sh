@@ -14,7 +14,7 @@ function confirm {
 }
 
 # Compile solidity contracts and hex prefix bytecode string.
-solc --overwrite --bin --abi wallet.sol     -o ./build/wallet     && bin=$(awk '{print "0x" $0}' ./build/wallet/TopUpWallet.bin)         && echo $bin > ./build/wallet/TopUpWallet.bin
+solc --overwrite --bin --abi wallet.sol     -o ./build/wallet     && bin=$(awk '{print "0x" $0}' ./build/wallet/Wallet.bin)         && echo $bin > ./build/wallet/Wallet.bin
 solc --overwrite --bin --abi controller.sol -o ./build/controller && bin=$(awk '{print "0x" $0}' ./build/controller/Controller.bin) && echo $bin > ./build/controller/Controller.bin
 solc --overwrite --bin --abi token.sol      -o ./build/token      && bin=$(awk '{print "0x" $0}' ./build/token/Token.bin)           && echo $bin > ./build/token/Token.bin
 solc --overwrite --bin --abi card.sol       -o ./build/card       && bin=$(awk '{print "0x" $0}' ./build/card/Card.bin)             && echo $bin > ./build/card/Card.bin
@@ -22,6 +22,6 @@ solc --overwrite --bin --abi card.sol       -o ./build/card       && bin=$(awk '
 
 # Generate Go bindings from solidity contracts.
 confirm
-abigen --abi ./build/wallet/TopUpWallet.abi    --bin ./build/wallet/TopUpWallet.bin    --pkg bindings --type=Wallet     --out ./pkg/bindings/wallet.go
+abigen --abi ./build/wallet/Wallet.abi         --bin ./build/wallet/Wallet.bin         --pkg bindings --type=Wallet     --out ./pkg/bindings/wallet.go
 abigen --abi ./build/card/Card.abi             --bin ./build/card/Card.bin             --pkg bindings --type=Card       --out ./pkg/bindings/card.go
 abigen --abi ./build/controller/Controller.abi --bin ./build/controller/Controller.bin --pkg bindings --type=Controller --out ./pkg/bindings/controller.go

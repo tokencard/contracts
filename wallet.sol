@@ -197,7 +197,7 @@ contract DailyLimit is Control {
 
 /// @title Asset wallet with extra security features.
 /// @author TokenCard
-contract Wallet is Whitelist, DailyLimit {
+contract Vault is Whitelist, DailyLimit {
     // Events
     event Deposit(address _from, uint _amount);
     event Transfer(address _to, address _token, uint _amount);
@@ -286,7 +286,7 @@ contract Wallet is Whitelist, DailyLimit {
     }
 }
 
-contract TopUpWallet is Wallet {
+contract Wallet is Vault {
 
     event SetGasLimit(uint _amount);
     event TopUpGas(address _sender, address _owner, uint _amount);
@@ -337,9 +337,9 @@ contract TopUpWallet is Wallet {
         assert(MINIMUM_GAS_LIMIT <= pendingGasLimit && pendingGasLimit <= MAXIMUM_GAS_LIMIT);
         // Set the daily limit to the pending amount.
         gasLimit = pendingGasLimit;
-        emit SetGasLimit(pendingGasLimit);
         // Reset the submission flag.
         submittedGasLimit = false;
+        emit SetGasLimit(pendingGasLimit);
     }
 
     /// @dev Cancel pending set gas limit operation.
