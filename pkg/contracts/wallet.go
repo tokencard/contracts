@@ -18,10 +18,7 @@ import (
 
 var ErrFailedContractCall = errors.New("calling smart contract failed")
 
-type Wallet interface {
-}
-
-func New(ethereum *ethclient.Client, opts *bind.TransactOpts, address common.Address) (Wallet, error) {
+func New(ethereum *ethclient.Client, opts *bind.TransactOpts, address common.Address) (*Wallet, error) {
 	walletBindings, err := bindings.NewWallet(address, ethereum)
 	if err != nil {
 		return nil, err
@@ -30,7 +27,7 @@ func New(ethereum *ethclient.Client, opts *bind.TransactOpts, address common.Add
 	if err != nil {
 		return nil, err
 	}
-	return &wallet{
+	return &Wallet{
 		address:  address,
 		bindings: walletBindings,
 		abi:      walletABI,
@@ -39,7 +36,7 @@ func New(ethereum *ethclient.Client, opts *bind.TransactOpts, address common.Add
 	}, nil
 }
 
-type wallet struct {
+type Wallet struct {
 	address  common.Address
 	bindings *bindings.Wallet
 	abi      abi.ABI
@@ -47,11 +44,11 @@ type wallet struct {
 	opts     *bind.TransactOpts
 }
 
-func (w *wallet) Deploy(owner common.Address, oracle common.Address, controllers []common.Address) (common.Address, *types.Transaction, *bindings.Wallet, error) {
+func (w *Wallet) Deploy(owner common.Address, oracle common.Address, controllers []common.Address) (common.Address, *types.Transaction, *bindings.Wallet, error) {
 	return bindings.DeployWallet(w.opts, w.ethereum, owner, oracle, controllers)
 }
 
-func (w *wallet) Balance(ctx context.Context, block *big.Int, asset common.Address) (*big.Int, error) {
+func (w *Wallet) Balance(ctx context.Context, block *big.Int, asset common.Address) (*big.Int, error) {
 	data, err := w.abi.Pack("balance", asset)
 	if err != nil {
 		return nil, err
@@ -72,7 +69,7 @@ func (w *wallet) Balance(ctx context.Context, block *big.Int, asset common.Addre
 	return res, nil
 }
 
-func (w *wallet) CurrentDay(ctx context.Context, block *big.Int) (*big.Int, error) {
+func (w *Wallet) CurrentDay(ctx context.Context, block *big.Int) (*big.Int, error) {
 	data, err := w.abi.Pack("currentDay")
 	if err != nil {
 		return nil, err
@@ -93,7 +90,7 @@ func (w *wallet) CurrentDay(ctx context.Context, block *big.Int) (*big.Int, erro
 	return res, nil
 }
 
-func (w *wallet) DailyLimit(ctx context.Context, block *big.Int) (*big.Int, error) {
+func (w *Wallet) DailyLimit(ctx context.Context, block *big.Int) (*big.Int, error) {
 	data, err := w.abi.Pack("dailyLimit")
 	if err != nil {
 		return nil, err
@@ -114,7 +111,7 @@ func (w *wallet) DailyLimit(ctx context.Context, block *big.Int) (*big.Int, erro
 	return res, nil
 }
 
-func (w *wallet) DailyAvailable(ctx context.Context, block *big.Int) (*big.Int, error) {
+func (w *Wallet) DailyAvailable(ctx context.Context, block *big.Int) (*big.Int, error) {
 	data, err := w.abi.Pack("dailyAvailable")
 	if err != nil {
 		return nil, err
@@ -135,7 +132,7 @@ func (w *wallet) DailyAvailable(ctx context.Context, block *big.Int) (*big.Int, 
 	return res, nil
 }
 
-func (w *wallet) GasLimit(ctx context.Context, block *big.Int) (*big.Int, error) {
+func (w *Wallet) GasLimit(ctx context.Context, block *big.Int) (*big.Int, error) {
 	data, err := w.abi.Pack("gasLimit")
 	if err != nil {
 		return nil, err
@@ -156,7 +153,7 @@ func (w *wallet) GasLimit(ctx context.Context, block *big.Int) (*big.Int, error)
 	return res, nil
 }
 
-func (w *wallet) GasAvailable(ctx context.Context, block *big.Int) (*big.Int, error) {
+func (w *Wallet) GasAvailable(ctx context.Context, block *big.Int) (*big.Int, error) {
 	data, err := w.abi.Pack("gasAvailable")
 	if err != nil {
 		return nil, err
@@ -177,7 +174,7 @@ func (w *wallet) GasAvailable(ctx context.Context, block *big.Int) (*big.Int, er
 	return res, nil
 }
 
-func (w *wallet) IsController(ctx context.Context, block *big.Int, address common.Address) (bool, error) {
+func (w *Wallet) IsController(ctx context.Context, block *big.Int, address common.Address) (bool, error) {
 	data, err := w.abi.Pack("isController", address)
 	if err != nil {
 		return false, err
@@ -203,7 +200,7 @@ func (w *wallet) IsController(ctx context.Context, block *big.Int, address commo
 	return res, nil
 }
 
-func (w *wallet) IsWhitelisted(ctx context.Context, block *big.Int, address common.Address) (bool, error) {
+func (w *Wallet) IsWhitelisted(ctx context.Context, block *big.Int, address common.Address) (bool, error) {
 	data, err := w.abi.Pack("isWhitelisted", address)
 	if err != nil {
 		return false, err
@@ -229,7 +226,7 @@ func (w *wallet) IsWhitelisted(ctx context.Context, block *big.Int, address comm
 	return res, nil
 }
 
-func (w *wallet) Oracle(ctx context.Context, block *big.Int) (common.Address, error) {
+func (w *Wallet) Oracle(ctx context.Context, block *big.Int) (common.Address, error) {
 	data, err := w.abi.Pack("oracle")
 	if err != nil {
 		return common.Address{}, err
@@ -250,7 +247,7 @@ func (w *wallet) Oracle(ctx context.Context, block *big.Int) (common.Address, er
 	return res, nil
 }
 
-func (w *wallet) Owner(ctx context.Context, block *big.Int) (common.Address, error) {
+func (w *Wallet) Owner(ctx context.Context, block *big.Int) (common.Address, error) {
 	data, err := w.abi.Pack("owner")
 	if err != nil {
 		return common.Address{}, err
@@ -271,7 +268,7 @@ func (w *wallet) Owner(ctx context.Context, block *big.Int) (common.Address, err
 	return res, nil
 }
 
-func (w *wallet) PendingAddition(ctx context.Context, block *big.Int) ([]common.Address, error) {
+func (w *Wallet) PendingAddition(ctx context.Context, block *big.Int) ([]common.Address, error) {
 	data, err := w.abi.Pack("pendingAddition")
 	if err != nil {
 		return nil, err
@@ -296,7 +293,7 @@ func (w *wallet) PendingAddition(ctx context.Context, block *big.Int) ([]common.
 	return res, nil
 }
 
-func (w *wallet) PendingRemoval(ctx context.Context, block *big.Int) ([]common.Address, error) {
+func (w *Wallet) PendingRemoval(ctx context.Context, block *big.Int) ([]common.Address, error) {
 	data, err := w.abi.Pack("pendingRemoval")
 	if err != nil {
 		return nil, err
@@ -321,7 +318,7 @@ func (w *wallet) PendingRemoval(ctx context.Context, block *big.Int) ([]common.A
 	return res, nil
 }
 
-func (w *wallet) PendingDailyLimit(ctx context.Context, block *big.Int) (*big.Int, error) {
+func (w *Wallet) PendingDailyLimit(ctx context.Context, block *big.Int) (*big.Int, error) {
 	data, err := w.abi.Pack("pendingDailyLimit")
 	if err != nil {
 		return nil, err
@@ -342,7 +339,7 @@ func (w *wallet) PendingDailyLimit(ctx context.Context, block *big.Int) (*big.In
 	return res, nil
 }
 
-func (w *wallet) PendingGasLimit(ctx context.Context, block *big.Int) (*big.Int, error) {
+func (w *Wallet) PendingGasLimit(ctx context.Context, block *big.Int) (*big.Int, error) {
 	data, err := w.abi.Pack("pendingGasLimit")
 	if err != nil {
 		return nil, err
@@ -363,79 +360,81 @@ func (w *wallet) PendingGasLimit(ctx context.Context, block *big.Int) (*big.Int,
 	return res, nil
 }
 
-func (w *wallet) AddController( account common.Address) (*types.Transaction, error) {
+func (w *Wallet) AddController( account common.Address) (*types.Transaction, error) {
 	return w.bindings.AddController(w.opts, account)
 }
 
-func (w *wallet) RemoveController(account common.Address) (*types.Transaction, error) {
+func (w *Wallet) RemoveController(account common.Address) (*types.Transaction, error) {
 	return w.bindings.RemoveController(w.opts, account)
 }
 
-func (w *wallet) InitializeWhitelist(addresses []common.Address) (*types.Transaction, error) {
+func (w *Wallet) InitializeWhitelist(addresses []common.Address) (*types.Transaction, error) {
 	return w.bindings.InitializeWhitelist(w.opts, addresses)
 }
 
-func (w *wallet) AddToWhitelist(addresses []common.Address) (*types.Transaction, error) {
+func (w *Wallet) AddToWhitelist(addresses []common.Address) (*types.Transaction, error) {
 	return w.bindings.AddToWhitelist(w.opts, addresses)
 }
 
-func (w *wallet) AddToWhitelistConfirm() (*types.Transaction, error) {
+func (w *Wallet) AddToWhitelistConfirm() (*types.Transaction, error) {
 	return w.bindings.AddToWhitelistConfirm(w.opts)
 }
 
-func (w *wallet) AddToWhitelistCancel() (*types.Transaction, error) {
+func (w *Wallet) AddToWhitelistCancel() (*types.Transaction, error) {
 	return w.bindings.AddToWhitelistCancel(w.opts)
 }
 
-func (w *wallet) RemoveFromWhitelist(opts *bind.TransactOpts, addresses []common.Address) (*types.Transaction, error) {
+func (w *Wallet) RemoveFromWhitelist(opts *bind.TransactOpts, addresses []common.Address) (*types.Transaction, error) {
 	return w.bindings.RemoveFromWhitelist(opts, addresses)
 }
 
-func (w *wallet) RemoveFromWhitelistConfirm() (*types.Transaction, error) {
+func (w *Wallet) RemoveFromWhitelistConfirm() (*types.Transaction, error) {
 	return w.bindings.RemoveFromWhitelistConfirm(w.opts)
 }
 
-func (w *wallet) RemoveFromWhitelistCancel() (*types.Transaction, error) {
+func (w *Wallet) RemoveFromWhitelistCancel() (*types.Transaction, error) {
 	return w.bindings.RemoveFromWhitelistCancel(w.opts)
 }
 
-func (w *wallet) InitializeDailyLimit(amount *big.Int) (*types.Transaction, error) {
+func (w *Wallet) InitializeDailyLimit(amount *big.Int) (*types.Transaction, error) {
 	return w.bindings.InitializeDailyLimit(w.opts, amount)
 }
 
-func (w *wallet) SetDailyLimit(amount *big.Int) (*types.Transaction, error) {
+func (w *Wallet) SetDailyLimit(amount *big.Int) (*types.Transaction, error) {
 	return w.bindings.SetDailyLimit(w.opts, amount)
 }
 
-func (w *wallet) SetDailyLimitConfirm() (*types.Transaction, error) {
+func (w *Wallet) SetDailyLimitConfirm() (*types.Transaction, error) {
 	return w.bindings.SetDailyLimitConfirm(w.opts)
 }
 
-func (w *wallet) SetDailyLimitCancel() (*types.Transaction, error) {
+func (w *Wallet) SetDailyLimitCancel() (*types.Transaction, error) {
 	return w.bindings.SetDailyLimitCancel(w.opts)
 }
 
-func (w *wallet) InitializeGasLimit(amount *big.Int) (*types.Transaction, error) {
+func (w *Wallet) InitializeGasLimit(amount *big.Int) (*types.Transaction, error) {
 	return w.bindings.InitializeGasLimit(w.opts, amount)
 }
 
-func (w *wallet) SetGasLimit(amount *big.Int) (*types.Transaction, error) {
+func (w *Wallet) SetGasLimit(amount *big.Int) (*types.Transaction, error) {
 	return w.bindings.SetGasLimit(w.opts, amount)
 }
 
-func (w *wallet) SetGasLimitConfirm() (*types.Transaction, error) {
+func (w *Wallet) SetGasLimitConfirm() (*types.Transaction, error) {
 	return w.bindings.SetGasLimitConfirm(w.opts)
 }
 
-func (w *wallet) SetGasLimitCancel() (*types.Transaction, error) {
+func (w *Wallet) SetGasLimitCancel() (*types.Transaction, error) {
 	return w.bindings.SetGasLimitCancel(w.opts)
 }
 
-func (w *wallet) Transfer(to common.Address, asset common.Address, amount *big.Int) (*types.Transaction, error) {
-	return w.bindings.Transfer(w.opts, )
+func (w *Wallet) Transfer(to common.Address, asset common.Address, amount *big.Int) (*types.Transaction, error) {
+	return w.bindings.Transfer(w.opts, to, asset, amount)
 }
 
-
+func (w *Wallet) TopUpGas(amount *big.Int) (*types.Transaction, error) {
+	return w.bindings.TopUpGas(w.opts, amount)
+}
 
 
 
