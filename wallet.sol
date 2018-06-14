@@ -53,21 +53,31 @@ contract Whitelist is Control {
     event WhitelistRemoval(address[] _addresses);
 
     mapping(address => bool) public isWhitelisted;
-    address[] public pendingAddition;
-    address[] public pendingRemoval;
-    bool internal submittedAddition;
-    bool internal submittedRemoval;
-    bool internal initializedWhitelist;
+    address[] private _pendingAddition;
+    address[] private _pendingRemoval;
+    bool private _submittedAddition;
+    bool private _submittedRemoval;
+    bool private _initializedWhitelist;
+
+    // @dev Getter for pending addition array.
+    function pendingAddition() public view returns(address[]) {
+        return _pendingAddition;
+    }
+
+    // @dev Getter for pending removal array.
+    function pendingRemoval() public view returns(address[]) {
+        return _pendingRemoval;
+    }
 
     /// @dev Add initial addresses to the whitelist.
     /// @param _addresses are the Ethereum addresses to be whitelisted.
     function initializeWhitelist(address[] _addresses) public onlyOwner {
-        require(!initializedWhitelist);
+        require(!_initializedWhitelist);
         // Add each of the provided addresses to the whitelist.
         for (uint i = 0; i < _addresses.length; i++) {
             isWhitelisted[_addresses[i]] = true;
         }
-        initializedWhitelist = true;
+        _initializedWhitelist = true;
         emit WhitelistAddition(_addresses);
     }
 
@@ -75,70 +85,70 @@ contract Whitelist is Control {
     /// @param _addresses are the Ethereum addresses to be whitelisted.
     function addToWhitelist(address[] _addresses) public onlyOwner {
         // Check if this operation has been already submitted.
-        require(!submittedAddition);
+        require(!_submittedAddition);
         // Limit the amount of addresses that can be whitelisted at one time.
         require(_addresses.length <= 20);
         // Add each of the provided addresses to the pending addition list.
         for (uint i = 0; i < _addresses.length; i++) {
-            pendingAddition.push(_addresses[i]);
+            _pendingAddition.push(_addresses[i]);
         }
         // Flag the operation as submitted.
-        submittedAddition = true;
+        _submittedAddition = true;
     }
 
     /// @dev Confirm pending whitelist addition.
     function addToWhitelistConfirm() public onlyController {
-        require(pendingAddition.length > 0 && submittedAddition);
+        require(_pendingAddition.length > 0 && _submittedAddition);
         // Whitelist pending addresses.
-        for (uint i = 0; i < pendingAddition.length; i++) {
-            isWhitelisted[pendingAddition[i]] = true;
+        for (uint i = 0; i < _pendingAddition.length; i++) {
+            isWhitelisted[_pendingAddition[i]] = true;
         }
         // Reset the submission flag.
-        submittedAddition = false;
-        emit WhitelistAddition(pendingAddition);
+        _submittedAddition = false;
+        emit WhitelistAddition(_pendingAddition);
     }
 
     /// @dev Cancel pending whitelist addition.
     function addToWhitelistCancel() public onlyController {
         // Reset pending addresses.
-        delete pendingAddition;
+        delete _pendingAddition;
         // Reset the submitted operation flag.
-        submittedAddition = false;
+        _submittedAddition = false;
     }
 
     /// @dev Remove addresses from the whitelist.
     /// @param _addresses are the Ethereum addresses to be removed.
     function removeFromWhitelist(address[] _addresses) public onlyOwner {
         // Check if this operation has been already submitted.
-        require(!submittedRemoval);
+        require(!_submittedRemoval);
         // Limit the amount of addresses that can be removed at one time.
         require(_addresses.length <= 20);
         // Add each of the addresses to the pending removal list.
         for (uint i = 0; i < _addresses.length; i++) {
-            pendingRemoval.push(_addresses[i]);
+            _pendingRemoval.push(_addresses[i]);
         }
         // Flag the operation as submitted.
-        submittedRemoval = true;
+        _submittedRemoval = true;
     }
 
     /// @dev Confirm pending removal of whitelisted addresses.
     function removeFromWhitelistConfirm() public onlyController {
-        require(pendingRemoval.length > 0 && submittedRemoval);
+        require(_pendingRemoval.length > 0 && _submittedRemoval);
         // Remove pending addresses.
-        for (uint i = 0; i < pendingRemoval.length; i++) {
-            isWhitelisted[pendingRemoval[i]] = false;
+        for (uint i = 0; i < _pendingRemoval.length; i++) {
+            isWhitelisted[_pendingRemoval[i]] = false;
         }
         // Reset the submission flag.
-        submittedRemoval = false;
-        emit WhitelistRemoval(pendingRemoval);
+        _submittedRemoval = false;
+        emit WhitelistRemoval(_pendingRemoval);
     }
 
     /// @dev Cancel pending removal of whitelisted addresses.
     function removeFromWhitelistCancel() public onlyController {
         // Reset pending addresses.
-        delete pendingRemoval;
+        delete _pendingRemoval;
         // Reset the submitted operation flag.
-        submittedRemoval = false;
+        _submittedRemoval = false;
     }
 }
 
@@ -149,19 +159,28 @@ contract DailyLimit is Control {
 
     uint public currentDay;
     uint public dailyLimit;
-    uint internal dailyAvailable;
+    uint internal _dailyAvailable;
 
     uint public pendingDailyLimit;
-    bool internal submittedDailyLimit;
-    bool internal initializedDailyLimit;
+    bool private _submittedDailyLimit;
+    bool private _initializedDailyLimit;
 
+    /// @dev Returns the available daily balance - accounts for daily limit reset.
+    /// @return amount of ether in wei.
+    function dailyAvailable() public view returns (uint) {
+        if (now > currentDay + 24 hours) {
+            return dailyLimit;
+        } else {
+            return _dailyAvailable;
+        }
+    }
     /// @dev Initialize a daily transfer limit for non-whitelisted addresses.
     /// @param _amount is the daily limit amount in wei.
     function initializeDailyLimit(uint _amount) public onlyOwner {
-        require(!initializedDailyLimit);
+        require(!_initializedDailyLimit);
         // Set the daily limit to the provided amount.
         dailyLimit = _amount;
-        initializedDailyLimit = true;
+        _initializedDailyLimit = true;
         emit SetDailyLimit(_amount);
     }
 
@@ -169,20 +188,20 @@ contract DailyLimit is Control {
     /// @param _amount is the daily limit amount in wei.
     function setDailyLimit(uint _amount) public onlyOwner {
         // Check if this operation has been already submitted.
-        require(!submittedDailyLimit);
+        require(!_submittedDailyLimit);
         // Assign the provided amount to pending daily limit change.
         pendingDailyLimit = _amount;
         // Flag the operation as submitted.
-        submittedDailyLimit = true;
+        _submittedDailyLimit = true;
     }
 
     /// @dev Confirm pending set daily limit operation.
     function setDailyLimitConfirm() public onlyController {
-        require(submittedDailyLimit);
+        require(_submittedDailyLimit);
         // Set the daily limit to the pending amount.
         dailyLimit = pendingDailyLimit;
         // Reset the submission flag.
-        submittedDailyLimit = false;
+        _submittedDailyLimit = false;
         emit SetDailyLimit(pendingDailyLimit);
     }
 
@@ -191,7 +210,7 @@ contract DailyLimit is Control {
         // Reset pending daily limit change.
         pendingDailyLimit = 0;
         // Reset the submitted operation flag.
-        submittedDailyLimit = false;
+        _submittedDailyLimit = false;
     }
 }
 
@@ -209,7 +228,7 @@ contract Vault is Whitelist, DailyLimit {
     constructor(address _owner, address _oracle, address[] _controllers) public {
         currentDay = now;
         dailyLimit = 1 ether;
-        dailyAvailable = dailyLimit;
+        _dailyAvailable = dailyLimit;
         owner = _owner;
         oracle = _oracle;
         for (uint i = 0; i < _controllers.length; i++) {
@@ -241,16 +260,6 @@ contract Vault is Whitelist, DailyLimit {
         }
     }
 
-    /// @dev Returns the available daily balance - accounts for daily limit reset.
-    /// @return amount of ether in wei.
-    function available() public view returns (uint) {
-        if (now > currentDay + 24 hours) {
-            return dailyLimit;
-        } else {
-            return dailyAvailable;
-        }
-    }
-
     /// @dev Transfer asset to an address.
     /// @param _to recipient address.
     /// @param _token address of an ERC20 token, 0x0 is used for ether.
@@ -270,11 +279,11 @@ contract Vault is Whitelist, DailyLimit {
             if (now > currentDay + 24 hours) {
                 uint extraDays = (now - currentDay) / 24 hours;
                 currentDay += extraDays * 24 hours;
-                dailyAvailable = dailyLimit;
+                _dailyAvailable = dailyLimit;
             }
-            require(etherValue <= dailyAvailable);
+            require(etherValue <= _dailyAvailable);
             // Update the available limit.
-            dailyAvailable -= etherValue;
+            _dailyAvailable -= etherValue;
         }
         // Transfer token or ether based on the provided address.
         if (_token != 0x0) {
@@ -295,24 +304,36 @@ contract Wallet is Vault {
     uint constant private MAXIMUM_GAS_LIMIT = 100 finney;
 
     uint public gasLimit;
-    uint private gasAvailable;
+    uint private _gasAvailable;
 
     uint public pendingGasLimit;
-    bool private submittedGasLimit;
-    bool private initializedGasLimit;
+    bool private _submittedGasLimit;
+    bool private _initializedGasLimit;
 
     constructor(address _owner, address _oracle, address[] _controllers) Vault(_owner, _oracle, _controllers) public {
         gasLimit = MAXIMUM_GAS_LIMIT;
-        gasAvailable = gasLimit;
+        _gasAvailable = gasLimit;
     }
 
+    /// @dev Returns the available daily gas top up balance - accounts for daily limit reset.
+    /// @return amount of gas in wei.
+    function gasAvailable() public view returns (uint) {
+        if (now > currentDay + 24 hours) {
+            return gasLimit;
+        } else {
+            return _gasAvailable;
+        }
+    }
+
+    /// @dev Initialize a daily gas top up limit.
+    /// @param _amount is the gas top up amount in wei.
     function initializeGasLimit(uint _amount) public onlyOwner {
-        require(!initializedGasLimit);
+        require(!_initializedGasLimit);
         // Require that the limit amount is within the acceptable range.
         require(MINIMUM_GAS_LIMIT <= _amount && _amount <= MAXIMUM_GAS_LIMIT);
         // Set the gas limit to the provided amount.
         gasLimit = _amount;
-        initializedGasLimit = true;
+        _initializedGasLimit = true;
         emit SetGasLimit(_amount);
     }
 
@@ -320,54 +341,54 @@ contract Wallet is Vault {
     /// @param _amount is the daily gas limit amount in wei.
     function setGasLimit(uint _amount) public onlyOwner {
         // Check if this operation has been already submitted.
-        require(!submittedGasLimit);
+        require(!_submittedGasLimit);
         // Require that the limit amount is within the acceptable range.
         require(MINIMUM_GAS_LIMIT <= _amount && _amount <= MAXIMUM_GAS_LIMIT);
         // Assign the provided amount to pending daily limit change.
-        pendingGasLimit = _amount;
+        pendingDailyLimit = _amount;
         // Flag the operation as submitted.
-        submittedGasLimit = true;
+        _submittedGasLimit = true;
     }
 
     /// @dev Confirm pending set gas limit operation.
     function setGasLimitConfirm() public onlyController {
         // That a set gas limit operation has been submitted.
-        require(submittedGasLimit);
+        require(_submittedGasLimit);
         // Assert that the pending gas limit amount is within the acceptable range.
-        assert(MINIMUM_GAS_LIMIT <= pendingGasLimit && pendingGasLimit <= MAXIMUM_GAS_LIMIT);
+        assert(MINIMUM_GAS_LIMIT <= pendingDailyLimit && pendingDailyLimit <= MAXIMUM_GAS_LIMIT);
         // Set the daily limit to the pending amount.
-        gasLimit = pendingGasLimit;
+        gasLimit = pendingDailyLimit;
         // Reset the submission flag.
-        submittedGasLimit = false;
-        emit SetGasLimit(pendingGasLimit);
+        _submittedGasLimit = false;
+        emit SetGasLimit(pendingDailyLimit);
     }
 
     /// @dev Cancel pending set gas limit operation.
     function setGasLimitCancel() public onlyController {
         // Reset pending daily limit change.
-        pendingGasLimit = 0;
+        pendingDailyLimit = 0;
         // Reset the submitted operation flag.
-        submittedGasLimit = false;
+        _submittedGasLimit = false;
     }
 
     /// @dev Refill owner's gas balance.
     /// @param _amount the amount of ether to transfer to the owner account in wei.
     function topUpGas(uint _amount) public eitherOwnerOrController notZero(_amount) {
         // Make sure the available gas is not zero.
-        require(gasAvailable > 0);
+        require(_gasAvailable > 0);
         // Account for the gas limit daily reset.
         if (now > currentDay + 24 hours) {
             uint extraDays = (now - currentDay) / 24 hours;
             currentDay += extraDays * 24 hours;
-            gasAvailable = gasLimit;
+            _gasAvailable = gasLimit;
         }
         // If amount is above available balance, use the entire balance.
-        if (_amount > gasAvailable) {
-            _amount = gasAvailable;
+        if (_amount > _gasAvailable) {
+            _amount = _gasAvailable;
         }
         // Deduce the top up amount from available balance and transfer corresponding
         // ether to the owner's account.
-        gasAvailable -= _amount;
+        _gasAvailable -= _amount;
         owner.transfer(_amount);
         emit TopUpGas(tx.origin, owner, _amount);
     }

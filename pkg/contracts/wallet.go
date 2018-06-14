@@ -49,27 +49,6 @@ func (w *wallet) Deploy(auth *bind.TransactOpts, _owner common.Address, _oracle 
 	return bindings.DeployWallet(auth, w.ethereum,  _owner, _oracle, _controllers)
 }
 
-func (w *wallet) Available(ctx context.Context, block *big.Int) (*big.Int, error) {
-	data, err := w.abi.Pack("available")
-	if err != nil {
-		return nil, err
-	}
-	rsp, err := w.ethereum.CallContract(ctx, ethereum.CallMsg{
-		To:   &w.address,
-		Data: data,
-	}, block)
-	if err != nil {
-		return nil, err
-	}
-	var res *big.Int
-	if len(rsp) == 32 {
-		res = new(big.Int).SetBytes(rsp)
-	} else {
-		return nil, errors.Wrap(ErrFailedContractCall, "available")
-	}
-	return res, nil
-}
-
 func (w *wallet) Balance(ctx context.Context, block *big.Int, asset common.Address) (*big.Int, error) {
 	data, err := w.abi.Pack("balance", asset)
 	if err != nil {
@@ -133,6 +112,27 @@ func (w *wallet) DailyLimit(ctx context.Context, block *big.Int) (*big.Int, erro
 	return res, nil
 }
 
+func (w *wallet) DailyAvailable(ctx context.Context, block *big.Int) (*big.Int, error) {
+	data, err := w.abi.Pack("dailyAvailable")
+	if err != nil {
+		return nil, err
+	}
+	rsp, err := w.ethereum.CallContract(ctx, ethereum.CallMsg{
+		To:   &w.address,
+		Data: data,
+	}, block)
+	if err != nil {
+		return nil, err
+	}
+	var res *big.Int
+	if len(rsp) == 32 {
+		res = new(big.Int).SetBytes(rsp)
+	} else {
+		return nil, errors.Wrap(ErrFailedContractCall, "dailyAvailable")
+	}
+	return res, nil
+}
+
 func (w *wallet) GasLimit(ctx context.Context, block *big.Int) (*big.Int, error) {
 	data, err := w.abi.Pack("gasLimit")
 	if err != nil {
@@ -154,8 +154,28 @@ func (w *wallet) GasLimit(ctx context.Context, block *big.Int) (*big.Int, error)
 	return res, nil
 }
 
+func (w *wallet) GasAvailable(ctx context.Context, block *big.Int) (*big.Int, error) {
+	data, err := w.abi.Pack("gasAvailable")
+	if err != nil {
+		return nil, err
+	}
+	rsp, err := w.ethereum.CallContract(ctx, ethereum.CallMsg{
+		To:   &w.address,
+		Data: data,
+	}, block)
+	if err != nil {
+		return nil, err
+	}
+	var res *big.Int
+	if len(rsp) == 32 {
+		res = new(big.Int).SetBytes(rsp)
+	} else {
+		return nil, errors.Wrap(ErrFailedContractCall, "gasAvailable")
+	}
+	return res, nil
+}
+
 func (w *wallet) IsController(ctx context.Context, block *big.Int, address common.Address) (bool, error) {
-	// TODO: How is bool return value represented.
 	data, err := w.abi.Pack("isController", address)
 	if err != nil {
 		return false, err
@@ -169,15 +189,19 @@ func (w *wallet) IsController(ctx context.Context, block *big.Int, address commo
 	}
 	var res bool
 	if len(rsp) == 32 {
-		res = new(big.Int).SetBytes(rsp)
+		switch new(big.Int).SetBytes(rsp).Uint64() {
+		case 0:
+			res = false
+		case 1:
+			res = true
+		}
 	} else {
 		return false, errors.Wrap(ErrFailedContractCall, "isController")
 	}
-	return true, nil
+	return res, nil
 }
 
 func (w *wallet) IsWhitelisted(ctx context.Context, block *big.Int, address common.Address) (bool, error) {
-	// TODO: How is bool return value represented.
 	data, err := w.abi.Pack("isWhitelisted", address)
 	if err != nil {
 		return false, err
@@ -191,11 +215,16 @@ func (w *wallet) IsWhitelisted(ctx context.Context, block *big.Int, address comm
 	}
 	var res bool
 	if len(rsp) == 32 {
-		res = new(big.Int).SetBytes(rsp)
+		switch new(big.Int).SetBytes(rsp).Uint64() {
+		case 0:
+			res = false
+		case 1:
+			res = true
+		}
 	} else {
 		return false, errors.Wrap(ErrFailedContractCall, "isWhitelisted")
 	}
-	return true, nil
+	return res, nil
 }
 
 func (w *wallet) Oracle(ctx context.Context, block *big.Int) (common.Address, error) {
@@ -241,51 +270,53 @@ func (w *wallet) Owner(ctx context.Context, block *big.Int) (common.Address, err
 }
 
 func (w *wallet) PendingAddition(ctx context.Context, block *big.Int) ([]common.Address, error) {
-	// TODO: PendingAddition, what happens when index out of range (how to break the loop)
-	var pending []common.Address
-	for i := 0; true; i++ {
-		data, err := w.abi.Pack("pendingAddition", i)
-		if err != nil {
-			return nil, err
-		}
-		rsp, err := w.ethereum.CallContract(ctx, ethereum.CallMsg{
-			To:   &w.address,
-			Data: data,
-		}, block)
-		if err != nil {
-			return nil, err
-		}
-		if len(rsp) == 32 {
-			pending = append(pending, common.BytesToAddress(rsp))
-		} else {
-			return nil, errors.Wrap(ErrFailedContractCall, "pendingAddition")
-		}
+	data, err := w.abi.Pack("pendingAddition")
+	if err != nil {
+		return nil, err
 	}
-	return pending, nil
+	rsp, err := w.ethereum.CallContract(ctx, ethereum.CallMsg{
+		To:   &w.address,
+		Data: data,
+	}, block)
+	if err != nil {
+		return nil, err
+	}
+	if len(rsp) < 64 {
+		return nil, errors.Wrap(ErrFailedContractCall, "pendingAddition")
+	}
+	// Get the response array length.
+	length := new(big.Int).SetBytes(rsp[32:64])
+	// Get the list of whitelisted addresses.
+	var res []common.Address
+	for i := uint64(0); i < length.Uint64(); i++ {
+		res = append(res, common.BytesToAddress(rsp[64+32*i:96+32*i]))
+	}
+	return res, nil
 }
 
 func (w *wallet) PendingRemoval(ctx context.Context, block *big.Int) ([]common.Address, error) {
-	// TODO: PendingAddition, what happens when index out of range (how to break the loop)
-	var pending []common.Address
-	for i := 0; true; i++ {
-		data, err := w.abi.Pack("pendingRemoval", i)
-		if err != nil {
-			return nil, err
-		}
-		rsp, err := w.ethereum.CallContract(ctx, ethereum.CallMsg{
-			To:   &w.address,
-			Data: data,
-		}, block)
-		if err != nil {
-			return nil, err
-		}
-		if len(rsp) == 32 {
-			pending = append(pending, common.BytesToAddress(rsp))
-		} else {
-			return nil, errors.Wrap(ErrFailedContractCall, "pendingRemoval")
-		}
+	data, err := w.abi.Pack("pendingRemoval")
+	if err != nil {
+		return nil, err
 	}
-	return pending, nil
+	rsp, err := w.ethereum.CallContract(ctx, ethereum.CallMsg{
+		To:   &w.address,
+		Data: data,
+	}, block)
+	if err != nil {
+		return nil, err
+	}
+	if len(rsp) < 64 {
+		return nil, errors.Wrap(ErrFailedContractCall, "pendingRemoval")
+	}
+	// Get the response array length.
+	length := new(big.Int).SetBytes(rsp[32:64])
+	// Get the list of whitelisted addresses.
+	var res []common.Address
+	for i := uint64(0); i < length.Uint64(); i++ {
+		res = append(res, common.BytesToAddress(rsp[64+32*i:96+32*i]))
+	}
+	return res, nil
 }
 
 func (w *wallet) PendingDailyLimit(ctx context.Context, block *big.Int) (*big.Int, error) {
@@ -330,13 +361,15 @@ func (w *wallet) PendingGasLimit(ctx context.Context, block *big.Int) (*big.Int,
 	return res, nil
 }
 
-func (w *wallet) AddController(opts *bind.TransactOpts, _account common.Address) (*types.Transaction, error) {
-	return w.bindings.AddController(opts, _account)
+func (w *wallet) AddController(opts *bind.TransactOpts, account common.Address) (*types.Transaction, error) {
+	return w.bindings.AddController(opts, account)
 }
 
-func (w *wallet) AddToWhitelist(opts *bind.TransactOpts, _addresses []common.Address) (*types.Transaction, error) {
-	return w.bindings.AddToWhitelist(opts, _addresses)
+func (w *wallet) AddToWhitelist(opts *bind.TransactOpts, addresses []common.Address) (*types.Transaction, error) {
+	return w.bindings.AddToWhitelist(opts, addresses)
 }
+
+
 
 
 
