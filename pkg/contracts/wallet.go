@@ -44,8 +44,8 @@ type Wallet struct {
 	opts     *bind.TransactOpts
 }
 
-func (w *Wallet) Deploy(owner common.Address, oracle common.Address, controllers []common.Address) (common.Address, *types.Transaction, *bindings.Wallet, error) {
-	return bindings.DeployWallet(w.opts, w.ethereum, owner, oracle, controllers)
+func DeployWallet(opts *bind.TransactOpts, eth *ethclient.Client ,owner common.Address, oracle common.Address, controllers []common.Address) (common.Address, *types.Transaction, *bindings.Wallet, error) {
+	return bindings.DeployWallet(opts, eth, owner, oracle, controllers)
 }
 
 func (w *Wallet) Balance(ctx context.Context, block *big.Int, asset common.Address) (*big.Int, error) {
