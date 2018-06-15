@@ -14,6 +14,7 @@ import (
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/pkg/errors"
+	"github.com/tokencard/assets"
 )
 
 var (
@@ -28,22 +29,24 @@ const (
 	whitelistAdditionTopic = "0xc76dd62bd7d0b2212e0d3445c1703a522dd816a749fe499b3bcb0f51b2500434"
 	whitelistRemovalTopic  = "0x4b089aff1cdd9a6984aa832d4a013996b3acd3d6244ce3de5e07e6ab050d2b94"
 	topUpGasTopic          = "0x2235de9f3363e464311d990c51aeef966703c87d1c77e80737831d6944d87c86"
+	ERC20Topic             = "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef"
 )
 
-func New(ethereum *ethclient.Client, address common.Address) (*Wallet, error) {
-	walletBindings, err := bindings.NewWallet(address, ethereum)
+func New(ethereum *ethclient.Client, assets []*assets.Asset, address common.Address) (*Wallet, error) {
+	contractBindings, err := bindings.NewWallet(address, ethereum)
 	if err != nil {
 		return nil, err
 	}
-	walletABI, err := abi.JSON(strings.NewReader(bindings.WalletABI))
+	contractABI, err := abi.JSON(strings.NewReader(bindings.WalletABI))
 	if err != nil {
 		return nil, err
 	}
 	return &Wallet{
 		address:  address,
-		bindings: walletBindings,
-		abi:      walletABI,
+		bindings: contractBindings,
+		abi:      contractABI,
 		ethereum: ethereum,
+		assets:   assets,
 	}, nil
 }
 
@@ -52,9 +55,11 @@ type Wallet struct {
 	bindings *bindings.Wallet
 	abi      abi.ABI
 	ethereum *ethclient.Client
+	assets   []*assets.Asset
 }
 
 type Event struct {
+	Address   common.Address
 	TxHash    common.Hash
 	BlockHash common.Hash
 	Data      [][]byte
@@ -477,6 +482,7 @@ func (w *Wallet) WhitelistAdditionEvents(ctx context.Context, block *big.Int) ([
 			data = append(data, v.Data[i:i+32])
 		}
 		events = append(events, &Event{
+			Address:   v.Address,
 			BlockHash: v.BlockHash,
 			Data:      data,
 			TxHash:    v.TxHash,
@@ -510,6 +516,7 @@ func (w *Wallet) WhitelistRemovalEvents(ctx context.Context, block *big.Int) ([]
 			data = append(data, v.Data[i:i+32])
 		}
 		events = append(events, &Event{
+			Address:   v.Address,
 			BlockHash: v.BlockHash,
 			Data:      data,
 			TxHash:    v.TxHash,
@@ -543,6 +550,7 @@ func (w *Wallet) SetDailyLimitEvents(ctx context.Context, block *big.Int) ([]*Ev
 			data = append(data, v.Data[i:i+32])
 		}
 		events = append(events, &Event{
+			Address:   v.Address,
 			BlockHash: v.BlockHash,
 			Data:      data,
 			TxHash:    v.TxHash,
@@ -576,6 +584,7 @@ func (w *Wallet) TopUpGasEvents(ctx context.Context, block *big.Int) ([]*Event, 
 			data = append(data, v.Data[i:i+32])
 		}
 		events = append(events, &Event{
+			Address:   v.Address,
 			BlockHash: v.BlockHash,
 			Data:      data,
 			TxHash:    v.TxHash,
@@ -609,6 +618,7 @@ func (w *Wallet) TransferEvents(ctx context.Context, block *big.Int) ([]*Event, 
 			data = append(data, v.Data[i:i+32])
 		}
 		events = append(events, &Event{
+			Address:   v.Address,
 			BlockHash: v.BlockHash,
 			Data:      data,
 			TxHash:    v.TxHash,
@@ -642,10 +652,51 @@ func (w *Wallet) DepositEvents(ctx context.Context, block *big.Int) ([]*Event, e
 			data = append(data, v.Data[i:i+32])
 		}
 		events = append(events, &Event{
+			Address:   v.Address,
 			BlockHash: v.BlockHash,
 			Data:      data,
 			TxHash:    v.TxHash,
 		})
+	}
+	return events, nil
+}
+
+func (w *Wallet) ERC20DepositEvents(ctx context.Context, block *big.Int) ([]*Event, error) {
+	var events []*Event
+	// Scan supported tokens for incoming events.
+	for _, asset := range w.assets {
+		if asset.Id == assets.ETHER {
+			continue
+		}
+		// Create a log filter query.
+		query := ethereum.FilterQuery{
+			FromBlock: nil,
+			ToBlock:   block,
+			Addresses: []common.Address{common.HexToAddress(asset.Id)},
+			Topics:    [][]common.Hash{{common.HexToHash(ERC20Topic)}, nil, {w.address.Hash()}},
+		}
+		// Get the contract logs.
+		logs, err := w.ethereum.FilterLogs(ctx, query)
+		if err != nil {
+			return nil, err
+		}
+		// Create a list of incoming asset transfer events.
+		for _, v := range logs {
+			// Decode event parameters.
+			if len(v.Data) < 32 {
+				return nil, ErrInvalidEventData
+			}
+			var data [][]byte
+			for i := 0; i < len(v.Data); i += 32 {
+				data = append(data, v.Data[i:i+32])
+			}
+			events = append(events, &Event{
+				Address:   v.Address,
+				BlockHash: v.BlockHash,
+				Data:      data,
+				TxHash:    v.TxHash,
+			})
+		}
 	}
 	return events, nil
 }
