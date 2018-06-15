@@ -69,13 +69,10 @@ func (w *Wallet) Balance(ctx context.Context, block *big.Int, asset common.Addre
 	if err != nil {
 		return nil, err
 	}
-	var res *big.Int
-	if len(rsp) == 32 {
-		res = new(big.Int).SetBytes(rsp)
-	} else {
+	if len(rsp) != 32 {
 		return nil, errors.Wrap(ErrFailedContractCall, "balance")
 	}
-	return res, nil
+	return new(big.Int).SetBytes(rsp), nil
 }
 
 func (w *Wallet) CurrentDay(ctx context.Context, block *big.Int) (*big.Int, error) {
@@ -90,13 +87,10 @@ func (w *Wallet) CurrentDay(ctx context.Context, block *big.Int) (*big.Int, erro
 	if err != nil {
 		return nil, err
 	}
-	var res *big.Int
-	if len(rsp) == 32 {
-		res = new(big.Int).SetBytes(rsp)
-	} else {
+	if len(rsp) != 32 {
 		return nil, errors.Wrap(ErrFailedContractCall, "currentDay")
 	}
-	return res, nil
+	return new(big.Int).SetBytes(rsp), nil
 }
 
 func (w *Wallet) DailyLimit(ctx context.Context, block *big.Int) (*big.Int, error) {
@@ -111,13 +105,10 @@ func (w *Wallet) DailyLimit(ctx context.Context, block *big.Int) (*big.Int, erro
 	if err != nil {
 		return nil, err
 	}
-	var res *big.Int
-	if len(rsp) == 32 {
-		res = new(big.Int).SetBytes(rsp)
-	} else {
+	if len(rsp) != 32 {
 		return nil, errors.Wrap(ErrFailedContractCall, "dailyLimit")
 	}
-	return res, nil
+	return new(big.Int).SetBytes(rsp), nil
 }
 
 func (w *Wallet) DailyAvailable(ctx context.Context, block *big.Int) (*big.Int, error) {
@@ -132,13 +123,10 @@ func (w *Wallet) DailyAvailable(ctx context.Context, block *big.Int) (*big.Int, 
 	if err != nil {
 		return nil, err
 	}
-	var res *big.Int
-	if len(rsp) == 32 {
-		res = new(big.Int).SetBytes(rsp)
-	} else {
+	if len(rsp) != 32 {
 		return nil, errors.Wrap(ErrFailedContractCall, "dailyAvailable")
 	}
-	return res, nil
+	return new(big.Int).SetBytes(rsp), nil
 }
 
 func (w *Wallet) GasLimit(ctx context.Context, block *big.Int) (*big.Int, error) {
@@ -153,13 +141,10 @@ func (w *Wallet) GasLimit(ctx context.Context, block *big.Int) (*big.Int, error)
 	if err != nil {
 		return nil, err
 	}
-	var res *big.Int
-	if len(rsp) == 32 {
-		res = new(big.Int).SetBytes(rsp)
-	} else {
+	if len(rsp) != 32 {
 		return nil, errors.Wrap(ErrFailedContractCall, "gasLimit")
 	}
-	return res, nil
+	return new(big.Int).SetBytes(rsp), nil
 }
 
 func (w *Wallet) GasAvailable(ctx context.Context, block *big.Int) (*big.Int, error) {
@@ -174,13 +159,10 @@ func (w *Wallet) GasAvailable(ctx context.Context, block *big.Int) (*big.Int, er
 	if err != nil {
 		return nil, err
 	}
-	var res *big.Int
-	if len(rsp) == 32 {
-		res = new(big.Int).SetBytes(rsp)
-	} else {
+	if len(rsp) != 32 {
 		return nil, errors.Wrap(ErrFailedContractCall, "gasAvailable")
 	}
-	return res, nil
+	return new(big.Int).SetBytes(rsp), nil
 }
 
 func (w *Wallet) IsController(ctx context.Context, block *big.Int, address common.Address) (bool, error) {
@@ -195,18 +177,14 @@ func (w *Wallet) IsController(ctx context.Context, block *big.Int, address commo
 	if err != nil {
 		return false, err
 	}
-	var res bool
-	if len(rsp) == 32 {
-		switch new(big.Int).SetBytes(rsp).Uint64() {
-		case 0:
-			res = false
-		case 1:
-			res = true
-		}
-	} else {
+	if len(rsp) != 32 {
 		return false, errors.Wrap(ErrFailedContractCall, "isController")
 	}
-	return res, nil
+	var result bool
+	if new(big.Int).SetBytes(rsp).Uint64() == 1 {
+		result = true
+	}
+	return result, nil
 }
 
 func (w *Wallet) IsWhitelisted(ctx context.Context, block *big.Int, address common.Address) (bool, error) {

@@ -10,6 +10,10 @@ import (
 
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/core/types"
+	"context"
+	"math/big"
+	"github.com/ethereum/go-ethereum"
+	"github.com/pkg/errors"
 )
 
 func NewCard(ethereum *ethclient.Client, address common.Address) (*Card, error) {
@@ -40,7 +44,41 @@ func DeployCard(opts *bind.TransactOpts, eth *ethclient.Client, controller commo
 	return bindings.DeployCard(opts, eth, controller, owner)
 }
 
+func (c *Card) Owner(ctx context.Context, block *big.Int) (common.Address, error) {
+	data, err := c.abi.Pack("owner")
+	if err != nil {
+		return common.Address{}, err
+	}
+	rsp, err := c.ethereum.CallContract(ctx, ethereum.CallMsg{
+		To:   &c.address,
+		Data: data,
+	}, block)
+	if err != nil {
+		return common.Address{}, err
+	}
+	if len(rsp) != 32 {
+		return common.Address{}, errors.Wrap(ErrFailedContractCall, "owner")
+	}
+	return common.BytesToAddress(rsp), nil
+}
 
+func (c *Card) UnlockAt(ctx context.Context, block *big.Int) (*big.Int, error) {
+	data, err := c.abi.Pack("unlockAt")
+	if err != nil {
+		return nil, err
+	}
+	rsp, err := c.ethereum.CallContract(ctx, ethereum.CallMsg{
+		To:   &c.address,
+		Data: data,
+	}, block)
+	if err != nil {
+		return nil, err
+	}
+	if len(rsp) != 32 {
+		return nil, errors.Wrap(ErrFailedContractCall, "unlockAt")
+	}
+	return new(big.Int).SetBytes(rsp), nil
+}
 
 
 
