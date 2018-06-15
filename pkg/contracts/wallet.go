@@ -17,11 +17,6 @@ import (
 	"github.com/tokencard/assets"
 )
 
-var (
-	ErrFailedContractCall = errors.New("calling smart contract failed")
-	ErrInvalidEventData   = errors.New("event data could not be parsed")
-)
-
 const (
 	depositTopic           = "0xe1fffcc4923d04b559f4d29a8bfc6cda04eb5b0d3c460751c2402c5c5cc9109c"
 	transferTopic          = "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef"
@@ -32,7 +27,7 @@ const (
 	ERC20Topic             = "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef"
 )
 
-func New(ethereum *ethclient.Client, assets []*assets.Asset, address common.Address) (*Wallet, error) {
+func NewWallet(ethereum *ethclient.Client, assets []*assets.Asset, address common.Address) (*Wallet, error) {
 	contractBindings, err := bindings.NewWallet(address, ethereum)
 	if err != nil {
 		return nil, err
@@ -56,13 +51,6 @@ type Wallet struct {
 	abi      abi.ABI
 	ethereum *ethclient.Client
 	assets   []*assets.Asset
-}
-
-type Event struct {
-	Address   common.Address
-	TxHash    common.Hash
-	BlockHash common.Hash
-	Data      [][]byte
 }
 
 func DeployWallet(opts *bind.TransactOpts, eth *ethclient.Client, owner common.Address, oracle common.Address, controllers []common.Address) (common.Address, *types.Transaction, *bindings.Wallet, error) {
@@ -687,6 +675,7 @@ func (w *Wallet) ERC20DepositEvents(ctx context.Context, block *big.Int) ([]*Eve
 				return nil, ErrInvalidEventData
 			}
 			var data [][]byte
+			data = append(data, v.Topics[len(v.Topics)-1].Bytes())
 			for i := 0; i < len(v.Data); i += 32 {
 				data = append(data, v.Data[i:i+32])
 			}
