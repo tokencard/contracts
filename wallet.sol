@@ -302,99 +302,99 @@ contract Vault is Whitelist, SpendLimit {
 
 contract Wallet is Vault {
 
-    event SetGasLimit(uint _amount);
-    event TopUpGas(address _sender, address _owner, uint _amount);
+    event SetTopupLimit(uint _amount);
+    event TopupGas(address _sender, address _owner, uint _amount);
 
-    uint constant private MINIMUM_GAS_LIMIT = 1 finney;
-    uint constant private MAXIMUM_GAS_LIMIT = 100 finney;
+    uint constant private MINIMUM_TOPUP_LIMIT = 1 finney;
+    uint constant private MAXIMUM_TOPUP_LIMIT = 100 finney;
 
-    uint public gasLimit;
-    uint private _gasAvailable;
+    uint public topupLimit;
+    uint private _topupAvailable;
 
-    uint public pendingGasLimit;
-    bool private _submittedGasLimit;
-    bool private _initializedGasLimit;
+    uint public pendingTopupLimit;
+    bool private _submittedTopupLimit;
+    bool private _initializedTopupLimit;
 
     constructor(address _owner, address _oracle, address[] _controllers) Vault(_owner, _oracle, _controllers) public {
-        gasLimit = MAXIMUM_GAS_LIMIT;
-        _gasAvailable = gasLimit;
+        topupLimit = MAXIMUM_TOPUP_LIMIT;
+        _topupAvailable = topupLimit;
     }
 
     /// @dev Returns the available daily gas top up balance - accounts for daily limit reset.
     /// @return amount of gas in wei.
-    function gasAvailable() public view returns (uint) {
+    function topupAvailable() public view returns (uint) {
         if (now > currentDay + 24 hours) {
-            return gasLimit;
+            return topupLimit;
         } else {
-            return _gasAvailable;
+            return _topupAvailable;
         }
     }
 
     /// @dev Initialize a daily gas top up limit.
     /// @param _amount is the gas top up amount in wei.
-    function initializeGasLimit(uint _amount) public onlyOwner {
-        require(!_initializedGasLimit);
+    function initializeTopupLimit(uint _amount) public onlyOwner {
+        require(!_initializedTopupLimit);
         // Require that the limit amount is within the acceptable range.
-        require(MINIMUM_GAS_LIMIT <= _amount && _amount <= MAXIMUM_GAS_LIMIT);
-        // Set the gas limit to the provided amount.
-        gasLimit = _amount;
-        _initializedGasLimit = true;
-        emit SetGasLimit(_amount);
+        require(MINIMUM_TOPUP_LIMIT <= _amount && _amount <= MAXIMUM_TOPUP_LIMIT);
+        // Set the topup limit to the provided amount.
+        topupLimit = _amount;
+        _initializedTopupLimit = true;
+        emit SetTopupLimit(_amount);
     }
 
-    /// @dev Set a daily gas top up limit.
-    /// @param _amount is the daily gas limit amount in wei.
-    function setGasLimit(uint _amount) public onlyOwner {
+    /// @dev Set a daily topup top up limit.
+    /// @param _amount is the daily topup limit amount in wei.
+    function setTopupLimit(uint _amount) public onlyOwner {
         // Check if this operation has been already submitted.
-        require(!_submittedGasLimit);
+        require(!_submittedTopupLimit);
         // Require that the limit amount is within the acceptable range.
-        require(MINIMUM_GAS_LIMIT <= _amount && _amount <= MAXIMUM_GAS_LIMIT);
+        require(MINIMUM_TOPUP_LIMIT <= _amount && _amount <= MAXIMUM_TOPUP_LIMIT);
         // Assign the provided amount to pending daily limit change.
         pendingSpendLimit = _amount;
         // Flag the operation as submitted.
-        _submittedGasLimit = true;
+        _submittedTopupLimit = true;
     }
 
-    /// @dev Confirm pending set gas limit operation.
-    function setGasLimitConfirm() public onlyController {
-        // That a set gas limit operation has been submitted.
-        require(_submittedGasLimit);
-        // Assert that the pending gas limit amount is within the acceptable range.
-        assert(MINIMUM_GAS_LIMIT <= pendingSpendLimit && pendingSpendLimit <= MAXIMUM_GAS_LIMIT);
+    /// @dev Confirm pending set top up limit operation.
+    function setTopupLimitConfirm() public onlyController {
+        // That a set topup limit operation has been submitted.
+        require(_submittedTopupLimit);
+        // Assert that the pending topup limit amount is within the acceptable range.
+        assert(MINIMUM_TOPUP_LIMIT <= pendingSpendLimit && pendingSpendLimit <= MAXIMUM_TOPUP_LIMIT);
         // Set the daily limit to the pending amount.
-        gasLimit = pendingSpendLimit;
+        topupLimit = pendingSpendLimit;
         // Reset the submission flag.
-        _submittedGasLimit = false;
-        emit SetGasLimit(pendingSpendLimit);
+        _submittedTopupLimit = false;
+        emit SetTopupLimit(pendingSpendLimit);
     }
 
-    /// @dev Cancel pending set gas limit operation.
-    function setGasLimitCancel() public onlyController {
+    /// @dev Cancel pending set top up limit operation.
+    function setTopupLimitCancel() public onlyController {
         // Reset pending daily limit change.
         pendingSpendLimit = 0;
         // Reset the submitted operation flag.
-        _submittedGasLimit = false;
+        _submittedTopupLimit = false;
     }
 
     /// @dev Refill owner's gas balance.
     /// @param _amount the amount of ether to transfer to the owner account in wei.
-    function topUpGas(uint _amount) public eitherOwnerOrController notZero(_amount) {
-        // Make sure the available gas is not zero.
-        require(_gasAvailable > 0);
-        // Account for the gas limit daily reset.
+    function topupGas(uint _amount) public eitherOwnerOrController notZero(_amount) {
+        // Make sure the available topup is not zero.
+        require(_topupAvailable > 0);
+        // Account for the topup limit daily reset.
         if (now > currentDay + 24 hours) {
             uint extraDays = (now - currentDay) / 24 hours;
             currentDay += extraDays * 24 hours;
-            _gasAvailable = gasLimit;
+            _topupAvailable = topupLimit;
         }
         // If amount is above available balance, use the entire balance.
-        if (_amount > _gasAvailable) {
-            _amount = _gasAvailable;
+        if (_amount > _topupAvailable) {
+            _amount = _topupAvailable;
         }
         // Deduce the top up amount from available balance and transfer corresponding
         // ether to the owner's account.
-        _gasAvailable -= _amount;
+        _topupAvailable -= _amount;
         owner.transfer(_amount);
-        emit TopUpGas(tx.origin, owner, _amount);
+        emit TopupGas(tx.origin, owner, _amount);
     }
 }

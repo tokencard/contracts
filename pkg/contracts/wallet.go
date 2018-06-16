@@ -21,10 +21,10 @@ const (
 	depositTopic           = "0xe1fffcc4923d04b559f4d29a8bfc6cda04eb5b0d3c460751c2402c5c5cc9109c"
 	transferTopic          = "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef"
 	spendLimitTopic        = "0x21e1049325acc99b4f885709c6ca1a70281b586f585ef03485b62f7ad0a1e253"
-	gasLimitTopic          = "0xf5bdeca176beddded5a1132996e4edf0d16be5100214b17d8bada54bf8676297"
+	topupLimitTopic        = "0x19ec72a595b8aab321636cc55d51478ac78e93a69b5c4a07ae548eb29e40c0a0"
 	whitelistAdditionTopic = "0xc76dd62bd7d0b2212e0d3445c1703a522dd816a749fe499b3bcb0f51b2500434"
 	whitelistRemovalTopic  = "0x4b089aff1cdd9a6984aa832d4a013996b3acd3d6244ce3de5e07e6ab050d2b94"
-	topUpGasTopic          = "0x2235de9f3363e464311d990c51aeef966703c87d1c77e80737831d6944d87c86"
+	topupGasTopic          = "0x11bb310b94280c15845698b8ce945817e14456a5d1582e387e6e4a01ef2c6742"
 	ERC20Topic             = "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef"
 )
 
@@ -130,8 +130,8 @@ func (w *Wallet) SpendAvailable(ctx context.Context, block *big.Int) (*big.Int, 
 	return new(big.Int).SetBytes(rsp), nil
 }
 
-func (w *Wallet) GasLimit(ctx context.Context, block *big.Int) (*big.Int, error) {
-	data, err := w.abi.Pack("gasLimit")
+func (w *Wallet) TopupLimit(ctx context.Context, block *big.Int) (*big.Int, error) {
+	data, err := w.abi.Pack("topupLimit")
 	if err != nil {
 		return nil, err
 	}
@@ -143,13 +143,13 @@ func (w *Wallet) GasLimit(ctx context.Context, block *big.Int) (*big.Int, error)
 		return nil, err
 	}
 	if len(rsp) != 32 {
-		return nil, errors.Wrap(ErrFailedContractCall, "gasLimit")
+		return nil, errors.Wrap(ErrFailedContractCall, "topupLimit")
 	}
 	return new(big.Int).SetBytes(rsp), nil
 }
 
-func (w *Wallet) GasAvailable(ctx context.Context, block *big.Int) (*big.Int, error) {
-	data, err := w.abi.Pack("gasAvailable")
+func (w *Wallet) TopupAvailable(ctx context.Context, block *big.Int) (*big.Int, error) {
+	data, err := w.abi.Pack("topupAvailable")
 	if err != nil {
 		return nil, err
 	}
@@ -161,7 +161,7 @@ func (w *Wallet) GasAvailable(ctx context.Context, block *big.Int) (*big.Int, er
 		return nil, err
 	}
 	if len(rsp) != 32 {
-		return nil, errors.Wrap(ErrFailedContractCall, "gasAvailable")
+		return nil, errors.Wrap(ErrFailedContractCall, "topupAvailable")
 	}
 	return new(big.Int).SetBytes(rsp), nil
 }
@@ -314,8 +314,8 @@ func (w *Wallet) PendingSpendLimit(ctx context.Context, block *big.Int) (*big.In
 	return new(big.Int).SetBytes(rsp), nil
 }
 
-func (w *Wallet) PendingGasLimit(ctx context.Context, block *big.Int) (*big.Int, error) {
-	data, err := w.abi.Pack("pendingGasLimit")
+func (w *Wallet) PendingTopupLimit(ctx context.Context, block *big.Int) (*big.Int, error) {
+	data, err := w.abi.Pack("pendingTopupLimit")
 	if err != nil {
 		return nil, err
 	}
@@ -327,7 +327,7 @@ func (w *Wallet) PendingGasLimit(ctx context.Context, block *big.Int) (*big.Int,
 		return nil, err
 	}
 	if len(rsp) != 32 {
-		return nil, errors.Wrap(ErrFailedContractCall, "pendingGasLimit")
+		return nil, errors.Wrap(ErrFailedContractCall, "pendingTopupLimit")
 	}
 	return new(big.Int).SetBytes(rsp), nil
 }
@@ -384,32 +384,32 @@ func (w *Wallet) SetSpendLimitCancel(opts *bind.TransactOpts) (*types.Transactio
 	return w.bindings.SetSpendLimitCancel(opts)
 }
 
-func (w *Wallet) InitializeGasLimit(opts *bind.TransactOpts, amount *big.Int) (*types.Transaction, error) {
-	return w.bindings.InitializeGasLimit(opts, amount)
+func (w *Wallet) InitializeTopupLimit(opts *bind.TransactOpts, amount *big.Int) (*types.Transaction, error) {
+	return w.bindings.InitializeTopupLimit(opts, amount)
 }
 
-func (w *Wallet) SetGasLimit(opts *bind.TransactOpts, amount *big.Int) (*types.Transaction, error) {
-	return w.bindings.SetGasLimit(opts, amount)
+func (w *Wallet) SetTopupLimit(opts *bind.TransactOpts, amount *big.Int) (*types.Transaction, error) {
+	return w.bindings.SetTopupLimit(opts, amount)
 }
 
-func (w *Wallet) SetGasLimitConfirm(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return w.bindings.SetGasLimitConfirm(opts)
+func (w *Wallet) SetTopupLimitConfirm(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return w.bindings.SetTopupLimitConfirm(opts)
 }
 
-func (w *Wallet) SetGasLimitCancel(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return w.bindings.SetGasLimitCancel(opts)
+func (w *Wallet) SetTopupLimitCancel(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return w.bindings.SetTopupLimitCancel(opts)
 }
 
 func (w *Wallet) Transfer(opts *bind.TransactOpts, to common.Address, asset common.Address, amount *big.Int) (*types.Transaction, error) {
 	return w.bindings.Transfer(opts, to, asset, amount)
 }
 
-func (w *Wallet) TopUpGas(opts *bind.TransactOpts, amount *big.Int) (*types.Transaction, error) {
-	return w.bindings.TopUpGas(opts, amount)
+func (w *Wallet) TopupGas(opts *bind.TransactOpts, amount *big.Int) (*types.Transaction, error) {
+	return w.bindings.TopupGas(opts, amount)
 }
 
 func (w *Wallet) WhitelistAdditionEvents(ctx context.Context, block *big.Int) ([]*Event, error) {
-	// Create a query for top up gas events.
+	// Create a query for whitelist addition events.
 	query := ethereum.FilterQuery{
 		FromBlock: nil,
 		ToBlock:   block,
@@ -443,7 +443,7 @@ func (w *Wallet) WhitelistAdditionEvents(ctx context.Context, block *big.Int) ([
 }
 
 func (w *Wallet) WhitelistRemovalEvents(ctx context.Context, block *big.Int) ([]*Event, error) {
-	// Create a query for top up gas events.
+	// Create a query for whitelist removal events.
 	query := ethereum.FilterQuery{
 		FromBlock: nil,
 		ToBlock:   block,
@@ -510,13 +510,13 @@ func (w *Wallet) SetSpendLimitEvents(ctx context.Context, block *big.Int) ([]*Ev
 	return events, nil
 }
 
-func (w *Wallet) SetGasLimitEvents(ctx context.Context, block *big.Int) ([]*Event, error) {
+func (w *Wallet) SetTopupLimitEvents(ctx context.Context, block *big.Int) ([]*Event, error) {
 	// Create a query for set daily limit events.
 	query := ethereum.FilterQuery{
 		FromBlock: nil,
 		ToBlock:   block,
 		Addresses: []common.Address{w.address},
-		Topics:    [][]common.Hash{{common.HexToHash(gasLimitTopic)}},
+		Topics:    [][]common.Hash{{common.HexToHash(topupLimitTopic)}},
 	}
 	// Get the contract logs.
 	logs, err := w.ethereum.FilterLogs(ctx, query)
@@ -544,13 +544,13 @@ func (w *Wallet) SetGasLimitEvents(ctx context.Context, block *big.Int) ([]*Even
 	return events, nil
 }
 
-func (w *Wallet) TopUpGasEvents(ctx context.Context, block *big.Int) ([]*Event, error) {
-	// Create a query for top up gas events.
+func (w *Wallet) TopupGasEvents(ctx context.Context, block *big.Int) ([]*Event, error) {
+	// Create a query for gas top up events.
 	query := ethereum.FilterQuery{
 		FromBlock: nil,
 		ToBlock:   block,
 		Addresses: []common.Address{w.address},
-		Topics:    [][]common.Hash{{common.HexToHash(topUpGasTopic)}},
+		Topics:    [][]common.Hash{{common.HexToHash(topupGasTopic)}},
 	}
 	// Get the contract logs.
 	logs, err := w.ethereum.FilterLogs(ctx, query)
@@ -579,7 +579,7 @@ func (w *Wallet) TopUpGasEvents(ctx context.Context, block *big.Int) ([]*Event, 
 }
 
 func (w *Wallet) TransferEvents(ctx context.Context, block *big.Int) ([]*Event, error) {
-	// Create a query for top up gas events.
+	// Create a query for transfer events.
 	query := ethereum.FilterQuery{
 		FromBlock: nil,
 		ToBlock:   block,
@@ -613,7 +613,7 @@ func (w *Wallet) TransferEvents(ctx context.Context, block *big.Int) ([]*Event, 
 }
 
 func (w *Wallet) DepositEvents(ctx context.Context, block *big.Int) ([]*Event, error) {
-	// Create a query for top up gas events.
+	// Create a query for deposit events.
 	query := ethereum.FilterQuery{
 		FromBlock: nil,
 		ToBlock:   block,
