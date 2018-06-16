@@ -199,18 +199,14 @@ func (w *Wallet) IsWhitelisted(ctx context.Context, block *big.Int, address comm
 	if err != nil {
 		return false, err
 	}
-	var res bool
-	if len(rsp) == 32 {
-		switch new(big.Int).SetBytes(rsp).Uint64() {
-		case 0:
-			res = false
-		case 1:
-			res = true
-		}
-	} else {
+	if len(rsp) != 32 {
 		return false, errors.Wrap(ErrFailedContractCall, "isWhitelisted")
 	}
-	return res, nil
+	var result bool
+	if new(big.Int).SetBytes(rsp).Uint64() == 1 {
+		result = true
+	}
+	return result, nil
 }
 
 func (w *Wallet) Oracle(ctx context.Context, block *big.Int) (common.Address, error) {
@@ -225,13 +221,10 @@ func (w *Wallet) Oracle(ctx context.Context, block *big.Int) (common.Address, er
 	if err != nil {
 		return common.Address{}, err
 	}
-	var res common.Address
-	if len(rsp) == 32 {
-		res = common.BytesToAddress(rsp)
-	} else {
+	if len(rsp) != 32 {
 		return common.Address{}, errors.Wrap(ErrFailedContractCall, "oracle")
 	}
-	return res, nil
+	return common.BytesToAddress(rsp), nil
 }
 
 func (w *Wallet) Owner(ctx context.Context, block *big.Int) (common.Address, error) {
@@ -246,13 +239,10 @@ func (w *Wallet) Owner(ctx context.Context, block *big.Int) (common.Address, err
 	if err != nil {
 		return common.Address{}, err
 	}
-	var res common.Address
-	if len(rsp) == 32 {
-		res = common.BytesToAddress(rsp)
-	} else {
+	if len(rsp) != 32 {
 		return common.Address{}, errors.Wrap(ErrFailedContractCall, "owner")
 	}
-	return res, nil
+	return common.BytesToAddress(rsp), nil
 }
 
 func (w *Wallet) PendingAddition(ctx context.Context, block *big.Int) ([]common.Address, error) {
@@ -317,13 +307,10 @@ func (w *Wallet) PendingDailyLimit(ctx context.Context, block *big.Int) (*big.In
 	if err != nil {
 		return nil, err
 	}
-	var res *big.Int
-	if len(rsp) == 32 {
-		res = new(big.Int).SetBytes(rsp)
-	} else {
+	if len(rsp) != 32 {
 		return nil, errors.Wrap(ErrFailedContractCall, "pendingDailyLimit")
 	}
-	return res, nil
+	return new(big.Int).SetBytes(rsp), nil
 }
 
 func (w *Wallet) PendingGasLimit(ctx context.Context, block *big.Int) (*big.Int, error) {
@@ -338,13 +325,10 @@ func (w *Wallet) PendingGasLimit(ctx context.Context, block *big.Int) (*big.Int,
 	if err != nil {
 		return nil, err
 	}
-	var res *big.Int
-	if len(rsp) == 32 {
-		res = new(big.Int).SetBytes(rsp)
-	} else {
+	if len(rsp) != 32 {
 		return nil, errors.Wrap(ErrFailedContractCall, "pendingGasLimit")
 	}
-	return res, nil
+	return new(big.Int).SetBytes(rsp), nil
 }
 
 func (w *Wallet) AddController(opts *bind.TransactOpts, account common.Address) (*types.Transaction, error) {

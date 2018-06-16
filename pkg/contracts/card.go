@@ -8,11 +8,12 @@ import (
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/tokencard/contracts/pkg/bindings"
 
-	"github.com/ethereum/go-ethereum/accounts/abi/bind"
-	"github.com/ethereum/go-ethereum/core/types"
 	"context"
 	"math/big"
+
 	"github.com/ethereum/go-ethereum"
+	"github.com/ethereum/go-ethereum/accounts/abi/bind"
+	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/pkg/errors"
 )
 
@@ -62,6 +63,24 @@ func (c *Card) Owner(ctx context.Context, block *big.Int) (common.Address, error
 	return common.BytesToAddress(rsp), nil
 }
 
+func (c *Card) Controller(ctx context.Context, block *big.Int) (common.Address, error) {
+	data, err := c.abi.Pack("controller")
+	if err != nil {
+		return common.Address{}, err
+	}
+	rsp, err := c.ethereum.CallContract(ctx, ethereum.CallMsg{
+		To:   &c.address,
+		Data: data,
+	}, block)
+	if err != nil {
+		return common.Address{}, err
+	}
+	if len(rsp) != 32 {
+		return common.Address{}, errors.Wrap(ErrFailedContractCall, "controller")
+	}
+	return common.BytesToAddress(rsp), nil
+}
+
 func (c *Card) UnlockAt(ctx context.Context, block *big.Int) (*big.Int, error) {
 	data, err := c.abi.Pack("unlockAt")
 	if err != nil {
@@ -80,5 +99,56 @@ func (c *Card) UnlockAt(ctx context.Context, block *big.Int) (*big.Int, error) {
 	return new(big.Int).SetBytes(rsp), nil
 }
 
+func (c *Card) Balance(ctx context.Context, block *big.Int, asset common.Address) (common.Address, error) {
+	data, err := c.abi.Pack("balance", asset)
+	if err != nil {
+		return common.Address{}, err
+	}
+	rsp, err := c.ethereum.CallContract(ctx, ethereum.CallMsg{
+		To:   &c.address,
+		Data: data,
+	}, block)
+	if err != nil {
+		return common.Address{}, err
+	}
+	if len(rsp) != 32 {
+		return common.Address{}, errors.Wrap(ErrFailedContractCall, "balance")
+	}
+	return common.BytesToAddress(rsp), nil
+}
 
+func (c *Card) Overdraft(ctx context.Context, block *big.Int, asset common.Address) (common.Address, error) {
+	data, err := c.abi.Pack("overdraft", asset)
+	if err != nil {
+		return common.Address{}, err
+	}
+	rsp, err := c.ethereum.CallContract(ctx, ethereum.CallMsg{
+		To:   &c.address,
+		Data: data,
+	}, block)
+	if err != nil {
+		return common.Address{}, err
+	}
+	if len(rsp) != 32 {
+		return common.Address{}, errors.Wrap(ErrFailedContractCall, "overdraft")
+	}
+	return common.BytesToAddress(rsp), nil
+}
 
+func (c *Card) Available(ctx context.Context, block *big.Int, asset common.Address) (common.Address, error) {
+	data, err := c.abi.Pack("available", asset)
+	if err != nil {
+		return common.Address{}, err
+	}
+	rsp, err := c.ethereum.CallContract(ctx, ethereum.CallMsg{
+		To:   &c.address,
+		Data: data,
+	}, block)
+	if err != nil {
+		return common.Address{}, err
+	}
+	if len(rsp) != 32 {
+		return common.Address{}, errors.Wrap(ErrFailedContractCall, "available")
+	}
+	return common.BytesToAddress(rsp), nil
+}
