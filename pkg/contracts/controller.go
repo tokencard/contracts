@@ -1,15 +1,14 @@
 package contracts
 
 import (
+	"context"
+	"math/big"
 	"strings"
 
 	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/tokencard/contracts/pkg/bindings"
-
-	"context"
-	"math/big"
 
 	"github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
@@ -64,5 +63,5 @@ func (c *Controller) Next(ctx context.Context, block *big.Int) (*big.Int, error)
 }
 
 func (c *Controller) Process(opts *bind.TransactOpts, sequenceNumber *big.Int, operations []byte, cards []common.Address, tokens []common.Address, amounts []*big.Int) (*types.Transaction, error) {
-	return c.Process(opts, sequenceNumber, operations, cards, tokens, amounts)
+	return c.bindings.Process(opts, sequenceNumber, operations, cards, tokens, amounts)
 }
