@@ -99,56 +99,56 @@ func (c *Card) UnlockAt(ctx context.Context, block *big.Int) (*big.Int, error) {
 	return new(big.Int).SetBytes(rsp), nil
 }
 
-func (c *Card) Balance(ctx context.Context, block *big.Int, asset common.Address) (common.Address, error) {
+func (c *Card) Balance(ctx context.Context, block *big.Int, asset common.Address) (*big.Int, error) {
 	data, err := c.abi.Pack("balance", asset)
 	if err != nil {
-		return common.Address{}, err
+		return nil, err
 	}
 	rsp, err := c.ethereum.CallContract(ctx, ethereum.CallMsg{
 		To:   &c.address,
 		Data: data,
 	}, block)
 	if err != nil {
-		return common.Address{}, err
+		return nil, err
 	}
 	if len(rsp) != 32 {
-		return common.Address{}, errors.Wrap(ErrFailedContractCall, "balance")
+		return nil, errors.Wrap(ErrFailedContractCall, "balance")
 	}
-	return common.BytesToAddress(rsp), nil
+	return new(big.Int).SetBytes(rsp), nil
 }
 
-func (c *Card) Overdraft(ctx context.Context, block *big.Int, asset common.Address) (common.Address, error) {
+func (c *Card) Overdraft(ctx context.Context, block *big.Int, asset common.Address) (*big.Int, error) {
 	data, err := c.abi.Pack("overdraft", asset)
 	if err != nil {
-		return common.Address{}, err
+		return nil, err
 	}
 	rsp, err := c.ethereum.CallContract(ctx, ethereum.CallMsg{
 		To:   &c.address,
 		Data: data,
 	}, block)
 	if err != nil {
-		return common.Address{}, err
+		return nil, err
 	}
 	if len(rsp) != 32 {
-		return common.Address{}, errors.Wrap(ErrFailedContractCall, "overdraft")
+		return nil, errors.Wrap(ErrFailedContractCall, "overdraft")
 	}
-	return common.BytesToAddress(rsp), nil
+	return new(big.Int).SetBytes(rsp), nil
 }
 
-func (c *Card) Available(ctx context.Context, block *big.Int, asset common.Address) (common.Address, error) {
+func (c *Card) Available(ctx context.Context, block *big.Int, asset common.Address) (*big.Int, error) {
 	data, err := c.abi.Pack("available", asset)
 	if err != nil {
-		return common.Address{}, err
+		return nil, err
 	}
 	rsp, err := c.ethereum.CallContract(ctx, ethereum.CallMsg{
 		To:   &c.address,
 		Data: data,
 	}, block)
 	if err != nil {
-		return common.Address{}, err
+		return nil, err
 	}
 	if len(rsp) != 32 {
-		return common.Address{}, errors.Wrap(ErrFailedContractCall, "available")
+		return nil, errors.Wrap(ErrFailedContractCall, "available")
 	}
-	return common.BytesToAddress(rsp), nil
+	return new(big.Int).SetBytes(rsp), nil
 }
