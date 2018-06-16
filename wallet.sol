@@ -157,71 +157,71 @@ contract Whitelist is Control {
     }
 }
 
-/// @title DailyLimit provides daily spend limit functionality.
-contract DailyLimit is Control {
+/// @title SpendLimit provides daily spend limit functionality.
+contract SpendLimit is Control {
 
-    event SetDailyLimit(uint _amount);
+    event SetSpendLimit(uint _amount);
 
     uint public currentDay;
-    uint public dailyLimit;
-    uint internal _dailyAvailable;
+    uint public spendLimit;
+    uint internal _spendAvailable;
 
-    uint public pendingDailyLimit;
-    bool private _submittedDailyLimit;
-    bool private _initializedDailyLimit;
+    uint public pendingSpendLimit;
+    bool private _submittedSpendLimit;
+    bool private _initializedSpendLimit;
 
     /// @dev Returns the available daily balance - accounts for daily limit reset.
     /// @return amount of ether in wei.
-    function dailyAvailable() public view returns (uint) {
+    function spendAvailable() public view returns (uint) {
         if (now > currentDay + 24 hours) {
-            return dailyLimit;
+            return spendLimit;
         } else {
-            return _dailyAvailable;
+            return _spendAvailable;
         }
     }
     /// @dev Initialize a daily transfer limit for non-whitelisted addresses.
     /// @param _amount is the daily limit amount in wei.
-    function initializeDailyLimit(uint _amount) public onlyOwner {
-        require(!_initializedDailyLimit);
+    function initializeSpendLimit(uint _amount) public onlyOwner {
+        require(!_initializedSpendLimit);
         // Set the daily limit to the provided amount.
-        dailyLimit = _amount;
-        _initializedDailyLimit = true;
-        emit SetDailyLimit(_amount);
+        spendLimit = _amount;
+        _initializedSpendLimit = true;
+        emit SetSpendLimit(_amount);
     }
 
     /// @dev Set a daily transfer limit for non-whitelisted addresses.
     /// @param _amount is the daily limit amount in wei.
-    function setDailyLimit(uint _amount) public onlyOwner {
+    function setSpendLimit(uint _amount) public onlyOwner {
         // Check if this operation has been already submitted.
-        require(!_submittedDailyLimit);
+        require(!_submittedSpendLimit);
         // Assign the provided amount to pending daily limit change.
-        pendingDailyLimit = _amount;
+        pendingSpendLimit = _amount;
         // Flag the operation as submitted.
-        _submittedDailyLimit = true;
+        _submittedSpendLimit = true;
     }
 
     /// @dev Confirm pending set daily limit operation.
-    function setDailyLimitConfirm() public onlyController {
-        require(_submittedDailyLimit);
+    function setSpendLimitConfirm() public onlyController {
+        require(_submittedSpendLimit);
         // Set the daily limit to the pending amount.
-        dailyLimit = pendingDailyLimit;
+        spendLimit = pendingSpendLimit;
         // Reset the submission flag.
-        _submittedDailyLimit = false;
-        emit SetDailyLimit(pendingDailyLimit);
+        _submittedSpendLimit = false;
+        emit SetSpendLimit(pendingSpendLimit);
     }
 
     /// @dev Cancel pending set daily limit operation.
-    function setDailyLimitCancel() public onlyController {
+    function setSpendLimitCancel() public onlyController {
         // Reset pending daily limit change.
-        pendingDailyLimit = 0;
+        pendingSpendLimit = 0;
         // Reset the submitted operation flag.
-        _submittedDailyLimit = false;
+        _submittedSpendLimit = false;
     }
 }
 
 /// @title Asset wallet with extra security features.
 /// @author TokenCard
-contract Vault is Whitelist, DailyLimit {
+contract Vault is Whitelist, SpendLimit {
     // Events
     event Deposit(address _from, uint _amount);
     event Transfer(address _to, address _asset, uint _amount);
@@ -232,8 +232,8 @@ contract Vault is Whitelist, DailyLimit {
     /// @dev Construct a wallet with an owner and a controller.
     constructor(address _owner, address _oracle, address[] _controllers) public {
         currentDay = now;
-        dailyLimit = 1 ether;
-        _dailyAvailable = dailyLimit;
+        spendLimit = 1 ether;
+        _spendAvailable = spendLimit;
         owner = _owner;
         oracle = _oracle;
         for (uint i = 0; i < _controllers.length; i++) {
@@ -284,11 +284,11 @@ contract Vault is Whitelist, DailyLimit {
             if (now > currentDay + 24 hours) {
                 uint extraDays = (now - currentDay) / 24 hours;
                 currentDay += extraDays * 24 hours;
-                _dailyAvailable = dailyLimit;
+                _spendAvailable = spendLimit;
             }
-            require(etherValue <= _dailyAvailable);
+            require(etherValue <= _spendAvailable);
             // Update the available limit.
-            _dailyAvailable -= etherValue;
+            _spendAvailable -= etherValue;
         }
         // Transfer token or ether based on the provided address.
         if (_asset != 0x0) {
@@ -350,7 +350,7 @@ contract Wallet is Vault {
         // Require that the limit amount is within the acceptable range.
         require(MINIMUM_GAS_LIMIT <= _amount && _amount <= MAXIMUM_GAS_LIMIT);
         // Assign the provided amount to pending daily limit change.
-        pendingDailyLimit = _amount;
+        pendingSpendLimit = _amount;
         // Flag the operation as submitted.
         _submittedGasLimit = true;
     }
@@ -360,18 +360,18 @@ contract Wallet is Vault {
         // That a set gas limit operation has been submitted.
         require(_submittedGasLimit);
         // Assert that the pending gas limit amount is within the acceptable range.
-        assert(MINIMUM_GAS_LIMIT <= pendingDailyLimit && pendingDailyLimit <= MAXIMUM_GAS_LIMIT);
+        assert(MINIMUM_GAS_LIMIT <= pendingSpendLimit && pendingSpendLimit <= MAXIMUM_GAS_LIMIT);
         // Set the daily limit to the pending amount.
-        gasLimit = pendingDailyLimit;
+        gasLimit = pendingSpendLimit;
         // Reset the submission flag.
         _submittedGasLimit = false;
-        emit SetGasLimit(pendingDailyLimit);
+        emit SetGasLimit(pendingSpendLimit);
     }
 
     /// @dev Cancel pending set gas limit operation.
     function setGasLimitCancel() public onlyController {
         // Reset pending daily limit change.
-        pendingDailyLimit = 0;
+        pendingSpendLimit = 0;
         // Reset the submitted operation flag.
         _submittedGasLimit = false;
     }

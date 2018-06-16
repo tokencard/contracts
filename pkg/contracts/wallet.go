@@ -20,7 +20,8 @@ import (
 const (
 	depositTopic           = "0xe1fffcc4923d04b559f4d29a8bfc6cda04eb5b0d3c460751c2402c5c5cc9109c"
 	transferTopic          = "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef"
-	dailyLimitTopic        = "0x4c6fb4d469797cfdfb4ac382c2fe84a494711f5b9676334ff9fac5f7601aef70"
+	spendLimitTopic        = "0x21e1049325acc99b4f885709c6ca1a70281b586f585ef03485b62f7ad0a1e253"
+	gasLimitTopic          = "0xf5bdeca176beddded5a1132996e4edf0d16be5100214b17d8bada54bf8676297"
 	whitelistAdditionTopic = "0xc76dd62bd7d0b2212e0d3445c1703a522dd816a749fe499b3bcb0f51b2500434"
 	whitelistRemovalTopic  = "0x4b089aff1cdd9a6984aa832d4a013996b3acd3d6244ce3de5e07e6ab050d2b94"
 	topUpGasTopic          = "0x2235de9f3363e464311d990c51aeef966703c87d1c77e80737831d6944d87c86"
@@ -93,8 +94,8 @@ func (w *Wallet) CurrentDay(ctx context.Context, block *big.Int) (*big.Int, erro
 	return new(big.Int).SetBytes(rsp), nil
 }
 
-func (w *Wallet) DailyLimit(ctx context.Context, block *big.Int) (*big.Int, error) {
-	data, err := w.abi.Pack("dailyLimit")
+func (w *Wallet) SpendLimit(ctx context.Context, block *big.Int) (*big.Int, error) {
+	data, err := w.abi.Pack("spendLimit")
 	if err != nil {
 		return nil, err
 	}
@@ -106,13 +107,13 @@ func (w *Wallet) DailyLimit(ctx context.Context, block *big.Int) (*big.Int, erro
 		return nil, err
 	}
 	if len(rsp) != 32 {
-		return nil, errors.Wrap(ErrFailedContractCall, "dailyLimit")
+		return nil, errors.Wrap(ErrFailedContractCall, "spendLimit")
 	}
 	return new(big.Int).SetBytes(rsp), nil
 }
 
-func (w *Wallet) DailyAvailable(ctx context.Context, block *big.Int) (*big.Int, error) {
-	data, err := w.abi.Pack("dailyAvailable")
+func (w *Wallet) SpendAvailable(ctx context.Context, block *big.Int) (*big.Int, error) {
+	data, err := w.abi.Pack("spendAvailable")
 	if err != nil {
 		return nil, err
 	}
@@ -124,7 +125,7 @@ func (w *Wallet) DailyAvailable(ctx context.Context, block *big.Int) (*big.Int, 
 		return nil, err
 	}
 	if len(rsp) != 32 {
-		return nil, errors.Wrap(ErrFailedContractCall, "dailyAvailable")
+		return nil, errors.Wrap(ErrFailedContractCall, "spendAvailable")
 	}
 	return new(big.Int).SetBytes(rsp), nil
 }
@@ -295,8 +296,8 @@ func (w *Wallet) PendingRemoval(ctx context.Context, block *big.Int) ([]common.A
 	return res, nil
 }
 
-func (w *Wallet) PendingDailyLimit(ctx context.Context, block *big.Int) (*big.Int, error) {
-	data, err := w.abi.Pack("pendingDailyLimit")
+func (w *Wallet) PendingSpendLimit(ctx context.Context, block *big.Int) (*big.Int, error) {
+	data, err := w.abi.Pack("pendingSpendLimit")
 	if err != nil {
 		return nil, err
 	}
@@ -308,7 +309,7 @@ func (w *Wallet) PendingDailyLimit(ctx context.Context, block *big.Int) (*big.In
 		return nil, err
 	}
 	if len(rsp) != 32 {
-		return nil, errors.Wrap(ErrFailedContractCall, "pendingDailyLimit")
+		return nil, errors.Wrap(ErrFailedContractCall, "pendingSpendLimit")
 	}
 	return new(big.Int).SetBytes(rsp), nil
 }
@@ -367,20 +368,20 @@ func (w *Wallet) RemoveFromWhitelistCancel(opts *bind.TransactOpts) (*types.Tran
 	return w.bindings.RemoveFromWhitelistCancel(opts)
 }
 
-func (w *Wallet) InitializeDailyLimit(opts *bind.TransactOpts, amount *big.Int) (*types.Transaction, error) {
-	return w.bindings.InitializeDailyLimit(opts, amount)
+func (w *Wallet) InitializeSpendLimit(opts *bind.TransactOpts, amount *big.Int) (*types.Transaction, error) {
+	return w.bindings.InitializeSpendLimit(opts, amount)
 }
 
-func (w *Wallet) SetDailyLimit(opts *bind.TransactOpts, amount *big.Int) (*types.Transaction, error) {
-	return w.bindings.SetDailyLimit(opts, amount)
+func (w *Wallet) SetSpendLimit(opts *bind.TransactOpts, amount *big.Int) (*types.Transaction, error) {
+	return w.bindings.SetSpendLimit(opts, amount)
 }
 
-func (w *Wallet) SetDailyLimitConfirm(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return w.bindings.SetDailyLimitConfirm(opts)
+func (w *Wallet) SetSpendLimitConfirm(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return w.bindings.SetSpendLimitConfirm(opts)
 }
 
-func (w *Wallet) SetDailyLimitCancel(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return w.bindings.SetDailyLimitCancel(opts)
+func (w *Wallet) SetSpendLimitCancel(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return w.bindings.SetSpendLimitCancel(opts)
 }
 
 func (w *Wallet) InitializeGasLimit(opts *bind.TransactOpts, amount *big.Int) (*types.Transaction, error) {
@@ -475,13 +476,47 @@ func (w *Wallet) WhitelistRemovalEvents(ctx context.Context, block *big.Int) ([]
 	return events, nil
 }
 
-func (w *Wallet) SetDailyLimitEvents(ctx context.Context, block *big.Int) ([]*Event, error) {
+func (w *Wallet) SetSpendLimitEvents(ctx context.Context, block *big.Int) ([]*Event, error) {
 	// Create a query for set daily limit events.
 	query := ethereum.FilterQuery{
 		FromBlock: nil,
 		ToBlock:   block,
 		Addresses: []common.Address{w.address},
-		Topics:    [][]common.Hash{{common.HexToHash(dailyLimitTopic)}},
+		Topics:    [][]common.Hash{{common.HexToHash(spendLimitTopic)}},
+	}
+	// Get the contract logs.
+	logs, err := w.ethereum.FilterLogs(ctx, query)
+	if err != nil {
+		return nil, err
+	}
+	// Create a list of logged outgoing events.
+	var events []*Event
+	for _, v := range logs {
+		// Decode event parameters.
+		if len(v.Data) != 32 {
+			return nil, ErrInvalidEventData
+		}
+		var data [][]byte
+		for i := 0; i < len(v.Data); i += 32 {
+			data = append(data, v.Data[i:i+32])
+		}
+		events = append(events, &Event{
+			Address:   v.Address,
+			BlockHash: v.BlockHash,
+			Data:      data,
+			TxHash:    v.TxHash,
+		})
+	}
+	return events, nil
+}
+
+func (w *Wallet) SetGasLimitEvents(ctx context.Context, block *big.Int) ([]*Event, error) {
+	// Create a query for set daily limit events.
+	query := ethereum.FilterQuery{
+		FromBlock: nil,
+		ToBlock:   block,
+		Addresses: []common.Address{w.address},
+		Topics:    [][]common.Hash{{common.HexToHash(gasLimitTopic)}},
 	}
 	// Get the contract logs.
 	logs, err := w.ethereum.FilterLogs(ctx, query)
