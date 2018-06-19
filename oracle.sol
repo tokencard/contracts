@@ -22,6 +22,10 @@ contract Oracle {
         _;
     }
 
+    // TODO: Account for uint overflow.
+    /// @dev Converts token amount to the corresponding ether amount.
+    /// @param _token an ERC20 token contract address.
+    /// @param _amount amount of token in base units.
     function convert(address _token, uint _amount) public view returns (uint) {
         Rate memory r = rate[_token];
         uint result = _amount * r.value / 10**r.decimal;
