@@ -4,7 +4,6 @@ const solc = require('solc')
 const instrumentSolidity = require('solidity-coverage/lib/instrumentSolidity')
 
 
-
 function compile(fileName, key) {
   const contractPath = path.resolve(__dirname, fileName)
   const source = fs.readFileSync(contractPath, 'utf8')
@@ -18,8 +17,6 @@ function compile(fileName, key) {
   return { contractPath, instrumented, ...output.contracts[key]}
 
 }
-
-
 
 module.exports = {
   card: compile('../../card.sol',':Card'),

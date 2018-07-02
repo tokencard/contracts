@@ -15,8 +15,8 @@ beforeEach(async () => {
   newOwner = accounts[2]
   neitherOwnerNorController = accounts[3]
   inbox = await new web3.eth.Contract(JSON.parse(card.interface))
-    .deploy({ data: card.bytecode, arguments: [controller]})
-    .send({ from: owner, gas: '5000000'})
+    .deploy({ data: card.bytecode, arguments: [controller, owner]})
+    .send({ from: owner, gas: '6000000'})
 })
 
 describe('Card', () => {
