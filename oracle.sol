@@ -1,4 +1,4 @@
-pragma solidity ^0.4.24;
+pragma solidity 0.4.24;
 
 /// @title The Oracle keeps track of exchange rates for a set of ERC20 tokens.
 /// @author TokenCard

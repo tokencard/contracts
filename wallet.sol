@@ -1,4 +1,4 @@
-pragma solidity ^0.4.24;
+pragma solidity 0.4.24;
 
 
 /// @title The Token interface is a subset of the ERC20 specification.
