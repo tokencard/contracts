@@ -95,7 +95,9 @@ contract Whitelist is Control {
         require(_addresses.length <= 20);
         // Add each of the provided addresses to the pending addition list.
         for (uint i = 0; i < _addresses.length; i++) {
-            _pendingAddition.push(_addresses[i]);
+            if (_addresses[i] != owner) {
+                _pendingAddition.push(_addresses[i]);
+            }
         }
         // Flag the operation as submitted.
         _submittedAddition = true;
