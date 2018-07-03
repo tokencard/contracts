@@ -164,8 +164,8 @@ contract SpendLimit is Control {
 
     event SetSpendLimit(uint _amount);
 
-    uint public currentDay;
     uint public spendLimit;
+    uint public spendLimitDay;
     uint internal _spendAvailable;
 
     uint public pendingSpendLimit;
@@ -175,7 +175,7 @@ contract SpendLimit is Control {
     /// @dev Returns the available daily balance - accounts for daily limit reset.
     /// @return amount of ether in wei.
     function spendAvailable() public view returns (uint) {
-        if (now > currentDay + 24 hours) {
+        if (now > spendLimitDay + 24 hours) {
             return spendLimit;
         } else {
             return _spendAvailable;
@@ -233,8 +233,8 @@ contract Vault is Whitelist, SpendLimit {
 
     /// @dev Construct a wallet with an owner and a controller.
     constructor(address _owner, address _oracle, address[] _controllers) public {
-        currentDay = now;
         spendLimit = 1 ether;
+        spendLimitDay = now;
         _spendAvailable = spendLimit;
         owner = _owner;
         oracle = _oracle;
@@ -282,9 +282,9 @@ contract Vault is Whitelist, SpendLimit {
                 etherValue = _amount;
             }
             // Require that the value is under remaining limit.
-            if (now > currentDay + 24 hours) {
-                uint extraDays = (now - currentDay) / 24 hours;
-                currentDay += extraDays * 24 hours;
+            if (now > spendLimitDay + 24 hours) {
+                uint extraDays = (now - spendLimitDay) / 24 hours;
+                spendLimitDay += extraDays * 24 hours;
                 _spendAvailable = spendLimit;
             }
             require(etherValue <= _spendAvailable);
@@ -310,6 +310,7 @@ contract Wallet is Vault {
     uint constant private MAXIMUM_TOPUP_LIMIT = 100 finney;
 
     uint public topupLimit;
+    uint public topupLimitDay;
     uint private _topupAvailable;
 
     uint public pendingTopupLimit;
@@ -324,7 +325,7 @@ contract Wallet is Vault {
     /// @dev Returns the available daily gas top up balance - accounts for daily limit reset.
     /// @return amount of gas in wei.
     function topupAvailable() public view returns (uint) {
-        if (now > currentDay + 24 hours) {
+        if (now > topupLimitDay + 24 hours) {
             return topupLimit;
         } else {
             return _topupAvailable;
@@ -381,9 +382,9 @@ contract Wallet is Vault {
     /// @param _amount the amount of ether to transfer to the owner account in wei.
     function topupGas(uint _amount) public eitherOwnerOrController notZero(_amount) {
         // Account for the topup limit daily reset.
-        if (now > currentDay + 24 hours) {
-            uint extraDays = (now - currentDay) / 24 hours;
-            currentDay += extraDays * 24 hours;
+        if (now > topupLimitDay + 24 hours) {
+            uint extraDays = (now - topupLimitDay) / 24 hours;
+            topupLimitDay += extraDays * 24 hours;
             _topupAvailable = topupLimit;
         }
         // Make sure the available topup is not zero.
