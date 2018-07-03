@@ -380,14 +380,14 @@ contract Wallet is Vault {
     /// @dev Refill owner's gas balance.
     /// @param _amount the amount of ether to transfer to the owner account in wei.
     function topupGas(uint _amount) public eitherOwnerOrController notZero(_amount) {
-        // Make sure the available topup is not zero.
-        require(_topupAvailable > 0);
         // Account for the topup limit daily reset.
         if (now > currentDay + 24 hours) {
             uint extraDays = (now - currentDay) / 24 hours;
             currentDay += extraDays * 24 hours;
             _topupAvailable = topupLimit;
         }
+        // Make sure the available topup is not zero.
+        require(_topupAvailable > 0);
         // If amount is above available balance, use the entire balance.
         if (_amount > _topupAvailable) {
             _amount = _topupAvailable;
