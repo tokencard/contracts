@@ -233,7 +233,7 @@ contract Vault is Whitelist, SpendLimit {
 
     /// @dev Construct a wallet with an owner and a controller.
     constructor(address _owner, address _oracle, address[] _controllers) public {
-        spendLimit = 1000 ether;
+        spendLimit = 100 ether;
         _spendLimitDay = now;
         _spendAvailable = spendLimit;
         owner = _owner;
