@@ -112,6 +112,10 @@ contract Whitelist is Control {
         }
         // Reset the submission flag.
         _submittedAddition = false;
+        // Flag operation as initialized if not initialized already.
+        if (!_initializedWhitelist) {
+            _initializedWhitelist = true;
+        }
         emit WhitelistAddition(_pendingAddition);
     }
 
@@ -185,8 +189,14 @@ contract SpendLimit is Control {
     /// @param _amount is the daily limit amount in wei.
     function initializeSpendLimit(uint _amount) public onlyOwner {
         require(!_initializedSpendLimit);
+        // Account for the topup limit daily reset.
+        updateSpendAvailable();
         // Set the daily limit to the provided amount.
         spendLimit = _amount;
+        // Lower the available limit if it's higher than the new daily limit.
+        if (_spendAvailable > spendLimit) {
+            _spendAvailable = spendLimit;
+        }
         _initializedSpendLimit = true;
         emit SetSpendLimit(_amount);
     }
@@ -205,10 +215,20 @@ contract SpendLimit is Control {
     /// @dev Confirm pending set daily limit operation.
     function setSpendLimitConfirm() public onlyController {
         require(_submittedSpendLimit);
+        // Account for the topup limit daily reset.
+        updateSpendAvailable();
         // Set the daily limit to the pending amount.
         spendLimit = pendingSpendLimit;
+        // Lower the available limit if it's higher than the new daily limit.
+        if (_spendAvailable > spendLimit) {
+            _spendAvailable = spendLimit;
+        }
         // Reset the submission flag.
         _submittedSpendLimit = false;
+        // Flag operation as initialized if not initialized already.
+        if (!_initializedSpendLimit) {
+            _initializedSpendLimit = true;
+        }
         emit SetSpendLimit(pendingSpendLimit);
     }
 
@@ -218,6 +238,17 @@ contract SpendLimit is Control {
         pendingSpendLimit = 0;
         // Reset the submitted operation flag.
         _submittedSpendLimit = false;
+    }
+
+    /// @dev Update available spend limit based on the daily reset.
+    function updateSpendAvailable() internal {
+        if (now > _spendLimitDay + 24 hours) {
+            // Advance the current day by how many days have passed.
+            uint extraDays = (now - _spendLimitDay) / 24 hours;
+            _spendLimitDay += extraDays * 24 hours;
+            // Set the available limit to the current spend limit.
+            _spendAvailable = spendLimit;
+        }
     }
 }
 
@@ -274,6 +305,8 @@ contract Vault is Whitelist, SpendLimit {
     function transfer(address _to, address _asset, uint _amount) public onlyOwner notZero(_amount) {
         // If address is not whitelisted, take daily limit into account.
         if (!isWhitelisted[_to]) {
+            // Update the available spend limit.
+            updateSpendAvailable();
             // Convert token amount to ether value.
             uint etherValue;
             if (_asset != 0x0) {
@@ -282,11 +315,6 @@ contract Vault is Whitelist, SpendLimit {
                 etherValue = _amount;
             }
             // Require that the value is under remaining limit.
-            if (now > _spendLimitDay + 24 hours) {
-                uint extraDays = (now - _spendLimitDay) / 24 hours;
-                _spendLimitDay += extraDays * 24 hours;
-                _spendAvailable = spendLimit;
-            }
             require(etherValue <= _spendAvailable);
             // Update the available limit.
             _spendAvailable -= etherValue;
@@ -338,8 +366,15 @@ contract Wallet is Vault {
         require(!_initializedTopupLimit);
         // Require that the limit amount is within the acceptable range.
         require(MINIMUM_TOPUP_LIMIT <= _amount && _amount <= MAXIMUM_TOPUP_LIMIT);
-        // Set the topup limit to the provided amount.
+        // Account for the topup limit daily reset.
+        updateTopupAvailable();
+        // Set the daily limit to the provided amount.
         topupLimit = _amount;
+        // Lower the available limit if it's higher than the new daily limit.
+        if (_topupAvailable > topupLimit) {
+            _topupAvailable = topupLimit;
+        }
+        // Flag operation as initialized.
         _initializedTopupLimit = true;
         emit SetTopupLimit(_amount);
     }
@@ -352,41 +387,58 @@ contract Wallet is Vault {
         // Require that the limit amount is within the acceptable range.
         require(MINIMUM_TOPUP_LIMIT <= _amount && _amount <= MAXIMUM_TOPUP_LIMIT);
         // Assign the provided amount to pending daily limit change.
-        pendingSpendLimit = _amount;
+        pendingTopupLimit = _amount;
         // Flag the operation as submitted.
         _submittedTopupLimit = true;
     }
 
     /// @dev Confirm pending set top up limit operation.
     function setTopupLimitConfirm() public onlyController {
-        // That a set topup limit operation has been submitted.
+        // Check if the set topup limit operation has been submitted.
         require(_submittedTopupLimit);
         // Assert that the pending topup limit amount is within the acceptable range.
-        assert(MINIMUM_TOPUP_LIMIT <= pendingSpendLimit && pendingSpendLimit <= MAXIMUM_TOPUP_LIMIT);
+        assert(MINIMUM_TOPUP_LIMIT <= pendingTopupLimit && pendingTopupLimit <= MAXIMUM_TOPUP_LIMIT);
+        // Account for the topup limit daily reset.
+        updateTopupAvailable();
         // Set the daily limit to the pending amount.
-        topupLimit = pendingSpendLimit;
+        topupLimit = pendingTopupLimit;
+        // Lower the available limit if it's higher than the new daily limit.
+        if (_topupAvailable > topupLimit) {
+            _topupAvailable = topupLimit;
+        }
         // Reset the submission flag.
         _submittedTopupLimit = false;
-        emit SetTopupLimit(pendingSpendLimit);
+        // Flag operation as initialized if not initialized already.
+        if (!_initializedTopupLimit) {
+            _initializedTopupLimit = true;
+        }
+        emit SetTopupLimit(pendingTopupLimit);
     }
 
     /// @dev Cancel pending set top up limit operation.
     function setTopupLimitCancel() public onlyController {
         // Reset pending daily limit change.
-        pendingSpendLimit = 0;
+        pendingTopupLimit = 0;
         // Reset the submitted operation flag.
         _submittedTopupLimit = false;
+    }
+
+    /// @dev Update available topup limit based on the daily reset.
+    function updateTopupAvailable() private {
+        if (now > _topupLimitDay + 24 hours) {
+            // Advance the current day by how many days have passed.
+            uint extraDays = (now - _topupLimitDay) / 24 hours;
+            _topupLimitDay += extraDays * 24 hours;
+            // Set the available limit to the current topup limit.
+            _topupAvailable = topupLimit;
+        }
     }
 
     /// @dev Refill owner's gas balance.
     /// @param _amount the amount of ether to transfer to the owner account in wei.
     function topupGas(uint _amount) public eitherOwnerOrController notZero(_amount) {
         // Account for the topup limit daily reset.
-        if (now > _topupLimitDay + 24 hours) {
-            uint extraDays = (now - _topupLimitDay) / 24 hours;
-            _topupLimitDay += extraDays * 24 hours;
-            _topupAvailable = topupLimit;
-        }
+        updateTopupAvailable();
         // Make sure the available topup is not zero.
         require(_topupAvailable > 0);
         // If amount is above available balance, use the entire balance.
