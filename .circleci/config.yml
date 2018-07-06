@@ -3,9 +3,10 @@ jobs:
   build_test:
     docker:
       - image: node:9.0.0
-    working_directory: /go/src/github.com/tokencard/bis
+    working_directory: /go/src/github.com/tokencard/contracts
     steps:
       - checkout
+      - run: scripts/ci.sh
       - run: npm install && npm run lint && npm test
   mythril:
     docker:
