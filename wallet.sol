@@ -93,12 +93,8 @@ contract Whitelist is Control {
         require(!_submittedAddition);
         // Limit the amount of addresses that can be whitelisted at one time.
         require(_addresses.length <= 20);
-        // Add each of the provided addresses to the pending addition list.
-        for (uint i = 0; i < _addresses.length; i++) {
-            if (_addresses[i] != owner) {
-                _pendingAddition.push(_addresses[i]);
-            }
-        }
+        // Add the provided addresses to the pending addition list.
+        _pendingAddition = _addresses;
         // Flag the operation as submitted.
         _submittedAddition = true;
     }
@@ -108,7 +104,9 @@ contract Whitelist is Control {
         require(_pendingAddition.length > 0 && _submittedAddition);
         // Whitelist pending addresses.
         for (uint i = 0; i < _pendingAddition.length; i++) {
-            isWhitelisted[_pendingAddition[i]] = true;
+            if (_pendingAddition[i] != owner) {
+                isWhitelisted[_pendingAddition[i]] = true;
+            }
         }
         // Reset the submission flag.
         _submittedAddition = false;
