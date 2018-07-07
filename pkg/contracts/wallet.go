@@ -25,7 +25,7 @@ const (
 	whitelistAdditionTopic = "0xc76dd62bd7d0b2212e0d3445c1703a522dd816a749fe499b3bcb0f51b2500434"
 	whitelistRemovalTopic  = "0x4b089aff1cdd9a6984aa832d4a013996b3acd3d6244ce3de5e07e6ab050d2b94"
 	topupGasTopic          = "0x11bb310b94280c15845698b8ce945817e14456a5d1582e387e6e4a01ef2c6742"
-	ERC20Topic             = "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef"
+	tokenTopic             = "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef"
 )
 
 func NewWallet(ethereum *ethclient.Client, assets []*assets.Asset, address common.Address) (*Wallet, error) {
@@ -646,7 +646,7 @@ func (w *Wallet) DepositEvents(ctx context.Context, block *big.Int) ([]*Event, e
 	return events, nil
 }
 
-func (w *Wallet) ERC20DepositEvents(ctx context.Context, block *big.Int) ([]*Event, error) {
+func (w *Wallet) TokenDepositEvents(ctx context.Context, block *big.Int) ([]*Event, error) {
 	var events []*Event
 	// Scan supported tokens for incoming events.
 	for _, asset := range w.assets {
@@ -658,7 +658,7 @@ func (w *Wallet) ERC20DepositEvents(ctx context.Context, block *big.Int) ([]*Eve
 			FromBlock: nil,
 			ToBlock:   block,
 			Addresses: []common.Address{common.HexToAddress(asset.Id)},
-			Topics:    [][]common.Hash{{common.HexToHash(ERC20Topic)}, nil, {w.address.Hash()}},
+			Topics:    [][]common.Hash{{common.HexToHash(tokenTopic)}, nil, {w.address.Hash()}},
 		}
 		// Get the contract logs.
 		logs, err := w.ethereum.FilterLogs(ctx, query)
