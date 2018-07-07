@@ -16,6 +16,11 @@ import (
 	"github.com/pkg/errors"
 )
 
+const (
+	CardABI = bindings.CardABI
+	CardBin = bindings.CardBin
+)
+
 func NewCard(ethereum *ethclient.Client, address common.Address) (*Card, error) {
 	contractBindings, err := bindings.NewCard(address, ethereum)
 	if err != nil {

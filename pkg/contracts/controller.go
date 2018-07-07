@@ -16,6 +16,11 @@ import (
 	"github.com/pkg/errors"
 )
 
+const (
+	ControllerABI = bindings.ControllerABI
+	ControllerBin = bindings.ControllerBin
+)
+
 func NewController(ethereum *ethclient.Client, address common.Address) (*Controller, error) {
 	contractBindings, err := bindings.NewController(address, ethereum)
 	if err != nil {
