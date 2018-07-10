@@ -187,8 +187,8 @@ contract SpendLimit is Control {
     /// @param _amount is the daily limit amount in wei.
     function initializeSpendLimit(uint _amount) public onlyOwner {
         require(!_initializedSpendLimit);
-        // Update spend limit to the provided value.
-        updateSpendLimit(_amount);
+        // Modify spend limit based on the provided value.
+        modifySpendLimit(_amount);
         // Flag the operation as initialized.
         _initializedSpendLimit = true;
         emit SetSpendLimit(_amount);
@@ -208,8 +208,8 @@ contract SpendLimit is Control {
     /// @dev Confirm pending set daily limit operation.
     function setSpendLimitConfirm() public onlyController {
         require(_submittedSpendLimit);
-        // Update spend limit to the pending value.
-        updateSpendLimit(pendingSpendLimit);
+        // Modify spend limit based on the pending value.
+        modifySpendLimit(pendingSpendLimit);
         // Reset the submission flag.
         _submittedSpendLimit = false;
         // Flag operation as initialized if not initialized already.
@@ -229,7 +229,7 @@ contract SpendLimit is Control {
 
     /// @dev Modify the spend limit and spend available based on the provided value.
     /// @dev _amount is the daily limit amount in wei.
-    function updateSpendLimit(uint _amount) internal {
+    function modifySpendLimit(uint _amount) private {
         // Account for the spend limit daily reset.
         updateSpendAvailable();
         // Set the daily limit to the provided amount.
@@ -366,8 +366,8 @@ contract Wallet is Vault {
         require(!_initializedTopupLimit);
         // Require that the limit amount is within the acceptable range.
         require(MINIMUM_TOPUP_LIMIT <= _amount && _amount <= MAXIMUM_TOPUP_LIMIT);
-        // Update spend limit to the provided value.
-        updateTopupLimit(_amount);
+        // Modify spend limit based on the provided value.
+        modifyTopupLimit(_amount);
         // Flag operation as initialized.
         _initializedTopupLimit = true;
         emit SetTopupLimit(_amount);
@@ -392,8 +392,8 @@ contract Wallet is Vault {
         require(_submittedTopupLimit);
         // Assert that the pending topup limit amount is within the acceptable range.
         assert(MINIMUM_TOPUP_LIMIT <= pendingTopupLimit && pendingTopupLimit <= MAXIMUM_TOPUP_LIMIT);
-        // Update topup limit to the pending value.
-        updateTopupLimit(pendingTopupLimit);
+        // Modify topup limit based on the pending value.
+        modifyTopupLimit(pendingTopupLimit);
         // Reset the submission flag.
         _submittedTopupLimit = false;
         // Flag operation as initialized if not initialized already.
@@ -413,7 +413,7 @@ contract Wallet is Vault {
 
     /// @dev Modify the topup limit and topup available based on the provided value.
     /// @dev _amount is the daily limit amount in wei.
-    function updateTopupLimit(uint _amount) private {
+    function modifyTopupLimit(uint _amount) private {
         // Account for the topup limit daily reset.
         updateTopupAvailable();
         // Set the daily limit to the provided amount.
