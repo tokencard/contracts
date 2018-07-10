@@ -11,16 +11,12 @@ import (
 	"github.com/tokencard/contracts/pkg/bindings"
 
 	"github.com/ethereum/go-ethereum"
-	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/core/types"
+	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/pkg/errors"
 )
 
-const (
-	ControllerABI = bindings.ControllerABI
-	ControllerBin = bindings.ControllerBin
-)
-
+// NewController creates a new controller contract, if provided address is `nil` the contract will have no bindings.
 func NewController(ethereum *ethclient.Client, address common.Address) (*Controller, error) {
 	contractBindings, err := bindings.NewController(address, ethereum)
 	if err != nil {
@@ -45,8 +41,12 @@ type Controller struct {
 	ethereum *ethclient.Client
 }
 
-func DeployController(opts *bind.TransactOpts, eth *ethclient.Client) (common.Address, *types.Transaction, *bindings.Controller, error) {
-	return bindings.DeployController(opts, eth)
+func DeployController(opts *ConstructOpts, eth *ethclient.Client) (common.Address, *types.Transaction, error) {
+	transaction, err := construct(opts, eth, nil, common.FromHex(bindings.ControllerBin))
+	if err != nil {
+		return common.Address{}, nil, err
+	}
+	return crypto.CreateAddress(opts.From, transaction.Nonce()), transaction, err
 }
 
 func (c *Controller) Next(ctx context.Context, block *big.Int) (*big.Int, error) {
@@ -67,6 +67,10 @@ func (c *Controller) Next(ctx context.Context, block *big.Int) (*big.Int, error)
 	return new(big.Int).SetBytes(rsp), nil
 }
 
-func (c *Controller) Process(opts *bind.TransactOpts, sequenceNumber *big.Int, operations []byte, cards []common.Address, tokens []common.Address, amounts []*big.Int) (*types.Transaction, error) {
-	return c.bindings.Process(opts, sequenceNumber, operations, cards, tokens, amounts)
+func (c *Controller) Process(opts *ConstructOpts, sequenceNumber *big.Int, operations []byte, cards []common.Address, tokens []common.Address, values []*big.Int) (*types.Transaction, error) {
+	data, err := c.abi.Pack("process", sequenceNumber, operations, cards, tokens, values)
+	if err != nil {
+		return nil, err
+	}
+	return construct(opts, c.ethereum, &c.address, data)
 }

@@ -11,14 +11,9 @@ import (
 	"github.com/tokencard/contracts/pkg/bindings"
 
 	"github.com/ethereum/go-ethereum"
-	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/pkg/errors"
-)
-
-const (
-	CardABI = bindings.CardABI
-	CardBin = bindings.CardBin
+	"github.com/ethereum/go-ethereum/crypto"
 )
 
 func NewCard(ethereum *ethclient.Client, address common.Address) (*Card, error) {
@@ -45,8 +40,21 @@ type Card struct {
 	ethereum *ethclient.Client
 }
 
-func DeployCard(opts *bind.TransactOpts, eth *ethclient.Client, controller common.Address, owner common.Address) (common.Address, *types.Transaction, *bindings.Card, error) {
-	return bindings.DeployCard(opts, eth, controller, owner)
+func DeployCard(opts *ConstructOpts, eth *ethclient.Client, controller common.Address, owner common.Address) (common.Address, *types.Transaction, error) {
+	contractABI, err := abi.JSON(strings.NewReader(bindings.CardABI))
+	if err != nil {
+		return common.Address{}, nil, err
+	}
+	data, err := contractABI.Pack("", controller, owner)
+	if err != nil {
+		return common.Address{}, nil, err
+	}
+
+	transaction, err := construct(opts, eth, nil, append(common.FromHex(bindings.CardBin), data...))
+	if err != nil {
+		return common.Address{}, nil, err
+	}
+	return crypto.CreateAddress(opts.From, transaction.Nonce()), transaction, err
 }
 
 func (c *Card) Owner(ctx context.Context, block *big.Int) (common.Address, error) {

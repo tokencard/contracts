@@ -11,15 +11,10 @@ import (
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/tokencard/contracts/pkg/bindings"
 
-	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/core/types"
+	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/pkg/errors"
 	"github.com/tokencard/assets"
-)
-
-const (
-	WalletABI = bindings.WalletABI
-	WalletBin = bindings.WalletBin
 )
 
 const (
@@ -59,8 +54,20 @@ type Wallet struct {
 	assets   []*assets.Asset
 }
 
-func DeployWallet(opts *bind.TransactOpts, eth *ethclient.Client, owner common.Address, oracle common.Address, controllers []common.Address) (common.Address, *types.Transaction, *bindings.Wallet, error) {
-	return bindings.DeployWallet(opts, eth, owner, oracle, controllers)
+func DeployWallet(opts *ConstructOpts, eth *ethclient.Client, owner common.Address, oracle common.Address, controllers []common.Address) (common.Address, *types.Transaction, error) {
+	contractABI, err := abi.JSON(strings.NewReader(bindings.WalletABI))
+	if err != nil {
+		return common.Address{}, nil, err
+	}
+	data, err := contractABI.Pack("", owner, oracle, controllers)
+	if err != nil {
+		return common.Address{}, nil, err
+	}
+	transaction, err := construct(opts, eth, nil, append(common.FromHex(bindings.WalletBin), data...))
+	if err != nil {
+		return common.Address{}, nil, err
+	}
+	return crypto.CreateAddress(opts.From, transaction.Nonce()), transaction, err
 }
 
 func (w *Wallet) Balance(ctx context.Context, block *big.Int, asset common.Address) (*big.Int, error) {
@@ -337,80 +344,156 @@ func (w *Wallet) PendingTopupLimit(ctx context.Context, block *big.Int) (*big.In
 	return new(big.Int).SetBytes(rsp), nil
 }
 
-func (w *Wallet) AddController(opts *bind.TransactOpts, account common.Address) (*types.Transaction, error) {
-	return w.bindings.AddController(opts, account)
+func (w *Wallet) AddController(opts *ConstructOpts, account common.Address) (*types.Transaction, error) {
+	data, err := w.abi.Pack("addController", account)
+	if err != nil {
+		return nil, err
+	}
+	return construct(opts, w.ethereum, &w.address, data)
 }
 
-func (w *Wallet) RemoveController(opts *bind.TransactOpts, account common.Address) (*types.Transaction, error) {
-	return w.bindings.RemoveController(opts, account)
+func (w *Wallet) RemoveController(opts *ConstructOpts, account common.Address) (*types.Transaction, error) {
+	data, err := w.abi.Pack("removeController", account)
+	if err != nil {
+		return nil, err
+	}
+	return construct(opts, w.ethereum, &w.address, data)
 }
 
-func (w *Wallet) InitializeWhitelist(opts *bind.TransactOpts, addresses []common.Address) (*types.Transaction, error) {
-	return w.bindings.InitializeWhitelist(opts, addresses)
+func (w *Wallet) InitializeWhitelist(opts *ConstructOpts, addresses []common.Address) (*types.Transaction, error) {
+	data, err := w.abi.Pack("initializeWhitelist", addresses)
+	if err != nil {
+		return nil, err
+	}
+	return construct(opts, w.ethereum, &w.address, data)
 }
 
-func (w *Wallet) AddToWhitelist(opts *bind.TransactOpts, addresses []common.Address) (*types.Transaction, error) {
-	return w.bindings.AddToWhitelist(opts, addresses)
+func (w *Wallet) AddToWhitelist(opts *ConstructOpts, addresses []common.Address) (*types.Transaction, error) {
+	data, err := w.abi.Pack("addToWhitelist", addresses)
+	if err != nil {
+		return nil, err
+	}
+	return construct(opts, w.ethereum, &w.address, data)
 }
 
-func (w *Wallet) AddToWhitelistConfirm(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return w.bindings.AddToWhitelistConfirm(opts)
+func (w *Wallet) AddToWhitelistConfirm(opts *ConstructOpts) (*types.Transaction, error) {
+	data, err := w.abi.Pack("addToWhitelistConfirm")
+	if err != nil {
+		return nil, err
+	}
+	return construct(opts, w.ethereum, &w.address, data)
 }
 
-func (w *Wallet) AddToWhitelistCancel(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return w.bindings.AddToWhitelistCancel(opts)
+func (w *Wallet) AddToWhitelistCancel(opts *ConstructOpts) (*types.Transaction, error) {
+	data, err := w.abi.Pack("addToWhitelistCancel")
+	if err != nil {
+		return nil, err
+	}
+	return construct(opts, w.ethereum, &w.address, data)
 }
 
-func (w *Wallet) RemoveFromWhitelist(opts *bind.TransactOpts, addresses []common.Address) (*types.Transaction, error) {
-	return w.bindings.RemoveFromWhitelist(opts, addresses)
+func (w *Wallet) RemoveFromWhitelist(opts *ConstructOpts, addresses []common.Address) (*types.Transaction, error) {
+	data, err := w.abi.Pack("removeFromWhitelist", addresses)
+	if err != nil {
+		return nil, err
+	}
+	return construct(opts, w.ethereum, &w.address, data)
 }
 
-func (w *Wallet) RemoveFromWhitelistConfirm(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return w.bindings.RemoveFromWhitelistConfirm(opts)
+func (w *Wallet) RemoveFromWhitelistConfirm(opts *ConstructOpts) (*types.Transaction, error) {
+	data, err := w.abi.Pack("removeFromWhitelistConfirm")
+	if err != nil {
+		return nil, err
+	}
+	return construct(opts, w.ethereum, &w.address, data)
 }
 
-func (w *Wallet) RemoveFromWhitelistCancel(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return w.bindings.RemoveFromWhitelistCancel(opts)
+func (w *Wallet) RemoveFromWhitelistCancel(opts *ConstructOpts) (*types.Transaction, error) {
+	data, err := w.abi.Pack("removeFromWhitelistCancel")
+	if err != nil {
+		return nil, err
+	}
+	return construct(opts, w.ethereum, &w.address, data)
 }
 
-func (w *Wallet) InitializeSpendLimit(opts *bind.TransactOpts, amount *big.Int) (*types.Transaction, error) {
-	return w.bindings.InitializeSpendLimit(opts, amount)
+func (w *Wallet) InitializeSpendLimit(opts *ConstructOpts, amount *big.Int) (*types.Transaction, error) {
+	data, err := w.abi.Pack("initializeSpendLimit", amount)
+	if err != nil {
+		return nil, err
+	}
+	return construct(opts, w.ethereum, &w.address, data)
 }
 
-func (w *Wallet) SetSpendLimit(opts *bind.TransactOpts, amount *big.Int) (*types.Transaction, error) {
-	return w.bindings.SetSpendLimit(opts, amount)
+func (w *Wallet) SetSpendLimit(opts *ConstructOpts, amount *big.Int) (*types.Transaction, error) {
+	data, err := w.abi.Pack("setSpendLimit", amount)
+	if err != nil {
+		return nil, err
+	}
+	return construct(opts, w.ethereum, &w.address, data)
 }
 
-func (w *Wallet) SetSpendLimitConfirm(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return w.bindings.SetSpendLimitConfirm(opts)
+func (w *Wallet) SetSpendLimitConfirm(opts *ConstructOpts) (*types.Transaction, error) {
+	data, err := w.abi.Pack("setSpendLimitConfirm")
+	if err != nil {
+		return nil, err
+	}
+	return construct(opts, w.ethereum, &w.address, data)
 }
 
-func (w *Wallet) SetSpendLimitCancel(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return w.bindings.SetSpendLimitCancel(opts)
+func (w *Wallet) SetSpendLimitCancel(opts *ConstructOpts) (*types.Transaction, error) {
+	data, err := w.abi.Pack("setSpendLimitCancel")
+	if err != nil {
+		return nil, err
+	}
+	return construct(opts, w.ethereum, &w.address, data)
 }
 
-func (w *Wallet) InitializeTopupLimit(opts *bind.TransactOpts, amount *big.Int) (*types.Transaction, error) {
-	return w.bindings.InitializeTopupLimit(opts, amount)
+func (w *Wallet) InitializeTopupLimit(opts *ConstructOpts, amount *big.Int) (*types.Transaction, error) {
+	data, err := w.abi.Pack("initializeTopupLimit", amount)
+	if err != nil {
+		return nil, err
+	}
+	return construct(opts, w.ethereum, &w.address, data)
 }
 
-func (w *Wallet) SetTopupLimit(opts *bind.TransactOpts, amount *big.Int) (*types.Transaction, error) {
-	return w.bindings.SetTopupLimit(opts, amount)
+func (w *Wallet) SetTopupLimit(opts *ConstructOpts, amount *big.Int) (*types.Transaction, error) {
+	data, err := w.abi.Pack("setTopupLimit", amount)
+	if err != nil {
+		return nil, err
+	}
+	return construct(opts, w.ethereum, &w.address, data)
 }
 
-func (w *Wallet) SetTopupLimitConfirm(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return w.bindings.SetTopupLimitConfirm(opts)
+func (w *Wallet) SetTopupLimitConfirm(opts *ConstructOpts) (*types.Transaction, error) {
+	data, err := w.abi.Pack("setTopupLimitConfirm")
+	if err != nil {
+		return nil, err
+	}
+	return construct(opts, w.ethereum, &w.address, data)
 }
 
-func (w *Wallet) SetTopupLimitCancel(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return w.bindings.SetTopupLimitCancel(opts)
+func (w *Wallet) SetTopupLimitCancel(opts *ConstructOpts) (*types.Transaction, error) {
+	data, err := w.abi.Pack("setTopupLimitCancel")
+	if err != nil {
+		return nil, err
+	}
+	return construct(opts, w.ethereum, &w.address, data)
 }
 
-func (w *Wallet) Transfer(opts *bind.TransactOpts, to common.Address, asset common.Address, amount *big.Int) (*types.Transaction, error) {
-	return w.bindings.Transfer(opts, to, asset, amount)
+func (w *Wallet) Transfer(opts *ConstructOpts, to common.Address, asset common.Address, amount *big.Int) (*types.Transaction, error) {
+	data, err := w.abi.Pack("transfer", to, asset, amount)
+	if err != nil {
+		return nil, err
+	}
+	return construct(opts, w.ethereum, &w.address, data)
 }
 
-func (w *Wallet) TopupGas(opts *bind.TransactOpts, amount *big.Int) (*types.Transaction, error) {
-	return w.bindings.TopupGas(opts, amount)
+func (w *Wallet) TopupGas(opts *ConstructOpts, amount *big.Int) (*types.Transaction, error) {
+	data, err := w.abi.Pack("topupGas", amount)
+	if err != nil {
+		return nil, err
+	}
+	return construct(opts, w.ethereum, &w.address, data)
 }
 
 func (w *Wallet) WhitelistAdditionEvents(ctx context.Context, block *big.Int) ([]*Event, error) {
