@@ -335,7 +335,7 @@ contract Wallet is Vault {
     event TopupGas(address _sender, address _owner, uint _amount);
 
     uint constant private MINIMUM_TOPUP_LIMIT = 1 finney;
-    uint constant private MAXIMUM_TOPUP_LIMIT = 100 finney;
+    uint constant private MAXIMUM_TOPUP_LIMIT = 500 finney;
 
     uint public topupLimit;
     uint private _topupLimitDay;
