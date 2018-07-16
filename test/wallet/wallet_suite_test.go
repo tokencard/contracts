@@ -28,6 +28,11 @@ var ONE_FINNEY *big.Int
 var FIVE_HUNDRED_FINNEY *big.Int
 var ONE_GWEI *big.Int
 
+func ethToWei(amount int) *big.Int {
+	r := big.NewInt(1).Set(ONE_ETH)
+	return r.Mul(r, big.NewInt(int64(amount)))
+}
+
 func init() {
 	var s bool
 
@@ -72,7 +77,7 @@ func init() {
 }
 
 var _ = AfterSuite(func() {
-	testRig.ExpectMinimumCoverage("wallet.sol:Wallet", 56.9)
+	testRig.ExpectMinimumCoverage("wallet.sol:Wallet", 71.23)
 })
 
 func balanceOf(a common.Address) *big.Int {
