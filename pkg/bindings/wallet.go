@@ -988,7 +988,7 @@ type WalletAddController struct {
 
 // FilterAddController is a free log retrieval operation binding the contract event 0xc187ac4977e802e627f1d633bbe3561806983fdbbde5904319f329bc0516365a.
 //
-// Solidity: event AddController(_account address)
+// Solidity: e AddController(_account address)
 func (_Wallet *WalletFilterer) FilterAddController(opts *bind.FilterOpts) (*WalletAddControllerIterator, error) {
 
 	logs, sub, err := _Wallet.contract.FilterLogs(opts, "AddController")
@@ -1000,7 +1000,7 @@ func (_Wallet *WalletFilterer) FilterAddController(opts *bind.FilterOpts) (*Wall
 
 // WatchAddController is a free log subscription operation binding the contract event 0xc187ac4977e802e627f1d633bbe3561806983fdbbde5904319f329bc0516365a.
 //
-// Solidity: event AddController(_account address)
+// Solidity: e AddController(_account address)
 func (_Wallet *WalletFilterer) WatchAddController(opts *bind.WatchOpts, sink chan<- *WalletAddController) (event.Subscription, error) {
 
 	logs, sub, err := _Wallet.contract.WatchLogs(opts, "AddController")
@@ -1111,7 +1111,7 @@ type WalletDeposit struct {
 
 // FilterDeposit is a free log retrieval operation binding the contract event 0xe1fffcc4923d04b559f4d29a8bfc6cda04eb5b0d3c460751c2402c5c5cc9109c.
 //
-// Solidity: event Deposit(_from address, _amount uint256)
+// Solidity: e Deposit(_from address, _amount uint256)
 func (_Wallet *WalletFilterer) FilterDeposit(opts *bind.FilterOpts) (*WalletDepositIterator, error) {
 
 	logs, sub, err := _Wallet.contract.FilterLogs(opts, "Deposit")
@@ -1123,7 +1123,7 @@ func (_Wallet *WalletFilterer) FilterDeposit(opts *bind.FilterOpts) (*WalletDepo
 
 // WatchDeposit is a free log subscription operation binding the contract event 0xe1fffcc4923d04b559f4d29a8bfc6cda04eb5b0d3c460751c2402c5c5cc9109c.
 //
-// Solidity: event Deposit(_from address, _amount uint256)
+// Solidity: e Deposit(_from address, _amount uint256)
 func (_Wallet *WalletFilterer) WatchDeposit(opts *bind.WatchOpts, sink chan<- *WalletDeposit) (event.Subscription, error) {
 
 	logs, sub, err := _Wallet.contract.WatchLogs(opts, "Deposit")
@@ -1233,7 +1233,7 @@ type WalletRemoveController struct {
 
 // FilterRemoveController is a free log retrieval operation binding the contract event 0x84c8c1572fb6a01167de9135b17f8c2dd31ef2d755fa7d2b2d8f2b05c3698688.
 //
-// Solidity: event RemoveController(_account address)
+// Solidity: e RemoveController(_account address)
 func (_Wallet *WalletFilterer) FilterRemoveController(opts *bind.FilterOpts) (*WalletRemoveControllerIterator, error) {
 
 	logs, sub, err := _Wallet.contract.FilterLogs(opts, "RemoveController")
@@ -1245,7 +1245,7 @@ func (_Wallet *WalletFilterer) FilterRemoveController(opts *bind.FilterOpts) (*W
 
 // WatchRemoveController is a free log subscription operation binding the contract event 0x84c8c1572fb6a01167de9135b17f8c2dd31ef2d755fa7d2b2d8f2b05c3698688.
 //
-// Solidity: event RemoveController(_account address)
+// Solidity: e RemoveController(_account address)
 func (_Wallet *WalletFilterer) WatchRemoveController(opts *bind.WatchOpts, sink chan<- *WalletRemoveController) (event.Subscription, error) {
 
 	logs, sub, err := _Wallet.contract.WatchLogs(opts, "RemoveController")
@@ -1355,7 +1355,7 @@ type WalletSetSpendLimit struct {
 
 // FilterSetSpendLimit is a free log retrieval operation binding the contract event 0x21e1049325acc99b4f885709c6ca1a70281b586f585ef03485b62f7ad0a1e253.
 //
-// Solidity: event SetSpendLimit(_amount uint256)
+// Solidity: e SetSpendLimit(_amount uint256)
 func (_Wallet *WalletFilterer) FilterSetSpendLimit(opts *bind.FilterOpts) (*WalletSetSpendLimitIterator, error) {
 
 	logs, sub, err := _Wallet.contract.FilterLogs(opts, "SetSpendLimit")
@@ -1367,7 +1367,7 @@ func (_Wallet *WalletFilterer) FilterSetSpendLimit(opts *bind.FilterOpts) (*Wall
 
 // WatchSetSpendLimit is a free log subscription operation binding the contract event 0x21e1049325acc99b4f885709c6ca1a70281b586f585ef03485b62f7ad0a1e253.
 //
-// Solidity: event SetSpendLimit(_amount uint256)
+// Solidity: e SetSpendLimit(_amount uint256)
 func (_Wallet *WalletFilterer) WatchSetSpendLimit(opts *bind.WatchOpts, sink chan<- *WalletSetSpendLimit) (event.Subscription, error) {
 
 	logs, sub, err := _Wallet.contract.WatchLogs(opts, "SetSpendLimit")
@@ -1477,7 +1477,7 @@ type WalletSetTopupLimit struct {
 
 // FilterSetTopupLimit is a free log retrieval operation binding the contract event 0x19ec72a595b8aab321636cc55d51478ac78e93a69b5c4a07ae548eb29e40c0a0.
 //
-// Solidity: event SetTopupLimit(_amount uint256)
+// Solidity: e SetTopupLimit(_amount uint256)
 func (_Wallet *WalletFilterer) FilterSetTopupLimit(opts *bind.FilterOpts) (*WalletSetTopupLimitIterator, error) {
 
 	logs, sub, err := _Wallet.contract.FilterLogs(opts, "SetTopupLimit")
@@ -1489,7 +1489,7 @@ func (_Wallet *WalletFilterer) FilterSetTopupLimit(opts *bind.FilterOpts) (*Wall
 
 // WatchSetTopupLimit is a free log subscription operation binding the contract event 0x19ec72a595b8aab321636cc55d51478ac78e93a69b5c4a07ae548eb29e40c0a0.
 //
-// Solidity: event SetTopupLimit(_amount uint256)
+// Solidity: e SetTopupLimit(_amount uint256)
 func (_Wallet *WalletFilterer) WatchSetTopupLimit(opts *bind.WatchOpts, sink chan<- *WalletSetTopupLimit) (event.Subscription, error) {
 
 	logs, sub, err := _Wallet.contract.WatchLogs(opts, "SetTopupLimit")
@@ -1601,7 +1601,7 @@ type WalletTopupGas struct {
 
 // FilterTopupGas is a free log retrieval operation binding the contract event 0x11bb310b94280c15845698b8ce945817e14456a5d1582e387e6e4a01ef2c6742.
 //
-// Solidity: event TopupGas(_sender address, _owner address, _amount uint256)
+// Solidity: e TopupGas(_sender address, _owner address, _amount uint256)
 func (_Wallet *WalletFilterer) FilterTopupGas(opts *bind.FilterOpts) (*WalletTopupGasIterator, error) {
 
 	logs, sub, err := _Wallet.contract.FilterLogs(opts, "TopupGas")
@@ -1613,7 +1613,7 @@ func (_Wallet *WalletFilterer) FilterTopupGas(opts *bind.FilterOpts) (*WalletTop
 
 // WatchTopupGas is a free log subscription operation binding the contract event 0x11bb310b94280c15845698b8ce945817e14456a5d1582e387e6e4a01ef2c6742.
 //
-// Solidity: event TopupGas(_sender address, _owner address, _amount uint256)
+// Solidity: e TopupGas(_sender address, _owner address, _amount uint256)
 func (_Wallet *WalletFilterer) WatchTopupGas(opts *bind.WatchOpts, sink chan<- *WalletTopupGas) (event.Subscription, error) {
 
 	logs, sub, err := _Wallet.contract.WatchLogs(opts, "TopupGas")
@@ -1725,7 +1725,7 @@ type WalletTransfer struct {
 
 // FilterTransfer is a free log retrieval operation binding the contract event 0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef.
 //
-// Solidity: event Transfer(_to address, _asset address, _amount uint256)
+// Solidity: e Transfer(_to address, _asset address, _amount uint256)
 func (_Wallet *WalletFilterer) FilterTransfer(opts *bind.FilterOpts) (*WalletTransferIterator, error) {
 
 	logs, sub, err := _Wallet.contract.FilterLogs(opts, "Transfer")
@@ -1737,7 +1737,7 @@ func (_Wallet *WalletFilterer) FilterTransfer(opts *bind.FilterOpts) (*WalletTra
 
 // WatchTransfer is a free log subscription operation binding the contract event 0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef.
 //
-// Solidity: event Transfer(_to address, _asset address, _amount uint256)
+// Solidity: e Transfer(_to address, _asset address, _amount uint256)
 func (_Wallet *WalletFilterer) WatchTransfer(opts *bind.WatchOpts, sink chan<- *WalletTransfer) (event.Subscription, error) {
 
 	logs, sub, err := _Wallet.contract.WatchLogs(opts, "Transfer")
@@ -1847,7 +1847,7 @@ type WalletWhitelistAddition struct {
 
 // FilterWhitelistAddition is a free log retrieval operation binding the contract event 0xc76dd62bd7d0b2212e0d3445c1703a522dd816a749fe499b3bcb0f51b2500434.
 //
-// Solidity: event WhitelistAddition(_addresses address[])
+// Solidity: e WhitelistAddition(_addresses address[])
 func (_Wallet *WalletFilterer) FilterWhitelistAddition(opts *bind.FilterOpts) (*WalletWhitelistAdditionIterator, error) {
 
 	logs, sub, err := _Wallet.contract.FilterLogs(opts, "WhitelistAddition")
@@ -1859,7 +1859,7 @@ func (_Wallet *WalletFilterer) FilterWhitelistAddition(opts *bind.FilterOpts) (*
 
 // WatchWhitelistAddition is a free log subscription operation binding the contract event 0xc76dd62bd7d0b2212e0d3445c1703a522dd816a749fe499b3bcb0f51b2500434.
 //
-// Solidity: event WhitelistAddition(_addresses address[])
+// Solidity: e WhitelistAddition(_addresses address[])
 func (_Wallet *WalletFilterer) WatchWhitelistAddition(opts *bind.WatchOpts, sink chan<- *WalletWhitelistAddition) (event.Subscription, error) {
 
 	logs, sub, err := _Wallet.contract.WatchLogs(opts, "WhitelistAddition")
@@ -1969,7 +1969,7 @@ type WalletWhitelistRemoval struct {
 
 // FilterWhitelistRemoval is a free log retrieval operation binding the contract event 0x4b089aff1cdd9a6984aa832d4a013996b3acd3d6244ce3de5e07e6ab050d2b94.
 //
-// Solidity: event WhitelistRemoval(_addresses address[])
+// Solidity: e WhitelistRemoval(_addresses address[])
 func (_Wallet *WalletFilterer) FilterWhitelistRemoval(opts *bind.FilterOpts) (*WalletWhitelistRemovalIterator, error) {
 
 	logs, sub, err := _Wallet.contract.FilterLogs(opts, "WhitelistRemoval")
@@ -1981,7 +1981,7 @@ func (_Wallet *WalletFilterer) FilterWhitelistRemoval(opts *bind.FilterOpts) (*W
 
 // WatchWhitelistRemoval is a free log subscription operation binding the contract event 0x4b089aff1cdd9a6984aa832d4a013996b3acd3d6244ce3de5e07e6ab050d2b94.
 //
-// Solidity: event WhitelistRemoval(_addresses address[])
+// Solidity: e WhitelistRemoval(_addresses address[])
 func (_Wallet *WalletFilterer) WatchWhitelistRemoval(opts *bind.WatchOpts, sink chan<- *WalletWhitelistRemoval) (event.Subscription, error) {
 
 	logs, sub, err := _Wallet.contract.WatchLogs(opts, "WhitelistRemoval")

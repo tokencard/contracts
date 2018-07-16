@@ -1,16 +1,38 @@
 version: 2
 jobs:
-  build_test:
+  vendor_and_test:
     docker:
-      - image: node:9.0.0
-    working_directory: /go/src/github.com/tokencard/contracts
+      - image: quay.io/token/go-build:v0.2.2
+    working_directory: /home/circleci/go/src/github.com/tokencard/contracts
     steps:
       - checkout
-      - run: scripts/ci.sh
-      - run: npm install && npm run lint && npm test
+      - restore_cache:
+          keys:
+            - vendorx-{{ checksum "Gopkg.lock" }}
+      - run: GOPATH=/home/circleci/go dep ensure
+      - run: GOPATH=/home/circleci/go go test -v ./test/...
+      - save_cache:
+          key: vendorx-{{ checksum "Gopkg.lock" }}
+          paths:
+            - "vendor"
+
+  build_test:
+    machine: true
+    working_directory: /home/circleci/go/src/github.com/tokencard/contracts
+    steps:
+      - checkout
+      - run: id
+      - run: ls -la /
+      - run: pwd
+      - restore_cache:
+          keys:
+            - vendorx-{{ checksum "Gopkg.lock" }}
+      - run: ./build.sh
+      - run: '[[ -z $(git status -uno --porcelain) ]] || (git status ; echo "Please run ./build.sh before commiting changes!"; exit 1)'
+
   mythril:
     docker:
-      - image: quay.io/token/mythril:2018-05-25
+      - image: quay.io/token/mythril:2018-07-05
     working_directory: /src
     steps:
       - checkout
@@ -20,7 +42,10 @@ workflows:
   version: 2
   build_deploy:
     jobs:
+      - vendor_and_test
       - build_test:
+          requires:
+            - vendor_and_test
           filters:
             tags:
               ignore: ""
