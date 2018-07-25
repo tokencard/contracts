@@ -25,7 +25,7 @@ var _ = Describe("balance", func() {
 			bankWallet.MustTransfer(be, wa, ONE_ETH)
 		})
 
-		It("Shuld return 1 ETH", func() {
+		It("Should return 1 ETH", func() {
 			b, err := w.Balance(nil, common.HexToAddress("0x0"))
 			Expect(err).ToNot(HaveOccurred())
 			Expect(b.String()).To(Equal("1000000000000000000"))
