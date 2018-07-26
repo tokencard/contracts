@@ -38,6 +38,21 @@ jobs:
       - checkout
       - run: myth -x *.sol
 
+  snyk_check:
+    docker:
+      - image: quay.io/token/go-build:v0.2.2
+    working_directory: /go/src/github.com/tokencard/contracts
+    steps:
+      - checkout
+      - run: |
+          apk add -U --no-cache git nodejs nodejs-npm
+          go get -u github.com/golang/dep/cmd/dep
+          dep ensure
+          npm install -g snyk
+          snyk auth ${SNYK_TOKEN}
+          snyk test
+
+
 workflows:
   version: 2
   build_deploy:
@@ -53,3 +68,5 @@ workflows:
           filters:
             tags:
               ignore: ""
+      - snyk_check:
+          context: snyk
