@@ -25,7 +25,7 @@ type Event struct {
 	Data      [][]byte
 }
 
-type SignTransaction func(*types.Transaction) (*types.Transaction, error)
+type SignTransaction func(context.Context, *types.Transaction) (*types.Transaction, error)
 
 type ConstructOpts struct {
 	From     common.Address  // Ethereum account to send the transaction from
@@ -77,8 +77,8 @@ func construct(opts *ConstructOpts, eth *ethclient.Client, address *common.Addre
 	} else if address != nil && opts.Sign == nil {
 		return types.NewTransaction(opts.Nonce, *address, new(big.Int), gasLimit+gasLimit/10, gasPrice, data), nil
 	} else if address == nil && opts.Sign != nil {
-		return opts.Sign(types.NewContractCreation(opts.Nonce, new(big.Int), gasLimit+gasLimit/10, gasPrice, data))
+		return opts.Sign(opts.Context, types.NewContractCreation(opts.Nonce, new(big.Int), gasLimit+gasLimit/10, gasPrice, data))
 	} else {
-		return opts.Sign(types.NewTransaction(opts.Nonce, *address, new(big.Int), gasLimit+gasLimit/10, gasPrice, data))
+		return opts.Sign(opts.Context, types.NewTransaction(opts.Nonce, *address, new(big.Int), gasLimit+gasLimit/10, gasPrice, data))
 	}
 }
