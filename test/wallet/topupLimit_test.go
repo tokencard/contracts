@@ -1,6 +1,8 @@
 package wallet_test
 
 import (
+	"time"
+
 	"github.com/ethereum/go-ethereum/common"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -20,7 +22,7 @@ var _ = Describe("topupLimit", func() {
 
 			w.Balance(nil, common.HexToAddress("0x0"))
 
-			tl, err = w.TopupLimit(nil)
+			tl, err = w.TopupAvailable(nil)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(tl.String()).To(Equal(FIVE_HUNDRED_FINNEY.String()))
 		})
@@ -171,6 +173,12 @@ var _ = Describe("topupLimit", func() {
 				Expect(txSuccessful).To(BeTrue())
 			})
 
+			It("Should have pending topup limit of 1 Finney", func() {
+				ptl, err := w.PendingTopupLimit(nil)
+				Expect(err).ToNot(HaveOccurred())
+				Expect(ptl.String()).To(Equal(ONE_FINNEY.String()))
+			})
+
 			Context("When the controller cancells the limit change", func() {
 				BeforeEach(func() {
 					tx, err := w.SetTopupLimitCancel(controller.TransactOpts())
@@ -273,7 +281,7 @@ var _ = Describe("topupLimit", func() {
 				})
 
 				It("Should have 1 Finney available for topups", func() {
-					tl, err := w.TopupLimit(nil)
+					tl, err := w.TopupAvailable(nil)
 					Expect(err).ToNot(HaveOccurred())
 					Expect(tl.String()).To(Equal(ONE_FINNEY.String()))
 				})
@@ -290,6 +298,35 @@ var _ = Describe("topupLimit", func() {
 
 					It("Should succeed", func() {
 						Expect(txSuccessful).To(BeTrue())
+					})
+
+					Context("When the controller confirms the topup limit", func() {
+						BeforeEach(func() {
+							tx, err := w.SetTopupLimitConfirm(controller.TransactOpts())
+							Expect(err).ToNot(HaveOccurred())
+							be.Commit()
+							txSuccessful = isSuccessful(tx)
+						})
+
+						It("Should have 1 Finney available for topups", func() {
+							tl, err := w.TopupAvailable(nil)
+							Expect(err).ToNot(HaveOccurred())
+							Expect(tl.String()).To(Equal(ONE_FINNEY.String()))
+						})
+						Context("When I wait for longer than a day", func() {
+							BeforeEach(func() {
+								be.AdjustTime(time.Hour * 25)
+								be.Commit()
+							})
+
+							It("Should have 500 Finney available for topups", func() {
+								tl, err := w.TopupAvailable(nil)
+								Expect(err).ToNot(HaveOccurred())
+								Expect(tl.String()).To(Equal(FIVE_HUNDRED_FINNEY.String()))
+							})
+
+						})
+
 					})
 
 				})

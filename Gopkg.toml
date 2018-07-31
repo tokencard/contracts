@@ -45,5 +45,9 @@
   branch = "master"
   name = "github.com/tokencard/assets"
 
+[[constraint]]
+  name = "github.com/tokencard/ethertest"
+  version = "v0.1.0"
+
 [prune]
   go-tests = true
