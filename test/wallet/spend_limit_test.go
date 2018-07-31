@@ -3,6 +3,7 @@ package wallet_test
 import (
 	"time"
 
+	"github.com/ethereum/go-ethereum/common"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
@@ -55,6 +56,12 @@ var _ = Describe("spendAvailable", func() {
 				Expect(av.String()).To(Equal(ethToWei(1).String()))
 			})
 
+			It("Should have spend limit of 1 ETH", func() {
+				sl, err := w.SpendLimit(nil)
+				Expect(err).ToNot(HaveOccurred())
+				Expect(sl.String()).To(Equal(ethToWei(1).String()))
+			})
+
 			Context("When I try to initialize the spending limit again", func() {
 				It("Should fail", func() {
 					to := owner.TransactOpts()
@@ -91,6 +98,27 @@ var _ = Describe("spendAvailable", func() {
 					av, err := w.SpendAvailable(nil)
 					Expect(err).ToNot(HaveOccurred())
 					Expect(av.String()).To(Equal(ethToWei(1000).String()))
+				})
+
+				Context("when the contract has one eth", func() {
+					BeforeEach(func() {
+						bankWallet.Transfer(be, wa, ethToWei(1))
+					})
+
+					Context("When I transfer one ETH", func() {
+						BeforeEach(func() {
+							tx, err := w.Transfer(owner.TransactOpts(), randomPerson.Address(), common.HexToAddress("0x"), ethToWei(1))
+							Expect(err).ToNot(HaveOccurred())
+							be.Commit()
+							Expect(isSuccessful(tx)).To(BeTrue())
+						})
+						It("Should have 999 ETH spend available", func() {
+							sa, err := w.SpendAvailable(nil)
+							Expect(err).ToNot(HaveOccurred())
+							Expect(sa.String()).To(Equal(ethToWei(999).String()))
+						})
+					})
+
 				})
 
 			})
