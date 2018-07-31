@@ -8,11 +8,11 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - vendorx-{{ checksum "Gopkg.lock" }}
-      - run: GOPATH=/home/circleci/go dep ensure
+            - vendor-{{ checksum "Gopkg.lock" }}
+      - run: GOPATH=/home/circleci/go dep ensure -vendor-only
       - run: GOPATH=/home/circleci/go go test -v ./test/...
       - save_cache:
-          key: vendorx-{{ checksum "Gopkg.lock" }}
+          key: vendor-{{ checksum "Gopkg.lock" }}
           paths:
             - "vendor"
 
@@ -26,7 +26,7 @@ jobs:
       - run: pwd
       - restore_cache:
           keys:
-            - vendorx-{{ checksum "Gopkg.lock" }}
+            - vendor-{{ checksum "Gopkg.lock" }}
       - run: ./build.sh
       - run: '[[ -z $(git status -uno --porcelain) ]] || (git status ; echo "Please run ./build.sh before commiting changes!"; exit 1)'
 
