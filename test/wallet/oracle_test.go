@@ -5,7 +5,7 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-var _ = Describe("owner", func() {
+var _ = Describe("oracle", func() {
 	Context("When the contract has been deployed", func() {
 		It("should have an oracle", func() {
 			o, err := w.Oracle(nil)
