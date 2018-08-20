@@ -11,9 +11,6 @@ ${SOLC} --overwrite  --bin --abi ./oracle.sol         -o /solidity/build/oracle 
 ${SOLC} --overwrite  --bin --abi ./old/card.sol       -o /solidity/build/card       && bin=$(awk '{print "0x" $0}' ./build/card/Card.bin)             && echo $bin > ./build/card/Card.bin             && echo "Compiled card."
 ${SOLC} --overwrite  --bin --abi ./old/controller.sol -o /solidity/build/controller && bin=$(awk '{print "0x" $0}' ./build/controller/Controller.bin) && echo $bin > ./build/controller/Controller.bin && echo "Compiled controller."
 
-# Create combined-json for code coverage.
-${SOLC} --overwrite --combined-json bin-runtime,srcmap-runtime,ast,srcmap,bin -o /solidity/build wallet.sol oracle.sol token.sol old/controller.sol old/card.sol && echo "Combined JSON output."
-
 GE_PATH=${PWD}/vendor/github.com/ethereum/go-ethereum
 if [ ! -d ${GE_PATH} ]
 then
