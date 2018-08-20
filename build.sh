@@ -1,8 +1,8 @@
 #!/bin/bash
 
-set -e
+set -e -o pipefail
 
-SOLC="docker run --rm -v $PWD:/solidity --workdir /solidity/contracts ethereum/solc:0.4.24"
+SOLC="docker run --rm -u `id -u` -v $PWD:/solidity --workdir /solidity/contracts ethereum/solc:0.4.24"
 
 # Compile solidity contracts and hex prefix bytecode string.
 ${SOLC} --overwrite  --bin --abi wallet.sol         -o /solidity/build/wallet     --combined-json bin-runtime,srcmap-runtime,ast,srcmap,bin && bin=$(awk '{print "0x" $0}' ./build/wallet/Wallet.bin)         && echo $bin > ./build/wallet/Wallet.bin         && echo "Compiled wallet."     || exit 1

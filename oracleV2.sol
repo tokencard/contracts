@@ -1,7 +1,9 @@
 pragma solidity ^0.4.18;
 
-import "github.com/oraclize/ethereum-api/oraclizeAPI.sol";
-import "github.com/Arachnid/solidity-stringutils/strings.sol";
+//"0xfe209bde5ca32fa20e6728a005f26d651fff5982","TKN",8
+
+import "./deps/oraclize/ethereum-api/oraclizeAPI.sol";
+import "./deps/Arachnid/solidity-stringutils/strings.sol";
 
 contract Oracle is usingOraclize{
 
