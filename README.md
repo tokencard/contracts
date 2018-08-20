@@ -48,9 +48,15 @@ Controller.sol allows Token to interact with the Card.sol contract. (old contrac
 
 ## Running contract tests
 
+Get dependencies:
 ```sh
-npm install
-npm run test
+dep ensure
+```
+
+Run tests:
+
+```sh
+go test -v ./test/...
 ```
 
 ## Code coverage reports
@@ -62,16 +68,6 @@ open coverage/index.html
 ```
 
 ## Building contracts
-
-You need abigen:
-```
-go get -u github.com/ethereum/go-ethereum
-cd $GOPATH/src/github.com/ethereum/go-ethereum
-make all
-cd cmd/abigen
-go build
-mv abigen $GOPATH/bin
-```
 
 To build all contracts and generate corresponding Go bindings:
 

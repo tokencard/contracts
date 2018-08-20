@@ -73,7 +73,7 @@ var bankWallet = ethertest.NewWallet()
 
 func init() {
 	testRig.AddGenesisAccountAllocation(bankWallet.Address(), HUNDRED_ETH)
-	testRig.AddCoverageForContracts("../../build/combined.json", "../../wallet.sol")
+	testRig.AddCoverageForContracts("../../build/combined.json", "../../contracts/wallet.sol")
 }
 
 var _ = AfterSuite(func() {
