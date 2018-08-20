@@ -14,6 +14,7 @@ ${SOLC} --overwrite  --bin --abi old/controller.sol -o /solidity/build/controlle
 GE_PATH=${PWD}/vendor/github.com/ethereum/go-ethereum
 if [ ! -d ${GE_PATH} ]
 then
+  echo "if statement"
   GE_PATH=${GOPATH:-$HOME/go}/src/github.com/ethereum/go-ethereum
 fi
 
