@@ -18,6 +18,7 @@ contract Control {
     event RemoveController(address _account);
 
     mapping (address => bool) public isController;
+    uint public controllerCount;
     address public owner;
 
     /// @dev Executable only by the owner.
@@ -40,12 +41,15 @@ contract Control {
 
     /// @dev Add a new controller to the list of controllers.
     function addController(address _account) public onlyController {
+        controllerCount++;
         isController[_account] = true;
         emit AddController(_account);
     }
 
     /// @dev Remove a controller from the list of controllers.
     function removeController(address _account) public onlyController {
+        require(controllerCount > 1);
+        controllerCount--;
         isController[_account] = false;
         emit RemoveController(_account);
     }
@@ -270,6 +274,7 @@ contract Vault is Whitelist, SpendLimit {
         owner = _owner;
         oracle = _oracle;
         for (uint i = 0; i < _controllers.length; i++) {
+            controllerCount++;
             isController[_controllers[i]] = true;
         }
     }
