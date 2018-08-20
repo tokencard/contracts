@@ -14,7 +14,6 @@ ${SOLC} --overwrite  --bin --abi old/controller.sol -o /solidity/build/controlle
 GE_PATH=${PWD}/vendor/github.com/ethereum/go-ethereum
 if [ ! -d ${GE_PATH} ]
 then
-  echo "if statement"
   GE_PATH=${GOPATH:-$HOME/go}/src/github.com/ethereum/go-ethereum
 fi
 
@@ -25,4 +24,3 @@ ${ABIGEN} --abi ./build/card/Card.abi             --bin ./build/card/Card.bin   
 ${ABIGEN} --abi ./build/oracle/Oracle.abi         --bin ./build/oracle/Oracle.bin         --pkg bindings --type=Oracle     --out ./pkg/bindings/oracle.go     && echo "Generated oracle bindings."
 ${ABIGEN} --abi ./build/controller/Controller.abi --bin ./build/controller/Controller.bin --pkg bindings --type=Controller --out ./pkg/bindings/controller.go && echo "Generated controller bindings."
 ${ABIGEN} --abi ./build/token/Token.abi           --bin ./build/token/Token.bin           --pkg bindings --type=Token      --out ./pkg/bindings/token.go      && echo "Generated token bindings."
-
