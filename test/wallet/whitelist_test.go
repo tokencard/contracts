@@ -185,26 +185,20 @@ var _ = Describe("addToWhitelist", func() {
 				Expect(len(pending)).To(Equal(0))
 			})
 
-			It("Should have empty pendingAddition list", func() {
-				pending, err := w.PendingAddition(nil)
-				Expect(err).ToNot(HaveOccurred())
-				Expect(len(pending)).To(Equal(0))
+			Context("When I try to initialize the whitelist", func() {
+				It("Should fail", func() {
+					to := owner.TransactOpts()
+					to.GasLimit = 100000
+					tx, err := w.InitializeWhitelist(to, []common.Address{randomPerson.Address()})
+					Expect(err).ToNot(HaveOccurred())
+					be.Commit()
+					Expect(isSuccessful(tx)).To(BeFalse())
+				})
 			})
 
 			Context("When I try to add another person to the whitelist", func() {
 				It("Should succeed", func() {
 					tx, err := w.AddToWhitelist(owner.TransactOpts(), []common.Address{randomPerson.Address()})
-					Expect(err).ToNot(HaveOccurred())
-					be.Commit()
-					Expect(isSuccessful(tx)).To(BeTrue())
-				})
-			})
-
-			Context("When I try to initialize the whitelist", func() {
-				It("Should succeed", func() {
-					to := owner.TransactOpts()
-					to.GasLimit = 100000
-					tx, err := w.InitializeWhitelist(to, []common.Address{randomPerson.Address()})
 					Expect(err).ToNot(HaveOccurred())
 					be.Commit()
 					Expect(isSuccessful(tx)).To(BeTrue())
