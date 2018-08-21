@@ -5,11 +5,11 @@ set -e
 SOLC="docker run --rm -v $PWD:/solidity --workdir /solidity/contracts ethereum/solc:0.4.24"
 
 # Compile solidity contracts and hex prefix bytecode string.
-${SOLC} --overwrite  --bin --abi ./wallet.sol         -o /solidity/build/wallet     && bin=$(awk '{print "0x" $0}' ./build/wallet/Wallet.bin)         && echo $bin > ./build/wallet/Wallet.bin         && echo "Compiled wallet."
-${SOLC} --overwrite  --bin --abi ./token.sol          -o /solidity/build/token      && bin=$(awk '{print "0x" $0}' ./build/token/Token.bin)           && echo $bin > ./build/token/Token.bin           && echo "Compiled token."
-${SOLC} --overwrite  --bin --abi ./oracle.sol         -o /solidity/build/oracle     && bin=$(awk '{print "0x" $0}' ./build/oracle/Oracle.bin)         && echo $bin > ./build/oracle/Oracle.bin         && echo "Compiled oracle."
-${SOLC} --overwrite  --bin --abi ./old/card.sol       -o /solidity/build/card       && bin=$(awk '{print "0x" $0}' ./build/card/Card.bin)             && echo $bin > ./build/card/Card.bin             && echo "Compiled card."
-${SOLC} --overwrite  --bin --abi ./old/controller.sol -o /solidity/build/controller && bin=$(awk '{print "0x" $0}' ./build/controller/Controller.bin) && echo $bin > ./build/controller/Controller.bin && echo "Compiled controller."
+${SOLC} --overwrite  --bin --abi wallet.sol         -o /solidity/build/wallet     --combined-json bin-runtime,srcmap-runtime,ast,srcmap,bin && bin=$(awk '{print "0x" $0}' ./build/wallet/Wallet.bin)         && echo $bin > ./build/wallet/Wallet.bin         && echo "Compiled wallet."
+${SOLC} --overwrite  --bin --abi token.sol          -o /solidity/build/token      --combined-json bin-runtime,srcmap-runtime,ast,srcmap,bin && bin=$(awk '{print "0x" $0}' ./build/token/Token.bin)           && echo $bin > ./build/token/Token.bin           && echo "Compiled token."
+${SOLC} --overwrite  --bin --abi oracle.sol         -o /solidity/build/oracle     --combined-json bin-runtime,srcmap-runtime,ast,srcmap,bin && bin=$(awk '{print "0x" $0}' ./build/oracle/Oracle.bin)         && echo $bin > ./build/oracle/Oracle.bin         && echo "Compiled oracle."
+${SOLC} --overwrite  --bin --abi old/card.sol       -o /solidity/build/card       --combined-json bin-runtime,srcmap-runtime,ast,srcmap,bin && bin=$(awk '{print "0x" $0}' ./build/card/Card.bin)             && echo $bin > ./build/card/Card.bin             && echo "Compiled card."
+${SOLC} --overwrite  --bin --abi old/controller.sol -o /solidity/build/controller --combined-json bin-runtime,srcmap-runtime,ast,srcmap,bin && bin=$(awk '{print "0x" $0}' ./build/controller/Controller.bin) && echo $bin > ./build/controller/Controller.bin && echo "Compiled controller."
 
 GE_PATH=${PWD}/vendor/github.com/ethereum/go-ethereum
 if [ ! -d ${GE_PATH} ]
