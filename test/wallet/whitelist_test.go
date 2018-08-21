@@ -295,10 +295,10 @@ var _ = Describe("removeFromWhitelist", func() {
 					Expect(evt.Addresses).To(Equal([]common.Address{randomPerson.Address()}))
 				})
 
-				It("should not clear pendingRemoval (bug!)", func() {
+				It("should clear pendingRemoval", func() {
 					pending, err := w.PendingRemoval(nil)
 					Expect(err).ToNot(HaveOccurred())
-					Expect(len(pending)).ToNot(Equal(0))
+					Expect(len(pending)).To(Equal(0))
 				})
 				Context("When I try to submit addreses for removal", func() {
 					It("Should succeed", func() {

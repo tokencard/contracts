@@ -121,11 +121,11 @@ contract Whitelist is Control {
                 isWhitelisted[_pendingAddition[i]] = true;
             }
         }
+        emit WhitelistAddition(_pendingAddition);
         // Reset pending addresses.
         delete _pendingAddition;
         // Reset the submission flag.
         submittedAddition = false;
-        emit WhitelistAddition(_pendingAddition);
     }
 
     /// @dev Cancel pending whitelist addition.
@@ -156,11 +156,11 @@ contract Whitelist is Control {
         for (uint i = 0; i < _pendingRemoval.length; i++) {
             isWhitelisted[_pendingRemoval[i]] = false;
         }
+        emit WhitelistRemoval(_pendingRemoval);
         // Reset pending addresses.
         delete _pendingRemoval;
         // Reset the submission flag.
         submittedRemoval = false;
-        emit WhitelistRemoval(_pendingRemoval);
     }
 
     /// @dev Cancel pending removal of whitelisted addresses.
@@ -225,11 +225,11 @@ contract SpendLimit is Control {
         require(submittedSpendLimit);
         // Modify spend limit based on the pending value.
         modifySpendLimit(pendingSpendLimit);
-        // Reset pending daily limit.
-        pendingSpendLimit = 0;
+        emit SetSpendLimit(pendingSpendLimit);
         // Reset the submission flag.
         submittedSpendLimit = false;
-        emit SetSpendLimit(pendingSpendLimit);
+        // Reset pending daily limit.
+        pendingSpendLimit = 0;
     }
 
     /// @dev Cancel pending set daily limit operation.
@@ -415,11 +415,11 @@ contract Wallet is Vault {
         assert(MINIMUM_TOPUP_LIMIT <= pendingTopupLimit && pendingTopupLimit <= MAXIMUM_TOPUP_LIMIT);
         // Modify topup limit based on the pending value.
         modifyTopupLimit(pendingTopupLimit);
+        emit SetTopupLimit(pendingTopupLimit);
         // Reset pending daily limit.
         pendingTopupLimit = 0;
         // Reset the submission flag.
         submittedTopupLimit = false;
-        emit SetTopupLimit(pendingTopupLimit);
     }
 
     /// @dev Cancel pending set top up limit operation.
