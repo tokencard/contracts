@@ -77,7 +77,7 @@ func init() {
 }
 
 var _ = AfterSuite(func() {
-	testRig.ExpectMinimumCoverage("wallet.sol:Wallet", 99.36)
+	testRig.ExpectMinimumCoverage("wallet.sol:Wallet", 94.60)
 })
 
 func balanceOf(a common.Address) *big.Int {
