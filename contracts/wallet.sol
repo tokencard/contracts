@@ -41,16 +41,17 @@ contract Control {
 
     /// @dev Add a new controller to the list of controllers.
     function addController(address _account) public onlyController {
-        controllerCount++;
+        require(!isController[_account]);
         isController[_account] = true;
+        controllerCount++;
         emit AddController(_account);
     }
 
     /// @dev Remove a controller from the list of controllers.
     function removeController(address _account) public onlyController {
-        require(controllerCount > 1);
-        controllerCount--;
+        require(isController[_account] && controllerCount > 1);
         isController[_account] = false;
+        controllerCount--;
         emit RemoveController(_account);
     }
 }
