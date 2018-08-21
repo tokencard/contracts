@@ -69,6 +69,12 @@ contract Whitelist is Control {
     bool public submittedRemoval;
     bool public initializedWhitelist;
 
+    /// @dev Make sure that the whitelisted addresses array is not too big.
+    modifier belowMax(address[] _addresses) {
+        require(_addresses.length <= 20);
+        _;
+    }
+
     // @dev Getter for pending addition array.
     function pendingAddition() public view returns(address[]) {
         return _pendingAddition;
@@ -81,7 +87,7 @@ contract Whitelist is Control {
 
     /// @dev Add initial addresses to the whitelist.
     /// @param _addresses are the Ethereum addresses to be whitelisted.
-    function initializeWhitelist(address[] _addresses) public onlyOwner {
+    function initializeWhitelist(address[] _addresses) public onlyOwner belowMax(_addresses) {
         require(!initializedWhitelist);
         // Add each of the provided addresses to the whitelist.
         for (uint i = 0; i < _addresses.length; i++) {
@@ -93,11 +99,9 @@ contract Whitelist is Control {
 
     /// @dev Add addresses to the whitelist.
     /// @param _addresses are the Ethereum addresses to be whitelisted.
-    function addToWhitelist(address[] _addresses) public onlyOwner {
+    function addToWhitelist(address[] _addresses) public onlyOwner belowMax(_addresses) {
         // Check if this operation has been already submitted.
         require(!submittedAddition);
-        // Limit the amount of addresses that can be whitelisted at one time.
-        require(_addresses.length <= 20);
         // Add the provided addresses to the pending addition list.
         _pendingAddition = _addresses;
         // Flag the operation as submitted.
@@ -132,11 +136,9 @@ contract Whitelist is Control {
 
     /// @dev Remove addresses from the whitelist.
     /// @param _addresses are the Ethereum addresses to be removed.
-    function removeFromWhitelist(address[] _addresses) public onlyOwner {
+    function removeFromWhitelist(address[] _addresses) public onlyOwner belowMax(_addresses) {
         // Check if this operation has been already submitted.
         require(!submittedRemoval);
-        // Limit the amount of addresses that can be removed at one time.
-        require(_addresses.length <= 20);
         // Add each of the addresses to the pending removal list.
         for (uint i = 0; i < _addresses.length; i++) {
             _pendingRemoval.push(_addresses[i]);

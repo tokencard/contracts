@@ -161,7 +161,7 @@ var _ = Describe("topupLimit", func() {
 
 			BeforeEach(func() {
 				op := owner.TransactOpts()
-				op.GasLimit = 65000
+				op.GasLimit = 70000
 				tx, err := w.SetTopupLimit(op, ONE_FINNEY)
 				Expect(err).ToNot(HaveOccurred())
 				be.Commit()
