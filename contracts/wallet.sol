@@ -121,6 +121,8 @@ contract Whitelist is Control {
                 isWhitelisted[_pendingAddition[i]] = true;
             }
         }
+        // Reset pending addresses.
+        delete _pendingAddition;
         // Reset the submission flag.
         submittedAddition = false;
         emit WhitelistAddition(_pendingAddition);
@@ -154,6 +156,8 @@ contract Whitelist is Control {
         for (uint i = 0; i < _pendingRemoval.length; i++) {
             isWhitelisted[_pendingRemoval[i]] = false;
         }
+        // Reset pending addresses.
+        delete _pendingRemoval;
         // Reset the submission flag.
         submittedRemoval = false;
         emit WhitelistRemoval(_pendingRemoval);
@@ -221,6 +225,8 @@ contract SpendLimit is Control {
         require(submittedSpendLimit);
         // Modify spend limit based on the pending value.
         modifySpendLimit(pendingSpendLimit);
+        // Reset pending daily limit.
+        pendingSpendLimit = 0;
         // Reset the submission flag.
         submittedSpendLimit = false;
         emit SetSpendLimit(pendingSpendLimit);
@@ -228,7 +234,7 @@ contract SpendLimit is Control {
 
     /// @dev Cancel pending set daily limit operation.
     function setSpendLimitCancel() public onlyController {
-        // Reset pending daily limit change.
+        // Reset pending daily limit.
         pendingSpendLimit = 0;
         // Reset the submitted operation flag.
         submittedSpendLimit = false;
@@ -409,6 +415,8 @@ contract Wallet is Vault {
         assert(MINIMUM_TOPUP_LIMIT <= pendingTopupLimit && pendingTopupLimit <= MAXIMUM_TOPUP_LIMIT);
         // Modify topup limit based on the pending value.
         modifyTopupLimit(pendingTopupLimit);
+        // Reset pending daily limit.
+        pendingTopupLimit = 0;
         // Reset the submission flag.
         submittedTopupLimit = false;
         emit SetTopupLimit(pendingTopupLimit);
@@ -416,7 +424,7 @@ contract Wallet is Vault {
 
     /// @dev Cancel pending set top up limit operation.
     function setTopupLimitCancel() public onlyController {
-        // Reset pending daily limit change.
+        // Reset pending daily limit.
         pendingTopupLimit = 0;
         // Reset the submitted operation flag.
         submittedTopupLimit = false;
