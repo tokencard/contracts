@@ -38,6 +38,7 @@ var _ = Describe("addController", func() {
 				it, err := w.FilterAddController(nil)
 				Expect(err).ToNot(HaveOccurred())
 				Expect(it.Next()).To(BeTrue())
+				Expect(it.Next()).To(BeTrue())
 				evt := it.Event
 				Expect(it.Next()).To(BeFalse())
 				Expect(evt.Account).To(Equal(randomPerson.Address()))
