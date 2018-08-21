@@ -102,6 +102,10 @@ contract Whitelist is Control {
         _pendingAddition = _addresses;
         // Flag the operation as submitted.
         submittedAddition = true;
+        // Flag operation as initialized if not initialized already.
+        if (!initializedWhitelist) {
+            initializedWhitelist = true;
+        }
     }
 
     /// @dev Confirm pending whitelist addition.
@@ -115,10 +119,6 @@ contract Whitelist is Control {
         }
         // Reset the submission flag.
         submittedAddition = false;
-        // Flag operation as initialized if not initialized already.
-        if (!initializedWhitelist) {
-            initializedWhitelist = true;
-        }
         emit WhitelistAddition(_pendingAddition);
     }
 
@@ -208,6 +208,10 @@ contract SpendLimit is Control {
         pendingSpendLimit = _amount;
         // Flag the operation as submitted.
         submittedSpendLimit = true;
+        // Flag operation as initialized if not initialized already.
+        if (!initializedSpendLimit) {
+            initializedSpendLimit = true;
+        }
     }
 
     /// @dev Confirm pending set daily limit operation.
@@ -217,10 +221,6 @@ contract SpendLimit is Control {
         modifySpendLimit(pendingSpendLimit);
         // Reset the submission flag.
         submittedSpendLimit = false;
-        // Flag operation as initialized if not initialized already.
-        if (!initializedSpendLimit) {
-            initializedSpendLimit = true;
-        }
         emit SetSpendLimit(pendingSpendLimit);
     }
 
@@ -393,6 +393,10 @@ contract Wallet is Vault {
         pendingTopupLimit = _amount;
         // Flag the operation as submitted.
         submittedTopupLimit = true;
+        // Flag operation as initialized if not initialized already.
+        if (!initializedTopupLimit) {
+            initializedTopupLimit = true;
+        }
     }
 
     /// @dev Confirm pending set top up limit operation.
@@ -405,10 +409,6 @@ contract Wallet is Vault {
         modifyTopupLimit(pendingTopupLimit);
         // Reset the submission flag.
         submittedTopupLimit = false;
-        // Flag operation as initialized if not initialized already.
-        if (!initializedTopupLimit) {
-            initializedTopupLimit = true;
-        }
         emit SetTopupLimit(pendingTopupLimit);
     }
 
