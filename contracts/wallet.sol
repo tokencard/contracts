@@ -219,7 +219,7 @@ contract SpendLimit is Control {
         submittedSpendLimit = false;
         // Flag operation as initialized if not initialized already.
         if (!initializedSpendLimit) {
-            _initializedSpendLimit = true;
+            initializedSpendLimit = true;
         }
         emit SetSpendLimit(pendingSpendLimit);
     }
