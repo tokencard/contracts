@@ -275,8 +275,11 @@ contract Vault is Whitelist, SpendLimit {
         owner = _owner;
         oracle = _oracle;
         for (uint i = 0; i < _controllers.length; i++) {
-            controllerCount++;
-            isController[_controllers[i]] = true;
+            if (!isController[_controllers[i]]) {
+                isController[_controllers[i]] = true;
+                controllerCount++;
+                emit AddController(_controllers[i]);
+            }
         }
     }
 
