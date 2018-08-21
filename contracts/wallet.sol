@@ -70,7 +70,7 @@ contract Whitelist is Control {
     bool public initializedWhitelist;
 
     /// @dev Make sure that the whitelisted addresses array is not too big.
-    modifier belowMax(address[] _addresses) {
+    modifier maxLength(address[] _addresses) {
         require(_addresses.length <= 20);
         _;
     }
@@ -87,7 +87,7 @@ contract Whitelist is Control {
 
     /// @dev Add initial addresses to the whitelist.
     /// @param _addresses are the Ethereum addresses to be whitelisted.
-    function initializeWhitelist(address[] _addresses) public onlyOwner belowMax(_addresses) {
+    function initializeWhitelist(address[] _addresses) public onlyOwner maxLength(_addresses) {
         require(!initializedWhitelist);
         // Add each of the provided addresses to the whitelist.
         for (uint i = 0; i < _addresses.length; i++) {
@@ -99,7 +99,7 @@ contract Whitelist is Control {
 
     /// @dev Add addresses to the whitelist.
     /// @param _addresses are the Ethereum addresses to be whitelisted.
-    function addToWhitelist(address[] _addresses) public onlyOwner belowMax(_addresses) {
+    function addToWhitelist(address[] _addresses) public onlyOwner maxLength(_addresses) {
         // Check if this operation has been already submitted.
         require(!submittedAddition);
         // Add the provided addresses to the pending addition list.
@@ -138,7 +138,7 @@ contract Whitelist is Control {
 
     /// @dev Remove addresses from the whitelist.
     /// @param _addresses are the Ethereum addresses to be removed.
-    function removeFromWhitelist(address[] _addresses) public onlyOwner belowMax(_addresses) {
+    function removeFromWhitelist(address[] _addresses) public onlyOwner maxLength(_addresses) {
         // Check if this operation has been already submitted.
         require(!submittedRemoval);
         // Add each of the addresses to the pending removal list.
