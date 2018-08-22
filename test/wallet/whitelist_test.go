@@ -134,6 +134,17 @@ var _ = Describe("addToWhitelist", func() {
 			})
 		})
 
+		Context("When I try to remove a person from the whitelist while addition is pending", func() {
+			It("should fail", func() {
+				to := owner.TransactOpts()
+				to.GasLimit = 100000
+				tx, err := w.SubmitWhitelistRemoval(to, []common.Address{randomPerson.Address()})
+				Expect(err).ToNot(HaveOccurred())
+				be.Commit()
+				Expect(isSuccessful(tx)).To(BeFalse())
+			})
+		})
+
 		Context("When the controller confirms the adding to the whitelist", func() {
 			BeforeEach(func() {
 				to := controller.TransactOpts()
@@ -294,6 +305,17 @@ var _ = Describe("removeFromWhitelist", func() {
 					to := owner.TransactOpts()
 					to.GasLimit = 100000
 					tx, err := w.SubmitWhitelistRemoval(to, []common.Address{randomPerson.Address()})
+					Expect(err).ToNot(HaveOccurred())
+					be.Commit()
+					Expect(isSuccessful(tx)).To(BeFalse())
+				})
+			})
+
+			Context("When I try to submit a list for addition while removal is pending", func() {
+				It("should fail", func() {
+					to := owner.TransactOpts()
+					to.GasLimit = 100000
+					tx, err := w.SubmitWhitelistAddition(to, []common.Address{randomPerson.Address()})
 					Expect(err).ToNot(HaveOccurred())
 					be.Commit()
 					Expect(isSuccessful(tx)).To(BeFalse())
