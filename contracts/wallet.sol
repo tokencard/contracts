@@ -184,9 +184,9 @@ contract Whitelist is Control {
 /// @title SpendLimit provides daily spend limit functionality.
 contract SpendLimit is Control {
 
+    event SetSpendLimit(address _sender, uint _amount);
     event SubmitSpendLimit(uint _amount);
     event CancelSpendLimit(address _sender);
-    event SetSpendLimit(address _sender, uint _amount);
 
     uint public spendLimit;
     uint internal _spendLimitDay;
@@ -357,13 +357,13 @@ contract Vault is Whitelist, SpendLimit {
     }
 }
 
-/// @title Asset wallet with extra security features.
+/// @title Asset wallet with extra security features and gas topup management.
 contract Wallet is Vault {
 
+    event TopupGas(address _sender, address _owner, uint _amount);
+    event SetTopupLimit(address _sender, uint _amount);
     event SubmitTopupLimit(uint _amount);
     event CancelTopupLimit(address _sender);
-    event SetTopupLimit(address _sender, uint _amount);
-    event TopupGas(address _sender, address _owner, uint _amount);
 
     uint constant private MINIMUM_TOPUP_LIMIT = 1 finney;
     uint constant private MAXIMUM_TOPUP_LIMIT = 500 finney;
