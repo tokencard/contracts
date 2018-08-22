@@ -120,8 +120,8 @@ contract Whitelist is Control {
     /// @dev Add addresses to the whitelist.
     /// @param _addresses are the Ethereum addresses to be whitelisted.
     function submitWhitelistAddition(address[] _addresses) public onlyOwner maxLength(_addresses) hasNoOwner(_addresses) {
-        // Check if this operation has been already submitted.
-        require(!submittedWhitelistAddition);
+        // Check if either addition or removal operation has been already submitted.
+        require(!submittedWhitelistAddition && !submittedWhitelistRemoval);
         // Add the provided addresses to the pending addition list.
         _pendingWhitelistAddition = _addresses;
         // Flag the operation as submitted.
@@ -159,8 +159,8 @@ contract Whitelist is Control {
     /// @dev Remove addresses from the whitelist.
     /// @param _addresses are the Ethereum addresses to be removed.
     function submitWhitelistRemoval(address[] _addresses) public onlyOwner maxLength(_addresses) {
-        // Check if this operation has been already submitted.
-        require(!submittedWhitelistRemoval);
+        // Check if either addition or removal operation has been already submitted.
+        require(!submittedWhitelistRemoval && !submittedWhitelistAddition);
         // Add the provided addresses to the pending addition list.
         _pendingWhitelistRemoval = _addresses;
         // Flag the operation as submitted.
