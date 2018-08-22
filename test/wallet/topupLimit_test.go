@@ -73,8 +73,19 @@ var _ = Describe("topupLimit", func() {
 				be.Commit()
 				txSuccessful = isSuccessful(tx)
 			})
+
 			It("Should succeed", func() {
 				Expect(txSuccessful).To(BeTrue())
+			})
+
+			It("Should emit SetTopupLimit event", func() {
+				it, err := w.FilterSetTopupLimit(nil)
+				Expect(err).ToNot(HaveOccurred())
+				Expect(it.Next()).To(BeTrue())
+				evt := it.Event
+				Expect(it.Next()).To(BeFalse())
+				Expect(evt.Sender).To(Equal(owner.Address()))
+				Expect(evt.Amount).To(Equal(ONE_FINNEY))
 			})
 
 			Context("When I try to initialize the limit again", func() {
@@ -168,6 +179,15 @@ var _ = Describe("topupLimit", func() {
 
 			})
 
+			It("Should emit SubmitTopupLimit event", func() {
+				it, err := w.FilterSubmitTopupLimit(nil)
+				Expect(err).ToNot(HaveOccurred())
+				Expect(it.Next()).To(BeTrue())
+				evt := it.Event
+				Expect(it.Next()).To(BeFalse())
+				Expect(evt.Amount).To(Equal(ONE_FINNEY))
+			})
+
 			It("Should succeed", func() {
 				Expect(txSuccessful).To(BeTrue())
 			})
@@ -184,6 +204,15 @@ var _ = Describe("topupLimit", func() {
 					Expect(err).ToNot(HaveOccurred())
 					be.Commit()
 					Expect(isSuccessful(tx)).To(BeTrue())
+				})
+
+				It("Should emit CancelTopupLimit event", func() {
+					it, err := w.FilterCancelTopupLimit(nil)
+					Expect(err).ToNot(HaveOccurred())
+					Expect(it.Next()).To(BeTrue())
+					evt := it.Event
+					Expect(it.Next()).To(BeFalse())
+					Expect(evt.Sender).To(Equal(controller.Address()))
 				})
 
 				It("Should set pendingTopupLimit to 0", func() {

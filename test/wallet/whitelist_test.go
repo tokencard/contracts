@@ -114,6 +114,15 @@ var _ = Describe("addToWhitelist", func() {
 			Expect(pending).To(Equal([]common.Address{randomPerson.Address()}))
 		})
 
+		It("Should emit a SubmitWhitelistAddition event", func() {
+			it, err := w.FilterSubmitWhitelistAddition(nil)
+			Expect(err).ToNot(HaveOccurred())
+			Expect(it.Next()).To(BeTrue())
+			evt := it.Event
+			Expect(it.Next()).To(BeFalse())
+			Expect(evt.Addresses).To(Equal([]common.Address{randomPerson.Address()}))
+		})
+
 		Context("When I try to add another person to the whitelist", func() {
 			It("Should fail", func() {
 				to := owner.TransactOpts()
@@ -177,6 +186,15 @@ var _ = Describe("addToWhitelist", func() {
 				Expect(err).ToNot(HaveOccurred())
 				be.Commit()
 				Expect(isSuccessful(tx)).To(BeTrue())
+			})
+
+			It("Should emit CancelWhitelistAddition event", func() {
+				it, err := w.FilterCancelWhitelistAddition(nil)
+				Expect(err).ToNot(HaveOccurred())
+				Expect(it.Next()).To(BeTrue())
+				evt := it.Event
+				Expect(it.Next()).To(BeFalse())
+				Expect(evt.Sender).To(Equal(controller.Address()))
 			})
 
 			It("Should have empty pendingAddition list", func() {
@@ -255,6 +273,16 @@ var _ = Describe("removeFromWhitelist", func() {
 				be.Commit()
 				Expect(isSuccessful(tx)).To(BeTrue())
 			})
+
+			It("Should emit SubmitWhitelistRemoval event", func() {
+				it, err := w.FilterSubmitWhitelistRemoval(nil)
+				Expect(err).ToNot(HaveOccurred())
+				Expect(it.Next()).To(BeTrue())
+				evt := it.Event
+				Expect(it.Next()).To(BeFalse())
+				Expect(evt.Addresses).To(Equal([]common.Address{randomPerson.Address()}))
+			})
+
 			It("should add random person's address to pendingRemoval", func() {
 				pending, err := w.PendingWhitelistRemoval(nil)
 				Expect(err).ToNot(HaveOccurred())
@@ -316,6 +344,15 @@ var _ = Describe("removeFromWhitelist", func() {
 					Expect(err).ToNot(HaveOccurred())
 					be.Commit()
 					Expect(isSuccessful(tx)).To(BeTrue())
+				})
+
+				It("Should emit CancelWhitelistRemoval event", func() {
+					it, err := w.FilterCancelWhitelistRemoval(nil)
+					Expect(err).ToNot(HaveOccurred())
+					Expect(it.Next()).To(BeTrue())
+					evt := it.Event
+					Expect(it.Next()).To(BeFalse())
+					Expect(evt.Sender).To(Equal(controller.Address()))
 				})
 
 				It("Should have empty pendingRemoval list", func() {

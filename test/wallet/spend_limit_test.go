@@ -50,6 +50,16 @@ var _ = Describe("spendAvailable", func() {
 				Expect(isSuccessful(tx)).To(BeTrue())
 			})
 
+			It("Should emit SetSpendLimit event", func() {
+				it, err := w.FilterSetSpendLimit(nil)
+				Expect(err).ToNot(HaveOccurred())
+				Expect(it.Next()).To(BeTrue())
+				evt := it.Event
+				Expect(it.Next()).To(BeFalse())
+				Expect(evt.Sender).To(Equal(owner.Address()))
+				Expect(evt.Amount).To(Equal(ethToWei(1)))
+			})
+
 			It("Should lower the spend available to 1 ETH", func() {
 				av, err := w.SpendAvailable(nil)
 				Expect(err).ToNot(HaveOccurred())
@@ -118,9 +128,7 @@ var _ = Describe("spendAvailable", func() {
 							Expect(sa.String()).To(Equal(ethToWei(999).String()))
 						})
 					})
-
 				})
-
 			})
 		})
 
@@ -130,6 +138,15 @@ var _ = Describe("spendAvailable", func() {
 				Expect(err).ToNot(HaveOccurred())
 				be.Commit()
 				Expect(isSuccessful(tx)).To(BeTrue())
+			})
+
+			It("Should emit SubmitSpendLimit event", func() {
+				it, err := w.FilterSubmitSpendLimit(nil)
+				Expect(err).ToNot(HaveOccurred())
+				Expect(it.Next()).To(BeTrue())
+				evt := it.Event
+				Expect(it.Next()).To(BeFalse())
+				Expect(evt.Amount).To(Equal(ethToWei(1)))
 			})
 
 			It("Should not reduce the spend available", func() {
@@ -158,7 +175,7 @@ var _ = Describe("spendAvailable", func() {
 					Expect(it.Next()).To(BeTrue())
 					evt := it.Event
 					Expect(it.Next()).To(BeFalse())
-					Expect(evt.Amount.String()).To(Equal(ethToWei(1).String()))
+					Expect(evt.Amount).To(Equal(ethToWei(1)))
 				})
 
 				It("Should reduce the spend available to 1 ETH", func() {
@@ -185,6 +202,15 @@ var _ = Describe("spendAvailable", func() {
 					Expect(err).ToNot(HaveOccurred())
 					be.Commit()
 					Expect(isSuccessful(tx)).To(BeTrue())
+				})
+
+				It("Should emit CancelSpendLimit event", func() {
+					it, err := w.FilterCancelSpendLimit(nil)
+					Expect(err).ToNot(HaveOccurred())
+					Expect(it.Next()).To(BeTrue())
+					evt := it.Event
+					Expect(it.Next()).To(BeFalse())
+					Expect(evt.Sender).To(Equal(controller.Address()))
 				})
 
 				It("Should set pendingSpendLimit to 0", func() {
