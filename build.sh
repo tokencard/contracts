@@ -4,12 +4,23 @@ set -e -o pipefail
 
 SOLC="docker run --rm -u `id -u` -v $PWD:/solidity --workdir /solidity/contracts ethereum/solc:0.4.24"
 
-# Compile solidity contracts and hex prefix bytecode string.
-${SOLC} --overwrite  --bin --abi wallet.sol         -o /solidity/build/wallet     --combined-json bin-runtime,srcmap-runtime,ast,srcmap,bin && bin=$(awk '{print "0x" $0}' ./build/wallet/Wallet.bin)         && echo $bin > ./build/wallet/Wallet.bin         && echo "Compiled wallet."     || exit 1
-${SOLC} --overwrite  --bin --abi token.sol          -o /solidity/build/token      --combined-json bin-runtime,srcmap-runtime,ast,srcmap,bin && bin=$(awk '{print "0x" $0}' ./build/token/Token.bin)           && echo $bin > ./build/token/Token.bin           && echo "Compiled token."      || exit 1
-${SOLC} --overwrite  --bin --abi oracle.sol         -o /solidity/build/oracle     --combined-json bin-runtime,srcmap-runtime,ast,srcmap,bin && bin=$(awk '{print "0x" $0}' ./build/oracle/Oracle.bin)         && echo $bin > ./build/oracle/Oracle.bin         && echo "Compiled oracle."     || exit 1
-${SOLC} --overwrite  --bin --abi old/card.sol       -o /solidity/build/card       --combined-json bin-runtime,srcmap-runtime,ast,srcmap,bin && bin=$(awk '{print "0x" $0}' ./build/card/Card.bin)             && echo $bin > ./build/card/Card.bin             && echo "Compiled card."       || exit 1
-${SOLC} --overwrite  --bin --abi old/controller.sol -o /solidity/build/controller --combined-json bin-runtime,srcmap-runtime,ast,srcmap,bin && bin=$(awk '{print "0x" $0}' ./build/controller/Controller.bin) && echo $bin > ./build/controller/Controller.bin && echo "Compiled controller." || exit 1
+compile_solidity() {
+  echo "compiling ${1}"
+  ${SOLC} --overwrite --bin --abi ${1}.sol -o /solidity/build/${1} --combined-json bin-runtime,srcmap-runtime,ast,srcmap,bin
+}
+
+contract_sources=(
+  'wallet'
+  'token'
+  'oracle'
+  'oracleV2'
+  'oraclize'
+)
+
+for c in "${contract_sources[@]}"
+do
+    compile_solidity $c
+done
 
 GE_PATH=${PWD}/vendor/github.com/ethereum/go-ethereum
 if [ ! -d ${GE_PATH} ]
@@ -20,8 +31,29 @@ fi
 # Generate Go bindings from solidity contracts.
 ABIGEN="docker run --rm -u `id -u` --workdir /go/src/github/tokencard/contracts -e GOPATH=/go -v $GE_PATH:/go/src/github.com/ethereum/go-ethereum -v $PWD:/go/src/github/tokencard/contracts ethereum/client-go:alltools-v1.8.15 abigen"
 
-${ABIGEN} --abi ./build/wallet/Wallet.abi         --bin ./build/wallet/Wallet.bin         --pkg bindings --type=Wallet     --out ./pkg/bindings/wallet.go     && echo "Generated wallet bindings."     || exit 1
-${ABIGEN} --abi ./build/card/Card.abi             --bin ./build/card/Card.bin             --pkg bindings --type=Card       --out ./pkg/bindings/card.go       && echo "Generated card bindings."       || exit 1
-${ABIGEN} --abi ./build/oracle/Oracle.abi         --bin ./build/oracle/Oracle.bin         --pkg bindings --type=Oracle     --out ./pkg/bindings/oracle.go     && echo "Generated oracle bindings."     || exit 1
-${ABIGEN} --abi ./build/controller/Controller.abi --bin ./build/controller/Controller.bin --pkg bindings --type=Controller --out ./pkg/bindings/controller.go && echo "Generated controller bindings." || exit 1
-${ABIGEN} --abi ./build/token/Token.abi           --bin ./build/token/Token.bin           --pkg bindings --type=Token      --out ./pkg/bindings/token.go      && echo "Generated token bindings."      || exit 1
+generate_binding() {
+  contract=$(echo $1 | awk '{print $1}')
+  go_source=$(echo $1 | awk '{print $2}')
+  go_type=$(echo $1 | awk '{print $3}')
+  echo "Generating binding for ${go_type} (${contract})"
+  bin=$(awk '{print "0x" $0}' ./build/${contract}.bin)
+  echo $bin > ./build/${contract}.bin
+  ${ABIGEN} --abi ./build/${contract}.abi  --bin ./build/${contract}.bin --pkg bindings --type=$go_type --out ./pkg/bindings/$go_source
+  # rm temp_bin_file
+}
+
+contracts=(
+  "wallet/Wallet wallet.go Wallet"
+  "oracle/Oracle oracle.go Oracle"
+  "token/Token token.go Token"
+  "oracleV2/Oracle oracleV2.go OracleV2"
+  "oraclize/Oraclize mock_oraclize.go MockOraclize"
+  "oraclize/OraclizeAddrResolver mock_oraclize_addr_resolver.go MockOraclizeAddrResolver"
+)
+
+for c in "${contracts[@]}"
+do
+    generate_binding "$c"
+done
+
+echo "done."

@@ -1996,9 +1996,12 @@ contract Oracle is usingOraclize{
         _;
     }
 
-    constructor() public {
+    constructor(address _oraclizeAddrResolver) public {
         controller = msg.sender;
-        OAR = OraclizeAddrResolverI(0x6f485C8BF6fc43eA212E93BBF8ce046C7f1cb475);
+        if (_oraclizeAddrResolver == 0x0) {
+          _oraclizeAddrResolver = 0x6f485C8BF6fc43eA212E93BBF8ce046C7f1cb475;
+        }
+        OAR = OraclizeAddrResolverI(_oraclizeAddrResolver);
         // oraclize_setProof(proofType_Android);
     }
 

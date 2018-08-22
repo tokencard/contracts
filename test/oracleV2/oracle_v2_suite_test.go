@@ -31,14 +31,16 @@ func finneyToWei(amount int) *big.Int {
 
 var testRig = ethertest.NewTestRig()
 var controllerWallet = ethertest.NewWallet()
+var oraclizeCallbackWallet = ethertest.NewWallet()
 
-func init() {
+var _ = BeforeSuite(func() {
 	testRig.AddGenesisAccountAllocation(controllerWallet.Address(), ethToWei(1000))
+	// testRig.AddGenesisAccountAllocation(oraclizeCallbackWallet.Address(), ethToWei(1000))
 	testRig.AddCoverageForContracts("../../build/oracleV2/combined.json", "../../contracts/oracleV2.sol")
-}
+})
 
 var _ = AfterSuite(func() {
-	testRig.ExpectMinimumCoverage("oracleV2.sol:Oracle", 6.5)
+	testRig.ExpectMinimumCoverage("oracleV2.sol:Oracle", 50.0)
 })
 
 func balanceOf(a common.Address) *big.Int {
@@ -56,19 +58,28 @@ func isSuccessful(tx *types.Transaction) bool {
 	return r.Status == types.ReceiptStatusSuccessful
 }
 
-var _ = BeforeEach(func() {
-	be = testRig.NewTestBackend()
-})
+var oraclizeMockAddrResolver *bindings.MockOraclizeAddrResolver
+var oraclizeMockAddrResolverAddress common.Address
 
-type almostEqual string
+var oraclizeMock *bindings.MockOraclize
+var oraclizeMockAddress common.Address
 
 var oracle *bindings.OracleV2
 var oa common.Address
 
 var _ = BeforeEach(func() {
-	var err error
-	oa, _, oracle, err = bindings.DeployOracleV2(controllerWallet.TransactOpts(), be)
+	be = testRig.NewTestBackend()
 
+	var err error
+
+	oraclizeMockAddress, _, oraclizeMock, err = bindings.DeployMockOraclize(controllerWallet.TransactOpts(), be, oraclizeCallbackWallet.Address())
 	Expect(err).ToNot(HaveOccurred())
+
+	oraclizeMockAddrResolverAddress, _, oraclizeMockAddrResolver, err = bindings.DeployMockOraclizeAddrResolver(controllerWallet.TransactOpts(), be, oraclizeMockAddress)
+	Expect(err).ToNot(HaveOccurred())
+
+	oa, _, oracle, err = bindings.DeployOracleV2(controllerWallet.TransactOpts(), be, oraclizeMockAddrResolverAddress)
+	Expect(err).ToNot(HaveOccurred())
+
 	be.Commit()
 })
