@@ -66,7 +66,6 @@ contract Control {
 
 /// @title Whitelist provides payee-whitelist functionality.
 contract Whitelist is Control {
-
     event WhitelistAddition(address _sender, address[] _addresses);
     event SubmitWhitelistAddition(address[] _addresses);
     event CancelWhitelistAddition(address _sender);
@@ -195,7 +194,6 @@ contract Whitelist is Control {
 
 /// @title SpendLimit provides daily spend limit functionality.
 contract SpendLimit is Control {
-
     event SetSpendLimit(address _sender, uint _amount);
     event SubmitSpendLimit(uint _amount);
     event CancelSpendLimit(address _sender);
@@ -292,7 +290,6 @@ contract SpendLimit is Control {
 
 /// @title Asset store with extra security features.
 contract Vault is Whitelist, SpendLimit {
-
     event Deposit(address _from, uint _amount);
     event Transfer(address _to, address _asset, uint _amount);
 
@@ -367,11 +364,11 @@ contract Vault is Whitelist, SpendLimit {
 
 /// @title Asset wallet with extra security features and gas topup management.
 contract Wallet is Vault {
-
-    event TopupGas(address _sender, address _owner, uint _amount);
     event SetTopupLimit(address _sender, uint _amount);
     event SubmitTopupLimit(uint _amount);
     event CancelTopupLimit(address _sender);
+
+    event TopupGas(address _sender, address _owner, uint _amount);
 
     uint constant private MINIMUM_TOPUP_LIMIT = 1 finney;
     uint constant private MAXIMUM_TOPUP_LIMIT = 500 finney;
