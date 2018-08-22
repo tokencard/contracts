@@ -1,7 +1,5 @@
 pragma solidity ^0.4.18;
 
-//"0xfe209bde5ca32fa20e6728a005f26d651fff5982","TKN",8
-
 /*
  * @title String & slice utility library for Solidity contracts.
  * @author Nick Johnson <arachnid@notdot.net>
@@ -2111,12 +2109,17 @@ contract Oracle is usingOraclize{
         emit RateUpdated(validIDs[queryId],result);
     }
 
-    function mockTransaction(address tknLabel, string amount) public view returns (uint){
+    function deductFromDailyLimit(address tknLabel, string amount) public view returns (uint){
 
         uint amountInt =  parseInt(amount, tokens[tknLabel].decimals)*tokens[tknLabel].rate;
 
         return amountInt/tokens[tknLabel].decimals;
     }
+
+    function updateRateManual(address tokenID,uint rate) public{
+        tokens[tokenID].rate = rate;
+    }
+
 
 
 }
