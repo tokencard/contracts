@@ -184,11 +184,13 @@ var _ = Describe("topupLimit", func() {
 					tx, err := w.SetTopupLimitCancel(controller.TransactOpts())
 					Expect(err).ToNot(HaveOccurred())
 					be.Commit()
-					txSuccessful = isSuccessful(tx)
+					Expect(isSuccessful(tx)).To(BeTrue())
 				})
 
-				It("Should succeed", func() {
-					Expect(txSuccessful).To(BeTrue())
+				It("Should set pendingTopupLimit to 0", func() {
+					psl, err := w.PendingTopupLimit(nil)
+					Expect(err).ToNot(HaveOccurred())
+					Expect(psl.String()).To(Equal("0"))
 				})
 			})
 

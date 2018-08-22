@@ -20,13 +20,13 @@ var _ = Describe("initializeWhitelist", func() {
 		It("Shoud have empty pending addition", func() {
 			pa, err := w.PendingAddition(nil)
 			Expect(err).ToNot(HaveOccurred())
-			Expect(len(pa)).To(Equal(0))
+			Expect(pa).To(HaveLen(0))
 		})
 
 		It("Shoud have empty pending pendingRemoval", func() {
 			pa, err := w.PendingRemoval(nil)
 			Expect(err).ToNot(HaveOccurred())
-			Expect(len(pa)).To(Equal(0))
+			Expect(pa).To(HaveLen(0))
 		})
 	})
 
@@ -182,7 +182,7 @@ var _ = Describe("addToWhitelist", func() {
 			It("Should have empty pendingAddition list", func() {
 				pending, err := w.PendingAddition(nil)
 				Expect(err).ToNot(HaveOccurred())
-				Expect(len(pending)).To(Equal(0))
+				Expect(pending).To(HaveLen(0))
 			})
 
 			Context("When I try to initialize the whitelist", func() {
@@ -295,10 +295,10 @@ var _ = Describe("removeFromWhitelist", func() {
 					Expect(evt.Addresses).To(Equal([]common.Address{randomPerson.Address()}))
 				})
 
-				It("should not clear pendingRemoval (bug!)", func() {
+				It("should clear pendingRemoval", func() {
 					pending, err := w.PendingRemoval(nil)
 					Expect(err).ToNot(HaveOccurred())
-					Expect(len(pending)).ToNot(Equal(0))
+					Expect(pending).To(HaveLen(0))
 				})
 				Context("When I try to submit addreses for removal", func() {
 					It("Should succeed", func() {
@@ -317,6 +317,13 @@ var _ = Describe("removeFromWhitelist", func() {
 					be.Commit()
 					Expect(isSuccessful(tx)).To(BeTrue())
 				})
+
+				It("Should have empty pendingRemoval list", func() {
+					pending, err := w.PendingRemoval(nil)
+					Expect(err).ToNot(HaveOccurred())
+					Expect(pending).To(HaveLen(0))
+				})
+
 				It("should keep the random person's address in the whitelist", func() {
 					isWhitelisted, err := w.IsWhitelisted(nil, randomPerson.Address())
 					Expect(err).ToNot(HaveOccurred())
