@@ -126,7 +126,7 @@ var _ = Describe("spendAvailable", func() {
 
 		Context("When I set the spend limit to 1 ETH", func() {
 			BeforeEach(func() {
-				tx, err := w.SetSpendLimit(owner.TransactOpts(), ethToWei(1))
+				tx, err := w.SubmitSpendLimit(owner.TransactOpts(), ethToWei(1))
 				Expect(err).ToNot(HaveOccurred())
 				be.Commit()
 				Expect(isSuccessful(tx)).To(BeTrue())
@@ -146,7 +146,7 @@ var _ = Describe("spendAvailable", func() {
 
 			Context("When the controller confirms the spend limit", func() {
 				BeforeEach(func() {
-					tx, err := w.SetSpendLimitConfirm(controller.TransactOpts())
+					tx, err := w.ConfirmSpendLimit(controller.TransactOpts())
 					Expect(err).ToNot(HaveOccurred())
 					be.Commit()
 					Expect(isSuccessful(tx)).To(BeTrue())
@@ -181,7 +181,7 @@ var _ = Describe("spendAvailable", func() {
 			})
 			Context("When the controller cancels the spend limit change", func() {
 				BeforeEach(func() {
-					tx, err := w.SetSpendLimitCancel(controller.TransactOpts())
+					tx, err := w.CancelSpendLimit(controller.TransactOpts())
 					Expect(err).ToNot(HaveOccurred())
 					be.Commit()
 					Expect(isSuccessful(tx)).To(BeTrue())
@@ -194,7 +194,7 @@ var _ = Describe("spendAvailable", func() {
 				})
 
 				It("Should make it possible to set the spending limit again", func() {
-					tx, err := w.SetSpendLimit(owner.TransactOpts(), ethToWei(2))
+					tx, err := w.SubmitSpendLimit(owner.TransactOpts(), ethToWei(2))
 					Expect(err).ToNot(HaveOccurred())
 					be.Commit()
 					Expect(isSuccessful(tx)).To(BeTrue())
@@ -206,7 +206,7 @@ var _ = Describe("spendAvailable", func() {
 				It("Should fail", func() {
 					to := owner.TransactOpts()
 					to.GasLimit = 100000
-					tx, err := w.SetSpendLimit(to, ethToWei(1))
+					tx, err := w.SubmitSpendLimit(to, ethToWei(1))
 					Expect(err).ToNot(HaveOccurred())
 					be.Commit()
 					Expect(isSuccessful(tx)).To(BeFalse())

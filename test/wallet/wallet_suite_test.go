@@ -123,7 +123,7 @@ func (m almostEqual) Match(actual interface{}) (success bool, err error) {
 
 	actualString, ok := actual.(string)
 	if !ok {
-		return false, fmt.Errorf("Actual value is not a string")
+		return false, fmt.Errorf("actual value is not a string")
 	}
 
 	act, ok := big.NewInt(0).SetString(actualString, 10)
