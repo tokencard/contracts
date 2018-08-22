@@ -77,7 +77,7 @@ func init() {
 }
 
 var _ = AfterSuite(func() {
-	testRig.ExpectMinimumCoverage("wallet.sol:Wallet", 90.0)
+	testRig.ExpectMinimumCoverage("wallet.sol:Wallet", 95.0)
 })
 
 func balanceOf(a common.Address) *big.Int {
@@ -123,7 +123,7 @@ func (m almostEqual) Match(actual interface{}) (success bool, err error) {
 
 	actualString, ok := actual.(string)
 	if !ok {
-		return false, fmt.Errorf("Actual value is not a string")
+		return false, fmt.Errorf("actual value is not a string")
 	}
 
 	act, ok := big.NewInt(0).SetString(actualString, 10)

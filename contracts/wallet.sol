@@ -14,8 +14,8 @@ interface Oracle {
 
 /// @title Control handles wallet access control.
 contract Control {
-    event AddController(address _account);
-    event RemoveController(address _account);
+    event AddController(address sender, address _account);
+    event RemoveController(address sender, address _account);
 
     mapping (address => bool) public isController;
     uint public controllerCount;
@@ -41,32 +41,45 @@ contract Control {
 
     /// @dev Add a new controller to the list of controllers.
     function addController(address _account) public onlyController {
+        addControllerInternal(_account);
+    }
+
+    function addControllerInternal(address _account) internal {
         require(!isController[_account]);
         isController[_account] = true;
         controllerCount++;
-        emit AddController(_account);
+        emit AddController(msg.sender, _account);
     }
 
     /// @dev Remove a controller from the list of controllers.
     function removeController(address _account) public onlyController {
+        removeControllerInternal(_account);
+    }
+
+    function removeControllerInternal(address _account) internal {
         require(isController[_account] && controllerCount > 1);
         isController[_account] = false;
         controllerCount--;
-        emit RemoveController(_account);
+        emit RemoveController(msg.sender, _account);
     }
 }
 
 /// @title Whitelist provides payee-whitelist functionality.
 contract Whitelist is Control {
 
-    event WhitelistAddition(address[] _addresses);
-    event WhitelistRemoval(address[] _addresses);
+    event WhitelistAddition(address _sender, address[] _addresses);
+    event SubmitWhitelistAddition(address[] _addresses);
+    event CancelWhitelistAddition(address _sender);
+
+    event WhitelistRemoval(address _sender, address[] _addresses);
+    event SubmitWhitelistRemoval(address[] _addresses);
+    event CancelWhitelistRemoval(address _sender);
 
     mapping(address => bool) public isWhitelisted;
-    address[] private _pendingAddition;
-    address[] private _pendingRemoval;
-    bool public submittedAddition;
-    bool public submittedRemoval;
+    address[] private _pendingWhitelistAddition;
+    address[] private _pendingWhitelistRemoval;
+    bool public submittedWhitelistAddition;
+    bool public submittedWhitelistRemoval;
     bool public initializedWhitelist;
 
     /// @dev Make sure that the whitelisted addresses array is not too big.
@@ -76,13 +89,13 @@ contract Whitelist is Control {
     }
 
     // @dev Getter for pending addition array.
-    function pendingAddition() public view returns(address[]) {
-        return _pendingAddition;
+    function pendingWhitelistAddition() public view returns(address[]) {
+        return _pendingWhitelistAddition;
     }
 
     // @dev Getter for pending removal array.
-    function pendingRemoval() public view returns(address[]) {
-        return _pendingRemoval;
+    function pendingWhitelistRemoval() public view returns(address[]) {
+        return _pendingWhitelistRemoval;
     }
 
     /// @dev Add initial addresses to the whitelist.
@@ -94,88 +107,94 @@ contract Whitelist is Control {
             isWhitelisted[_addresses[i]] = true;
         }
         initializedWhitelist = true;
-        emit WhitelistAddition(_addresses);
+        emit WhitelistAddition(msg.sender, _addresses);
     }
 
     /// @dev Add addresses to the whitelist.
     /// @param _addresses are the Ethereum addresses to be whitelisted.
-    function addToWhitelist(address[] _addresses) public onlyOwner maxLength(_addresses) {
+    function submitWhitelistAddition(address[] _addresses) public onlyOwner maxLength(_addresses) {
         // Check if this operation has been already submitted.
-        require(!submittedAddition);
+        require(!submittedWhitelistAddition);
         // Add the provided addresses to the pending addition list.
-        _pendingAddition = _addresses;
+        _pendingWhitelistAddition = _addresses;
         // Flag the operation as submitted.
-        submittedAddition = true;
+        submittedWhitelistAddition = true;
         // Flag operation as initialized if not initialized already.
         if (!initializedWhitelist) {
             initializedWhitelist = true;
         }
+        emit SubmitWhitelistAddition(_addresses);
     }
 
     /// @dev Confirm pending whitelist addition.
-    function addToWhitelistConfirm() public onlyController {
-        require(_pendingAddition.length > 0 && submittedAddition);
+    function confirmWhitelistAddition() public onlyController {
+        require(_pendingWhitelistAddition.length > 0 && submittedWhitelistAddition);
         // Whitelist pending addresses.
-        for (uint i = 0; i < _pendingAddition.length; i++) {
-            if (_pendingAddition[i] != owner) {
-                isWhitelisted[_pendingAddition[i]] = true;
+        for (uint i = 0; i < _pendingWhitelistAddition.length; i++) {
+            if (_pendingWhitelistAddition[i] != owner) {
+                isWhitelisted[_pendingWhitelistAddition[i]] = true;
             }
         }
-        emit WhitelistAddition(_pendingAddition);
+        emit WhitelistAddition(msg.sender, _pendingWhitelistAddition);
         // Reset pending addresses.
-        delete _pendingAddition;
+        delete _pendingWhitelistAddition;
         // Reset the submission flag.
-        submittedAddition = false;
+        submittedWhitelistAddition = false;
     }
 
     /// @dev Cancel pending whitelist addition.
-    function addToWhitelistCancel() public onlyController {
+    function cancelWhitelistAddition() public onlyController {
         // Reset pending addresses.
-        delete _pendingAddition;
+        delete _pendingWhitelistAddition;
         // Reset the submitted operation flag.
-        submittedAddition = false;
+        submittedWhitelistAddition = false;
+        emit CancelWhitelistAddition(msg.sender);
     }
 
     /// @dev Remove addresses from the whitelist.
     /// @param _addresses are the Ethereum addresses to be removed.
-    function removeFromWhitelist(address[] _addresses) public onlyOwner maxLength(_addresses) {
+    function submitWhitelistRemoval(address[] _addresses) public onlyOwner maxLength(_addresses) {
         // Check if this operation has been already submitted.
-        require(!submittedRemoval);
+        require(!submittedWhitelistRemoval);
         // Add each of the addresses to the pending removal list.
         for (uint i = 0; i < _addresses.length; i++) {
-            _pendingRemoval.push(_addresses[i]);
+            _pendingWhitelistRemoval.push(_addresses[i]);
         }
         // Flag the operation as submitted.
-        submittedRemoval = true;
+        submittedWhitelistRemoval = true;
+        emit SubmitWhitelistRemoval(_addresses);
     }
 
     /// @dev Confirm pending removal of whitelisted addresses.
-    function removeFromWhitelistConfirm() public onlyController {
-        require(_pendingRemoval.length > 0 && submittedRemoval);
+    function confirmWhitelistRemoval() public onlyController {
+        require(_pendingWhitelistRemoval.length > 0 && submittedWhitelistRemoval);
         // Remove pending addresses.
-        for (uint i = 0; i < _pendingRemoval.length; i++) {
-            isWhitelisted[_pendingRemoval[i]] = false;
+        for (uint i = 0; i < _pendingWhitelistRemoval.length; i++) {
+            isWhitelisted[_pendingWhitelistRemoval[i]] = false;
         }
-        emit WhitelistRemoval(_pendingRemoval);
+        emit WhitelistRemoval(msg.sender, _pendingWhitelistRemoval);
         // Reset pending addresses.
-        delete _pendingRemoval;
+        delete _pendingWhitelistRemoval;
         // Reset the submission flag.
-        submittedRemoval = false;
+        submittedWhitelistRemoval = false;
     }
 
     /// @dev Cancel pending removal of whitelisted addresses.
-    function removeFromWhitelistCancel() public onlyController {
+    function cancelWhitelistRemoval() public onlyController {
         // Reset pending addresses.
-        delete _pendingRemoval;
+        delete _pendingWhitelistRemoval;
         // Reset the submitted operation flag.
-        submittedRemoval = false;
+        submittedWhitelistRemoval = false;
+        emit CancelWhitelistRemoval(msg.sender);
     }
 }
 
 /// @title SpendLimit provides daily spend limit functionality.
 contract SpendLimit is Control {
 
-    event SetSpendLimit(uint _amount);
+    event SetSpendLimit(address _sender, uint _amount);
+    event SubmitSpendLimit(uint _amount);
+    event CancelSpendLimit(address _sender);
 
     uint public spendLimit;
     uint internal _spendLimitDay;
@@ -202,12 +221,12 @@ contract SpendLimit is Control {
         modifySpendLimit(_amount);
         // Flag the operation as initialized.
         initializedSpendLimit = true;
-        emit SetSpendLimit(_amount);
+        emit SetSpendLimit(msg.sender, _amount);
     }
 
     /// @dev Set a daily transfer limit for non-whitelisted addresses.
     /// @param _amount is the daily limit amount in wei.
-    function setSpendLimit(uint _amount) public onlyOwner {
+    function submitSpendLimit(uint _amount) public onlyOwner {
         // Check if this operation has been already submitted.
         require(!submittedSpendLimit);
         // Assign the provided amount to pending daily limit change.
@@ -218,14 +237,15 @@ contract SpendLimit is Control {
         if (!initializedSpendLimit) {
             initializedSpendLimit = true;
         }
+        emit SubmitSpendLimit(_amount);
     }
 
     /// @dev Confirm pending set daily limit operation.
-    function setSpendLimitConfirm() public onlyController {
+    function confirmSpendLimit() public onlyController {
         require(submittedSpendLimit);
         // Modify spend limit based on the pending value.
         modifySpendLimit(pendingSpendLimit);
-        emit SetSpendLimit(pendingSpendLimit);
+        emit SetSpendLimit(msg.sender, pendingSpendLimit);
         // Reset the submission flag.
         submittedSpendLimit = false;
         // Reset pending daily limit.
@@ -233,11 +253,12 @@ contract SpendLimit is Control {
     }
 
     /// @dev Cancel pending set daily limit operation.
-    function setSpendLimitCancel() public onlyController {
+    function cancelSpendLimit() public onlyController {
         // Reset pending daily limit.
         pendingSpendLimit = 0;
         // Reset the submitted operation flag.
         submittedSpendLimit = false;
+        emit CancelSpendLimit(msg.sender);
     }
 
     /// @dev Modify the spend limit and spend available based on the provided value.
@@ -265,14 +286,12 @@ contract SpendLimit is Control {
     }
 }
 
-/// @title Asset wallet with extra security features.
-/// @author TokenCard
+/// @title Asset store with extra security features.
 contract Vault is Whitelist, SpendLimit {
-    // Events
+
     event Deposit(address _from, uint _amount);
     event Transfer(address _to, address _asset, uint _amount);
 
-    // Storage
     address public oracle;
 
     /// @dev Construct a wallet with an owner and a controller.
@@ -283,11 +302,7 @@ contract Vault is Whitelist, SpendLimit {
         owner = _owner;
         oracle = _oracle;
         for (uint i = 0; i < _controllers.length; i++) {
-            if (!isController[_controllers[i]]) {
-                isController[_controllers[i]] = true;
-                controllerCount++;
-                emit AddController(_controllers[i]);
-            }
+            addControllerInternal(_controllers[i]);
         }
     }
 
@@ -346,10 +361,13 @@ contract Vault is Whitelist, SpendLimit {
     }
 }
 
+/// @title Asset wallet with extra security features and gas topup management.
 contract Wallet is Vault {
 
-    event SetTopupLimit(uint _amount);
     event TopupGas(address _sender, address _owner, uint _amount);
+    event SetTopupLimit(address _sender, uint _amount);
+    event SubmitTopupLimit(uint _amount);
+    event CancelTopupLimit(address _sender);
 
     uint constant private MINIMUM_TOPUP_LIMIT = 1 finney;
     uint constant private MAXIMUM_TOPUP_LIMIT = 500 finney;
@@ -387,12 +405,12 @@ contract Wallet is Vault {
         modifyTopupLimit(_amount);
         // Flag operation as initialized.
         initializedTopupLimit = true;
-        emit SetTopupLimit(_amount);
+        emit SetTopupLimit(msg.sender, _amount);
     }
 
     /// @dev Set a daily topup top up limit.
     /// @param _amount is the daily topup limit amount in wei.
-    function setTopupLimit(uint _amount) public onlyOwner {
+    function submitTopupLimit(uint _amount) public onlyOwner {
         // Check if this operation has been already submitted.
         require(!submittedTopupLimit);
         // Require that the limit amount is within the acceptable range.
@@ -405,17 +423,18 @@ contract Wallet is Vault {
         if (!initializedTopupLimit) {
             initializedTopupLimit = true;
         }
+        emit SubmitTopupLimit(_amount);
     }
 
     /// @dev Confirm pending set top up limit operation.
-    function setTopupLimitConfirm() public onlyController {
+    function confirmTopupLimit() public onlyController {
         // Check if the set topup limit operation has been submitted.
         require(submittedTopupLimit);
         // Assert that the pending topup limit amount is within the acceptable range.
         assert(MINIMUM_TOPUP_LIMIT <= pendingTopupLimit && pendingTopupLimit <= MAXIMUM_TOPUP_LIMIT);
         // Modify topup limit based on the pending value.
         modifyTopupLimit(pendingTopupLimit);
-        emit SetTopupLimit(pendingTopupLimit);
+        emit SetTopupLimit(msg.sender, pendingTopupLimit);
         // Reset pending daily limit.
         pendingTopupLimit = 0;
         // Reset the submission flag.
@@ -423,11 +442,12 @@ contract Wallet is Vault {
     }
 
     /// @dev Cancel pending set top up limit operation.
-    function setTopupLimitCancel() public onlyController {
+    function cancelTopupLimit() public onlyController {
         // Reset pending daily limit.
         pendingTopupLimit = 0;
         // Reset the submitted operation flag.
         submittedTopupLimit = false;
+        emit CancelTopupLimit(msg.sender);
     }
 
     /// @dev Modify the topup limit and topup available based on the provided value.
