@@ -41,6 +41,10 @@ contract Control {
 
     /// @dev Add a new controller to the list of controllers.
     function addController(address _account) public onlyController {
+        addControllerInternal(_account);
+    }
+
+    function addControllerInternal(address _account) internal {
         require(!isController[_account]);
         isController[_account] = true;
         controllerCount++;
@@ -49,6 +53,10 @@ contract Control {
 
     /// @dev Remove a controller from the list of controllers.
     function removeController(address _account) public onlyController {
+        removeControllerInternal(_account);
+    }
+
+    function removeControllerInternal(address _account) internal {
         require(isController[_account] && controllerCount > 1);
         isController[_account] = false;
         controllerCount--;
@@ -294,11 +302,7 @@ contract Vault is Whitelist, SpendLimit {
         owner = _owner;
         oracle = _oracle;
         for (uint i = 0; i < _controllers.length; i++) {
-            if (!isController[_controllers[i]]) {
-                isController[_controllers[i]] = true;
-                controllerCount++;
-                emit AddController(msg.sender, _controllers[i]);
-            }
+            addControllerInternal(_controllers[i]);
         }
     }
 
