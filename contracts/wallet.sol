@@ -88,6 +88,13 @@ contract Whitelist is Control {
         _;
     }
 
+    modifier hasNoOwner(address[] _addresses) {
+        for (uint i = 0; i < _addresses.length; i++) {
+            require(_addresses[i] != owner);
+        }
+        _;
+    }
+
     // @dev Getter for pending addition array.
     function pendingWhitelistAddition() public view returns(address[]) {
         return _pendingWhitelistAddition;
@@ -100,11 +107,10 @@ contract Whitelist is Control {
 
     /// @dev Add initial addresses to the whitelist.
     /// @param _addresses are the Ethereum addresses to be whitelisted.
-    function initializeWhitelist(address[] _addresses) public onlyOwner maxLength(_addresses) {
+    function initializeWhitelist(address[] _addresses) public onlyOwner maxLength(_addresses) hasNoOwner(_addresses) {
         require(!initializedWhitelist);
         // Add each of the provided addresses to the whitelist.
         for (uint i = 0; i < _addresses.length; i++) {
-            require(_addresses[i] != owner);
             isWhitelisted[_addresses[i]] = true;
         }
         initializedWhitelist = true;
@@ -113,13 +119,9 @@ contract Whitelist is Control {
 
     /// @dev Add addresses to the whitelist.
     /// @param _addresses are the Ethereum addresses to be whitelisted.
-    function submitWhitelistAddition(address[] _addresses) public onlyOwner maxLength(_addresses) {
+    function submitWhitelistAddition(address[] _addresses) public onlyOwner maxLength(_addresses) hasNoOwner(_addresses) {
         // Check if this operation has been already submitted.
         require(!submittedWhitelistAddition);
-        // Make sure that the provided addresses don't contain the owner address.
-        for (uint i = 0; i < _addresses.length; i++) {
-            require(_addresses[i] != owner);
-        }
         // Add the provided addresses to the pending addition list.
         _pendingWhitelistAddition = _addresses;
         // Flag the operation as submitted.
