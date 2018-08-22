@@ -104,6 +104,7 @@ contract Whitelist is Control {
         require(!initializedWhitelist);
         // Add each of the provided addresses to the whitelist.
         for (uint i = 0; i < _addresses.length; i++) {
+            require(_addresses[i] != owner);
             isWhitelisted[_addresses[i]] = true;
         }
         initializedWhitelist = true;
@@ -115,6 +116,10 @@ contract Whitelist is Control {
     function submitWhitelistAddition(address[] _addresses) public onlyOwner maxLength(_addresses) {
         // Check if this operation has been already submitted.
         require(!submittedWhitelistAddition);
+        // Make sure that the provided addresses don't contain the owner address.
+        for (uint i = 0; i < _addresses.length; i++) {
+            require(_addresses[i] != owner);
+        }
         // Add the provided addresses to the pending addition list.
         _pendingWhitelistAddition = _addresses;
         // Flag the operation as submitted.
@@ -131,9 +136,7 @@ contract Whitelist is Control {
         require(_pendingWhitelistAddition.length > 0 && submittedWhitelistAddition);
         // Whitelist pending addresses.
         for (uint i = 0; i < _pendingWhitelistAddition.length; i++) {
-            if (_pendingWhitelistAddition[i] != owner) {
-                isWhitelisted[_pendingWhitelistAddition[i]] = true;
-            }
+            isWhitelisted[_pendingWhitelistAddition[i]] = true;
         }
         emit WhitelistAddition(msg.sender, _pendingWhitelistAddition);
         // Reset pending addresses.
@@ -156,10 +159,8 @@ contract Whitelist is Control {
     function submitWhitelistRemoval(address[] _addresses) public onlyOwner maxLength(_addresses) {
         // Check if this operation has been already submitted.
         require(!submittedWhitelistRemoval);
-        // Add each of the addresses to the pending removal list.
-        for (uint i = 0; i < _addresses.length; i++) {
-            _pendingWhitelistRemoval.push(_addresses[i]);
-        }
+        // Add the provided addresses to the pending addition list.
+        _pendingWhitelistRemoval = _addresses;
         // Flag the operation as submitted.
         submittedWhitelistRemoval = true;
         emit SubmitWhitelistRemoval(_addresses);
