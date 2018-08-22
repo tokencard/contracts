@@ -188,7 +188,6 @@ var _ = Describe("addToWhitelist", func() {
 					Expect(isSuccessful(tx)).To(BeFalse())
 				})
 			})
-
 		})
 
 		Context("When the controller cancels adding to the whitelist", func() {
