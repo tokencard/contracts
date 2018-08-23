@@ -483,13 +483,14 @@ contract Wallet is Vault {
         // Make sure the available topup is not zero.
         require(_topupAvailable > 0);
         // If amount is above available balance, use the entire balance.
-        if (_amount > _topupAvailable) {
-            _amount = _topupAvailable;
+        uint amount = _amount;
+        if (amount > _topupAvailable) {
+            amount = _topupAvailable;
         }
         // Reduce the top up amount from available balance and transfer corresponding
         // ether to the owner's account.
-        _topupAvailable -= _amount;
-        owner.transfer(_amount);
-        emit TopupGas(tx.origin, owner, _amount);
+        _topupAvailable -= amount;
+        owner.transfer(amount);
+        emit TopupGas(tx.origin, owner, amount);
     }
 }
