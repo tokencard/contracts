@@ -14,8 +14,8 @@ interface Oracle {
 
 /// @title Control handles wallet access control.
 contract Control {
-    event AddController(address sender, address _account);
-    event RemoveController(address sender, address _account);
+    event AddController(address _sender, address _account);
+    event RemoveController(address _sender, address _account);
 
     mapping (address => bool) public isController;
     uint public controllerCount;
