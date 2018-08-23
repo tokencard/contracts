@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"math/big"
+	"testing"
 
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
@@ -12,8 +13,6 @@ import (
 	gtypes "github.com/onsi/gomega/types"
 	"github.com/tokencard/contracts/pkg/bindings"
 	"github.com/tokencard/ethertest"
-
-	"testing"
 )
 
 func TestWalletSuite(t *testing.T) {
@@ -27,11 +26,6 @@ var ONE_ETH *big.Int
 var ONE_FINNEY *big.Int
 var FIVE_HUNDRED_FINNEY *big.Int
 var ONE_GWEI *big.Int
-
-func ethToWei(amount int) *big.Int {
-	r := big.NewInt(1).Set(ONE_ETH)
-	return r.Mul(r, big.NewInt(int64(amount)))
-}
 
 func init() {
 	var s bool
@@ -66,41 +60,35 @@ func init() {
 		panic("Could not parse one ETH")
 	}
 
+	testRig.AddGenesisAccountAllocation(bankWallet.Address(), HUNDRED_ETH)
+	testRig.AddCoverageForContracts("../../build/wallet/combined.json", "../../contracts/wallet.sol")
 }
 
 var testRig = ethertest.NewTestRig()
 var bankWallet = ethertest.NewWallet()
 
-func init() {
-	testRig.AddGenesisAccountAllocation(bankWallet.Address(), HUNDRED_ETH)
-	testRig.AddCoverageForContracts("../../build/wallet/combined.json", "../../contracts/wallet.sol")
-}
-
 var _ = AfterSuite(func() {
 	testRig.ExpectMinimumCoverage("wallet.sol:Wallet", 95.0)
 })
+
+func ethToWei(amount int) *big.Int {
+	r := big.NewInt(1).Set(ONE_ETH)
+	return r.Mul(r, big.NewInt(int64(amount)))
+}
+
+var be ethertest.TestBackend
 
 func balanceOf(a common.Address) *big.Int {
 	b, err := be.BalanceAt(context.Background(), a, nil)
 	Expect(err).ToNot(HaveOccurred())
 	return b
-
-}
-
-var be ethertest.TestBackend
-
-type submittedTX struct {
-	*types.Transaction
 }
 
 func isSuccessful(tx *types.Transaction) bool {
 	r, err := be.TransactionReceipt(context.Background(), tx.Hash())
 	Expect(err).ToNot(HaveOccurred())
 	return r.Status == types.ReceiptStatusSuccessful
-
 }
-
-// var tt = newTokenTracer()
 
 var _ = BeforeEach(func() {
 	be = testRig.NewTestBackend()
@@ -136,7 +124,6 @@ func (m almostEqual) Match(actual interface{}) (success bool, err error) {
 	delta = delta.Sub(act, expected)
 
 	return delta.Abs(delta).Cmp(maxDelta) == -1, nil
-
 }
 
 func (m almostEqual) FailureMessage(actual interface{}) (message string) {
@@ -170,7 +157,6 @@ var _ = BeforeEach(func() {
 	be.Commit()
 
 	Expect(isSuccessful(tx)).To(BeTrue())
-
 })
 
 var tkn *bindings.Token
@@ -185,7 +171,7 @@ var _ = BeforeEach(func() {
 
 	Expect(isSuccessful(tx)).To(BeTrue())
 
-	// add exchange rate to the oracle
+	// TODO: Add exchange rate to the oracle.
 
 	o.Set(bankWallet.TransactOpts(), []common.Address{tkna}, []*big.Int{big.NewInt(100)}, []*big.Int{big.NewInt(1)})
 })
@@ -202,7 +188,6 @@ var _ = BeforeEach(func() {
 		oa,
 		[]common.Address{controller.Address()},
 	)
-
 	Expect(err).ToNot(HaveOccurred())
 	be.Commit()
 })
