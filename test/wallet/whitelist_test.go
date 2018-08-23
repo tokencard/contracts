@@ -262,6 +262,18 @@ var _ = Describe("addToWhitelist", func() {
 			Expect(isSuccessful(tx)).To(BeFalse())
 		})
 	})
+
+	Context("When I submit 0 addresses for adding to whitelist", func() {
+		It("Should fail", func() {
+			addresses := []common.Address{}
+			to := owner.TransactOpts()
+			to.GasLimit = 50000
+			tx, err := w.SubmitWhitelistAddition(to, addresses)
+			Expect(err).ToNot(HaveOccurred())
+			be.Commit()
+			Expect(isSuccessful(tx)).To(BeFalse())
+		})
+	})
 })
 
 var _ = Describe("removeFromWhitelist", func() {
