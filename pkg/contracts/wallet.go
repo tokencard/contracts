@@ -738,14 +738,14 @@ func (w *Wallet) TokenDepositEvents(ctx context.Context, block *big.Int) ([]*Eve
 	var events []*Event
 	// Scan supported tokens for incoming events.
 	for _, asset := range w.assets {
-		if asset.Id == assets.ETHER {
+		if asset.ID == assets.ETHER {
 			continue
 		}
 		// Create a log filter query.
 		query := ethereum.FilterQuery{
 			FromBlock: nil,
 			ToBlock:   block,
-			Addresses: []common.Address{common.HexToAddress(asset.Id)},
+			Addresses: []common.Address{common.HexToAddress(asset.ID)},
 			Topics:    [][]common.Hash{{common.HexToHash(tokenTopic)}, nil, {w.address.Hash()}},
 		}
 		// Get the contract logs.
