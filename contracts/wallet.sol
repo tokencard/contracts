@@ -14,8 +14,8 @@ interface Oracle {
 
 /// @title Control handles wallet access control.
 contract Control {
-    event AddController(address sender, address _account);
-    event RemoveController(address sender, address _account);
+    event AddController(address _sender, address _account);
+    event RemoveController(address _sender, address _account);
 
     mapping (address => bool) public isController;
     uint public controllerCount;
@@ -66,7 +66,6 @@ contract Control {
 
 /// @title Whitelist provides payee-whitelist functionality.
 contract Whitelist is Control {
-
     event WhitelistAddition(address _sender, address[] _addresses);
     event SubmitWhitelistAddition(address[] _addresses);
     event CancelWhitelistAddition(address _sender);
@@ -82,12 +81,13 @@ contract Whitelist is Control {
     bool public submittedWhitelistRemoval;
     bool public initializedWhitelist;
 
-    /// @dev Make sure that the whitelisted addresses array is not too big.
-    modifier maxLength(address[] _addresses) {
-        require(_addresses.length <= 20);
+    /// @dev Check if the provided addresses array has a valid length.
+    modifier validLength(address[] _addresses) {
+        require(_addresses.length >= 1 && _addresses.length <= 20);
         _;
     }
 
+    /// @dev Check if the provided addresses contain the owner address.
     modifier hasNoOwner(address[] _addresses) {
         for (uint i = 0; i < _addresses.length; i++) {
             require(_addresses[i] != owner);
@@ -107,7 +107,7 @@ contract Whitelist is Control {
 
     /// @dev Add initial addresses to the whitelist.
     /// @param _addresses are the Ethereum addresses to be whitelisted.
-    function initializeWhitelist(address[] _addresses) public onlyOwner maxLength(_addresses) hasNoOwner(_addresses) {
+    function initializeWhitelist(address[] _addresses) public onlyOwner validLength(_addresses) hasNoOwner(_addresses) {
         require(!initializedWhitelist);
         // Add each of the provided addresses to the whitelist.
         for (uint i = 0; i < _addresses.length; i++) {
@@ -119,7 +119,7 @@ contract Whitelist is Control {
 
     /// @dev Add addresses to the whitelist.
     /// @param _addresses are the Ethereum addresses to be whitelisted.
-    function submitWhitelistAddition(address[] _addresses) public onlyOwner maxLength(_addresses) hasNoOwner(_addresses) {
+    function submitWhitelistAddition(address[] _addresses) public onlyOwner validLength(_addresses) hasNoOwner(_addresses) {
         // Check if either addition or removal operation has been already submitted.
         require(!submittedWhitelistAddition && !submittedWhitelistRemoval);
         // Add the provided addresses to the pending addition list.
@@ -158,7 +158,7 @@ contract Whitelist is Control {
 
     /// @dev Remove addresses from the whitelist.
     /// @param _addresses are the Ethereum addresses to be removed.
-    function submitWhitelistRemoval(address[] _addresses) public onlyOwner maxLength(_addresses) {
+    function submitWhitelistRemoval(address[] _addresses) public onlyOwner validLength(_addresses) {
         // Check if either addition or removal operation has been already submitted.
         require(!submittedWhitelistRemoval && !submittedWhitelistAddition);
         // Add the provided addresses to the pending addition list.
@@ -194,7 +194,6 @@ contract Whitelist is Control {
 
 /// @title SpendLimit provides daily spend limit functionality.
 contract SpendLimit is Control {
-
     event SetSpendLimit(address _sender, uint _amount);
     event SubmitSpendLimit(uint _amount);
     event CancelSpendLimit(address _sender);
@@ -291,7 +290,6 @@ contract SpendLimit is Control {
 
 /// @title Asset store with extra security features.
 contract Vault is Whitelist, SpendLimit {
-
     event Deposit(address _from, uint _amount);
     event Transfer(address _to, address _asset, uint _amount);
 
@@ -366,11 +364,11 @@ contract Vault is Whitelist, SpendLimit {
 
 /// @title Asset wallet with extra security features and gas topup management.
 contract Wallet is Vault {
-
-    event TopupGas(address _sender, address _owner, uint _amount);
     event SetTopupLimit(address _sender, uint _amount);
     event SubmitTopupLimit(uint _amount);
     event CancelTopupLimit(address _sender);
+
+    event TopupGas(address _sender, address _owner, uint _amount);
 
     uint constant private MINIMUM_TOPUP_LIMIT = 1 finney;
     uint constant private MAXIMUM_TOPUP_LIMIT = 500 finney;
