@@ -114,7 +114,7 @@ var _ = Describe("whitelistAddition", func() {
 			Expect(isSuccessful(tx)).To(BeTrue())
 		})
 
-		It("Should update the submittedWhitelistAddition; flag", func() {
+		It("Should update the submittedWhitelistAddition flag", func() {
 			submitted, err := w.SubmittedWhitelistAddition(nil)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(submitted).To(BeTrue())

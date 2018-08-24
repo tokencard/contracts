@@ -1,9 +1,10 @@
 package wallet_test
 
 import (
+	"math/big"
+
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	"math/big"
 )
 
 var _ = Describe("addController", func() {
