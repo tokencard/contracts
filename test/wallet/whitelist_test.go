@@ -38,6 +38,12 @@ var _ = Describe("initializeWhitelist", func() {
 			Expect(isSuccessful(tx)).To(BeTrue())
 		})
 
+		It("Should update the initializedWhitelist flag", func() {
+			initialized, err := w.InitializedWhitelist(nil)
+			Expect(err).ToNot(HaveOccurred())
+			Expect(initialized).To(BeTrue())
+		})
+
 		It("should add the random person to the whitelist", func() {
 			isWhitelisted, err := w.IsWhitelisted(nil, randomPerson.Address())
 			Expect(err).ToNot(HaveOccurred())
@@ -96,7 +102,7 @@ var _ = Describe("initializeWhitelist", func() {
 
 })
 
-var _ = Describe("addToWhitelist", func() {
+var _ = Describe("whitelistAddition", func() {
 	BeforeEach(func() {
 		bankWallet.MustTransfer(be, controller.Address(), ethToWei(1))
 	})
@@ -106,6 +112,12 @@ var _ = Describe("addToWhitelist", func() {
 			Expect(err).ToNot(HaveOccurred())
 			be.Commit()
 			Expect(isSuccessful(tx)).To(BeTrue())
+		})
+
+		It("Should update the submittedWhitelistAddition flag", func() {
+			submitted, err := w.SubmittedWhitelistAddition(nil)
+			Expect(err).ToNot(HaveOccurred())
+			Expect(submitted).To(BeTrue())
 		})
 
 		It("Should add the random persons's address to the pending addition", func() {
@@ -276,7 +288,7 @@ var _ = Describe("addToWhitelist", func() {
 	})
 })
 
-var _ = Describe("removeFromWhitelist", func() {
+var _ = Describe("whitelistRemoval", func() {
 	BeforeEach(func() {
 		bankWallet.MustTransfer(be, controller.Address(), ethToWei(1))
 	})
@@ -294,6 +306,12 @@ var _ = Describe("removeFromWhitelist", func() {
 				Expect(err).ToNot(HaveOccurred())
 				be.Commit()
 				Expect(isSuccessful(tx)).To(BeTrue())
+			})
+
+			It("Should update the submittedWhitelistRemoval; flag", func() {
+				submitted, err := w.SubmittedWhitelistRemoval(nil)
+				Expect(err).ToNot(HaveOccurred())
+				Expect(submitted).To(BeTrue())
 			})
 
 			It("Should emit SubmitWhitelistRemoval event", func() {

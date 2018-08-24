@@ -78,6 +78,12 @@ var _ = Describe("topupLimit", func() {
 				Expect(txSuccessful).To(BeTrue())
 			})
 
+			It("Should update the initializedTopupLimit flag", func() {
+				initialized, err := w.InitializedTopupLimit(nil)
+				Expect(err).ToNot(HaveOccurred())
+				Expect(initialized).To(BeTrue())
+			})
+
 			It("Should emit SetTopupLimit event", func() {
 				it, err := w.FilterSetTopupLimit(nil)
 				Expect(err).ToNot(HaveOccurred())
@@ -165,7 +171,7 @@ var _ = Describe("topupLimit", func() {
 
 		})
 
-		Context("When I submit topup limit change to 1 Finney", func() {
+		Context("When I submit topup limit of 1 Finney", func() {
 
 			var txSuccessful bool
 
@@ -177,6 +183,12 @@ var _ = Describe("topupLimit", func() {
 				be.Commit()
 				txSuccessful = isSuccessful(tx)
 
+			})
+
+			It("Should update the submittedTopupLimit flag", func() {
+				submitted, err := w.SubmittedTopupLimit(nil)
+				Expect(err).ToNot(HaveOccurred())
+				Expect(submitted).To(BeTrue())
 			})
 
 			It("Should emit SubmitTopupLimit event", func() {

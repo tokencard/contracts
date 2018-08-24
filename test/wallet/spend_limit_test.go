@@ -92,6 +92,12 @@ var _ = Describe("spendAvailable", func() {
 				Expect(isSuccessful(tx)).To(BeTrue())
 			})
 
+			It("Should update the initializedSpendLimit flag", func() {
+				initialized, err := w.InitializedSpendLimit(nil)
+				Expect(err).ToNot(HaveOccurred())
+				Expect(initialized).To(BeTrue())
+			})
+
 			It("Should keep the spend available at 100 ETH", func() {
 				av, err := w.SpendAvailable(nil)
 				Expect(err).ToNot(HaveOccurred())
@@ -104,7 +110,7 @@ var _ = Describe("spendAvailable", func() {
 					be.Commit()
 				})
 
-				It("Should increase the spend available at 1000 ETH", func() {
+				It("Should increase the spend available to 1000 ETH", func() {
 					av, err := w.SpendAvailable(nil)
 					Expect(err).ToNot(HaveOccurred())
 					Expect(av.String()).To(Equal(ethToWei(1000).String()))
@@ -132,12 +138,18 @@ var _ = Describe("spendAvailable", func() {
 			})
 		})
 
-		Context("When I set the spend limit to 1 ETH", func() {
+		Context("When I submit the spend limit of 1 ETH", func() {
 			BeforeEach(func() {
 				tx, err := w.SubmitSpendLimit(owner.TransactOpts(), ethToWei(1))
 				Expect(err).ToNot(HaveOccurred())
 				be.Commit()
 				Expect(isSuccessful(tx)).To(BeTrue())
+			})
+
+			It("Should update the submittedSpendLimit flag", func() {
+				submitted, err := w.SubmittedSpendLimit(nil)
+				Expect(err).ToNot(HaveOccurred())
+				Expect(submitted).To(BeTrue())
 			})
 
 			It("Should emit SubmitSpendLimit event", func() {
