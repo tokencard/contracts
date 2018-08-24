@@ -3,6 +3,7 @@ package wallet_test
 import (
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
+	"math/big"
 )
 
 var _ = Describe("addController", func() {
@@ -31,7 +32,12 @@ var _ = Describe("addController", func() {
 				Expect(err).ToNot(HaveOccurred())
 				be.Commit()
 				Expect(isSuccessful(tx)).To(BeTrue())
+			})
 
+			It("Should increase the controller count", func() {
+				count, err := w.ControllerCount(nil)
+				Expect(err).ToNot(HaveOccurred())
+				Expect(count).To(Equal(big.NewInt(2)))
 			})
 
 			It("Should emit an AddController event", func() {
@@ -85,8 +91,14 @@ var _ = Describe("removeController", func() {
 				Expect(err).ToNot(HaveOccurred())
 				be.Commit()
 				Expect(isSuccessful(tx)).To(BeTrue())
-
 			})
+
+			It("Should decrease the controller count", func() {
+				count, err := w.ControllerCount(nil)
+				Expect(err).ToNot(HaveOccurred())
+				Expect(count).To(Equal(big.NewInt(1)))
+			})
+
 			It("Should emit an RemoveController event", func() {
 				it, err := w.FilterRemoveController(nil)
 				Expect(err).ToNot(HaveOccurred())

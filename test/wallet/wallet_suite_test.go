@@ -68,7 +68,7 @@ var testRig = ethertest.NewTestRig()
 var bankWallet = ethertest.NewWallet()
 
 var _ = AfterSuite(func() {
-	testRig.ExpectMinimumCoverage("wallet.sol:Wallet", 95.0)
+	testRig.ExpectMinimumCoverage("wallet.sol:Wallet", 100.0)
 })
 
 func ethToWei(amount int) *big.Int {
