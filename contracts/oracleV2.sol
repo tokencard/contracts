@@ -2112,13 +2112,17 @@ contract Oracle is usingOraclize{
         emit RateUpdated(validIDs[queryId],result);
     }
 
-    function convert(address tknLabel, uint amount)
+    function convert(address tokenID, uint amount)
         external
         view
+        tokenSupported(tokenID)
         returns (uint)
     {
+        require(tokens[tokenID].rate != 0);
+        require(tokens[tokenID].decimals != 0);
+        assert((amount * tokens[tokenID].rate) / tokens[tokenID].rate == amount); // Overflow check, returns 0
 
-        return amount*tokens[tknLabel].rate/tokens[tknLabel].decimals;
+        return amount*tokens[tokenID].rate/(uint(10)**tokens[tokenID].decimals);
     }
 
     function updateRateManual(address tokenID,uint rate)
