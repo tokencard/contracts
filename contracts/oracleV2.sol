@@ -2112,17 +2112,22 @@ contract Oracle is usingOraclize{
         emit RateUpdated(validIDs[queryId],result);
     }
 
-    function deductFromDailyLimit(address tknLabel, string amount) public view returns (uint){
+    function convert(address tknLabel, uint amount)
+        external
+        view
+        returns (uint)
+    {
 
-        uint amountInt =  parseInt(amount, tokens[tknLabel].decimals)*tokens[tknLabel].rate;
-
-        return amountInt/tokens[tknLabel].decimals;
+        return amount*tokens[tknLabel].rate/tokens[tknLabel].decimals;
     }
 
-    function updateRateManual(address tokenID,uint rate) public{
+    function updateRateManual(address tokenID,uint rate)
+     external
+     onlyController
+     tokenSupported(tokenID)
+     {
         tokens[tokenID].rate = rate;
     }
-
 
 
 }
