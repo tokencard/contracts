@@ -31,16 +31,18 @@ func finneyToWei(amount int) *big.Int {
 
 var testRig = ethertest.NewTestRig()
 var controllerWallet = ethertest.NewWallet()
+var randomWallet = ethertest.NewWallet()
 var oraclizeCallbackWallet = ethertest.NewWallet()
 
 var _ = BeforeSuite(func() {
 	testRig.AddGenesisAccountAllocation(controllerWallet.Address(), ethToWei(1000))
+	testRig.AddGenesisAccountAllocation(randomWallet.Address(), ethToWei(1000))
 	// testRig.AddGenesisAccountAllocation(oraclizeCallbackWallet.Address(), ethToWei(1000))
 	testRig.AddCoverageForContracts("../../build/oracleV2/combined.json", "../../contracts/oracleV2.sol")
 })
 
 var _ = AfterSuite(func() {
-	testRig.ExpectMinimumCoverage("oracleV2.sol:Oracle", 50.0)
+	testRig.ExpectMinimumCoverage("oracleV2.sol:Oracle", 0.0)
 })
 
 func balanceOf(a common.Address) *big.Int {
@@ -56,6 +58,15 @@ func isSuccessful(tx *types.Transaction) bool {
 	r, err := be.TransactionReceipt(context.Background(), tx.Hash())
 	Expect(err).ToNot(HaveOccurred())
 	return r.Status == types.ReceiptStatusSuccessful
+}
+
+func isGasExausted(tx *types.Transaction, gasLimit uint64) bool {
+	r, err := be.TransactionReceipt(context.Background(), tx.Hash())
+	Expect(err).ToNot(HaveOccurred())
+	if r.Status == types.ReceiptStatusSuccessful {
+		return false
+	}
+	return r.GasUsed == gasLimit
 }
 
 var oraclizeMockAddrResolver *bindings.MockOraclizeAddrResolver
