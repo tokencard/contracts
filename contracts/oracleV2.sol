@@ -1956,7 +1956,7 @@ contract Oracle is usingOraclize{
     event TokenRemoval(address indexed tokenID);
     event TokenAddition(address indexed tokenID, string label);
     event LogNewOraclizeQuery(string description);
-    event RateUpdated(address tokenAddress,string rate);
+    event RateUpdated(address tokenAddress,uint rate);
 
     struct Erc20Token {
         string label;  //token symbol
@@ -2106,10 +2106,12 @@ contract Oracle is usingOraclize{
           last_update_timestamp = now;
         } */
 
-        tokens[validIDs[queryId]].rate = parseInt(result, 18); //transform rate(string) to uint (wei precision)
+        uint rate = parseInt(result, 18);
+
+        tokens[validIDs[queryId]].rate = rate; //transform rate(string) to uint (wei precision)
         delete validIDs[queryId]; //remove mapping
 
-        emit RateUpdated(validIDs[queryId],result);
+        emit RateUpdated(validIDs[queryId], rate);
     }
 
     function convert(address tokenID, uint amount)
@@ -2131,6 +2133,8 @@ contract Oracle is usingOraclize{
      tokenSupported(tokenID)
      {
         tokens[tokenID].rate = rate;
+
+        emit RateUpdated(tokenID, rate);
     }
 
 
