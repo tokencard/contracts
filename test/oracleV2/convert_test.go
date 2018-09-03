@@ -39,7 +39,7 @@ var _ = Describe("convert", func() {
 				})
 			})
 			Context("When overflow does not occur", func() {
-				It("Should return 1 (100*100/10^4)", func() {
+				It("Should return 0.01(amount)*0.001633(rate)*10^18(in wei)", func() {
 					value, err := oracle.Convert(nil, common.HexToAddress("0xfe209bdE5CA32fa20E6728A005F26D651FFF5982"), big.NewInt(int64(0.01*math.Pow10(8))))
 					Expect(err).ToNot(HaveOccurred())
 					Expect(value.String()).To(Equal(big.NewInt(int64(0.00001633 * math.Pow10(18))).String()))
