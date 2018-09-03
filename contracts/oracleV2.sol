@@ -2072,7 +2072,10 @@ contract Oracle is usingOraclize{
         emit TokenRemoval(tokenID);
     }
 
-    function updateRates() public payable{
+    function updateRates()
+    public
+    payable
+    {
 
         uint contractAddressesLength = contractAddresses.length; //number of supported tokens
 
@@ -2096,7 +2099,10 @@ contract Oracle is usingOraclize{
         }
     }
 
-    function __callback(bytes32 queryId, string result, bytes proof) public onlyOraclize {
+    function __callback(bytes32 queryId, string result, bytes proof)
+    public
+    onlyOraclize
+    {
 
         require(tokens[validIDs[queryId]].supported);//must be a valid token.
 
@@ -2109,9 +2115,9 @@ contract Oracle is usingOraclize{
         uint rate = parseInt(result, 18);
 
         tokens[validIDs[queryId]].rate = rate; //transform rate(string) to uint (wei precision)
+        emit RateUpdated(validIDs[queryId], rate);
         delete validIDs[queryId]; //remove mapping
 
-        emit RateUpdated(validIDs[queryId], rate);
     }
 
     function convert(address tokenID, uint amount)
