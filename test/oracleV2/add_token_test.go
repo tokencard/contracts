@@ -1,6 +1,8 @@
 package oracle_v2_test
 
 import (
+	"math/big"
+
 	"github.com/ethereum/go-ethereum/common"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -16,7 +18,6 @@ var _ = Describe("addToken", func() {
 				be.Commit()
 				Expect(isSuccessful(tx)).To(BeTrue())
 			})
-
 		})
 		Context("When the token is added/supported", func() {
 			BeforeEach(func() {
@@ -37,7 +38,12 @@ var _ = Describe("addToken", func() {
 				Expect(evt.TokenID).To(Equal(common.HexToAddress("0x0")))
 				Expect(evt.Label).To(Equal("ETH"))
 			})
-
+			It("Should update ContactAddresses", func() {
+				// index := big.NewInt(0)
+				a, err := oracle.ContractAddresses(nil, big.NewInt(0))
+				Expect(err).ToNot(HaveOccurred())
+				Expect(a).To(Equal(common.HexToAddress("0x0")))
+			})
 			It("Should fail", func() {
 				to := controllerWallet.TransactOpts()
 				to.GasLimit = 100000
