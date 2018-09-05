@@ -18,6 +18,14 @@
   revision = "fdfc19097e7ac6b57035062056f5b7b4638b8898"
 
 [[projects]]
+  digest = "1:c166378e8ab0f794f293dfb941d250dd70b035b05dec58879f717621d0fe1714"
+  name = "github.com/deckarep/golang-set"
+  packages = ["."]
+  pruneopts = "T"
+  revision = "1d4478f51bed434f1dadf96dcd9b43aabac66795"
+  version = "v1.7"
+
+[[projects]]
   branch = "master"
   digest = "1:67d0b50be0549e610017cb91e0b0b745ec0cad7c613bc8e18ff2d1c1fc8825a7"
   name = "github.com/edsrzf/mmap-go"
@@ -26,7 +34,7 @@
   revision = "0bce6a6887123b67a60366d2c9fe2dfb74289d2e"
 
 [[projects]]
-  digest = "1:3e892a54552313db9f7eda71126179f4da5c9d15778681c662f0ef44471698ee"
+  digest = "1:ba11b65320bfa1a5e8e43b050833bca23490e508a67c45d7e430156cefc2ab7f"
   name = "github.com/ethereum/go-ethereum"
   packages = [
     ".",
@@ -52,7 +60,6 @@
     "crypto/bn256",
     "crypto/bn256/cloudflare",
     "crypto/bn256/google",
-    "crypto/randentropy",
     "crypto/secp256k1",
     "crypto/sha3",
     "eth/filters",
@@ -68,8 +75,8 @@
     "trie",
   ]
   pruneopts = "T"
-  revision = "37685930d953bcbe023f9bc65b135a8d8b8f1488"
-  version = "v1.8.12"
+  revision = "89451f7c382ad2185987ee369f16416f89c28a7d"
+  version = "v1.8.15"
 
 [[projects]]
   digest = "1:c4a2528ccbcabf90f9f3c464a5fc9e302d592861bbfd0b7135a7de8a943d0406"
@@ -216,15 +223,15 @@
   revision = "93350a882848874991d48ff78a8d1d3e6b3c6111"
 
 [[projects]]
-  digest = "1:9670881c0ed0272e8ea4c22fd44c53b73f43ab9ed374962858e11321702309e7"
+  digest = "1:aec9c498c32c9de11ab78d8703355f1919ef903f762ca1b6233ffd81468e77bd"
   name = "github.com/tokencard/ethertest"
   packages = [
     ".",
     "backends",
   ]
   pruneopts = "T"
-  revision = "c4514322c03e59578f63dd279597c85cb3a68928"
-  version = "v0.1"
+  revision = "43ae13c26395f8bef47d0ce50b18635fe85144b9"
+  version = "v0.1.2"
 
 [[projects]]
   branch = "master"
@@ -255,7 +262,10 @@
   branch = "master"
   digest = "1:1c5a313b5a06256a9ccf9e6a5a6370c04adceb41dae684ba6c9ac1b6964529ed"
   name = "golang.org/x/sys"
-  packages = ["unix"]
+  packages = [
+    "cpu",
+    "unix",
+  ]
   pruneopts = "T"
   revision = "1b2967e3c290b7c545b3db0deeda16e9be4f98a2"
 
@@ -296,14 +306,6 @@
   ]
   pruneopts = "T"
   revision = "2087f8c10712366cfc2f4fcb1bf99eeef61ab21e"
-
-[[projects]]
-  digest = "1:3ccd10c863188cfe0d936fcfe6a055c95362e43af8e7039e33baade846928e74"
-  name = "gopkg.in/fatih/set.v0"
-  packages = ["."]
-  pruneopts = "T"
-  revision = "57907de300222151a123d29255ed17f5ed43fad3"
-  version = "v0.1.0"
 
 [[projects]]
   branch = "v2"
