@@ -3,19 +3,19 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:a271e80eaf06c3842d9508f258233b1b0f88e7be6f2057499fc87ae0dcd71cbf"
+  digest = "1:fcee9109b202ec83e394090947c53d9a345c7843a8dd33dde5189ad0e75cbf63"
   name = "github.com/aristanetworks/goarista"
   packages = ["monotime"]
   pruneopts = "T"
-  revision = "32f94db2e6faa2c7250286dfb4c7ad3dc0f3ead2"
+  revision = "c2e37c381520048ad67de8a2ef5c471603282ab7"
 
 [[projects]]
   branch = "master"
-  digest = "1:818930f1f9a72b859781d8f2246eb7af53d1c9c66fe4847f714cdc350dcfd66b"
+  digest = "1:f2d4beb3a1f1d5c59ed38864724bb098952c6230a22a226b30b8cb1dcb8daf79"
   name = "github.com/btcsuite/btcd"
   packages = ["btcec"]
   pruneopts = "T"
-  revision = "fdfc19097e7ac6b57035062056f5b7b4638b8898"
+  revision = "cff30e1d23fc9e800b2b5b4b41ef1817dda07e9f"
 
 [[projects]]
   digest = "1:c166378e8ab0f794f293dfb941d250dd70b035b05dec58879f717621d0fe1714"
@@ -79,12 +79,12 @@
   version = "v1.8.15"
 
 [[projects]]
-  digest = "1:c4a2528ccbcabf90f9f3c464a5fc9e302d592861bbfd0b7135a7de8a943d0406"
+  digest = "1:586ea76dbd0374d6fb649a91d70d652b7fe0ccffb8910a77468e7702e7901f3d"
   name = "github.com/go-stack/stack"
   packages = ["."]
   pruneopts = "T"
-  revision = "259ab82a6cad3992b4e21ff5cac294ccb06474bc"
-  version = "v1.7.0"
+  revision = "2fee6af1a9795aafbe0253a0cfbdf668e1fb8a9a"
+  version = "v1.8.0"
 
 [[projects]]
   branch = "master"
@@ -95,15 +95,29 @@
   revision = "2e65f85255dbc3072edf28d6b5b8efc472979f5a"
 
 [[projects]]
-  branch = "master"
-  digest = "1:cf296baa185baae04a9a7004efee8511d08e2f5f51d4cbe5375da89722d681db"
+  digest = "1:8ec8d88c248041a6df5f6574b87bc00e7e0b493881dad2e7ef47b11dc69093b5"
   name = "github.com/hashicorp/golang-lru"
   packages = [
     ".",
     "simplelru",
   ]
   pruneopts = "T"
-  revision = "0fb14efe8c47ae851c0034ed7a448854d3d34cf3"
+  revision = "20f1fb78b0740ba8c3cb143a61e86ba5c8669768"
+  version = "v0.5.0"
+
+[[projects]]
+  digest = "1:8f20c8dd713564fa97299fbcb77d729c6de9c33f3222812a76e6ecfaef80fd61"
+  name = "github.com/hpcloud/tail"
+  packages = [
+    ".",
+    "ratelimiter",
+    "util",
+    "watch",
+    "winfile",
+  ]
+  pruneopts = "T"
+  revision = "a30252cb686a21eb2d0b98132633053ec2f7f1e5"
+  version = "v1.0.0"
 
 [[projects]]
   branch = "master"
@@ -114,7 +128,7 @@
   revision = "d694e6f975a9109e2b063829d563a7c153c4b53c"
 
 [[projects]]
-  digest = "1:b6a86e76afb80d2eda55b4222b8c848d7f465c65f6142525ed523fffebd2305d"
+  digest = "1:99ec7b4370b05816679fe9ae77f1f8af4eae3df0abaeef8c3d2d42d86f55f549"
   name = "github.com/onsi/ginkgo"
   packages = [
     ".",
@@ -137,11 +151,11 @@
     "types",
   ]
   pruneopts = "T"
-  revision = "fa5fabab2a1bfbd924faf4c067d07ae414e2aedf"
-  version = "v1.5.0"
+  revision = "3774a09d95489ccaa16032e0770d08ea77ba6184"
+  version = "v1.6.0"
 
 [[projects]]
-  digest = "1:a57594bb92ae910ca04381e36692c5dc9e1250b6825ae51092ee1dc103e203ab"
+  digest = "1:7343b611a01c3276e8d1bb69b38f94014dbe6bf92df545b069808f7e7531b802"
   name = "github.com/onsi/gomega"
   packages = [
     ".",
@@ -158,8 +172,8 @@
     "types",
   ]
   pruneopts = "T"
-  revision = "62bff4df71bdbc266561a0caee19f0594b17c240"
-  version = "v1.4.0"
+  revision = "b6ea1ea48f981d0f615a154a45eabb9dd466556d"
+  version = "v1.4.1"
 
 [[projects]]
   digest = "1:361de06aa7ae272616cbe71c3994a654cc6316324e30998e650f7765b20c5b33"
@@ -178,24 +192,24 @@
   version = "v0.8.0"
 
 [[projects]]
-  digest = "1:6afc433cbb471b1d32de92131245fb1f76000c9d88940265df4a512572a51b51"
+  digest = "1:602081d2a289d1f76ea90b806b0c61c19038d76504e9005ccb969864dbaee339"
   name = "github.com/rjeczalik/notify"
   packages = ["."]
   pruneopts = "T"
-  revision = "52ae50d8490436622a8941bd70c3dbe0acdd4bbf"
-  version = "v0.9.0"
+  revision = "0f065fa99b48b842c3fd3e2c8b194c6f2b69f6b8"
+  version = "v0.9.1"
 
 [[projects]]
-  digest = "1:8ee30ce90cdb86c549810a4c6a67356f6bf93c76b0b4d3f33caa0c2f85c5b5e0"
+  digest = "1:6cae6970d70fc5fe75bf83c48ee33e9c4c561a62d0b033254bee8dd5942b815a"
   name = "github.com/rs/cors"
   packages = ["."]
   pruneopts = "T"
-  revision = "ca016a06a5753f8ba03029c0aa5e54afb1bf713f"
-  version = "v1.4.0"
+  revision = "3fb1b69b103a84de38a19c3c6ec073dd6caa4d3f"
+  version = "v1.5.0"
 
 [[projects]]
   branch = "master"
-  digest = "1:7d44c4d11eb65cfdc78c76040f37ef305b16474c019c98a8a7cf188fece2d574"
+  digest = "1:ee395d0d8c1719b5a1407f34af93953b4763bacb19a8961aba5b6d312824da41"
   name = "github.com/syndtr/goleveldb"
   packages = [
     "leveldb",
@@ -212,15 +226,7 @@
     "leveldb/util",
   ]
   pruneopts = "T"
-  revision = "c4c61651e9e37fa117f53c5a906d3b63090d8445"
-
-[[projects]]
-  digest = "1:fd233eb5908f30928b5409b1da9c88949110d6bdbcfc2708d566dd9c6143e095"
-  name = "github.com/tokencard/assets"
-  packages = ["pkg/assets"]
-  pruneopts = "T"
-  revision = "ed7616d9635b240d4c7427d92f1425d1fe948299"
-  version = "v0.9.0"
+  revision = "ae2bd5eed72d46b28834ec3f60db3a3ebedd8dbd"
 
 [[projects]]
   digest = "1:aec9c498c32c9de11ab78d8703355f1919ef903f762ca1b6233ffd81468e77bd"
@@ -235,7 +241,7 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:6b0f356468ed2e782d294aa3624769a4f6c449d9ef55e5fd7cea5e5cc777b830"
+  digest = "1:490cbeb7a0a743de4cc0058a6d13ef6772c4d1e3d4d36a8f0428d3c5114012ff"
   name = "golang.org/x/crypto"
   packages = [
     "pbkdf2",
@@ -243,11 +249,11 @@
     "scrypt",
   ]
   pruneopts = "T"
-  revision = "a49355c7e3f8fe157a85be2f77e6e269a0f89602"
+  revision = "0709b304e793a5edb4a2c0145f281ecdc20838a4"
 
 [[projects]]
   branch = "master"
-  digest = "1:69d5f1bcfa48da499baa49ec966e4f03929d35516d8a344db2d49f4fe744314e"
+  digest = "1:c96475ce8a4befca406926432f1a9dea8d17c1573fe99c3086055d28e0910bec"
   name = "golang.org/x/net"
   packages = [
     "html",
@@ -256,18 +262,18 @@
     "websocket",
   ]
   pruneopts = "T"
-  revision = "d0887baf81f4598189d4e12a37c6da86f0bba4d0"
+  revision = "8a410e7b638dca158bf9e766925842f6651ff828"
 
 [[projects]]
   branch = "master"
-  digest = "1:1c5a313b5a06256a9ccf9e6a5a6370c04adceb41dae684ba6c9ac1b6964529ed"
+  digest = "1:d32b0068e49e0a7da2dc96eb84125651037f04d123ae8fa1199a10bf2fb15e57"
   name = "golang.org/x/sys"
   packages = [
     "cpu",
     "unix",
   ]
   pruneopts = "T"
-  revision = "1b2967e3c290b7c545b3db0deeda16e9be4f98a2"
+  revision = "ebe1bf3edb3325c393447059974de898d5133eb8"
 
 [[projects]]
   digest = "1:6164911cb5e94e8d8d5131d646613ff82c14f5a8ce869de2f6d80d9889df8c5a"
@@ -297,7 +303,7 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:d5e9755f676f7c62eae4c2690e402c5c3b78224d3d4a0c3a3f8a9ee63664d8d2"
+  digest = "1:dbc233c3e91caaf82db96f3bc5fcd5aa783f7b645022fd4ffc471e36f06df946"
   name = "golang.org/x/tools"
   packages = [
     "go/ast/astutil",
@@ -305,7 +311,16 @@
     "internal/fastwalk",
   ]
   pruneopts = "T"
-  revision = "2087f8c10712366cfc2f4fcb1bf99eeef61ab21e"
+  revision = "0aa4b8830f481fed77b73cf7cea2bc3129e05148"
+
+[[projects]]
+  digest = "1:7fc160b460a6fc506b37fcca68332464c3f2cd57b6e3f111f26c5bbfd2d5518e"
+  name = "gopkg.in/fsnotify.v1"
+  packages = ["."]
+  pruneopts = "T"
+  revision = "c2828203cd70a50dcccfb2761f8b1f8ceef9a8e9"
+  source = "gopkg.in/fsnotify/fsnotify.v1"
+  version = "v1.4.7"
 
 [[projects]]
   branch = "v2"
@@ -322,6 +337,14 @@
   packages = ["."]
   pruneopts = "T"
   revision = "c1b8fa8bdccecb0b8db834ee0b92fdbcfa606dd6"
+
+[[projects]]
+  branch = "v1"
+  digest = "1:0caa92e17bc0b65a98c63e5bc76a9e844cd5e56493f8fdbb28fad101a16254d9"
+  name = "gopkg.in/tomb.v1"
+  packages = ["."]
+  pruneopts = "T"
+  revision = "dd632973f1e7218eb1089048e0798ec9ae7dceb8"
 
 [[projects]]
   digest = "1:342378ac4dcb378a5448dd723f0784ae519383532f5e70ade24132c4c8693202"
@@ -347,7 +370,6 @@
     "github.com/onsi/gomega",
     "github.com/onsi/gomega/types",
     "github.com/pkg/errors",
-    "github.com/tokencard/assets/pkg/assets",
     "github.com/tokencard/ethertest",
   ]
   solver-name = "gps-cdcl"
