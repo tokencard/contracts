@@ -15,8 +15,8 @@
   version = "0.8.0"
 
 [[constraint]]
-  branch = "master"
   name = "github.com/tokencard/assets"
+  version = "0.9.0"
 
 [[constraint]]
   name = "github.com/tokencard/ethertest"

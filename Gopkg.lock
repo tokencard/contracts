@@ -215,12 +215,12 @@
   revision = "c4c61651e9e37fa117f53c5a906d3b63090d8445"
 
 [[projects]]
-  branch = "master"
-  digest = "1:6bf49be987cde5ccc5c9ba64f913c4ee79564b2ef33c9a65f941f40c0b23f808"
+  digest = "1:fd233eb5908f30928b5409b1da9c88949110d6bdbcfc2708d566dd9c6143e095"
   name = "github.com/tokencard/assets"
-  packages = ["."]
+  packages = ["pkg/assets"]
   pruneopts = "T"
-  revision = "93350a882848874991d48ff78a8d1d3e6b3c6111"
+  revision = "ed7616d9635b240d4c7427d92f1425d1fe948299"
+  version = "v0.9.0"
 
 [[projects]]
   digest = "1:aec9c498c32c9de11ab78d8703355f1919ef903f762ca1b6233ffd81468e77bd"
@@ -347,7 +347,7 @@
     "github.com/onsi/gomega",
     "github.com/onsi/gomega/types",
     "github.com/pkg/errors",
-    "github.com/tokencard/assets",
+    "github.com/tokencard/assets/pkg/assets",
     "github.com/tokencard/ethertest",
   ]
   solver-name = "gps-cdcl"

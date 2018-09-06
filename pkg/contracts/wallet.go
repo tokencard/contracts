@@ -14,7 +14,7 @@ import (
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/pkg/errors"
-	"github.com/tokencard/assets"
+	"github.com/tokencard/assets/pkg/assets"
 )
 
 const (
