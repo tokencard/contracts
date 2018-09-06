@@ -14,7 +14,6 @@ import (
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/pkg/errors"
-	"github.com/tokencard/assets/pkg/assets"
 )
 
 const (
@@ -25,10 +24,9 @@ const (
 	whitelistAdditionTopic = "0xc76dd62bd7d0b2212e0d3445c1703a522dd816a749fe499b3bcb0f51b2500434"
 	whitelistRemovalTopic  = "0x4b089aff1cdd9a6984aa832d4a013996b3acd3d6244ce3de5e07e6ab050d2b94"
 	topupGasTopic          = "0x11bb310b94280c15845698b8ce945817e14456a5d1582e387e6e4a01ef2c6742"
-	tokenTopic             = "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef"
 )
 
-func NewWallet(ethereum *ethclient.Client, assets []*assets.Asset, address common.Address) (*Wallet, error) {
+func NewWallet(ethereum *ethclient.Client, address common.Address) (*Wallet, error) {
 	contractBindings, err := bindings.NewWallet(address, ethereum)
 	if err != nil {
 		return nil, err
@@ -42,7 +40,6 @@ func NewWallet(ethereum *ethclient.Client, assets []*assets.Asset, address commo
 		bindings: contractBindings,
 		abi:      contractABI,
 		ethereum: ethereum,
-		assets:   assets,
 	}, nil
 }
 
@@ -51,7 +48,6 @@ type Wallet struct {
 	bindings *bindings.Wallet
 	abi      abi.ABI
 	ethereum *ethclient.Client
-	assets   []*assets.Asset
 }
 
 func DeployWallet(opts *ConstructOpts, eth *ethclient.Client, owner common.Address, oracle common.Address, controllers []common.Address) (common.Address, *types.Transaction, error) {
@@ -778,47 +774,6 @@ func (w *Wallet) DepositEvents(ctx context.Context, block *big.Int) ([]*Event, e
 			Data:      data,
 			TxHash:    v.TxHash,
 		})
-	}
-	return events, nil
-}
-
-func (w *Wallet) TokenDepositEvents(ctx context.Context, block *big.Int) ([]*Event, error) {
-	var events []*Event
-	// Scan supported tokens for incoming events.
-	for _, asset := range w.assets {
-		if asset.ID == assets.ETHER {
-			continue
-		}
-		// Create a log filter query.
-		query := ethereum.FilterQuery{
-			FromBlock: nil,
-			ToBlock:   block,
-			Addresses: []common.Address{common.HexToAddress(asset.Contract)},
-			Topics:    [][]common.Hash{{common.HexToHash(tokenTopic)}, nil, {w.address.Hash()}},
-		}
-		// Get the contract logs.
-		logs, err := w.ethereum.FilterLogs(ctx, query)
-		if err != nil {
-			return nil, err
-		}
-		// Create a list of incoming asset transfer events.
-		for _, v := range logs {
-			// Decode event parameters.
-			if len(v.Data) < 32 {
-				return nil, ErrInvalidEventData
-			}
-			var data [][]byte
-			data = append(data, v.Topics[len(v.Topics)-1].Bytes())
-			for i := 0; i < len(v.Data); i += 32 {
-				data = append(data, v.Data[i:i+32])
-			}
-			events = append(events, &Event{
-				Address:   v.Address,
-				BlockHash: v.BlockHash,
-				Data:      data,
-				TxHash:    v.TxHash,
-			})
-		}
 	}
 	return events, nil
 }
