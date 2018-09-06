@@ -13,6 +13,8 @@ import (
 	gtypes "github.com/onsi/gomega/types"
 	"github.com/tokencard/contracts/pkg/bindings"
 	"github.com/tokencard/ethertest"
+	"github.com/tokencard/contracts/pkg/bindings/mocks"
+	"math"
 )
 
 func TestWalletSuite(t *testing.T) {
@@ -146,34 +148,44 @@ var _ = BeforeEach(func() {
 	bankWallet.MustTransfer(be, randomPerson.Address(), FIVE_HUNDRED_FINNEY)
 })
 
-var o *bindings.Oracle
-var oa common.Address
+var oraclizeMockAddrResolver *mocks.OraclizeAddrResolver
+var oraclizeMockAddrResolverAddress common.Address
+
+var oraclizeMock *mocks.Oraclize
+var oraclizeMockAddress common.Address
+
+var oracle *bindings.Oracle
+var oracleAddress common.Address
+
 var _ = BeforeEach(func() {
 	var err error
-	var tx *types.Transaction
-	oa, tx, o, err = bindings.DeployOracle(bankWallet.TransactOpts(), be)
+
+	oraclizeMockAddress, _, oraclizeMock, err = mocks.DeployOraclize(bankWallet.TransactOpts(), be, bankWallet.Address())
+	Expect(err).ToNot(HaveOccurred())
+
+	oraclizeMockAddrResolverAddress, _, oraclizeMockAddrResolver, err = mocks.DeployOraclizeAddrResolver(bankWallet.TransactOpts(), be, oraclizeMockAddress)
+	Expect(err).ToNot(HaveOccurred())
+
+	oracleAddress, _, oracle, err = bindings.DeployOracle(bankWallet.TransactOpts(), be, oraclizeMockAddrResolverAddress)
 	Expect(err).ToNot(HaveOccurred())
 
 	be.Commit()
-
-	Expect(isSuccessful(tx)).To(BeTrue())
 })
 
 var tkn *bindings.Token
 var tkna common.Address
 var _ = BeforeEach(func() {
 	var err error
-	var tx *types.Transaction
-	tkna, tx, tkn, err = bindings.DeployToken(bankWallet.TransactOpts(), be)
+	tkna, _, tkn, err = bindings.DeployToken(bankWallet.TransactOpts(), be)
+	Expect(err).ToNot(HaveOccurred())
+
+	_, err = oracle.AddToken(bankWallet.TransactOpts(), tkna, "TKN", 8)
+	Expect(err).ToNot(HaveOccurred())
+
+	_, err = oracle.UpdateRateManual(bankWallet.TransactOpts(), tkna, big.NewInt(int64(0.001633*math.Pow10(18))))
 	Expect(err).ToNot(HaveOccurred())
 
 	be.Commit()
-
-	Expect(isSuccessful(tx)).To(BeTrue())
-
-	// TODO: Add exchange rate to the oracle.
-
-	o.Set(bankWallet.TransactOpts(), []common.Address{tkna}, []*big.Int{big.NewInt(100)}, []*big.Int{big.NewInt(1)})
 })
 
 var w *bindings.Wallet
@@ -185,7 +197,7 @@ var _ = BeforeEach(func() {
 		bankWallet.TransactOpts(),
 		be,
 		owner.Address(),
-		oa,
+		oracleAddress,
 		[]common.Address{controller.Address()},
 	)
 	Expect(err).ToNot(HaveOccurred())

@@ -10,7 +10,7 @@ var _ = Describe("oracle", func() {
 		It("should have an oracle", func() {
 			o, err := w.Oracle(nil)
 			Expect(err).ToNot(HaveOccurred())
-			Expect(o).To(Equal(oa))
+			Expect(o).To(Equal(oracleAddress))
 		})
 	})
 })

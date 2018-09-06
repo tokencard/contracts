@@ -12,9 +12,11 @@ compile_solidity() {
 contract_sources=(
   'wallet'
   'token'
+  'deprecated/controller'
+  'deprecated/card'
+  'mocks/oraclize-connector'
+  'mocks/oraclize-resolver'
   'oracle'
-  'oracleV2'
-  'oraclize'
 )
 
 for c in "${contract_sources[@]}"
@@ -35,20 +37,19 @@ generate_binding() {
   contract=$(echo $1 | awk '{print $1}')
   go_source=$(echo $1 | awk '{print $2}')
   go_type=$(echo $1 | awk '{print $3}')
+  package=$(echo $1 | awk '{print $4}')
   echo "Generating binding for ${go_type} (${contract})"
-  bin=$(awk '{print "0x" $0}' ./build/${contract}.bin)
-  echo $bin > ./build/${contract}.bin
-  ${ABIGEN} --abi ./build/${contract}.abi  --bin ./build/${contract}.bin --pkg bindings --type=$go_type --out ./pkg/bindings/$go_source
-  # rm temp_bin_file
+  ${ABIGEN} --abi ./build/${contract}.abi  --bin ./build/${contract}.bin --pkg ${package} --type=${go_type} --out ./pkg/bindings/${go_source}
 }
 
 contracts=(
-  "wallet/Wallet wallet.go Wallet"
-  "oracle/Oracle oracle.go Oracle"
-  "token/Token token.go Token"
-  "oracleV2/Oracle oracleV2.go OracleV2"
-  "oraclize/Oraclize mock_oraclize.go MockOraclize"
-  "oraclize/OraclizeAddrResolver mock_oraclize_addr_resolver.go MockOraclizeAddrResolver"
+  "wallet/Wallet wallet.go Wallet bindings"
+  "oracle/Oracle oracle.go Oracle bindings"
+  "token/Token token.go Token bindings"
+  "mocks/oraclize-resolver/OraclizeAddrResolver mocks/oraclize-resolver.go OraclizeAddrResolver mocks"
+  "mocks/oraclize-connector/Oraclize mocks/oraclize-connector.go Oraclize mocks"
+  "deprecated/controller/Controller controller.go Controller bindings"
+  "deprecated/card/Card card.go Card bindings"
 )
 
 for c in "${contracts[@]}"
@@ -56,4 +57,4 @@ do
     generate_binding "$c"
 done
 
-echo "done."
+echo "done"
