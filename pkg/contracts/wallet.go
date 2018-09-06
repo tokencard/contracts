@@ -14,7 +14,7 @@ import (
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/pkg/errors"
-	"github.com/tokencard/assets"
+	"github.com/tokencard/assets/pkg/assets"
 )
 
 const (
@@ -793,7 +793,7 @@ func (w *Wallet) TokenDepositEvents(ctx context.Context, block *big.Int) ([]*Eve
 		query := ethereum.FilterQuery{
 			FromBlock: nil,
 			ToBlock:   block,
-			Addresses: []common.Address{common.HexToAddress(asset.ID)},
+			Addresses: []common.Address{common.HexToAddress(asset.Contract)},
 			Topics:    [][]common.Hash{{common.HexToHash(tokenTopic)}, nil, {w.address.Hash()}},
 		}
 		// Get the contract logs.
