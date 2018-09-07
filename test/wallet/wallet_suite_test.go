@@ -172,11 +172,11 @@ var _ = BeforeEach(func() {
 	be.Commit()
 })
 
-var tkn *bindings.Token
+var tkn *mocks.Token
 var tkna common.Address
 var _ = BeforeEach(func() {
 	var err error
-	tkna, _, tkn, err = bindings.DeployToken(bankWallet.TransactOpts(), be)
+	tkna, _, tkn, err = mocks.DeployToken(bankWallet.TransactOpts(), be)
 	Expect(err).ToNot(HaveOccurred())
 
 	_, err = oracle.AddToken(bankWallet.TransactOpts(), tkna, "TKN", 8)

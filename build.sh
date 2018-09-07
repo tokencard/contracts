@@ -11,9 +11,9 @@ compile_solidity() {
 
 contract_sources=(
   'wallet'
-  'token'
   'deprecated/controller'
   'deprecated/card'
+  'mocks/token'
   'mocks/oraclize-connector'
   'mocks/oraclize-resolver'
   'oracle'
@@ -45,7 +45,7 @@ generate_binding() {
 contracts=(
   "wallet/Wallet wallet.go Wallet bindings"
   "oracle/Oracle oracle.go Oracle bindings"
-  "token/Token token.go Token bindings"
+  "mocks/token/Token mocks/token.go Token mocks"
   "mocks/oraclize-resolver/OraclizeAddrResolver mocks/oraclize-resolver.go OraclizeAddrResolver mocks"
   "mocks/oraclize-connector/Oraclize mocks/oraclize-connector.go Oraclize mocks"
   "deprecated/controller/Controller controller.go Controller bindings"
