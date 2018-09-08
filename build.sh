@@ -11,8 +11,6 @@ compile_solidity() {
 
 contract_sources=(
   'wallet'
-  'deprecated/controller'
-  'deprecated/card'
   'mocks/token'
   'mocks/oraclize-connector'
   'mocks/oraclize-resolver'
@@ -48,8 +46,6 @@ contracts=(
   "mocks/token/Token mocks/token.go Token mocks"
   "mocks/oraclize-resolver/OraclizeAddrResolver mocks/oraclize-resolver.go OraclizeAddrResolver mocks"
   "mocks/oraclize-connector/Oraclize mocks/oraclize-connector.go Oraclize mocks"
-  "deprecated/controller/Controller controller.go Controller bindings"
-  "deprecated/card/Card card.go Card bindings"
 )
 
 for c in "${contracts[@]}"
