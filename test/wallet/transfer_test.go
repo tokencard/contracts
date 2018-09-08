@@ -26,13 +26,7 @@ var _ = Describe("transfer", func() {
 
 		BeforeEach(func() {
 			caller = owner
-		})
-
-		BeforeEach(func() {
 			amount = ONE_FINNEY
-		})
-
-		BeforeEach(func() {
 			asset = common.HexToAddress("0x")
 		})
 
@@ -49,7 +43,7 @@ var _ = Describe("transfer", func() {
 			BeforeEach(func() {
 				to = randomPerson.Address()
 			})
-			It("should succeed", func() {
+			It("Should succeed", func() {
 				Expect(isSuccessful(tx)).To(BeTrue())
 			})
 
@@ -127,7 +121,6 @@ var _ = Describe("transfer", func() {
 					Expect(err).ToNot(HaveOccurred())
 					Expect(av.String()).To(Equal("99999999983670000000"))
 				})
-
 			})
 
 			Context("When controller tries to transfer one token to a random person", func() {

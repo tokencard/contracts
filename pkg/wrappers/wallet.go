@@ -1,3 +1,5 @@
+// Package wrappers provides extra functionality in addition to the generated wallet bindings.
+
 package wrappers
 
 import (

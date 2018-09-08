@@ -6,15 +6,16 @@ import (
 	"math/big"
 	"testing"
 
+	"math"
+
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	gtypes "github.com/onsi/gomega/types"
 	"github.com/tokencard/contracts/pkg/bindings"
-	"github.com/tokencard/ethertest"
 	"github.com/tokencard/contracts/pkg/bindings/mocks"
-	"math"
+	"github.com/tokencard/ethertest"
 )
 
 func TestWalletSuite(t *testing.T) {
@@ -78,19 +79,13 @@ func ethToWei(amount int) *big.Int {
 	return r.Mul(r, big.NewInt(int64(amount)))
 }
 
-var be ethertest.TestBackend
-
-func balanceOf(a common.Address) *big.Int {
-	b, err := be.BalanceAt(context.Background(), a, nil)
-	Expect(err).ToNot(HaveOccurred())
-	return b
-}
-
 func isSuccessful(tx *types.Transaction) bool {
 	r, err := be.TransactionReceipt(context.Background(), tx.Hash())
 	Expect(err).ToNot(HaveOccurred())
 	return r.Status == types.ReceiptStatusSuccessful
 }
+
+var be ethertest.TestBackend
 
 var _ = BeforeEach(func() {
 	be = testRig.NewTestBackend()

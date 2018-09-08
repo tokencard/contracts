@@ -3,41 +3,36 @@ pragma solidity 0.4.24;
 import "./external/strings.sol";
 import "./external/oraclize-api.sol";
 
-contract Oracle is usingOraclize{
+contract Oracle is usingOraclize {
 
     using strings for *;
 
-    /*
-     *  Events
-     */
-
     event TokenRemoval(address indexed tokenID);
-    event TokenAddition(address indexed tokenID, string label);
+    event TokenAddition(address indexed tokenID);
     event LogNewOraclizeQuery(string description);
     event RateUpdated(address tokenAddress,uint rate);
 
     struct Erc20Token {
-        string label;  //token symbol
-        uint8 decimals; //maximum number of decimals
-        uint rate; // ratio: value over ETH
-        bool supported; //denotes whether the token is inserted in the array
-
+        string label;   // Token symbol
+        uint8 decimals; // Maximum number of decimals
+        uint rate;      // Rate of token in wei
+        bool supported; // Denotes whether the token is inserted in the array
     }
 
     mapping (address => Erc20Token) public tokens;
-    address[] public contractAddresses; //keep track of the existing tokens, a way to enumerating them
+    address[] private _contractAddresses; // keep track of the existing tokens, a way to enumerating them
 
     address public controller;
 
-    /// @dev unique id returned from Oraclize, mapped to a token address so we can undertand in the callback which rate to update.
+    /// @dev unique id returned from Oraclize, mapped to a token address so we can understand in the callback which rate to update.
     mapping (bytes32 => address) validIDs;
 
-    modifier tokenSupported(address tokenID){
+    modifier tokenSupported(address tokenID) {
         require(tokens[tokenID].supported);
         _;
     }
 
-    modifier tokenNotSupported(address tokenID){
+    modifier tokenNotSupported(address tokenID) {
         require(!tokens[tokenID].supported);
         _;
     }
@@ -49,7 +44,7 @@ contract Oracle is usingOraclize{
     }
 
     /// @dev Executable only by Oraclize (used in the __callback function).
-    modifier onlyOraclize {
+    modifier onlyOraclize() {
         require(msg.sender == oraclize_cbAddress());
         _;
     }
@@ -63,35 +58,40 @@ contract Oracle is usingOraclize{
         // oraclize_setProof(proofType_Android);
     }
 
+    /// @dev Getter for contract addresses array.
+    function contractAddresses() public view returns (address[]) {
+        return _contractAddresses;
+    }
+
     /**
     * @dev add a new token to the list and mapping
     * @param tokenID token contract addresses
-    * @param label the symbol/abbreviation used to represent the token (a '.' seperated string)
+    * @param label the symbol/abbreviation used to represent the token (a '.' separated string)
     * @param decimals the precision of the token value(maximum number of decimal points)
     */
     function addToken(address tokenID, string label, uint8 decimals) public onlyController tokenNotSupported(tokenID) {
-            contractAddresses.push(tokenID);
-            tokens[tokenID] = Erc20Token({
-                label : label,
-                decimals : decimals,
-                rate : 0,
-                supported: true
-            });
+        _contractAddresses.push(tokenID);
+        tokens[tokenID] = Erc20Token({
+            label : label,
+            decimals : decimals,
+            rate : 0,
+            supported: true
+        });
 
-        emit TokenAddition(tokenID,label);
+        emit TokenAddition(tokenID);
     }
 
     /**
     * @dev add new tokens to the list and mapping
     * @param tokenIDs token contract addresses
-    * @param labels the symbol/abbreviation used to represent the token (a '.' seperated string)
+    * @param labels the symbol/abbreviation used to represent the token (a '.' separated string)
     * @param decimals the precision of the token value(maximum number of decimal points)
     */
     function addTokenBatch (address[] tokenIDs, string labels, uint8[] decimals) public onlyController {
         require(tokenIDs.length == decimals.length);
 
-        //convert strings into the library's 'slice' format
-        strings.slice  memory labelSlice = labels.toSlice();
+        // Convert strings into the library's 'slice' format.
+        strings.slice memory labelSlice = labels.toSlice();
         strings.slice memory delim = ".".toSlice();
 
         uint numTokenLabels = labelSlice.count(delim) + 1; //the number of labels is +1 of thenumber of '.' ["t1.t2.t3"] string expected
@@ -99,13 +99,12 @@ contract Oracle is usingOraclize{
 
         for (uint i = 0; i < numTokenLabels; i++) {
             if(!tokens[tokenIDs[i]].supported){
-                contractAddresses.push(tokenIDs[i]); //push token to the array
+                _contractAddresses.push(tokenIDs[i]); //push token to the array
                 tokens[tokenIDs[i]].label = labelSlice.split(delim).toString();//split the string with a '.' delimiter
                 tokens[tokenIDs[i]].decimals = decimals[i];
                 tokens[tokenIDs[i]].rate = 0; //to be updated later
                 tokens[tokenIDs[i]].supported = true;
             }
-
         }
     }
 
@@ -116,26 +115,23 @@ contract Oracle is usingOraclize{
     function removeToken(address tokenID) public onlyController tokenSupported(tokenID) {
         delete tokens[tokenID].supported;
 
-        //check if the address matches up to one token before the last one
-        //the tokenSupported() modifier ensures that the token address actually exists.
-        //if no match is found in the loop, it means that the last address was the desired one, simply reduce the size by one in any case.
-        uint contractAddressesLength = contractAddresses.length - 1;
+        // Check if the address matches up to one token before the last one
+        // the tokenSupported() modifier ensures that the token address actually exists.
+        // If no match is found in the loop, it means that the last address was the desired one, simply reduce the size by one in any case.
+        uint contractAddressesLength = _contractAddresses.length - 1;
         for (uint i=0; i<contractAddressesLength; i++)
-            if (contractAddresses[i] == tokenID) {
-                contractAddresses[i] = contractAddresses[contractAddressesLength];
+            if (_contractAddresses[i] == tokenID) {
+                _contractAddresses[i] = _contractAddresses[contractAddressesLength];
                 break;
             }
-        contractAddresses.length--;
+        _contractAddresses.length--;
 
         emit TokenRemoval(tokenID);
     }
 
-    function updateRates()
-    public
-    payable
-    {
+    function updateRates() public payable {
 
-        uint contractAddressesLength = contractAddresses.length; //number of supported tokens
+        uint contractAddressesLength = _contractAddresses.length; //number of supported tokens
 
         if (oraclize_getPrice("URL") * contractAddressesLength > address(this).balance){
             emit LogNewOraclizeQuery("Oraclize query was NOT sent, please add some ETH to cover for the query fee");
@@ -147,20 +143,17 @@ contract Oracle is usingOraclize{
             strings.slice  memory apiSuffix = "&tsyms=ETH&sign=true).ETH".toSlice();
 
             for (uint i=0; i<contractAddressesLength; i++){
-                strings.slice memory tokenLabel = tokens[contractAddresses[i]].label.toSlice();//the token label to be inserted in the api.
+                strings.slice memory tokenLabel = tokens[_contractAddresses[i]].label.toSlice();//the token label to be inserted in the api.
                 string memory apiString = apiPrefix.concat(tokenLabel).toSlice().concat(apiSuffix); //assigned for clarity
                 bytes32 queryId = oraclize_query("URL",apiString);
-                validIDs[queryId] = contractAddresses[i];// map queryId to token contract address, to be used in the callback.
+                validIDs[queryId] = _contractAddresses[i];// map queryId to token contract address, to be used in the callback.
 
                 emit LogNewOraclizeQuery("Oraclize query was sent, standing by for the answer...");
             }
         }
     }
 
-    function __callback(bytes32 queryId, string result, bytes proof)
-    public
-    onlyOraclize
-    {
+    function __callback(bytes32 queryId, string result, bytes proof) public onlyOraclize {
 
         require(tokens[validIDs[queryId]].supported);//must be a valid token.
 
@@ -178,24 +171,13 @@ contract Oracle is usingOraclize{
 
     }
 
-    function convert(address tokenID, uint amount)
-        external
-        view
-        tokenSupported(tokenID)
-        returns (uint)
-    {
+    function convert(address tokenID, uint amount) external view tokenSupported(tokenID) returns (uint) {
         require(tokens[tokenID].rate != 0);
-        require(tokens[tokenID].decimals != 0);
         assert((amount * tokens[tokenID].rate) / tokens[tokenID].rate == amount); // Overflow check, returns 0
-
         return amount*tokens[tokenID].rate/(uint(10)**tokens[tokenID].decimals);
     }
 
-    function updateRateManual(address tokenID,uint rate)
-     external
-     onlyController
-     tokenSupported(tokenID)
-     {
+    function updateRateManual(address tokenID,uint rate) external onlyController tokenSupported(tokenID) {
         tokens[tokenID].rate = rate;
 
         emit RateUpdated(tokenID, rate);
