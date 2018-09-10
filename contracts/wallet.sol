@@ -44,6 +44,7 @@ contract Control {
         addControllerInternal(_account);
     }
 
+    /// @dev Re-usable internal function that adds a new controller.
     function addControllerInternal(address _account) internal {
         require(!isController[_account]);
         isController[_account] = true;
@@ -56,6 +57,7 @@ contract Control {
         removeControllerInternal(_account);
     }
 
+    /// @dev Re-usable internal function that removes an existing controller.
     function removeControllerInternal(address _account) internal {
         require(isController[_account] && controllerCount > 1);
         isController[_account] = false;
@@ -108,19 +110,21 @@ contract Whitelist is Control {
     /// @dev Add initial addresses to the whitelist.
     /// @param _addresses are the Ethereum addresses to be whitelisted.
     function initializeWhitelist(address[] _addresses) external onlyOwner validLength(_addresses) hasNoOwner(_addresses) {
+        // Require that the whitelist has not been initialized.
         require(!initializedWhitelist);
         // Add each of the provided addresses to the whitelist.
         for (uint i = 0; i < _addresses.length; i++) {
             isWhitelisted[_addresses[i]] = true;
         }
         initializedWhitelist = true;
+        // Emit the addition event.
         emit WhitelistAddition(msg.sender, _addresses);
     }
 
     /// @dev Add addresses to the whitelist.
     /// @param _addresses are the Ethereum addresses to be whitelisted.
     function submitWhitelistAddition(address[] _addresses) external onlyOwner validLength(_addresses) hasNoOwner(_addresses) {
-        // Check if either addition or removal operation has been already submitted.
+        // Require that either addition or removal operations have not been already submitted.
         require(!submittedWhitelistAddition && !submittedWhitelistRemoval);
         // Add the provided addresses to the pending addition list.
         _pendingWhitelistAddition = _addresses;
@@ -130,16 +134,19 @@ contract Whitelist is Control {
         if (!initializedWhitelist) {
             initializedWhitelist = true;
         }
+        // Emit the submission event.
         emit SubmitWhitelistAddition(_addresses);
     }
 
     /// @dev Confirm pending whitelist addition.
     function confirmWhitelistAddition() external onlyController {
+        // Require that the pending whitelist is not empty and the operation has been submitted.
         require(_pendingWhitelistAddition.length > 0 && submittedWhitelistAddition);
         // Whitelist pending addresses.
         for (uint i = 0; i < _pendingWhitelistAddition.length; i++) {
             isWhitelisted[_pendingWhitelistAddition[i]] = true;
         }
+        // Emit the addition event.
         emit WhitelistAddition(msg.sender, _pendingWhitelistAddition);
         // Reset pending addresses.
         delete _pendingWhitelistAddition;
@@ -153,28 +160,32 @@ contract Whitelist is Control {
         delete _pendingWhitelistAddition;
         // Reset the submitted operation flag.
         submittedWhitelistAddition = false;
+        // Emit the cancellation event.
         emit CancelWhitelistAddition(msg.sender);
     }
 
     /// @dev Remove addresses from the whitelist.
     /// @param _addresses are the Ethereum addresses to be removed.
     function submitWhitelistRemoval(address[] _addresses) external onlyOwner validLength(_addresses) {
-        // Check if either addition or removal operation has been already submitted.
+        // Require that either addition or removal operations have not been already submitted.
         require(!submittedWhitelistRemoval && !submittedWhitelistAddition);
         // Add the provided addresses to the pending addition list.
         _pendingWhitelistRemoval = _addresses;
         // Flag the operation as submitted.
         submittedWhitelistRemoval = true;
+        // Emit the submission event.
         emit SubmitWhitelistRemoval(_addresses);
     }
 
     /// @dev Confirm pending removal of whitelisted addresses.
     function confirmWhitelistRemoval() external onlyController {
+        // Require that the pending whitelist is not empty and the operation has been submitted.
         require(_pendingWhitelistRemoval.length > 0 && submittedWhitelistRemoval);
         // Remove pending addresses.
         for (uint i = 0; i < _pendingWhitelistRemoval.length; i++) {
             isWhitelisted[_pendingWhitelistRemoval[i]] = false;
         }
+        // Emit the removal event.
         emit WhitelistRemoval(msg.sender, _pendingWhitelistRemoval);
         // Reset pending addresses.
         delete _pendingWhitelistRemoval;
@@ -188,6 +199,7 @@ contract Whitelist is Control {
         delete _pendingWhitelistRemoval;
         // Reset the submitted operation flag.
         submittedWhitelistRemoval = false;
+        // Emit the cancellation event.
         emit CancelWhitelistRemoval(msg.sender);
     }
 }
@@ -218,18 +230,20 @@ contract SpendLimit is Control {
     /// @dev Initialize a daily transfer limit for non-whitelisted addresses.
     /// @param _amount is the daily limit amount in wei.
     function initializeSpendLimit(uint _amount) external onlyOwner {
+        // Require that the spend limit has not been initialized.
         require(!initializedSpendLimit);
         // Modify spend limit based on the provided value.
         modifySpendLimit(_amount);
         // Flag the operation as initialized.
         initializedSpendLimit = true;
+        // Emit the set limit event.
         emit SetSpendLimit(msg.sender, _amount);
     }
 
     /// @dev Set a daily transfer limit for non-whitelisted addresses.
     /// @param _amount is the daily limit amount in wei.
     function submitSpendLimit(uint _amount) external onlyOwner {
-        // Check if this operation has been already submitted.
+        // Require that the operation has been submitted.
         require(!submittedSpendLimit);
         // Assign the provided amount to pending daily limit change.
         pendingSpendLimit = _amount;
@@ -239,14 +253,17 @@ contract SpendLimit is Control {
         if (!initializedSpendLimit) {
             initializedSpendLimit = true;
         }
+        // Emit the submission event.
         emit SubmitSpendLimit(_amount);
     }
 
     /// @dev Confirm pending set daily limit operation.
     function confirmSpendLimit() external onlyController {
+        // Require that the operation has been submitted.
         require(submittedSpendLimit);
         // Modify spend limit based on the pending value.
         modifySpendLimit(pendingSpendLimit);
+        // Emit the set limit event.
         emit SetSpendLimit(msg.sender, pendingSpendLimit);
         // Reset the submission flag.
         submittedSpendLimit = false;
@@ -260,6 +277,7 @@ contract SpendLimit is Control {
         pendingSpendLimit = 0;
         // Reset the submitted operation flag.
         submittedSpendLimit = false;
+        // Emit the cancellation event.
         emit CancelSpendLimit(msg.sender);
     }
 
@@ -307,7 +325,7 @@ contract Vault is Whitelist, SpendLimit {
         }
     }
 
-    /// @dev Checks if the value is not zero.
+    /// @dev Check if the value is not zero.
     modifier notZero(uint _value) {
         require(_value != 0);
         _;
@@ -316,6 +334,7 @@ contract Vault is Whitelist, SpendLimit {
     /// @dev Ether can be deposited from any source, so this contract must be payable by anyone.
     function() public payable {
         if (msg.value > 0) {
+            // Emit the deposit event.
             emit Deposit(msg.sender, msg.value);
         }
     }
@@ -358,6 +377,7 @@ contract Vault is Whitelist, SpendLimit {
         } else {
             _to.transfer(_amount);
         }
+        // Emit the transfer event.
         emit Transfer(_to, _asset, _amount);
     }
 }
@@ -399,6 +419,7 @@ contract Wallet is Vault {
     /// @dev Initialize a daily gas top up limit.
     /// @param _amount is the gas top up amount in wei.
     function initializeTopupLimit(uint _amount) external onlyOwner {
+        // Require that the topup limit has not been initialized.
         require(!initializedTopupLimit);
         // Require that the limit amount is within the acceptable range.
         require(MINIMUM_TOPUP_LIMIT <= _amount && _amount <= MAXIMUM_TOPUP_LIMIT);
@@ -406,13 +427,14 @@ contract Wallet is Vault {
         modifyTopupLimit(_amount);
         // Flag operation as initialized.
         initializedTopupLimit = true;
+        // Emit the set limit event.
         emit SetTopupLimit(msg.sender, _amount);
     }
 
     /// @dev Set a daily topup top up limit.
     /// @param _amount is the daily topup limit amount in wei.
     function submitTopupLimit(uint _amount) external onlyOwner {
-        // Check if this operation has been already submitted.
+        // Require that the operation has not been submitted.
         require(!submittedTopupLimit);
         // Require that the limit amount is within the acceptable range.
         require(MINIMUM_TOPUP_LIMIT <= _amount && _amount <= MAXIMUM_TOPUP_LIMIT);
@@ -424,17 +446,19 @@ contract Wallet is Vault {
         if (!initializedTopupLimit) {
             initializedTopupLimit = true;
         }
+        // Emit the submission event.
         emit SubmitTopupLimit(_amount);
     }
 
     /// @dev Confirm pending set top up limit operation.
     function confirmTopupLimit() external onlyController {
-        // Check if the set topup limit operation has been submitted.
+        // Require that the operation has been submitted.
         require(submittedTopupLimit);
         // Assert that the pending topup limit amount is within the acceptable range.
         assert(MINIMUM_TOPUP_LIMIT <= pendingTopupLimit && pendingTopupLimit <= MAXIMUM_TOPUP_LIMIT);
         // Modify topup limit based on the pending value.
         modifyTopupLimit(pendingTopupLimit);
+        // Emit the set limit event.
         emit SetTopupLimit(msg.sender, pendingTopupLimit);
         // Reset pending daily limit.
         pendingTopupLimit = 0;
@@ -448,6 +472,7 @@ contract Wallet is Vault {
         pendingTopupLimit = 0;
         // Reset the submitted operation flag.
         submittedTopupLimit = false;
+        // Emit the cancellation event.
         emit CancelTopupLimit(msg.sender);
     }
 
@@ -491,6 +516,7 @@ contract Wallet is Vault {
         // ether to the owner's account.
         _topupAvailable -= amount;
         owner.transfer(amount);
+        // Emit the gas topup event.
         emit TopupGas(tx.origin, owner, amount);
     }
 }

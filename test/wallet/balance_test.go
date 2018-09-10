@@ -8,7 +8,7 @@ import (
 	"github.com/ethereum/go-ethereum/core/types"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	"github.com/tokencard/contracts/pkg/bindings"
+	"github.com/tokencard/contracts/pkg/bindings/mocks"
 )
 
 var _ = Describe("balance", func() {
@@ -33,11 +33,11 @@ var _ = Describe("balance", func() {
 	})
 
 	Context("When contract owns one TKN", func() {
-		var t *bindings.Token
+		var t *mocks.Token
 		var ta common.Address
 		BeforeEach(func() {
 			var err error
-			ta, _, t, err = bindings.DeployToken(bankWallet.TransactOpts(), be)
+			ta, _, t, err = mocks.DeployToken(bankWallet.TransactOpts(), be)
 			Expect(err).ToNot(HaveOccurred())
 
 			tx, err := t.Credit(bankWallet.TransactOpts(), wa, big.NewInt(1))

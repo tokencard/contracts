@@ -26,13 +26,7 @@ var _ = Describe("transfer", func() {
 
 		BeforeEach(func() {
 			caller = owner
-		})
-
-		BeforeEach(func() {
 			amount = ONE_FINNEY
-		})
-
-		BeforeEach(func() {
 			asset = common.HexToAddress("0x")
 		})
 
@@ -49,7 +43,7 @@ var _ = Describe("transfer", func() {
 			BeforeEach(func() {
 				to = randomPerson.Address()
 			})
-			It("should succeed", func() {
+			It("Should succeed", func() {
 				Expect(isSuccessful(tx)).To(BeTrue())
 			})
 
@@ -86,23 +80,23 @@ var _ = Describe("transfer", func() {
 
 		})
 
-		Context("When I have one token", func() {
+		Context("When I have one thousand tokens", func() {
 			BeforeEach(func() {
 				var err error
-				tx, err = tkn.Credit(bankWallet.TransactOpts(), wa, big.NewInt(1))
+				tx, err = tkn.Credit(bankWallet.TransactOpts(), wa, big.NewInt(1000))
 				Expect(err).ToNot(HaveOccurred())
 				be.Commit()
 				Expect(isSuccessful(tx)).To(BeTrue())
 			})
-			Context("When I transfer one token to a random person", func() {
+			Context("When I transfer one thousand tokens to a random person", func() {
 				BeforeEach(func() {
 					to = randomPerson.Address()
 					asset = tkna
-					amount = big.NewInt(1)
+					amount = big.NewInt(1000)
 
 					b, err := w.Balance(nil, asset)
 					Expect(err).ToNot(HaveOccurred())
-					Expect(b.String()).To(Equal("1"))
+					Expect(b.String()).To(Equal("1000"))
 
 				})
 
@@ -110,8 +104,10 @@ var _ = Describe("transfer", func() {
 					Expect(isSuccessful(tx)).To(BeTrue())
 				})
 
-				It("should increase balance of the random person", func() {
-					Expect(randomPerson.Balance(be).String()).To(Equal("500000000000000000"))
+				It("should increase TKN balance of the random person", func() {
+					b, err := tkn.BalanceOf(nil, randomPerson.Address())
+					Expect(err).ToNot(HaveOccurred())
+					Expect(b.String()).To(Equal("1000"))
 				})
 
 				It("should decrease TKN balance of the wallet", func() {
@@ -123,9 +119,8 @@ var _ = Describe("transfer", func() {
 				It("should reduce the availabe balance for the day", func() {
 					av, err := w.SpendAvailable(nil)
 					Expect(err).ToNot(HaveOccurred())
-					Expect(av.String()).To(Equal("99999999999999999990"))
+					Expect(av.String()).To(Equal("99999999983670000000"))
 				})
-
 			})
 
 			Context("When controller tries to transfer one token to a random person", func() {
