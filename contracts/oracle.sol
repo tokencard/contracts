@@ -1969,7 +1969,7 @@ contract Oracle is usingOraclize {
     address public controller;
 
     /// @dev unique id returned from Oraclize, mapped to a token address so we can understand in the callback which rate to update.
-    mapping (bytes32 => address) validIDs;
+    mapping (bytes32 => address) tokenLabeltoAddress;
 
     modifier tokenSupported(address tokenID) {
         require(tokens[tokenID].supported);
@@ -2093,7 +2093,7 @@ contract Oracle is usingOraclize {
                 strings.slice memory tokenLabel = tokens[_contractAddresses[i]].label.toSlice();//the token label to be inserted in the api.
                 string memory apiString = apiPrefix.concat(tokenLabel).toSlice().concat(apiSuffix); //assigned for clarity
                 bytes32 queryId = oraclize_query("URL",apiString);
-                validIDs[queryId] = _contractAddresses[i];// map queryId to token contract address, to be used in the callback.
+                tokenLabeltoAddress[queryId] = _contractAddresses[i];// map queryId to token contract address, to be used in the callback.
 
                 emit LogNewOraclizeQuery("Oraclize query was sent, standing by for the answer...");
             }
@@ -2102,19 +2102,23 @@ contract Oracle is usingOraclize {
 
     function __callback(bytes32 queryId, string result, bytes proof) public onlyOraclize {
 
-        require(tokens[validIDs[queryId]].supported);//must be a valid token.
+        address a = tokenLabeltoAddress[queryId];
+        Erc20Token t = tokens[a];
+
+        require(t.supported);//must be a valid token.
 
         /* if ((proof.length > 0) && (nativeProof_verify(result, proof, cc_pubkey))) {
           TKNETH = parseInt(result, 6);
-          delete validIDs[queryId];
+          delete a
           last_update_timestamp = now;
         } */
 
+        //uint rate = parseInt(result, t.decimals);
         uint rate = parseInt(result, 18);
 
-        tokens[validIDs[queryId]].rate = rate; //transform rate(string) to uint (wei precision)
-        emit RateUpdated(validIDs[queryId], rate);
-        delete validIDs[queryId]; //remove mapping
+        t.rate = rate; //transform rate(string) to uint (wei precision)
+        emit RateUpdated(a, rate);
+        delete a; //remove mapping
 
     }
 
