@@ -38,7 +38,7 @@ var _ = Describe("removeToken", func() {
 				Expect(it.Next()).To(BeTrue())
 				evt := it.Event
 				Expect(it.Next()).To(BeFalse())
-				Expect(evt.TokenID).To(Equal(common.HexToAddress("0x0")))
+				Expect(evt.Token).To(Equal(common.HexToAddress("0x0")))
 			})
 
 			It("Should update the contract addresses array", func() {
