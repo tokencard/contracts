@@ -2,9 +2,9 @@ package oracle_test
 
 import (
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/core/types"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	"github.com/ethereum/go-ethereum/core/types"
 )
 
 var _ = Describe("addTokenBatch", func() {
@@ -15,7 +15,7 @@ var _ = Describe("addTokenBatch", func() {
 			BeforeEach(func() {
 				var err error
 				tokens := []common.Address{common.HexToAddress("0x0"), common.HexToAddress("0x1")}
-				tx, err = oracle.AddTokenBatch(controllerWallet.TransactOpts(), tokens, "BNT.TKN", []uint8{18,8})
+				tx, err = oracle.AddTokenBatch(controllerWallet.TransactOpts(), tokens, "BNT.TKN", []uint8{18, 8})
 				Expect(err).ToNot(HaveOccurred())
 				be.Commit()
 			})
@@ -50,7 +50,7 @@ var _ = Describe("addTokenBatch", func() {
 				to := controllerWallet.TransactOpts()
 				to.GasLimit = 300000
 				tokens := []common.Address{common.HexToAddress("0x0"), common.HexToAddress("0x1")}
-				tx, err := oracle.AddTokenBatch(to, tokens, "BNT.TKN.ZRX", []uint8{18,8})
+				tx, err := oracle.AddTokenBatch(to, tokens, "BNT.TKN.ZRX", []uint8{18, 8})
 				Expect(err).ToNot(HaveOccurred())
 				be.Commit()
 				Expect(isGasExhausted(tx, to.GasLimit)).To(BeFalse())
@@ -64,7 +64,7 @@ var _ = Describe("addTokenBatch", func() {
 			to := randomWallet.TransactOpts()
 			to.GasLimit = 300000
 			tokens := []common.Address{common.HexToAddress("0x0"), common.HexToAddress("0x1")}
-			tx, err := oracle.AddTokenBatch(to, tokens, "BNT.TKN", []uint8{18,8})
+			tx, err := oracle.AddTokenBatch(to, tokens, "BNT.TKN", []uint8{18, 8})
 			Expect(err).ToNot(HaveOccurred())
 			be.Commit()
 			Expect(isGasExhausted(tx, to.GasLimit)).To(BeFalse())
