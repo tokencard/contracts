@@ -2113,8 +2113,8 @@ contract Oracle is usingOraclize {
           last_update_timestamp = now;
         } */
 
-        //uint rate = parseInt(result, t.decimals);
-        uint rate = parseInt(result, 18);
+        uint rate = parseInt(result, t.decimals);
+        //uint rate = parseInt(result, 18);
 
         t.rate = rate; //transform rate(string) to uint (wei precision)
         emit RateUpdated(a, rate);
