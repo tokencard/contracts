@@ -1971,13 +1971,13 @@ contract Oracle is usingOraclize {
     /// @dev unique id returned from Oraclize, mapped to a token address so we can understand in the callback which rate to update.
     mapping (bytes32 => address) tokenLabelToAddress;
 
-    modifier tokenSupported(address _tokenID) {
-        require(tokens[_tokenID].supported);
+    modifier tokenSupported(address _token) {
+        require(tokens[_token].supported);
         _;
     }
 
-    modifier tokenNotSupported(address _tokenID) {
-        require(!tokens[_tokenID].supported);
+    modifier tokenNotSupported(address _token) {
+        require(!tokens[_token].supported);
         _;
     }
 
@@ -2009,30 +2009,30 @@ contract Oracle is usingOraclize {
 
     /**
     * @dev add a new token to the list and mapping
-    * @param _tokenID token contract addresses
+    * @param _token token contract addresses
     * @param _label the symbol/abbreviation used to represent the token (a '.' separated string)
     * @param _decimals the precision of the token value(maximum number of decimal points)
     */
-    function addToken(address _tokenID, string _label, uint8 _decimals) public onlyController tokenNotSupported(_tokenID) {
-        _contractAddresses.push(_tokenID);
-        tokens[_tokenID] = Erc20Token({
+    function addToken(address _token, string _label, uint8 _decimals) public onlyController tokenNotSupported(_token) {
+        _contractAddresses.push(_token);
+        tokens[_token] = Erc20Token({
             label : _label,
             decimals : _decimals,
             rate : 0,
             supported: true
         });
 
-        emit TokenAddition(_tokenID);
+        emit TokenAddition(_token);
     }
 
     /**
     * @dev add new tokens to the list and mapping
-    * @param _tokenIDs token contract addresses
+    * @param _tokens token contract addresses
     * @param _labels the symbol/abbreviation used to represent the token (a '.' separated string)
     * @param _decimals the precision of the token value(maximum number of decimal points)
     */
-    function addTokenBatch (address[] _tokenIDs, string _labels, uint8[] _decimals) public onlyController {
-        require(_tokenIDs.length == _decimals.length);
+    function addTokenBatch (address[] _tokens, string _labels, uint8[] _decimals) public onlyController {
+        require(_tokens.length == _decimals.length);
 
         // Convert strings into the library's 'slice' format.
         strings.slice memory labelSlice = _labels.toSlice();
@@ -2043,37 +2043,37 @@ contract Oracle is usingOraclize {
 
         for (uint i = 0; i < numTokenLabels; i++) {
             string memory tempLabel = labelSlice.split(delim).toString();//split the string with a '.' delimiter
-            if (!tokens[_tokenIDs[i]].supported) {
-                _contractAddresses.push(_tokenIDs[i]); //push token to the array
-                tokens[_tokenIDs[i]].label = tempLabel;
-                tokens[_tokenIDs[i]].decimals = _decimals[i];
-                tokens[_tokenIDs[i]].rate = 0; //to be updated later
-                tokens[_tokenIDs[i]].supported = true;
+            if (!tokens[_tokens[i]].supported) {
+                _contractAddresses.push(_tokens[i]); //push token to the array
+                tokens[_tokens[i]].label = tempLabel;
+                tokens[_tokens[i]].decimals = _decimals[i];
+                tokens[_tokens[i]].rate = 0; //to be updated later
+                tokens[_tokens[i]].supported = true;
             } else {
-                emit TokenAlreadySupported(_tokenIDs[i], tempLabel);
+                emit TokenAlreadySupported(_tokens[i], tempLabel);
             }
         }
     }
 
     /**
     * @dev remove a token from the list of supported ones
-    * @param _tokenID token contract addresses
+    * @param _token token contract addresses
     */
-    function removeToken(address _tokenID) public onlyController tokenSupported(_tokenID) {
-        delete tokens[_tokenID].supported;
+    function removeToken(address _token) public onlyController tokenSupported(_token) {
+        delete tokens[_token].supported;
 
         // Check if the address matches up to one token before the last one
         // the tokenSupported() modifier ensures that the token address actually exists.
         // If no match is found in the loop, it means that the last address was the desired one, simply reduce the size by one in any case.
         uint contractAddressesLength = _contractAddresses.length - 1;
         for (uint i=0; i<contractAddressesLength; i++)
-            if (_contractAddresses[i] == _tokenID) {
+            if (_contractAddresses[i] == _token) {
                 _contractAddresses[i] = _contractAddresses[contractAddressesLength];
                 break;
             }
         _contractAddresses.length--;
 
-        emit TokenRemoval(_tokenID);
+        emit TokenRemoval(_token);
     }
 
     function updateRates() public payable {
@@ -2122,16 +2122,16 @@ contract Oracle is usingOraclize {
 
     }
 
-    function convert(address tokenID, uint amount) external view tokenSupported(tokenID) returns (uint) {
-        require(tokens[tokenID].rate != 0);
-        assert((amount * tokens[tokenID].rate) / tokens[tokenID].rate == amount); // Overflow check, returns 0
-        return amount*tokens[tokenID].rate/(uint(10)**tokens[tokenID].decimals);
+    function convert(address _token, uint amount) external view tokenSupported(_token) returns (uint) {
+        require(tokens[_token].rate != 0);
+        assert((amount * tokens[_token].rate) / tokens[_token].rate == amount); // Overflow check, returns 0
+        return amount*tokens[_token].rate/(uint(10)**tokens[_token].decimals);
     }
 
-    function updateRateManual(address _tokenID, uint rate) external onlyController tokenSupported(_tokenID) {
-        tokens[_tokenID].rate = rate;
+    function updateRateManual(address _token, uint rate) external onlyController tokenSupported(_token) {
+        tokens[_token].rate = rate;
 
-        emit RateUpdated(_tokenID, rate);
+        emit RateUpdated(_token, rate);
     }
 
     function getContractAddressesLength() public view returns (uint) {
