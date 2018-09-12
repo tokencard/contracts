@@ -41,11 +41,8 @@ var _ = BeforeSuite(func() {
 	testRig.AddCoverageForContracts("../../build/oracle/combined.json", "../../contracts/oracle.sol")
 })
 
-
-
-
 var _ = AfterSuite(func() {
-	testRig.ExpectMinimumCoverage("oracle.sol:Oracle", 94.90)
+	testRig.ExpectMinimumCoverage("oracle.sol:Oracle", 65.00)
 })
 
 var be ethertest.TestBackend
