@@ -1969,7 +1969,7 @@ contract Oracle is usingOraclize {
     address public controller;
 
     /// @dev unique id returned from Oraclize, mapped to a token address so we can understand in the callback which rate to update.
-    mapping (bytes32 => address) tokenLabelToAddress;
+    mapping (bytes32 => address) private _queryIdToToken;
 
     modifier tokenSupported(address _token) {
         require(tokens[_token].supported);
@@ -2093,7 +2093,7 @@ contract Oracle is usingOraclize {
                 strings.slice memory tokenLabel = tokens[_contractAddresses[i]].label.toSlice();//the token label to be inserted in the api.
                 string memory apiString = apiPrefix.concat(tokenLabel).toSlice().concat(apiSuffix); //assigned for clarity
                 bytes32 queryId = oraclize_query("URL",apiString);
-                tokenLabelToAddress[queryId] = _contractAddresses[i];// map queryId to token contract address, to be used in the callback.
+                _queryIdToToken[queryId] = _contractAddresses[i];// map queryId to token contract address, to be used in the callback.
 
                 emit LogNewOraclizeQuery("Oraclize query was sent, standing by for the answer...");
             }
@@ -2102,7 +2102,7 @@ contract Oracle is usingOraclize {
 
     function __callback(bytes32 queryId, string result, bytes proof) public onlyOraclize {
 
-        address a = tokenLabelToAddress[queryId];
+        address a = _queryIdToToken[queryId];
         Erc20Token t = tokens[a];
 
         require(t.supported);//must be a valid token.
