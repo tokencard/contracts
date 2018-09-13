@@ -2049,7 +2049,7 @@ contract Oracle is usingOraclize {
             if (!tokens[t].supported) {
                 addToken(t, tempLabel, d);
             } else {
-                emit TokenAlreadySupported(_tokens[i], tempLabel);
+                emit TokenAlreadySupported(t, tempLabel);
             }
         }
     }
