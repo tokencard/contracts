@@ -2044,14 +2044,12 @@ contract Oracle is usingOraclize {
 
         for (uint i = 0; i < numTokenLabels; i++) {
             string memory tempLabel = labelSlice.split(delim).toString();//split the string with a '.' delimiter
-            if (!tokens[_tokens[i]].supported) {
-                _contractAddresses.push(_tokens[i]); //push token to the array
-                tokens[_tokens[i]].label = tempLabel;
-                tokens[_tokens[i]].decimals = _decimals[i];
-                tokens[_tokens[i]].rate = 0; //to be updated later
-                tokens[_tokens[i]].supported = true;
+            address t = _tokens[i];
+            uint8 d = _decimals[i];
+            if (!tokens[t].supported) {
+                addToken(t, tempLabel, d);
             } else {
-                emit TokenAlreadySupported(_tokens[i], tempLabel);
+                emit TokenAlreadySupported(t, tempLabel);
             }
         }
     }
