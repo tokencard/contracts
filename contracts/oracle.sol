@@ -1950,11 +1950,12 @@ contract Oracle is usingOraclize {
 
     using strings for *;
 
-    event TokenRemoval(address indexed tokenID);
-    event TokenAddition(address indexed tokenID);
-    event TokenAlreadySupported(address indexed tokenID, string label);
-    event LogNewOraclizeQuery(string description);
-    event RateUpdated(address tokenAddress,uint rate);
+    event TokenRemoval(address indexed token);
+    event TokenAddition(address indexed token);
+    event TokenAlreadySupported(address indexed token, string label);
+    event RateUpdated(address tokenAddress, uint rate);
+    event OraclizeSucceeded(string label);
+    event OraclizeFailedNotEnoughEth(uint balance);
 
     struct Erc20Token {
         string label;   // Token symbol
@@ -1996,7 +1997,7 @@ contract Oracle is usingOraclize {
     constructor(address _oraclizeAddrResolver) public {
         controller = msg.sender;
         if (_oraclizeAddrResolver == 0x0) {
-          _oraclizeAddrResolver = 0x6f485C8BF6fc43eA212E93BBF8ce046C7f1cb475;
+            _oraclizeAddrResolver = 0x6f485C8BF6fc43eA212E93BBF8ce046C7f1cb475;
         }
         OAR = OraclizeAddrResolverI(_oraclizeAddrResolver);
         // oraclize_setProof(proofType_Android);
@@ -2079,23 +2080,23 @@ contract Oracle is usingOraclize {
     function updateRates() public payable {
 
         uint contractAddressesLength = _contractAddresses.length; //number of supported tokens
+        uint currentBalance = address(this).balance;
 
-        if (oraclize_getPrice("URL") * contractAddressesLength > address(this).balance){
-            emit LogNewOraclizeQuery("Oraclize query was NOT sent, please add some ETH to cover for the query fee");
-        }
-        else{
-
+        // Check if the address has enough ETH to pay for the oraclize_getPrice method
+        if (oraclize_getPrice("URL") * contractAddressesLength > address(this).balance) {
+            emit OraclizeFailedNotEnoughEth(currentBalance);
+        } else {
             //the fixed strings required to access the Cryptocompare api.
-            strings.slice  memory apiPrefix = "json(https://min-api.cryptocompare.com/data/price?fsym=".toSlice();
-            strings.slice  memory apiSuffix = "&tsyms=ETH&sign=true).ETH".toSlice();
+            strings.slice memory apiPrefix = "json(https://min-api.cryptocompare.com/data/price?fsym=".toSlice();
+            strings.slice memory apiSuffix = "&tsyms=ETH&sign=true).ETH".toSlice();
 
-            for (uint i=0; i<contractAddressesLength; i++){
-                strings.slice memory tokenLabel = tokens[_contractAddresses[i]].label.toSlice();//the token label to be inserted in the api.
+            for (uint i=0; i<contractAddressesLength; i++) {
+                strings.slice memory tokenLabel = tokens[_contractAddresses[i]].label.toSlice(); //the token label to be inserted in the api.
                 string memory apiString = apiPrefix.concat(tokenLabel).toSlice().concat(apiSuffix); //assigned for clarity
-                bytes32 queryId = oraclize_query("URL",apiString);
+                bytes32 queryId = oraclize_query("URL", apiString);
                 _queryIdToToken[queryId] = _contractAddresses[i];// map queryId to token contract address, to be used in the callback.
 
-                emit LogNewOraclizeQuery("Oraclize query was sent, standing by for the answer...");
+                emit OraclizeSucceeded(tokenLabel.toString());
             }
         }
     }

@@ -2,9 +2,9 @@ package oracle_test
 
 import (
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/core/types"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	"github.com/ethereum/go-ethereum/core/types"
 )
 
 var _ = Describe("addToken", func() {
@@ -29,7 +29,7 @@ var _ = Describe("addToken", func() {
 				Expect(it.Next()).To(BeTrue())
 				evt := it.Event
 				Expect(it.Next()).To(BeFalse())
-				Expect(evt.TokenID).To(Equal(common.HexToAddress("0x0")))
+				Expect(evt.Token).To(Equal(common.HexToAddress("0x0")))
 			})
 
 			It("Should update the contract addresses array", func() {
