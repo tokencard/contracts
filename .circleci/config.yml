@@ -50,7 +50,7 @@ jobs:
           dep ensure
           npm install -g snyk
           snyk auth ${SNYK_TOKEN}
-          snyk test
+          snyk test --org=token
 
 
 workflows:
