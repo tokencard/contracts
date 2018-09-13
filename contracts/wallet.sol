@@ -22,13 +22,13 @@ contract Control {
     address public owner;
 
     /// @dev Executable only by the owner.
-    modifier onlyOwner {
+    modifier onlyOwner() {
         require(msg.sender == owner);
         _;
     }
 
     /// @dev Executable only by the controller.
-    modifier onlyController {
+    modifier onlyController() {
         require(isController[msg.sender]);
         _;
     }
