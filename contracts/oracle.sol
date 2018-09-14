@@ -2059,18 +2059,23 @@ contract Oracle is usingOraclize {
     * @param _token token contract addresses
     */
     function removeToken(address _token) public onlyController tokenSupported(_token) {
-        delete tokens[_token].supported;
-
         // Check if the address matches up to one token before the last one
+        // Swap and Delete as order doesn't matter ...
         // the tokenSupported() modifier ensures that the token address actually exists.
         // If no match is found in the loop, it means that the last address was the desired one, simply reduce the size by one in any case.
-        uint contractAddressesLength = _contractAddresses.length - 1;
-        for (uint i=0; i<contractAddressesLength; i++)
+        uint contractAddressesLengthMinusOne = _contractAddresses.length - 1;
+        for (uint i=0; i < contractAddressesLengthMinusOne; i++) {
             if (_contractAddresses[i] == _token) {
-                _contractAddresses[i] = _contractAddresses[contractAddressesLength];
+                _contractAddresses[i] = _contractAddresses[contractAddressesLengthMinusOne];
                 break;
             }
+        }
+
+        // This cleans to the array by deleting the last element
+        delete _contractAddresses[contractAddressesLengthMinusOne];
         _contractAddresses.length--;
+        // This cleans to the mapping
+        delete tokens[_token];
 
         emit TokenRemoval(_token);
     }
