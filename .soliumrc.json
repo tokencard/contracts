@@ -6,6 +6,7 @@
   "rules": {
     "security/no-assign-params": "off",
     "security/no-tx-origin": "off",
+    "security/no-block-members": "off",
     "quotes": [
       "error",
       "double"
