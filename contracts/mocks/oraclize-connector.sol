@@ -1,17 +1,5 @@
 pragma solidity 0.4.24;
 
-/* contract Oraclize {
-
-    address private oraclizedAddress;
-
-    constructor(address _oraclizedAddress) public {
-      oraclizedAddress = _oraclizedAddress;
-    }
-
-    function getAddress() public returns (address _addr) {
-      return oraclizedAddress;
-    }
-} */
 
 contract Oraclize {
     address public cbAddress;

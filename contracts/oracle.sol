@@ -1,9 +1,9 @@
 pragma solidity 0.4.24;
 
-import "./internal/control.sol";
-import "./external/strings.sol";
-import "./external/safe-math.sol";
-import "./external/oraclize-api.sol";
+import "internal/control.sol";
+import "external/strings.sol";
+import "external/safe-math.sol";
+import "external/oraclize-api.sol";
 
 contract Proof {
     using Strings for *;
@@ -138,6 +138,7 @@ contract Oracle is UsingOraclize, Proof, Control {
     event OraclizeQuerySuccess(string _label);
     event OraclizeQueryFailure(string _reason);
 
+    event Conversion(address _token, uint _rate, uint _result);
     event ProofVerification(bytes _publicKey, string _result, bool _success);
 
     struct Token {
@@ -155,7 +156,7 @@ contract Oracle is UsingOraclize, Proof, Control {
     uint private _callbackTimestamp;
 
     /// @dev Check if the parameter's length is within a valid range.
-    modifier validLength(address[] _addresses) {
+    modifier hasValidLength(address[] _addresses) {
         require(_addresses.length >= 1 && _addresses.length <= 20, "invalid parameter length");
         _;
     }
@@ -186,7 +187,7 @@ contract Oracle is UsingOraclize, Proof, Control {
     /// @param _tokens ERC20 token contract addresses.
     /// @param _labels ERC20 token names.
     /// @param _decimals number of decimal places used by each ERC20 token.
-    function addTokens(address[] _tokens, bytes32[] _labels, uint8[] _decimals) external onlyController validLength(_tokens) {
+    function addTokens(address[] _tokens, bytes32[] _labels, uint8[] _decimals) external onlyController hasValidLength(_tokens) {
         // Require that all parameters have the same length.
         require(_tokens.length == _labels.length && _tokens.length == _decimals.length, "parameter lengths do not match");
         // Add each token to the list of supported tokens.
@@ -217,7 +218,7 @@ contract Oracle is UsingOraclize, Proof, Control {
 
     /// @dev Remove ERC20 tokens from the list of supported tokens.
     /// @param _tokens ERC20 token contract addresses.
-    function removeTokens(address[] _tokens) external onlyController validLength(_tokens) {
+    function removeTokens(address[] _tokens) external onlyController hasValidLength(_tokens) {
         // Delete each token object from the list of supported tokens based on the addresses provided.
         for (uint i = 0; i < _tokens.length; i++) {
             // Store the token address.

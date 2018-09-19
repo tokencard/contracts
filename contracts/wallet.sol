@@ -1,10 +1,11 @@
 pragma solidity 0.4.24;
 
-import "./internal/control.sol";
+import "internal/ownable.sol";
+import "internal/controllable.sol";
 
 
-/// @title The Token interface is a subset of the ERC20 specification.
-interface Token {
+/// @title The ERC20 interface is a subset of the ERC20 specification.
+interface ERC20 {
     function transfer(address, uint) external returns (bool);
     function balanceOf(address) external view returns (uint);
 }
@@ -17,7 +18,7 @@ interface Oracle {
 
 
 /// @title Whitelist provides payee-whitelist functionality.
-contract Whitelist is Control {
+contract Whitelist is Controllable, Ownable {
     event WhitelistAddition(address _sender, address[] _addresses);
     event SubmitWhitelistAddition(address[] _addresses);
     event CancelWhitelistAddition(address _sender);
@@ -34,7 +35,7 @@ contract Whitelist is Control {
     bool public initializedWhitelist;
 
     /// @dev Check if the provided addresses array has a valid length.
-    modifier validLength(address[] _addresses) {
+    modifier hasValidLength(address[] _addresses) {
         require(_addresses.length >= 1 && _addresses.length <= 20, "invalid whitelist length");
         _;
     }
@@ -59,7 +60,7 @@ contract Whitelist is Control {
 
     /// @dev Add initial addresses to the whitelist.
     /// @param _addresses are the Ethereum addresses to be whitelisted.
-    function initializeWhitelist(address[] _addresses) external onlyOwner validLength(_addresses) hasNoOwner(_addresses) {
+    function initializeWhitelist(address[] _addresses) external onlyOwner hasValidLength(_addresses) hasNoOwner(_addresses) {
         // Require that the whitelist has not been initialized.
         require(!initializedWhitelist, "whitelist has already been initialized");
         // Add each of the provided addresses to the whitelist.
@@ -73,7 +74,7 @@ contract Whitelist is Control {
 
     /// @dev Add addresses to the whitelist.
     /// @param _addresses are the Ethereum addresses to be whitelisted.
-    function submitWhitelistAddition(address[] _addresses) external onlyOwner validLength(_addresses) hasNoOwner(_addresses) {
+    function submitWhitelistAddition(address[] _addresses) external onlyOwner hasValidLength(_addresses) hasNoOwner(_addresses) {
         // Require that either addition or removal operations have not been already submitted.
         require(!submittedWhitelistAddition && !submittedWhitelistRemoval, "whitelist operation has already been submitted");
         // Add the provided addresses to the pending addition list.
@@ -117,7 +118,7 @@ contract Whitelist is Control {
 
     /// @dev Remove addresses from the whitelist.
     /// @param _addresses are the Ethereum addresses to be removed.
-    function submitWhitelistRemoval(address[] _addresses) external onlyOwner validLength(_addresses) {
+    function submitWhitelistRemoval(address[] _addresses) external onlyOwner hasValidLength(_addresses) {
         // Require that either addition or removal operations have not been already submitted.
         require(!submittedWhitelistRemoval && !submittedWhitelistAddition, "whitelist operation has already been submitted");
         // Add the provided addresses to the pending addition list.
@@ -158,7 +159,7 @@ contract Whitelist is Control {
 
 
 /// @title SpendLimit provides daily spend limit functionality.
-contract SpendLimit is Control {
+contract SpendLimit is Controllable, Ownable {
     event SetSpendLimit(address _sender, uint _amount);
     event SubmitSpendLimit(uint _amount);
     event CancelSpendLimit(address _sender);
@@ -170,6 +171,13 @@ contract SpendLimit is Control {
     uint public pendingSpendLimit;
     bool public submittedSpendLimit;
     bool public initializedSpendLimit;
+
+    /// @dev Constructor initializes the daily spend limit.
+    constructor(uint _spendLimit) internal {
+        spendLimit = _spendLimit;
+        _spendLimitDay = now;
+        _spendAvailable = spendLimit;
+    }
 
     /// @dev Returns the available daily balance - accounts for daily limit reset.
     /// @return amount of ether in wei.
@@ -266,22 +274,15 @@ contract Vault is Whitelist, SpendLimit {
     event Deposit(address _from, uint _amount);
     event Transfer(address _to, address _asset, uint _amount);
 
-    address public oracle;
+    Oracle public oracle;
 
-    /// @dev Construct a wallet with an owner and a controller.
-    constructor(address _owner, address _oracle, address[] _controllers) public {
-        spendLimit = 100 ether;
-        _spendLimitDay = now;
-        _spendAvailable = spendLimit;
-        owner = _owner;
-        oracle = _oracle;
-        for (uint i = 0; i < _controllers.length; i++) {
-            _addController(_controllers[i]);
-        }
+    /// @dev Constructor initializes the vault with an owner address and spend limit. It also sets up the oracle and controller contracts.
+    constructor(address _owner, address _oracle, address _controller) SpendLimit(100 ether) Ownable(_owner) Controllable(_controller) public {
+        oracle = Oracle(_oracle);
     }
 
-    /// @dev Check if the value is not zero.
-    modifier notZero(uint _value) {
+    /// @dev Checks if the value is not zero.
+    modifier isNotZero(uint _value) {
         require(_value != 0, "provided value cannot be zero");
         _;
     }
@@ -299,17 +300,17 @@ contract Vault is Whitelist, SpendLimit {
     /// @return balance associated with the wallet address in wei.
     function balance(address _asset) external view returns (uint) {
         if (_asset != 0x0) {
-            return Token(_asset).balanceOf(this);
+            return ERC20(_asset).balanceOf(this);
         } else {
             return address(this).balance;
         }
     }
 
-    /// @dev Transfer asset to an address.
-    /// @param _to recipient address.
+    /// @dev Transfers the specified asset to the recipient's address.
+    /// @param _to recipient's address.
     /// @param _asset address of an ERC20 token or 0x0 for ether.
     /// @param _amount is the amount of tokens to be transferred in base units.
-    function transfer(address _to, address _asset, uint _amount) external onlyOwner notZero(_amount) {
+    function transfer(address _to, address _asset, uint _amount) external onlyOwner isNotZero(_amount) {
         // If address is not whitelisted, take daily limit into account.
         if (!isWhitelisted[_to]) {
             // Update the available spend limit.
@@ -317,7 +318,7 @@ contract Vault is Whitelist, SpendLimit {
             // Convert token amount to ether value.
             uint etherValue;
             if (_asset != 0x0) {
-                etherValue = Oracle(oracle).convert(_asset, _amount);
+                etherValue = oracle.convert(_asset, _amount);
             } else {
                 etherValue = _amount;
             }
@@ -328,7 +329,7 @@ contract Vault is Whitelist, SpendLimit {
         }
         // Transfer token or ether based on the provided address.
         if (_asset != 0x0) {
-            require(Token(_asset).transfer(_to, _amount), "token transfer was unsuccessful");
+            require(ERC20(_asset).transfer(_to, _amount), "ERC20 token transfer was unsuccessful");
         } else {
             _to.transfer(_amount);
         }
@@ -357,7 +358,8 @@ contract Wallet is Vault {
     bool public submittedTopupLimit;
     bool public initializedTopupLimit;
 
-    constructor(address _owner, address _oracle, address[] _controllers) Vault(_owner, _oracle, _controllers) public {
+    /// @dev Constructor initializes the wallet top up limit and the vault contract.
+    constructor(address _owner, address _oracle, address _controller) Vault(_owner, _oracle, _controller) public {
         topupLimit = MAXIMUM_TOPUP_LIMIT;
         _topupAvailable = topupLimit;
     }
@@ -434,7 +436,9 @@ contract Wallet is Vault {
 
     /// @dev Refill owner's gas balance.
     /// @param _amount the amount of ether to transfer to the owner account in wei.
-    function topupGas(uint _amount) external eitherOwnerOrController notZero(_amount) {
+    function topupGas(uint _amount) external notZero(_amount) {
+        // Require that the sender is either the owner or a controller.
+        require(isOwner() || isController(msg.sender), "sender is neither an owner nor a controller");
         // Account for the topup limit daily reset.
         updateTopupAvailable();
         // Make sure the available topup amount is not zero.

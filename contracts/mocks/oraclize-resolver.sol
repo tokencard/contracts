@@ -1,4 +1,4 @@
-pragma solidity 0.4.24;
+pragma solidity ^0.4.24;
 
 
 contract OraclizeAddrResolver {
@@ -9,7 +9,7 @@ contract OraclizeAddrResolver {
         oraclizedAddress = _oraclizedAddress;
     }
 
-    function getAddress() public returns (address _addr) {
+    function getAddress() public returns (address) {
         return oraclizedAddress;
     }
 }
