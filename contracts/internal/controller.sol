@@ -9,26 +9,16 @@ contract Controller {
     mapping (address => bool) private _isController;
     uint private _controllerCount;
 
-    /// @dev Checks if message sender is a controller.
-    modifier onlyController() {
-        require(isController(msg.sender), "sender is not a controller");
-        _;
-    }
-
     /// @dev Constructor initializes the list of controllers with the provided address.
     /// @param _account address to add to the list of controllers.
     constructor(address _account) public {
         _addController(_account);
     }
 
-    /// @return true if the provided account is a controller.
-    function isController(address _account) public view returns (bool) {
-        return _isController[_account];
-    }
-
-    /// @return the current number of controllers.
-    function controllerCount() public view returns (uint) {
-        return _controllerCount;
+    /// @dev Checks if message sender is a controller.
+    modifier onlyController() {
+        require(isController(msg.sender), "sender is not a controller");
+        _;
     }
 
     /// @dev Add a new controller to the list of controllers.
@@ -41,6 +31,16 @@ contract Controller {
     /// @param _account address to remove from the list of controllers.
     function removeController(address _account) external onlyController {
         _removeController(_account);
+    }
+
+    /// @return true if the provided account is a controller.
+    function isController(address _account) public view returns (bool) {
+        return _isController[_account];
+    }
+
+    /// @return the current number of controllers.
+    function controllerCount() public view returns (uint) {
+        return _controllerCount;
     }
 
     /// @dev Internal-only function that adds a new controller.

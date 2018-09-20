@@ -1,19 +1,25 @@
-pragma solidity 0.4.24;
+pragma solidity ^0.4.24;
 
-import "internal/ownable.sol";
-import "internal/controllable.sol";
+import "./internal/ownable.sol";
+import "./internal/controllable.sol";
 
 
-/// @title The ERC20 interface is a subset of the ERC20 specification.
+/// @title ERC20 is a subset of the ERC20 specification.
 interface ERC20 {
     function transfer(address, uint) external returns (bool);
     function balanceOf(address) external view returns (uint);
 }
 
 
-/// @title The Oracle interface provides exchange rates for ERC20 tokens in wei.
+/// @title Oracle converts ERC20 token amounts into equivalent ether amounts based on cryptocurrency exchange rates.
 interface Oracle {
     function convert(address, uint) external view returns (uint);
+}
+
+
+/// @title Resolver returns the oracle contract address.
+interface Resolver {
+    function getAddress() external returns (address);
 }
 
 
@@ -43,7 +49,7 @@ contract Whitelist is Controllable, Ownable {
     /// @dev Check if the provided addresses contain the owner address.
     modifier hasNoOwner(address[] _addresses) {
         for (uint i = 0; i < _addresses.length; i++) {
-            require(_addresses[i] != owner, "provided whitelist contains the owner address");
+            require(_addresses[i] != owner(), "provided whitelist contains the owner address");
         }
         _;
     }
@@ -273,12 +279,17 @@ contract SpendLimit is Controllable, Ownable {
 contract Vault is Whitelist, SpendLimit {
     event Deposit(address _from, uint _amount);
     event Transfer(address _to, address _asset, uint _amount);
+    event UpdateOracle(address _from, address _to);
 
-    Oracle public oracle;
+    /// @dev Oracle points to the oracle contract.
+    Oracle private _O;
+    /// @dev Resolver points to the oracle address resolver contract.
+    Resolver private _R;
 
     /// @dev Constructor initializes the vault with an owner address and spend limit. It also sets up the oracle and controller contracts.
-    constructor(address _owner, address _oracle, address _controller) SpendLimit(100 ether) Ownable(_owner) Controllable(_controller) public {
-        oracle = Oracle(_oracle);
+    constructor(address _owner, address _resolver, address _controller) SpendLimit(100 ether) Ownable(_owner) Controllable(_controller) public {
+        _R = Resolver(_resolver);
+        _O = Oracle(_R.getAddress());
     }
 
     /// @dev Checks if the value is not zero.
@@ -293,6 +304,26 @@ contract Vault is Whitelist, SpendLimit {
             // Emit the deposit event.
             emit Deposit(msg.sender, msg.value);
         }
+    }
+
+    /// @return oracle contract address.
+    function oracle() external view returns (address) {
+        return address(_O);
+    }
+
+    /// @return oracle resolver contract address.
+    function resolver() external view returns (address) {
+        return address(_R);
+    }
+
+    /// @dev Calls the resolver to update the oracle contract address.
+    function updateOracle() external onlyOwner {
+        // Resolve the oracle contract address.
+        address resolved = _R.getAddress();
+        // Emit the oracle update event.
+        emit UpdateOracle(address(_O), resolved);
+        // Update the oracle with the resolved address.
+        _O = Oracle(resolved);
     }
 
     /// @dev Returns the amount of an asset owned by the contract.
@@ -318,7 +349,7 @@ contract Vault is Whitelist, SpendLimit {
             // Convert token amount to ether value.
             uint etherValue;
             if (_asset != 0x0) {
-                etherValue = oracle.convert(_asset, _amount);
+                etherValue = _O.convert(_asset, _amount);
             } else {
                 etherValue = _amount;
             }
@@ -359,7 +390,7 @@ contract Wallet is Vault {
     bool public initializedTopupLimit;
 
     /// @dev Constructor initializes the wallet top up limit and the vault contract.
-    constructor(address _owner, address _oracle, address _controller) Vault(_owner, _oracle, _controller) public {
+    constructor(address _owner, address _resolver, address _controller) Vault(_owner, _resolver, _controller) public {
         topupLimit = MAXIMUM_TOPUP_LIMIT;
         _topupAvailable = topupLimit;
     }
@@ -436,7 +467,7 @@ contract Wallet is Vault {
 
     /// @dev Refill owner's gas balance.
     /// @param _amount the amount of ether to transfer to the owner account in wei.
-    function topupGas(uint _amount) external notZero(_amount) {
+    function topupGas(uint _amount) external isNotZero(_amount) {
         // Require that the sender is either the owner or a controller.
         require(isOwner() || isController(msg.sender), "sender is neither an owner nor a controller");
         // Account for the topup limit daily reset.
@@ -451,9 +482,9 @@ contract Wallet is Vault {
         // Reduce the top up amount from available balance and transfer corresponding
         // ether to the owner's account.
         _topupAvailable -= amount;
-        owner.transfer(amount);
+        owner().transfer(amount);
         // Emit the gas topup event.
-        emit TopupGas(tx.origin, owner, amount);
+        emit TopupGas(tx.origin, owner(), amount);
     }
 
     /// @dev Update available topup limit based on the daily reset.

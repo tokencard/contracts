@@ -7,6 +7,9 @@
     "security/no-assign-params": "off",
     "security/no-tx-origin": "off",
     "security/no-block-members": "off",
+    "security/no-inline-assembly": "off",
+    "arg-overflow": "off",
+    "max-len": "off",
     "quotes": [
       "error",
       "double"

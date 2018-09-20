@@ -3,19 +3,21 @@ pragma solidity ^0.4.24;
 
 /// @title The Controller interface provides access to an external list of controllers.
 interface Controller {
-    function isController(address) public view returns (bool);
+    function isController(address) external view returns (bool);
 }
 
 
 /// @title Controllable implements access control functionality based on an external list of controllers.
 contract Controllable {
+    event UpdateController(address _from, address _to);
+
     /// @dev Controller points to the contract that contains the list of controllers.
-    Controller private _c;
+    Controller private _C;
 
     /// @dev Constructor initializes the controller contract object.
     /// @param _controller address of the controller contract.
     constructor(address _controller) internal {
-        _c = Controller(_controller);
+        _C = Controller(_controller);
     }
 
     /// @dev Checks if message sender is a controller.
@@ -26,6 +28,13 @@ contract Controllable {
 
     /// @return true if the provided account is a controller.
     function isController(address _account) internal view returns (bool) {
-        return _c.isController(_account);
+        return _C.isController(_account);
+    }
+
+    /// @dev Updates the address of the controller contract.
+    /// @param _controller address of the new controller contract.
+    function updateController(address _controller) public onlyController {
+        emit UpdateController(address(_C), _controller);
+        _C = Controller(_controller);
     }
 }

@@ -13,10 +13,10 @@ import (
 )
 
 // OraclizeAddrResolverABI is the input ABI used to generate the binding from.
-const OraclizeAddrResolverABI = "[{\"constant\":false,\"inputs\":[],\"name\":\"getAddress\",\"outputs\":[{\"name\":\"_addr\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"name\":\"_oraclizedAddress\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"}]"
+const OraclizeAddrResolverABI = "[{\"constant\":false,\"inputs\":[],\"name\":\"getAddress\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"name\":\"_oraclizedAddress\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"}]"
 
 // OraclizeAddrResolverBin is the compiled bytecode used for deploying new contracts.
-const OraclizeAddrResolverBin = `608060405234801561001057600080fd5b5060405160208061016f83398101806040528101908080519060200190929190505050806000806101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff1602179055505060ed806100826000396000f300608060405260043610603f576000357c0100000000000000000000000000000000000000000000000000000000900463ffffffff16806338cc4831146044575b600080fd5b348015604f57600080fd5b5060566098565b604051808273ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200191505060405180910390f35b60008060009054906101000a900473ffffffffffffffffffffffffffffffffffffffff169050905600a165627a7a72305820a536e0d556238e7fefb0e102085018d3f14bf444292ff49a0494a55a3dd72ee80029`
+const OraclizeAddrResolverBin = `608060405234801561001057600080fd5b5060405160208061016f83398101806040528101908080519060200190929190505050806000806101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff1602179055505060ed806100826000396000f300608060405260043610603f576000357c0100000000000000000000000000000000000000000000000000000000900463ffffffff16806338cc4831146044575b600080fd5b348015604f57600080fd5b5060566098565b604051808273ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200191505060405180910390f35b60008060009054906101000a900473ffffffffffffffffffffffffffffffffffffffff169050905600a165627a7a723058200426c2436fb865203eef9f3943f4462e76a54f016c47549976b1af8f250743d50029`
 
 // DeployOraclizeAddrResolver deploys a new Ethereum contract, binding an instance of OraclizeAddrResolver to it.
 func DeployOraclizeAddrResolver(auth *bind.TransactOpts, backend bind.ContractBackend, _oraclizedAddress common.Address) (common.Address, *types.Transaction, *OraclizeAddrResolver, error) {
@@ -175,21 +175,21 @@ func (_OraclizeAddrResolver *OraclizeAddrResolverTransactorRaw) Transact(opts *b
 
 // GetAddress is a paid mutator transaction binding the contract method 0x38cc4831.
 //
-// Solidity: function getAddress() returns(_addr address)
+// Solidity: function getAddress() returns(address)
 func (_OraclizeAddrResolver *OraclizeAddrResolverTransactor) GetAddress(opts *bind.TransactOpts) (*types.Transaction, error) {
 	return _OraclizeAddrResolver.contract.Transact(opts, "getAddress")
 }
 
 // GetAddress is a paid mutator transaction binding the contract method 0x38cc4831.
 //
-// Solidity: function getAddress() returns(_addr address)
+// Solidity: function getAddress() returns(address)
 func (_OraclizeAddrResolver *OraclizeAddrResolverSession) GetAddress() (*types.Transaction, error) {
 	return _OraclizeAddrResolver.Contract.GetAddress(&_OraclizeAddrResolver.TransactOpts)
 }
 
 // GetAddress is a paid mutator transaction binding the contract method 0x38cc4831.
 //
-// Solidity: function getAddress() returns(_addr address)
+// Solidity: function getAddress() returns(address)
 func (_OraclizeAddrResolver *OraclizeAddrResolverTransactorSession) GetAddress() (*types.Transaction, error) {
 	return _OraclizeAddrResolver.Contract.GetAddress(&_OraclizeAddrResolver.TransactOpts)
 }

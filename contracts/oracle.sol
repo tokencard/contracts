@@ -1,66 +1,33 @@
-pragma solidity 0.4.24;
+pragma solidity ^0.4.24;
 
-import "internal/control.sol";
-import "external/strings.sol";
-import "external/safe-math.sol";
-import "external/oraclize-api.sol";
+import "./internal/controllable.sol";
+import "./external/strings.sol";
+import "./external/safe-math.sol";
+import "./external/oraclize-api.sol";
 
-contract Proof {
+
+/// @title JSON provides JSON parsing functionality.
+contract JSON {
     using Strings for *;
 
-    function fromJSON(string _json, string _label) internal returns (string) {
-        Strings.slice memory slice = _json.toSlice();
-        slice.split(":".toSlice()).toString();
-        return slice.until("}".toSlice()).toString();
+    /// @dev Extracts JSON float value from the response object.
+    /// @param _json body of the JSON response from the CryptoCompare API.
+    /// @param _label asset label used to extract the correct json field.
+    function fromJSON(string _json, string _label) internal pure returns (string) {
+        Strings.slice memory body = _json.toSlice();
+        body.beyond("{".toSlice());
+        body.until("}".toSlice());
+        body.find(_label.toSlice());
+        Strings.slice memory asset;
+        body.split(",".toSlice(), asset);
+        asset.split(":".toSlice());
+        return asset.toString();
     }
+}
 
-    bytes constant BASE64_DECODE_CHAR = hex"000000000000000000000000000000000000000000000000000000000000000000000000000000000000003e003e003f3435363738393a3b3c3d00000000000000000102030405060708090a0b0c0d0e0f10111213141516171819000000003f001a1b1c1d1e1f202122232425262728292a2b2c2d2e2f30313233";
 
-    function base64decode(bytes _encoded) internal pure returns (bytes) {
-        byte v1;
-        byte v2;
-        byte v3;
-        byte v4;
-        uint length = _encoded.length;
-        bytes memory result = new bytes(length);
-        uint index;
-        if (keccak256(_encoded[length - 2]) == keccak256('=')) {
-            length -= 2;
-        } else if (keccak256(_encoded[length - 1]) == keccak256('=')) {
-            length -= 1;
-        }
-        uint count = length >> 2 << 2;
-        for (uint i = 0; i < count;) {
-            v1 = BASE64_DECODE_CHAR[uint(_encoded[i++])];
-            v2 = BASE64_DECODE_CHAR[uint(_encoded[i++])];
-            v3 = BASE64_DECODE_CHAR[uint(_encoded[i++])];
-            v4 = BASE64_DECODE_CHAR[uint(_encoded[i++])];
-
-            result[index++] = (v1 << 2 | v2 >> 4) & 255;
-            result[index++] = (v2 << 4 | v3 >> 2) & 255;
-            result[index++] = (v3 << 6 | v4) & 255;
-        }
-        if (length - count == 2) {
-            v1 = BASE64_DECODE_CHAR[uint(_encoded[i++])];
-            v2 = BASE64_DECODE_CHAR[uint(_encoded[i++])];
-            result[index++] = (v1 << 2 | v2 >> 4) & 255;
-        }
-        else if (length - count == 3) {
-            v1 = BASE64_DECODE_CHAR[uint(_encoded[i++])];
-            v2 = BASE64_DECODE_CHAR[uint(_encoded[i++])];
-            v3 = BASE64_DECODE_CHAR[uint(_encoded[i++])];
-
-            result[index++] = (v1 << 2 | v2 >> 4) & 255;
-            result[index++] = (v2 << 4 | v3 >> 2) & 255;
-        }
-        // Set to correct length.
-        assembly {
-            mstore(result, index)
-        }
-        return result;
-    }
-
-    // Date and time
+/// @title Date provides date parsing functionality.
+contract Date {
     uint constant DAY_IN_SECONDS = 86400;
     uint constant YEAR_IN_SECONDS = 31536000;
     uint constant LEAP_YEAR_IN_SECONDS = 31622400;
@@ -81,20 +48,22 @@ contract Proof {
     bytes32 constant private NOVEMBER = keccak256("Nov");
     bytes32 constant private DECEMBER = keccak256("Dec");
 
-    function isLeapYear(uint16 year) internal pure returns (bool) {
-        if (year % 4 != 0) {
+    /// @return true or false based on whether the year is a leap year.
+    /// @param _year the year number to be checked.
+    function isLeapYear(uint16 _year) internal pure returns (bool) {
+        if (_year % 4 != 0) {
             return false;
-        }
-        if (year % 100 != 0) {
+        } else if (_year % 100 != 0) {
             return true;
-        }
-        if (year % 400 != 0) {
+        } else if (_year % 400 != 0) {
             return false;
         }
         return true;
     }
 
-    function monthNumber(string _month) internal pure returns (uint8) {
+    /// @return the number of the month based on its name.
+    /// @param _month the first three letters of a month's name e.g. "Jan".
+    function monthToNumber(string _month) internal pure returns (uint8) {
         bytes32 month = keccak256(_month);
         if (month == JANUARY) {
             return 1;
@@ -121,12 +90,65 @@ contract Proof {
         } else if (month == DECEMBER) {
             return 12;
         } else {
-            revert("invalid month name");
+            revert("not a valid month");
         }
     }
 }
 
-contract Oracle is UsingOraclize, Proof, Control {
+
+/// @title Base64 provides base 64 decoding functionality.
+contract Base64 {
+    bytes constant BASE64_DECODE_CHAR = hex"000000000000000000000000000000000000000000000000000000000000000000000000000000000000003e003e003f3435363738393a3b3c3d00000000000000000102030405060708090a0b0c0d0e0f10111213141516171819000000003f001a1b1c1d1e1f202122232425262728292a2b2c2d2e2f30313233";
+
+    /// @return decoded array of bytes.
+    /// @param _encoded base 64 encoded array of bytes.
+    function base64decode(bytes _encoded) internal pure returns (bytes) {
+        byte v1;
+        byte v2;
+        byte v3;
+        byte v4;
+        uint length = _encoded.length;
+        bytes memory result = new bytes(length);
+        uint index;
+        if (keccak256(_encoded[length - 2]) == keccak256("=")) {
+            length -= 2;
+        } else if (keccak256(_encoded[length - 1]) == keccak256("=")) {
+            length -= 1;
+        }
+        uint count = length >> 2 << 2;
+        for (uint i = 0; i < count;) {
+            v1 = BASE64_DECODE_CHAR[uint(_encoded[i++])];
+            v2 = BASE64_DECODE_CHAR[uint(_encoded[i++])];
+            v3 = BASE64_DECODE_CHAR[uint(_encoded[i++])];
+            v4 = BASE64_DECODE_CHAR[uint(_encoded[i++])];
+
+            result[index++] = (v1 << 2 | v2 >> 4) & 255;
+            result[index++] = (v2 << 4 | v3 >> 2) & 255;
+            result[index++] = (v3 << 6 | v4) & 255;
+        }
+        if (length - count == 2) {
+            v1 = BASE64_DECODE_CHAR[uint(_encoded[i++])];
+            v2 = BASE64_DECODE_CHAR[uint(_encoded[i++])];
+            result[index++] = (v1 << 2 | v2 >> 4) & 255;
+        } else if (length - count == 3) {
+            v1 = BASE64_DECODE_CHAR[uint(_encoded[i++])];
+            v2 = BASE64_DECODE_CHAR[uint(_encoded[i++])];
+            v3 = BASE64_DECODE_CHAR[uint(_encoded[i++])];
+
+            result[index++] = (v1 << 2 | v2 >> 4) & 255;
+            result[index++] = (v2 << 4 | v3 >> 2) & 255;
+        }
+        // Set to correct length.
+        assembly {
+            mstore(result, index)
+        }
+        return result;
+    }
+}
+
+
+/// @title Oracle provides asset exchange rates and conversion functionality.
+contract Oracle is UsingOraclize, Base64, Date, JSON, Controllable {
     using Strings for *;
     using SafeMath for uint256;
 
@@ -135,40 +157,52 @@ contract Oracle is UsingOraclize, Proof, Control {
     event TokenRemoval(address _token);
     event TokenRateUpdate(address _token, uint _rate);
 
+    event SetGasPrice(uint _gasPrice);
+    event Conversion(address _token, uint _amount, uint _ether);
+
     event OraclizeQuerySuccess(string _label);
     event OraclizeQueryFailure(string _reason);
 
-    event Conversion(address _token, uint _rate, uint _result);
-    event ProofVerification(bytes _publicKey, string _result, bool _success);
+    event VerificationSuccess(bytes _publicKey, string _result);
+    event VerificationFailure(bytes _publicKey, string _result);
 
     struct Token {
-        string label;   // Token symbol
-        uint8 decimals; // Number of decimal places
-        bool exists;    // Token addition flag
-        uint rate;      // Token exchange rate in wei
+        string label;     // Token symbol
+        uint8 decimals;   // Number of decimal places
+        uint rate;        // Token exchange rate in wei
+        uint lastUpdate;  // Time of the last rate update
+        bool exists;      // Flags if the struct is empty or not
     }
 
     mapping(address => Token) public tokens;
     address[] private _tokenAddresses;
 
-    bytes public cryptoComparePublicKey = hex"a0f4f688350018ad1b9785991c0bde5f704b005dc79972b114dbed4a615a983710bfc647ebe5a320daa28771dce6a2d104f5efa2e4a85ba3760b76d46f8571ca";
-    mapping(bytes32 => address) private _queryToAddress;
-    uint private _callbackTimestamp;
+    bytes public APIPublicKey;
+    mapping(bytes32 => address) private _queryToToken;
 
-    /// @dev Check if the parameter's length is within a valid range.
+    /// @dev Construct the oracle with multiple controllers, address resolver and custom gas price.
+    constructor(address _resolver, address _controller) Controllable(_controller) public {
+        APIPublicKey = hex"a0f4f688350018ad1b9785991c0bde5f704b005dc79972b114dbed4a615a983710bfc647ebe5a320daa28771dce6a2d104f5efa2e4a85ba3760b76d46f8571ca";
+        OAR = OraclizeAddrResolverI(_resolver);
+        oraclize_setCustomGasPrice(10000000000);
+        oraclize_setProof(proofType_Native);
+    }
+
+    /// @dev Checks if the parameter's length is within a valid range.
     modifier hasValidLength(address[] _addresses) {
         require(_addresses.length >= 1 && _addresses.length <= 20, "invalid parameter length");
         _;
     }
 
-    /// @dev Construct the oracle with multiple controllers, address resolver and custom gas price.
-    constructor(address[] _controllers, address _resolver, uint _gasPrice) public {
-        OAR = OraclizeAddrResolverI(_resolver);
+    /// @dev Updates the Crypto Compare public API key.
+    function updateAPIPublicKey(bytes _publicKey) external onlyController {
+        APIPublicKey = _publicKey;
+    }
+
+    /// @dev Sets the gas price used by oraclize query.
+    function setCustomGasPrice(uint _gasPrice) external onlyController {
         oraclize_setCustomGasPrice(_gasPrice);
-        oraclize_setProof(proofType_Native);
-        for (uint i = 0; i < _controllers.length; i++) {
-            _addController(_controllers[i]);
-        }
+        emit SetGasPrice(_gasPrice);
     }
 
     /// @dev Convert ERC20 token amount to the corresponding ether amount (used by the wallet contract).
@@ -176,11 +210,18 @@ contract Oracle is UsingOraclize, Proof, Control {
     /// @param _amount amount of token in base units.
     function convert(address _token, uint _amount) external view returns (uint) {
         // Store the token in memory to save map entry lookup gas.
-        Token memory token = tokens[_token];
+        Token storage token = tokens[_token];
         // Require that the token exists and that its rate is not zero.
-        require(token.exists && token.decimals != 0);
-        // Check for overflow (TODO: add safe exponentiation) and return the ether amount.
-        return _amount.mul(token.rate).div(10 ** token.decimals);
+        require(token.exists && token.decimals != 0, "token does not exist");
+        // Safely convert the token amount to ether based on the exchange rate.
+        uint decimals = 1;
+        for (uint i = 0; i < token.decimals; i++) {
+            decimals = decimals.mul(10);
+        }
+        uint etherValue = _amount.mul(token.rate).div(decimals);
+        // Emit the conversion event.
+        emit Conversion(_token, _amount, etherValue);
+        return etherValue;
     }
 
     /// @dev Add ERC20 tokens to the list of supported tokens.
@@ -192,27 +233,24 @@ contract Oracle is UsingOraclize, Proof, Control {
         require(_tokens.length == _labels.length && _tokens.length == _decimals.length, "parameter lengths do not match");
         // Add each token to the list of supported tokens.
         for (uint i = 0; i < _tokens.length; i++) {
-            // Store the intermediate values to save gas on array element lookup.
-            string memory label = _labels[i].toSliceB32().toString();
+            // Require that the token doesn't already exist.
             address token = _tokens[i];
+            require(!tokens[token].exists, "token already exists");
+            // Store the intermediate values.
+            string memory label = _labels[i].toSliceB32().toString();
             uint8 decimals = _decimals[i];
-            // Add the token if it doesn't exist, otherwise emit omission event.
-            if (!tokens[token].exists) {
-                // Add the token to the token list.
-                tokens[token] = Token({
-                    label : label,
-                    decimals : decimals,
-                    rate : 0,
-                    exists : true
-                    });
-                // Add the token address to the address list.
-                _tokenAddresses.push(token);
-                // Emit token addition event.
-                emit TokenAddition(token, label, decimals);
-            } else {
-                // Emit token omission event.
-                emit TokenOmission(token, label, decimals);
-            }
+            // Add the token to the token list.
+            tokens[token] = Token({
+                label : label,
+                decimals : decimals,
+                rate : 0,
+                exists : true,
+                lastUpdate: now
+            });
+            // Add the token address to the address list.
+            _tokenAddresses.push(token);
+            // Emit token addition event.
+            emit TokenAddition(token, label, decimals);
         }
     }
 
@@ -243,7 +281,7 @@ contract Oracle is UsingOraclize, Proof, Control {
     /// @param _rate ERC20 token exchange rate in wei.
     function updateTokenRate(address _token, uint _rate) external onlyController {
         // Require that the token exists.
-        require(tokens[_token].exists);
+        require(tokens[_token].exists, "token does not exist");
         // Update the token's rate.
         tokens[_token].rate = _rate;
         // Emit the rate update event.
@@ -253,6 +291,30 @@ contract Oracle is UsingOraclize, Proof, Control {
     /// @dev Update ERC20 token exchange rates for all supported tokens.
     function updateTokenRates() external payable onlyController {
         _updateTokenRates();
+    }
+
+    /// @dev Handle Oraclize query callback and verifiy the provided origin proof.
+    /// @param _queryID Oraclize query ID.
+    /// @param _result query result in JSON format.
+    /// @param _proof origin proof from crypto compare.
+    // solium-disable-next-line mixedcase
+    function __callback(bytes32 _queryID, string _result, bytes _proof) public {
+        // Require that the caller is the Oraclize contract.
+        require(msg.sender == oraclize_cbAddress(), "sender is not oraclize");
+        // Use the query ID to find the matching token address.
+        address _token = _queryToToken[_queryID];
+        // Get the corresponding token object.
+        Token storage token = tokens[_token];
+        // Require that the proof is valid.
+        require(verifyProof(_result, _proof, APIPublicKey, token.lastUpdate), "provided origin proof is invalid");
+        // Parse the JSON result to get the rate in wei.
+        token.rate = parseInt(fromJSON(_result, "ETH"), 18);
+        // Emit the rate update event.
+        emit TokenRateUpdate(_token, token.rate);
+        // Set the update time of the token rate.
+        token.lastUpdate = now;
+        // Remove query from the list.
+        delete _queryToToken[_queryID];
     }
 
     /// @dev Re-usable helper function that performs the Oraclize Query.
@@ -272,78 +334,56 @@ contract Oracle is UsingOraclize, Proof, Control {
                 // Create a new oraclize query from the component strings.
                 bytes32 queryID = oraclize_query(5, "URL", apiPrefix.concat(label).toSlice().concat(apiSuffix), 2000000);
                 // Store the query ID together with the associated token address.
-                _queryToAddress[queryID] = _tokenAddresses[i];
+                _queryToToken[queryID] = _tokenAddresses[i];
                 // Emit the query success event.
                 emit OraclizeQuerySuccess(label.toString());
             }
         }
     }
 
-    /// @dev Handle Oraclize query callback and verifiy the provided origin proof.
-    /// @param _queryID Oraclize query ID.
-    /// @param _result query result in JSON format.
-    /// @param _proof origin proof from crypto compare.
-    function __callback(bytes32 _queryID, string _result, bytes _proof) public {
-        // Require that the caller is the Oraclize contract.
-        require(msg.sender == oraclize_cbAddress(), "sender is not oraclize");
-        // Require that the proof is valid.
-        require(verifyProof(_result, _proof, cryptoComparePublicKey), "provided origin proof is invalid");
-        // Use the query ID to find the matching token.
-        address _address = _queryToAddress[_queryID];
-        Token memory token = tokens[_address];
-        // Parse the JSON result to get the rate in wei.
-        token.rate = parseInt(fromJSON(_result, token.label), 18);
-        // Emit the rate update event.
-        emit TokenRateUpdate(_address, token.rate);
-        // Remove query from the list.
-        delete _queryToAddress[_queryID];
-    }
-
     /// @dev Verify the origin proof returned by the crypto compare API.
     /// @param _result query result in JSON format.
     /// @param _proof origin proof from crypto compare.
     /// @param _publicKey crypto compare public key.
-    function verifyProof(string _result, bytes _proof, bytes _publicKey) private returns (bool) {
+    /// @param _lastUpdate timestamp of the last time the requested token was updated.
+    function verifyProof(string _result, bytes _proof, bytes _publicKey, uint _lastUpdate) private returns (bool) {
         // Extract the signature.
         uint signatureLength = uint(_proof[1]);
         bytes memory signature = new bytes(signatureLength);
         signature = copyBytes(_proof, 2, signatureLength, signature, 0);
-
         // Extract the headers.
         uint headersLength = uint(_proof[2 + signatureLength]) * 256 + uint(_proof[2 + signatureLength + 1]);
         bytes memory headers = new bytes(headersLength);
         headers = copyBytes(_proof, 4 + signatureLength, headersLength, headers, 0);
-
         // Check if the date is valid.
         bytes memory dateHeader = new bytes(30);
         dateHeader = copyBytes(headers, 5, 30, dateHeader, 0);
-        bool dateOK = verifyDate(string(dateHeader));
-        if (!dateOK) return false;
-
+        if (!verifyDate(string(dateHeader), _lastUpdate)) {
+            return false;
+        }
         // Check if the signed digest hash matches the result hash.
         bytes memory digest = new bytes(headersLength - 52);
         digest = copyBytes(headers, 52, headersLength - 52, digest, 0);
-        bool digestOK = keccak256(sha256(_result)) == keccak256(base64decode(digest));
-        if (!digestOK) return false;
-
+        if (keccak256(sha256(_result)) != keccak256(base64decode(digest))) {
+            return false;
+        }
         // Check if the signature is valid and if the signer addresses match.
         address signer;
         bool signatureOK;
         (signatureOK, signer) = ecrecovery(sha256(headers), signature);
-
         if (signatureOK && signer == address(keccak256(_publicKey))) {
-            emit ProofVerification(_publicKey, _result, true);
+            emit VerificationSuccess(_publicKey, _result);
             return true;
-        } else {
-            emit ProofVerification(_publicKey, _result, false);
-            return false;
         }
+        emit VerificationFailure(_publicKey, _result);
+        return false;
     }
 
     /// @dev Verify the signed HTTP date header.
-    /// @param _date extracted date string e.g. Wed, 12 Sep 2018 15:18:14 GMT.
-    function verifyDate(string _date) private view returns (bool) {
-        Strings.slice memory date = _date.toSlice();
+    /// @param _dateHeader extracted date string e.g. Wed, 12 Sep 2018 15:18:14 GMT.
+    /// @param _lastUpdate timestamp of the last time the requested token was updated.
+    function verifyDate(string _dateHeader, uint _lastUpdate) private pure returns (bool) {
+        Strings.slice memory date = _dateHeader.toSlice();
         Strings.slice memory timeDelimiter = ":".toSlice();
         Strings.slice memory dateDelimiter = " ".toSlice();
         // Split the date string.
@@ -351,7 +391,7 @@ contract Oracle is UsingOraclize, Proof, Control {
         date.split(dateDelimiter);
         // Get individual date components.
         uint8 day = uint8(parseInt(date.split(dateDelimiter).toString(), 0));
-        uint8 month = monthNumber(date.split(dateDelimiter).toString());
+        uint8 month = monthToNumber(date.split(dateDelimiter).toString());
         uint16 year = uint16(parseInt(date.split(dateDelimiter).toString(), 0));
         uint8 hour = uint8(parseInt(date.split(timeDelimiter).toString(), 0));
         uint8 minute = uint8(parseInt(date.split(timeDelimiter).toString(), 0));
@@ -395,7 +435,7 @@ contract Oracle is UsingOraclize, Proof, Control {
         timestamp += MINUTE_IN_SECONDS * (minute);
         // Second
         timestamp += second;
-        return timestamp > _callbackTimestamp;
+        return timestamp > _lastUpdate;
     }
 }
 

@@ -14,16 +14,6 @@ contract Ownable {
         _owner = _account;
     }
 
-    /// @return the address of the owner.
-    function owner() public view returns (address) {
-        return _owner;
-    }
-
-    /// @return the address of the new owner.
-    function newOwner() public view returns (address) {
-        return _newOwner;
-    }
-
     /// @dev Reverts if called by any account other than the owner.
     modifier onlyOwner() {
         require(isOwner(), "sender is not an owner");
@@ -34,16 +24,6 @@ contract Ownable {
     modifier onlyNewOwner() {
         require(isNewOwner(), "sender is not the new owner");
         _;
-    }
-
-    /// @return true if sender is the owner of the contract.
-    function isOwner() public view returns (bool) {
-        return msg.sender == _owner;
-    }
-
-    /// @return true if sender is the new owner of the contract.
-    function isNewOwner() public view returns (bool) {
-        return msg.sender == _newOwner;
     }
 
     /// @dev Allows the current owner to transfer control of the contract to a new address.
@@ -66,5 +46,25 @@ contract Ownable {
         _owner = _newOwner;
         // Reset the new owner address variable.
         delete _newOwner;
+    }
+
+    /// @return the address of the owner.
+    function owner() public view returns (address) {
+        return _owner;
+    }
+
+    /// @return the address of the new owner.
+    function newOwner() public view returns (address) {
+        return _newOwner;
+    }
+
+    /// @return true if sender is the owner of the contract.
+    function isOwner() public view returns (bool) {
+        return msg.sender == _owner;
+    }
+
+    /// @return true if sender is the new owner of the contract.
+    function isNewOwner() public view returns (bool) {
+        return msg.sender == _newOwner;
     }
 }
