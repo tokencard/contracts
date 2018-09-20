@@ -10,7 +10,7 @@ contract Resolver is Controllable {
 
     /// @dev Constructor initializes the resolver target and sets up controller authentication.
     /// @param _target initial address of the target contract.
-    /// @param _controller address of the controller contract.
+    /// @param _controller is the controller contract address.
     constructor(address _target, address _controller) Controllable(_controller) public {
         _address = _target;
     }

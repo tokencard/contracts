@@ -181,6 +181,8 @@ contract Oracle is UsingOraclize, Base64, Date, JSON, Controllable {
     mapping(bytes32 => address) private _queryToToken;
 
     /// @dev Construct the oracle with multiple controllers, address resolver and custom gas price.
+    /// @dev _resolver is the oraclize address resolver contract address.
+    /// @dev _controller is the controller contract address.
     constructor(address _resolver, address _controller) Controllable(_controller) public {
         APIPublicKey = hex"a0f4f688350018ad1b9785991c0bde5f704b005dc79972b114dbed4a615a983710bfc647ebe5a320daa28771dce6a2d104f5efa2e4a85ba3760b76d46f8571ca";
         OAR = OraclizeAddrResolverI(_resolver);
