@@ -277,8 +277,8 @@ contract SpendLimit is Controllable, Ownable {
 
 /// @title Asset store with extra security features.
 contract Vault is Whitelist, SpendLimit {
-    event Deposit(address _from, uint _amount);
-    event Transfer(address _to, address _asset, uint _amount);
+    event Deposit(address indexed _from, uint _amount);
+    event Transfer(address indexed _to, address indexed _asset, uint _amount);
     event UpdateOracle(address _from, address _to);
 
     /// @dev Resolver points to the oracle address resolver.
