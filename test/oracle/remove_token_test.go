@@ -7,7 +7,7 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-var _ = Describe("removeToken", func() {
+var _ = Describe("removeTokens", func() {
 
 	Context("When called by the controller", func() {
 		Context("When removing a supported token", func() {
@@ -15,7 +15,7 @@ var _ = Describe("removeToken", func() {
 
 			BeforeEach(func() {
 				var err error
-				tx, err = oracle.AddToken(controllerWallet.TransactOpts(), common.HexToAddress("0x0"), "ETH", 18)
+				tx, err = oracle.AddTokens(controllerWallet.TransactOpts(), []common.Address{common.HexToAddress("0x0")}, stringsToByte32("ETH"), []byte{18})
 				Expect(err).ToNot(HaveOccurred())
 				be.Commit()
 				Expect(isSuccessful(tx)).To(BeTrue())
@@ -23,7 +23,7 @@ var _ = Describe("removeToken", func() {
 
 			BeforeEach(func() {
 				var err error
-				tx, err = oracle.RemoveToken(controllerWallet.TransactOpts(), common.HexToAddress("0x0"))
+				tx, err = oracle.RemoveTokens(controllerWallet.TransactOpts(), []common.Address{common.HexToAddress("0x0")})
 				Expect(err).ToNot(HaveOccurred())
 				be.Commit()
 			})
@@ -33,7 +33,7 @@ var _ = Describe("removeToken", func() {
 			})
 
 			It("Should emit a TokenRemoval event", func() {
-				it, err := oracle.FilterTokenRemoval(nil, []common.Address{common.HexToAddress("0x0")})
+				it, err := oracle.FilterTokenRemoval(nil)
 				Expect(err).ToNot(HaveOccurred())
 				Expect(it.Next()).To(BeTrue())
 				evt := it.Event
@@ -41,18 +41,13 @@ var _ = Describe("removeToken", func() {
 				Expect(evt.Token).To(Equal(common.HexToAddress("0x0")))
 			})
 
-			It("Should update the contract addresses array", func() {
-				addresses, err := oracle.ContractAddresses(nil)
-				Expect(err).ToNot(HaveOccurred())
-				Expect(addresses).To(HaveLen(0))
-			})
 		})
 		Context("When removing an unsupported token", func() {
 
 			It("Should fail", func() {
 				to := controllerWallet.TransactOpts()
 				to.GasLimit = 100000
-				tx, err := oracle.RemoveToken(to, common.HexToAddress("0x0"))
+				tx, err := oracle.RemoveTokens(to, []common.Address{common.HexToAddress("0x0")})
 				Expect(err).ToNot(HaveOccurred())
 				be.Commit()
 				Expect(isSuccessful(tx)).To(BeFalse())
@@ -64,7 +59,7 @@ var _ = Describe("removeToken", func() {
 		It("Should fail", func() {
 			to := randomWallet.TransactOpts()
 			to.GasLimit = 300000
-			tx, err := oracle.RemoveToken(to, common.HexToAddress("0x0"))
+			tx, err := oracle.RemoveTokens(to, []common.Address{common.HexToAddress("0x0")})
 			Expect(err).ToNot(HaveOccurred())
 			be.Commit()
 			Expect(isGasExhausted(tx, to.GasLimit)).To(BeFalse())

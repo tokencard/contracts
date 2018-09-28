@@ -1,16 +1,22 @@
 # Smart contracts
 
-This repository contains TokenWallet and TokenCard smart contracts.
+This repository contains Token smart contracts.
 
-Wallet.sol is the primary TokenWallet contract which holds user's funds and offers additional security features (e.g. whitelist, daily spend/gas limit). The wallet contract is composed of multiple contracts, one of which is the Vault, which offers the same security features as the Wallet, but without the gas top up functionality. 
+wallet.sol is the primary TokenWallet contract which holds user's funds and offers additional security features (e.g. whitelist, daily spend/gas limit). The wallet contract is composed of multiple contracts, one of which is the Vault, which offers the same security features as the Wallet, but without the gas top up functionality. 
 
-Oracle.sol is an oracle contract which stores token/wei exchange rates for each of the supported tokens. Exchange rates have to be updated periodically by Token when the exchange rate increases/decreases beyond a certain threshold, relative to what is stored in the contract.
+oracle.sol is an oracle contract which stores token/wei exchange rates for each of the supported tokens. Exchange rates have to be updated periodically by calling the Crypto Compare API through the Oraclize contract when the exchange rate increases/decreases beyond a certain threshold, relative to what is stored in the contract.
 
-Token.sol is a partial implementation of the ERC20 token standard used for development purposes.
+internal/resolver.sol is a resolver contract that provides dynamic address resolution for the oracle and oraclize smart contracts. 
 
-Card.sol contract stores funds that can be spent when using the TokenCard (old contract).
+internal/ownable.sol is an inheritable contract that provides owner authentication functionality to the child contract. 
 
-Controller.sol allows Token to interact with the Card.sol contract. (old contract)
+internal/controller.sol is a storage contract that stores a list of controller addresses which can be used for together with the 'controllable.sol' contract.
+
+internal/controllable.sol is an inheritable contract that integrates with the list of controllers and provides control functionality to the child contract.
+
+mocks/token.sol is a partial implementation of the ERC20 token standard used for development purposes.
+
+
 
 ## Contract communication
 
@@ -31,18 +37,6 @@ Controller.sol allows Token to interact with the Card.sol contract. (old contrac
                                │               │   
                                └───────────────┘   
                                                                           
-                                                   
-                                   ┌──────────────┐
-  ┌──────────────────────┐         │              │
-  │                      │         │              │
-  │                      │         │              │
-  │                      │         │              │
-  │    Controller.sol    │─────────▶   Card.sol   │
-  │                      │         │              │
-  │                      │         │              │
-  │                      │         │              │
-  └──────────────────────┘         │              │
-                                   └──────────────┘
 ```
 
 

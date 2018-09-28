@@ -23,25 +23,12 @@ func TestWalletSuite(t *testing.T) {
 	RunSpecs(t, "Contract Suite")
 }
 
-var HUNDRED_ETH *big.Int
-var TEN_ETH *big.Int
 var ONE_ETH *big.Int
 var ONE_FINNEY *big.Int
-var FIVE_HUNDRED_FINNEY *big.Int
 var ONE_GWEI *big.Int
 
 func init() {
 	var s bool
-
-	HUNDRED_ETH, s = big.NewInt(1).SetString("100000000000000000000", 10)
-	if !s {
-		panic("Could not parse one ETH")
-	}
-
-	TEN_ETH, s = big.NewInt(1).SetString("10000000000000000000", 10)
-	if !s {
-		panic("Could not parse one ETH")
-	}
 
 	ONE_ETH, s = big.NewInt(1).SetString("1000000000000000000", 10)
 	if !s {
@@ -53,17 +40,12 @@ func init() {
 		panic("Could not parse one ETH")
 	}
 
-	FIVE_HUNDRED_FINNEY, s = big.NewInt(1).SetString("500000000000000000", 10)
-	if !s {
-		panic("Could not parse one ETH")
-	}
-
 	ONE_GWEI, s = big.NewInt(1).SetString("1000000000", 10)
 	if !s {
 		panic("Could not parse one ETH")
 	}
 
-	testRig.AddGenesisAccountAllocation(bankWallet.Address(), HUNDRED_ETH)
+	testRig.AddGenesisAccountAllocation(bankWallet.Address(), ethToWei(100))
 	testRig.AddCoverageForContracts("../../build/wallet/combined.json", "../../contracts/wallet.sol")
 }
 
@@ -71,11 +53,21 @@ var testRig = ethertest.NewTestRig()
 var bankWallet = ethertest.NewWallet()
 
 var _ = AfterSuite(func() {
-	testRig.ExpectMinimumCoverage("wallet.sol:Wallet", 100.0)
+	testRig.ExpectMinimumCoverage("wallet.sol:Wallet", 0.0)
 })
 
 func ethToWei(amount int) *big.Int {
 	r := big.NewInt(1).Set(ONE_ETH)
+	return r.Mul(r, big.NewInt(int64(amount)))
+}
+
+func finneyToWei(amount int) *big.Int {
+	r := big.NewInt(1).Set(ONE_FINNEY)
+	return r.Mul(r, big.NewInt(int64(amount)))
+}
+
+func gweiToWei(amount int) *big.Int {
+	r := big.NewInt(1).Set(ONE_GWEI)
 	return r.Mul(r, big.NewInt(int64(amount)))
 }
 
@@ -97,7 +89,7 @@ func AlmostEqual(val string) gtypes.GomegaMatcher {
 	return almostEqual(val)
 }
 
-var maxDelta = big.NewInt(100000)
+var maxDelta = big.NewInt(1000000)
 
 func (m almostEqual) Match(actual interface{}) (success bool, err error) {
 
@@ -140,8 +132,11 @@ var _ = BeforeEach(func() {
 	bankWallet.MustTransfer(be, owner.Address(), ONE_ETH)
 	controller = ethertest.NewWallet()
 	randomPerson = ethertest.NewWallet()
-	bankWallet.MustTransfer(be, randomPerson.Address(), FIVE_HUNDRED_FINNEY)
+	bankWallet.MustTransfer(be, randomPerson.Address(), finneyToWei(500))
 })
+
+var controllerContract *bindings.Controller
+var controllerContractAddress common.Address
 
 var oraclizeMockAddrResolver *mocks.OraclizeAddrResolver
 var oraclizeMockAddrResolverAddress common.Address
@@ -152,35 +147,77 @@ var oraclizeMockAddress common.Address
 var oracle *bindings.Oracle
 var oracleAddress common.Address
 
+var oracleResolver *bindings.Resolver
+var oracleResolverAddress common.Address
+
 var _ = BeforeEach(func() {
 	var err error
+	var tx *types.Transaction
 
-	oraclizeMockAddress, _, oraclizeMock, err = mocks.DeployOraclize(bankWallet.TransactOpts(), be, bankWallet.Address())
+	controllerContractAddress, tx, controllerContract, err = bindings.DeployController(bankWallet.TransactOpts(), be, bankWallet.Address())
 	Expect(err).ToNot(HaveOccurred())
-
-	oraclizeMockAddrResolverAddress, _, oraclizeMockAddrResolver, err = mocks.DeployOraclizeAddrResolver(bankWallet.TransactOpts(), be, oraclizeMockAddress)
-	Expect(err).ToNot(HaveOccurred())
-
-	oracleAddress, _, oracle, err = bindings.DeployOracle(bankWallet.TransactOpts(), be, oraclizeMockAddrResolverAddress)
-	Expect(err).ToNot(HaveOccurred())
-
 	be.Commit()
+	Expect(isSuccessful(tx)).To(BeTrue())
+
+	tx, err = controllerContract.AddController(bankWallet.TransactOpts(), controller.Address())
+	Expect(err).ToNot(HaveOccurred())
+	be.Commit()
+	Expect(isSuccessful(tx)).To(BeTrue())
+
+	Expect(bankWallet.Transfer(be, controller.Address(), ethToWei(1))).To(Succeed())
+
+	oraclizeMockAddress, tx, oraclizeMock, err = mocks.DeployOraclize(bankWallet.TransactOpts(), be, bankWallet.Address())
+	Expect(err).ToNot(HaveOccurred())
+	be.Commit()
+	Expect(isSuccessful(tx)).To(BeTrue())
+
+	oraclizeMockAddrResolverAddress, tx, oraclizeMockAddrResolver, err = mocks.DeployOraclizeAddrResolver(bankWallet.TransactOpts(), be, oraclizeMockAddress)
+	Expect(err).ToNot(HaveOccurred())
+	be.Commit()
+	Expect(isSuccessful(tx)).To(BeTrue())
+
+	oracleAddress, tx, oracle, err = bindings.DeployOracle(bankWallet.TransactOpts(), be, oraclizeMockAddrResolverAddress, controllerContractAddress)
+	Expect(err).ToNot(HaveOccurred())
+	be.Commit()
+	Expect(isSuccessful(tx)).To(BeTrue())
+
+	oracleResolverAddress, tx, oracleResolver, err = bindings.DeployResolver(bankWallet.TransactOpts(), be, oracleAddress, controllerContractAddress)
+	Expect(err).ToNot(HaveOccurred())
+	be.Commit()
+	Expect(isSuccessful(tx)).To(BeTrue())
+
 })
+
+func stringsToByte32(names ...string) [][32]byte {
+	r := [][32]byte{}
+	for _, n := range names {
+		nb := [32]byte{}
+		copy(nb[:], []byte(n))
+		r = append(r, nb)
+	}
+	return r
+}
 
 var tkn *mocks.Token
 var tkna common.Address
 var _ = BeforeEach(func() {
 	var err error
-	tkna, _, tkn, err = mocks.DeployToken(bankWallet.TransactOpts(), be)
+	var tx *types.Transaction
+	tkna, tx, tkn, err = mocks.DeployToken(bankWallet.TransactOpts(), be)
 	Expect(err).ToNot(HaveOccurred())
-
-	_, err = oracle.AddToken(bankWallet.TransactOpts(), tkna, "TKN", 8)
-	Expect(err).ToNot(HaveOccurred())
-
-	_, err = oracle.UpdateRateManual(bankWallet.TransactOpts(), tkna, big.NewInt(int64(0.001633*math.Pow10(18))))
-	Expect(err).ToNot(HaveOccurred())
-
 	be.Commit()
+	Expect(isSuccessful(tx)).To(BeTrue())
+
+	tx, err = oracle.AddTokens(controller.TransactOpts(), []common.Address{tkna}, stringsToByte32("TKN"), []byte{8})
+	Expect(err).ToNot(HaveOccurred())
+	be.Commit()
+	Expect(isSuccessful(tx)).To(BeTrue())
+
+	tx, err = oracle.UpdateTokenRate(controller.TransactOpts(), tkna, big.NewInt(int64(0.00001633*math.Pow10(18))))
+	Expect(err).ToNot(HaveOccurred())
+	be.Commit()
+	Expect(isSuccessful(tx)).To(BeTrue())
+
 })
 
 var w *bindings.Wallet
@@ -192,8 +229,8 @@ var _ = BeforeEach(func() {
 		bankWallet.TransactOpts(),
 		be,
 		owner.Address(),
-		oracleAddress,
-		[]common.Address{controller.Address()},
+		oracleResolverAddress,
+		controllerContractAddress,
 	)
 	Expect(err).ToNot(HaveOccurred())
 	be.Commit()

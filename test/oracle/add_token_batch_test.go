@@ -7,7 +7,17 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-var _ = Describe("addTokenBatch", func() {
+func stringsToByte32(names ...string) [][32]byte {
+	r := [][32]byte{}
+	for _, n := range names {
+		nb := [32]byte{}
+		copy(nb[:], []byte(n))
+		r = append(r, nb)
+	}
+	return r
+}
+
+var _ = Describe("addTokens", func() {
 
 	Context("When called by the controller", func() {
 		Context("When the added tokens are not already supported", func() {
@@ -15,7 +25,7 @@ var _ = Describe("addTokenBatch", func() {
 			BeforeEach(func() {
 				var err error
 				tokens := []common.Address{common.HexToAddress("0x0"), common.HexToAddress("0x1")}
-				tx, err = oracle.AddTokenBatch(controllerWallet.TransactOpts(), tokens, "BNT.TKN", []uint8{18, 8})
+				tx, err = oracle.AddTokens(controllerWallet.TransactOpts(), tokens, stringsToByte32("BNT", "TKN"), []uint8{18, 8})
 				Expect(err).ToNot(HaveOccurred())
 				be.Commit()
 			})
@@ -24,23 +34,15 @@ var _ = Describe("addTokenBatch", func() {
 				Expect(isSuccessful(tx)).To(BeTrue())
 			})
 
-			It("Should update contract addresses array", func() {
-				addresses, err := oracle.ContractAddresses(nil)
-				Expect(err).ToNot(HaveOccurred())
-				Expect(addresses).To(HaveLen(2))
-				Expect(addresses[0]).To(Equal(common.HexToAddress("0x0")))
-				Expect(addresses[1]).To(Equal(common.HexToAddress("0x1")))
-			})
-
 			It("Should update the tokens map", func() {
 				token, err := oracle.Tokens(nil, common.HexToAddress("0x0"))
 				Expect(err).ToNot(HaveOccurred())
-				Expect(token.Supported).To(BeTrue())
+				Expect(token.Exists).To(BeTrue())
 				Expect(token.Decimals).To(Equal(uint8(18)))
 
 				token, err = oracle.Tokens(nil, common.HexToAddress("0x1"))
 				Expect(err).ToNot(HaveOccurred())
-				Expect(token.Supported).To(BeTrue())
+				Expect(token.Exists).To(BeTrue())
 				Expect(token.Decimals).To(Equal(uint8(8)))
 			})
 		})
@@ -50,7 +52,7 @@ var _ = Describe("addTokenBatch", func() {
 				to := controllerWallet.TransactOpts()
 				to.GasLimit = 300000
 				tokens := []common.Address{common.HexToAddress("0x0"), common.HexToAddress("0x1")}
-				tx, err := oracle.AddTokenBatch(to, tokens, "BNT.TKN.ZRX", []uint8{18, 8})
+				tx, err := oracle.AddTokens(to, tokens, stringsToByte32("BNT", "TKN", "ZRX"), []uint8{18, 8})
 				Expect(err).ToNot(HaveOccurred())
 				be.Commit()
 				Expect(isGasExhausted(tx, to.GasLimit)).To(BeFalse())
@@ -64,7 +66,7 @@ var _ = Describe("addTokenBatch", func() {
 			to := randomWallet.TransactOpts()
 			to.GasLimit = 300000
 			tokens := []common.Address{common.HexToAddress("0x0"), common.HexToAddress("0x1")}
-			tx, err := oracle.AddTokenBatch(to, tokens, "BNT.TKN", []uint8{18, 8})
+			tx, err := oracle.AddTokens(to, tokens, stringsToByte32("BNT", "TKN"), []uint8{18, 8})
 			Expect(err).ToNot(HaveOccurred())
 			be.Commit()
 			Expect(isGasExhausted(tx, to.GasLimit)).To(BeFalse())

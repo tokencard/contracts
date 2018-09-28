@@ -1,0 +1,190 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: oraclize-bridge-config
+data:
+  instance.json: |
+    {
+      "context_name": "eth_58C2B8F85D",
+      "latest_block_number": 289538,
+      "oar": "0xD08F3d78aaae50Ee5db484CA70173cF5bd7056E1",
+      "node": {
+          "main": "http://parity-poa:8545",
+          "backup": []
+      },
+      "contracts": {
+          "connector": {
+              "binary": "/app/contracts/binary/oraclizeConnector.binary",
+              "abi": "/app/contracts/abi/oraclizeConnector.json",
+              "source": "/app/contracts/ethereum-api/connectors/oraclizeConnector.sol"
+          },
+          "oar": {
+              "binary": "/app/contracts/binary/addressResolver.binary",
+              "abi": "/app/contracts/abi/addressResolver.json",
+              "source": "/app/contracts/ethereum-api/connectors/addressResolver.sol"
+          }
+      },
+      "deterministic_oar": false,
+      "deploy_gas": 3700000,
+      "account": "0xac02606bb48fbe849e28c3f369d87b0b6108cd0f",
+      "mode": "broadcast",
+      "key_file": "/app/config/instance/keys.json",
+      "gas_price": 20000000000,
+      "onchain_config": {
+          "pricing": [
+              {
+                  "name": "IPFS",
+                  "proof": 0,
+                  "units": 10
+              },
+              {
+                  "name": "IPFS",
+                  "proof": 1,
+                  "units": 10
+              },
+              {
+                  "name": "swarm",
+                  "proof": 0,
+                  "units": 10
+              },
+              {
+                  "name": "swarm",
+                  "proof": 1,
+                  "units": 10
+              },
+              {
+                  "name": "URL",
+                  "proof": 0,
+                  "units": 10
+              },
+              {
+                  "name": "URL",
+                  "proof": 1,
+                  "units": 10
+              },
+              {
+                  "name": "URL",
+                  "proof": 16,
+                  "units": 50
+              },
+              {
+                  "name": "URL",
+                  "proof": 17,
+                  "units": 50
+              },
+              {
+                  "name": "URL",
+                  "proof": 32,
+                  "units": 50
+              },
+              {
+                  "name": "URL",
+                  "proof": 33,
+                  "units": 50
+              },
+              {
+                  "name": "Blockchain",
+                  "proof": 0,
+                  "units": 10
+              },
+              {
+                  "name": "Blockchain",
+                  "proof": 1,
+                  "units": 10
+              },
+              {
+                  "name": "nested",
+                  "proof": 0,
+                  "units": 10
+              },
+              {
+                  "name": "nested",
+                  "proof": 1,
+                  "units": 10
+              },
+              {
+                  "name": "nested",
+                  "proof": 16,
+                  "units": 50
+              },
+              {
+                  "name": "nested",
+                  "proof": 17,
+                  "units": 50
+              },
+              {
+                  "name": "nested",
+                  "proof": 32,
+                  "units": 50
+              },
+              {
+                  "name": "nested",
+                  "proof": 33,
+                  "units": 50
+              },
+              {
+                  "name": "WolframAlpha",
+                  "proof": 0,
+                  "units": 30
+              },
+              {
+                  "name": "WolframAlpha",
+                  "proof": 1,
+                  "units": 30
+              },
+              {
+                  "name": "computation",
+                  "proof": 0,
+                  "units": 500
+              },
+              {
+                  "name": "computation",
+                  "proof": 1,
+                  "units": 500
+              },
+              {
+                  "name": "computation",
+                  "proof": 16,
+                  "units": 540
+              },
+              {
+                  "name": "computation",
+                  "proof": 17,
+                  "units": 540
+              },
+              {
+                  "name": "computation",
+                  "proof": 32,
+                  "units": 540
+              },
+              {
+                  "name": "computation",
+                  "proof": 33,
+                  "units": 540
+              },
+              {
+                  "name": "random",
+                  "proof": 0,
+                  "units": 50
+              },
+              {
+                  "name": "random",
+                  "proof": 1,
+                  "units": 50
+              },
+              {
+                  "name": "random",
+                  "proof": 48,
+                  "units": 50
+              },
+              {
+                  "name": "random",
+                  "proof": 49,
+                  "units": 50
+              }
+          ],
+          "base_price": 0.00000277
+      },
+      "connector": "0xfd2c6614e9bb2775a2e6dabf1a757702758c1bb4"
+    }

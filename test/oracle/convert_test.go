@@ -14,20 +14,22 @@ var _ = Describe("convert", func() {
 
 	Context("When the token is already supported", func() {
 		BeforeEach(func() {
-			tx, err := oracle.AddToken(controllerWallet.TransactOpts(), common.HexToAddress("0xfe209bdE5CA32fa20E6728A005F26D651FFF5982"), "TKN", 8)
+			tx, err := oracle.AddTokens(controllerWallet.TransactOpts(), []common.Address{common.HexToAddress("0xfe209bdE5CA32fa20E6728A005F26D651FFF5982")}, stringsToByte32("TKN"), []byte{8})
 			Expect(err).ToNot(HaveOccurred())
 			be.Commit()
 			Expect(isSuccessful(tx)).To(BeTrue())
 		})
 		Context("When exchange rate is 0", func() {
-			It("Should trigger require() (empty output)", func() {
-				_, err := oracle.Convert(nil, common.HexToAddress("0xfe209bdE5CA32fa20E6728A005F26D651FFF5982"), big.NewInt(100))
-				Expect(err).To(MatchError(errors.New("abi: unmarshalling empty output")))
+			It("Should return 0", func() {
+				v, err := oracle.Convert(nil, common.HexToAddress("0xfe209bdE5CA32fa20E6728A005F26D651FFF5982"), big.NewInt(100))
+				Expect(err).ToNot(HaveOccurred())
+				Expect(v.String()).To(Equal("0"))
+				// Expect(err).To(MatchError(errors.New("abi: unmarshalling empty output")))
 			})
 		})
 		Context("When exchange rate is NOT 0", func() {
 			BeforeEach(func() {
-				tx, err := oracle.UpdateRateManual(controllerWallet.TransactOpts(), common.HexToAddress("0xfe209bdE5CA32fa20E6728A005F26D651FFF5982"), big.NewInt(int64(0.001633*math.Pow10(18))))
+				tx, err := oracle.UpdateTokenRate(controllerWallet.TransactOpts(), common.HexToAddress("0xfe209bdE5CA32fa20E6728A005F26D651FFF5982"), big.NewInt(int64(0.001633*math.Pow10(18))))
 				Expect(err).ToNot(HaveOccurred())
 				be.Commit()
 				Expect(isSuccessful(tx)).To(BeTrue())
@@ -51,26 +53,26 @@ var _ = Describe("convert", func() {
 	Context("When the token is not supported", func() {
 		//the subsequent BeforeEach ensure that the the token fields are initialized but it is not supported longer
 		BeforeEach(func() {
-			tx, err := oracle.AddToken(controllerWallet.TransactOpts(), common.HexToAddress("0x1"), "ETH", 4)
+			tx, err := oracle.AddTokens(controllerWallet.TransactOpts(), []common.Address{common.HexToAddress("0x1")}, stringsToByte32("ETH"), []byte{4})
 			Expect(err).ToNot(HaveOccurred())
 			be.Commit()
 			Expect(isSuccessful(tx)).To(BeTrue())
 		})
 		BeforeEach(func() {
-			tx, err := oracle.UpdateRateManual(controllerWallet.TransactOpts(), common.HexToAddress("0x1"), big.NewInt(100))
+			tx, err := oracle.UpdateTokenRate(controllerWallet.TransactOpts(), common.HexToAddress("0x1"), big.NewInt(100))
 			Expect(err).ToNot(HaveOccurred())
 			be.Commit()
 			Expect(isSuccessful(tx)).To(BeTrue())
 		})
 		BeforeEach(func() {
-			tx, err := oracle.RemoveToken(controllerWallet.TransactOpts(), common.HexToAddress("0x1"))
+			tx, err := oracle.RemoveTokens(controllerWallet.TransactOpts(), []common.Address{common.HexToAddress("0x1")})
 			Expect(err).ToNot(HaveOccurred())
 			be.Commit()
 			Expect(isSuccessful(tx)).To(BeTrue())
 		})
 		It("Should trigger require() (empty output)", func() {
 			_, err := oracle.Convert(nil, common.HexToAddress("0x1"), big.NewInt(100))
-			Expect(err).To(MatchError(errors.New("abi: unmarshalling empty output")))
+			Expect(err).To(MatchError(errors.New("abi: improperly formatted output")))
 		})
 	})
 

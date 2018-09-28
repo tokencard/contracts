@@ -1,0 +1,43 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: oraclize-bridge
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: oraclize-bridge
+  template:
+    metadata:
+      labels:
+        name: oraclize-bridge
+    spec:
+      containers:
+        - name: oraclize-bridge
+          imagePullPolicy: Always
+          image: quay.io/nostdm/ethereum-bridge:latest
+          args:
+            - "--instance=instance.json"
+          volumeMounts:
+            - name: keys
+              mountPath: /app/config/instance/keys.json
+              subPath: keys.json
+              readOnly: true
+            - name: config
+              mountPath: /app/config/instance/instance.json
+              subPath: instance.json
+              readOnly: false
+      volumes:
+        - name: keys
+          secret:
+            secretName: oraclize-bridge-keys
+            items:
+              - key: keys.json
+                path: keys.json
+        - name: config
+          configMap:
+            name: oraclize-bridge-config
+            items:
+              - key: instance.json
+                path: instance.json
