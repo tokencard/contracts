@@ -1,9 +1,9 @@
 pragma solidity ^0.4.24;
 
-import "./controllable.sol";
-import "./strings.sol";
-import "./safe-math.sol";
-import "./oraclize-api.sol";
+import "./internal/controllable.sol";
+import "./external/strings.sol";
+import "./external/safe-math.sol";
+import "./external/oraclize-api.sol";
 
 
 /// @title JSON provides JSON parsing functionality.
