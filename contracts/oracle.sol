@@ -1,9 +1,9 @@
 pragma solidity ^0.4.24;
 
-import "./internal/controllable.sol";
-import "./external/strings.sol";
-import "./external/safe-math.sol";
-import "./external/oraclize-api.sol";
+import "./controllable.sol";
+import "./strings.sol";
+import "./safe-math.sol";
+import "./oraclize-api.sol";
 
 
 /// @title JSON provides JSON parsing functionality.
@@ -164,7 +164,7 @@ contract Oracle is UsingOraclize, Base64, Date, JSON, Controllable {
     event OraclizeQueryFailure(string _reason);
 
     event VerificationSuccess(bytes _publicKey, string _result);
-    event VerificationFailure(bytes _publicKey, string _result);
+    event VerificationFailure(bytes _publicKey, string _result, string _reason);
 
     struct Token {
         string label;     // Token symbol
@@ -303,20 +303,23 @@ contract Oracle is UsingOraclize, Base64, Date, JSON, Controllable {
     function __callback(bytes32 _queryID, string _result, bytes _proof) public {
         // Require that the caller is the Oraclize contract.
         require(msg.sender == oraclize_cbAddress(), "sender is not oraclize");
-        // Use the query ID to find the matching token address.
-        address _token = _queryToToken[_queryID];
-        // Get the corresponding token object.
-        Token storage token = tokens[_token];
+
         // Require that the proof is valid.
-        require(verifyProof(_result, _proof, APIPublicKey, token.lastUpdate), "provided origin proof is invalid");
-        // Parse the JSON result to get the rate in wei.
-        token.rate = parseInt(parseRate(_result, "ETH"), 18);
-        // Emit the rate update event.
-        emit TokenRateUpdate(_token, token.rate);
-        // Set the update time of the token rate.
-        token.lastUpdate = now;
-        // Remove query from the list.
-        delete _queryToToken[_queryID];
+        // require(verifyProof(_result, _proof, APIPublicKey, token.lastUpdate), "provided origin proof is invalid");
+        if (verifyProof(_result, _proof, APIPublicKey, token.lastUpdate)){
+          // Use the query ID to find the matching token address.
+          address _token = _queryToToken[_queryID];
+          // Get the corresponding token object.
+          Token storage token = tokens[_token];
+          // Parse the JSON result to get the rate in wei.
+          token.rate = parseInt(parseRate(_result, "ETH"), 18);
+          // Emit the rate update event.
+          emit TokenRateUpdate(_token, token.rate);
+          // Set the update time of the token rate.
+          token.lastUpdate = now;
+          // Remove query from the list.
+          delete _queryToToken[_queryID];
+        }
     }
 
     /// @dev Re-usable helper function that performs the Oraclize Query.
@@ -361,12 +364,14 @@ contract Oracle is UsingOraclize, Base64, Date, JSON, Controllable {
         bytes memory dateHeader = new bytes(30);
         dateHeader = copyBytes(headers, 5, 30, dateHeader, 0);
         if (!verifyDate(string(dateHeader), _lastUpdate)) {
+            emit VerificationFailure(_publicKey, _result, "Invalid date");
             return false;
         }
         // Check if the signed digest hash matches the result hash.
         bytes memory digest = new bytes(headersLength - 52);
         digest = copyBytes(headers, 52, headersLength - 52, digest, 0);
         if (keccak256(sha256(_result)) != keccak256(base64decode(digest))) {
+            emit VerificationFailure(_publicKey, _result, "Result mismatch");
             return false;
         }
         // Check if the signature is valid and if the signer addresses match.
@@ -377,7 +382,7 @@ contract Oracle is UsingOraclize, Base64, Date, JSON, Controllable {
             emit VerificationSuccess(_publicKey, _result);
             return true;
         }
-        emit VerificationFailure(_publicKey, _result);
+        emit VerificationFailure(_publicKey, _result, "Invalid signature");
         return false;
     }
 
