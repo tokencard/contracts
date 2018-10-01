@@ -25,10 +25,6 @@ do
 done
 
 GE_PATH=${PWD}/vendor/github.com/ethereum/go-ethereum
-if [ ! -d ${GE_PATH} ]
-then
-  GE_PATH=${GOPATH:-$HOME/go}/src/github.com/ethereum/go-ethereum
-fi
 
 # Generate Go bindings from solidity contracts.
 ABIGEN="docker run --rm -u `id -u` --workdir /go/src/github/tokencard/contracts -e GOPATH=/go -v $GE_PATH:/go/src/github.com/ethereum/go-ethereum -v $PWD:/go/src/github/tokencard/contracts ethereum/client-go:alltools-v1.8.15 abigen"
