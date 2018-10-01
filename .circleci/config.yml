@@ -33,7 +33,7 @@ jobs:
     working_directory: /src
     steps:
       - checkout
-      - run: myth -x *.sol
+      - run: myth -x ./contracts/*.sol
 
   snyk_check:
     docker:

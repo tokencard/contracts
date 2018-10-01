@@ -44,7 +44,7 @@ mocks/token.sol is a partial implementation of the ERC20 token standard used for
 
 Get dependencies:
 ```sh
-dep ensure
+go mod vendor
 ```
 
 Run tests:
