@@ -42,7 +42,7 @@ var _ = BeforeSuite(func() {
 })
 
 var _ = AfterSuite(func() {
-	testRig.ExpectMinimumCoverage("oracle.sol:Oracle", 1.00)
+	testRig.ExpectMinimumCoverage("oracle.sol:Oracle", 40.42)
 })
 
 var be ethertest.TestBackend
