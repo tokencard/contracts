@@ -214,7 +214,7 @@ contract Oracle is UsingOraclize, Base64, Date, JSON, Controllable {
         // Store the token in memory to save map entry lookup gas.
         Token storage token = tokens[_token];
         // Require that the token exists and that its rate is not zero.
-        require(token.exists && token.decimals != 0, "token does not exist");
+        require(token.exists && token.rate != 0, "token does not exist");
         // Safely convert the token amount to ether based on the exchange rate.
         uint decimals = 1;
         for (uint i = 0; i < token.decimals; i++) {
@@ -440,6 +440,3 @@ contract Oracle is UsingOraclize, Base64, Date, JSON, Controllable {
         return timestamp > _lastUpdate;
     }
 }
-
-
-
