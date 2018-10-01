@@ -10,10 +10,10 @@ import "./external/oraclize-api.sol";
 contract JSON {
     using Strings for *;
 
-    /// @dev Extracts JSON float value from the response object.
+    /// @dev Extracts JSON rate value from the response object.
     /// @param _json body of the JSON response from the CryptoCompare API.
     /// @param _label asset label used to extract the correct json field.
-    function fromJSON(string _json, string _label) internal pure returns (string) {
+    function parseRate(string _json, string _label) internal pure returns (string) {
         Strings.slice memory body = _json.toSlice();
         body.beyond("{".toSlice());
         body.until("}".toSlice());
@@ -310,7 +310,7 @@ contract Oracle is UsingOraclize, Base64, Date, JSON, Controllable {
         // Require that the proof is valid.
         require(verifyProof(_result, _proof, APIPublicKey, token.lastUpdate), "provided origin proof is invalid");
         // Parse the JSON result to get the rate in wei.
-        token.rate = parseInt(fromJSON(_result, "ETH"), 18);
+        token.rate = parseInt(parseRate(_result, "ETH"), 18);
         // Emit the rate update event.
         emit TokenRateUpdate(_token, token.rate);
         // Set the update time of the token rate.
