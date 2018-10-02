@@ -371,7 +371,7 @@ contract Oracle is UsingOraclize, Base64, Date, JSON, Controllable {
         bytes memory digest = new bytes(headersLength - 52);
         digest = copyBytes(headers, 52, headersLength - 52, digest, 0);
         if (keccak256(sha256(_result)) != keccak256(base64decode(digest))) {
-            emit VerificationFailure(_publicKey, _result, "Result mismatch");
+            emit VerificationFailure(_publicKey, _result, "Result hash mismatch");
             return false;
         }
         // Check if the signature is valid and if the signer addresses match.
