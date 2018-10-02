@@ -64,13 +64,13 @@ var _ = Describe("addTokens", func() {
 				BeforeEach(func() {
 					var err error
 					tokens := []common.Address{common.HexToAddress("0x4"), common.HexToAddress("0x5")}
-					tx, err = oracle.AddTokens(controllerWallet.TransactOptsWithGasLimit(200000), tokens, stringsToByte32("MKR", "MTL"), []uint8{1, 12})
+					tx, err = oracle.AddTokens(controllerWallet.TransactOptsWithGasLimit(300000), tokens, stringsToByte32("MKR", "MTL"), []uint8{1, 12})
 					Expect(err).ToNot(HaveOccurred())
 					be.Commit()
 				})
 
 				It("Should pass", func() {
-					Expect(isSuccessful(t)).To(BeTrue())
+					Expect(isSuccessful(tx)).To(BeTrue())
 				})
 			})
 
