@@ -47,14 +47,26 @@ var _ = Describe("addTokens", func() {
 			})
 
 			Context("When at least one of the added tokens is already supported", func() {
-				It("Should fail", func() {
-					to := controllerWallet.TransactOpts()
+				BeforeEach(func() {
+					var err error
 					tokens := []common.Address{common.HexToAddress("0x0"), common.HexToAddress("0x2")}
-					to.GasLimit = 200000
-					_tx, err := oracle.AddTokens(to, tokens, stringsToByte32("BNT", "OMG"), []uint8{18, 18})
+					tx, err = oracle.AddTokens(controllerWallet.TransactOptsWithGasLimit(200000), tokens, stringsToByte32("BNT", "OMG"), []uint8{18, 18})
 					Expect(err).ToNot(HaveOccurred())
 					be.Commit()
-					Expect(isSuccessful(_tx)).To(BeTrue())
+				})
+				It("Should fail", func() {
+					Expect(isSuccessful(tx)).To(BeFalse())
+				})
+			})
+
+			Context("When none of the added tokens are supported", func() {
+				It("Should pass", func() {
+					to := controllerWallet.TransactOpts()
+					tokens := []common.Address{common.HexToAddress("0x4"), common.HexToAddress("0x5")}
+					t, err := oracle.AddTokens(to, tokens, stringsToByte32("XXX", "MTL"), []uint8{18, 18})
+					Expect(err).ToNot(HaveOccurred())
+					be.Commit()
+					Expect(isSuccessful(t)).To(BeTrue())
 				})
 			})
 
