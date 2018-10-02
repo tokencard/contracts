@@ -20,10 +20,9 @@ var _ = Describe("convert", func() {
 			Expect(isSuccessful(tx)).To(BeTrue())
 		})
 		Context("When exchange rate is 0", func() {
-			It("Should return 0", func() {
-				v, err := oracle.Convert(nil, common.HexToAddress("0xfe209bdE5CA32fa20E6728A005F26D651FFF5982"), big.NewInt(100))
-				Expect(err).ToNot(HaveOccurred())
-				Expect(v.String()).To(Equal("0"))
+			It("Should fail", func() {
+				_, err := oracle.Convert(nil, common.HexToAddress("0xfe209bdE5CA32fa20E6728A005F26D651FFF5982"), big.NewInt(100))
+				Expect(err).To(HaveOccurred())
 				// Expect(err).To(MatchError(errors.New("abi: unmarshalling empty output")))
 			})
 		})
