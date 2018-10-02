@@ -29,7 +29,7 @@ jobs:
 
   mythril:
     docker:
-      - image: quay.io/token/mythril:2018-07-05
+      - image: quay.io/token/mythril:2018-10-02
     working_directory: /src
     steps:
       - checkout
