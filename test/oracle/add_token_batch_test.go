@@ -45,6 +45,19 @@ var _ = Describe("addTokens", func() {
 				Expect(token.Exists).To(BeTrue())
 				Expect(token.Decimals).To(Equal(uint8(8)))
 			})
+
+			Context("When at least one of the added tokens is already supported", func() {
+				It("Should fail", func() {
+					to := controllerWallet.TransactOpts()
+					tokens := []common.Address{common.HexToAddress("0x0"), common.HexToAddress("0x2")}
+					to.GasLimit = 200000
+					_tx, err := oracle.AddTokens(to, tokens, stringsToByte32("BNT", "OMG"), []uint8{18, 18})
+					Expect(err).ToNot(HaveOccurred())
+					be.Commit()
+					Expect(isSuccessful(_tx)).To(BeTrue())
+				})
+			})
+
 		})
 
 		Context("When the parameters have different lengths", func() {
@@ -57,6 +70,7 @@ var _ = Describe("addTokens", func() {
 				Expect(isSuccessful(tx)).To(BeFalse())
 			})
 		})
+
 	})
 
 	Context("When called by a random address", func() {
