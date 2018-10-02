@@ -22,9 +22,7 @@ var _ = Describe("spendAvailable", func() {
 
 		Context("When a random person tries to initialize the spend limit", func() {
 			It("Should fail", func() {
-				to := randomPerson.TransactOpts()
-				to.GasLimit = 100000
-				tx, err := w.InitializeSpendLimit(to, ethToWei(1))
+				tx, err := w.InitializeSpendLimit(randomPerson.TransactOptsWithGasLimit(100000), ethToWei(1))
 				Expect(err).ToNot(HaveOccurred())
 				be.Commit()
 				Expect(isSuccessful(tx)).To(BeFalse())
@@ -33,9 +31,7 @@ var _ = Describe("spendAvailable", func() {
 
 		Context("When controller tries to initialize the spend limit", func() {
 			It("Should fail", func() {
-				to := controller.TransactOpts()
-				to.GasLimit = 100000
-				tx, err := w.InitializeSpendLimit(to, ethToWei(1))
+				tx, err := w.InitializeSpendLimit(controller.TransactOptsWithGasLimit(100000), ethToWei(1))
 				Expect(err).ToNot(HaveOccurred())
 				be.Commit()
 				Expect(isSuccessful(tx)).To(BeFalse())
@@ -74,9 +70,7 @@ var _ = Describe("spendAvailable", func() {
 
 			Context("When I try to initialize the spending limit again", func() {
 				It("Should fail", func() {
-					to := owner.TransactOpts()
-					to.GasLimit = 100000
-					tx, err := w.InitializeSpendLimit(to, ethToWei(1))
+					tx, err := w.InitializeSpendLimit(owner.TransactOptsWithGasLimit(100000), ethToWei(1))
 					Expect(err).ToNot(HaveOccurred())
 					be.Commit()
 					Expect(isSuccessful(tx)).To(BeFalse())
@@ -198,9 +192,7 @@ var _ = Describe("spendAvailable", func() {
 
 				Context("When I try to initialize the spend limit", func() {
 					It("Should fail", func() {
-						to := owner.TransactOpts()
-						to.GasLimit = 100000
-						tx, err := w.InitializeSpendLimit(to, ethToWei(1000))
+						tx, err := w.InitializeSpendLimit(owner.TransactOptsWithGasLimit(100000), ethToWei(1000))
 						Expect(err).ToNot(HaveOccurred())
 						be.Commit()
 						Expect(isSuccessful(tx)).To(BeFalse())
@@ -242,9 +234,7 @@ var _ = Describe("spendAvailable", func() {
 
 			Context("When I try to set spending limit again", func() {
 				It("Should fail", func() {
-					to := owner.TransactOpts()
-					to.GasLimit = 100000
-					tx, err := w.SubmitSpendLimit(to, ethToWei(1))
+					tx, err := w.SubmitSpendLimit(owner.TransactOptsWithGasLimit(100000), ethToWei(1))
 					Expect(err).ToNot(HaveOccurred())
 					be.Commit()
 					Expect(isSuccessful(tx)).To(BeFalse())

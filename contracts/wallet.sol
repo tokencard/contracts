@@ -306,11 +306,6 @@ contract Vault is Whitelist, SpendLimit {
         }
     }
 
-    /// @return oracle resolver contract address.
-    function resolver() external view returns (address) {
-        return address(_OR);
-    }
-
     /// @dev Returns the amount of an asset owned by the contract.
     /// @param _asset address of an ERC20 token or 0x0 for ether.
     /// @return balance associated with the wallet address in wei.

@@ -21,10 +21,8 @@ var _ = Describe("transfer", func() {
 
 		Context("When I transfer 1 Finney to a randon person", func() {
 			BeforeEach(func() {
-				top := owner.TransactOpts()
-				top.GasLimit = 81000
 				var err error
-				tx, err = w.Transfer(top, randomPerson.Address(), common.HexToAddress("0x"), ONE_FINNEY)
+				tx, err = w.Transfer(owner.TransactOptsWithGasLimit(81000), randomPerson.Address(), common.HexToAddress("0x"), ONE_FINNEY)
 				Expect(err).ToNot(HaveOccurred())
 				be.Commit()
 			})
@@ -43,10 +41,8 @@ var _ = Describe("transfer", func() {
 		Context("When controller tries to transfer 1 Finney to a random person", func() {
 
 			BeforeEach(func() {
-				top := controller.TransactOpts()
-				top.GasLimit = 81000
 				var err error
-				tx, err = w.Transfer(top, randomPerson.Address(), common.HexToAddress("0x"), ONE_FINNEY)
+				tx, err = w.Transfer(controller.TransactOptsWithGasLimit(81000), randomPerson.Address(), common.HexToAddress("0x"), ONE_FINNEY)
 				Expect(err).ToNot(HaveOccurred())
 				be.Commit()
 			})
@@ -60,10 +56,8 @@ var _ = Describe("transfer", func() {
 		Context("When a random person tries to transfer 1 Finney to a random person", func() {
 
 			BeforeEach(func() {
-				top := randomPerson.TransactOpts()
-				top.GasLimit = 81000
 				var err error
-				tx, err = w.Transfer(top, randomPerson.Address(), common.HexToAddress("0x"), ONE_FINNEY)
+				tx, err = w.Transfer(randomPerson.TransactOptsWithGasLimit(81000), randomPerson.Address(), common.HexToAddress("0x"), ONE_FINNEY)
 				Expect(err).ToNot(HaveOccurred())
 				be.Commit()
 			})
@@ -77,7 +71,6 @@ var _ = Describe("transfer", func() {
 		Context("When I have one thousand tokens", func() {
 			BeforeEach(func() {
 				var err error
-
 				tx, err = tkn.Credit(bankWallet.TransactOpts(), wa, big.NewInt(1000))
 				Expect(err).ToNot(HaveOccurred())
 				be.Commit()
@@ -124,9 +117,7 @@ var _ = Describe("transfer", func() {
 			Context("When controller tries to transfer one token to a random person", func() {
 				BeforeEach(func() {
 					var err error
-					to := controller.TransactOpts()
-					to.GasLimit = 80000
-					tx, err = w.Transfer(to, randomPerson.Address(), tkna, big.NewInt(1))
+					tx, err = w.Transfer(controller.TransactOptsWithGasLimit(80000), randomPerson.Address(), tkna, big.NewInt(1))
 					Expect(err).ToNot(HaveOccurred())
 					be.Commit()
 				})
@@ -140,9 +131,7 @@ var _ = Describe("transfer", func() {
 
 				BeforeEach(func() {
 					var err error
-					to := randomPerson.TransactOpts()
-					to.GasLimit = 80000
-					tx, err = w.Transfer(to, randomPerson.Address(), tkna, big.NewInt(1))
+					tx, err = w.Transfer(randomPerson.TransactOptsWithGasLimit(80000), randomPerson.Address(), tkna, big.NewInt(1))
 					Expect(err).ToNot(HaveOccurred())
 					be.Commit()
 				})
