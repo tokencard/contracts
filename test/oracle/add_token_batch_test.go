@@ -49,13 +49,11 @@ var _ = Describe("addTokens", func() {
 
 		Context("When the parameters have different lengths", func() {
 			It("Should fail", func() {
-				to := controllerWallet.TransactOpts()
-				to.GasLimit = 300000
 				tokens := []common.Address{common.HexToAddress("0x0"), common.HexToAddress("0x1")}
-				tx, err := oracle.AddTokens(to, tokens, stringsToByte32("BNT", "TKN", "ZRX"), []uint8{18, 8})
+				tx, err := oracle.AddTokens(controllerWallet.TransactOptsWithGasLimit(300000), tokens, stringsToByte32("BNT", "TKN", "ZRX"), []uint8{18, 8})
 				Expect(err).ToNot(HaveOccurred())
 				be.Commit()
-				Expect(isGasExhausted(tx, to.GasLimit)).To(BeFalse())
+				Expect(isGasExhausted(tx, 300000)).To(BeFalse())
 				Expect(isSuccessful(tx)).To(BeFalse())
 			})
 		})
@@ -63,13 +61,11 @@ var _ = Describe("addTokens", func() {
 
 	Context("When called by a random address", func() {
 		It("Should fail", func() {
-			to := randomWallet.TransactOpts()
-			to.GasLimit = 300000
 			tokens := []common.Address{common.HexToAddress("0x0"), common.HexToAddress("0x1")}
-			tx, err := oracle.AddTokens(to, tokens, stringsToByte32("BNT", "TKN"), []uint8{18, 8})
+			tx, err := oracle.AddTokens(randomWallet.TransactOptsWithGasLimit(300000), tokens, stringsToByte32("BNT", "TKN"), []uint8{18, 8})
 			Expect(err).ToNot(HaveOccurred())
 			be.Commit()
-			Expect(isGasExhausted(tx, to.GasLimit)).To(BeFalse())
+			Expect(isGasExhausted(tx, 300000)).To(BeFalse())
 			Expect(isSuccessful(tx)).To(BeFalse())
 
 		})

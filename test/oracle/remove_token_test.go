@@ -45,9 +45,7 @@ var _ = Describe("removeTokens", func() {
 		Context("When removing an unsupported token", func() {
 
 			It("Should fail", func() {
-				to := controllerWallet.TransactOpts()
-				to.GasLimit = 100000
-				tx, err := oracle.RemoveTokens(to, []common.Address{common.HexToAddress("0x0")})
+				tx, err := oracle.RemoveTokens(controllerWallet.TransactOptsWithGasLimit(100000), []common.Address{common.HexToAddress("0x0")})
 				Expect(err).ToNot(HaveOccurred())
 				be.Commit()
 				Expect(isSuccessful(tx)).To(BeFalse())
@@ -57,12 +55,10 @@ var _ = Describe("removeTokens", func() {
 
 	Context("When called by a random address", func() {
 		It("Should fail", func() {
-			to := randomWallet.TransactOpts()
-			to.GasLimit = 300000
-			tx, err := oracle.RemoveTokens(to, []common.Address{common.HexToAddress("0x0")})
+			tx, err := oracle.RemoveTokens(randomWallet.TransactOptsWithGasLimit(300000), []common.Address{common.HexToAddress("0x0")})
 			Expect(err).ToNot(HaveOccurred())
 			be.Commit()
-			Expect(isGasExhausted(tx, to.GasLimit)).To(BeFalse())
+			Expect(isGasExhausted(tx, 300000)).To(BeFalse())
 			Expect(isSuccessful(tx)).To(BeFalse())
 
 		})
