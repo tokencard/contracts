@@ -13,19 +13,21 @@ spec:
       labels:
         name: oraclize-bridge
     spec:
+      imagePullSecrets:
+      - name: regsecret
       containers:
         - name: oraclize-bridge
           imagePullPolicy: Always
-          image: quay.io/nostdm/ethereum-bridge:latest
+          image: quay.io/token/oraclize-bridge:v1.0.0
           args:
             - "--instance=instance.json"
           volumeMounts:
             - name: keys
-              mountPath: /app/config/instance/keys.json
+              mountPath: /ethereum-bridge/config/instance/keys.json
               subPath: keys.json
               readOnly: true
             - name: config
-              mountPath: /app/config/instance/instance.json
+              mountPath: /ethereum-bridge/config/instance/instance.json
               subPath: instance.json
               readOnly: false
       volumes:
