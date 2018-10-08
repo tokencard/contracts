@@ -3,6 +3,7 @@ package oracle_test
 import (
 	"context"
 	"math/big"
+	"os"
 	"testing"
 
 	"github.com/ethereum/go-ethereum/common"
@@ -43,6 +44,7 @@ var _ = BeforeSuite(func() {
 
 var _ = AfterSuite(func() {
 	testRig.ExpectMinimumCoverage("oracle.sol:Oracle", 40.07)
+	testRig.PrintGasUsage(os.Stdout)
 })
 
 var be ethertest.TestBackend

@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"math/big"
+	"os"
 	"testing"
 
 	"math"
@@ -54,6 +55,7 @@ var bankWallet = ethertest.NewWallet()
 
 var _ = AfterSuite(func() {
 	testRig.ExpectMinimumCoverage("wallet.sol:Wallet", 99.95)
+	testRig.PrintGasUsage(os.Stdout)
 })
 
 func ethToWei(amount int) *big.Int {
