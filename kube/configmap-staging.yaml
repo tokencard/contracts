@@ -15,21 +15,21 @@ data:
       },
       "contracts": {
           "connector": {
-              "binary": "/app/contracts/binary/oraclizeConnector.binary",
-              "abi": "/app/contracts/abi/oraclizeConnector.json",
-              "source": "/app/contracts/ethereum-api/connectors/oraclizeConnector.sol"
+              "binary": "/ethereum-bridge/contracts/binary/oraclizeConnector.binary",
+              "abi": "/ethereum-bridge/contracts/abi/oraclizeConnector.json",
+              "source": "/ethereum-bridge/contracts/ethereum-api/connectors/oraclizeConnector.sol"
           },
           "oar": {
-              "binary": "/app/contracts/binary/addressResolver.binary",
-              "abi": "/app/contracts/abi/addressResolver.json",
-              "source": "/app/contracts/ethereum-api/connectors/addressResolver.sol"
+              "binary": "/ethereum-bridge/contracts/binary/addressResolver.binary",
+              "abi": "/ethereum-bridge/contracts/abi/addressResolver.json",
+              "source": "/ethereum-bridge/contracts/ethereum-api/connectors/addressResolver.sol"
           }
       },
       "deterministic_oar": false,
       "deploy_gas": 3700000,
       "account": "0xac02606bb48fbe849e28c3f369d87b0b6108cd0f",
       "mode": "broadcast",
-      "key_file": "/app/config/instance/keys.json",
+      "key_file": "/ethereum-bridge/config/instance/keys.json",
       "gas_price": 20000000000,
       "onchain_config": {
           "pricing": [

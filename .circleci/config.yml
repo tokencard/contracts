@@ -44,7 +44,8 @@ jobs:
       - run: apk add -U --no-cache nodejs nodejs-npm
       - run: go get -u github.com/golang/dep/cmd/dep
       - run: dep init --no-examples
-      - run: npm install -g snyk
+      - run: npm config set unsafe-perm true
+      - run: npm install -g snyk@1.101.1
       - run: snyk auth ${SNYK_TOKEN}
       - run: snyk test --org=token
 
