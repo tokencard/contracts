@@ -233,6 +233,7 @@ var _ = BeforeEach(func() {
 		owner.Address(),
 		oracleResolverAddress,
 		controllerContractAddress,
+		ethToWei(100),
 	)
 	Expect(err).ToNot(HaveOccurred())
 	be.Commit()

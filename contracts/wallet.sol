@@ -287,7 +287,7 @@ contract Vault is Whitelist, SpendLimit {
     /// @param _owner is the owner account of the wallet contract.
     /// @param _resolver is the oracle resolver contract address.
     /// @param _controller is the controller contract address.
-    constructor(address _owner, address _resolver, address _controller) SpendLimit(100 ether) Ownable(_owner) Controllable(_controller) public {
+    constructor(address _owner, address _resolver, address _controller, uint _spendLimit) SpendLimit(_spendLimit) Ownable(_owner) Controllable(_controller) public {
         _OR = Resolver(_resolver);
     }
 
@@ -369,7 +369,7 @@ contract Wallet is Vault {
     /// @param _owner is the owner account of the wallet contract.
     /// @param _resolver is the oracle resolver contract address.
     /// @param _controller is the controller contract address.
-    constructor(address _owner, address _resolver, address _controller) Vault(_owner, _resolver, _controller) public {
+    constructor(address _owner, address _resolver, address _controller, uint _spendLimit) Vault(_owner, _resolver, _controller, _spendLimit) public {
         topupLimit = MAXIMUM_TOPUP_LIMIT;
         _topupAvailable = topupLimit;
     }
