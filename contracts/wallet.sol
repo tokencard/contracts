@@ -364,6 +364,7 @@ contract Wallet is Vault {
     /// @param _resolver is the oracle resolver contract address.
     /// @param _controller is the controller contract address.
     constructor(address _owner, address _resolver, address _controller, uint _spendLimit) Vault(_owner, _resolver, _controller, _spendLimit) public {
+        _topupLimitDay = now;
         topupLimit = MAXIMUM_TOPUP_LIMIT;
         _topupAvailable = topupLimit;
     }
