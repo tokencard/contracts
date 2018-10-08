@@ -40,12 +40,6 @@ contract Whitelist is Controllable, Ownable {
     bool public submittedWhitelistRemoval;
     bool public initializedWhitelist;
 
-    /// @dev Check if the provided addresses array has a valid length.
-    modifier hasValidLength(address[] _addresses) {
-        require(_addresses.length >= 1 && _addresses.length <= 20, "invalid whitelist length");
-        _;
-    }
-
     /// @dev Check if the provided addresses contain the owner address.
     modifier hasNoOwner(address[] _addresses) {
         for (uint i = 0; i < _addresses.length; i++) {
@@ -66,7 +60,7 @@ contract Whitelist is Controllable, Ownable {
 
     /// @dev Add initial addresses to the whitelist.
     /// @param _addresses are the Ethereum addresses to be whitelisted.
-    function initializeWhitelist(address[] _addresses) external onlyOwner hasValidLength(_addresses) hasNoOwner(_addresses) {
+    function initializeWhitelist(address[] _addresses) external onlyOwner hasNoOwner(_addresses) {
         // Require that the whitelist has not been initialized.
         require(!initializedWhitelist, "whitelist has already been initialized");
         // Add each of the provided addresses to the whitelist.
@@ -80,7 +74,7 @@ contract Whitelist is Controllable, Ownable {
 
     /// @dev Add addresses to the whitelist.
     /// @param _addresses are the Ethereum addresses to be whitelisted.
-    function submitWhitelistAddition(address[] _addresses) external onlyOwner hasValidLength(_addresses) hasNoOwner(_addresses) {
+    function submitWhitelistAddition(address[] _addresses) external onlyOwner hasNoOwner(_addresses) {
         // Require that either addition or removal operations have not been already submitted.
         require(!submittedWhitelistAddition && !submittedWhitelistRemoval, "whitelist operation has already been submitted");
         // Add the provided addresses to the pending addition list.
@@ -124,7 +118,7 @@ contract Whitelist is Controllable, Ownable {
 
     /// @dev Remove addresses from the whitelist.
     /// @param _addresses are the Ethereum addresses to be removed.
-    function submitWhitelistRemoval(address[] _addresses) external onlyOwner hasValidLength(_addresses) {
+    function submitWhitelistRemoval(address[] _addresses) external onlyOwner {
         // Require that either addition or removal operations have not been already submitted.
         require(!submittedWhitelistRemoval && !submittedWhitelistAddition, "whitelist operation has already been submitted");
         // Add the provided addresses to the pending addition list.
