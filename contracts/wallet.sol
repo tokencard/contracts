@@ -299,10 +299,7 @@ contract Vault is Whitelist, SpendLimit {
 
     /// @dev Ether can be deposited from any source, so this contract must be payable by anyone.
     function() public payable {
-        if (msg.value > 0) {
-            // Emit the deposit event.
-            emit DepositReceived(msg.sender, msg.value);
-        }
+        emit DepositReceived(msg.sender, msg.value);
     }
 
     /// @dev Returns the amount of an asset owned by the contract.
