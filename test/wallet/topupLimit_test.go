@@ -79,7 +79,7 @@ var _ = Describe("topupLimit", func() {
 			})
 
 			It("Should emit SetTopupLimit event", func() {
-				it, err := w.FilterSetTopupLimit(nil)
+				it, err := w.FilterTopupLimitSet(nil)
 				Expect(err).ToNot(HaveOccurred())
 				Expect(it.Next()).To(BeTrue())
 				evt := it.Event
@@ -174,7 +174,7 @@ var _ = Describe("topupLimit", func() {
 			})
 
 			It("Should emit SubmitTopupLimit event", func() {
-				it, err := w.FilterSubmitTopupLimit(nil)
+				it, err := w.FilterTopupLimitSubmitted(nil)
 				Expect(err).ToNot(HaveOccurred())
 				Expect(it.Next()).To(BeTrue())
 				evt := it.Event
@@ -201,7 +201,7 @@ var _ = Describe("topupLimit", func() {
 				})
 
 				It("Should emit CancelTopupLimit event", func() {
-					it, err := w.FilterCancelTopupLimit(nil)
+					it, err := w.FilterTopupLimitCancelled(nil)
 					Expect(err).ToNot(HaveOccurred())
 					Expect(it.Next()).To(BeTrue())
 					evt := it.Event

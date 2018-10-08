@@ -51,7 +51,7 @@ var _ = Describe("initializeWhitelist", func() {
 		})
 
 		It("Should emit WhitelistAddition event", func() {
-			it, err := w.FilterWhitelistAddition(nil)
+			it, err := w.FilterWhitelistAdded(nil)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(it.Next()).To(BeTrue())
 			evt := it.Event
@@ -121,7 +121,7 @@ var _ = Describe("whitelistAddition", func() {
 		})
 
 		It("Should emit a SubmitWhitelistAddition event", func() {
-			it, err := w.FilterSubmitWhitelistAddition(nil)
+			it, err := w.FilterWhitelistAdditionSubmitted(nil)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(it.Next()).To(BeTrue())
 			evt := it.Event
@@ -163,7 +163,7 @@ var _ = Describe("whitelistAddition", func() {
 			})
 
 			It("Should emit WhitelistAddition event", func() {
-				it, err := w.FilterWhitelistAddition(nil)
+				it, err := w.FilterWhitelistAdded(nil)
 				Expect(err).ToNot(HaveOccurred())
 				Expect(it.Next()).To(BeTrue())
 				evt := it.Event
@@ -199,7 +199,7 @@ var _ = Describe("whitelistAddition", func() {
 			})
 
 			It("Should emit CancelWhitelistAddition event", func() {
-				it, err := w.FilterCancelWhitelistAddition(nil)
+				it, err := w.FilterWhitelistAdditionCancelled(nil)
 				Expect(err).ToNot(HaveOccurred())
 				Expect(it.Next()).To(BeTrue())
 				evt := it.Event
@@ -297,7 +297,7 @@ var _ = Describe("whitelistRemoval", func() {
 			})
 
 			It("Should emit SubmitWhitelistRemoval event", func() {
-				it, err := w.FilterSubmitWhitelistRemoval(nil)
+				it, err := w.FilterWhitelistRemovalSubmitted(nil)
 				Expect(err).ToNot(HaveOccurred())
 				Expect(it.Next()).To(BeTrue())
 				evt := it.Event
@@ -344,7 +344,7 @@ var _ = Describe("whitelistRemoval", func() {
 				})
 
 				It("Should emit WhitelistRemoval event", func() {
-					it, err := w.FilterWhitelistRemoval(nil)
+					it, err := w.FilterWhitelistRemoved(nil)
 					Expect(err).ToNot(HaveOccurred())
 					Expect(it.Next()).To(BeTrue())
 					evt := it.Event
@@ -376,7 +376,7 @@ var _ = Describe("whitelistRemoval", func() {
 				})
 
 				It("Should emit CancelWhitelistRemoval event", func() {
-					it, err := w.FilterCancelWhitelistRemoval(nil)
+					it, err := w.FilterWhitelistRemovalCancelled(nil)
 					Expect(err).ToNot(HaveOccurred())
 					Expect(it.Next()).To(BeTrue())
 					evt := it.Event

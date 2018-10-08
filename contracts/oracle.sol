@@ -152,19 +152,18 @@ contract Oracle is UsingOraclize, Base64, Date, JSON, Controllable {
     using Strings for *;
     using SafeMath for uint256;
 
-    event TokenAddition(address _token, string _label, uint8 _decimals);
-    event TokenOmission(address _token, string _label, uint8 _decimals);
-    event TokenRemoval(address _token);
-    event TokenRateUpdate(address _token, uint _rate);
+    event TokenAdded(address _token, string _label, uint8 _decimals);
+    event TokenRemoved(address _token);
+    event TokenRateUpdated(address _token, uint _rate);
 
-    event SetGasPrice(uint _gasPrice);
-    event Conversion(address _token, uint _amount, uint _ether);
+    event GasPriceSet(uint _gasPrice);
+    event Converted(address _token, uint _amount, uint _ether);
 
-    event OraclizeQuerySuccess(string _label);
-    event OraclizeQueryFailure(string _reason);
+    event OraclizeQuerySucceeded(string _label);
+    event OraclizeQueryFailed(string _reason);
 
-    event VerificationSuccess(bytes _publicKey, string _result);
-    event VerificationFailure(bytes _publicKey, string _result, string _reason); 
+    event VerificationSucceeded(bytes _publicKey, string _result);
+    event VerificationFailed(bytes _publicKey, string _result, string _reason);
 
     struct Token {
         string label;     // Token symbol
@@ -204,7 +203,7 @@ contract Oracle is UsingOraclize, Base64, Date, JSON, Controllable {
     /// @dev Sets the gas price used by oraclize query.
     function setCustomGasPrice(uint _gasPrice) external onlyController {
         oraclize_setCustomGasPrice(_gasPrice);
-        emit SetGasPrice(_gasPrice);
+        emit GasPriceSet(_gasPrice);
     }
 
     /// @dev Convert ERC20 token amount to the corresponding ether amount (used by the wallet contract).
@@ -222,7 +221,7 @@ contract Oracle is UsingOraclize, Base64, Date, JSON, Controllable {
         }
         uint etherValue = _amount.mul(token.rate).div(decimals);
         // Emit the conversion event.
-        emit Conversion(_token, _amount, etherValue);
+        emit Converted(_token, _amount, etherValue);
         return etherValue;
     }
 
@@ -252,7 +251,7 @@ contract Oracle is UsingOraclize, Base64, Date, JSON, Controllable {
             // Add the token address to the address list.
             _tokenAddresses.push(token);
             // Emit token addition event.
-            emit TokenAddition(token, label, decimals);
+            emit TokenAdded(token, label, decimals);
         }
     }
 
@@ -274,7 +273,7 @@ contract Oracle is UsingOraclize, Base64, Date, JSON, Controllable {
             }
             _tokenAddresses.length--;
             // Emit token removal event.
-            emit TokenRemoval(token);
+            emit TokenRemoved(token);
         }
     }
 
@@ -287,7 +286,7 @@ contract Oracle is UsingOraclize, Base64, Date, JSON, Controllable {
         // Update the token's rate.
         tokens[_token].rate = _rate;
         // Emit the rate update event.
-        emit TokenRateUpdate(_token, _rate);
+        emit TokenRateUpdated(_token, _rate);
     }
 
     /// @dev Update ERC20 token exchange rates for all supported tokens.
@@ -313,7 +312,7 @@ contract Oracle is UsingOraclize, Base64, Date, JSON, Controllable {
           // Parse the JSON result to get the rate in wei.
           token.rate = parseInt(parseRate(_result, "ETH"), 18);
           // Emit the rate update event.
-          emit TokenRateUpdate(_token, token.rate);
+          emit TokenRateUpdated(_token, token.rate);
           // Set the update time of the token rate.
           token.lastUpdate = now;
           // Remove query from the list.
@@ -326,7 +325,7 @@ contract Oracle is UsingOraclize, Base64, Date, JSON, Controllable {
         // Check if the contract has enough Ether to pay for the query.
         if (oraclize_getPrice("URL") * _tokenAddresses.length > address(this).balance) {
             // Emit the query failure event.
-            emit OraclizeQueryFailure("not enough balance to pay for the query");
+            emit OraclizeQueryFailed("not enough balance to pay for the query");
         } else {
             // Set up the crypto compare API query strings.
             Strings.slice memory apiPrefix = "https://min-api.cryptocompare.com/data/price?fsym=".toSlice();
@@ -340,7 +339,7 @@ contract Oracle is UsingOraclize, Base64, Date, JSON, Controllable {
                 // Store the query ID together with the associated token address.
                 _queryToToken[queryID] = _tokenAddresses[i];
                 // Emit the query success event.
-                emit OraclizeQuerySuccess(label.toString());
+                emit OraclizeQuerySucceeded(label.toString());
             }
         }
     }
@@ -363,14 +362,14 @@ contract Oracle is UsingOraclize, Base64, Date, JSON, Controllable {
         bytes memory dateHeader = new bytes(30);
         dateHeader = copyBytes(headers, 5, 30, dateHeader, 0);
         if (!verifyDate(string(dateHeader), _lastUpdate)) {
-            emit VerificationFailure(_publicKey, _result, "date");
+            emit VerificationFailed(_publicKey, _result, "date");
             return false;
         }
         // Check if the signed digest hash matches the result hash.
         bytes memory digest = new bytes(headersLength - 52);
         digest = copyBytes(headers, 52, headersLength - 52, digest, 0);
         if (keccak256(sha256(_result)) != keccak256(base64decode(digest))) {
-            emit VerificationFailure(_publicKey, _result, "hash");
+            emit VerificationFailed(_publicKey, _result, "hash");
             return false;
         }
         // Check if the signature is valid and if the signer addresses match.
@@ -378,10 +377,10 @@ contract Oracle is UsingOraclize, Base64, Date, JSON, Controllable {
         bool signatureOK;
         (signatureOK, signer) = ecrecovery(sha256(headers), signature);
         if (signatureOK && signer == address(keccak256(_publicKey))) {
-            emit VerificationSuccess(_publicKey, _result);
+            emit VerificationSucceeded(_publicKey, _result);
             return true;
         }
-        emit VerificationFailure(_publicKey, _result, "signature");
+        emit VerificationFailed(_publicKey, _result, "signature");
         return false;
     }
 

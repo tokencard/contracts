@@ -33,7 +33,7 @@ var _ = Describe("removeTokens", func() {
 			})
 
 			It("Should emit a TokenRemoval event", func() {
-				it, err := oracle.FilterTokenRemoval(nil)
+				it, err := oracle.FilterTokenRemoved(nil)
 				Expect(err).ToNot(HaveOccurred())
 				Expect(it.Next()).To(BeTrue())
 				evt := it.Event

@@ -9,7 +9,7 @@ interface Controller {
 
 /// @title Controllable implements access control functionality based on an external list of controllers.
 contract Controllable {
-    event NewController(address _old, address _new);
+    event ControllerResolverChanged(address _old, address _new);
 
     /// @dev Controller points to the contract that contains the list of controllers.
     Controller private _C;
@@ -34,7 +34,7 @@ contract Controllable {
     /// @dev Changes the address of the controller contract.
     /// @param _controller address of the new controller contract.
     function newController(address _controller) public onlyController {
-        emit NewController(address(_C), _controller);
+        emit ControllerResolverChanged(address(_C), _controller);
         _C = Controller(_controller);
     }
 }
