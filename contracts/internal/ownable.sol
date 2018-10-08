@@ -3,8 +3,8 @@ pragma solidity ^0.4.24;
 
 /// @title Ownable has an owner address and provides basic authorization control functions.
 contract Ownable {
-    event TransferOwnership(address _to);
-    event AcceptOwnership(address _from);
+    event OwnershipTransferred(address _to);
+    event OwnershipAccepted(address _from);
 
     address private _owner;
     address private _newOwner;
@@ -33,7 +33,7 @@ contract Ownable {
         // Set the new owner to the provided address.
         _newOwner = _account;
         // Emit the ownership transfer event.
-        emit TransferOwnership(_newOwner);
+        emit OwnershipTransferred(_newOwner);
     }
 
     /// @dev Allows the new owner to accept ownership of the contract.
@@ -41,7 +41,7 @@ contract Ownable {
         // Require that the new owner is not the zero address.
         require(_newOwner != address(0), "owner cannot be set to 0x0000000000000000000000000000000000000000");
         // Emit the acceptance event with the previous owner address.
-        emit AcceptOwnership(_owner);
+        emit OwnershipAccepted(_owner);
         // Change the owner to the new address.
         _owner = _newOwner;
         // Reset the new owner address variable.

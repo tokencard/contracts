@@ -3,8 +3,8 @@ pragma solidity ^0.4.24;
 
 /// @title Controller stores a list of controller addresses that can be used for authentication in other contracts.
 contract Controller {
-    event AddController(address _sender, address _controller);
-    event RemoveController(address _sender, address _controller);
+    event ControllerAdded(address _sender, address _controller);
+    event ControllerRemoved(address _sender, address _controller);
 
     mapping (address => bool) private _isController;
     uint private _controllerCount;
@@ -48,7 +48,7 @@ contract Controller {
         require(!_isController[_account], "provided account is already a controller");
         _isController[_account] = true;
         _controllerCount++;
-        emit AddController(msg.sender, _account);
+        emit ControllerAdded(msg.sender, _account);
     }
 
     /// @dev Internal-only function that removes an existing controller.
@@ -57,6 +57,6 @@ contract Controller {
         require(_controllerCount > 1, "cannot remove the last controller");
         _isController[_account] = false;
         _controllerCount--;
-        emit RemoveController(msg.sender, _account);
+        emit ControllerRemoved(msg.sender, _account);
     }
 }

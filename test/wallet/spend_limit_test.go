@@ -47,7 +47,7 @@ var _ = Describe("spendAvailable", func() {
 			})
 
 			It("Should emit SetSpendLimit event", func() {
-				it, err := w.FilterSetSpendLimit(nil)
+				it, err := w.FilterSpendLimitSet(nil)
 				Expect(err).ToNot(HaveOccurred())
 				Expect(it.Next()).To(BeTrue())
 				evt := it.Event
@@ -147,7 +147,7 @@ var _ = Describe("spendAvailable", func() {
 			})
 
 			It("Should emit SubmitSpendLimit event", func() {
-				it, err := w.FilterSubmitSpendLimit(nil)
+				it, err := w.FilterSpendLimitSubmitted(nil)
 				Expect(err).ToNot(HaveOccurred())
 				Expect(it.Next()).To(BeTrue())
 				evt := it.Event
@@ -176,7 +176,7 @@ var _ = Describe("spendAvailable", func() {
 				})
 
 				It("Should emit SetSpendLimit event", func() {
-					it, err := w.FilterSetSpendLimit(nil)
+					it, err := w.FilterSpendLimitSet(nil)
 					Expect(err).ToNot(HaveOccurred())
 					Expect(it.Next()).To(BeTrue())
 					evt := it.Event
@@ -209,7 +209,7 @@ var _ = Describe("spendAvailable", func() {
 				})
 
 				It("Should emit CancelSpendLimit event", func() {
-					it, err := w.FilterCancelSpendLimit(nil)
+					it, err := w.FilterSpendLimitCancelled(nil)
 					Expect(err).ToNot(HaveOccurred())
 					Expect(it.Next()).To(BeTrue())
 					evt := it.Event
