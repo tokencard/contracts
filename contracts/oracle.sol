@@ -189,6 +189,14 @@ contract Oracle is UsingOraclize, Base64, Date, JSON, Controllable {
         oraclize_setProof(proofType_Native);
     }
 
+    /// @dev Checks if all addresses passed in, are new addresses
+    modifier hasNoExistingAddresses(address[] _addresses) {
+        for (uint i = 0; i < _addresses.length; i++) {
+            require(!tokens[_addresses[i]].exists); 
+        }
+        _;
+    }
+
     /// @dev Checks if the parameter's length is within a valid range.
     modifier hasValidLength(address[] _addresses) {
         require(_addresses.length >= 1 && _addresses.length <= 20, "invalid parameter length");
@@ -229,7 +237,7 @@ contract Oracle is UsingOraclize, Base64, Date, JSON, Controllable {
     /// @param _tokens ERC20 token contract addresses.
     /// @param _labels ERC20 token names.
     /// @param _decimals number of decimal places used by each ERC20 token.
-    function addTokens(address[] _tokens, bytes32[] _labels, uint8[] _decimals) external onlyController hasValidLength(_tokens) {
+    function addTokens(address[] _tokens, bytes32[] _labels, uint8[] _decimals) external onlyController hasValidLength(_tokens) hasNoExistingAddresses(_tokens) {
         // Require that all parameters have the same length.
         require(_tokens.length == _labels.length && _tokens.length == _decimals.length, "parameter lengths do not match");
         // Add each token to the list of supported tokens.

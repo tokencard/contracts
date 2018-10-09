@@ -45,6 +45,35 @@ var _ = Describe("addTokens", func() {
 				Expect(token.Exists).To(BeTrue())
 				Expect(token.Decimals).To(Equal(uint8(8)))
 			})
+
+			Context("When at least one of the added tokens is already supported", func() {
+				BeforeEach(func() {
+					var err error
+					tokens := []common.Address{common.HexToAddress("0x0"), common.HexToAddress("0x2")}
+					tx, err = oracle.AddTokens(controllerWallet.TransactOptsWithGasLimit(200000), tokens, stringsToByte32("BNT", "OMG"), []uint8{18, 18})
+					Expect(err).ToNot(HaveOccurred())
+					be.Commit()
+				})
+
+				It("Should fail", func() {
+					Expect(isSuccessful(tx)).To(BeFalse())
+				})
+			})
+
+			Context("When none of the added tokens are supported", func() {
+				BeforeEach(func() {
+					var err error
+					tokens := []common.Address{common.HexToAddress("0x4"), common.HexToAddress("0x5")}
+					tx, err = oracle.AddTokens(controllerWallet.TransactOptsWithGasLimit(300000), tokens, stringsToByte32("MKR", "MTL"), []uint8{1, 12})
+					Expect(err).ToNot(HaveOccurred())
+					be.Commit()
+				})
+
+				It("Should pass", func() {
+					Expect(isSuccessful(tx)).To(BeTrue())
+				})
+			})
+
 		})
 
 		Context("When the parameters have different lengths", func() {
@@ -57,6 +86,7 @@ var _ = Describe("addTokens", func() {
 				Expect(isSuccessful(tx)).To(BeFalse())
 			})
 		})
+
 	})
 
 	Context("When called by a random address", func() {
