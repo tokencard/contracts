@@ -11,6 +11,12 @@ interface ERC20 {
 }
 
 
+/// @title ERC165 specifies a standard way of querying if a contract implements an interface.
+interface ERC165 {
+    function supportsInterface(bytes4) external view returns (bool);
+}
+
+
 /// @title Oracle converts ERC20 token amounts into equivalent ether amounts based on cryptocurrency exchange rates.
 interface Oracle {
     function convert(address, uint) external view returns (uint);
@@ -270,12 +276,15 @@ contract SpendLimit is Controllable, Ownable {
 
 
 /// @title Asset store with extra security features.
-contract Vault is Whitelist, SpendLimit {
+contract Vault is Whitelist, SpendLimit, ERC165 {
     event DepositReceived(address _from, uint _amount);
     event Transferred(address _to, address _asset, uint _amount);
 
+    //// @dev Supported ERC165 interface ID.
+    bytes4 private constant _ERC165_INTERFACE_ID = 0x01ffc9a7; // solium-disable-line uppercase
+
     /// @dev Resolver points to the oracle address resolver.
-    Resolver private _OR;
+    Resolver private _OR; // solium-disable-line mixedcase
 
     /// @dev Constructor initializes the vault with an owner address and spend limit. It also sets up the oracle and controller contracts.
     /// @param _owner is the owner account of the wallet contract.
@@ -336,6 +345,11 @@ contract Vault is Whitelist, SpendLimit {
         }
         // Emit the transfer event.
         emit Transferred(_to, _asset, _amount);
+    }
+
+    /// @dev Checks for interface support based on ERC165.
+    function supportsInterface(bytes4 interfaceID) external view returns (bool) {
+        return interfaceID == _ERC165_INTERFACE_ID;
     }
 }
 
