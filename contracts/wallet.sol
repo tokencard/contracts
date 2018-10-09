@@ -281,7 +281,7 @@ contract Vault is Whitelist, SpendLimit, ERC165 {
     event Transferred(address _to, address _asset, uint _amount);
 
     //// @dev Supported ERC165 interface ID.
-    bytes4 private constant _INTERFACE_ID_ERC165 = 0x01ffc9a7; // solium-disable-line uppercase
+    bytes4 private constant _ERC165_INTERFACE_ID = 0x01ffc9a7; // solium-disable-line uppercase
 
     /// @dev Resolver points to the oracle address resolver.
     Resolver private _OR; // solium-disable-line mixedcase
@@ -349,7 +349,7 @@ contract Vault is Whitelist, SpendLimit, ERC165 {
 
     /// @dev Checks for interface support based on ERC165.
     function supportsInterface(bytes4 interfaceID) external view returns (bool) {
-        return interfaceID == _INTERFACE_ID_ERC165;
+        return interfaceID == _ERC165_INTERFACE_ID;
     }
 }
 
