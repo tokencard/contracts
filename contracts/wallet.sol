@@ -462,7 +462,7 @@ contract Wallet is Vault {
         updateTopupAvailable();
         // Make sure the available topup amount is not zero.
         require(_topupAvailable != 0, "available topup limit cannot be zero");
-        // If amount is above available balance, use the entire balance.
+        // Limit topup amount to the available topup level.
         uint amount = _amount;
         if (amount > _topupAvailable) {
             amount = _topupAvailable;
