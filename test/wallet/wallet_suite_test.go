@@ -54,7 +54,7 @@ var testRig = ethertest.NewTestRig()
 var bankWallet = ethertest.NewWallet()
 
 var _ = AfterSuite(func() {
-	testRig.ExpectMinimumCoverage("wallet.sol:Wallet", 99.38)
+	testRig.ExpectMinimumCoverage("wallet.sol:Wallet", 100.00)
 	testRig.PrintGasUsage(os.Stdout)
 })
 

@@ -280,7 +280,7 @@ contract Vault is Whitelist, SpendLimit, ERC165 {
     event DepositReceived(address _from, uint _amount);
     event Transferred(address _to, address _asset, uint _amount);
 
-    //// @dev ERC165 list of supported interfaces.
+    //// @dev Supported ERC165 interface ID.
     bytes4 private constant _INTERFACE_ID_ERC165 = 0x01ffc9a7; // solium-disable-line uppercase
 
     /// @dev Resolver points to the oracle address resolver.
