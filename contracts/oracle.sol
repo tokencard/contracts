@@ -165,6 +165,8 @@ contract Oracle is UsingOraclize, Base64, Date, JSON, Controllable {
     event VerificationSucceeded(bytes _publicKey, string _result);
     event VerificationFailed(bytes _publicKey, string _result, string _reason);
 
+    event SetCryptoComparePrivateKey(bytes _publicKey);
+
     struct Token {
         string label;     // Token symbol
         uint8 decimals;   // Number of decimal places
@@ -206,6 +208,7 @@ contract Oracle is UsingOraclize, Base64, Date, JSON, Controllable {
     /// @dev Updates the Crypto Compare public API key.
     function updateAPIPublicKey(bytes _publicKey) external onlyController {
         APIPublicKey = _publicKey;
+        emit SetCryptoComparePrivateKey(_publicKey);
     }
 
     /// @dev Sets the gas price used by oraclize query.
