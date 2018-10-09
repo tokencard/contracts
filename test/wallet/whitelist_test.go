@@ -246,26 +246,13 @@ var _ = Describe("whitelistAddition", func() {
 		})
 	})
 
-	Context("When I submit 21 addresses for adding to whitelist", func() {
-		It("Should fail", func() {
-			addresses := []common.Address{}
-			for i := 0; i < 21; i++ {
-				addresses = append(addresses, ethertest.NewWallet().Address())
-			}
-			tx, err := w.SubmitWhitelistAddition(owner.TransactOptsWithGasLimit(100000), addresses)
-			Expect(err).ToNot(HaveOccurred())
-			be.Commit()
-			Expect(isSuccessful(tx)).To(BeFalse())
-		})
-	})
-
 	Context("When I submit 0 addresses for adding to whitelist", func() {
-		It("Should fail", func() {
+		It("Should succeed", func() {
 			addresses := []common.Address{}
-			tx, err := w.SubmitWhitelistAddition(owner.TransactOptsWithGasLimit(50000), addresses)
+			tx, err := w.SubmitWhitelistAddition(owner.TransactOpts(), addresses)
 			Expect(err).ToNot(HaveOccurred())
 			be.Commit()
-			Expect(isSuccessful(tx)).To(BeFalse())
+			Expect(isSuccessful(tx)).To(BeTrue())
 		})
 	})
 })
