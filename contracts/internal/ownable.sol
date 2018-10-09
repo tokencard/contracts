@@ -24,12 +24,12 @@ contract Ownable {
     /// @dev Allows the current owner to transfer control of the contract to a new address.
     /// @param _account address to transfer ownership to.
     function transferOwnership(address _account) external onlyOwner {
-        // Require that the available ownership transfers are not zero.
+        // Require that the ownership is transferable.
         require(_isTransferable, "ownership is not transferable");
         // Require that the new owner is not the zero address.
         require(_account != address(0), "owner cannot be set to 0x0");
-        // Decrement the number of available transfers.
-        _isTransferable == false;
+        // Set the transferable flag to false.
+        _isTransferable = false;
         // Set the owner to the provided address.
         _owner = _account;
         // Emit the ownership transfer event.

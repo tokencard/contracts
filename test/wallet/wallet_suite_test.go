@@ -227,14 +227,17 @@ var wa common.Address
 
 var _ = BeforeEach(func() {
 	var err error
-	wa, _, w, err = bindings.DeployWallet(
+	var tx *types.Transaction
+	wa, tx, w, err = bindings.DeployWallet(
 		bankWallet.TransactOpts(),
 		be,
 		owner.Address(),
+		true,
 		oracleResolverAddress,
 		controllerContractAddress,
 		ethToWei(100),
 	)
 	Expect(err).ToNot(HaveOccurred())
 	be.Commit()
+	Expect(isSuccessful(tx)).To(BeTrue())
 })

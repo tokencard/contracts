@@ -288,7 +288,7 @@ contract Vault is Whitelist, SpendLimit, ERC165 {
 
     /// @dev Constructor initializes the vault with an owner address and spend limit. It also sets up the oracle and controller contracts.
     /// @param _owner is the owner account of the wallet contract.
-    /// @param _mot is the maximum number of ownership transfers.
+    /// @param _transferable indicates whether the contract ownership can be transferred.
     /// @param _resolver is the oracle resolver contract address.
     /// @param _controller is the controller contract address.
     constructor(address _owner, bool _transferable, address _resolver, address _controller, uint _spendLimit) SpendLimit(_spendLimit) Ownable(_owner, _transferable) Controllable(_controller) public {
@@ -376,7 +376,7 @@ contract Wallet is Vault {
 
     /// @dev Constructor initializes the wallet top up limit and the vault contract.
     /// @param _owner is the owner account of the wallet contract.
-    /// @param _mot is the maximum number of ownership transfers.
+    /// @param _transferable indicates whether the contract ownership can be transferred.
     /// @param _resolver is the oracle resolver contract address.
     /// @param _controller is the controller contract address.
     constructor(address _owner, bool _transferable, address _resolver, address _controller, uint _spendLimit) Vault(_owner, _transferable, _resolver, _controller, _spendLimit) public {
