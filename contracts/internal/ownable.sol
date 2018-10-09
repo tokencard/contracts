@@ -4,14 +4,15 @@ pragma solidity ^0.4.24;
 /// @title Ownable has an owner address and provides basic authorization control functions.
 contract Ownable {
     event OwnershipTransferred(address _to);
-    event OwnershipAccepted(address _from);
 
     address private _owner;
-    address private _newOwner;
+    bool private _isTransferable;
 
-    /// @dev Constructor sets the original owner of the contract to the provided account.
-    constructor(address _account) internal {
+
+    /// @dev Constructor sets the original owner of the contract and the maximum number of ownership transfers.
+    constructor(address _account, bool _transferable) internal {
         _owner = _account;
+        _isTransferable = _transferable;
     }
 
     /// @dev Reverts if called by any account other than the owner.
@@ -20,32 +21,19 @@ contract Ownable {
         _;
     }
 
-    /// @dev Reverts if called by any account other than the new owner.
-    modifier onlyNewOwner() {
-        require(isNewOwner(), "sender is not the new owner");
-        _;
-    }
-
     /// @dev Allows the current owner to transfer control of the contract to a new address.
-    /// @notice The ownership transfer has to be accepted by the new proposed owner.
     /// @param _account address to transfer ownership to.
     function transferOwnership(address _account) external onlyOwner {
-        // Set the new owner to the provided address.
-        _newOwner = _account;
-        // Emit the ownership transfer event.
-        emit OwnershipTransferred(_newOwner);
-    }
-
-    /// @dev Allows the new owner to accept ownership of the contract.
-    function acceptOwnership() external onlyNewOwner {
+        // Require that the ownership is transferable.
+        require(_isTransferable, "ownership is not transferable");
         // Require that the new owner is not the zero address.
-        require(_newOwner != address(0), "owner cannot be set to 0x0000000000000000000000000000000000000000");
-        // Emit the acceptance event with the previous owner address.
-        emit OwnershipAccepted(_owner);
-        // Change the owner to the new address.
-        _owner = _newOwner;
-        // Reset the new owner address variable.
-        delete _newOwner;
+        require(_account != address(0), "owner cannot be set to 0x0");
+        // Set the transferable flag to false.
+        _isTransferable = false;
+        // Set the owner to the provided address.
+        _owner = _account;
+        // Emit the ownership transfer event.
+        emit OwnershipTransferred(_account);
     }
 
     /// @return the address of the owner.
@@ -53,18 +41,13 @@ contract Ownable {
         return _owner;
     }
 
-    /// @return the address of the new owner.
-    function newOwner() public view returns (address) {
-        return _newOwner;
+    /// @return true if the ownership is transferable.
+    function isTransferable() public view returns (bool) {
+        return _isTransferable;
     }
 
     /// @return true if sender is the owner of the contract.
-    function isOwner() public view returns (bool) {
+    function isOwner() internal view returns (bool) {
         return msg.sender == _owner;
-    }
-
-    /// @return true if sender is the new owner of the contract.
-    function isNewOwner() public view returns (bool) {
-        return msg.sender == _newOwner;
     }
 }
