@@ -26,7 +26,7 @@ var _ = Describe("transfer", func() {
 				Expect(err).ToNot(HaveOccurred())
 				be.Commit()
 			})
-			It("Should succeed", func() {
+			It("should succeed", func() {
 				Expect(isSuccessful(tx)).To(BeTrue())
 			})
 
@@ -62,7 +62,7 @@ var _ = Describe("transfer", func() {
 				be.Commit()
 			})
 
-			It("Should fail", func() {
+			It("should fail", func() {
 				Expect(isSuccessful(tx)).To(BeFalse())
 			})
 
@@ -80,18 +80,9 @@ var _ = Describe("transfer", func() {
 
 			Context("When I transfer 300 tokens to a random person", func() {
 				BeforeEach(func() {
-					var err error
-					tx, err = w.SubmitWhitelistAddition(owner.TransactOpts(), []common.Address{randomPerson.Address()})
+					tx, err := w.Transfer(owner.TransactOpts(), randomPerson.Address(), tkna, big.NewInt(300))
 					Expect(err).ToNot(HaveOccurred())
 					be.Commit()
-					Expect(isSuccessful(tx)).To(BeTrue())
-
-					tx, err = w.Transfer(owner.TransactOpts(), randomPerson.Address(), tkna, big.NewInt(300))
-					Expect(err).ToNot(HaveOccurred())
-					be.Commit()
-				})
-
-				It("should succeed", func() {
 					Expect(isSuccessful(tx)).To(BeTrue())
 				})
 
@@ -107,7 +98,7 @@ var _ = Describe("transfer", func() {
 					Expect(b.String()).To(Equal("700"))
 				})
 
-				It("should reduce the availabe balance for the day", func() {
+				It("should reduce the available daily spend balance", func() {
 					av, err := w.SpendAvailable(nil)
 					Expect(err).ToNot(HaveOccurred())
 					Expect(av.String()).To(AlmostEqual("99999999999951010000"))

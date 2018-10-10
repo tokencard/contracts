@@ -95,9 +95,8 @@ contract Whitelist is Controllable, Ownable {
 
     /// @dev Confirm pending whitelist addition.
     function confirmWhitelistAddition() external onlyController {
-        // Require that the pending whitelist is not empty and the operation has been submitted.
+        // Require that the whitelist addition has been submitted.
         require(submittedWhitelistAddition, "whitelist addition has not been submitted");
-        require(_pendingWhitelistAddition.length > 0, "pending whitelist addition is empty");
         // Whitelist pending addresses.
         for (uint i = 0; i < _pendingWhitelistAddition.length; i++) {
             isWhitelisted[_pendingWhitelistAddition[i]] = true;
@@ -471,17 +470,6 @@ contract Wallet is Vault {
         emit TopupGas(tx.origin, owner(), amount);
     }
 
-    /// @dev Update available topup limit based on the daily reset.
-    function updateTopupAvailable() private {
-        if (now > _topupLimitDay + 24 hours) {
-            // Advance the current day by how many days have passed.
-            uint extraDays = (now - _topupLimitDay) / 24 hours;
-            _topupLimitDay += extraDays * 24 hours;
-            // Set the available limit to the current topup limit.
-            _topupAvailable = topupLimit;
-        }
-    }
-
     /// @dev Modify the topup limit and topup available based on the provided value.
     /// @dev _amount is the daily limit amount in wei.
     function modifyTopupLimit(uint _amount) private {
@@ -491,6 +479,17 @@ contract Wallet is Vault {
         topupLimit = _amount;
         // Lower the available limit if it's higher than the new daily limit.
         if (_topupAvailable > topupLimit) {
+            _topupAvailable = topupLimit;
+        }
+    }
+
+    /// @dev Update available topup limit based on the daily reset.
+    function updateTopupAvailable() private {
+        if (now > _topupLimitDay + 24 hours) {
+            // Advance the current day by how many days have passed.
+            uint extraDays = (now - _topupLimitDay) / 24 hours;
+            _topupLimitDay += extraDays * 24 hours;
+            // Set the available limit to the current topup limit.
             _topupAvailable = topupLimit;
         }
     }
