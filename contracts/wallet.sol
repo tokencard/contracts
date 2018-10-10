@@ -44,6 +44,12 @@ contract Whitelist is Controllable, Ownable {
         _;
     }
 
+    // @dev Check that neither addition nor removal operations have already been submitted.
+    modifier noActiveSubmission() {
+        require(!submittedWhitelistAddition && !submittedWhitelistRemoval, "whitelist operation has already been submitted");
+        _;
+    }
+
     // @dev Getter for pending addition array.
     function pendingWhitelistAddition() external view returns(address[]) {
         return _pendingWhitelistAddition;
@@ -70,11 +76,9 @@ contract Whitelist is Controllable, Ownable {
 
     /// @dev Add addresses to the whitelist.
     /// @param _addresses are the Ethereum addresses to be whitelisted.
-    function submitWhitelistAddition(address[] _addresses) external onlyOwner hasNoOwner(_addresses) {
+    function submitWhitelistAddition(address[] _addresses) external onlyOwner noActiveSubmission hasNoOwner(_addresses)  {
         // Require that the whitelist has been initialized.
         require(initializedWhitelist, "whitelist has not been initialized");
-        // Require that either addition or removal operations have not been already submitted.
-        require(!submittedWhitelistAddition && !submittedWhitelistRemoval, "whitelist operation has already been submitted");
         // Set the provided addresses to the pending addition addresses.
         _pendingWhitelistAddition = _addresses;
         // Flag the operation as submitted.
@@ -111,9 +115,7 @@ contract Whitelist is Controllable, Ownable {
 
     /// @dev Remove addresses from the whitelist.
     /// @param _addresses are the Ethereum addresses to be removed.
-    function submitWhitelistRemoval(address[] _addresses) external onlyOwner {
-        // Require that either addition or removal operations have not been already submitted.
-        require(!submittedWhitelistRemoval && !submittedWhitelistAddition, "whitelist operation has already been submitted");
+    function submitWhitelistRemoval(address[] _addresses) external onlyOwner noActiveSubmission {
         // Add the provided addresses to the pending addition list.
         _pendingWhitelistRemoval = _addresses;
         // Flag the operation as submitted.
