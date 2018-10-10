@@ -21,13 +21,13 @@ interface ERC165 {
 
 /// @title Whitelist provides payee-whitelist functionality.
 contract Whitelist is Controllable, Ownable {
-    event WhitelistAdded(address _sender, address[] _addresses);
-    event WhitelistAdditionSubmitted(address[] _addresses);
-    event WhitelistAdditionCancelled(address _sender);
+    event AddedToWhitelist(address _sender, address[] _addresses);
+    event SubmittedWhitelistAddition(address[] _addresses);
+    event CancelledWhitelistAddition(address _sender);
 
-    event WhitelistRemoved(address _sender, address[] _addresses);
-    event WhitelistRemovalSubmitted(address[] _addresses);
-    event WhitelistRemovalCancelled(address _sender);
+    event RemovedFromWhitelist(address _sender, address[] _addresses);
+    event SubmittedWhitelistRemoval(address[] _addresses);
+    event CancelledWhitelistRemoval(address _sender);
 
     mapping(address => bool) public isWhitelisted;
     address[] private _pendingWhitelistAddition;
@@ -71,7 +71,7 @@ contract Whitelist is Controllable, Ownable {
         }
         initializedWhitelist = true;
         // Emit the addition event.
-        emit WhitelistAdded(msg.sender, _addresses);
+        emit AddedToWhitelist(msg.sender, _addresses);
     }
 
     /// @dev Add addresses to the whitelist.
@@ -84,7 +84,7 @@ contract Whitelist is Controllable, Ownable {
         // Flag the operation as submitted.
         submittedWhitelistAddition = true;
         // Emit the submission event.
-        emit WhitelistAdditionSubmitted(_addresses);
+        emit SubmittedWhitelistAddition(_addresses);
     }
 
     /// @dev Confirm pending whitelist addition.
@@ -96,7 +96,7 @@ contract Whitelist is Controllable, Ownable {
             isWhitelisted[_pendingWhitelistAddition[i]] = true;
         }
         // Emit the addition event.
-        emit WhitelistAdded(msg.sender, _pendingWhitelistAddition);
+        emit AddedToWhitelist(msg.sender, _pendingWhitelistAddition);
         // Reset pending addresses.
         delete _pendingWhitelistAddition;
         // Reset the submission flag.
@@ -110,7 +110,7 @@ contract Whitelist is Controllable, Ownable {
         // Reset the submitted operation flag.
         submittedWhitelistAddition = false;
         // Emit the cancellation event.
-        emit WhitelistAdditionCancelled(msg.sender);
+        emit CancelledWhitelistAddition(msg.sender);
     }
 
     /// @dev Remove addresses from the whitelist.
@@ -121,7 +121,7 @@ contract Whitelist is Controllable, Ownable {
         // Flag the operation as submitted.
         submittedWhitelistRemoval = true;
         // Emit the submission event.
-        emit WhitelistRemovalSubmitted(_addresses);
+        emit SubmittedWhitelistRemoval(_addresses);
     }
 
     /// @dev Confirm pending removal of whitelisted addresses.
@@ -134,7 +134,7 @@ contract Whitelist is Controllable, Ownable {
             isWhitelisted[_pendingWhitelistRemoval[i]] = false;
         }
         // Emit the removal event.
-        emit WhitelistRemoved(msg.sender, _pendingWhitelistRemoval);
+        emit RemovedFromWhitelist(msg.sender, _pendingWhitelistRemoval);
         // Reset pending addresses.
         delete _pendingWhitelistRemoval;
         // Reset the submission flag.
@@ -148,16 +148,16 @@ contract Whitelist is Controllable, Ownable {
         // Reset the submitted operation flag.
         submittedWhitelistRemoval = false;
         // Emit the cancellation event.
-        emit WhitelistRemovalCancelled(msg.sender);
+        emit CancelledWhitelistRemoval(msg.sender);
     }
 }
 
 
 /// @title SpendLimit provides daily spend limit functionality.
 contract SpendLimit is Controllable, Ownable {
-    event SpendLimitSet(address _sender, uint _amount);
-    event SpendLimitSubmitted(uint _amount);
-    event SpendLimitCancelled(address _sender);
+    event SetSpendLimit(address _sender, uint _amount);
+    event SubmittedSpendLimit(uint _amount);
+    event CancelledSpendLimit(address _sender);
 
     uint public spendLimit;
     uint internal _spendLimitDay;
@@ -194,7 +194,7 @@ contract SpendLimit is Controllable, Ownable {
         // Flag the operation as initialized.
         initializedSpendLimit = true;
         // Emit the set limit event.
-        emit SpendLimitSet(msg.sender, _amount);
+        emit SetSpendLimit(msg.sender, _amount);
     }
 
     /// @dev Set a daily transfer limit for non-whitelisted addresses.
@@ -209,7 +209,7 @@ contract SpendLimit is Controllable, Ownable {
         // Flag the operation as submitted.
         submittedSpendLimit = true;
         // Emit the submission event.
-        emit SpendLimitSubmitted(_amount);
+        emit SubmittedSpendLimit(_amount);
     }
 
     /// @dev Confirm pending set daily limit operation.
@@ -219,7 +219,7 @@ contract SpendLimit is Controllable, Ownable {
         // Modify spend limit based on the pending value.
         modifySpendLimit(pendingSpendLimit);
         // Emit the set limit event.
-        emit SpendLimitSet(msg.sender, pendingSpendLimit);
+        emit SetSpendLimit(msg.sender, pendingSpendLimit);
         // Reset the submission flag.
         submittedSpendLimit = false;
         // Reset pending daily limit.
@@ -233,7 +233,7 @@ contract SpendLimit is Controllable, Ownable {
         // Reset the submitted operation flag.
         submittedSpendLimit = false;
         // Emit the cancellation event.
-        emit SpendLimitCancelled(msg.sender);
+        emit CancelledSpendLimit(msg.sender);
     }
 
     /// @dev Update available spend limit based on the daily reset.
@@ -344,9 +344,9 @@ contract Vault is Whitelist, SpendLimit, ERC165 {
 
 /// @title Asset wallet with extra security features and gas topup management.
 contract Wallet is Vault {
-    event TopupLimitSet(address _sender, uint _amount);
-    event TopupLimitSubmitted(uint _amount);
-    event TopupLimitCancelled(address _sender);
+    event SetTopupLimit(address _sender, uint _amount);
+    event SubmittedTopupLimit(uint _amount);
+    event CancelledTopupLimit(address _sender);
 
     event TopupGas(address _sender, address _owner, uint _amount);
 
@@ -394,7 +394,7 @@ contract Wallet is Vault {
         // Flag operation as initialized.
         initializedTopupLimit = true;
         // Emit the set limit event.
-        emit TopupLimitSet(msg.sender, _amount);
+        emit SetTopupLimit(msg.sender, _amount);
     }
 
     /// @dev Set a daily topup top up limit.
@@ -411,7 +411,7 @@ contract Wallet is Vault {
         // Flag the operation as submitted.
         submittedTopupLimit = true;
         // Emit the submission event.
-        emit TopupLimitSubmitted(_amount);
+        emit SubmittedTopupLimit(_amount);
     }
 
     /// @dev Confirm pending set top up limit operation.
@@ -423,7 +423,7 @@ contract Wallet is Vault {
         // Modify topup limit based on the pending value.
         modifyTopupLimit(pendingTopupLimit);
         // Emit the set limit event.
-        emit TopupLimitSet(msg.sender, pendingTopupLimit);
+        emit SetTopupLimit(msg.sender, pendingTopupLimit);
         // Reset pending daily limit.
         pendingTopupLimit = 0;
         // Reset the submission flag.
@@ -437,7 +437,7 @@ contract Wallet is Vault {
         // Reset the submitted operation flag.
         submittedTopupLimit = false;
         // Emit the cancellation event.
-        emit TopupLimitCancelled(msg.sender);
+        emit CancelledTopupLimit(msg.sender);
     }
 
     /// @dev Refill owner's gas balance.

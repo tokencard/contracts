@@ -5,6 +5,7 @@ import (
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	"github.com/tokencard/ethertest"
+	. "github.com/tokencard/ethertest"
 )
 
 var _ = Describe("initializeWhitelist", func() {
@@ -51,7 +52,7 @@ var _ = Describe("initializeWhitelist", func() {
 		})
 
 		It("should emit WhitelistAddition event", func() {
-			it, err := w.FilterWhitelistAdded(nil)
+			it, err := w.FilterAddedToWhitelist(nil)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(it.Next()).To(BeTrue())
 			evt := it.Event
@@ -61,7 +62,7 @@ var _ = Describe("initializeWhitelist", func() {
 
 		Context("When I try to initialize the whitelist again", func() {
 			It("should fail", func() {
-				tx, err := w.InitializeWhitelist(owner.TransactOptsWithGasLimit(100000), []common.Address{randomPerson.Address()})
+				tx, err := w.InitializeWhitelist(owner.TransactOpts(WithGasLimit(100000)), []common.Address{randomPerson.Address()})
 				Expect(err).ToNot(HaveOccurred())
 				be.Commit()
 				Expect(isSuccessful(tx)).To(BeFalse())
@@ -75,7 +76,7 @@ var _ = Describe("initializeWhitelist", func() {
 			bankWallet.MustTransfer(be, controller.Address(), ethToWei(1))
 		})
 		It("should fail", func() {
-			tx, err := w.InitializeWhitelist(controller.TransactOptsWithGasLimit(65000), []common.Address{randomPerson.Address()})
+			tx, err := w.InitializeWhitelist(controller.TransactOpts(WithGasLimit(65000)), []common.Address{randomPerson.Address()})
 			Expect(err).ToNot(HaveOccurred())
 			be.Commit()
 			Expect(isSuccessful(tx)).To(BeFalse())
@@ -87,7 +88,7 @@ var _ = Describe("initializeWhitelist", func() {
 			bankWallet.MustTransfer(be, randomPerson.Address(), ethToWei(1))
 		})
 		It("should fail", func() {
-			tx, err := w.InitializeWhitelist(randomPerson.TransactOptsWithGasLimit(100000), []common.Address{randomPerson.Address()})
+			tx, err := w.InitializeWhitelist(randomPerson.TransactOpts(WithGasLimit(100000)), []common.Address{randomPerson.Address()})
 			Expect(err).ToNot(HaveOccurred())
 			be.Commit()
 			Expect(isSuccessful(tx)).To(BeFalse())
@@ -102,7 +103,7 @@ var _ = Describe("whitelistAddition", func() {
 	})
 	Context("When I add a random person to the whitelist before initialization", func() {
 		It("should fail", func() {
-			tx, err := w.SubmitWhitelistAddition(owner.TransactOptsWithGasLimit(1000000), []common.Address{randomPerson.Address()})
+			tx, err := w.SubmitWhitelistAddition(owner.TransactOpts(WithGasLimit(1000000)), []common.Address{randomPerson.Address()})
 			Expect(err).ToNot(HaveOccurred())
 			be.Commit()
 			Expect(isSuccessful(tx)).To(BeFalse())
@@ -119,12 +120,12 @@ var _ = Describe("whitelistAddition", func() {
 
 	Context("When I add random person to the whitelist after initialization", func() {
 		BeforeEach(func() {
-			tx, err := w.InitializeWhitelist(owner.TransactOptsWithGasLimit(500000), []common.Address{common.HexToAddress("0x1")})
+			tx, err := w.InitializeWhitelist(owner.TransactOpts(WithGasLimit(500000)), []common.Address{common.HexToAddress("0x1")})
 			Expect(err).ToNot(HaveOccurred())
 			be.Commit()
 			Expect(isSuccessful(tx)).To(BeTrue())
 
-			tx, err = w.SubmitWhitelistAddition(owner.TransactOptsWithGasLimit(500000), []common.Address{randomPerson.Address()})
+			tx, err = w.SubmitWhitelistAddition(owner.TransactOpts(WithGasLimit(500000)), []common.Address{randomPerson.Address()})
 			Expect(err).ToNot(HaveOccurred())
 			be.Commit()
 			Expect(isSuccessful(tx)).To(BeTrue())
@@ -143,7 +144,7 @@ var _ = Describe("whitelistAddition", func() {
 		})
 
 		It("should emit a whitelist submission event", func() {
-			it, err := w.FilterWhitelistAdditionSubmitted(nil)
+			it, err := w.FilterSubmittedWhitelistAddition(nil)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(it.Next()).To(BeTrue())
 			evt := it.Event
@@ -153,7 +154,7 @@ var _ = Describe("whitelistAddition", func() {
 
 		Context("When I try to add another person to the whitelist", func() {
 			It("should fail", func() {
-				tx, err := w.SubmitWhitelistAddition(owner.TransactOptsWithGasLimit(500000), []common.Address{randomPerson.Address()})
+				tx, err := w.SubmitWhitelistAddition(owner.TransactOpts(WithGasLimit(500000)), []common.Address{randomPerson.Address()})
 				Expect(err).ToNot(HaveOccurred())
 				be.Commit()
 				Expect(isSuccessful(tx)).To(BeFalse())
@@ -162,7 +163,7 @@ var _ = Describe("whitelistAddition", func() {
 
 		Context("When I try to remove a person from the whitelist while addition is pending", func() {
 			It("should fail", func() {
-				tx, err := w.SubmitWhitelistRemoval(owner.TransactOptsWithGasLimit(500000), []common.Address{randomPerson.Address()})
+				tx, err := w.SubmitWhitelistRemoval(owner.TransactOpts(WithGasLimit(500000)), []common.Address{randomPerson.Address()})
 				Expect(err).ToNot(HaveOccurred())
 				be.Commit()
 				Expect(isSuccessful(tx)).To(BeFalse())
@@ -171,7 +172,7 @@ var _ = Describe("whitelistAddition", func() {
 
 		Context("When the controller confirms the adding to the whitelist", func() {
 			BeforeEach(func() {
-				tx, err := w.ConfirmWhitelistAddition(controller.TransactOptsWithGasLimit(500000))
+				tx, err := w.ConfirmWhitelistAddition(controller.TransactOpts(WithGasLimit(500000)))
 				Expect(err).ToNot(HaveOccurred())
 				be.Commit()
 				Expect(isSuccessful(tx)).To(BeTrue())
@@ -184,7 +185,7 @@ var _ = Describe("whitelistAddition", func() {
 			})
 
 			It("should emit whitelist addition event", func() {
-				it, err := w.FilterWhitelistAdded(nil)
+				it, err := w.FilterAddedToWhitelist(nil)
 				Expect(err).ToNot(HaveOccurred())
 				Expect(it.Next()).To(BeTrue())
 				Expect(it.Next()).To(BeTrue())
@@ -204,7 +205,7 @@ var _ = Describe("whitelistAddition", func() {
 
 			Context("When I try to initialize the whitelist", func() {
 				It("should fail", func() {
-					tx, err := w.InitializeWhitelist(owner.TransactOptsWithGasLimit(500000), []common.Address{randomPerson.Address()})
+					tx, err := w.InitializeWhitelist(owner.TransactOpts(WithGasLimit(500000)), []common.Address{randomPerson.Address()})
 					Expect(err).ToNot(HaveOccurred())
 					be.Commit()
 					Expect(isSuccessful(tx)).To(BeFalse())
@@ -221,7 +222,7 @@ var _ = Describe("whitelistAddition", func() {
 			})
 
 			It("should emit CancelWhitelistAddition event", func() {
-				it, err := w.FilterWhitelistAdditionCancelled(nil)
+				it, err := w.FilterCancelledWhitelistAddition(nil)
 				Expect(err).ToNot(HaveOccurred())
 				Expect(it.Next()).To(BeTrue())
 				evt := it.Event
@@ -237,7 +238,7 @@ var _ = Describe("whitelistAddition", func() {
 
 			Context("When I try to initialize the whitelist", func() {
 				It("should fail", func() {
-					tx, err := w.InitializeWhitelist(owner.TransactOptsWithGasLimit(100000), []common.Address{randomPerson.Address()})
+					tx, err := w.InitializeWhitelist(owner.TransactOpts(WithGasLimit(100000)), []common.Address{randomPerson.Address()})
 					Expect(err).ToNot(HaveOccurred())
 					be.Commit()
 					Expect(isSuccessful(tx)).To(BeFalse())
@@ -257,7 +258,7 @@ var _ = Describe("whitelistAddition", func() {
 
 	Context("When I submit a list of addresses to be added to the whitelist after initialization", func() {
 		BeforeEach(func() {
-			tx, err := w.InitializeWhitelist(owner.TransactOptsWithGasLimit(500000), []common.Address{common.HexToAddress("0x1")})
+			tx, err := w.InitializeWhitelist(owner.TransactOpts(WithGasLimit(500000)), []common.Address{common.HexToAddress("0x1")})
 			Expect(err).ToNot(HaveOccurred())
 			be.Commit()
 			Expect(isSuccessful(tx)).To(BeTrue())
@@ -277,7 +278,7 @@ var _ = Describe("whitelistAddition", func() {
 
 	Context("When I submit an empty list of addresses to be added to the whitelist after initialization", func() {
 		BeforeEach(func() {
-			tx, err := w.InitializeWhitelist(owner.TransactOptsWithGasLimit(500000), []common.Address{common.HexToAddress("0x1")})
+			tx, err := w.InitializeWhitelist(owner.TransactOpts(WithGasLimit(500000)), []common.Address{common.HexToAddress("0x1")})
 			Expect(err).ToNot(HaveOccurred())
 			be.Commit()
 			Expect(isSuccessful(tx)).To(BeTrue())
@@ -320,7 +321,7 @@ var _ = Describe("whitelistRemoval", func() {
 			})
 
 			It("should emit SubmitWhitelistRemoval event", func() {
-				it, err := w.FilterWhitelistRemovalSubmitted(nil)
+				it, err := w.FilterSubmittedWhitelistRemoval(nil)
 				Expect(err).ToNot(HaveOccurred())
 				Expect(it.Next()).To(BeTrue())
 				evt := it.Event
@@ -336,7 +337,7 @@ var _ = Describe("whitelistRemoval", func() {
 
 			Context("When I try to submit another list for removal", func() {
 				It("should fail", func() {
-					tx, err := w.SubmitWhitelistRemoval(owner.TransactOptsWithGasLimit(100000), []common.Address{randomPerson.Address()})
+					tx, err := w.SubmitWhitelistRemoval(owner.TransactOpts(WithGasLimit(100000)), []common.Address{randomPerson.Address()})
 					Expect(err).ToNot(HaveOccurred())
 					be.Commit()
 					Expect(isSuccessful(tx)).To(BeFalse())
@@ -345,7 +346,7 @@ var _ = Describe("whitelistRemoval", func() {
 
 			Context("When I try to submit a list for addition while removal is pending", func() {
 				It("should fail", func() {
-					tx, err := w.SubmitWhitelistAddition(owner.TransactOptsWithGasLimit(100000), []common.Address{randomPerson.Address()})
+					tx, err := w.SubmitWhitelistAddition(owner.TransactOpts(WithGasLimit(100000)), []common.Address{randomPerson.Address()})
 					Expect(err).ToNot(HaveOccurred())
 					be.Commit()
 					Expect(isSuccessful(tx)).To(BeFalse())
@@ -367,7 +368,7 @@ var _ = Describe("whitelistRemoval", func() {
 				})
 
 				It("should emit WhitelistRemoval event", func() {
-					it, err := w.FilterWhitelistRemoved(nil)
+					it, err := w.FilterRemovedFromWhitelist(nil)
 					Expect(err).ToNot(HaveOccurred())
 					Expect(it.Next()).To(BeTrue())
 					evt := it.Event
@@ -399,7 +400,7 @@ var _ = Describe("whitelistRemoval", func() {
 				})
 
 				It("should emit CancelWhitelistRemoval event", func() {
-					it, err := w.FilterWhitelistRemovalCancelled(nil)
+					it, err := w.FilterCancelledWhitelistRemoval(nil)
 					Expect(err).ToNot(HaveOccurred())
 					Expect(it.Next()).To(BeTrue())
 					evt := it.Event
@@ -451,7 +452,7 @@ var _ = Describe("whitelistRemoval", func() {
 			for i := 0; i < 21; i++ {
 				addresses = append(addresses, ethertest.NewWallet().Address())
 			}
-			tx, err := w.SubmitWhitelistRemoval(owner.TransactOptsWithGasLimit(100000), addresses)
+			tx, err := w.SubmitWhitelistRemoval(owner.TransactOpts(WithGasLimit(100000)), addresses)
 			Expect(err).ToNot(HaveOccurred())
 			be.Commit()
 			Expect(isSuccessful(tx)).To(BeFalse())
