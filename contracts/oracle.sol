@@ -199,7 +199,7 @@ contract Oracle is UsingOraclize, Base64, Date, JSON, Controllable, IOracle {
     /// @dev Checks if all addresses passed in, are new addresses
     modifier hasNoExistingAddresses(address[] _addresses) {
         for (uint i = 0; i < _addresses.length; i++) {
-            require(!tokens[_addresses[i]].exists); 
+            require(!tokens[_addresses[i]].exists);
         }
         _;
     }
@@ -319,12 +319,15 @@ contract Oracle is UsingOraclize, Base64, Date, JSON, Controllable, IOracle {
         // Require that the caller is the Oraclize contract.
         require(msg.sender == oraclize_cbAddress(), "sender is not oraclize");
 
+        // Use the query ID to find the matching token address.
+        address _token = _queryToToken[_queryID];
+        require(_token != address(0),"queryID matches to address 0");
+        
+        // Get the corresponding token object.
+        Token storage token = tokens[_token];
+
         // Require that the proof is valid.
         if (verifyProof(_result, _proof, APIPublicKey, token.lastUpdate)) {
-          // Use the query ID to find the matching token address.
-          address _token = _queryToToken[_queryID];
-          // Get the corresponding token object.
-          Token storage token = tokens[_token];
           // Parse the JSON result to get the rate in wei.
           token.rate = parseInt(parseRate(_result, "ETH"), 18);
           // Emit the rate update event.
