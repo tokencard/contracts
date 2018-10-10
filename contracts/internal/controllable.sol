@@ -1,6 +1,6 @@
 pragma solidity ^0.4.25;
 
-import "controller.sol";
+import "./controller.sol";
 
 /// @title Controllable implements access control functionality based on an external list of controllers.
 contract Controllable {
