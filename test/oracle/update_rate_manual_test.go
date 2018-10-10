@@ -6,6 +6,7 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
+	. "github.com/tokencard/ethertest"
 )
 
 var _ = Describe("updateRateManual", func() {
@@ -27,7 +28,7 @@ var _ = Describe("updateRateManual", func() {
 		})
 		Context("When not called by the controller", func() {
 			It("Should fail", func() {
-				tx, err := oracle.UpdateTokenRate(randomWallet.TransactOptsWithGasLimit(100000), common.HexToAddress("0x1"), big.NewInt(666))
+				tx, err := oracle.UpdateTokenRate(randomWallet.TransactOpts(WithGasLimit(100000)), common.HexToAddress("0x1"), big.NewInt(666))
 				Expect(err).ToNot(HaveOccurred())
 				be.Commit()
 				Expect(isSuccessful(tx)).To(BeFalse())
@@ -38,7 +39,7 @@ var _ = Describe("updateRateManual", func() {
 	Context("When the token is not supported", func() {
 		Context("When called by the controller", func() {
 			It("Should fail", func() {
-				tx, err := oracle.UpdateTokenRate(controllerWallet.TransactOptsWithGasLimit(100000), common.HexToAddress("0x1"), big.NewInt(666))
+				tx, err := oracle.UpdateTokenRate(controllerWallet.TransactOpts(WithGasLimit(100000)), common.HexToAddress("0x1"), big.NewInt(666))
 				Expect(err).ToNot(HaveOccurred())
 				be.Commit()
 				Expect(isSuccessful(tx)).To(BeFalse())
@@ -46,7 +47,7 @@ var _ = Describe("updateRateManual", func() {
 		})
 		Context("When not called by the controller", func() {
 			It("Should fail", func() {
-				tx, err := oracle.UpdateTokenRate(randomWallet.TransactOptsWithGasLimit(100000), common.HexToAddress("0x1"), big.NewInt(666))
+				tx, err := oracle.UpdateTokenRate(randomWallet.TransactOpts(WithGasLimit(100000)), common.HexToAddress("0x1"), big.NewInt(666))
 				Expect(err).ToNot(HaveOccurred())
 				be.Commit()
 				Expect(isSuccessful(tx)).To(BeFalse())

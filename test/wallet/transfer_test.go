@@ -7,6 +7,7 @@ import (
 	"github.com/ethereum/go-ethereum/core/types"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
+	. "github.com/tokencard/ethertest"
 )
 
 var _ = Describe("transfer", func() {
@@ -22,7 +23,7 @@ var _ = Describe("transfer", func() {
 		Context("When I transfer 1 Finney to a randon person", func() {
 			BeforeEach(func() {
 				var err error
-				tx, err = w.Transfer(owner.TransactOptsWithGasLimit(81000), randomPerson.Address(), common.HexToAddress("0x"), ONE_FINNEY)
+				tx, err = w.Transfer(owner.TransactOpts(WithGasLimit(81000)), randomPerson.Address(), common.HexToAddress("0x"), ONE_FINNEY)
 				Expect(err).ToNot(HaveOccurred())
 				be.Commit()
 			})
@@ -42,7 +43,7 @@ var _ = Describe("transfer", func() {
 
 			BeforeEach(func() {
 				var err error
-				tx, err = w.Transfer(controller.TransactOptsWithGasLimit(81000), randomPerson.Address(), common.HexToAddress("0x"), ONE_FINNEY)
+				tx, err = w.Transfer(controller.TransactOpts(WithGasLimit(81000)), randomPerson.Address(), common.HexToAddress("0x"), ONE_FINNEY)
 				Expect(err).ToNot(HaveOccurred())
 				be.Commit()
 			})
@@ -57,7 +58,7 @@ var _ = Describe("transfer", func() {
 
 			BeforeEach(func() {
 				var err error
-				tx, err = w.Transfer(randomPerson.TransactOptsWithGasLimit(81000), randomPerson.Address(), common.HexToAddress("0x"), ONE_FINNEY)
+				tx, err = w.Transfer(randomPerson.TransactOpts(WithGasLimit(81000)), randomPerson.Address(), common.HexToAddress("0x"), ONE_FINNEY)
 				Expect(err).ToNot(HaveOccurred())
 				be.Commit()
 			})
@@ -108,7 +109,7 @@ var _ = Describe("transfer", func() {
 			Context("When controller tries to transfer one token to a random person", func() {
 				BeforeEach(func() {
 					var err error
-					tx, err = w.Transfer(controller.TransactOptsWithGasLimit(80000), randomPerson.Address(), tkna, big.NewInt(1))
+					tx, err = w.Transfer(controller.TransactOpts(WithGasLimit(80000)), randomPerson.Address(), tkna, big.NewInt(1))
 					Expect(err).ToNot(HaveOccurred())
 					be.Commit()
 				})
@@ -122,7 +123,7 @@ var _ = Describe("transfer", func() {
 
 				BeforeEach(func() {
 					var err error
-					tx, err = w.Transfer(randomPerson.TransactOptsWithGasLimit(80000), randomPerson.Address(), tkna, big.NewInt(1))
+					tx, err = w.Transfer(randomPerson.TransactOpts(WithGasLimit(80000)), randomPerson.Address(), tkna, big.NewInt(1))
 					Expect(err).ToNot(HaveOccurred())
 					be.Commit()
 				})

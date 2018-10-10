@@ -6,6 +6,7 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
+	. "github.com/tokencard/ethertest"
 )
 
 var _ = Describe("spendAvailable", func() {
@@ -22,7 +23,7 @@ var _ = Describe("spendAvailable", func() {
 
 		Context("When a random person tries to initialize the spend limit", func() {
 			It("should fail", func() {
-				tx, err := w.InitializeSpendLimit(randomPerson.TransactOptsWithGasLimit(100000), ethToWei(1))
+				tx, err := w.InitializeSpendLimit(randomPerson.TransactOpts(WithGasLimit(100000)), ethToWei(1))
 				Expect(err).ToNot(HaveOccurred())
 				be.Commit()
 				Expect(isSuccessful(tx)).To(BeFalse())
@@ -31,7 +32,7 @@ var _ = Describe("spendAvailable", func() {
 
 		Context("When controller tries to initialize the spend limit", func() {
 			It("should fail", func() {
-				tx, err := w.InitializeSpendLimit(controller.TransactOptsWithGasLimit(100000), ethToWei(1))
+				tx, err := w.InitializeSpendLimit(controller.TransactOpts(WithGasLimit(100000)), ethToWei(1))
 				Expect(err).ToNot(HaveOccurred())
 				be.Commit()
 				Expect(isSuccessful(tx)).To(BeFalse())
@@ -47,7 +48,7 @@ var _ = Describe("spendAvailable", func() {
 			})
 
 			It("should emit a spend limit set event", func() {
-				it, err := w.FilterSpendLimitSet(nil)
+				it, err := w.FilterSetSpendLimit(nil)
 				Expect(err).ToNot(HaveOccurred())
 				Expect(it.Next()).To(BeTrue())
 				evt := it.Event
@@ -70,7 +71,7 @@ var _ = Describe("spendAvailable", func() {
 
 			Context("When I try to initialize the spending limit again", func() {
 				It("should fail", func() {
-					tx, err := w.InitializeSpendLimit(owner.TransactOptsWithGasLimit(100000), ethToWei(1))
+					tx, err := w.InitializeSpendLimit(owner.TransactOpts(WithGasLimit(100000)), ethToWei(1))
 					Expect(err).ToNot(HaveOccurred())
 					be.Commit()
 					Expect(isSuccessful(tx)).To(BeFalse())
@@ -134,7 +135,7 @@ var _ = Describe("spendAvailable", func() {
 
 		Context("When I submit the spend limit of 1 ETH before initialization", func() {
 			It("should fail", func() {
-				tx, err := w.SubmitSpendLimit(owner.TransactOptsWithGasLimit(100000), ethToWei(1))
+				tx, err := w.SubmitSpendLimit(owner.TransactOpts(WithGasLimit(100000)), ethToWei(1))
 				Expect(err).ToNot(HaveOccurred())
 				be.Commit()
 				Expect(isSuccessful(tx)).To(BeFalse())
@@ -147,12 +148,12 @@ var _ = Describe("spendAvailable", func() {
 
 		Context("When I submit the spend limit of 1 ETH after initialization", func() {
 			BeforeEach(func() {
-				tx, err := w.InitializeSpendLimit(owner.TransactOptsWithGasLimit(100000), ethToWei(2))
+				tx, err := w.InitializeSpendLimit(owner.TransactOpts(WithGasLimit(100000)), ethToWei(2))
 				Expect(err).ToNot(HaveOccurred())
 				be.Commit()
 				Expect(isSuccessful(tx)).To(BeTrue())
 
-				tx, err = w.SubmitSpendLimit(owner.TransactOptsWithGasLimit(100000), ethToWei(1))
+				tx, err = w.SubmitSpendLimit(owner.TransactOpts(WithGasLimit(100000)), ethToWei(1))
 				Expect(err).ToNot(HaveOccurred())
 				be.Commit()
 				Expect(isSuccessful(tx)).To(BeTrue())
@@ -165,7 +166,7 @@ var _ = Describe("spendAvailable", func() {
 			})
 
 			It("should emit the submission event", func() {
-				it, err := w.FilterSpendLimitSubmitted(nil)
+				it, err := w.FilterSubmittedSpendLimit(nil)
 				Expect(err).ToNot(HaveOccurred())
 				Expect(it.Next()).To(BeTrue())
 				evt := it.Event
@@ -194,7 +195,7 @@ var _ = Describe("spendAvailable", func() {
 				})
 
 				It("should emit a spend limit set event", func() {
-					it, err := w.FilterSpendLimitSet(nil)
+					it, err := w.FilterSetSpendLimit(nil)
 					Expect(err).ToNot(HaveOccurred())
 					Expect(it.Next()).To(BeTrue())
 					Expect(it.Next()).To(BeTrue())
@@ -211,7 +212,7 @@ var _ = Describe("spendAvailable", func() {
 
 				Context("When I try to initialize the spend limit", func() {
 					It("should fail", func() {
-						tx, err := w.InitializeSpendLimit(owner.TransactOptsWithGasLimit(100000), ethToWei(1000))
+						tx, err := w.InitializeSpendLimit(owner.TransactOpts(WithGasLimit(100000)), ethToWei(1000))
 						Expect(err).ToNot(HaveOccurred())
 						be.Commit()
 						Expect(isSuccessful(tx)).To(BeFalse())
@@ -228,7 +229,7 @@ var _ = Describe("spendAvailable", func() {
 				})
 
 				It("should emit a cancellation event", func() {
-					it, err := w.FilterSpendLimitCancelled(nil)
+					it, err := w.FilterCancelledSpendLimit(nil)
 					Expect(err).ToNot(HaveOccurred())
 					Expect(it.Next()).To(BeTrue())
 					evt := it.Event
@@ -253,7 +254,7 @@ var _ = Describe("spendAvailable", func() {
 
 			Context("When I try to set spending limit again", func() {
 				It("should fail", func() {
-					tx, err := w.SubmitSpendLimit(owner.TransactOptsWithGasLimit(100000), ethToWei(1))
+					tx, err := w.SubmitSpendLimit(owner.TransactOpts(WithGasLimit(100000)), ethToWei(1))
 					Expect(err).ToNot(HaveOccurred())
 					be.Commit()
 					Expect(isSuccessful(tx)).To(BeFalse())

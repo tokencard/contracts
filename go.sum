@@ -10,8 +10,8 @@ github.com/deckarep/golang-set v1.7.1 h1:SCQV0S6gTtp6itiFrTqI+pfmJ4LN85S1YzhDf9r
 github.com/deckarep/golang-set v1.7.1/go.mod h1:93vsz/8Wt4joVM7c2AVqh+YRMiUSc14yDtF28KmMOgQ=
 github.com/edsrzf/mmap-go v0.0.0-20170320065105-0bce6a688712 h1:aaQcKT9WumO6JEJcRyTqFVq4XUZiUcKR2/GI31TOcz8=
 github.com/edsrzf/mmap-go v0.0.0-20170320065105-0bce6a688712/go.mod h1:YO35OhQPt3KJa3ryjFM5Bs14WD66h8eGKpfaBNrHW5M=
-github.com/ethereum/go-ethereum v1.8.16 h1:mWSfeuH5G3WDvHcY/aXDgSjy+mXQ6UyL7w0hrMbE/ds=
-github.com/ethereum/go-ethereum v1.8.16/go.mod h1:PwpWDrCLZrV+tfrhqqF6kPknbISMHaJv9Ln3kPCZLwY=
+github.com/ethereum/go-ethereum v1.8.17 h1:aoqWfGFYsSxCdFZfQ6h0pnojtoBOcYI+6Yg8JXhGuXs=
+github.com/ethereum/go-ethereum v1.8.17/go.mod h1:PwpWDrCLZrV+tfrhqqF6kPknbISMHaJv9Ln3kPCZLwY=
 github.com/fjl/memsize v0.0.0-20180929194037-2a09253e352a h1:1znxn4+q2MrEdTk1eCk6KIV3muTYVclBIB6CTVR/zBc=
 github.com/fjl/memsize v0.0.0-20180929194037-2a09253e352a/go.mod h1:VvhXpOYNQvB+uIk2RvXzuaQtkQJzzIx6lSBe1xv7hi0=
 github.com/fsnotify/fsnotify v1.4.7 h1:IXs+QLmnXW2CcXuY+8Mzv/fWEsPGWxqefPtCP5CnV9I=
@@ -62,8 +62,8 @@ github.com/stretchr/testify v1.2.2 h1:bSDNvY7ZPG5RlJ8otE/7V6gMiyenm9RtJ7IUVIAoJ1
 github.com/stretchr/testify v1.2.2/go.mod h1:a8OnRcib4nhh0OaRAV+Yts87kKdq0PP7pXfy6kDkUVs=
 github.com/syndtr/goleveldb v0.0.0-20180815032940-ae2bd5eed72d h1:4J9HCZVpvDmj2tiKGSTUnb3Ok/9CEQb9oqu9LHKQQpc=
 github.com/syndtr/goleveldb v0.0.0-20180815032940-ae2bd5eed72d/go.mod h1:Z4AUp2Km+PwemOoO/VB5AOx9XSsIItzFjoJlOSiYmn0=
-github.com/tokencard/ethertest v0.3.0 h1:H8ob1/ULqQoiBdIX498Y3HBGRZoJy/7L+GyQmzI/W6g=
-github.com/tokencard/ethertest v0.3.0/go.mod h1:vrsMVt381hYqqkqS6pvgjku4fdJF/AyO3707lJ0tB34=
+github.com/tokencard/ethertest v0.3.2 h1:TWIRA+cndgP9IwlbmvQTBB3TVUKbQUv7tnfBvK2DYxA=
+github.com/tokencard/ethertest v0.3.2/go.mod h1:c+qKrL1Tg3Dg0/lEOnmX/WB9Rv/mitm6ueAn9Ge8UKQ=
 golang.org/x/crypto v0.0.0-20180927165925-5295e8364332 h1:hvQVdF6P9DX4OiKA5tpehlG6JsgzmyQiThG7q5Bn3UQ=
 golang.org/x/crypto v0.0.0-20180927165925-5295e8364332/go.mod h1:6SG95UA2DQfeDnfUPMdvaQW0Q7yPrPDi9nlGo2tz2b4=
 golang.org/x/net v0.0.0-20180906233101-161cd47e91fd/go.mod h1:mL1N/T3taQHkDXs73rZJwtUhF3w3ftmwwsq0BUmARs4=
@@ -77,8 +77,6 @@ golang.org/x/sys v0.0.0-20180928133829-e4b3c5e90611 h1:O33LKL7WyJgjN9CvxfTIomjIC
 golang.org/x/sys v0.0.0-20180928133829-e4b3c5e90611/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
 golang.org/x/text v0.3.0 h1:g61tztE5qeGQ89tm6NTjjM9VPIm088od1l6aSorWRWg=
 golang.org/x/text v0.3.0/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
-golang.org/x/tools v0.0.0-20180928181343-b3c0be4c978b h1:hjfKpJoTfQ2QXKPX9eCDFBZ0t9sDrZL/viAgrN962TQ=
-golang.org/x/tools v0.0.0-20180928181343-b3c0be4c978b/go.mod h1:n7NCudcB/nEzxVGmLbDWY5pfWTLqBcC2KZ6jyYvM4mQ=
 gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405 h1:yhCVgyC4o1eVCa2tZl7eS0r+SDo693bJlVdllGtEeKM=
 gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=
 gopkg.in/fsnotify.v1 v1.4.7 h1:xOHLXZwVvI9hhs+cLKq5+I5onOuwQLhQwiu63xxlHs4=

@@ -5,6 +5,7 @@ import (
 	"github.com/ethereum/go-ethereum/core/types"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
+	. "github.com/tokencard/ethertest"
 )
 
 var _ = Describe("removeTokens", func() {
@@ -45,7 +46,7 @@ var _ = Describe("removeTokens", func() {
 		Context("When removing an unsupported token", func() {
 
 			It("Should fail", func() {
-				tx, err := oracle.RemoveTokens(controllerWallet.TransactOptsWithGasLimit(100000), []common.Address{common.HexToAddress("0x0")})
+				tx, err := oracle.RemoveTokens(controllerWallet.TransactOpts(WithGasLimit(100000)), []common.Address{common.HexToAddress("0x0")})
 				Expect(err).ToNot(HaveOccurred())
 				be.Commit()
 				Expect(isSuccessful(tx)).To(BeFalse())
@@ -55,7 +56,7 @@ var _ = Describe("removeTokens", func() {
 
 	Context("When called by a random address", func() {
 		It("Should fail", func() {
-			tx, err := oracle.RemoveTokens(randomWallet.TransactOptsWithGasLimit(300000), []common.Address{common.HexToAddress("0x0")})
+			tx, err := oracle.RemoveTokens(randomWallet.TransactOpts(WithGasLimit(300000)), []common.Address{common.HexToAddress("0x0")})
 			Expect(err).ToNot(HaveOccurred())
 			be.Commit()
 			Expect(isGasExhausted(tx, 300000)).To(BeFalse())

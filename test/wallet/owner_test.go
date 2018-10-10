@@ -6,6 +6,7 @@ import (
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	"github.com/tokencard/contracts/pkg/bindings"
+	. "github.com/tokencard/ethertest"
 )
 
 var _ = Describe("ownable", func() {
@@ -16,7 +17,7 @@ var _ = Describe("ownable", func() {
 			Expect(o).To(Equal(owner.Address()))
 		})
 		It("should not allow the ownership to be transferred to the 0x0 address", func() {
-			tx, err := w.TransferOwnership(owner.TransactOptsWithGasLimit(60000), common.HexToAddress("0x0"))
+			tx, err := w.TransferOwnership(owner.TransactOpts(WithGasLimit(60000)), common.HexToAddress("0x0"))
 			Expect(err).ToNot(HaveOccurred())
 			be.Commit()
 			Expect(isSuccessful(tx)).To(BeFalse())
@@ -57,7 +58,7 @@ var _ = Describe("ownable", func() {
 			Expect(o).To(Equal(owner.Address()))
 		})
 		It("should not allow the ownership to be transferred", func() {
-			tx, err := w.TransferOwnership(owner.TransactOptsWithGasLimit(60000), common.HexToAddress("0x1"))
+			tx, err := w.TransferOwnership(owner.TransactOpts(WithGasLimit(60000)), common.HexToAddress("0x1"))
 			Expect(err).ToNot(HaveOccurred())
 			be.Commit()
 			Expect(isSuccessful(tx)).To(BeFalse())

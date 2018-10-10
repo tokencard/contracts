@@ -6,6 +6,7 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
+	. "github.com/tokencard/ethertest"
 )
 
 var _ = Describe("topupLimit", func() {
@@ -34,7 +35,7 @@ var _ = Describe("topupLimit", func() {
 
 		Context("When I try to initialize topup limit to one Gwei (below min topup limit)", func() {
 			BeforeEach(func() {
-				tx, err := w.InitializeTopupLimit(owner.TransactOptsWithGasLimit(65000), ONE_GWEI)
+				tx, err := w.InitializeTopupLimit(owner.TransactOpts(WithGasLimit(65000)), ONE_GWEI)
 				Expect(err).ToNot(HaveOccurred())
 				be.Commit()
 				txSuccessful = isSuccessful(tx)
@@ -48,7 +49,7 @@ var _ = Describe("topupLimit", func() {
 
 		Context("When I try to initialize topup limit to one ETH (above max topup limit)", func() {
 			BeforeEach(func() {
-				tx, err := w.InitializeTopupLimit(owner.TransactOptsWithGasLimit(65000), ONE_ETH)
+				tx, err := w.InitializeTopupLimit(owner.TransactOpts(WithGasLimit(65000)), ONE_ETH)
 				Expect(err).ToNot(HaveOccurred())
 				be.Commit()
 				txSuccessful = isSuccessful(tx)
@@ -62,7 +63,7 @@ var _ = Describe("topupLimit", func() {
 
 		Context("When I initialize topup limit for the first time to one Finney", func() {
 			BeforeEach(func() {
-				tx, err := w.InitializeTopupLimit(owner.TransactOptsWithGasLimit(65000), ONE_FINNEY)
+				tx, err := w.InitializeTopupLimit(owner.TransactOpts(WithGasLimit(65000)), ONE_FINNEY)
 				Expect(err).ToNot(HaveOccurred())
 				be.Commit()
 				txSuccessful = isSuccessful(tx)
@@ -79,7 +80,7 @@ var _ = Describe("topupLimit", func() {
 			})
 
 			It("should emit topup limit set event", func() {
-				it, err := w.FilterTopupLimitSet(nil)
+				it, err := w.FilterSetTopupLimit(nil)
 				Expect(err).ToNot(HaveOccurred())
 				Expect(it.Next()).To(BeTrue())
 				evt := it.Event
@@ -90,7 +91,7 @@ var _ = Describe("topupLimit", func() {
 
 			Context("When I try to initialize the limit again", func() {
 				BeforeEach(func() {
-					tx, err := w.InitializeTopupLimit(owner.TransactOptsWithGasLimit(165000), finneyToWei(500))
+					tx, err := w.InitializeTopupLimit(owner.TransactOpts(WithGasLimit(165000)), finneyToWei(500))
 					Expect(err).ToNot(HaveOccurred())
 					be.Commit()
 					txSuccessful = isSuccessful(tx)
@@ -108,7 +109,7 @@ var _ = Describe("topupLimit", func() {
 
 		Context("When I submit daily topup limit above 1 Finney before initialization", func() {
 			It("should fail", func() {
-				tx, err := w.SubmitTopupLimit(owner.TransactOptsWithGasLimit(65000), finneyToWei(5))
+				tx, err := w.SubmitTopupLimit(owner.TransactOpts(WithGasLimit(65000)), finneyToWei(5))
 				Expect(err).ToNot(HaveOccurred())
 				be.Commit()
 				Expect(isSuccessful(tx)).To(BeFalse())
@@ -117,12 +118,12 @@ var _ = Describe("topupLimit", func() {
 
 		Context("When I submit daily topup limit below 1 Finney after initialization", func() {
 			It("should fail", func() {
-				tx, err := w.InitializeTopupLimit(owner.TransactOptsWithGasLimit(65000), finneyToWei(5))
+				tx, err := w.InitializeTopupLimit(owner.TransactOpts(WithGasLimit(65000)), finneyToWei(5))
 				Expect(err).ToNot(HaveOccurred())
 				be.Commit()
 				Expect(isSuccessful(tx)).To(BeTrue())
 
-				tx, err = w.SubmitTopupLimit(owner.TransactOptsWithGasLimit(65000), ONE_GWEI)
+				tx, err = w.SubmitTopupLimit(owner.TransactOpts(WithGasLimit(65000)), ONE_GWEI)
 				Expect(err).ToNot(HaveOccurred())
 				be.Commit()
 				Expect(isSuccessful(tx)).To(BeFalse())
@@ -131,12 +132,12 @@ var _ = Describe("topupLimit", func() {
 
 		Context("When I submit daily topup limit above 500 Finney after initialization", func() {
 			It("should fail", func() {
-				tx, err := w.InitializeTopupLimit(owner.TransactOptsWithGasLimit(65000), finneyToWei(5))
+				tx, err := w.InitializeTopupLimit(owner.TransactOpts(WithGasLimit(65000)), finneyToWei(5))
 				Expect(err).ToNot(HaveOccurred())
 				be.Commit()
 				Expect(isSuccessful(tx)).To(BeTrue())
 
-				tx, err = w.SubmitTopupLimit(owner.TransactOptsWithGasLimit(65000), ONE_ETH)
+				tx, err = w.SubmitTopupLimit(owner.TransactOpts(WithGasLimit(65000)), ONE_ETH)
 				Expect(err).ToNot(HaveOccurred())
 				be.Commit()
 				Expect(isSuccessful(tx)).To(BeFalse())
@@ -145,12 +146,12 @@ var _ = Describe("topupLimit", func() {
 
 		Context("When controller submits daily topup limit of 1 Finney after initialization", func() {
 			It("should fail", func() {
-				tx, err := w.InitializeTopupLimit(owner.TransactOptsWithGasLimit(65000), finneyToWei(5))
+				tx, err := w.InitializeTopupLimit(owner.TransactOpts(WithGasLimit(65000)), finneyToWei(5))
 				Expect(err).ToNot(HaveOccurred())
 				be.Commit()
 				Expect(isSuccessful(tx)).To(BeTrue())
 
-				tx, err = w.SubmitTopupLimit(controller.TransactOptsWithGasLimit(65000), ONE_FINNEY)
+				tx, err = w.SubmitTopupLimit(controller.TransactOpts(WithGasLimit(65000)), ONE_FINNEY)
 				Expect(err).ToNot(HaveOccurred())
 				be.Commit()
 				Expect(isSuccessful(tx)).To(BeFalse())
@@ -160,12 +161,12 @@ var _ = Describe("topupLimit", func() {
 
 		Context("When a random person submits daily topup limit of 1 Finney after initialization", func() {
 			It("should fail", func() {
-				tx, err := w.InitializeTopupLimit(owner.TransactOptsWithGasLimit(65000), finneyToWei(5))
+				tx, err := w.InitializeTopupLimit(owner.TransactOpts(WithGasLimit(65000)), finneyToWei(5))
 				Expect(err).ToNot(HaveOccurred())
 				be.Commit()
 				Expect(isSuccessful(tx)).To(BeTrue())
 
-				tx, err = w.SubmitTopupLimit(randomPerson.TransactOptsWithGasLimit(65000), ONE_FINNEY)
+				tx, err = w.SubmitTopupLimit(randomPerson.TransactOpts(WithGasLimit(65000)), ONE_FINNEY)
 				Expect(err).ToNot(HaveOccurred())
 				be.Commit()
 				Expect(isSuccessful(tx)).To(BeFalse())
@@ -175,12 +176,12 @@ var _ = Describe("topupLimit", func() {
 
 		Context("When I submit topup limit of 1 Finney after initialization", func() {
 			BeforeEach(func() {
-				tx, err := w.InitializeTopupLimit(owner.TransactOptsWithGasLimit(65000), finneyToWei(5))
+				tx, err := w.InitializeTopupLimit(owner.TransactOpts(WithGasLimit(65000)), finneyToWei(5))
 				Expect(err).ToNot(HaveOccurred())
 				be.Commit()
 				Expect(isSuccessful(tx)).To(BeTrue())
 
-				tx, err = w.SubmitTopupLimit(owner.TransactOptsWithGasLimit(65000), ONE_FINNEY)
+				tx, err = w.SubmitTopupLimit(owner.TransactOpts(WithGasLimit(65000)), ONE_FINNEY)
 				Expect(err).ToNot(HaveOccurred())
 				be.Commit()
 				Expect(isSuccessful(tx)).To(BeTrue())
@@ -193,7 +194,7 @@ var _ = Describe("topupLimit", func() {
 			})
 
 			It("should emit a submission event", func() {
-				it, err := w.FilterTopupLimitSubmitted(nil)
+				it, err := w.FilterSubmittedTopupLimit(nil)
 				Expect(err).ToNot(HaveOccurred())
 				Expect(it.Next()).To(BeTrue())
 				evt := it.Event
@@ -216,7 +217,7 @@ var _ = Describe("topupLimit", func() {
 				})
 
 				It("should emit a cancellation event", func() {
-					it, err := w.FilterTopupLimitCancelled(nil)
+					it, err := w.FilterCancelledTopupLimit(nil)
 					Expect(err).ToNot(HaveOccurred())
 					Expect(it.Next()).To(BeTrue())
 					evt := it.Event
@@ -233,7 +234,7 @@ var _ = Describe("topupLimit", func() {
 
 			Context("When I try to cancel the limit change", func() {
 				It("should fail", func() {
-					tx, err := w.CancelTopupLimit(owner.TransactOptsWithGasLimit(65000))
+					tx, err := w.CancelTopupLimit(owner.TransactOpts(WithGasLimit(65000)))
 					Expect(err).ToNot(HaveOccurred())
 					be.Commit()
 					Expect(isSuccessful(tx)).To(BeFalse())
@@ -242,7 +243,7 @@ var _ = Describe("topupLimit", func() {
 
 			Context("When a random person tries to cancel the limit change", func() {
 				It("should fail", func() {
-					tx, err := w.CancelTopupLimit(randomPerson.TransactOptsWithGasLimit(65000))
+					tx, err := w.CancelTopupLimit(randomPerson.TransactOpts(WithGasLimit(65000)))
 					Expect(err).ToNot(HaveOccurred())
 					be.Commit()
 					Expect(isSuccessful(tx)).To(BeFalse())
@@ -251,7 +252,7 @@ var _ = Describe("topupLimit", func() {
 
 			Context("When I try to submit a second topup limit of 500 Finney", func() {
 				It("should fail", func() {
-					tx, err := w.SubmitTopupLimit(owner.TransactOptsWithGasLimit(65000), finneyToWei(500))
+					tx, err := w.SubmitTopupLimit(owner.TransactOpts(WithGasLimit(65000)), finneyToWei(500))
 					Expect(err).ToNot(HaveOccurred())
 					be.Commit()
 					Expect(isSuccessful(tx)).To(BeFalse())
@@ -261,7 +262,7 @@ var _ = Describe("topupLimit", func() {
 
 			Context("When I try to confirm the topup limit", func() {
 				It("should fail", func() {
-					tx, err := w.ConfirmTopupLimit(owner.TransactOptsWithGasLimit(65000))
+					tx, err := w.ConfirmTopupLimit(owner.TransactOpts(WithGasLimit(65000)))
 					Expect(err).ToNot(HaveOccurred())
 					be.Commit()
 					Expect(isSuccessful(tx)).To(BeFalse())
@@ -270,7 +271,7 @@ var _ = Describe("topupLimit", func() {
 
 			Context("When a random person tries to confirm the topup limit", func() {
 				It("should fail", func() {
-					tx, err := w.ConfirmTopupLimit(randomPerson.TransactOptsWithGasLimit(65000))
+					tx, err := w.ConfirmTopupLimit(randomPerson.TransactOpts(WithGasLimit(65000)))
 					Expect(err).ToNot(HaveOccurred())
 					be.Commit()
 					Expect(isSuccessful(tx)).To(BeFalse())
@@ -293,7 +294,7 @@ var _ = Describe("topupLimit", func() {
 
 				Context("When I submit a second topup limit to 500 Finney", func() {
 					BeforeEach(func() {
-						tx, err := w.SubmitTopupLimit(owner.TransactOptsWithGasLimit(65000), finneyToWei(500))
+						tx, err := w.SubmitTopupLimit(owner.TransactOpts(WithGasLimit(65000)), finneyToWei(500))
 						Expect(err).ToNot(HaveOccurred())
 						be.Commit()
 						Expect(isSuccessful(tx)).To(BeTrue())

@@ -8,6 +8,7 @@ import (
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	"github.com/tokencard/ethertest"
+	. "github.com/tokencard/ethertest"
 )
 
 var _ = Describe("topupGas", func() {
@@ -29,7 +30,7 @@ var _ = Describe("topupGas", func() {
 		Context("When called by the wallet controller and is lower than topup limit", func() {
 
 			BeforeEach(func() {
-				tx, err = w.TopupGas(caller.TransactOptsWithGasLimit(81000), ONE_FINNEY)
+				tx, err = w.TopupGas(caller.TransactOpts(WithGasLimit(81000)), ONE_FINNEY)
 				be.Commit()
 			})
 
@@ -45,7 +46,7 @@ var _ = Describe("topupGas", func() {
 		Context("When the value is above topup limit", func() {
 
 			BeforeEach(func() {
-				tx, err = w.TopupGas(caller.TransactOptsWithGasLimit(81000), ONE_ETH)
+				tx, err = w.TopupGas(caller.TransactOpts(WithGasLimit(81000)), ONE_ETH)
 				Expect(err).ToNot(HaveOccurred())
 				be.Commit()
 			})
@@ -74,14 +75,14 @@ var _ = Describe("topupGas", func() {
 			})
 
 			BeforeEach(func() {
-				tx, err = w.TopupGas(caller.TransactOptsWithGasLimit(81000), ONE_ETH)
+				tx, err = w.TopupGas(caller.TransactOpts(WithGasLimit(81000)), ONE_ETH)
 				Expect(err).ToNot(HaveOccurred())
 				be.Commit()
 				Expect(isSuccessful(tx)).To(BeTrue())
 			})
 
 			BeforeEach(func() {
-				tx, err = w.TopupGas(caller.TransactOptsWithGasLimit(165000), ONE_ETH)
+				tx, err = w.TopupGas(caller.TransactOpts(WithGasLimit(165000)), ONE_ETH)
 				Expect(err).ToNot(HaveOccurred())
 				be.Commit()
 			})
@@ -101,7 +102,7 @@ var _ = Describe("topupGas", func() {
 				})
 
 				BeforeEach(func() {
-					tx, err = w.TopupGas(caller.TransactOptsWithGasLimit(165000), ONE_ETH)
+					tx, err = w.TopupGas(caller.TransactOpts(WithGasLimit(165000)), ONE_ETH)
 					Expect(err).ToNot(HaveOccurred())
 					be.Commit()
 				})
@@ -134,7 +135,7 @@ var _ = Describe("topupGas", func() {
 			Context("when the value is lower than topup limit", func() {
 
 				BeforeEach(func() {
-					tx, err = w.TopupGas(caller.TransactOptsWithGasLimit(81000), finneyToWei(500))
+					tx, err = w.TopupGas(caller.TransactOpts(WithGasLimit(81000)), finneyToWei(500))
 					Expect(err).ToNot(HaveOccurred())
 					be.Commit()
 				})
@@ -152,7 +153,7 @@ var _ = Describe("topupGas", func() {
 			Context("When the value is above topup limit", func() {
 
 				BeforeEach(func() {
-					tx, err = w.TopupGas(caller.TransactOptsWithGasLimit(81000), finneyToWei(800))
+					tx, err = w.TopupGas(caller.TransactOpts(WithGasLimit(81000)), finneyToWei(800))
 					Expect(err).ToNot(HaveOccurred())
 					be.Commit()
 				})
@@ -177,13 +178,13 @@ var _ = Describe("topupGas", func() {
 			Context("When daily limit has been exausted", func() {
 
 				BeforeEach(func() {
-					tx, err = w.TopupGas(caller.TransactOptsWithGasLimit(81000), finneyToWei(500))
+					tx, err = w.TopupGas(caller.TransactOpts(WithGasLimit(81000)), finneyToWei(500))
 					Expect(err).ToNot(HaveOccurred())
 					be.Commit()
 				})
 
 				BeforeEach(func() {
-					tx, err = w.TopupGas(caller.TransactOptsWithGasLimit(165000), ONE_ETH)
+					tx, err = w.TopupGas(caller.TransactOpts(WithGasLimit(165000)), ONE_ETH)
 					be.Commit()
 				})
 
@@ -202,7 +203,7 @@ var _ = Describe("topupGas", func() {
 					})
 
 					BeforeEach(func() {
-						tx, err = w.TopupGas(caller.TransactOptsWithGasLimit(165000), ONE_ETH)
+						tx, err = w.TopupGas(caller.TransactOpts(WithGasLimit(165000)), ONE_ETH)
 						be.Commit()
 					})
 
@@ -233,7 +234,7 @@ var _ = Describe("topupGas", func() {
 			})
 
 			BeforeEach(func() {
-				tx, err = w.TopupGas(caller.TransactOptsWithGasLimit(165000), ONE_ETH)
+				tx, err = w.TopupGas(caller.TransactOpts(WithGasLimit(165000)), ONE_ETH)
 				Expect(err).ToNot(HaveOccurred())
 				be.Commit()
 			})

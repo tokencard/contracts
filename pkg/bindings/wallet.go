@@ -28,10 +28,10 @@ var (
 )
 
 // WalletABI is the input ABI used to generate the binding from.
-const WalletABI = "[{\"constant\":true,\"inputs\":[{\"name\":\"interfaceID\",\"type\":\"bytes4\"}],\"name\":\"supportsInterface\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"pendingTopupLimit\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"isTransferable\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[],\"name\":\"cancelWhitelistAddition\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"submittedWhitelistAddition\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"pendingWhitelistRemoval\",\"outputs\":[{\"name\":\"\",\"type\":\"address[]\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"submittedTopupLimit\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"\",\"type\":\"address\"}],\"name\":\"isWhitelisted\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[],\"name\":\"confirmWhitelistAddition\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"pendingWhitelistAddition\",\"outputs\":[{\"name\":\"\",\"type\":\"address[]\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[],\"name\":\"confirmWhitelistRemoval\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[],\"name\":\"cancelWhitelistRemoval\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[],\"name\":\"cancelSpendLimit\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"initializedSpendLimit\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"initializeSpendLimit\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_addresses\",\"type\":\"address[]\"}],\"name\":\"submitWhitelistRemoval\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"topupAvailable\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_addresses\",\"type\":\"address[]\"}],\"name\":\"submitWhitelistAddition\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[],\"name\":\"confirmTopupLimit\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"initializeTopupLimit\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[],\"name\":\"cancelTopupLimit\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[],\"name\":\"confirmSpendLimit\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"spendLimit\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"initializedWhitelist\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_to\",\"type\":\"address\"},{\"name\":\"_asset\",\"type\":\"address\"},{\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"transfer\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"pendingSpendLimit\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_controller\",\"type\":\"address\"}],\"name\":\"newController\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"initializedTopupLimit\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"submitTopupLimit\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"submittedSpendLimit\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"topupLimit\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"submitSpendLimit\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"spendAvailable\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"submittedWhitelistRemoval\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_asset\",\"type\":\"address\"}],\"name\":\"balance\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"topupGas\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_account\",\"type\":\"address\"}],\"name\":\"transferOwnership\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_addresses\",\"type\":\"address[]\"}],\"name\":\"initializeWhitelist\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"name\":\"_owner\",\"type\":\"address\"},{\"name\":\"_transferable\",\"type\":\"bool\"},{\"name\":\"_resolver\",\"type\":\"address\"},{\"name\":\"_controller\",\"type\":\"address\"},{\"name\":\"_spendLimit\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"payable\":true,\"stateMutability\":\"payable\",\"type\":\"fallback\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_sender\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"TopupLimitSet\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"TopupLimitSubmitted\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_sender\",\"type\":\"address\"}],\"name\":\"TopupLimitCancelled\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_sender\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_owner\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"TopupGas\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_from\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"DepositReceived\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_to\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_asset\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"Transferred\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_sender\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"SpendLimitSet\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"SpendLimitSubmitted\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_sender\",\"type\":\"address\"}],\"name\":\"SpendLimitCancelled\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_sender\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_addresses\",\"type\":\"address[]\"}],\"name\":\"WhitelistAdded\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_addresses\",\"type\":\"address[]\"}],\"name\":\"WhitelistAdditionSubmitted\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_sender\",\"type\":\"address\"}],\"name\":\"WhitelistAdditionCancelled\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_sender\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_addresses\",\"type\":\"address[]\"}],\"name\":\"WhitelistRemoved\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_addresses\",\"type\":\"address[]\"}],\"name\":\"WhitelistRemovalSubmitted\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_sender\",\"type\":\"address\"}],\"name\":\"WhitelistRemovalCancelled\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_to\",\"type\":\"address\"}],\"name\":\"OwnershipTransferred\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_old\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_new\",\"type\":\"address\"}],\"name\":\"ControllerResolverChanged\",\"type\":\"event\"}]"
+const WalletABI = "[{\"constant\":true,\"inputs\":[{\"name\":\"interfaceID\",\"type\":\"bytes4\"}],\"name\":\"supportsInterface\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"pendingTopupLimit\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"isTransferable\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[],\"name\":\"cancelWhitelistAddition\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"submittedWhitelistAddition\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"pendingWhitelistRemoval\",\"outputs\":[{\"name\":\"\",\"type\":\"address[]\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"submittedTopupLimit\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"\",\"type\":\"address\"}],\"name\":\"isWhitelisted\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[],\"name\":\"confirmWhitelistAddition\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"pendingWhitelistAddition\",\"outputs\":[{\"name\":\"\",\"type\":\"address[]\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[],\"name\":\"confirmWhitelistRemoval\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[],\"name\":\"cancelWhitelistRemoval\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[],\"name\":\"cancelSpendLimit\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"initializedSpendLimit\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"initializeSpendLimit\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_addresses\",\"type\":\"address[]\"}],\"name\":\"submitWhitelistRemoval\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"topupAvailable\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_addresses\",\"type\":\"address[]\"}],\"name\":\"submitWhitelistAddition\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[],\"name\":\"confirmTopupLimit\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"initializeTopupLimit\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[],\"name\":\"cancelTopupLimit\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[],\"name\":\"confirmSpendLimit\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"spendLimit\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"initializedWhitelist\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_to\",\"type\":\"address\"},{\"name\":\"_asset\",\"type\":\"address\"},{\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"transfer\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"pendingSpendLimit\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_controller\",\"type\":\"address\"}],\"name\":\"newController\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"initializedTopupLimit\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"submitTopupLimit\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"submittedSpendLimit\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"topupLimit\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"submitSpendLimit\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"spendAvailable\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"submittedWhitelistRemoval\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_asset\",\"type\":\"address\"}],\"name\":\"balance\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"topupGas\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_account\",\"type\":\"address\"}],\"name\":\"transferOwnership\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_addresses\",\"type\":\"address[]\"}],\"name\":\"initializeWhitelist\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"name\":\"_owner\",\"type\":\"address\"},{\"name\":\"_transferable\",\"type\":\"bool\"},{\"name\":\"_resolver\",\"type\":\"address\"},{\"name\":\"_controller\",\"type\":\"address\"},{\"name\":\"_spendLimit\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"payable\":true,\"stateMutability\":\"payable\",\"type\":\"fallback\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_sender\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"SetTopupLimit\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"SubmittedTopupLimit\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_sender\",\"type\":\"address\"}],\"name\":\"CancelledTopupLimit\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_sender\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_owner\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"TopupGas\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_from\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"DepositReceived\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_to\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_asset\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"Transferred\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_sender\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"SetSpendLimit\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"SubmittedSpendLimit\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_sender\",\"type\":\"address\"}],\"name\":\"CancelledSpendLimit\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_sender\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_addresses\",\"type\":\"address[]\"}],\"name\":\"AddedToWhitelist\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_addresses\",\"type\":\"address[]\"}],\"name\":\"SubmittedWhitelistAddition\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_sender\",\"type\":\"address\"}],\"name\":\"CancelledWhitelistAddition\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_sender\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_addresses\",\"type\":\"address[]\"}],\"name\":\"RemovedFromWhitelist\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_addresses\",\"type\":\"address[]\"}],\"name\":\"SubmittedWhitelistRemoval\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_sender\",\"type\":\"address\"}],\"name\":\"CancelledWhitelistRemoval\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_to\",\"type\":\"address\"}],\"name\":\"OwnershipTransferred\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_old\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_new\",\"type\":\"address\"}],\"name\":\"ControllerResolverChanged\",\"type\":\"event\"}]"
 
 // WalletBin is the compiled bytecode used for deploying new contracts.
-const WalletBin = `608060405234801561001057600080fd5b5060405160a080612bc28339810160409081528151602083015191830151606084015160809094015160008054600160a060020a03968716600160a060020a03199182161790915560018054951515740100000000000000000000000000000000000000000260a060020a60ff0219958816969092169590951793909316929092179092556006819055426007819055600891909155600a80549390921662010000026201000060b060020a0319909316929092179055600c556706f05b59d3b20000600b819055600d55612ad8806100ea6000396000f3006080604052600436106101c95763ffffffff60e060020a60003504166301ffc9a781146102055780630978f5a0146102505780632121dc751461027757806322401bde1461028c57806326d05ab2146102a3578063294f4025146102b85780633671bb0d1461031d5780633af32abf146103325780633b98fe841461035357806347b55a9d146103685780634b7304081461037d5780635204110c1461039257806354f599d7146103a75780635658eff0146103bc57806358453569146103d15780636137d670146103e95780636fc95b89146104095780637fd004fa1461041e5780638da5cb5b1461043e5780638e112cf91461046f5780638ff3bf331461048457806395eccddb1461049c57806396136585146104b1578063aceaf92d146104c6578063afa0fd9b146104db578063beabacc8146104f0578063c8ecaddb1461051a578063ca57cb781461052f578063cd96895c14610550578063d3a6058614610565578063d56665901461057d578063d87d2a3914610592578063d9ec3018146105a7578063dae37fac146105bf578063de212bf3146105d4578063e3d670d7146105e9578063eca717921461060a578063f2fde38b14610622578063f4199bb814610643575b6040805133815234602082015281517f9936746a4565f9766fa768f88f56a7487c78780ac179562773d1c75c5269537e929181900390910190a1005b34801561021157600080fd5b5061023c7bffffffffffffffffffffffffffffffffffffffffffffffffffffffff1960043516610663565b604080519115158252519081900360200190f35b34801561025c57600080fd5b506102656106ab565b60408051918252519081900360200190f35b34801561028357600080fd5b5061023c6106b1565b34801561029857600080fd5b506102a16106d3565b005b3480156102af57600080fd5b5061023c61076b565b3480156102c457600080fd5b506102cd610774565b60408051602080825283518183015283519192839290830191858101910280838360005b838110156103095781810151838201526020016102f1565b505050509050019250505060405180910390f35b34801561032957600080fd5b5061023c6107d6565b34801561033e57600080fd5b5061023c600160a060020a03600435166107df565b34801561035f57600080fd5b506102a16107f4565b34801561037457600080fd5b506102cd6109d7565b34801561038957600080fd5b506102a1610a37565b34801561039e57600080fd5b506102a1610ca0565b3480156103b357600080fd5b506102a1610d39565b3480156103c857600080fd5b5061023c610dca565b3480156103dd57600080fd5b506102a1600435610dd8565b3480156103f557600080fd5b506102a16004803560248101910135610f00565b34801561041557600080fd5b50610265611059565b34801561042a57600080fd5b506102a1600480356024810191013561107c565b34801561044a57600080fd5b5061045361134d565b60408051600160a060020a039092168252519081900360200190f35b34801561047b57600080fd5b506102a161135c565b34801561049057600080fd5b506102a16004356114b0565b3480156104a857600080fd5b506102a1611673565b3480156104bd57600080fd5b506102a1611704565b3480156104d257600080fd5b5061026561182d565b3480156104e757600080fd5b5061023c611833565b3480156104fc57600080fd5b506102a1600160a060020a0360043581169060243516604435611842565b34801561052657600080fd5b50610265611c75565b34801561053b57600080fd5b506102a1600160a060020a0360043516611c7b565b34801561055c57600080fd5b5061023c611d3f565b34801561057157600080fd5b506102a1600435611d4d565b34801561058957600080fd5b5061023c611f83565b34801561059e57600080fd5b50610265611f8c565b3480156105b357600080fd5b506102a1600435611f92565b3480156105cb57600080fd5b5061026561212d565b3480156105e057600080fd5b5061023c612150565b3480156105f557600080fd5b50610265600160a060020a036004351661215e565b34801561061657600080fd5b506102a160043561220b565b34801561062e57600080fd5b506102a1600160a060020a0360043516612435565b34801561064f57600080fd5b506102a160048035602481019101356125b7565b7bffffffffffffffffffffffffffffffffffffffffffffffffffffffff1981167f01ffc9a700000000000000000000000000000000000000000000000000000000145b919050565b600e5481565b60015474010000000000000000000000000000000000000000900460ff165b90565b6106dc3361284d565b1515610720576040805160e560020a62461bcd02815260206004820152601a6024820152600080516020612a8d833981519152604482015290519081900360640190fd5b61072c60036000612993565b6005805460ff191690556040805133815290517f52b0bc9c244e000beb0e24535b386411b96be4257d9738097806172fb2224b669181900360200190a1565b60055460ff1681565b606060048054806020026020016040519081016040528092919081815260200182805480156107cc57602002820191906000526020600020905b8154600160a060020a031681526001909101906020018083116107ae575b5050505050905090565b600f5460ff1681565b60026020526000908152604090205460ff1681565b60006107ff3361284d565b1515610843576040805160e560020a62461bcd02815260206004820152601a6024820152600080516020612a8d833981519152604482015290519081900360640190fd5b60055460ff1615156108c5576040805160e560020a62461bcd02815260206004820152602960248201527f77686974656c697374206164646974696f6e20686173206e6f74206265656e2060448201527f7375626d69747465640000000000000000000000000000000000000000000000606482015290519081900360840190fd5b5060005b600354811015610924576001600260006003848154811015156108e857fe5b600091825260208083209190910154600160a060020a031683528201929092526040019020805460ff19169115159190911790556001016108c9565b7fd98606aaa487d6600d0ccc0412dcdf79adc4f37f1deb6a6f9710ee6f458a7fb33360036040518083600160a060020a0316600160a060020a031681526020018060200182810382528381815481526020019150805480156109af57602002820191906000526020600020905b8154600160a060020a03168152600190910190602001808311610991575b5050935050505060405180910390a16109ca60036000612993565b506005805460ff19169055565b606060038054806020026020016040519081016040528092919081815260200182805480156107cc57602002820191906000526020600020908154600160a060020a031681526001909101906020018083116107ae575050505050905090565b6000610a423361284d565b1515610a86576040805160e560020a62461bcd02815260206004820152601a6024820152600080516020612a8d833981519152604482015290519081900360640190fd5b600554610100900460ff161515610b0d576040805160e560020a62461bcd02815260206004820152602860248201527f77686974656c6973742072656d6f76616c20686173206e6f74206265656e207360448201527f75626d6974746564000000000000000000000000000000000000000000000000606482015290519081900360840190fd5b600454600010610b8d576040805160e560020a62461bcd02815260206004820152602260248201527f70656e64696e672077686974656c6973742072656d6f76616c20697320656d7060448201527f7479000000000000000000000000000000000000000000000000000000000000606482015290519081900360840190fd5b5060005b600454811015610bec57600060026000600484815481101515610bb057fe5b600091825260208083209190910154600160a060020a031683528201929092526040019020805460ff1916911515919091179055600101610b91565b7f8dcc5cbf3fad6045849f4884bb2e80fc9e15ece7a07ae215b197123807847a0d3360046040518083600160a060020a0316600160a060020a03168152602001806020018281038252838181548152602001915080548015610c7757602002820191906000526020600020905b8154600160a060020a03168152600190910190602001808311610c59575b5050935050505060405180910390a1610c9260046000612993565b506005805461ff0019169055565b610ca93361284d565b1515610ced576040805160e560020a62461bcd02815260206004820152601a6024820152600080516020612a8d833981519152604482015290519081900360640190fd5b610cf960046000612993565b6005805461ff00191690556040805133815290517f8629df681796168db65daa22769456c33e3e8eaf0f9c80e13efff7905e2903819181900360200190a1565b610d423361284d565b1515610d86576040805160e560020a62461bcd02815260206004820152601a6024820152600080516020612a8d833981519152604482015290519081900360640190fd5b6000600955600a805460ff191690556040805133815290517f18a837b2338e54e45f66b65e880c92515fe1fcbb3ea7f1710674ed479ada749f9181900360200190a1565b600a54610100900460ff1681565b610de06128e7565b1515610e24576040805160e560020a62461bcd0281526020600482015260166024820152600080516020612a6d833981519152604482015290519081900360640190fd5b600a54610100900460ff1615610eaa576040805160e560020a62461bcd02815260206004820152602860248201527f7370656e64206c696d69742068617320616c7265616479206265656e20696e6960448201527f7469616c697a6564000000000000000000000000000000000000000000000000606482015290519081900360840190fd5b610eb3816128f8565b600a805461ff001916610100179055604080513381526020810183905281517f13693f63ecb2f7da8178b895e26f5d32ce3fbd6bba8832ccd970d75116b25f1a929181900390910190a150565b610f086128e7565b1515610f4c576040805160e560020a62461bcd0281526020600482015260166024820152600080516020612a6d833981519152604482015290519081900360640190fd5b60055460ff16158015610f675750600554610100900460ff16155b1515610fe3576040805160e560020a62461bcd02815260206004820152602e60248201527f77686974656c697374206f7065726174696f6e2068617320616c72656164792060448201527f6265656e207375626d6974746564000000000000000000000000000000000000606482015290519081900360840190fd5b610fef600483836129b1565b506005805461ff0019166101001790556040805160208082528082018490527f56c8087c53ba3bd97430c1270719f4e10315cfb883bd92aacb97effe531f062492859285929091829190820190859085028082843760405192018290039550909350505050a15050565b6000600c5462015180014211156110735750600b546106d0565b50600d546106d0565b6110846128e7565b15156110c8576040805160e560020a62461bcd0281526020600482015260166024820152600080516020612a6d833981519152604482015290519081900360640190fd5b60055460ff161580156110e35750600554610100900460ff16155b151561115f576040805160e560020a62461bcd02815260206004820152602e60248201527f77686974656c697374206f7065726174696f6e2068617320616c72656164792060448201527f6265656e207375626d6974746564000000000000000000000000000000000000606482015290519081900360840190fd5b8181808060200260200160405190810160405280939291908181526020018383602002808284375060009450505050505b815181101561124f576111a161134d565b600160a060020a031682828151811015156111b857fe5b60209081029091010151600160a060020a03161415611247576040805160e560020a62461bcd02815260206004820152602d60248201527f70726f76696465642077686974656c69737420636f6e7461696e73207468652060448201527f6f776e6572206164647265737300000000000000000000000000000000000000606482015290519081900360840190fd5b600101611190565b60055462010000900460ff1615156112d7576040805160e560020a62461bcd02815260206004820152602260248201527f77686974656c69737420686173206e6f74206265656e20696e697469616c697a60448201527f6564000000000000000000000000000000000000000000000000000000000000606482015290519081900360840190fd5b6112e3600385856129b1565b506005805460ff191660011790556040805160208082528082018690527fd9a6feb0b6b0bf85f02a1e3cea31a41fb2b7a92cf5aec53cf6162d30829ce0e892879287929091829190820190859085028082843760405192018290039550909350505050a150505050565b600154600160a060020a031690565b6113653361284d565b15156113a9576040805160e560020a62461bcd02815260206004820152601a6024820152600080516020612a8d833981519152604482015290519081900360640190fd5b600f5460ff16151561142b576040805160e560020a62461bcd02815260206004820152602260248201527f746f707570206c696d697420686173206e6f74206265656e207375626d69747460448201527f6564000000000000000000000000000000000000000000000000000000000000606482015290519081900360840190fd5b600e5466038d7ea4c680001115801561144e57506706f05b59d3b20000600e5411155b151561145657fe5b611461600e54612919565b600e5460408051338152602081019290925280517f30cdfef434cd0bf85708997856f523c20b62eebe0d780dc0c1d4896a7efd8f2f9281900390910190a16000600e55600f805460ff19169055565b6114b86128e7565b15156114fc576040805160e560020a62461bcd0281526020600482015260166024820152600080516020612a6d833981519152604482015290519081900360640190fd5b600f54610100900460ff1615611582576040805160e560020a62461bcd02815260206004820152602860248201527f746f707570206c696d69742068617320616c7265616479206265656e20696e6960448201527f7469616c697a6564000000000000000000000000000000000000000000000000606482015290519081900360840190fd5b8066038d7ea4c68000111580156115a157506706f05b59d3b200008111155b151561161d576040805160e560020a62461bcd02815260206004820152602c60248201527f746f70757020616d6f756e74206973206f757473696465206f6620746865206d60448201527f696e2f6d61782072616e67650000000000000000000000000000000000000000606482015290519081900360840190fd5b61162681612919565b600f805461ff001916610100179055604080513381526020810183905281517f30cdfef434cd0bf85708997856f523c20b62eebe0d780dc0c1d4896a7efd8f2f929181900390910190a150565b61167c3361284d565b15156116c0576040805160e560020a62461bcd02815260206004820152601a6024820152600080516020612a8d833981519152604482015290519081900360640190fd5b6000600e55600f805460ff191690556040805133815290517f206d7706b533d822ed2b6463324b95061754aa9141df1f79a034250914a6c1829181900360200190a1565b61170d3361284d565b1515611751576040805160e560020a62461bcd02815260206004820152601a6024820152600080516020612a8d833981519152604482015290519081900360640190fd5b600a5460ff1615156117d3576040805160e560020a62461bcd02815260206004820152602260248201527f7370656e64206c696d697420686173206e6f74206265656e207375626d69747460448201527f6564000000000000000000000000000000000000000000000000000000000000606482015290519081900360840190fd5b6117de6009546128f8565b60095460408051338152602081019290925280517f13693f63ecb2f7da8178b895e26f5d32ce3fbd6bba8832ccd970d75116b25f1a9281900390910190a1600a805460ff191690556000600955565b60065481565b60055462010000900460ff1681565b600061184c6128e7565b1515611890576040805160e560020a62461bcd0281526020600482015260166024820152600080516020612a6d833981519152604482015290519081900360640190fd5b818015156118e8576040805160e560020a62461bcd02815260206004820152601d60248201527f70726f76696465642076616c75652063616e6e6f74206265207a65726f000000604482015290519081900360640190fd5b600160a060020a03851660009081526002602052604090205460ff161515611acd57611912612939565b600160a060020a03841615611a3f57600a60029054906101000a9004600160a060020a0316600160a060020a03166338cc48316040518163ffffffff1660e060020a028152600401602060405180830381600087803b15801561197457600080fd5b505af1158015611988573d6000803e3d6000fd5b505050506040513d602081101561199e57600080fd5b5051604080517f67c6e39c000000000000000000000000000000000000000000000000000000008152600160a060020a03878116600483015260248201879052915191909216916367c6e39c9160448083019260209291908290030181600087803b158015611a0c57600080fd5b505af1158015611a20573d6000803e3d6000fd5b505050506040513d6020811015611a3657600080fd5b50519150611a43565b8291505b600854821115611ac3576040805160e560020a62461bcd02815260206004820152602d60248201527f7472616e7366657220616d6f756e74206578636565647320617661696c61626c60448201527f65207370656e64206c696d697400000000000000000000000000000000000000606482015290519081900360840190fd5b6008805483900390555b600160a060020a03841615611bec5783600160a060020a031663a9059cbb86856040518363ffffffff1660e060020a0281526004018083600160a060020a0316600160a060020a0316815260200182815260200192505050602060405180830381600087803b158015611b3f57600080fd5b505af1158015611b53573d6000803e3d6000fd5b505050506040513d6020811015611b6957600080fd5b50511515611be7576040805160e560020a62461bcd02815260206004820152602560248201527f455243323020746f6b656e207472616e736665722077617320756e737563636560448201527f737366756c000000000000000000000000000000000000000000000000000000606482015290519081900360840190fd5b611c24565b604051600160a060020a0386169084156108fc029085906000818181858888f19350505050158015611c22573d6000803e3d6000fd5b505b60408051600160a060020a0380881682528616602082015280820185905290517fd1ba4ac2e2a11b5101f6cb4d978f514a155b421e8ec396d2d9abaf0bb02917ee9181900360600190a15050505050565b60095481565b611c843361284d565b1515611cc8576040805160e560020a62461bcd02815260206004820152601a6024820152600080516020612a8d833981519152604482015290519081900360640190fd5b60005460408051600160a060020a039283168152918316602083015280517f95d5e19ddf857cd05ebf87d06d1bef8ceab83305a3f833ff72d6cfafbf76f8259281900390910190a16000805473ffffffffffffffffffffffffffffffffffffffff1916600160a060020a0392909216919091179055565b600f54610100900460ff1681565b611d556128e7565b1515611d99576040805160e560020a62461bcd0281526020600482015260166024820152600080516020612a6d833981519152604482015290519081900360640190fd5b600f54610100900460ff161515611e1f576040805160e560020a62461bcd028152602060048201526024808201527f746f707570206c696d697420686173206e6f74206265656e20696e697469616c60448201527f697a656400000000000000000000000000000000000000000000000000000000606482015290519081900360840190fd5b600f5460ff1615611ea0576040805160e560020a62461bcd02815260206004820152602660248201527f746f707570206c696d69742068617320616c7265616479206265656e2073756260448201527f6d69747465640000000000000000000000000000000000000000000000000000606482015290519081900360840190fd5b8066038d7ea4c6800011158015611ebf57506706f05b59d3b200008111155b1515611f3b576040805160e560020a62461bcd02815260206004820152602c60248201527f746f70757020616d6f756e74206973206f757473696465206f6620746865206d60448201527f696e2f6d61782072616e67650000000000000000000000000000000000000000606482015290519081900360840190fd5b600e819055600f805460ff191660011790556040805182815290517f58f80b6bbdc1ed8f57adb757fea1942dc103ee0e8145f6c6af899e00e6d1c7649181900360200190a150565b600a5460ff1681565b600b5481565b611f9a6128e7565b1515611fde576040805160e560020a62461bcd0281526020600482015260166024820152600080516020612a6d833981519152604482015290519081900360640190fd5b600a54610100900460ff161515612064576040805160e560020a62461bcd028152602060048201526024808201527f7370656e64206c696d697420686173206e6f74206265656e20696e697469616c60448201527f697a656400000000000000000000000000000000000000000000000000000000606482015290519081900360840190fd5b600a5460ff16156120e5576040805160e560020a62461bcd02815260206004820152602660248201527f7370656e64206c696d69742068617320616c7265616479206265656e2073756260448201527f6d69747465640000000000000000000000000000000000000000000000000000606482015290519081900360840190fd5b6009819055600a805460ff191660011790556040805182815290517f5a9022428d76bcf4eea69f5b951c7a06e03f68b46ad277a0f9f91e3aa447b62a9181900360200190a150565b6000600754620151800142111561214757506006546106d0565b506008546106d0565b600554610100900460ff1681565b6000600160a060020a0382161561220357604080517f70a082310000000000000000000000000000000000000000000000000000000081523060048201529051600160a060020a038416916370a082319160248083019260209291908290030181600087803b1580156121d057600080fd5b505af11580156121e4573d6000803e3d6000fd5b505050506040513d60208110156121fa57600080fd5b505190506106a6565b5030316106a6565b600081801515612265576040805160e560020a62461bcd02815260206004820152601d60248201527f70726f76696465642076616c75652063616e6e6f74206265207a65726f000000604482015290519081900360640190fd5b61226d6128e7565b8061227c575061227c3361284d565b15156122f8576040805160e560020a62461bcd02815260206004820152602b60248201527f73656e646572206973206e65697468657220616e206f776e6572206e6f72206160448201527f20636f6e74726f6c6c6572000000000000000000000000000000000000000000606482015290519081900360840190fd5b612300612966565b600d54151561237e576040805160e560020a62461bcd028152602060048201526024808201527f617661696c61626c6520746f707570206c696d69742063616e6e6f742062652060448201527f7a65726f00000000000000000000000000000000000000000000000000000000606482015290519081900360840190fd5b829150600d5482111561239157600d5491505b600d805483900390556123a261134d565b600160a060020a03166108fc839081150290604051600060405180830381858888f193505050501580156123da573d6000803e3d6000fd5b507f11bb310b94280c15845698b8ce945817e14456a5d1582e387e6e4a01ef2c67423261240561134d565b60408051600160a060020a03938416815291909216602082015280820185905290519081900360600190a1505050565b61243d6128e7565b1515612481576040805160e560020a62461bcd0281526020600482015260166024820152600080516020612a6d833981519152604482015290519081900360640190fd5b60015474010000000000000000000000000000000000000000900460ff1615156124f5576040805160e560020a62461bcd02815260206004820152601d60248201527f6f776e657273686970206973206e6f74207472616e7366657261626c65000000604482015290519081900360640190fd5b600160a060020a0381161515612555576040805160e560020a62461bcd02815260206004820152601a60248201527f6f776e65722063616e6e6f742062652073657420746f20307830000000000000604482015290519081900360640190fd5b60018054600160a060020a03831674ffffffffffffffffffffffffffffffffffffffffff19909116811790915560408051918252517f04dba622d284ed0014ee4b9a6a68386be1a4c08a4913ae272de89199cc6861639181900360200190a150565b60006125c16128e7565b1515612605576040805160e560020a62461bcd0281526020600482015260166024820152600080516020612a6d833981519152604482015290519081900360640190fd5b8282808060200260200160405190810160405280939291908181526020018383602002808284375060009450505050505b81518110156126f55761264761134d565b600160a060020a0316828281518110151561265e57fe5b60209081029091010151600160a060020a031614156126ed576040805160e560020a62461bcd02815260206004820152602d60248201527f70726f76696465642077686974656c69737420636f6e7461696e73207468652060448201527f6f776e6572206164647265737300000000000000000000000000000000000000606482015290519081900360840190fd5b600101612636565b60055462010000900460ff161561277c576040805160e560020a62461bcd02815260206004820152602660248201527f77686974656c6973742068617320616c7265616479206265656e20696e69746960448201527f616c697a65640000000000000000000000000000000000000000000000000000606482015290519081900360840190fd5b600092505b838310156127d85760016002600087878781811061279b57fe5b60209081029290920135600160a060020a0316835250810191909152604001600020805460ff191691151591909117905560019290920191612781565b6005805462ff0000191662010000179055604080513380825260208083018481529383018890527fd98606aaa487d6600d0ccc0412dcdf79adc4f37f1deb6a6f9710ee6f458a7fb393919289928992606083019085908502808284376040519201829003965090945050505050a15050505050565b60008054604080517fb429afeb000000000000000000000000000000000000000000000000000000008152600160a060020a0385811660048301529151919092169163b429afeb91602480830192602092919082900301818787803b1580156128b557600080fd5b505af11580156128c9573d6000803e3d6000fd5b505050506040513d60208110156128df57600080fd5b505192915050565b600154600160a060020a0316331490565b612900612939565b6006819055600854811015612916576006546008555b50565b612921612966565b600b819055600d5481101561291657600b54600d5550565b60006007546201518001421115612916575060078054620151804282900381900402019055600654600855565b6000600c5462015180014211156129165750600c8054620151804282900381900402019055600b54600d55565b50805460008255906000526020600020908101906129169190612a21565b828054828255906000526020600020908101928215612a11579160200282015b82811115612a1157815473ffffffffffffffffffffffffffffffffffffffff1916600160a060020a038435161782556020909201916001909101906129d1565b50612a1d929150612a3b565b5090565b6106d091905b80821115612a1d5760008155600101612a27565b6106d091905b80821115612a1d57805473ffffffffffffffffffffffffffffffffffffffff19168155600101612a41560073656e646572206973206e6f7420616e206f776e65720000000000000000000073656e646572206973206e6f74206120636f6e74726f6c6c6572000000000000a165627a7a72305820aa7f6d292e1c4e7ff3f6d536e12c11025bfcb5241dd42d924632799f53eb457a0029`
+const WalletBin = `608060405234801561001057600080fd5b5060405160a080612bc28339810160409081528151602083015191830151606084015160809094015160008054600160a060020a03968716600160a060020a03199182161790915560018054951515740100000000000000000000000000000000000000000260a060020a60ff0219958816969092169590951793909316929092179092556006819055426007819055600891909155600a80549390921662010000026201000060b060020a0319909316929092179055600c556706f05b59d3b20000600b819055600d55612ad8806100ea6000396000f3006080604052600436106101c95763ffffffff60e060020a60003504166301ffc9a781146102055780630978f5a0146102505780632121dc751461027757806322401bde1461028c57806326d05ab2146102a3578063294f4025146102b85780633671bb0d1461031d5780633af32abf146103325780633b98fe841461035357806347b55a9d146103685780634b7304081461037d5780635204110c1461039257806354f599d7146103a75780635658eff0146103bc57806358453569146103d15780636137d670146103e95780636fc95b89146104095780637fd004fa1461041e5780638da5cb5b1461043e5780638e112cf91461046f5780638ff3bf331461048457806395eccddb1461049c57806396136585146104b1578063aceaf92d146104c6578063afa0fd9b146104db578063beabacc8146104f0578063c8ecaddb1461051a578063ca57cb781461052f578063cd96895c14610550578063d3a6058614610565578063d56665901461057d578063d87d2a3914610592578063d9ec3018146105a7578063dae37fac146105bf578063de212bf3146105d4578063e3d670d7146105e9578063eca717921461060a578063f2fde38b14610622578063f4199bb814610643575b6040805133815234602082015281517f9936746a4565f9766fa768f88f56a7487c78780ac179562773d1c75c5269537e929181900390910190a1005b34801561021157600080fd5b5061023c7bffffffffffffffffffffffffffffffffffffffffffffffffffffffff1960043516610663565b604080519115158252519081900360200190f35b34801561025c57600080fd5b506102656106ab565b60408051918252519081900360200190f35b34801561028357600080fd5b5061023c6106b1565b34801561029857600080fd5b506102a16106d3565b005b3480156102af57600080fd5b5061023c61076b565b3480156102c457600080fd5b506102cd610774565b60408051602080825283518183015283519192839290830191858101910280838360005b838110156103095781810151838201526020016102f1565b505050509050019250505060405180910390f35b34801561032957600080fd5b5061023c6107d6565b34801561033e57600080fd5b5061023c600160a060020a03600435166107df565b34801561035f57600080fd5b506102a16107f4565b34801561037457600080fd5b506102cd6109d7565b34801561038957600080fd5b506102a1610a37565b34801561039e57600080fd5b506102a1610ca0565b3480156103b357600080fd5b506102a1610d39565b3480156103c857600080fd5b5061023c610dca565b3480156103dd57600080fd5b506102a1600435610dd8565b3480156103f557600080fd5b506102a16004803560248101910135610f00565b34801561041557600080fd5b50610265611059565b34801561042a57600080fd5b506102a1600480356024810191013561107c565b34801561044a57600080fd5b5061045361134d565b60408051600160a060020a039092168252519081900360200190f35b34801561047b57600080fd5b506102a161135c565b34801561049057600080fd5b506102a16004356114b0565b3480156104a857600080fd5b506102a1611673565b3480156104bd57600080fd5b506102a1611704565b3480156104d257600080fd5b5061026561182d565b3480156104e757600080fd5b5061023c611833565b3480156104fc57600080fd5b506102a1600160a060020a0360043581169060243516604435611842565b34801561052657600080fd5b50610265611c75565b34801561053b57600080fd5b506102a1600160a060020a0360043516611c7b565b34801561055c57600080fd5b5061023c611d3f565b34801561057157600080fd5b506102a1600435611d4d565b34801561058957600080fd5b5061023c611f83565b34801561059e57600080fd5b50610265611f8c565b3480156105b357600080fd5b506102a1600435611f92565b3480156105cb57600080fd5b5061026561212d565b3480156105e057600080fd5b5061023c612150565b3480156105f557600080fd5b50610265600160a060020a036004351661215e565b34801561061657600080fd5b506102a160043561220b565b34801561062e57600080fd5b506102a1600160a060020a0360043516612435565b34801561064f57600080fd5b506102a160048035602481019101356125b7565b7bffffffffffffffffffffffffffffffffffffffffffffffffffffffff1981167f01ffc9a700000000000000000000000000000000000000000000000000000000145b919050565b600e5481565b60015474010000000000000000000000000000000000000000900460ff165b90565b6106dc3361284d565b1515610720576040805160e560020a62461bcd02815260206004820152601a6024820152600080516020612a8d833981519152604482015290519081900360640190fd5b61072c60036000612993565b6005805460ff191690556040805133815290517f25d73bd719f2f11f571183502cb12c04453b3f963a034d89d1feebf4358f7f309181900360200190a1565b60055460ff1681565b606060048054806020026020016040519081016040528092919081815260200182805480156107cc57602002820191906000526020600020905b8154600160a060020a031681526001909101906020018083116107ae575b5050505050905090565b600f5460ff1681565b60026020526000908152604090205460ff1681565b60006107ff3361284d565b1515610843576040805160e560020a62461bcd02815260206004820152601a6024820152600080516020612a8d833981519152604482015290519081900360640190fd5b60055460ff1615156108c5576040805160e560020a62461bcd02815260206004820152602960248201527f77686974656c697374206164646974696f6e20686173206e6f74206265656e2060448201527f7375626d69747465640000000000000000000000000000000000000000000000606482015290519081900360840190fd5b5060005b600354811015610924576001600260006003848154811015156108e857fe5b600091825260208083209190910154600160a060020a031683528201929092526040019020805460ff19169115159190911790556001016108c9565b7fb2f6cccee7a369e23e293c25aa19bef80af11eb26deba3ea0f2a02783f752e4a3360036040518083600160a060020a0316600160a060020a031681526020018060200182810382528381815481526020019150805480156109af57602002820191906000526020600020905b8154600160a060020a03168152600190910190602001808311610991575b5050935050505060405180910390a16109ca60036000612993565b506005805460ff19169055565b606060038054806020026020016040519081016040528092919081815260200182805480156107cc57602002820191906000526020600020908154600160a060020a031681526001909101906020018083116107ae575050505050905090565b6000610a423361284d565b1515610a86576040805160e560020a62461bcd02815260206004820152601a6024820152600080516020612a8d833981519152604482015290519081900360640190fd5b600554610100900460ff161515610b0d576040805160e560020a62461bcd02815260206004820152602860248201527f77686974656c6973742072656d6f76616c20686173206e6f74206265656e207360448201527f75626d6974746564000000000000000000000000000000000000000000000000606482015290519081900360840190fd5b600454600010610b8d576040805160e560020a62461bcd02815260206004820152602260248201527f70656e64696e672077686974656c6973742072656d6f76616c20697320656d7060448201527f7479000000000000000000000000000000000000000000000000000000000000606482015290519081900360840190fd5b5060005b600454811015610bec57600060026000600484815481101515610bb057fe5b600091825260208083209190910154600160a060020a031683528201929092526040019020805460ff1916911515919091179055600101610b91565b7fd218c430fa348f4ce67791021b6b89c0c3eacd4ead1d8f5b83c60038ec28249b3360046040518083600160a060020a0316600160a060020a03168152602001806020018281038252838181548152602001915080548015610c7757602002820191906000526020600020905b8154600160a060020a03168152600190910190602001808311610c59575b5050935050505060405180910390a1610c9260046000612993565b506005805461ff0019169055565b610ca93361284d565b1515610ced576040805160e560020a62461bcd02815260206004820152601a6024820152600080516020612a8d833981519152604482015290519081900360640190fd5b610cf960046000612993565b6005805461ff00191690556040805133815290517f60bb946c4a1cccc534339b65c28159eda759452dae3765f17933d4b374f2ba379181900360200190a1565b610d423361284d565b1515610d86576040805160e560020a62461bcd02815260206004820152601a6024820152600080516020612a8d833981519152604482015290519081900360640190fd5b6000600955600a805460ff191690556040805133815290517f1a6f4fb68d01759f53aae31846f64b45ed6e4ea1e73ec0905db00eacd355450d9181900360200190a1565b600a54610100900460ff1681565b610de06128e7565b1515610e24576040805160e560020a62461bcd0281526020600482015260166024820152600080516020612a6d833981519152604482015290519081900360640190fd5b600a54610100900460ff1615610eaa576040805160e560020a62461bcd02815260206004820152602860248201527f7370656e64206c696d69742068617320616c7265616479206265656e20696e6960448201527f7469616c697a6564000000000000000000000000000000000000000000000000606482015290519081900360840190fd5b610eb3816128f8565b600a805461ff001916610100179055604080513381526020810183905281517f068f112e5ec923d412be64779fe69e0fcbb6784c6617e94cccc8fd348f2e0f21929181900390910190a150565b610f086128e7565b1515610f4c576040805160e560020a62461bcd0281526020600482015260166024820152600080516020612a6d833981519152604482015290519081900360640190fd5b60055460ff16158015610f675750600554610100900460ff16155b1515610fe3576040805160e560020a62461bcd02815260206004820152602e60248201527f77686974656c697374206f7065726174696f6e2068617320616c72656164792060448201527f6265656e207375626d6974746564000000000000000000000000000000000000606482015290519081900360840190fd5b610fef600483836129b1565b506005805461ff0019166101001790556040805160208082528082018490527fdd3cec2d800435e7127ecec5ff8ab7cc72d1ffc496a083747eb6516d669050d992859285929091829190820190859085028082843760405192018290039550909350505050a15050565b6000600c5462015180014211156110735750600b546106d0565b50600d546106d0565b6110846128e7565b15156110c8576040805160e560020a62461bcd0281526020600482015260166024820152600080516020612a6d833981519152604482015290519081900360640190fd5b60055460ff161580156110e35750600554610100900460ff16155b151561115f576040805160e560020a62461bcd02815260206004820152602e60248201527f77686974656c697374206f7065726174696f6e2068617320616c72656164792060448201527f6265656e207375626d6974746564000000000000000000000000000000000000606482015290519081900360840190fd5b8181808060200260200160405190810160405280939291908181526020018383602002808284375060009450505050505b815181101561124f576111a161134d565b600160a060020a031682828151811015156111b857fe5b60209081029091010151600160a060020a03161415611247576040805160e560020a62461bcd02815260206004820152602d60248201527f70726f76696465642077686974656c69737420636f6e7461696e73207468652060448201527f6f776e6572206164647265737300000000000000000000000000000000000000606482015290519081900360840190fd5b600101611190565b60055462010000900460ff1615156112d7576040805160e560020a62461bcd02815260206004820152602260248201527f77686974656c69737420686173206e6f74206265656e20696e697469616c697a60448201527f6564000000000000000000000000000000000000000000000000000000000000606482015290519081900360840190fd5b6112e3600385856129b1565b506005805460ff191660011790556040805160208082528082018690527f1d2ace46074b1588a44de3e68b155a95fbf4704fabf5d560c733e4302e89203e92879287929091829190820190859085028082843760405192018290039550909350505050a150505050565b600154600160a060020a031690565b6113653361284d565b15156113a9576040805160e560020a62461bcd02815260206004820152601a6024820152600080516020612a8d833981519152604482015290519081900360640190fd5b600f5460ff16151561142b576040805160e560020a62461bcd02815260206004820152602260248201527f746f707570206c696d697420686173206e6f74206265656e207375626d69747460448201527f6564000000000000000000000000000000000000000000000000000000000000606482015290519081900360840190fd5b600e5466038d7ea4c680001115801561144e57506706f05b59d3b20000600e5411155b151561145657fe5b611461600e54612919565b600e5460408051338152602081019290925280517f542c9d9a32f2597d63c74984374742431933d68fe2fd019ee3592121b5e53e819281900390910190a16000600e55600f805460ff19169055565b6114b86128e7565b15156114fc576040805160e560020a62461bcd0281526020600482015260166024820152600080516020612a6d833981519152604482015290519081900360640190fd5b600f54610100900460ff1615611582576040805160e560020a62461bcd02815260206004820152602860248201527f746f707570206c696d69742068617320616c7265616479206265656e20696e6960448201527f7469616c697a6564000000000000000000000000000000000000000000000000606482015290519081900360840190fd5b8066038d7ea4c68000111580156115a157506706f05b59d3b200008111155b151561161d576040805160e560020a62461bcd02815260206004820152602c60248201527f746f70757020616d6f756e74206973206f757473696465206f6620746865206d60448201527f696e2f6d61782072616e67650000000000000000000000000000000000000000606482015290519081900360840190fd5b61162681612919565b600f805461ff001916610100179055604080513381526020810183905281517f542c9d9a32f2597d63c74984374742431933d68fe2fd019ee3592121b5e53e81929181900390910190a150565b61167c3361284d565b15156116c0576040805160e560020a62461bcd02815260206004820152601a6024820152600080516020612a8d833981519152604482015290519081900360640190fd5b6000600e55600f805460ff191690556040805133815290517f101f373a908c693fd9007b042b675b1122f3549a25cfcc29b449ee0b6a6625329181900360200190a1565b61170d3361284d565b1515611751576040805160e560020a62461bcd02815260206004820152601a6024820152600080516020612a8d833981519152604482015290519081900360640190fd5b600a5460ff1615156117d3576040805160e560020a62461bcd02815260206004820152602260248201527f7370656e64206c696d697420686173206e6f74206265656e207375626d69747460448201527f6564000000000000000000000000000000000000000000000000000000000000606482015290519081900360840190fd5b6117de6009546128f8565b60095460408051338152602081019290925280517f068f112e5ec923d412be64779fe69e0fcbb6784c6617e94cccc8fd348f2e0f219281900390910190a1600a805460ff191690556000600955565b60065481565b60055462010000900460ff1681565b600061184c6128e7565b1515611890576040805160e560020a62461bcd0281526020600482015260166024820152600080516020612a6d833981519152604482015290519081900360640190fd5b818015156118e8576040805160e560020a62461bcd02815260206004820152601d60248201527f70726f76696465642076616c75652063616e6e6f74206265207a65726f000000604482015290519081900360640190fd5b600160a060020a03851660009081526002602052604090205460ff161515611acd57611912612939565b600160a060020a03841615611a3f57600a60029054906101000a9004600160a060020a0316600160a060020a03166338cc48316040518163ffffffff1660e060020a028152600401602060405180830381600087803b15801561197457600080fd5b505af1158015611988573d6000803e3d6000fd5b505050506040513d602081101561199e57600080fd5b5051604080517f67c6e39c000000000000000000000000000000000000000000000000000000008152600160a060020a03878116600483015260248201879052915191909216916367c6e39c9160448083019260209291908290030181600087803b158015611a0c57600080fd5b505af1158015611a20573d6000803e3d6000fd5b505050506040513d6020811015611a3657600080fd5b50519150611a43565b8291505b600854821115611ac3576040805160e560020a62461bcd02815260206004820152602d60248201527f7472616e7366657220616d6f756e74206578636565647320617661696c61626c60448201527f65207370656e64206c696d697400000000000000000000000000000000000000606482015290519081900360840190fd5b6008805483900390555b600160a060020a03841615611bec5783600160a060020a031663a9059cbb86856040518363ffffffff1660e060020a0281526004018083600160a060020a0316600160a060020a0316815260200182815260200192505050602060405180830381600087803b158015611b3f57600080fd5b505af1158015611b53573d6000803e3d6000fd5b505050506040513d6020811015611b6957600080fd5b50511515611be7576040805160e560020a62461bcd02815260206004820152602560248201527f455243323020746f6b656e207472616e736665722077617320756e737563636560448201527f737366756c000000000000000000000000000000000000000000000000000000606482015290519081900360840190fd5b611c24565b604051600160a060020a0386169084156108fc029085906000818181858888f19350505050158015611c22573d6000803e3d6000fd5b505b60408051600160a060020a0380881682528616602082015280820185905290517fd1ba4ac2e2a11b5101f6cb4d978f514a155b421e8ec396d2d9abaf0bb02917ee9181900360600190a15050505050565b60095481565b611c843361284d565b1515611cc8576040805160e560020a62461bcd02815260206004820152601a6024820152600080516020612a8d833981519152604482015290519081900360640190fd5b60005460408051600160a060020a039283168152918316602083015280517f95d5e19ddf857cd05ebf87d06d1bef8ceab83305a3f833ff72d6cfafbf76f8259281900390910190a16000805473ffffffffffffffffffffffffffffffffffffffff1916600160a060020a0392909216919091179055565b600f54610100900460ff1681565b611d556128e7565b1515611d99576040805160e560020a62461bcd0281526020600482015260166024820152600080516020612a6d833981519152604482015290519081900360640190fd5b600f54610100900460ff161515611e1f576040805160e560020a62461bcd028152602060048201526024808201527f746f707570206c696d697420686173206e6f74206265656e20696e697469616c60448201527f697a656400000000000000000000000000000000000000000000000000000000606482015290519081900360840190fd5b600f5460ff1615611ea0576040805160e560020a62461bcd02815260206004820152602660248201527f746f707570206c696d69742068617320616c7265616479206265656e2073756260448201527f6d69747465640000000000000000000000000000000000000000000000000000606482015290519081900360840190fd5b8066038d7ea4c6800011158015611ebf57506706f05b59d3b200008111155b1515611f3b576040805160e560020a62461bcd02815260206004820152602c60248201527f746f70757020616d6f756e74206973206f757473696465206f6620746865206d60448201527f696e2f6d61782072616e67650000000000000000000000000000000000000000606482015290519081900360840190fd5b600e819055600f805460ff191660011790556040805182815290517f1ede90fafc1d421fc4432cbbe366cae166cb7e548c7cdbf34cd2745d041588d29181900360200190a150565b600a5460ff1681565b600b5481565b611f9a6128e7565b1515611fde576040805160e560020a62461bcd0281526020600482015260166024820152600080516020612a6d833981519152604482015290519081900360640190fd5b600a54610100900460ff161515612064576040805160e560020a62461bcd028152602060048201526024808201527f7370656e64206c696d697420686173206e6f74206265656e20696e697469616c60448201527f697a656400000000000000000000000000000000000000000000000000000000606482015290519081900360840190fd5b600a5460ff16156120e5576040805160e560020a62461bcd02815260206004820152602660248201527f7370656e64206c696d69742068617320616c7265616479206265656e2073756260448201527f6d69747465640000000000000000000000000000000000000000000000000000606482015290519081900360840190fd5b6009819055600a805460ff191660011790556040805182815290517f24f0e1b80ee7adac7eb873ad38ddae63273315b55a910cb9eaba0cf8a3059d2a9181900360200190a150565b6000600754620151800142111561214757506006546106d0565b506008546106d0565b600554610100900460ff1681565b6000600160a060020a0382161561220357604080517f70a082310000000000000000000000000000000000000000000000000000000081523060048201529051600160a060020a038416916370a082319160248083019260209291908290030181600087803b1580156121d057600080fd5b505af11580156121e4573d6000803e3d6000fd5b505050506040513d60208110156121fa57600080fd5b505190506106a6565b5030316106a6565b600081801515612265576040805160e560020a62461bcd02815260206004820152601d60248201527f70726f76696465642076616c75652063616e6e6f74206265207a65726f000000604482015290519081900360640190fd5b61226d6128e7565b8061227c575061227c3361284d565b15156122f8576040805160e560020a62461bcd02815260206004820152602b60248201527f73656e646572206973206e65697468657220616e206f776e6572206e6f72206160448201527f20636f6e74726f6c6c6572000000000000000000000000000000000000000000606482015290519081900360840190fd5b612300612966565b600d54151561237e576040805160e560020a62461bcd028152602060048201526024808201527f617661696c61626c6520746f707570206c696d69742063616e6e6f742062652060448201527f7a65726f00000000000000000000000000000000000000000000000000000000606482015290519081900360840190fd5b829150600d5482111561239157600d5491505b600d805483900390556123a261134d565b600160a060020a03166108fc839081150290604051600060405180830381858888f193505050501580156123da573d6000803e3d6000fd5b507f11bb310b94280c15845698b8ce945817e14456a5d1582e387e6e4a01ef2c67423261240561134d565b60408051600160a060020a03938416815291909216602082015280820185905290519081900360600190a1505050565b61243d6128e7565b1515612481576040805160e560020a62461bcd0281526020600482015260166024820152600080516020612a6d833981519152604482015290519081900360640190fd5b60015474010000000000000000000000000000000000000000900460ff1615156124f5576040805160e560020a62461bcd02815260206004820152601d60248201527f6f776e657273686970206973206e6f74207472616e7366657261626c65000000604482015290519081900360640190fd5b600160a060020a0381161515612555576040805160e560020a62461bcd02815260206004820152601a60248201527f6f776e65722063616e6e6f742062652073657420746f20307830000000000000604482015290519081900360640190fd5b60018054600160a060020a03831674ffffffffffffffffffffffffffffffffffffffffff19909116811790915560408051918252517f04dba622d284ed0014ee4b9a6a68386be1a4c08a4913ae272de89199cc6861639181900360200190a150565b60006125c16128e7565b1515612605576040805160e560020a62461bcd0281526020600482015260166024820152600080516020612a6d833981519152604482015290519081900360640190fd5b8282808060200260200160405190810160405280939291908181526020018383602002808284375060009450505050505b81518110156126f55761264761134d565b600160a060020a0316828281518110151561265e57fe5b60209081029091010151600160a060020a031614156126ed576040805160e560020a62461bcd02815260206004820152602d60248201527f70726f76696465642077686974656c69737420636f6e7461696e73207468652060448201527f6f776e6572206164647265737300000000000000000000000000000000000000606482015290519081900360840190fd5b600101612636565b60055462010000900460ff161561277c576040805160e560020a62461bcd02815260206004820152602660248201527f77686974656c6973742068617320616c7265616479206265656e20696e69746960448201527f616c697a65640000000000000000000000000000000000000000000000000000606482015290519081900360840190fd5b600092505b838310156127d85760016002600087878781811061279b57fe5b60209081029290920135600160a060020a0316835250810191909152604001600020805460ff191691151591909117905560019290920191612781565b6005805462ff0000191662010000179055604080513380825260208083018481529383018890527fb2f6cccee7a369e23e293c25aa19bef80af11eb26deba3ea0f2a02783f752e4a93919289928992606083019085908502808284376040519201829003965090945050505050a15050505050565b60008054604080517fb429afeb000000000000000000000000000000000000000000000000000000008152600160a060020a0385811660048301529151919092169163b429afeb91602480830192602092919082900301818787803b1580156128b557600080fd5b505af11580156128c9573d6000803e3d6000fd5b505050506040513d60208110156128df57600080fd5b505192915050565b600154600160a060020a0316331490565b612900612939565b6006819055600854811015612916576006546008555b50565b612921612966565b600b819055600d5481101561291657600b54600d5550565b60006007546201518001421115612916575060078054620151804282900381900402019055600654600855565b6000600c5462015180014211156129165750600c8054620151804282900381900402019055600b54600d55565b50805460008255906000526020600020908101906129169190612a21565b828054828255906000526020600020908101928215612a11579160200282015b82811115612a1157815473ffffffffffffffffffffffffffffffffffffffff1916600160a060020a038435161782556020909201916001909101906129d1565b50612a1d929150612a3b565b5090565b6106d091905b80821115612a1d5760008155600101612a27565b6106d091905b80821115612a1d57805473ffffffffffffffffffffffffffffffffffffffff19168155600101612a41560073656e646572206973206e6f7420616e206f776e65720000000000000000000073656e646572206973206e6f74206120636f6e74726f6c6c6572000000000000a165627a7a72305820e9f0aacbc2f5dbe02a7df7ebcf741af5f999bd297b60f61bc007e3d17ec423b40029`
 
 // DeployWallet deploys a new Ethereum contract, binding an instance of Wallet to it.
 func DeployWallet(auth *bind.TransactOpts, backend bind.ContractBackend, _owner common.Address, _transferable bool, _resolver common.Address, _controller common.Address, _spendLimit *big.Int) (common.Address, *types.Transaction, *Wallet, error) {
@@ -1107,6 +1107,617 @@ func (_Wallet *WalletTransactorSession) TransferOwnership(_account common.Addres
 	return _Wallet.Contract.TransferOwnership(&_Wallet.TransactOpts, _account)
 }
 
+// WalletAddedToWhitelistIterator is returned from FilterAddedToWhitelist and is used to iterate over the raw logs and unpacked data for AddedToWhitelist events raised by the Wallet contract.
+type WalletAddedToWhitelistIterator struct {
+	Event *WalletAddedToWhitelist // Event containing the contract specifics and raw log
+
+	contract *bind.BoundContract // Generic contract to use for unpacking event data
+	event    string              // Event name to use for unpacking event data
+
+	logs chan types.Log        // Log channel receiving the found contract events
+	sub  ethereum.Subscription // Subscription for errors, completion and termination
+	done bool                  // Whether the subscription completed delivering logs
+	fail error                 // Occurred error to stop iteration
+}
+
+// Next advances the iterator to the subsequent event, returning whether there
+// are any more events found. In case of a retrieval or parsing error, false is
+// returned and Error() can be queried for the exact failure.
+func (it *WalletAddedToWhitelistIterator) Next() bool {
+	// If the iterator failed, stop iterating
+	if it.fail != nil {
+		return false
+	}
+	// If the iterator completed, deliver directly whatever's available
+	if it.done {
+		select {
+		case log := <-it.logs:
+			it.Event = new(WalletAddedToWhitelist)
+			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+				it.fail = err
+				return false
+			}
+			it.Event.Raw = log
+			return true
+
+		default:
+			return false
+		}
+	}
+	// Iterator still in progress, wait for either a data or an error event
+	select {
+	case log := <-it.logs:
+		it.Event = new(WalletAddedToWhitelist)
+		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+			it.fail = err
+			return false
+		}
+		it.Event.Raw = log
+		return true
+
+	case err := <-it.sub.Err():
+		it.done = true
+		it.fail = err
+		return it.Next()
+	}
+}
+
+// Error returns any retrieval or parsing error occurred during filtering.
+func (it *WalletAddedToWhitelistIterator) Error() error {
+	return it.fail
+}
+
+// Close terminates the iteration process, releasing any pending underlying
+// resources.
+func (it *WalletAddedToWhitelistIterator) Close() error {
+	it.sub.Unsubscribe()
+	return nil
+}
+
+// WalletAddedToWhitelist represents a AddedToWhitelist event raised by the Wallet contract.
+type WalletAddedToWhitelist struct {
+	Sender    common.Address
+	Addresses []common.Address
+	Raw       types.Log // Blockchain specific contextual infos
+}
+
+// FilterAddedToWhitelist is a free log retrieval operation binding the contract event 0xb2f6cccee7a369e23e293c25aa19bef80af11eb26deba3ea0f2a02783f752e4a.
+//
+// Solidity: e AddedToWhitelist(_sender address, _addresses address[])
+func (_Wallet *WalletFilterer) FilterAddedToWhitelist(opts *bind.FilterOpts) (*WalletAddedToWhitelistIterator, error) {
+
+	logs, sub, err := _Wallet.contract.FilterLogs(opts, "AddedToWhitelist")
+	if err != nil {
+		return nil, err
+	}
+	return &WalletAddedToWhitelistIterator{contract: _Wallet.contract, event: "AddedToWhitelist", logs: logs, sub: sub}, nil
+}
+
+// WatchAddedToWhitelist is a free log subscription operation binding the contract event 0xb2f6cccee7a369e23e293c25aa19bef80af11eb26deba3ea0f2a02783f752e4a.
+//
+// Solidity: e AddedToWhitelist(_sender address, _addresses address[])
+func (_Wallet *WalletFilterer) WatchAddedToWhitelist(opts *bind.WatchOpts, sink chan<- *WalletAddedToWhitelist) (event.Subscription, error) {
+
+	logs, sub, err := _Wallet.contract.WatchLogs(opts, "AddedToWhitelist")
+	if err != nil {
+		return nil, err
+	}
+	return event.NewSubscription(func(quit <-chan struct{}) error {
+		defer sub.Unsubscribe()
+		for {
+			select {
+			case log := <-logs:
+				// New log arrived, parse the event and forward to the user
+				event := new(WalletAddedToWhitelist)
+				if err := _Wallet.contract.UnpackLog(event, "AddedToWhitelist", log); err != nil {
+					return err
+				}
+				event.Raw = log
+
+				select {
+				case sink <- event:
+				case err := <-sub.Err():
+					return err
+				case <-quit:
+					return nil
+				}
+			case err := <-sub.Err():
+				return err
+			case <-quit:
+				return nil
+			}
+		}
+	}), nil
+}
+
+// WalletCancelledSpendLimitIterator is returned from FilterCancelledSpendLimit and is used to iterate over the raw logs and unpacked data for CancelledSpendLimit events raised by the Wallet contract.
+type WalletCancelledSpendLimitIterator struct {
+	Event *WalletCancelledSpendLimit // Event containing the contract specifics and raw log
+
+	contract *bind.BoundContract // Generic contract to use for unpacking event data
+	event    string              // Event name to use for unpacking event data
+
+	logs chan types.Log        // Log channel receiving the found contract events
+	sub  ethereum.Subscription // Subscription for errors, completion and termination
+	done bool                  // Whether the subscription completed delivering logs
+	fail error                 // Occurred error to stop iteration
+}
+
+// Next advances the iterator to the subsequent event, returning whether there
+// are any more events found. In case of a retrieval or parsing error, false is
+// returned and Error() can be queried for the exact failure.
+func (it *WalletCancelledSpendLimitIterator) Next() bool {
+	// If the iterator failed, stop iterating
+	if it.fail != nil {
+		return false
+	}
+	// If the iterator completed, deliver directly whatever's available
+	if it.done {
+		select {
+		case log := <-it.logs:
+			it.Event = new(WalletCancelledSpendLimit)
+			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+				it.fail = err
+				return false
+			}
+			it.Event.Raw = log
+			return true
+
+		default:
+			return false
+		}
+	}
+	// Iterator still in progress, wait for either a data or an error event
+	select {
+	case log := <-it.logs:
+		it.Event = new(WalletCancelledSpendLimit)
+		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+			it.fail = err
+			return false
+		}
+		it.Event.Raw = log
+		return true
+
+	case err := <-it.sub.Err():
+		it.done = true
+		it.fail = err
+		return it.Next()
+	}
+}
+
+// Error returns any retrieval or parsing error occurred during filtering.
+func (it *WalletCancelledSpendLimitIterator) Error() error {
+	return it.fail
+}
+
+// Close terminates the iteration process, releasing any pending underlying
+// resources.
+func (it *WalletCancelledSpendLimitIterator) Close() error {
+	it.sub.Unsubscribe()
+	return nil
+}
+
+// WalletCancelledSpendLimit represents a CancelledSpendLimit event raised by the Wallet contract.
+type WalletCancelledSpendLimit struct {
+	Sender common.Address
+	Raw    types.Log // Blockchain specific contextual infos
+}
+
+// FilterCancelledSpendLimit is a free log retrieval operation binding the contract event 0x1a6f4fb68d01759f53aae31846f64b45ed6e4ea1e73ec0905db00eacd355450d.
+//
+// Solidity: e CancelledSpendLimit(_sender address)
+func (_Wallet *WalletFilterer) FilterCancelledSpendLimit(opts *bind.FilterOpts) (*WalletCancelledSpendLimitIterator, error) {
+
+	logs, sub, err := _Wallet.contract.FilterLogs(opts, "CancelledSpendLimit")
+	if err != nil {
+		return nil, err
+	}
+	return &WalletCancelledSpendLimitIterator{contract: _Wallet.contract, event: "CancelledSpendLimit", logs: logs, sub: sub}, nil
+}
+
+// WatchCancelledSpendLimit is a free log subscription operation binding the contract event 0x1a6f4fb68d01759f53aae31846f64b45ed6e4ea1e73ec0905db00eacd355450d.
+//
+// Solidity: e CancelledSpendLimit(_sender address)
+func (_Wallet *WalletFilterer) WatchCancelledSpendLimit(opts *bind.WatchOpts, sink chan<- *WalletCancelledSpendLimit) (event.Subscription, error) {
+
+	logs, sub, err := _Wallet.contract.WatchLogs(opts, "CancelledSpendLimit")
+	if err != nil {
+		return nil, err
+	}
+	return event.NewSubscription(func(quit <-chan struct{}) error {
+		defer sub.Unsubscribe()
+		for {
+			select {
+			case log := <-logs:
+				// New log arrived, parse the event and forward to the user
+				event := new(WalletCancelledSpendLimit)
+				if err := _Wallet.contract.UnpackLog(event, "CancelledSpendLimit", log); err != nil {
+					return err
+				}
+				event.Raw = log
+
+				select {
+				case sink <- event:
+				case err := <-sub.Err():
+					return err
+				case <-quit:
+					return nil
+				}
+			case err := <-sub.Err():
+				return err
+			case <-quit:
+				return nil
+			}
+		}
+	}), nil
+}
+
+// WalletCancelledTopupLimitIterator is returned from FilterCancelledTopupLimit and is used to iterate over the raw logs and unpacked data for CancelledTopupLimit events raised by the Wallet contract.
+type WalletCancelledTopupLimitIterator struct {
+	Event *WalletCancelledTopupLimit // Event containing the contract specifics and raw log
+
+	contract *bind.BoundContract // Generic contract to use for unpacking event data
+	event    string              // Event name to use for unpacking event data
+
+	logs chan types.Log        // Log channel receiving the found contract events
+	sub  ethereum.Subscription // Subscription for errors, completion and termination
+	done bool                  // Whether the subscription completed delivering logs
+	fail error                 // Occurred error to stop iteration
+}
+
+// Next advances the iterator to the subsequent event, returning whether there
+// are any more events found. In case of a retrieval or parsing error, false is
+// returned and Error() can be queried for the exact failure.
+func (it *WalletCancelledTopupLimitIterator) Next() bool {
+	// If the iterator failed, stop iterating
+	if it.fail != nil {
+		return false
+	}
+	// If the iterator completed, deliver directly whatever's available
+	if it.done {
+		select {
+		case log := <-it.logs:
+			it.Event = new(WalletCancelledTopupLimit)
+			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+				it.fail = err
+				return false
+			}
+			it.Event.Raw = log
+			return true
+
+		default:
+			return false
+		}
+	}
+	// Iterator still in progress, wait for either a data or an error event
+	select {
+	case log := <-it.logs:
+		it.Event = new(WalletCancelledTopupLimit)
+		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+			it.fail = err
+			return false
+		}
+		it.Event.Raw = log
+		return true
+
+	case err := <-it.sub.Err():
+		it.done = true
+		it.fail = err
+		return it.Next()
+	}
+}
+
+// Error returns any retrieval or parsing error occurred during filtering.
+func (it *WalletCancelledTopupLimitIterator) Error() error {
+	return it.fail
+}
+
+// Close terminates the iteration process, releasing any pending underlying
+// resources.
+func (it *WalletCancelledTopupLimitIterator) Close() error {
+	it.sub.Unsubscribe()
+	return nil
+}
+
+// WalletCancelledTopupLimit represents a CancelledTopupLimit event raised by the Wallet contract.
+type WalletCancelledTopupLimit struct {
+	Sender common.Address
+	Raw    types.Log // Blockchain specific contextual infos
+}
+
+// FilterCancelledTopupLimit is a free log retrieval operation binding the contract event 0x101f373a908c693fd9007b042b675b1122f3549a25cfcc29b449ee0b6a662532.
+//
+// Solidity: e CancelledTopupLimit(_sender address)
+func (_Wallet *WalletFilterer) FilterCancelledTopupLimit(opts *bind.FilterOpts) (*WalletCancelledTopupLimitIterator, error) {
+
+	logs, sub, err := _Wallet.contract.FilterLogs(opts, "CancelledTopupLimit")
+	if err != nil {
+		return nil, err
+	}
+	return &WalletCancelledTopupLimitIterator{contract: _Wallet.contract, event: "CancelledTopupLimit", logs: logs, sub: sub}, nil
+}
+
+// WatchCancelledTopupLimit is a free log subscription operation binding the contract event 0x101f373a908c693fd9007b042b675b1122f3549a25cfcc29b449ee0b6a662532.
+//
+// Solidity: e CancelledTopupLimit(_sender address)
+func (_Wallet *WalletFilterer) WatchCancelledTopupLimit(opts *bind.WatchOpts, sink chan<- *WalletCancelledTopupLimit) (event.Subscription, error) {
+
+	logs, sub, err := _Wallet.contract.WatchLogs(opts, "CancelledTopupLimit")
+	if err != nil {
+		return nil, err
+	}
+	return event.NewSubscription(func(quit <-chan struct{}) error {
+		defer sub.Unsubscribe()
+		for {
+			select {
+			case log := <-logs:
+				// New log arrived, parse the event and forward to the user
+				event := new(WalletCancelledTopupLimit)
+				if err := _Wallet.contract.UnpackLog(event, "CancelledTopupLimit", log); err != nil {
+					return err
+				}
+				event.Raw = log
+
+				select {
+				case sink <- event:
+				case err := <-sub.Err():
+					return err
+				case <-quit:
+					return nil
+				}
+			case err := <-sub.Err():
+				return err
+			case <-quit:
+				return nil
+			}
+		}
+	}), nil
+}
+
+// WalletCancelledWhitelistAdditionIterator is returned from FilterCancelledWhitelistAddition and is used to iterate over the raw logs and unpacked data for CancelledWhitelistAddition events raised by the Wallet contract.
+type WalletCancelledWhitelistAdditionIterator struct {
+	Event *WalletCancelledWhitelistAddition // Event containing the contract specifics and raw log
+
+	contract *bind.BoundContract // Generic contract to use for unpacking event data
+	event    string              // Event name to use for unpacking event data
+
+	logs chan types.Log        // Log channel receiving the found contract events
+	sub  ethereum.Subscription // Subscription for errors, completion and termination
+	done bool                  // Whether the subscription completed delivering logs
+	fail error                 // Occurred error to stop iteration
+}
+
+// Next advances the iterator to the subsequent event, returning whether there
+// are any more events found. In case of a retrieval or parsing error, false is
+// returned and Error() can be queried for the exact failure.
+func (it *WalletCancelledWhitelistAdditionIterator) Next() bool {
+	// If the iterator failed, stop iterating
+	if it.fail != nil {
+		return false
+	}
+	// If the iterator completed, deliver directly whatever's available
+	if it.done {
+		select {
+		case log := <-it.logs:
+			it.Event = new(WalletCancelledWhitelistAddition)
+			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+				it.fail = err
+				return false
+			}
+			it.Event.Raw = log
+			return true
+
+		default:
+			return false
+		}
+	}
+	// Iterator still in progress, wait for either a data or an error event
+	select {
+	case log := <-it.logs:
+		it.Event = new(WalletCancelledWhitelistAddition)
+		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+			it.fail = err
+			return false
+		}
+		it.Event.Raw = log
+		return true
+
+	case err := <-it.sub.Err():
+		it.done = true
+		it.fail = err
+		return it.Next()
+	}
+}
+
+// Error returns any retrieval or parsing error occurred during filtering.
+func (it *WalletCancelledWhitelistAdditionIterator) Error() error {
+	return it.fail
+}
+
+// Close terminates the iteration process, releasing any pending underlying
+// resources.
+func (it *WalletCancelledWhitelistAdditionIterator) Close() error {
+	it.sub.Unsubscribe()
+	return nil
+}
+
+// WalletCancelledWhitelistAddition represents a CancelledWhitelistAddition event raised by the Wallet contract.
+type WalletCancelledWhitelistAddition struct {
+	Sender common.Address
+	Raw    types.Log // Blockchain specific contextual infos
+}
+
+// FilterCancelledWhitelistAddition is a free log retrieval operation binding the contract event 0x25d73bd719f2f11f571183502cb12c04453b3f963a034d89d1feebf4358f7f30.
+//
+// Solidity: e CancelledWhitelistAddition(_sender address)
+func (_Wallet *WalletFilterer) FilterCancelledWhitelistAddition(opts *bind.FilterOpts) (*WalletCancelledWhitelistAdditionIterator, error) {
+
+	logs, sub, err := _Wallet.contract.FilterLogs(opts, "CancelledWhitelistAddition")
+	if err != nil {
+		return nil, err
+	}
+	return &WalletCancelledWhitelistAdditionIterator{contract: _Wallet.contract, event: "CancelledWhitelistAddition", logs: logs, sub: sub}, nil
+}
+
+// WatchCancelledWhitelistAddition is a free log subscription operation binding the contract event 0x25d73bd719f2f11f571183502cb12c04453b3f963a034d89d1feebf4358f7f30.
+//
+// Solidity: e CancelledWhitelistAddition(_sender address)
+func (_Wallet *WalletFilterer) WatchCancelledWhitelistAddition(opts *bind.WatchOpts, sink chan<- *WalletCancelledWhitelistAddition) (event.Subscription, error) {
+
+	logs, sub, err := _Wallet.contract.WatchLogs(opts, "CancelledWhitelistAddition")
+	if err != nil {
+		return nil, err
+	}
+	return event.NewSubscription(func(quit <-chan struct{}) error {
+		defer sub.Unsubscribe()
+		for {
+			select {
+			case log := <-logs:
+				// New log arrived, parse the event and forward to the user
+				event := new(WalletCancelledWhitelistAddition)
+				if err := _Wallet.contract.UnpackLog(event, "CancelledWhitelistAddition", log); err != nil {
+					return err
+				}
+				event.Raw = log
+
+				select {
+				case sink <- event:
+				case err := <-sub.Err():
+					return err
+				case <-quit:
+					return nil
+				}
+			case err := <-sub.Err():
+				return err
+			case <-quit:
+				return nil
+			}
+		}
+	}), nil
+}
+
+// WalletCancelledWhitelistRemovalIterator is returned from FilterCancelledWhitelistRemoval and is used to iterate over the raw logs and unpacked data for CancelledWhitelistRemoval events raised by the Wallet contract.
+type WalletCancelledWhitelistRemovalIterator struct {
+	Event *WalletCancelledWhitelistRemoval // Event containing the contract specifics and raw log
+
+	contract *bind.BoundContract // Generic contract to use for unpacking event data
+	event    string              // Event name to use for unpacking event data
+
+	logs chan types.Log        // Log channel receiving the found contract events
+	sub  ethereum.Subscription // Subscription for errors, completion and termination
+	done bool                  // Whether the subscription completed delivering logs
+	fail error                 // Occurred error to stop iteration
+}
+
+// Next advances the iterator to the subsequent event, returning whether there
+// are any more events found. In case of a retrieval or parsing error, false is
+// returned and Error() can be queried for the exact failure.
+func (it *WalletCancelledWhitelistRemovalIterator) Next() bool {
+	// If the iterator failed, stop iterating
+	if it.fail != nil {
+		return false
+	}
+	// If the iterator completed, deliver directly whatever's available
+	if it.done {
+		select {
+		case log := <-it.logs:
+			it.Event = new(WalletCancelledWhitelistRemoval)
+			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+				it.fail = err
+				return false
+			}
+			it.Event.Raw = log
+			return true
+
+		default:
+			return false
+		}
+	}
+	// Iterator still in progress, wait for either a data or an error event
+	select {
+	case log := <-it.logs:
+		it.Event = new(WalletCancelledWhitelistRemoval)
+		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+			it.fail = err
+			return false
+		}
+		it.Event.Raw = log
+		return true
+
+	case err := <-it.sub.Err():
+		it.done = true
+		it.fail = err
+		return it.Next()
+	}
+}
+
+// Error returns any retrieval or parsing error occurred during filtering.
+func (it *WalletCancelledWhitelistRemovalIterator) Error() error {
+	return it.fail
+}
+
+// Close terminates the iteration process, releasing any pending underlying
+// resources.
+func (it *WalletCancelledWhitelistRemovalIterator) Close() error {
+	it.sub.Unsubscribe()
+	return nil
+}
+
+// WalletCancelledWhitelistRemoval represents a CancelledWhitelistRemoval event raised by the Wallet contract.
+type WalletCancelledWhitelistRemoval struct {
+	Sender common.Address
+	Raw    types.Log // Blockchain specific contextual infos
+}
+
+// FilterCancelledWhitelistRemoval is a free log retrieval operation binding the contract event 0x60bb946c4a1cccc534339b65c28159eda759452dae3765f17933d4b374f2ba37.
+//
+// Solidity: e CancelledWhitelistRemoval(_sender address)
+func (_Wallet *WalletFilterer) FilterCancelledWhitelistRemoval(opts *bind.FilterOpts) (*WalletCancelledWhitelistRemovalIterator, error) {
+
+	logs, sub, err := _Wallet.contract.FilterLogs(opts, "CancelledWhitelistRemoval")
+	if err != nil {
+		return nil, err
+	}
+	return &WalletCancelledWhitelistRemovalIterator{contract: _Wallet.contract, event: "CancelledWhitelistRemoval", logs: logs, sub: sub}, nil
+}
+
+// WatchCancelledWhitelistRemoval is a free log subscription operation binding the contract event 0x60bb946c4a1cccc534339b65c28159eda759452dae3765f17933d4b374f2ba37.
+//
+// Solidity: e CancelledWhitelistRemoval(_sender address)
+func (_Wallet *WalletFilterer) WatchCancelledWhitelistRemoval(opts *bind.WatchOpts, sink chan<- *WalletCancelledWhitelistRemoval) (event.Subscription, error) {
+
+	logs, sub, err := _Wallet.contract.WatchLogs(opts, "CancelledWhitelistRemoval")
+	if err != nil {
+		return nil, err
+	}
+	return event.NewSubscription(func(quit <-chan struct{}) error {
+		defer sub.Unsubscribe()
+		for {
+			select {
+			case log := <-logs:
+				// New log arrived, parse the event and forward to the user
+				event := new(WalletCancelledWhitelistRemoval)
+				if err := _Wallet.contract.UnpackLog(event, "CancelledWhitelistRemoval", log); err != nil {
+					return err
+				}
+				event.Raw = log
+
+				select {
+				case sink <- event:
+				case err := <-sub.Err():
+					return err
+				case <-quit:
+					return nil
+				}
+			case err := <-sub.Err():
+				return err
+			case <-quit:
+				return nil
+			}
+		}
+	}), nil
+}
+
 // WalletControllerResolverChangedIterator is returned from FilterControllerResolverChanged and is used to iterate over the raw logs and unpacked data for ControllerResolverChanged events raised by the Wallet contract.
 type WalletControllerResolverChangedIterator struct {
 	Event *WalletControllerResolverChanged // Event containing the contract specifics and raw log
@@ -1475,9 +2086,9 @@ func (_Wallet *WalletFilterer) WatchOwnershipTransferred(opts *bind.WatchOpts, s
 	}), nil
 }
 
-// WalletSpendLimitCancelledIterator is returned from FilterSpendLimitCancelled and is used to iterate over the raw logs and unpacked data for SpendLimitCancelled events raised by the Wallet contract.
-type WalletSpendLimitCancelledIterator struct {
-	Event *WalletSpendLimitCancelled // Event containing the contract specifics and raw log
+// WalletRemovedFromWhitelistIterator is returned from FilterRemovedFromWhitelist and is used to iterate over the raw logs and unpacked data for RemovedFromWhitelist events raised by the Wallet contract.
+type WalletRemovedFromWhitelistIterator struct {
+	Event *WalletRemovedFromWhitelist // Event containing the contract specifics and raw log
 
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
@@ -1491,7 +2102,7 @@ type WalletSpendLimitCancelledIterator struct {
 // Next advances the iterator to the subsequent event, returning whether there
 // are any more events found. In case of a retrieval or parsing error, false is
 // returned and Error() can be queried for the exact failure.
-func (it *WalletSpendLimitCancelledIterator) Next() bool {
+func (it *WalletRemovedFromWhitelistIterator) Next() bool {
 	// If the iterator failed, stop iterating
 	if it.fail != nil {
 		return false
@@ -1500,7 +2111,7 @@ func (it *WalletSpendLimitCancelledIterator) Next() bool {
 	if it.done {
 		select {
 		case log := <-it.logs:
-			it.Event = new(WalletSpendLimitCancelled)
+			it.Event = new(WalletRemovedFromWhitelist)
 			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 				it.fail = err
 				return false
@@ -1515,7 +2126,7 @@ func (it *WalletSpendLimitCancelledIterator) Next() bool {
 	// Iterator still in progress, wait for either a data or an error event
 	select {
 	case log := <-it.logs:
-		it.Event = new(WalletSpendLimitCancelled)
+		it.Event = new(WalletRemovedFromWhitelist)
 		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 			it.fail = err
 			return false
@@ -1531,41 +2142,42 @@ func (it *WalletSpendLimitCancelledIterator) Next() bool {
 }
 
 // Error returns any retrieval or parsing error occurred during filtering.
-func (it *WalletSpendLimitCancelledIterator) Error() error {
+func (it *WalletRemovedFromWhitelistIterator) Error() error {
 	return it.fail
 }
 
 // Close terminates the iteration process, releasing any pending underlying
 // resources.
-func (it *WalletSpendLimitCancelledIterator) Close() error {
+func (it *WalletRemovedFromWhitelistIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
 
-// WalletSpendLimitCancelled represents a SpendLimitCancelled event raised by the Wallet contract.
-type WalletSpendLimitCancelled struct {
-	Sender common.Address
-	Raw    types.Log // Blockchain specific contextual infos
+// WalletRemovedFromWhitelist represents a RemovedFromWhitelist event raised by the Wallet contract.
+type WalletRemovedFromWhitelist struct {
+	Sender    common.Address
+	Addresses []common.Address
+	Raw       types.Log // Blockchain specific contextual infos
 }
 
-// FilterSpendLimitCancelled is a free log retrieval operation binding the contract event 0x18a837b2338e54e45f66b65e880c92515fe1fcbb3ea7f1710674ed479ada749f.
+// FilterRemovedFromWhitelist is a free log retrieval operation binding the contract event 0xd218c430fa348f4ce67791021b6b89c0c3eacd4ead1d8f5b83c60038ec28249b.
 //
-// Solidity: e SpendLimitCancelled(_sender address)
-func (_Wallet *WalletFilterer) FilterSpendLimitCancelled(opts *bind.FilterOpts) (*WalletSpendLimitCancelledIterator, error) {
+// Solidity: e RemovedFromWhitelist(_sender address, _addresses address[])
+func (_Wallet *WalletFilterer) FilterRemovedFromWhitelist(opts *bind.FilterOpts) (*WalletRemovedFromWhitelistIterator, error) {
 
-	logs, sub, err := _Wallet.contract.FilterLogs(opts, "SpendLimitCancelled")
+	logs, sub, err := _Wallet.contract.FilterLogs(opts, "RemovedFromWhitelist")
 	if err != nil {
 		return nil, err
 	}
-	return &WalletSpendLimitCancelledIterator{contract: _Wallet.contract, event: "SpendLimitCancelled", logs: logs, sub: sub}, nil
+	return &WalletRemovedFromWhitelistIterator{contract: _Wallet.contract, event: "RemovedFromWhitelist", logs: logs, sub: sub}, nil
 }
 
-// WatchSpendLimitCancelled is a free log subscription operation binding the contract event 0x18a837b2338e54e45f66b65e880c92515fe1fcbb3ea7f1710674ed479ada749f.
+// WatchRemovedFromWhitelist is a free log subscription operation binding the contract event 0xd218c430fa348f4ce67791021b6b89c0c3eacd4ead1d8f5b83c60038ec28249b.
 //
-// Solidity: e SpendLimitCancelled(_sender address)
-func (_Wallet *WalletFilterer) WatchSpendLimitCancelled(opts *bind.WatchOpts, sink chan<- *WalletSpendLimitCancelled) (event.Subscription, error) {
+// Solidity: e RemovedFromWhitelist(_sender address, _addresses address[])
+func (_Wallet *WalletFilterer) WatchRemovedFromWhitelist(opts *bind.WatchOpts, sink chan<- *WalletRemovedFromWhitelist) (event.Subscription, error) {
 
-	logs, sub, err := _Wallet.contract.WatchLogs(opts, "SpendLimitCancelled")
+	logs, sub, err := _Wallet.contract.WatchLogs(opts, "RemovedFromWhitelist")
 	if err != nil {
 		return nil, err
 	}
@@ -1575,8 +2187,8 @@ func (_Wallet *WalletFilterer) WatchSpendLimitCancelled(opts *bind.WatchOpts, si
 			select {
 			case log := <-logs:
 				// New log arrived, parse the event and forward to the user
-				event := new(WalletSpendLimitCancelled)
-				if err := _Wallet.contract.UnpackLog(event, "SpendLimitCancelled", log); err != nil {
+				event := new(WalletRemovedFromWhitelist)
+				if err := _Wallet.contract.UnpackLog(event, "RemovedFromWhitelist", log); err != nil {
 					return err
 				}
 				event.Raw = log
@@ -1597,9 +2209,9 @@ func (_Wallet *WalletFilterer) WatchSpendLimitCancelled(opts *bind.WatchOpts, si
 	}), nil
 }
 
-// WalletSpendLimitSetIterator is returned from FilterSpendLimitSet and is used to iterate over the raw logs and unpacked data for SpendLimitSet events raised by the Wallet contract.
-type WalletSpendLimitSetIterator struct {
-	Event *WalletSpendLimitSet // Event containing the contract specifics and raw log
+// WalletSetSpendLimitIterator is returned from FilterSetSpendLimit and is used to iterate over the raw logs and unpacked data for SetSpendLimit events raised by the Wallet contract.
+type WalletSetSpendLimitIterator struct {
+	Event *WalletSetSpendLimit // Event containing the contract specifics and raw log
 
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
@@ -1613,7 +2225,7 @@ type WalletSpendLimitSetIterator struct {
 // Next advances the iterator to the subsequent event, returning whether there
 // are any more events found. In case of a retrieval or parsing error, false is
 // returned and Error() can be queried for the exact failure.
-func (it *WalletSpendLimitSetIterator) Next() bool {
+func (it *WalletSetSpendLimitIterator) Next() bool {
 	// If the iterator failed, stop iterating
 	if it.fail != nil {
 		return false
@@ -1622,7 +2234,7 @@ func (it *WalletSpendLimitSetIterator) Next() bool {
 	if it.done {
 		select {
 		case log := <-it.logs:
-			it.Event = new(WalletSpendLimitSet)
+			it.Event = new(WalletSetSpendLimit)
 			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 				it.fail = err
 				return false
@@ -1637,7 +2249,7 @@ func (it *WalletSpendLimitSetIterator) Next() bool {
 	// Iterator still in progress, wait for either a data or an error event
 	select {
 	case log := <-it.logs:
-		it.Event = new(WalletSpendLimitSet)
+		it.Event = new(WalletSetSpendLimit)
 		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 			it.fail = err
 			return false
@@ -1653,42 +2265,42 @@ func (it *WalletSpendLimitSetIterator) Next() bool {
 }
 
 // Error returns any retrieval or parsing error occurred during filtering.
-func (it *WalletSpendLimitSetIterator) Error() error {
+func (it *WalletSetSpendLimitIterator) Error() error {
 	return it.fail
 }
 
 // Close terminates the iteration process, releasing any pending underlying
 // resources.
-func (it *WalletSpendLimitSetIterator) Close() error {
+func (it *WalletSetSpendLimitIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
 
-// WalletSpendLimitSet represents a SpendLimitSet event raised by the Wallet contract.
-type WalletSpendLimitSet struct {
+// WalletSetSpendLimit represents a SetSpendLimit event raised by the Wallet contract.
+type WalletSetSpendLimit struct {
 	Sender common.Address
 	Amount *big.Int
 	Raw    types.Log // Blockchain specific contextual infos
 }
 
-// FilterSpendLimitSet is a free log retrieval operation binding the contract event 0x13693f63ecb2f7da8178b895e26f5d32ce3fbd6bba8832ccd970d75116b25f1a.
+// FilterSetSpendLimit is a free log retrieval operation binding the contract event 0x068f112e5ec923d412be64779fe69e0fcbb6784c6617e94cccc8fd348f2e0f21.
 //
-// Solidity: e SpendLimitSet(_sender address, _amount uint256)
-func (_Wallet *WalletFilterer) FilterSpendLimitSet(opts *bind.FilterOpts) (*WalletSpendLimitSetIterator, error) {
+// Solidity: e SetSpendLimit(_sender address, _amount uint256)
+func (_Wallet *WalletFilterer) FilterSetSpendLimit(opts *bind.FilterOpts) (*WalletSetSpendLimitIterator, error) {
 
-	logs, sub, err := _Wallet.contract.FilterLogs(opts, "SpendLimitSet")
+	logs, sub, err := _Wallet.contract.FilterLogs(opts, "SetSpendLimit")
 	if err != nil {
 		return nil, err
 	}
-	return &WalletSpendLimitSetIterator{contract: _Wallet.contract, event: "SpendLimitSet", logs: logs, sub: sub}, nil
+	return &WalletSetSpendLimitIterator{contract: _Wallet.contract, event: "SetSpendLimit", logs: logs, sub: sub}, nil
 }
 
-// WatchSpendLimitSet is a free log subscription operation binding the contract event 0x13693f63ecb2f7da8178b895e26f5d32ce3fbd6bba8832ccd970d75116b25f1a.
+// WatchSetSpendLimit is a free log subscription operation binding the contract event 0x068f112e5ec923d412be64779fe69e0fcbb6784c6617e94cccc8fd348f2e0f21.
 //
-// Solidity: e SpendLimitSet(_sender address, _amount uint256)
-func (_Wallet *WalletFilterer) WatchSpendLimitSet(opts *bind.WatchOpts, sink chan<- *WalletSpendLimitSet) (event.Subscription, error) {
+// Solidity: e SetSpendLimit(_sender address, _amount uint256)
+func (_Wallet *WalletFilterer) WatchSetSpendLimit(opts *bind.WatchOpts, sink chan<- *WalletSetSpendLimit) (event.Subscription, error) {
 
-	logs, sub, err := _Wallet.contract.WatchLogs(opts, "SpendLimitSet")
+	logs, sub, err := _Wallet.contract.WatchLogs(opts, "SetSpendLimit")
 	if err != nil {
 		return nil, err
 	}
@@ -1698,8 +2310,8 @@ func (_Wallet *WalletFilterer) WatchSpendLimitSet(opts *bind.WatchOpts, sink cha
 			select {
 			case log := <-logs:
 				// New log arrived, parse the event and forward to the user
-				event := new(WalletSpendLimitSet)
-				if err := _Wallet.contract.UnpackLog(event, "SpendLimitSet", log); err != nil {
+				event := new(WalletSetSpendLimit)
+				if err := _Wallet.contract.UnpackLog(event, "SetSpendLimit", log); err != nil {
 					return err
 				}
 				event.Raw = log
@@ -1720,9 +2332,9 @@ func (_Wallet *WalletFilterer) WatchSpendLimitSet(opts *bind.WatchOpts, sink cha
 	}), nil
 }
 
-// WalletSpendLimitSubmittedIterator is returned from FilterSpendLimitSubmitted and is used to iterate over the raw logs and unpacked data for SpendLimitSubmitted events raised by the Wallet contract.
-type WalletSpendLimitSubmittedIterator struct {
-	Event *WalletSpendLimitSubmitted // Event containing the contract specifics and raw log
+// WalletSetTopupLimitIterator is returned from FilterSetTopupLimit and is used to iterate over the raw logs and unpacked data for SetTopupLimit events raised by the Wallet contract.
+type WalletSetTopupLimitIterator struct {
+	Event *WalletSetTopupLimit // Event containing the contract specifics and raw log
 
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
@@ -1736,7 +2348,7 @@ type WalletSpendLimitSubmittedIterator struct {
 // Next advances the iterator to the subsequent event, returning whether there
 // are any more events found. In case of a retrieval or parsing error, false is
 // returned and Error() can be queried for the exact failure.
-func (it *WalletSpendLimitSubmittedIterator) Next() bool {
+func (it *WalletSetTopupLimitIterator) Next() bool {
 	// If the iterator failed, stop iterating
 	if it.fail != nil {
 		return false
@@ -1745,7 +2357,7 @@ func (it *WalletSpendLimitSubmittedIterator) Next() bool {
 	if it.done {
 		select {
 		case log := <-it.logs:
-			it.Event = new(WalletSpendLimitSubmitted)
+			it.Event = new(WalletSetTopupLimit)
 			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 				it.fail = err
 				return false
@@ -1760,7 +2372,7 @@ func (it *WalletSpendLimitSubmittedIterator) Next() bool {
 	// Iterator still in progress, wait for either a data or an error event
 	select {
 	case log := <-it.logs:
-		it.Event = new(WalletSpendLimitSubmitted)
+		it.Event = new(WalletSetTopupLimit)
 		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 			it.fail = err
 			return false
@@ -1776,41 +2388,42 @@ func (it *WalletSpendLimitSubmittedIterator) Next() bool {
 }
 
 // Error returns any retrieval or parsing error occurred during filtering.
-func (it *WalletSpendLimitSubmittedIterator) Error() error {
+func (it *WalletSetTopupLimitIterator) Error() error {
 	return it.fail
 }
 
 // Close terminates the iteration process, releasing any pending underlying
 // resources.
-func (it *WalletSpendLimitSubmittedIterator) Close() error {
+func (it *WalletSetTopupLimitIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
 
-// WalletSpendLimitSubmitted represents a SpendLimitSubmitted event raised by the Wallet contract.
-type WalletSpendLimitSubmitted struct {
+// WalletSetTopupLimit represents a SetTopupLimit event raised by the Wallet contract.
+type WalletSetTopupLimit struct {
+	Sender common.Address
 	Amount *big.Int
 	Raw    types.Log // Blockchain specific contextual infos
 }
 
-// FilterSpendLimitSubmitted is a free log retrieval operation binding the contract event 0x5a9022428d76bcf4eea69f5b951c7a06e03f68b46ad277a0f9f91e3aa447b62a.
+// FilterSetTopupLimit is a free log retrieval operation binding the contract event 0x542c9d9a32f2597d63c74984374742431933d68fe2fd019ee3592121b5e53e81.
 //
-// Solidity: e SpendLimitSubmitted(_amount uint256)
-func (_Wallet *WalletFilterer) FilterSpendLimitSubmitted(opts *bind.FilterOpts) (*WalletSpendLimitSubmittedIterator, error) {
+// Solidity: e SetTopupLimit(_sender address, _amount uint256)
+func (_Wallet *WalletFilterer) FilterSetTopupLimit(opts *bind.FilterOpts) (*WalletSetTopupLimitIterator, error) {
 
-	logs, sub, err := _Wallet.contract.FilterLogs(opts, "SpendLimitSubmitted")
+	logs, sub, err := _Wallet.contract.FilterLogs(opts, "SetTopupLimit")
 	if err != nil {
 		return nil, err
 	}
-	return &WalletSpendLimitSubmittedIterator{contract: _Wallet.contract, event: "SpendLimitSubmitted", logs: logs, sub: sub}, nil
+	return &WalletSetTopupLimitIterator{contract: _Wallet.contract, event: "SetTopupLimit", logs: logs, sub: sub}, nil
 }
 
-// WatchSpendLimitSubmitted is a free log subscription operation binding the contract event 0x5a9022428d76bcf4eea69f5b951c7a06e03f68b46ad277a0f9f91e3aa447b62a.
+// WatchSetTopupLimit is a free log subscription operation binding the contract event 0x542c9d9a32f2597d63c74984374742431933d68fe2fd019ee3592121b5e53e81.
 //
-// Solidity: e SpendLimitSubmitted(_amount uint256)
-func (_Wallet *WalletFilterer) WatchSpendLimitSubmitted(opts *bind.WatchOpts, sink chan<- *WalletSpendLimitSubmitted) (event.Subscription, error) {
+// Solidity: e SetTopupLimit(_sender address, _amount uint256)
+func (_Wallet *WalletFilterer) WatchSetTopupLimit(opts *bind.WatchOpts, sink chan<- *WalletSetTopupLimit) (event.Subscription, error) {
 
-	logs, sub, err := _Wallet.contract.WatchLogs(opts, "SpendLimitSubmitted")
+	logs, sub, err := _Wallet.contract.WatchLogs(opts, "SetTopupLimit")
 	if err != nil {
 		return nil, err
 	}
@@ -1820,8 +2433,496 @@ func (_Wallet *WalletFilterer) WatchSpendLimitSubmitted(opts *bind.WatchOpts, si
 			select {
 			case log := <-logs:
 				// New log arrived, parse the event and forward to the user
-				event := new(WalletSpendLimitSubmitted)
-				if err := _Wallet.contract.UnpackLog(event, "SpendLimitSubmitted", log); err != nil {
+				event := new(WalletSetTopupLimit)
+				if err := _Wallet.contract.UnpackLog(event, "SetTopupLimit", log); err != nil {
+					return err
+				}
+				event.Raw = log
+
+				select {
+				case sink <- event:
+				case err := <-sub.Err():
+					return err
+				case <-quit:
+					return nil
+				}
+			case err := <-sub.Err():
+				return err
+			case <-quit:
+				return nil
+			}
+		}
+	}), nil
+}
+
+// WalletSubmittedSpendLimitIterator is returned from FilterSubmittedSpendLimit and is used to iterate over the raw logs and unpacked data for SubmittedSpendLimit events raised by the Wallet contract.
+type WalletSubmittedSpendLimitIterator struct {
+	Event *WalletSubmittedSpendLimit // Event containing the contract specifics and raw log
+
+	contract *bind.BoundContract // Generic contract to use for unpacking event data
+	event    string              // Event name to use for unpacking event data
+
+	logs chan types.Log        // Log channel receiving the found contract events
+	sub  ethereum.Subscription // Subscription for errors, completion and termination
+	done bool                  // Whether the subscription completed delivering logs
+	fail error                 // Occurred error to stop iteration
+}
+
+// Next advances the iterator to the subsequent event, returning whether there
+// are any more events found. In case of a retrieval or parsing error, false is
+// returned and Error() can be queried for the exact failure.
+func (it *WalletSubmittedSpendLimitIterator) Next() bool {
+	// If the iterator failed, stop iterating
+	if it.fail != nil {
+		return false
+	}
+	// If the iterator completed, deliver directly whatever's available
+	if it.done {
+		select {
+		case log := <-it.logs:
+			it.Event = new(WalletSubmittedSpendLimit)
+			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+				it.fail = err
+				return false
+			}
+			it.Event.Raw = log
+			return true
+
+		default:
+			return false
+		}
+	}
+	// Iterator still in progress, wait for either a data or an error event
+	select {
+	case log := <-it.logs:
+		it.Event = new(WalletSubmittedSpendLimit)
+		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+			it.fail = err
+			return false
+		}
+		it.Event.Raw = log
+		return true
+
+	case err := <-it.sub.Err():
+		it.done = true
+		it.fail = err
+		return it.Next()
+	}
+}
+
+// Error returns any retrieval or parsing error occurred during filtering.
+func (it *WalletSubmittedSpendLimitIterator) Error() error {
+	return it.fail
+}
+
+// Close terminates the iteration process, releasing any pending underlying
+// resources.
+func (it *WalletSubmittedSpendLimitIterator) Close() error {
+	it.sub.Unsubscribe()
+	return nil
+}
+
+// WalletSubmittedSpendLimit represents a SubmittedSpendLimit event raised by the Wallet contract.
+type WalletSubmittedSpendLimit struct {
+	Amount *big.Int
+	Raw    types.Log // Blockchain specific contextual infos
+}
+
+// FilterSubmittedSpendLimit is a free log retrieval operation binding the contract event 0x24f0e1b80ee7adac7eb873ad38ddae63273315b55a910cb9eaba0cf8a3059d2a.
+//
+// Solidity: e SubmittedSpendLimit(_amount uint256)
+func (_Wallet *WalletFilterer) FilterSubmittedSpendLimit(opts *bind.FilterOpts) (*WalletSubmittedSpendLimitIterator, error) {
+
+	logs, sub, err := _Wallet.contract.FilterLogs(opts, "SubmittedSpendLimit")
+	if err != nil {
+		return nil, err
+	}
+	return &WalletSubmittedSpendLimitIterator{contract: _Wallet.contract, event: "SubmittedSpendLimit", logs: logs, sub: sub}, nil
+}
+
+// WatchSubmittedSpendLimit is a free log subscription operation binding the contract event 0x24f0e1b80ee7adac7eb873ad38ddae63273315b55a910cb9eaba0cf8a3059d2a.
+//
+// Solidity: e SubmittedSpendLimit(_amount uint256)
+func (_Wallet *WalletFilterer) WatchSubmittedSpendLimit(opts *bind.WatchOpts, sink chan<- *WalletSubmittedSpendLimit) (event.Subscription, error) {
+
+	logs, sub, err := _Wallet.contract.WatchLogs(opts, "SubmittedSpendLimit")
+	if err != nil {
+		return nil, err
+	}
+	return event.NewSubscription(func(quit <-chan struct{}) error {
+		defer sub.Unsubscribe()
+		for {
+			select {
+			case log := <-logs:
+				// New log arrived, parse the event and forward to the user
+				event := new(WalletSubmittedSpendLimit)
+				if err := _Wallet.contract.UnpackLog(event, "SubmittedSpendLimit", log); err != nil {
+					return err
+				}
+				event.Raw = log
+
+				select {
+				case sink <- event:
+				case err := <-sub.Err():
+					return err
+				case <-quit:
+					return nil
+				}
+			case err := <-sub.Err():
+				return err
+			case <-quit:
+				return nil
+			}
+		}
+	}), nil
+}
+
+// WalletSubmittedTopupLimitIterator is returned from FilterSubmittedTopupLimit and is used to iterate over the raw logs and unpacked data for SubmittedTopupLimit events raised by the Wallet contract.
+type WalletSubmittedTopupLimitIterator struct {
+	Event *WalletSubmittedTopupLimit // Event containing the contract specifics and raw log
+
+	contract *bind.BoundContract // Generic contract to use for unpacking event data
+	event    string              // Event name to use for unpacking event data
+
+	logs chan types.Log        // Log channel receiving the found contract events
+	sub  ethereum.Subscription // Subscription for errors, completion and termination
+	done bool                  // Whether the subscription completed delivering logs
+	fail error                 // Occurred error to stop iteration
+}
+
+// Next advances the iterator to the subsequent event, returning whether there
+// are any more events found. In case of a retrieval or parsing error, false is
+// returned and Error() can be queried for the exact failure.
+func (it *WalletSubmittedTopupLimitIterator) Next() bool {
+	// If the iterator failed, stop iterating
+	if it.fail != nil {
+		return false
+	}
+	// If the iterator completed, deliver directly whatever's available
+	if it.done {
+		select {
+		case log := <-it.logs:
+			it.Event = new(WalletSubmittedTopupLimit)
+			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+				it.fail = err
+				return false
+			}
+			it.Event.Raw = log
+			return true
+
+		default:
+			return false
+		}
+	}
+	// Iterator still in progress, wait for either a data or an error event
+	select {
+	case log := <-it.logs:
+		it.Event = new(WalletSubmittedTopupLimit)
+		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+			it.fail = err
+			return false
+		}
+		it.Event.Raw = log
+		return true
+
+	case err := <-it.sub.Err():
+		it.done = true
+		it.fail = err
+		return it.Next()
+	}
+}
+
+// Error returns any retrieval or parsing error occurred during filtering.
+func (it *WalletSubmittedTopupLimitIterator) Error() error {
+	return it.fail
+}
+
+// Close terminates the iteration process, releasing any pending underlying
+// resources.
+func (it *WalletSubmittedTopupLimitIterator) Close() error {
+	it.sub.Unsubscribe()
+	return nil
+}
+
+// WalletSubmittedTopupLimit represents a SubmittedTopupLimit event raised by the Wallet contract.
+type WalletSubmittedTopupLimit struct {
+	Amount *big.Int
+	Raw    types.Log // Blockchain specific contextual infos
+}
+
+// FilterSubmittedTopupLimit is a free log retrieval operation binding the contract event 0x1ede90fafc1d421fc4432cbbe366cae166cb7e548c7cdbf34cd2745d041588d2.
+//
+// Solidity: e SubmittedTopupLimit(_amount uint256)
+func (_Wallet *WalletFilterer) FilterSubmittedTopupLimit(opts *bind.FilterOpts) (*WalletSubmittedTopupLimitIterator, error) {
+
+	logs, sub, err := _Wallet.contract.FilterLogs(opts, "SubmittedTopupLimit")
+	if err != nil {
+		return nil, err
+	}
+	return &WalletSubmittedTopupLimitIterator{contract: _Wallet.contract, event: "SubmittedTopupLimit", logs: logs, sub: sub}, nil
+}
+
+// WatchSubmittedTopupLimit is a free log subscription operation binding the contract event 0x1ede90fafc1d421fc4432cbbe366cae166cb7e548c7cdbf34cd2745d041588d2.
+//
+// Solidity: e SubmittedTopupLimit(_amount uint256)
+func (_Wallet *WalletFilterer) WatchSubmittedTopupLimit(opts *bind.WatchOpts, sink chan<- *WalletSubmittedTopupLimit) (event.Subscription, error) {
+
+	logs, sub, err := _Wallet.contract.WatchLogs(opts, "SubmittedTopupLimit")
+	if err != nil {
+		return nil, err
+	}
+	return event.NewSubscription(func(quit <-chan struct{}) error {
+		defer sub.Unsubscribe()
+		for {
+			select {
+			case log := <-logs:
+				// New log arrived, parse the event and forward to the user
+				event := new(WalletSubmittedTopupLimit)
+				if err := _Wallet.contract.UnpackLog(event, "SubmittedTopupLimit", log); err != nil {
+					return err
+				}
+				event.Raw = log
+
+				select {
+				case sink <- event:
+				case err := <-sub.Err():
+					return err
+				case <-quit:
+					return nil
+				}
+			case err := <-sub.Err():
+				return err
+			case <-quit:
+				return nil
+			}
+		}
+	}), nil
+}
+
+// WalletSubmittedWhitelistAdditionIterator is returned from FilterSubmittedWhitelistAddition and is used to iterate over the raw logs and unpacked data for SubmittedWhitelistAddition events raised by the Wallet contract.
+type WalletSubmittedWhitelistAdditionIterator struct {
+	Event *WalletSubmittedWhitelistAddition // Event containing the contract specifics and raw log
+
+	contract *bind.BoundContract // Generic contract to use for unpacking event data
+	event    string              // Event name to use for unpacking event data
+
+	logs chan types.Log        // Log channel receiving the found contract events
+	sub  ethereum.Subscription // Subscription for errors, completion and termination
+	done bool                  // Whether the subscription completed delivering logs
+	fail error                 // Occurred error to stop iteration
+}
+
+// Next advances the iterator to the subsequent event, returning whether there
+// are any more events found. In case of a retrieval or parsing error, false is
+// returned and Error() can be queried for the exact failure.
+func (it *WalletSubmittedWhitelistAdditionIterator) Next() bool {
+	// If the iterator failed, stop iterating
+	if it.fail != nil {
+		return false
+	}
+	// If the iterator completed, deliver directly whatever's available
+	if it.done {
+		select {
+		case log := <-it.logs:
+			it.Event = new(WalletSubmittedWhitelistAddition)
+			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+				it.fail = err
+				return false
+			}
+			it.Event.Raw = log
+			return true
+
+		default:
+			return false
+		}
+	}
+	// Iterator still in progress, wait for either a data or an error event
+	select {
+	case log := <-it.logs:
+		it.Event = new(WalletSubmittedWhitelistAddition)
+		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+			it.fail = err
+			return false
+		}
+		it.Event.Raw = log
+		return true
+
+	case err := <-it.sub.Err():
+		it.done = true
+		it.fail = err
+		return it.Next()
+	}
+}
+
+// Error returns any retrieval or parsing error occurred during filtering.
+func (it *WalletSubmittedWhitelistAdditionIterator) Error() error {
+	return it.fail
+}
+
+// Close terminates the iteration process, releasing any pending underlying
+// resources.
+func (it *WalletSubmittedWhitelistAdditionIterator) Close() error {
+	it.sub.Unsubscribe()
+	return nil
+}
+
+// WalletSubmittedWhitelistAddition represents a SubmittedWhitelistAddition event raised by the Wallet contract.
+type WalletSubmittedWhitelistAddition struct {
+	Addresses []common.Address
+	Raw       types.Log // Blockchain specific contextual infos
+}
+
+// FilterSubmittedWhitelistAddition is a free log retrieval operation binding the contract event 0x1d2ace46074b1588a44de3e68b155a95fbf4704fabf5d560c733e4302e89203e.
+//
+// Solidity: e SubmittedWhitelistAddition(_addresses address[])
+func (_Wallet *WalletFilterer) FilterSubmittedWhitelistAddition(opts *bind.FilterOpts) (*WalletSubmittedWhitelistAdditionIterator, error) {
+
+	logs, sub, err := _Wallet.contract.FilterLogs(opts, "SubmittedWhitelistAddition")
+	if err != nil {
+		return nil, err
+	}
+	return &WalletSubmittedWhitelistAdditionIterator{contract: _Wallet.contract, event: "SubmittedWhitelistAddition", logs: logs, sub: sub}, nil
+}
+
+// WatchSubmittedWhitelistAddition is a free log subscription operation binding the contract event 0x1d2ace46074b1588a44de3e68b155a95fbf4704fabf5d560c733e4302e89203e.
+//
+// Solidity: e SubmittedWhitelistAddition(_addresses address[])
+func (_Wallet *WalletFilterer) WatchSubmittedWhitelistAddition(opts *bind.WatchOpts, sink chan<- *WalletSubmittedWhitelistAddition) (event.Subscription, error) {
+
+	logs, sub, err := _Wallet.contract.WatchLogs(opts, "SubmittedWhitelistAddition")
+	if err != nil {
+		return nil, err
+	}
+	return event.NewSubscription(func(quit <-chan struct{}) error {
+		defer sub.Unsubscribe()
+		for {
+			select {
+			case log := <-logs:
+				// New log arrived, parse the event and forward to the user
+				event := new(WalletSubmittedWhitelistAddition)
+				if err := _Wallet.contract.UnpackLog(event, "SubmittedWhitelistAddition", log); err != nil {
+					return err
+				}
+				event.Raw = log
+
+				select {
+				case sink <- event:
+				case err := <-sub.Err():
+					return err
+				case <-quit:
+					return nil
+				}
+			case err := <-sub.Err():
+				return err
+			case <-quit:
+				return nil
+			}
+		}
+	}), nil
+}
+
+// WalletSubmittedWhitelistRemovalIterator is returned from FilterSubmittedWhitelistRemoval and is used to iterate over the raw logs and unpacked data for SubmittedWhitelistRemoval events raised by the Wallet contract.
+type WalletSubmittedWhitelistRemovalIterator struct {
+	Event *WalletSubmittedWhitelistRemoval // Event containing the contract specifics and raw log
+
+	contract *bind.BoundContract // Generic contract to use for unpacking event data
+	event    string              // Event name to use for unpacking event data
+
+	logs chan types.Log        // Log channel receiving the found contract events
+	sub  ethereum.Subscription // Subscription for errors, completion and termination
+	done bool                  // Whether the subscription completed delivering logs
+	fail error                 // Occurred error to stop iteration
+}
+
+// Next advances the iterator to the subsequent event, returning whether there
+// are any more events found. In case of a retrieval or parsing error, false is
+// returned and Error() can be queried for the exact failure.
+func (it *WalletSubmittedWhitelistRemovalIterator) Next() bool {
+	// If the iterator failed, stop iterating
+	if it.fail != nil {
+		return false
+	}
+	// If the iterator completed, deliver directly whatever's available
+	if it.done {
+		select {
+		case log := <-it.logs:
+			it.Event = new(WalletSubmittedWhitelistRemoval)
+			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+				it.fail = err
+				return false
+			}
+			it.Event.Raw = log
+			return true
+
+		default:
+			return false
+		}
+	}
+	// Iterator still in progress, wait for either a data or an error event
+	select {
+	case log := <-it.logs:
+		it.Event = new(WalletSubmittedWhitelistRemoval)
+		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+			it.fail = err
+			return false
+		}
+		it.Event.Raw = log
+		return true
+
+	case err := <-it.sub.Err():
+		it.done = true
+		it.fail = err
+		return it.Next()
+	}
+}
+
+// Error returns any retrieval or parsing error occurred during filtering.
+func (it *WalletSubmittedWhitelistRemovalIterator) Error() error {
+	return it.fail
+}
+
+// Close terminates the iteration process, releasing any pending underlying
+// resources.
+func (it *WalletSubmittedWhitelistRemovalIterator) Close() error {
+	it.sub.Unsubscribe()
+	return nil
+}
+
+// WalletSubmittedWhitelistRemoval represents a SubmittedWhitelistRemoval event raised by the Wallet contract.
+type WalletSubmittedWhitelistRemoval struct {
+	Addresses []common.Address
+	Raw       types.Log // Blockchain specific contextual infos
+}
+
+// FilterSubmittedWhitelistRemoval is a free log retrieval operation binding the contract event 0xdd3cec2d800435e7127ecec5ff8ab7cc72d1ffc496a083747eb6516d669050d9.
+//
+// Solidity: e SubmittedWhitelistRemoval(_addresses address[])
+func (_Wallet *WalletFilterer) FilterSubmittedWhitelistRemoval(opts *bind.FilterOpts) (*WalletSubmittedWhitelistRemovalIterator, error) {
+
+	logs, sub, err := _Wallet.contract.FilterLogs(opts, "SubmittedWhitelistRemoval")
+	if err != nil {
+		return nil, err
+	}
+	return &WalletSubmittedWhitelistRemovalIterator{contract: _Wallet.contract, event: "SubmittedWhitelistRemoval", logs: logs, sub: sub}, nil
+}
+
+// WatchSubmittedWhitelistRemoval is a free log subscription operation binding the contract event 0xdd3cec2d800435e7127ecec5ff8ab7cc72d1ffc496a083747eb6516d669050d9.
+//
+// Solidity: e SubmittedWhitelistRemoval(_addresses address[])
+func (_Wallet *WalletFilterer) WatchSubmittedWhitelistRemoval(opts *bind.WatchOpts, sink chan<- *WalletSubmittedWhitelistRemoval) (event.Subscription, error) {
+
+	logs, sub, err := _Wallet.contract.WatchLogs(opts, "SubmittedWhitelistRemoval")
+	if err != nil {
+		return nil, err
+	}
+	return event.NewSubscription(func(quit <-chan struct{}) error {
+		defer sub.Unsubscribe()
+		for {
+			select {
+			case log := <-logs:
+				// New log arrived, parse the event and forward to the user
+				event := new(WalletSubmittedWhitelistRemoval)
+				if err := _Wallet.contract.UnpackLog(event, "SubmittedWhitelistRemoval", log); err != nil {
 					return err
 				}
 				event.Raw = log
@@ -1966,373 +3067,6 @@ func (_Wallet *WalletFilterer) WatchTopupGas(opts *bind.WatchOpts, sink chan<- *
 	}), nil
 }
 
-// WalletTopupLimitCancelledIterator is returned from FilterTopupLimitCancelled and is used to iterate over the raw logs and unpacked data for TopupLimitCancelled events raised by the Wallet contract.
-type WalletTopupLimitCancelledIterator struct {
-	Event *WalletTopupLimitCancelled // Event containing the contract specifics and raw log
-
-	contract *bind.BoundContract // Generic contract to use for unpacking event data
-	event    string              // Event name to use for unpacking event data
-
-	logs chan types.Log        // Log channel receiving the found contract events
-	sub  ethereum.Subscription // Subscription for errors, completion and termination
-	done bool                  // Whether the subscription completed delivering logs
-	fail error                 // Occurred error to stop iteration
-}
-
-// Next advances the iterator to the subsequent event, returning whether there
-// are any more events found. In case of a retrieval or parsing error, false is
-// returned and Error() can be queried for the exact failure.
-func (it *WalletTopupLimitCancelledIterator) Next() bool {
-	// If the iterator failed, stop iterating
-	if it.fail != nil {
-		return false
-	}
-	// If the iterator completed, deliver directly whatever's available
-	if it.done {
-		select {
-		case log := <-it.logs:
-			it.Event = new(WalletTopupLimitCancelled)
-			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
-				it.fail = err
-				return false
-			}
-			it.Event.Raw = log
-			return true
-
-		default:
-			return false
-		}
-	}
-	// Iterator still in progress, wait for either a data or an error event
-	select {
-	case log := <-it.logs:
-		it.Event = new(WalletTopupLimitCancelled)
-		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
-			it.fail = err
-			return false
-		}
-		it.Event.Raw = log
-		return true
-
-	case err := <-it.sub.Err():
-		it.done = true
-		it.fail = err
-		return it.Next()
-	}
-}
-
-// Error returns any retrieval or parsing error occurred during filtering.
-func (it *WalletTopupLimitCancelledIterator) Error() error {
-	return it.fail
-}
-
-// Close terminates the iteration process, releasing any pending underlying
-// resources.
-func (it *WalletTopupLimitCancelledIterator) Close() error {
-	it.sub.Unsubscribe()
-	return nil
-}
-
-// WalletTopupLimitCancelled represents a TopupLimitCancelled event raised by the Wallet contract.
-type WalletTopupLimitCancelled struct {
-	Sender common.Address
-	Raw    types.Log // Blockchain specific contextual infos
-}
-
-// FilterTopupLimitCancelled is a free log retrieval operation binding the contract event 0x206d7706b533d822ed2b6463324b95061754aa9141df1f79a034250914a6c182.
-//
-// Solidity: e TopupLimitCancelled(_sender address)
-func (_Wallet *WalletFilterer) FilterTopupLimitCancelled(opts *bind.FilterOpts) (*WalletTopupLimitCancelledIterator, error) {
-
-	logs, sub, err := _Wallet.contract.FilterLogs(opts, "TopupLimitCancelled")
-	if err != nil {
-		return nil, err
-	}
-	return &WalletTopupLimitCancelledIterator{contract: _Wallet.contract, event: "TopupLimitCancelled", logs: logs, sub: sub}, nil
-}
-
-// WatchTopupLimitCancelled is a free log subscription operation binding the contract event 0x206d7706b533d822ed2b6463324b95061754aa9141df1f79a034250914a6c182.
-//
-// Solidity: e TopupLimitCancelled(_sender address)
-func (_Wallet *WalletFilterer) WatchTopupLimitCancelled(opts *bind.WatchOpts, sink chan<- *WalletTopupLimitCancelled) (event.Subscription, error) {
-
-	logs, sub, err := _Wallet.contract.WatchLogs(opts, "TopupLimitCancelled")
-	if err != nil {
-		return nil, err
-	}
-	return event.NewSubscription(func(quit <-chan struct{}) error {
-		defer sub.Unsubscribe()
-		for {
-			select {
-			case log := <-logs:
-				// New log arrived, parse the event and forward to the user
-				event := new(WalletTopupLimitCancelled)
-				if err := _Wallet.contract.UnpackLog(event, "TopupLimitCancelled", log); err != nil {
-					return err
-				}
-				event.Raw = log
-
-				select {
-				case sink <- event:
-				case err := <-sub.Err():
-					return err
-				case <-quit:
-					return nil
-				}
-			case err := <-sub.Err():
-				return err
-			case <-quit:
-				return nil
-			}
-		}
-	}), nil
-}
-
-// WalletTopupLimitSetIterator is returned from FilterTopupLimitSet and is used to iterate over the raw logs and unpacked data for TopupLimitSet events raised by the Wallet contract.
-type WalletTopupLimitSetIterator struct {
-	Event *WalletTopupLimitSet // Event containing the contract specifics and raw log
-
-	contract *bind.BoundContract // Generic contract to use for unpacking event data
-	event    string              // Event name to use for unpacking event data
-
-	logs chan types.Log        // Log channel receiving the found contract events
-	sub  ethereum.Subscription // Subscription for errors, completion and termination
-	done bool                  // Whether the subscription completed delivering logs
-	fail error                 // Occurred error to stop iteration
-}
-
-// Next advances the iterator to the subsequent event, returning whether there
-// are any more events found. In case of a retrieval or parsing error, false is
-// returned and Error() can be queried for the exact failure.
-func (it *WalletTopupLimitSetIterator) Next() bool {
-	// If the iterator failed, stop iterating
-	if it.fail != nil {
-		return false
-	}
-	// If the iterator completed, deliver directly whatever's available
-	if it.done {
-		select {
-		case log := <-it.logs:
-			it.Event = new(WalletTopupLimitSet)
-			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
-				it.fail = err
-				return false
-			}
-			it.Event.Raw = log
-			return true
-
-		default:
-			return false
-		}
-	}
-	// Iterator still in progress, wait for either a data or an error event
-	select {
-	case log := <-it.logs:
-		it.Event = new(WalletTopupLimitSet)
-		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
-			it.fail = err
-			return false
-		}
-		it.Event.Raw = log
-		return true
-
-	case err := <-it.sub.Err():
-		it.done = true
-		it.fail = err
-		return it.Next()
-	}
-}
-
-// Error returns any retrieval or parsing error occurred during filtering.
-func (it *WalletTopupLimitSetIterator) Error() error {
-	return it.fail
-}
-
-// Close terminates the iteration process, releasing any pending underlying
-// resources.
-func (it *WalletTopupLimitSetIterator) Close() error {
-	it.sub.Unsubscribe()
-	return nil
-}
-
-// WalletTopupLimitSet represents a TopupLimitSet event raised by the Wallet contract.
-type WalletTopupLimitSet struct {
-	Sender common.Address
-	Amount *big.Int
-	Raw    types.Log // Blockchain specific contextual infos
-}
-
-// FilterTopupLimitSet is a free log retrieval operation binding the contract event 0x30cdfef434cd0bf85708997856f523c20b62eebe0d780dc0c1d4896a7efd8f2f.
-//
-// Solidity: e TopupLimitSet(_sender address, _amount uint256)
-func (_Wallet *WalletFilterer) FilterTopupLimitSet(opts *bind.FilterOpts) (*WalletTopupLimitSetIterator, error) {
-
-	logs, sub, err := _Wallet.contract.FilterLogs(opts, "TopupLimitSet")
-	if err != nil {
-		return nil, err
-	}
-	return &WalletTopupLimitSetIterator{contract: _Wallet.contract, event: "TopupLimitSet", logs: logs, sub: sub}, nil
-}
-
-// WatchTopupLimitSet is a free log subscription operation binding the contract event 0x30cdfef434cd0bf85708997856f523c20b62eebe0d780dc0c1d4896a7efd8f2f.
-//
-// Solidity: e TopupLimitSet(_sender address, _amount uint256)
-func (_Wallet *WalletFilterer) WatchTopupLimitSet(opts *bind.WatchOpts, sink chan<- *WalletTopupLimitSet) (event.Subscription, error) {
-
-	logs, sub, err := _Wallet.contract.WatchLogs(opts, "TopupLimitSet")
-	if err != nil {
-		return nil, err
-	}
-	return event.NewSubscription(func(quit <-chan struct{}) error {
-		defer sub.Unsubscribe()
-		for {
-			select {
-			case log := <-logs:
-				// New log arrived, parse the event and forward to the user
-				event := new(WalletTopupLimitSet)
-				if err := _Wallet.contract.UnpackLog(event, "TopupLimitSet", log); err != nil {
-					return err
-				}
-				event.Raw = log
-
-				select {
-				case sink <- event:
-				case err := <-sub.Err():
-					return err
-				case <-quit:
-					return nil
-				}
-			case err := <-sub.Err():
-				return err
-			case <-quit:
-				return nil
-			}
-		}
-	}), nil
-}
-
-// WalletTopupLimitSubmittedIterator is returned from FilterTopupLimitSubmitted and is used to iterate over the raw logs and unpacked data for TopupLimitSubmitted events raised by the Wallet contract.
-type WalletTopupLimitSubmittedIterator struct {
-	Event *WalletTopupLimitSubmitted // Event containing the contract specifics and raw log
-
-	contract *bind.BoundContract // Generic contract to use for unpacking event data
-	event    string              // Event name to use for unpacking event data
-
-	logs chan types.Log        // Log channel receiving the found contract events
-	sub  ethereum.Subscription // Subscription for errors, completion and termination
-	done bool                  // Whether the subscription completed delivering logs
-	fail error                 // Occurred error to stop iteration
-}
-
-// Next advances the iterator to the subsequent event, returning whether there
-// are any more events found. In case of a retrieval or parsing error, false is
-// returned and Error() can be queried for the exact failure.
-func (it *WalletTopupLimitSubmittedIterator) Next() bool {
-	// If the iterator failed, stop iterating
-	if it.fail != nil {
-		return false
-	}
-	// If the iterator completed, deliver directly whatever's available
-	if it.done {
-		select {
-		case log := <-it.logs:
-			it.Event = new(WalletTopupLimitSubmitted)
-			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
-				it.fail = err
-				return false
-			}
-			it.Event.Raw = log
-			return true
-
-		default:
-			return false
-		}
-	}
-	// Iterator still in progress, wait for either a data or an error event
-	select {
-	case log := <-it.logs:
-		it.Event = new(WalletTopupLimitSubmitted)
-		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
-			it.fail = err
-			return false
-		}
-		it.Event.Raw = log
-		return true
-
-	case err := <-it.sub.Err():
-		it.done = true
-		it.fail = err
-		return it.Next()
-	}
-}
-
-// Error returns any retrieval or parsing error occurred during filtering.
-func (it *WalletTopupLimitSubmittedIterator) Error() error {
-	return it.fail
-}
-
-// Close terminates the iteration process, releasing any pending underlying
-// resources.
-func (it *WalletTopupLimitSubmittedIterator) Close() error {
-	it.sub.Unsubscribe()
-	return nil
-}
-
-// WalletTopupLimitSubmitted represents a TopupLimitSubmitted event raised by the Wallet contract.
-type WalletTopupLimitSubmitted struct {
-	Amount *big.Int
-	Raw    types.Log // Blockchain specific contextual infos
-}
-
-// FilterTopupLimitSubmitted is a free log retrieval operation binding the contract event 0x58f80b6bbdc1ed8f57adb757fea1942dc103ee0e8145f6c6af899e00e6d1c764.
-//
-// Solidity: e TopupLimitSubmitted(_amount uint256)
-func (_Wallet *WalletFilterer) FilterTopupLimitSubmitted(opts *bind.FilterOpts) (*WalletTopupLimitSubmittedIterator, error) {
-
-	logs, sub, err := _Wallet.contract.FilterLogs(opts, "TopupLimitSubmitted")
-	if err != nil {
-		return nil, err
-	}
-	return &WalletTopupLimitSubmittedIterator{contract: _Wallet.contract, event: "TopupLimitSubmitted", logs: logs, sub: sub}, nil
-}
-
-// WatchTopupLimitSubmitted is a free log subscription operation binding the contract event 0x58f80b6bbdc1ed8f57adb757fea1942dc103ee0e8145f6c6af899e00e6d1c764.
-//
-// Solidity: e TopupLimitSubmitted(_amount uint256)
-func (_Wallet *WalletFilterer) WatchTopupLimitSubmitted(opts *bind.WatchOpts, sink chan<- *WalletTopupLimitSubmitted) (event.Subscription, error) {
-
-	logs, sub, err := _Wallet.contract.WatchLogs(opts, "TopupLimitSubmitted")
-	if err != nil {
-		return nil, err
-	}
-	return event.NewSubscription(func(quit <-chan struct{}) error {
-		defer sub.Unsubscribe()
-		for {
-			select {
-			case log := <-logs:
-				// New log arrived, parse the event and forward to the user
-				event := new(WalletTopupLimitSubmitted)
-				if err := _Wallet.contract.UnpackLog(event, "TopupLimitSubmitted", log); err != nil {
-					return err
-				}
-				event.Raw = log
-
-				select {
-				case sink <- event:
-				case err := <-sub.Err():
-					return err
-				case <-quit:
-					return nil
-				}
-			case err := <-sub.Err():
-				return err
-			case <-quit:
-				return nil
-			}
-		}
-	}), nil
-}
-
 // WalletTransferredIterator is returned from FilterTransferred and is used to iterate over the raw logs and unpacked data for Transferred events raised by the Wallet contract.
 type WalletTransferredIterator struct {
 	Event *WalletTransferred // Event containing the contract specifics and raw log
@@ -2437,740 +3171,6 @@ func (_Wallet *WalletFilterer) WatchTransferred(opts *bind.WatchOpts, sink chan<
 				// New log arrived, parse the event and forward to the user
 				event := new(WalletTransferred)
 				if err := _Wallet.contract.UnpackLog(event, "Transferred", log); err != nil {
-					return err
-				}
-				event.Raw = log
-
-				select {
-				case sink <- event:
-				case err := <-sub.Err():
-					return err
-				case <-quit:
-					return nil
-				}
-			case err := <-sub.Err():
-				return err
-			case <-quit:
-				return nil
-			}
-		}
-	}), nil
-}
-
-// WalletWhitelistAddedIterator is returned from FilterWhitelistAdded and is used to iterate over the raw logs and unpacked data for WhitelistAdded events raised by the Wallet contract.
-type WalletWhitelistAddedIterator struct {
-	Event *WalletWhitelistAdded // Event containing the contract specifics and raw log
-
-	contract *bind.BoundContract // Generic contract to use for unpacking event data
-	event    string              // Event name to use for unpacking event data
-
-	logs chan types.Log        // Log channel receiving the found contract events
-	sub  ethereum.Subscription // Subscription for errors, completion and termination
-	done bool                  // Whether the subscription completed delivering logs
-	fail error                 // Occurred error to stop iteration
-}
-
-// Next advances the iterator to the subsequent event, returning whether there
-// are any more events found. In case of a retrieval or parsing error, false is
-// returned and Error() can be queried for the exact failure.
-func (it *WalletWhitelistAddedIterator) Next() bool {
-	// If the iterator failed, stop iterating
-	if it.fail != nil {
-		return false
-	}
-	// If the iterator completed, deliver directly whatever's available
-	if it.done {
-		select {
-		case log := <-it.logs:
-			it.Event = new(WalletWhitelistAdded)
-			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
-				it.fail = err
-				return false
-			}
-			it.Event.Raw = log
-			return true
-
-		default:
-			return false
-		}
-	}
-	// Iterator still in progress, wait for either a data or an error event
-	select {
-	case log := <-it.logs:
-		it.Event = new(WalletWhitelistAdded)
-		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
-			it.fail = err
-			return false
-		}
-		it.Event.Raw = log
-		return true
-
-	case err := <-it.sub.Err():
-		it.done = true
-		it.fail = err
-		return it.Next()
-	}
-}
-
-// Error returns any retrieval or parsing error occurred during filtering.
-func (it *WalletWhitelistAddedIterator) Error() error {
-	return it.fail
-}
-
-// Close terminates the iteration process, releasing any pending underlying
-// resources.
-func (it *WalletWhitelistAddedIterator) Close() error {
-	it.sub.Unsubscribe()
-	return nil
-}
-
-// WalletWhitelistAdded represents a WhitelistAdded event raised by the Wallet contract.
-type WalletWhitelistAdded struct {
-	Sender    common.Address
-	Addresses []common.Address
-	Raw       types.Log // Blockchain specific contextual infos
-}
-
-// FilterWhitelistAdded is a free log retrieval operation binding the contract event 0xd98606aaa487d6600d0ccc0412dcdf79adc4f37f1deb6a6f9710ee6f458a7fb3.
-//
-// Solidity: e WhitelistAdded(_sender address, _addresses address[])
-func (_Wallet *WalletFilterer) FilterWhitelistAdded(opts *bind.FilterOpts) (*WalletWhitelistAddedIterator, error) {
-
-	logs, sub, err := _Wallet.contract.FilterLogs(opts, "WhitelistAdded")
-	if err != nil {
-		return nil, err
-	}
-	return &WalletWhitelistAddedIterator{contract: _Wallet.contract, event: "WhitelistAdded", logs: logs, sub: sub}, nil
-}
-
-// WatchWhitelistAdded is a free log subscription operation binding the contract event 0xd98606aaa487d6600d0ccc0412dcdf79adc4f37f1deb6a6f9710ee6f458a7fb3.
-//
-// Solidity: e WhitelistAdded(_sender address, _addresses address[])
-func (_Wallet *WalletFilterer) WatchWhitelistAdded(opts *bind.WatchOpts, sink chan<- *WalletWhitelistAdded) (event.Subscription, error) {
-
-	logs, sub, err := _Wallet.contract.WatchLogs(opts, "WhitelistAdded")
-	if err != nil {
-		return nil, err
-	}
-	return event.NewSubscription(func(quit <-chan struct{}) error {
-		defer sub.Unsubscribe()
-		for {
-			select {
-			case log := <-logs:
-				// New log arrived, parse the event and forward to the user
-				event := new(WalletWhitelistAdded)
-				if err := _Wallet.contract.UnpackLog(event, "WhitelistAdded", log); err != nil {
-					return err
-				}
-				event.Raw = log
-
-				select {
-				case sink <- event:
-				case err := <-sub.Err():
-					return err
-				case <-quit:
-					return nil
-				}
-			case err := <-sub.Err():
-				return err
-			case <-quit:
-				return nil
-			}
-		}
-	}), nil
-}
-
-// WalletWhitelistAdditionCancelledIterator is returned from FilterWhitelistAdditionCancelled and is used to iterate over the raw logs and unpacked data for WhitelistAdditionCancelled events raised by the Wallet contract.
-type WalletWhitelistAdditionCancelledIterator struct {
-	Event *WalletWhitelistAdditionCancelled // Event containing the contract specifics and raw log
-
-	contract *bind.BoundContract // Generic contract to use for unpacking event data
-	event    string              // Event name to use for unpacking event data
-
-	logs chan types.Log        // Log channel receiving the found contract events
-	sub  ethereum.Subscription // Subscription for errors, completion and termination
-	done bool                  // Whether the subscription completed delivering logs
-	fail error                 // Occurred error to stop iteration
-}
-
-// Next advances the iterator to the subsequent event, returning whether there
-// are any more events found. In case of a retrieval or parsing error, false is
-// returned and Error() can be queried for the exact failure.
-func (it *WalletWhitelistAdditionCancelledIterator) Next() bool {
-	// If the iterator failed, stop iterating
-	if it.fail != nil {
-		return false
-	}
-	// If the iterator completed, deliver directly whatever's available
-	if it.done {
-		select {
-		case log := <-it.logs:
-			it.Event = new(WalletWhitelistAdditionCancelled)
-			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
-				it.fail = err
-				return false
-			}
-			it.Event.Raw = log
-			return true
-
-		default:
-			return false
-		}
-	}
-	// Iterator still in progress, wait for either a data or an error event
-	select {
-	case log := <-it.logs:
-		it.Event = new(WalletWhitelistAdditionCancelled)
-		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
-			it.fail = err
-			return false
-		}
-		it.Event.Raw = log
-		return true
-
-	case err := <-it.sub.Err():
-		it.done = true
-		it.fail = err
-		return it.Next()
-	}
-}
-
-// Error returns any retrieval or parsing error occurred during filtering.
-func (it *WalletWhitelistAdditionCancelledIterator) Error() error {
-	return it.fail
-}
-
-// Close terminates the iteration process, releasing any pending underlying
-// resources.
-func (it *WalletWhitelistAdditionCancelledIterator) Close() error {
-	it.sub.Unsubscribe()
-	return nil
-}
-
-// WalletWhitelistAdditionCancelled represents a WhitelistAdditionCancelled event raised by the Wallet contract.
-type WalletWhitelistAdditionCancelled struct {
-	Sender common.Address
-	Raw    types.Log // Blockchain specific contextual infos
-}
-
-// FilterWhitelistAdditionCancelled is a free log retrieval operation binding the contract event 0x52b0bc9c244e000beb0e24535b386411b96be4257d9738097806172fb2224b66.
-//
-// Solidity: e WhitelistAdditionCancelled(_sender address)
-func (_Wallet *WalletFilterer) FilterWhitelistAdditionCancelled(opts *bind.FilterOpts) (*WalletWhitelistAdditionCancelledIterator, error) {
-
-	logs, sub, err := _Wallet.contract.FilterLogs(opts, "WhitelistAdditionCancelled")
-	if err != nil {
-		return nil, err
-	}
-	return &WalletWhitelistAdditionCancelledIterator{contract: _Wallet.contract, event: "WhitelistAdditionCancelled", logs: logs, sub: sub}, nil
-}
-
-// WatchWhitelistAdditionCancelled is a free log subscription operation binding the contract event 0x52b0bc9c244e000beb0e24535b386411b96be4257d9738097806172fb2224b66.
-//
-// Solidity: e WhitelistAdditionCancelled(_sender address)
-func (_Wallet *WalletFilterer) WatchWhitelistAdditionCancelled(opts *bind.WatchOpts, sink chan<- *WalletWhitelistAdditionCancelled) (event.Subscription, error) {
-
-	logs, sub, err := _Wallet.contract.WatchLogs(opts, "WhitelistAdditionCancelled")
-	if err != nil {
-		return nil, err
-	}
-	return event.NewSubscription(func(quit <-chan struct{}) error {
-		defer sub.Unsubscribe()
-		for {
-			select {
-			case log := <-logs:
-				// New log arrived, parse the event and forward to the user
-				event := new(WalletWhitelistAdditionCancelled)
-				if err := _Wallet.contract.UnpackLog(event, "WhitelistAdditionCancelled", log); err != nil {
-					return err
-				}
-				event.Raw = log
-
-				select {
-				case sink <- event:
-				case err := <-sub.Err():
-					return err
-				case <-quit:
-					return nil
-				}
-			case err := <-sub.Err():
-				return err
-			case <-quit:
-				return nil
-			}
-		}
-	}), nil
-}
-
-// WalletWhitelistAdditionSubmittedIterator is returned from FilterWhitelistAdditionSubmitted and is used to iterate over the raw logs and unpacked data for WhitelistAdditionSubmitted events raised by the Wallet contract.
-type WalletWhitelistAdditionSubmittedIterator struct {
-	Event *WalletWhitelistAdditionSubmitted // Event containing the contract specifics and raw log
-
-	contract *bind.BoundContract // Generic contract to use for unpacking event data
-	event    string              // Event name to use for unpacking event data
-
-	logs chan types.Log        // Log channel receiving the found contract events
-	sub  ethereum.Subscription // Subscription for errors, completion and termination
-	done bool                  // Whether the subscription completed delivering logs
-	fail error                 // Occurred error to stop iteration
-}
-
-// Next advances the iterator to the subsequent event, returning whether there
-// are any more events found. In case of a retrieval or parsing error, false is
-// returned and Error() can be queried for the exact failure.
-func (it *WalletWhitelistAdditionSubmittedIterator) Next() bool {
-	// If the iterator failed, stop iterating
-	if it.fail != nil {
-		return false
-	}
-	// If the iterator completed, deliver directly whatever's available
-	if it.done {
-		select {
-		case log := <-it.logs:
-			it.Event = new(WalletWhitelistAdditionSubmitted)
-			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
-				it.fail = err
-				return false
-			}
-			it.Event.Raw = log
-			return true
-
-		default:
-			return false
-		}
-	}
-	// Iterator still in progress, wait for either a data or an error event
-	select {
-	case log := <-it.logs:
-		it.Event = new(WalletWhitelistAdditionSubmitted)
-		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
-			it.fail = err
-			return false
-		}
-		it.Event.Raw = log
-		return true
-
-	case err := <-it.sub.Err():
-		it.done = true
-		it.fail = err
-		return it.Next()
-	}
-}
-
-// Error returns any retrieval or parsing error occurred during filtering.
-func (it *WalletWhitelistAdditionSubmittedIterator) Error() error {
-	return it.fail
-}
-
-// Close terminates the iteration process, releasing any pending underlying
-// resources.
-func (it *WalletWhitelistAdditionSubmittedIterator) Close() error {
-	it.sub.Unsubscribe()
-	return nil
-}
-
-// WalletWhitelistAdditionSubmitted represents a WhitelistAdditionSubmitted event raised by the Wallet contract.
-type WalletWhitelistAdditionSubmitted struct {
-	Addresses []common.Address
-	Raw       types.Log // Blockchain specific contextual infos
-}
-
-// FilterWhitelistAdditionSubmitted is a free log retrieval operation binding the contract event 0xd9a6feb0b6b0bf85f02a1e3cea31a41fb2b7a92cf5aec53cf6162d30829ce0e8.
-//
-// Solidity: e WhitelistAdditionSubmitted(_addresses address[])
-func (_Wallet *WalletFilterer) FilterWhitelistAdditionSubmitted(opts *bind.FilterOpts) (*WalletWhitelistAdditionSubmittedIterator, error) {
-
-	logs, sub, err := _Wallet.contract.FilterLogs(opts, "WhitelistAdditionSubmitted")
-	if err != nil {
-		return nil, err
-	}
-	return &WalletWhitelistAdditionSubmittedIterator{contract: _Wallet.contract, event: "WhitelistAdditionSubmitted", logs: logs, sub: sub}, nil
-}
-
-// WatchWhitelistAdditionSubmitted is a free log subscription operation binding the contract event 0xd9a6feb0b6b0bf85f02a1e3cea31a41fb2b7a92cf5aec53cf6162d30829ce0e8.
-//
-// Solidity: e WhitelistAdditionSubmitted(_addresses address[])
-func (_Wallet *WalletFilterer) WatchWhitelistAdditionSubmitted(opts *bind.WatchOpts, sink chan<- *WalletWhitelistAdditionSubmitted) (event.Subscription, error) {
-
-	logs, sub, err := _Wallet.contract.WatchLogs(opts, "WhitelistAdditionSubmitted")
-	if err != nil {
-		return nil, err
-	}
-	return event.NewSubscription(func(quit <-chan struct{}) error {
-		defer sub.Unsubscribe()
-		for {
-			select {
-			case log := <-logs:
-				// New log arrived, parse the event and forward to the user
-				event := new(WalletWhitelistAdditionSubmitted)
-				if err := _Wallet.contract.UnpackLog(event, "WhitelistAdditionSubmitted", log); err != nil {
-					return err
-				}
-				event.Raw = log
-
-				select {
-				case sink <- event:
-				case err := <-sub.Err():
-					return err
-				case <-quit:
-					return nil
-				}
-			case err := <-sub.Err():
-				return err
-			case <-quit:
-				return nil
-			}
-		}
-	}), nil
-}
-
-// WalletWhitelistRemovalCancelledIterator is returned from FilterWhitelistRemovalCancelled and is used to iterate over the raw logs and unpacked data for WhitelistRemovalCancelled events raised by the Wallet contract.
-type WalletWhitelistRemovalCancelledIterator struct {
-	Event *WalletWhitelistRemovalCancelled // Event containing the contract specifics and raw log
-
-	contract *bind.BoundContract // Generic contract to use for unpacking event data
-	event    string              // Event name to use for unpacking event data
-
-	logs chan types.Log        // Log channel receiving the found contract events
-	sub  ethereum.Subscription // Subscription for errors, completion and termination
-	done bool                  // Whether the subscription completed delivering logs
-	fail error                 // Occurred error to stop iteration
-}
-
-// Next advances the iterator to the subsequent event, returning whether there
-// are any more events found. In case of a retrieval or parsing error, false is
-// returned and Error() can be queried for the exact failure.
-func (it *WalletWhitelistRemovalCancelledIterator) Next() bool {
-	// If the iterator failed, stop iterating
-	if it.fail != nil {
-		return false
-	}
-	// If the iterator completed, deliver directly whatever's available
-	if it.done {
-		select {
-		case log := <-it.logs:
-			it.Event = new(WalletWhitelistRemovalCancelled)
-			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
-				it.fail = err
-				return false
-			}
-			it.Event.Raw = log
-			return true
-
-		default:
-			return false
-		}
-	}
-	// Iterator still in progress, wait for either a data or an error event
-	select {
-	case log := <-it.logs:
-		it.Event = new(WalletWhitelistRemovalCancelled)
-		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
-			it.fail = err
-			return false
-		}
-		it.Event.Raw = log
-		return true
-
-	case err := <-it.sub.Err():
-		it.done = true
-		it.fail = err
-		return it.Next()
-	}
-}
-
-// Error returns any retrieval or parsing error occurred during filtering.
-func (it *WalletWhitelistRemovalCancelledIterator) Error() error {
-	return it.fail
-}
-
-// Close terminates the iteration process, releasing any pending underlying
-// resources.
-func (it *WalletWhitelistRemovalCancelledIterator) Close() error {
-	it.sub.Unsubscribe()
-	return nil
-}
-
-// WalletWhitelistRemovalCancelled represents a WhitelistRemovalCancelled event raised by the Wallet contract.
-type WalletWhitelistRemovalCancelled struct {
-	Sender common.Address
-	Raw    types.Log // Blockchain specific contextual infos
-}
-
-// FilterWhitelistRemovalCancelled is a free log retrieval operation binding the contract event 0x8629df681796168db65daa22769456c33e3e8eaf0f9c80e13efff7905e290381.
-//
-// Solidity: e WhitelistRemovalCancelled(_sender address)
-func (_Wallet *WalletFilterer) FilterWhitelistRemovalCancelled(opts *bind.FilterOpts) (*WalletWhitelistRemovalCancelledIterator, error) {
-
-	logs, sub, err := _Wallet.contract.FilterLogs(opts, "WhitelistRemovalCancelled")
-	if err != nil {
-		return nil, err
-	}
-	return &WalletWhitelistRemovalCancelledIterator{contract: _Wallet.contract, event: "WhitelistRemovalCancelled", logs: logs, sub: sub}, nil
-}
-
-// WatchWhitelistRemovalCancelled is a free log subscription operation binding the contract event 0x8629df681796168db65daa22769456c33e3e8eaf0f9c80e13efff7905e290381.
-//
-// Solidity: e WhitelistRemovalCancelled(_sender address)
-func (_Wallet *WalletFilterer) WatchWhitelistRemovalCancelled(opts *bind.WatchOpts, sink chan<- *WalletWhitelistRemovalCancelled) (event.Subscription, error) {
-
-	logs, sub, err := _Wallet.contract.WatchLogs(opts, "WhitelistRemovalCancelled")
-	if err != nil {
-		return nil, err
-	}
-	return event.NewSubscription(func(quit <-chan struct{}) error {
-		defer sub.Unsubscribe()
-		for {
-			select {
-			case log := <-logs:
-				// New log arrived, parse the event and forward to the user
-				event := new(WalletWhitelistRemovalCancelled)
-				if err := _Wallet.contract.UnpackLog(event, "WhitelistRemovalCancelled", log); err != nil {
-					return err
-				}
-				event.Raw = log
-
-				select {
-				case sink <- event:
-				case err := <-sub.Err():
-					return err
-				case <-quit:
-					return nil
-				}
-			case err := <-sub.Err():
-				return err
-			case <-quit:
-				return nil
-			}
-		}
-	}), nil
-}
-
-// WalletWhitelistRemovalSubmittedIterator is returned from FilterWhitelistRemovalSubmitted and is used to iterate over the raw logs and unpacked data for WhitelistRemovalSubmitted events raised by the Wallet contract.
-type WalletWhitelistRemovalSubmittedIterator struct {
-	Event *WalletWhitelistRemovalSubmitted // Event containing the contract specifics and raw log
-
-	contract *bind.BoundContract // Generic contract to use for unpacking event data
-	event    string              // Event name to use for unpacking event data
-
-	logs chan types.Log        // Log channel receiving the found contract events
-	sub  ethereum.Subscription // Subscription for errors, completion and termination
-	done bool                  // Whether the subscription completed delivering logs
-	fail error                 // Occurred error to stop iteration
-}
-
-// Next advances the iterator to the subsequent event, returning whether there
-// are any more events found. In case of a retrieval or parsing error, false is
-// returned and Error() can be queried for the exact failure.
-func (it *WalletWhitelistRemovalSubmittedIterator) Next() bool {
-	// If the iterator failed, stop iterating
-	if it.fail != nil {
-		return false
-	}
-	// If the iterator completed, deliver directly whatever's available
-	if it.done {
-		select {
-		case log := <-it.logs:
-			it.Event = new(WalletWhitelistRemovalSubmitted)
-			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
-				it.fail = err
-				return false
-			}
-			it.Event.Raw = log
-			return true
-
-		default:
-			return false
-		}
-	}
-	// Iterator still in progress, wait for either a data or an error event
-	select {
-	case log := <-it.logs:
-		it.Event = new(WalletWhitelistRemovalSubmitted)
-		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
-			it.fail = err
-			return false
-		}
-		it.Event.Raw = log
-		return true
-
-	case err := <-it.sub.Err():
-		it.done = true
-		it.fail = err
-		return it.Next()
-	}
-}
-
-// Error returns any retrieval or parsing error occurred during filtering.
-func (it *WalletWhitelistRemovalSubmittedIterator) Error() error {
-	return it.fail
-}
-
-// Close terminates the iteration process, releasing any pending underlying
-// resources.
-func (it *WalletWhitelistRemovalSubmittedIterator) Close() error {
-	it.sub.Unsubscribe()
-	return nil
-}
-
-// WalletWhitelistRemovalSubmitted represents a WhitelistRemovalSubmitted event raised by the Wallet contract.
-type WalletWhitelistRemovalSubmitted struct {
-	Addresses []common.Address
-	Raw       types.Log // Blockchain specific contextual infos
-}
-
-// FilterWhitelistRemovalSubmitted is a free log retrieval operation binding the contract event 0x56c8087c53ba3bd97430c1270719f4e10315cfb883bd92aacb97effe531f0624.
-//
-// Solidity: e WhitelistRemovalSubmitted(_addresses address[])
-func (_Wallet *WalletFilterer) FilterWhitelistRemovalSubmitted(opts *bind.FilterOpts) (*WalletWhitelistRemovalSubmittedIterator, error) {
-
-	logs, sub, err := _Wallet.contract.FilterLogs(opts, "WhitelistRemovalSubmitted")
-	if err != nil {
-		return nil, err
-	}
-	return &WalletWhitelistRemovalSubmittedIterator{contract: _Wallet.contract, event: "WhitelistRemovalSubmitted", logs: logs, sub: sub}, nil
-}
-
-// WatchWhitelistRemovalSubmitted is a free log subscription operation binding the contract event 0x56c8087c53ba3bd97430c1270719f4e10315cfb883bd92aacb97effe531f0624.
-//
-// Solidity: e WhitelistRemovalSubmitted(_addresses address[])
-func (_Wallet *WalletFilterer) WatchWhitelistRemovalSubmitted(opts *bind.WatchOpts, sink chan<- *WalletWhitelistRemovalSubmitted) (event.Subscription, error) {
-
-	logs, sub, err := _Wallet.contract.WatchLogs(opts, "WhitelistRemovalSubmitted")
-	if err != nil {
-		return nil, err
-	}
-	return event.NewSubscription(func(quit <-chan struct{}) error {
-		defer sub.Unsubscribe()
-		for {
-			select {
-			case log := <-logs:
-				// New log arrived, parse the event and forward to the user
-				event := new(WalletWhitelistRemovalSubmitted)
-				if err := _Wallet.contract.UnpackLog(event, "WhitelistRemovalSubmitted", log); err != nil {
-					return err
-				}
-				event.Raw = log
-
-				select {
-				case sink <- event:
-				case err := <-sub.Err():
-					return err
-				case <-quit:
-					return nil
-				}
-			case err := <-sub.Err():
-				return err
-			case <-quit:
-				return nil
-			}
-		}
-	}), nil
-}
-
-// WalletWhitelistRemovedIterator is returned from FilterWhitelistRemoved and is used to iterate over the raw logs and unpacked data for WhitelistRemoved events raised by the Wallet contract.
-type WalletWhitelistRemovedIterator struct {
-	Event *WalletWhitelistRemoved // Event containing the contract specifics and raw log
-
-	contract *bind.BoundContract // Generic contract to use for unpacking event data
-	event    string              // Event name to use for unpacking event data
-
-	logs chan types.Log        // Log channel receiving the found contract events
-	sub  ethereum.Subscription // Subscription for errors, completion and termination
-	done bool                  // Whether the subscription completed delivering logs
-	fail error                 // Occurred error to stop iteration
-}
-
-// Next advances the iterator to the subsequent event, returning whether there
-// are any more events found. In case of a retrieval or parsing error, false is
-// returned and Error() can be queried for the exact failure.
-func (it *WalletWhitelistRemovedIterator) Next() bool {
-	// If the iterator failed, stop iterating
-	if it.fail != nil {
-		return false
-	}
-	// If the iterator completed, deliver directly whatever's available
-	if it.done {
-		select {
-		case log := <-it.logs:
-			it.Event = new(WalletWhitelistRemoved)
-			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
-				it.fail = err
-				return false
-			}
-			it.Event.Raw = log
-			return true
-
-		default:
-			return false
-		}
-	}
-	// Iterator still in progress, wait for either a data or an error event
-	select {
-	case log := <-it.logs:
-		it.Event = new(WalletWhitelistRemoved)
-		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
-			it.fail = err
-			return false
-		}
-		it.Event.Raw = log
-		return true
-
-	case err := <-it.sub.Err():
-		it.done = true
-		it.fail = err
-		return it.Next()
-	}
-}
-
-// Error returns any retrieval or parsing error occurred during filtering.
-func (it *WalletWhitelistRemovedIterator) Error() error {
-	return it.fail
-}
-
-// Close terminates the iteration process, releasing any pending underlying
-// resources.
-func (it *WalletWhitelistRemovedIterator) Close() error {
-	it.sub.Unsubscribe()
-	return nil
-}
-
-// WalletWhitelistRemoved represents a WhitelistRemoved event raised by the Wallet contract.
-type WalletWhitelistRemoved struct {
-	Sender    common.Address
-	Addresses []common.Address
-	Raw       types.Log // Blockchain specific contextual infos
-}
-
-// FilterWhitelistRemoved is a free log retrieval operation binding the contract event 0x8dcc5cbf3fad6045849f4884bb2e80fc9e15ece7a07ae215b197123807847a0d.
-//
-// Solidity: e WhitelistRemoved(_sender address, _addresses address[])
-func (_Wallet *WalletFilterer) FilterWhitelistRemoved(opts *bind.FilterOpts) (*WalletWhitelistRemovedIterator, error) {
-
-	logs, sub, err := _Wallet.contract.FilterLogs(opts, "WhitelistRemoved")
-	if err != nil {
-		return nil, err
-	}
-	return &WalletWhitelistRemovedIterator{contract: _Wallet.contract, event: "WhitelistRemoved", logs: logs, sub: sub}, nil
-}
-
-// WatchWhitelistRemoved is a free log subscription operation binding the contract event 0x8dcc5cbf3fad6045849f4884bb2e80fc9e15ece7a07ae215b197123807847a0d.
-//
-// Solidity: e WhitelistRemoved(_sender address, _addresses address[])
-func (_Wallet *WalletFilterer) WatchWhitelistRemoved(opts *bind.WatchOpts, sink chan<- *WalletWhitelistRemoved) (event.Subscription, error) {
-
-	logs, sub, err := _Wallet.contract.WatchLogs(opts, "WhitelistRemoved")
-	if err != nil {
-		return nil, err
-	}
-	return event.NewSubscription(func(quit <-chan struct{}) error {
-		defer sub.Unsubscribe()
-		for {
-			select {
-			case log := <-logs:
-				// New log arrived, parse the event and forward to the user
-				event := new(WalletWhitelistRemoved)
-				if err := _Wallet.contract.UnpackLog(event, "WhitelistRemoved", log); err != nil {
 					return err
 				}
 				event.Raw = log
