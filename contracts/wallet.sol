@@ -156,8 +156,8 @@ contract Whitelist is Controllable, Ownable {
 /// @title SpendLimit provides daily spend limit functionality.
 contract SpendLimit is Controllable, Ownable {
     event SetSpendLimit(address _sender, uint _amount);
-    event SubmittedSpendLimit(uint _amount);
-    event CancelledSpendLimit(address _sender);
+    event SubmittedSpendLimitChange(uint _amount);
+    event CancelledSpendLimitChange(address _sender);
 
     uint public spendLimit;
     uint internal _spendLimitDay;
@@ -209,7 +209,7 @@ contract SpendLimit is Controllable, Ownable {
         // Flag the operation as submitted.
         submittedSpendLimit = true;
         // Emit the submission event.
-        emit SubmittedSpendLimit(_amount);
+        emit SubmittedSpendLimitChange(_amount);
     }
 
     /// @dev Confirm pending set daily limit operation.
@@ -233,7 +233,7 @@ contract SpendLimit is Controllable, Ownable {
         // Reset the submitted operation flag.
         submittedSpendLimit = false;
         // Emit the cancellation event.
-        emit CancelledSpendLimit(msg.sender);
+        emit CancelledSpendLimitChange(msg.sender);
     }
 
     /// @dev Update available spend limit based on the daily reset.
@@ -264,7 +264,7 @@ contract SpendLimit is Controllable, Ownable {
 
 /// @title Asset store with extra security features.
 contract Vault is Whitelist, SpendLimit, ERC165 {
-    event DepositReceived(address _from, uint _amount);
+    event Received(address _from, uint _amount);
     event Transferred(address _to, address _asset, uint _amount);
 
     //// @dev Supported ERC165 interface ID.
@@ -290,7 +290,7 @@ contract Vault is Whitelist, SpendLimit, ERC165 {
 
     /// @dev Ether can be deposited from any source, so this contract must be payable by anyone.
     function() public payable {
-        emit DepositReceived(msg.sender, msg.value);
+        emit Received(msg.sender, msg.value);
     }
 
     /// @dev Returns the amount of an asset owned by the contract.
@@ -345,8 +345,8 @@ contract Vault is Whitelist, SpendLimit, ERC165 {
 /// @title Asset wallet with extra security features and gas topup management.
 contract Wallet is Vault {
     event SetTopupLimit(address _sender, uint _amount);
-    event SubmittedTopupLimit(uint _amount);
-    event CancelledTopupLimit(address _sender);
+    event SubmittedTopupLimitChange(uint _amount);
+    event CancelledTopupLimitChange(address _sender);
 
     event TopupGas(address _sender, address _owner, uint _amount);
 
@@ -411,7 +411,7 @@ contract Wallet is Vault {
         // Flag the operation as submitted.
         submittedTopupLimit = true;
         // Emit the submission event.
-        emit SubmittedTopupLimit(_amount);
+        emit SubmittedTopupLimitChange(_amount);
     }
 
     /// @dev Confirm pending set top up limit operation.
@@ -437,7 +437,7 @@ contract Wallet is Vault {
         // Reset the submitted operation flag.
         submittedTopupLimit = false;
         // Emit the cancellation event.
-        emit CancelledTopupLimit(msg.sender);
+        emit CancelledTopupLimitChange(msg.sender);
     }
 
     /// @dev Refill owner's gas balance.

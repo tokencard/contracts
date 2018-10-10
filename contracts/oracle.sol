@@ -158,11 +158,11 @@ contract Oracle is UsingOraclize, Base64, Date, JSON, Controllable, IOracle {
     using Strings for *;
     using SafeMath for uint256;
 
-    event TokenAdded(address _token, string _label, uint8 _decimals);
-    event TokenRemoved(address _token);
-    event TokenRateUpdated(address _token, uint _rate);
+    event AddedToken(address _token, string _label, uint8 _decimals);
+    event RemovedToken(address _token);
+    event UpdatedTokenRate(address _token, uint _rate);
 
-    event GasPriceSet(uint _gasPrice);
+    event SetGasPrice(uint _gasPrice);
     event Converted(address _token, uint _amount, uint _ether);
 
     event OraclizeQuerySucceeded(string _label);
@@ -220,7 +220,7 @@ contract Oracle is UsingOraclize, Base64, Date, JSON, Controllable, IOracle {
     /// @dev Sets the gas price used by oraclize query.
     function setCustomGasPrice(uint _gasPrice) external onlyController {
         oraclize_setCustomGasPrice(_gasPrice);
-        emit GasPriceSet(_gasPrice);
+        emit SetGasPrice(_gasPrice);
     }
 
     /// @dev Convert ERC20 token amount to the corresponding ether amount (used by the wallet contract).
@@ -268,7 +268,7 @@ contract Oracle is UsingOraclize, Base64, Date, JSON, Controllable, IOracle {
             // Add the token address to the address list.
             _tokenAddresses.push(token);
             // Emit token addition event.
-            emit TokenAdded(token, label, decimals);
+            emit AddedToken(token, label, decimals);
         }
     }
 
@@ -290,7 +290,7 @@ contract Oracle is UsingOraclize, Base64, Date, JSON, Controllable, IOracle {
             }
             _tokenAddresses.length--;
             // Emit token removal event.
-            emit TokenRemoved(token);
+            emit RemovedToken(token);
         }
     }
 
@@ -305,7 +305,7 @@ contract Oracle is UsingOraclize, Base64, Date, JSON, Controllable, IOracle {
         // Update the token's last update timestamp.
         tokens[_token].lastUpdate = now;
         // Emit the rate update event.
-        emit TokenRateUpdated(_token, _rate);
+        emit UpdatedTokenRate(_token, _rate);
     }
 
     /// @dev Update ERC20 token exchange rates for all supported tokens.
@@ -334,7 +334,7 @@ contract Oracle is UsingOraclize, Base64, Date, JSON, Controllable, IOracle {
           // Parse the JSON result to get the rate in wei.
           token.rate = parseInt(parseRate(_result, "ETH"), 18);
           // Emit the rate update event.
-          emit TokenRateUpdated(_token, token.rate);
+          emit UpdatedTokenRate(_token, token.rate);
           // Set the update time of the token rate.
           token.lastUpdate = now;
           // Remove query from the list.

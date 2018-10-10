@@ -3,7 +3,7 @@ pragma solidity ^0.4.25;
 
 /// @title Ownable has an owner address and provides basic authorization control functions.
 contract Ownable {
-    event OwnershipTransferred(address _to);
+    event TransferredOwnership(address _to);
 
     address private _owner;
     bool private _isTransferable;
@@ -33,7 +33,7 @@ contract Ownable {
         // Set the owner to the provided address.
         _owner = _account;
         // Emit the ownership transfer event.
-        emit OwnershipTransferred(_account);
+        emit TransferredOwnership(_account);
     }
 
     /// @return the address of the owner.

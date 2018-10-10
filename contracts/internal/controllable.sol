@@ -4,7 +4,7 @@ import "./controller.sol";
 
 /// @title Controllable implements access control functionality based on an external list of controllers.
 contract Controllable {
-    event ControllerResolverChanged(address _old, address _new);
+    event ChangedControllerResolver(address _old, address _new);
 
     /// @dev Controller points to the contract that contains the list of controllers.
     IController private _C;
@@ -29,7 +29,7 @@ contract Controllable {
     /// @dev Changes the address of the controller contract.
     /// @param _controller address of the new controller contract.
     function newController(address _controller) public onlyController {
-        emit ControllerResolverChanged(address(_C), _controller);
+        emit ChangedControllerResolver(address(_C), _controller);
         _C = IController(_controller);
     }
 }

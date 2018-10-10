@@ -28,10 +28,10 @@ var (
 )
 
 // ControllerABI is the input ABI used to generate the binding from.
-const ControllerABI = "[{\"constant\":true,\"inputs\":[],\"name\":\"controllerCount\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_account\",\"type\":\"address\"}],\"name\":\"addController\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_account\",\"type\":\"address\"}],\"name\":\"isController\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_account\",\"type\":\"address\"}],\"name\":\"removeController\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"name\":\"_account\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_sender\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_controller\",\"type\":\"address\"}],\"name\":\"ControllerAdded\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_sender\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_controller\",\"type\":\"address\"}],\"name\":\"ControllerRemoved\",\"type\":\"event\"}]"
+const ControllerABI = "[{\"constant\":true,\"inputs\":[],\"name\":\"controllerCount\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_account\",\"type\":\"address\"}],\"name\":\"addController\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_account\",\"type\":\"address\"}],\"name\":\"isController\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_account\",\"type\":\"address\"}],\"name\":\"removeController\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"name\":\"_account\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_sender\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_controller\",\"type\":\"address\"}],\"name\":\"AddedController\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_sender\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_controller\",\"type\":\"address\"}],\"name\":\"RemovedController\",\"type\":\"event\"}]"
 
 // ControllerBin is the compiled bytecode used for deploying new contracts.
-const ControllerBin = `608060405234801561001057600080fd5b5060405160208061060683398101604052516100348164010000000061003a810204565b50610151565b600160a060020a03811660009081526020819052604090205460ff16156100e857604080517f08c379a000000000000000000000000000000000000000000000000000000000815260206004820152602860248201527f70726f7669646564206163636f756e7420697320616c7265616479206120636f60448201527f6e74726f6c6c6572000000000000000000000000000000000000000000000000606482015290519081900360840190fd5b600160a060020a03811660008181526020818152604091829020805460ff1916600190811790915580548101905581513381529081019290925280517f09703263c91de41f96b822b3995609acf9858ba081d151c4e7ec3398085ae3269281900390910190a150565b6104a6806101606000396000f3006080604052600436106100615763ffffffff7c010000000000000000000000000000000000000000000000000000000060003504166315b9a8b88114610066578063a7fc7a071461008d578063b429afeb146100b0578063f6a74ed7146100e5575b600080fd5b34801561007257600080fd5b5061007b610106565b60408051918252519081900360200190f35b34801561009957600080fd5b506100ae600160a060020a036004351661010c565b005b3480156100bc57600080fd5b506100d1600160a060020a0360043516610177565b604080519115158252519081900360200190f35b3480156100f157600080fd5b506100ae600160a060020a0360043516610195565b60015490565b61011533610177565b151561016b576040805160e560020a62461bcd02815260206004820152601a60248201527f73656e646572206973206e6f74206120636f6e74726f6c6c6572000000000000604482015290519081900360640190fd5b610174816101fd565b50565b600160a060020a031660009081526020819052604090205460ff1690565b61019e33610177565b15156101f4576040805160e560020a62461bcd02815260206004820152601a60248201527f73656e646572206973206e6f74206120636f6e74726f6c6c6572000000000000604482015290519081900360640190fd5b610174816102fd565b600160a060020a03811660009081526020819052604090205460ff1615610294576040805160e560020a62461bcd02815260206004820152602860248201527f70726f7669646564206163636f756e7420697320616c7265616479206120636f60448201527f6e74726f6c6c6572000000000000000000000000000000000000000000000000606482015290519081900360840190fd5b600160a060020a03811660008181526020818152604091829020805460ff1916600190811790915580548101905581513381529081019290925280517f09703263c91de41f96b822b3995609acf9858ba081d151c4e7ec3398085ae3269281900390910190a150565b600160a060020a03811660009081526020819052604090205460ff161515610394576040805160e560020a62461bcd028152602060048201526024808201527f70726f7669646564206163636f756e74206973206e6f74206120636f6e74726f60448201527f6c6c657200000000000000000000000000000000000000000000000000000000606482015290519081900360840190fd5b6001805411610413576040805160e560020a62461bcd02815260206004820152602160248201527f63616e6e6f742072656d6f766520746865206c61737420636f6e74726f6c6c6560448201527f7200000000000000000000000000000000000000000000000000000000000000606482015290519081900360840190fd5b600160a060020a03811660008181526020818152604091829020805460ff191690556001805460001901905581513381529081019290925280517f41f64ada53a9badeceff01974383e6c72edbc9d5761a759526902033848c74eb9281900390910190a1505600a165627a7a7230582047c66cd17ef04cdb6f142c6453448914d8e6b65b9a937bbaf30d25a3f36980fa0029`
+const ControllerBin = `608060405234801561001057600080fd5b5060405160208061060683398101604052516100348164010000000061003a810204565b50610151565b600160a060020a03811660009081526020819052604090205460ff16156100e857604080517f08c379a000000000000000000000000000000000000000000000000000000000815260206004820152602860248201527f70726f7669646564206163636f756e7420697320616c7265616479206120636f60448201527f6e74726f6c6c6572000000000000000000000000000000000000000000000000606482015290519081900360840190fd5b600160a060020a03811660008181526020818152604091829020805460ff1916600190811790915580548101905581513381529081019290925280517fb890d5abdcd5c2b61ce8bbc2cf6af9b6d7f7451830cbc85037cbdd182c86fe1d9281900390910190a150565b6104a6806101606000396000f3006080604052600436106100615763ffffffff7c010000000000000000000000000000000000000000000000000000000060003504166315b9a8b88114610066578063a7fc7a071461008d578063b429afeb146100b0578063f6a74ed7146100e5575b600080fd5b34801561007257600080fd5b5061007b610106565b60408051918252519081900360200190f35b34801561009957600080fd5b506100ae600160a060020a036004351661010c565b005b3480156100bc57600080fd5b506100d1600160a060020a0360043516610177565b604080519115158252519081900360200190f35b3480156100f157600080fd5b506100ae600160a060020a0360043516610195565b60015490565b61011533610177565b151561016b576040805160e560020a62461bcd02815260206004820152601a60248201527f73656e646572206973206e6f74206120636f6e74726f6c6c6572000000000000604482015290519081900360640190fd5b610174816101fd565b50565b600160a060020a031660009081526020819052604090205460ff1690565b61019e33610177565b15156101f4576040805160e560020a62461bcd02815260206004820152601a60248201527f73656e646572206973206e6f74206120636f6e74726f6c6c6572000000000000604482015290519081900360640190fd5b610174816102fd565b600160a060020a03811660009081526020819052604090205460ff1615610294576040805160e560020a62461bcd02815260206004820152602860248201527f70726f7669646564206163636f756e7420697320616c7265616479206120636f60448201527f6e74726f6c6c6572000000000000000000000000000000000000000000000000606482015290519081900360840190fd5b600160a060020a03811660008181526020818152604091829020805460ff1916600190811790915580548101905581513381529081019290925280517fb890d5abdcd5c2b61ce8bbc2cf6af9b6d7f7451830cbc85037cbdd182c86fe1d9281900390910190a150565b600160a060020a03811660009081526020819052604090205460ff161515610394576040805160e560020a62461bcd028152602060048201526024808201527f70726f7669646564206163636f756e74206973206e6f74206120636f6e74726f60448201527f6c6c657200000000000000000000000000000000000000000000000000000000606482015290519081900360840190fd5b6001805411610413576040805160e560020a62461bcd02815260206004820152602160248201527f63616e6e6f742072656d6f766520746865206c61737420636f6e74726f6c6c6560448201527f7200000000000000000000000000000000000000000000000000000000000000606482015290519081900360840190fd5b600160a060020a03811660008181526020818152604091829020805460ff191690556001805460001901905581513381529081019290925280517fb6a283aaede08e15ef55c74e3014e30eb0c0040d4b156cccb77391268ea373949281900390910190a1505600a165627a7a72305820314f5af280b35e097a3cd60705a559b5060200053bb63294045baadcd58b98170029`
 
 // DeployController deploys a new Ethereum contract, binding an instance of Controller to it.
 func DeployController(auth *bind.TransactOpts, backend bind.ContractBackend, _account common.Address) (common.Address, *types.Transaction, *Controller, error) {
@@ -282,9 +282,9 @@ func (_Controller *ControllerTransactorSession) RemoveController(_account common
 	return _Controller.Contract.RemoveController(&_Controller.TransactOpts, _account)
 }
 
-// ControllerControllerAddedIterator is returned from FilterControllerAdded and is used to iterate over the raw logs and unpacked data for ControllerAdded events raised by the Controller contract.
-type ControllerControllerAddedIterator struct {
-	Event *ControllerControllerAdded // Event containing the contract specifics and raw log
+// ControllerAddedControllerIterator is returned from FilterAddedController and is used to iterate over the raw logs and unpacked data for AddedController events raised by the Controller contract.
+type ControllerAddedControllerIterator struct {
+	Event *ControllerAddedController // Event containing the contract specifics and raw log
 
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
@@ -298,7 +298,7 @@ type ControllerControllerAddedIterator struct {
 // Next advances the iterator to the subsequent event, returning whether there
 // are any more events found. In case of a retrieval or parsing error, false is
 // returned and Error() can be queried for the exact failure.
-func (it *ControllerControllerAddedIterator) Next() bool {
+func (it *ControllerAddedControllerIterator) Next() bool {
 	// If the iterator failed, stop iterating
 	if it.fail != nil {
 		return false
@@ -307,7 +307,7 @@ func (it *ControllerControllerAddedIterator) Next() bool {
 	if it.done {
 		select {
 		case log := <-it.logs:
-			it.Event = new(ControllerControllerAdded)
+			it.Event = new(ControllerAddedController)
 			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 				it.fail = err
 				return false
@@ -322,7 +322,7 @@ func (it *ControllerControllerAddedIterator) Next() bool {
 	// Iterator still in progress, wait for either a data or an error event
 	select {
 	case log := <-it.logs:
-		it.Event = new(ControllerControllerAdded)
+		it.Event = new(ControllerAddedController)
 		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 			it.fail = err
 			return false
@@ -338,42 +338,42 @@ func (it *ControllerControllerAddedIterator) Next() bool {
 }
 
 // Error returns any retrieval or parsing error occurred during filtering.
-func (it *ControllerControllerAddedIterator) Error() error {
+func (it *ControllerAddedControllerIterator) Error() error {
 	return it.fail
 }
 
 // Close terminates the iteration process, releasing any pending underlying
 // resources.
-func (it *ControllerControllerAddedIterator) Close() error {
+func (it *ControllerAddedControllerIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
 
-// ControllerControllerAdded represents a ControllerAdded event raised by the Controller contract.
-type ControllerControllerAdded struct {
+// ControllerAddedController represents a AddedController event raised by the Controller contract.
+type ControllerAddedController struct {
 	Sender     common.Address
 	Controller common.Address
 	Raw        types.Log // Blockchain specific contextual infos
 }
 
-// FilterControllerAdded is a free log retrieval operation binding the contract event 0x09703263c91de41f96b822b3995609acf9858ba081d151c4e7ec3398085ae326.
+// FilterAddedController is a free log retrieval operation binding the contract event 0xb890d5abdcd5c2b61ce8bbc2cf6af9b6d7f7451830cbc85037cbdd182c86fe1d.
 //
-// Solidity: e ControllerAdded(_sender address, _controller address)
-func (_Controller *ControllerFilterer) FilterControllerAdded(opts *bind.FilterOpts) (*ControllerControllerAddedIterator, error) {
+// Solidity: e AddedController(_sender address, _controller address)
+func (_Controller *ControllerFilterer) FilterAddedController(opts *bind.FilterOpts) (*ControllerAddedControllerIterator, error) {
 
-	logs, sub, err := _Controller.contract.FilterLogs(opts, "ControllerAdded")
+	logs, sub, err := _Controller.contract.FilterLogs(opts, "AddedController")
 	if err != nil {
 		return nil, err
 	}
-	return &ControllerControllerAddedIterator{contract: _Controller.contract, event: "ControllerAdded", logs: logs, sub: sub}, nil
+	return &ControllerAddedControllerIterator{contract: _Controller.contract, event: "AddedController", logs: logs, sub: sub}, nil
 }
 
-// WatchControllerAdded is a free log subscription operation binding the contract event 0x09703263c91de41f96b822b3995609acf9858ba081d151c4e7ec3398085ae326.
+// WatchAddedController is a free log subscription operation binding the contract event 0xb890d5abdcd5c2b61ce8bbc2cf6af9b6d7f7451830cbc85037cbdd182c86fe1d.
 //
-// Solidity: e ControllerAdded(_sender address, _controller address)
-func (_Controller *ControllerFilterer) WatchControllerAdded(opts *bind.WatchOpts, sink chan<- *ControllerControllerAdded) (event.Subscription, error) {
+// Solidity: e AddedController(_sender address, _controller address)
+func (_Controller *ControllerFilterer) WatchAddedController(opts *bind.WatchOpts, sink chan<- *ControllerAddedController) (event.Subscription, error) {
 
-	logs, sub, err := _Controller.contract.WatchLogs(opts, "ControllerAdded")
+	logs, sub, err := _Controller.contract.WatchLogs(opts, "AddedController")
 	if err != nil {
 		return nil, err
 	}
@@ -383,8 +383,8 @@ func (_Controller *ControllerFilterer) WatchControllerAdded(opts *bind.WatchOpts
 			select {
 			case log := <-logs:
 				// New log arrived, parse the event and forward to the user
-				event := new(ControllerControllerAdded)
-				if err := _Controller.contract.UnpackLog(event, "ControllerAdded", log); err != nil {
+				event := new(ControllerAddedController)
+				if err := _Controller.contract.UnpackLog(event, "AddedController", log); err != nil {
 					return err
 				}
 				event.Raw = log
@@ -405,9 +405,9 @@ func (_Controller *ControllerFilterer) WatchControllerAdded(opts *bind.WatchOpts
 	}), nil
 }
 
-// ControllerControllerRemovedIterator is returned from FilterControllerRemoved and is used to iterate over the raw logs and unpacked data for ControllerRemoved events raised by the Controller contract.
-type ControllerControllerRemovedIterator struct {
-	Event *ControllerControllerRemoved // Event containing the contract specifics and raw log
+// ControllerRemovedControllerIterator is returned from FilterRemovedController and is used to iterate over the raw logs and unpacked data for RemovedController events raised by the Controller contract.
+type ControllerRemovedControllerIterator struct {
+	Event *ControllerRemovedController // Event containing the contract specifics and raw log
 
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
@@ -421,7 +421,7 @@ type ControllerControllerRemovedIterator struct {
 // Next advances the iterator to the subsequent event, returning whether there
 // are any more events found. In case of a retrieval or parsing error, false is
 // returned and Error() can be queried for the exact failure.
-func (it *ControllerControllerRemovedIterator) Next() bool {
+func (it *ControllerRemovedControllerIterator) Next() bool {
 	// If the iterator failed, stop iterating
 	if it.fail != nil {
 		return false
@@ -430,7 +430,7 @@ func (it *ControllerControllerRemovedIterator) Next() bool {
 	if it.done {
 		select {
 		case log := <-it.logs:
-			it.Event = new(ControllerControllerRemoved)
+			it.Event = new(ControllerRemovedController)
 			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 				it.fail = err
 				return false
@@ -445,7 +445,7 @@ func (it *ControllerControllerRemovedIterator) Next() bool {
 	// Iterator still in progress, wait for either a data or an error event
 	select {
 	case log := <-it.logs:
-		it.Event = new(ControllerControllerRemoved)
+		it.Event = new(ControllerRemovedController)
 		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 			it.fail = err
 			return false
@@ -461,42 +461,42 @@ func (it *ControllerControllerRemovedIterator) Next() bool {
 }
 
 // Error returns any retrieval or parsing error occurred during filtering.
-func (it *ControllerControllerRemovedIterator) Error() error {
+func (it *ControllerRemovedControllerIterator) Error() error {
 	return it.fail
 }
 
 // Close terminates the iteration process, releasing any pending underlying
 // resources.
-func (it *ControllerControllerRemovedIterator) Close() error {
+func (it *ControllerRemovedControllerIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
 
-// ControllerControllerRemoved represents a ControllerRemoved event raised by the Controller contract.
-type ControllerControllerRemoved struct {
+// ControllerRemovedController represents a RemovedController event raised by the Controller contract.
+type ControllerRemovedController struct {
 	Sender     common.Address
 	Controller common.Address
 	Raw        types.Log // Blockchain specific contextual infos
 }
 
-// FilterControllerRemoved is a free log retrieval operation binding the contract event 0x41f64ada53a9badeceff01974383e6c72edbc9d5761a759526902033848c74eb.
+// FilterRemovedController is a free log retrieval operation binding the contract event 0xb6a283aaede08e15ef55c74e3014e30eb0c0040d4b156cccb77391268ea37394.
 //
-// Solidity: e ControllerRemoved(_sender address, _controller address)
-func (_Controller *ControllerFilterer) FilterControllerRemoved(opts *bind.FilterOpts) (*ControllerControllerRemovedIterator, error) {
+// Solidity: e RemovedController(_sender address, _controller address)
+func (_Controller *ControllerFilterer) FilterRemovedController(opts *bind.FilterOpts) (*ControllerRemovedControllerIterator, error) {
 
-	logs, sub, err := _Controller.contract.FilterLogs(opts, "ControllerRemoved")
+	logs, sub, err := _Controller.contract.FilterLogs(opts, "RemovedController")
 	if err != nil {
 		return nil, err
 	}
-	return &ControllerControllerRemovedIterator{contract: _Controller.contract, event: "ControllerRemoved", logs: logs, sub: sub}, nil
+	return &ControllerRemovedControllerIterator{contract: _Controller.contract, event: "RemovedController", logs: logs, sub: sub}, nil
 }
 
-// WatchControllerRemoved is a free log subscription operation binding the contract event 0x41f64ada53a9badeceff01974383e6c72edbc9d5761a759526902033848c74eb.
+// WatchRemovedController is a free log subscription operation binding the contract event 0xb6a283aaede08e15ef55c74e3014e30eb0c0040d4b156cccb77391268ea37394.
 //
-// Solidity: e ControllerRemoved(_sender address, _controller address)
-func (_Controller *ControllerFilterer) WatchControllerRemoved(opts *bind.WatchOpts, sink chan<- *ControllerControllerRemoved) (event.Subscription, error) {
+// Solidity: e RemovedController(_sender address, _controller address)
+func (_Controller *ControllerFilterer) WatchRemovedController(opts *bind.WatchOpts, sink chan<- *ControllerRemovedController) (event.Subscription, error) {
 
-	logs, sub, err := _Controller.contract.WatchLogs(opts, "ControllerRemoved")
+	logs, sub, err := _Controller.contract.WatchLogs(opts, "RemovedController")
 	if err != nil {
 		return nil, err
 	}
@@ -506,8 +506,8 @@ func (_Controller *ControllerFilterer) WatchControllerRemoved(opts *bind.WatchOp
 			select {
 			case log := <-logs:
 				// New log arrived, parse the event and forward to the user
-				event := new(ControllerControllerRemoved)
-				if err := _Controller.contract.UnpackLog(event, "ControllerRemoved", log); err != nil {
+				event := new(ControllerRemovedController)
+				if err := _Controller.contract.UnpackLog(event, "RemovedController", log); err != nil {
 					return err
 				}
 				event.Raw = log
