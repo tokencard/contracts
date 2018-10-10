@@ -347,20 +347,22 @@ contract Oracle is UsingOraclize, Base64, Date, JSON, Controllable, IOracle {
             // Emit the query failure event.
             emit OraclizeQueryFailed("not enough balance to pay for the query");
         } else {
-            // Set up the crypto compare API query strings.
-            Strings.slice memory apiPrefix = "https://min-api.cryptocompare.com/data/price?fsym=".toSlice();
-            Strings.slice memory apiSuffix = "&tsyms=ETH&sign=true".toSlice();
-            // Create a new oraclize query for each supported token.
-            for (uint i = 0; i < _tokenAddresses.length; i++) {
-                // Store the token label used in the query.
-                Strings.slice memory label = tokens[_tokenAddresses[i]].label.toSlice();
-                // Create a new oraclize query from the component strings.
-                bytes32 queryID = oraclize_query(5, "URL", apiPrefix.concat(label).toSlice().concat(apiSuffix), 2000000);
-                // Store the query ID together with the associated token address.
-                _queryToToken[queryID] = _tokenAddresses[i];
-                // Emit the query success event.
-                emit OraclizeQuerySucceeded(label.toString());
-            }
+          // Set up the crypto compare API query strings.
+          Strings.slice memory apiPrefix = "https://min-api.cryptocompare.com/data/price?fsym=".toSlice();
+          Strings.slice memory apiSuffix = "&tsyms=ETH&sign=true".toSlice();
+
+          uint gaslimit = 2000000;
+          // Create a new oraclize query for each supported token.
+          for (uint i = 0; i < _tokenAddresses.length; i++) {
+              // Store the token label used in the query.
+              Strings.slice memory label = tokens[_tokenAddresses[i]].label.toSlice();
+              // Create a new oraclize query from the component strings.
+              bytes32 queryID = oraclize_query("URL", apiPrefix.concat(label).toSlice().concat(apiSuffix), gaslimit);
+              // Store the query ID together with the associated token address.
+              _queryToToken[queryID] = _tokenAddresses[i];
+              // Emit the query success event.
+              emit OraclizeQuerySucceeded(label.toString());
+          }
         }
     }
 
