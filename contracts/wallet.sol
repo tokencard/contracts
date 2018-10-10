@@ -85,7 +85,7 @@ contract Whitelist is Controllable, Ownable {
         require(initializedWhitelist, "whitelist has not been initialized");
         // Require that either addition or removal operations have not been already submitted.
         require(!submittedWhitelistAddition && !submittedWhitelistRemoval, "whitelist operation has already been submitted");
-        // Add the provided addresses to the pending addition list.
+        // Set the provided addresses to the pending addition addresses.
         _pendingWhitelistAddition = _addresses;
         // Flag the operation as submitted.
         submittedWhitelistAddition = true;
