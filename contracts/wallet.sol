@@ -1,6 +1,8 @@
-pragma solidity ^0.4.24;
+pragma solidity ^0.4.25;
 
+import "./oracle.sol";
 import "./internal/ownable.sol";
+import "./internal/resolver.sol";
 import "./internal/controllable.sol";
 
 
@@ -14,18 +16,6 @@ interface ERC20 {
 /// @title ERC165 specifies a standard way of querying if a contract implements an interface.
 interface ERC165 {
     function supportsInterface(bytes4) external view returns (bool);
-}
-
-
-/// @title Oracle converts ERC20 token amounts into equivalent ether amounts based on cryptocurrency exchange rates.
-interface Oracle {
-    function convert(address, uint) external view returns (uint);
-}
-
-
-/// @title Resolver returns the controller contract address.
-interface Resolver {
-    function getAddress() external returns (address);
 }
 
 
@@ -51,6 +41,12 @@ contract Whitelist is Controllable, Ownable {
         for (uint i = 0; i < _addresses.length; i++) {
             require(_addresses[i] != owner(), "provided whitelist contains the owner address");
         }
+        _;
+    }
+
+    // @dev Check that neither addition nor removal operations have already been submitted.
+    modifier noActiveSubmission() {
+        require(!submittedWhitelistAddition && !submittedWhitelistRemoval, "whitelist operation has already been submitted");
         _;
     }
 
@@ -80,12 +76,10 @@ contract Whitelist is Controllable, Ownable {
 
     /// @dev Add addresses to the whitelist.
     /// @param _addresses are the Ethereum addresses to be whitelisted.
-    function submitWhitelistAddition(address[] _addresses) external onlyOwner hasNoOwner(_addresses) {
+    function submitWhitelistAddition(address[] _addresses) external onlyOwner noActiveSubmission hasNoOwner(_addresses)  {
         // Require that the whitelist has been initialized.
         require(initializedWhitelist, "whitelist has not been initialized");
-        // Require that either addition or removal operations have not been already submitted.
-        require(!submittedWhitelistAddition && !submittedWhitelistRemoval, "whitelist operation has already been submitted");
-        // Add the provided addresses to the pending addition list.
+        // Set the provided addresses to the pending addition addresses.
         _pendingWhitelistAddition = _addresses;
         // Flag the operation as submitted.
         submittedWhitelistAddition = true;
@@ -121,9 +115,7 @@ contract Whitelist is Controllable, Ownable {
 
     /// @dev Remove addresses from the whitelist.
     /// @param _addresses are the Ethereum addresses to be removed.
-    function submitWhitelistRemoval(address[] _addresses) external onlyOwner {
-        // Require that either addition or removal operations have not been already submitted.
-        require(!submittedWhitelistRemoval && !submittedWhitelistAddition, "whitelist operation has already been submitted");
+    function submitWhitelistRemoval(address[] _addresses) external onlyOwner noActiveSubmission {
         // Add the provided addresses to the pending addition list.
         _pendingWhitelistRemoval = _addresses;
         // Flag the operation as submitted.
@@ -279,7 +271,7 @@ contract Vault is Whitelist, SpendLimit, ERC165 {
     bytes4 private constant _ERC165_INTERFACE_ID = 0x01ffc9a7; // solium-disable-line uppercase
 
     /// @dev Resolver points to the oracle address resolver.
-    Resolver private _OR; // solium-disable-line mixedcase
+    IResolver private _OR; // solium-disable-line mixedcase
 
     /// @dev Constructor initializes the vault with an owner address and spend limit. It also sets up the oracle and controller contracts.
     /// @param _owner is the owner account of the wallet contract.
@@ -287,7 +279,7 @@ contract Vault is Whitelist, SpendLimit, ERC165 {
     /// @param _resolver is the oracle resolver contract address.
     /// @param _controller is the controller contract address.
     constructor(address _owner, bool _transferable, address _resolver, address _controller, uint _spendLimit) SpendLimit(_spendLimit) Ownable(_owner, _transferable) Controllable(_controller) public {
-        _OR = Resolver(_resolver);
+        _OR = IResolver(_resolver);
     }
 
     /// @dev Checks if the value is not zero.
@@ -324,7 +316,7 @@ contract Vault is Whitelist, SpendLimit, ERC165 {
             // Convert token amount to ether value.
             uint etherValue;
             if (_asset != 0x0) {
-                etherValue = Oracle(_OR.getAddress()).convert(_asset, _amount);
+                etherValue = IOracle(_OR.getAddress()).convert(_asset, _amount);
             } else {
                 etherValue = _amount;
             }

@@ -1,8 +1,12 @@
-pragma solidity ^0.4.24;
+pragma solidity ^0.4.25;
 
+/// @title The Controller interface provides access to an external list of controllers.
+interface IController {
+    function isController(address) external view returns (bool);
+}
 
 /// @title Controller stores a list of controller addresses that can be used for authentication in other contracts.
-contract Controller {
+contract Controller is IController {
     event ControllerAdded(address _sender, address _controller);
     event ControllerRemoved(address _sender, address _controller);
 

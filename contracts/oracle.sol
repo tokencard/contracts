@@ -1,10 +1,15 @@
-pragma solidity ^0.4.24;
+pragma solidity ^0.4.25;
 
 import "./internal/controllable.sol";
 import "./external/strings.sol";
 import "./external/safe-math.sol";
 import "./external/oraclize-api.sol";
 
+
+/// @title Oracle converts ERC20 token amounts into equivalent ether amounts based on cryptocurrency exchange rates.
+interface IOracle {
+    function convert(address, uint) external view returns (uint);
+}
 
 /// @title JSON provides JSON parsing functionality.
 contract JSON {
@@ -148,7 +153,7 @@ contract Base64 {
 
 
 /// @title Oracle provides asset exchange rates and conversion functionality.
-contract Oracle is UsingOraclize, Base64, Date, JSON, Controllable {
+contract Oracle is UsingOraclize, Base64, Date, JSON, Controllable, IOracle {
     using Strings for *;
     using SafeMath for uint256;
 

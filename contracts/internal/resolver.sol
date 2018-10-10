@@ -1,10 +1,14 @@
-pragma solidity ^0.4.24;
+pragma solidity ^0.4.25;
 
 import "./controllable.sol";
 
+/// @title Resolver returns the controller contract address.
+interface IResolver {
+    function getAddress() external returns (address);
+}
 
 /// @title Resolver implements on-chain contract address resolution.
-contract Resolver is Controllable {
+contract Resolver is Controllable, IResolver {
 
     address private _address;
 
