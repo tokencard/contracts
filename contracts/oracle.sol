@@ -22,7 +22,8 @@ contract JSON {
         Strings.slice memory body = _json.toSlice();
         body.beyond("{".toSlice());
         body.until("}".toSlice());
-        body.find(_label.toSlice());
+        Strings.slice memory _quote_mark = "\"".toSlice();
+        body.find(_quote_mark.concat(_label.toSlice()).toSlice().concat(_quote_mark).toSlice());
         Strings.slice memory asset;
         body.split(",".toSlice(), asset);
         asset.split(":".toSlice());
@@ -322,7 +323,7 @@ contract Oracle is UsingOraclize, Base64, Date, JSON, Controllable, IOracle {
         // Use the query ID to find the matching token address.
         address _token = _queryToToken[_queryID];
         require(_token != address(0),"queryID matches to address 0");
-        
+
         // Get the corresponding token object.
         Token storage token = tokens[_token];
 
