@@ -22,7 +22,8 @@ contract JSON {
         Strings.slice memory body = _json.toSlice();
         body.beyond("{".toSlice());
         body.until("}".toSlice());
-        body.find(_label.toSlice());
+        Strings.slice memory _quote_mark = "\"".toSlice();
+        body.find(_quote_mark.concat(_label.toSlice()).toSlice().concat(_quote_mark).toSlice());
         Strings.slice memory asset;
         body.split(",".toSlice(), asset);
         asset.split(":".toSlice());
@@ -199,7 +200,7 @@ contract Oracle is UsingOraclize, Base64, Date, JSON, Controllable, IOracle {
     /// @dev Checks if all addresses passed in, are new addresses
     modifier hasNoExistingAddresses(address[] _addresses) {
         for (uint i = 0; i < _addresses.length; i++) {
-            require(!tokens[_addresses[i]].exists); 
+            require(!tokens[_addresses[i]].exists);
         }
         _;
     }
@@ -301,6 +302,8 @@ contract Oracle is UsingOraclize, Base64, Date, JSON, Controllable, IOracle {
         require(tokens[_token].exists, "token does not exist");
         // Update the token's rate.
         tokens[_token].rate = _rate;
+        // Update the token's last update timestamp.
+        tokens[_token].lastUpdate = now;
         // Emit the rate update event.
         emit TokenRateUpdated(_token, _rate);
     }
@@ -319,12 +322,15 @@ contract Oracle is UsingOraclize, Base64, Date, JSON, Controllable, IOracle {
         // Require that the caller is the Oraclize contract.
         require(msg.sender == oraclize_cbAddress(), "sender is not oraclize");
 
+        // Use the query ID to find the matching token address.
+        address _token = _queryToToken[_queryID];
+        require(_token != address(0),"queryID matches to address 0");
+
+        // Get the corresponding token object.
+        Token storage token = tokens[_token];
+
         // Require that the proof is valid.
         if (verifyProof(_result, _proof, APIPublicKey, token.lastUpdate)) {
-          // Use the query ID to find the matching token address.
-          address _token = _queryToToken[_queryID];
-          // Get the corresponding token object.
-          Token storage token = tokens[_token];
           // Parse the JSON result to get the rate in wei.
           token.rate = parseInt(parseRate(_result, "ETH"), 18);
           // Emit the rate update event.
@@ -343,20 +349,22 @@ contract Oracle is UsingOraclize, Base64, Date, JSON, Controllable, IOracle {
             // Emit the query failure event.
             emit OraclizeQueryFailed("not enough balance to pay for the query");
         } else {
-            // Set up the crypto compare API query strings.
-            Strings.slice memory apiPrefix = "https://min-api.cryptocompare.com/data/price?fsym=".toSlice();
-            Strings.slice memory apiSuffix = "&tsyms=ETH&sign=true".toSlice();
-            // Create a new oraclize query for each supported token.
-            for (uint i = 0; i < _tokenAddresses.length; i++) {
-                // Store the token label used in the query.
-                Strings.slice memory label = tokens[_tokenAddresses[i]].label.toSlice();
-                // Create a new oraclize query from the component strings.
-                bytes32 queryID = oraclize_query(5, "URL", apiPrefix.concat(label).toSlice().concat(apiSuffix), 2000000);
-                // Store the query ID together with the associated token address.
-                _queryToToken[queryID] = _tokenAddresses[i];
-                // Emit the query success event.
-                emit OraclizeQuerySucceeded(label.toString());
-            }
+          // Set up the crypto compare API query strings.
+          Strings.slice memory apiPrefix = "https://min-api.cryptocompare.com/data/price?fsym=".toSlice();
+          Strings.slice memory apiSuffix = "&tsyms=ETH&sign=true".toSlice();
+
+          uint gaslimit = 2000000;
+          // Create a new oraclize query for each supported token.
+          for (uint i = 0; i < _tokenAddresses.length; i++) {
+              // Store the token label used in the query.
+              Strings.slice memory label = tokens[_tokenAddresses[i]].label.toSlice();
+              // Create a new oraclize query from the component strings.
+              bytes32 queryID = oraclize_query("URL", apiPrefix.concat(label).toSlice().concat(apiSuffix), gaslimit);
+              // Store the query ID together with the associated token address.
+              _queryToToken[queryID] = _tokenAddresses[i];
+              // Emit the query success event.
+              emit OraclizeQuerySucceeded(label.toString());
+          }
         }
     }
 
