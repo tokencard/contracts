@@ -1,4 +1,4 @@
-pragma solidity ^0.4.24;
+pragma solidity ^0.4.25;
 
 
 /// @title Controller stores a list of controller addresses that can be used for authentication in other contracts.

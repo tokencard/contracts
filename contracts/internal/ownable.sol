@@ -1,4 +1,4 @@
-pragma solidity ^0.4.24;
+pragma solidity ^0.4.25;
 
 
 /// @title Ownable has an owner address and provides basic authorization control functions.
