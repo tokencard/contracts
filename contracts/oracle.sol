@@ -302,6 +302,8 @@ contract Oracle is UsingOraclize, Base64, Date, JSON, Controllable, IOracle {
         require(tokens[_token].exists, "token does not exist");
         // Update the token's rate.
         tokens[_token].rate = _rate;
+        // Update the token's last update timestamp.
+        tokens[_token].lastUpdate = now;
         // Emit the rate update event.
         emit TokenRateUpdated(_token, _rate);
     }
