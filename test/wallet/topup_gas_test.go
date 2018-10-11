@@ -15,16 +15,16 @@ var _ = Describe("topupGas", func() {
 
 	Context("when the wallet has enough ETH", func() {
 		BeforeEach(func() {
-			bankWallet.MustTransfer(be, wa, ethToWei(10))
+			bankAccount.MustTransfer(be, wa, ethToWei(10))
 		})
 
 		var tx *types.Transaction
 		var err error
-		var caller *ethertest.Wallet
+		var caller *ethertest.Account
 
 		BeforeEach(func() {
 			caller = controller
-			bankWallet.MustTransfer(be, controller.Address(), ONE_ETH)
+			bankAccount.MustTransfer(be, controller.Address(), ONE_ETH)
 		})
 
 		Context("When called by the wallet controller and is lower than topup limit", func() {
@@ -71,7 +71,7 @@ var _ = Describe("topupGas", func() {
 		Context("When daily limit has been exausted", func() {
 			BeforeEach(func() {
 				caller = controller
-				bankWallet.MustTransfer(be, controller.Address(), ONE_ETH)
+				bankAccount.MustTransfer(be, controller.Address(), ONE_ETH)
 			})
 
 			BeforeEach(func() {
@@ -230,7 +230,7 @@ var _ = Describe("topupGas", func() {
 		Context("When called by some random address and is lower than topup limit", func() {
 
 			BeforeEach(func() {
-				caller = randomPerson
+				caller = randomAccount
 			})
 
 			BeforeEach(func() {

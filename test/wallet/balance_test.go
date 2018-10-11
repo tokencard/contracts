@@ -22,7 +22,7 @@ var _ = Describe("balance", func() {
 
 	Context("When contract has 1 ETH", func() {
 		BeforeEach(func() {
-			bankWallet.MustTransfer(be, wa, ONE_ETH)
+			bankAccount.MustTransfer(be, wa, ONE_ETH)
 		})
 
 		It("should return 1 ETH", func() {
@@ -37,10 +37,10 @@ var _ = Describe("balance", func() {
 		var ta common.Address
 		BeforeEach(func() {
 			var err error
-			ta, _, t, err = mocks.DeployToken(bankWallet.TransactOpts(), be)
+			ta, _, t, err = mocks.DeployToken(bankAccount.TransactOpts(), be)
 			Expect(err).ToNot(HaveOccurred())
 
-			tx, err := t.Credit(bankWallet.TransactOpts(), wa, big.NewInt(1))
+			tx, err := t.Credit(bankAccount.TransactOpts(), wa, big.NewInt(1))
 
 			Expect(err).ToNot(HaveOccurred())
 			be.Commit()

@@ -11,7 +11,7 @@ import (
 
 var _ = Describe("spendAvailable", func() {
 	BeforeEach(func() {
-		bankWallet.MustTransfer(be, controller.Address(), ethToWei(1))
+		bankAccount.MustTransfer(be, controller.Address(), ethToWei(1))
 	})
 
 	Context("When wallet has been deployed", func() {
@@ -23,7 +23,7 @@ var _ = Describe("spendAvailable", func() {
 
 		Context("When a random person tries to initialize the spend limit", func() {
 			It("should fail", func() {
-				tx, err := w.InitializeSpendLimit(randomPerson.TransactOpts(WithGasLimit(100000)), ethToWei(1))
+				tx, err := w.InitializeSpendLimit(randomAccount.TransactOpts(WithGasLimit(100000)), ethToWei(1))
 				Expect(err).ToNot(HaveOccurred())
 				be.Commit()
 				Expect(isSuccessful(tx)).To(BeFalse())
@@ -113,12 +113,12 @@ var _ = Describe("spendAvailable", func() {
 
 				Context("when the contract has one eth", func() {
 					BeforeEach(func() {
-						bankWallet.Transfer(be, wa, ethToWei(1))
+						bankAccount.Transfer(be, wa, ethToWei(1))
 					})
 
 					Context("When I transfer one ETH", func() {
 						BeforeEach(func() {
-							tx, err := w.Transfer(owner.TransactOpts(), randomPerson.Address(), common.HexToAddress("0x"), ethToWei(1))
+							tx, err := w.Transfer(owner.TransactOpts(), randomAccount.Address(), common.HexToAddress("0x"), ethToWei(1))
 							Expect(err).ToNot(HaveOccurred())
 							be.Commit()
 							Expect(isSuccessful(tx)).To(BeTrue())

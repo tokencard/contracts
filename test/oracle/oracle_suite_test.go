@@ -31,14 +31,14 @@ func finneyToWei(amount int) *big.Int {
 }
 
 var testRig = ethertest.NewTestRig()
-var controllerWallet = ethertest.NewWallet()
-var randomWallet = ethertest.NewWallet()
-var oraclizeCallbackWallet = ethertest.NewWallet()
+var controller = ethertest.NewAccount()
+var randomAccount = ethertest.NewAccount()
+var oraclizeCallbackAccount = ethertest.NewAccount()
 
 var _ = BeforeSuite(func() {
-	testRig.AddGenesisAccountAllocation(controllerWallet.Address(), ethToWei(1000))
-	testRig.AddGenesisAccountAllocation(randomWallet.Address(), ethToWei(1000))
-	testRig.AddGenesisAccountAllocation(oraclizeCallbackWallet.Address(), ethToWei(1000))
+	testRig.AddGenesisAccountAllocation(controller.Address(), ethToWei(1000))
+	testRig.AddGenesisAccountAllocation(randomAccount.Address(), ethToWei(1000))
+	testRig.AddGenesisAccountAllocation(oraclizeCallbackAccount.Address(), ethToWei(1000))
 	testRig.AddCoverageForContracts("../../build/oracle/combined.json", "../../contracts/oracle.sol")
 })
 
@@ -82,22 +82,22 @@ var _ = BeforeEach(func() {
 	var err error
 	var tx *types.Transaction
 
-	controllerContractAddress, tx, controllerContract, err = bindings.DeployController(controllerWallet.TransactOpts(), be, controllerWallet.Address())
+	controllerContractAddress, tx, controllerContract, err = bindings.DeployController(controller.TransactOpts(), be, controller.Address())
 	Expect(err).ToNot(HaveOccurred())
 	be.Commit()
 	Expect(isSuccessful(tx)).To(BeTrue())
 
-	oraclizeMockAddress, tx, oraclizeMock, err = mocks.DeployOraclize(controllerWallet.TransactOpts(), be, oraclizeCallbackWallet.Address())
+	oraclizeMockAddress, tx, oraclizeMock, err = mocks.DeployOraclize(controller.TransactOpts(), be, oraclizeCallbackAccount.Address())
 	Expect(err).ToNot(HaveOccurred())
 	be.Commit()
 	Expect(isSuccessful(tx)).To(BeTrue())
 
-	oraclizeMockAddrResolverAddress, tx, _, err = mocks.DeployOraclizeAddrResolver(controllerWallet.TransactOpts(), be, oraclizeMockAddress)
+	oraclizeMockAddrResolverAddress, tx, _, err = mocks.DeployOraclizeAddrResolver(controller.TransactOpts(), be, oraclizeMockAddress)
 	Expect(err).ToNot(HaveOccurred())
 	be.Commit()
 	Expect(isSuccessful(tx)).To(BeTrue())
 
-	oracleAddress, tx, oracle, err = bindings.DeployOracle(controllerWallet.TransactOpts(), be, oraclizeMockAddrResolverAddress, controllerContractAddress)
+	oracleAddress, tx, oracle, err = bindings.DeployOracle(controller.TransactOpts(), be, oraclizeMockAddrResolverAddress, controllerContractAddress)
 	Expect(err).ToNot(HaveOccurred())
 	be.Commit()
 	Expect(isSuccessful(tx)).To(BeTrue())

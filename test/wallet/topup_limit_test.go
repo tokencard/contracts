@@ -11,7 +11,7 @@ import (
 
 var _ = Describe("topupLimit", func() {
 	BeforeEach(func() {
-		bankWallet.MustTransfer(be, controller.Address(), finneyToWei(500))
+		bankAccount.MustTransfer(be, controller.Address(), finneyToWei(500))
 	})
 
 	Context("When the contract just has been deployed", func() {
@@ -166,7 +166,7 @@ var _ = Describe("topupLimit", func() {
 				be.Commit()
 				Expect(isSuccessful(tx)).To(BeTrue())
 
-				tx, err = w.SubmitTopupLimit(randomPerson.TransactOpts(WithGasLimit(65000)), ONE_FINNEY)
+				tx, err = w.SubmitTopupLimit(randomAccount.TransactOpts(WithGasLimit(65000)), ONE_FINNEY)
 				Expect(err).ToNot(HaveOccurred())
 				be.Commit()
 				Expect(isSuccessful(tx)).To(BeFalse())
@@ -243,7 +243,7 @@ var _ = Describe("topupLimit", func() {
 
 			Context("When a random person tries to cancel the limit change", func() {
 				It("should fail", func() {
-					tx, err := w.CancelTopupLimit(randomPerson.TransactOpts(WithGasLimit(65000)))
+					tx, err := w.CancelTopupLimit(randomAccount.TransactOpts(WithGasLimit(65000)))
 					Expect(err).ToNot(HaveOccurred())
 					be.Commit()
 					Expect(isSuccessful(tx)).To(BeFalse())
@@ -271,7 +271,7 @@ var _ = Describe("topupLimit", func() {
 
 			Context("When a random person tries to confirm the topup limit", func() {
 				It("should fail", func() {
-					tx, err := w.ConfirmTopupLimit(randomPerson.TransactOpts(WithGasLimit(65000)))
+					tx, err := w.ConfirmTopupLimit(randomAccount.TransactOpts(WithGasLimit(65000)))
 					Expect(err).ToNot(HaveOccurred())
 					be.Commit()
 					Expect(isSuccessful(tx)).To(BeFalse())
