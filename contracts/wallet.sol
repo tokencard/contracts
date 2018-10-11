@@ -343,24 +343,24 @@ contract Vault is Whitelist, SpendLimit, ERC165 {
 }
 
 
-/// @title Asset wallet with extra security features and gas topup management.
+/// @title Asset wallet with extra security features and gas top up management.
 contract Wallet is Vault {
-    event SetTopupLimit(address _sender, uint _amount);
-    event SubmittedTopupLimitChange(uint _amount);
-    event CancelledTopupLimitChange(address _sender);
+    event SetTopUpLimit(address _sender, uint _amount);
+    event SubmittedTopUpLimitChange(uint _amount);
+    event CancelledTopUpLimitChange(address _sender);
 
-    event ToppedupGas(address _sender, address _owner, uint _amount);
+    event ToppedUpGas(address _sender, address _owner, uint _amount);
 
     uint constant private MINIMUM_TOPUP_LIMIT = 1 finney;
     uint constant private MAXIMUM_TOPUP_LIMIT = 500 finney;
 
-    uint public topupLimit;
-    uint private _topupLimitDay;
-    uint private _topupAvailable;
+    uint public topUpLimit;
+    uint private _topUpLimitDay;
+    uint private _topUpAvailable;
 
-    uint public pendingTopupLimit;
-    bool public submittedTopupLimit;
-    bool public initializedTopupLimit;
+    uint public pendingTopUpLimit;
+    bool public submittedTopUpLimit;
+    bool public initializedTopUpLimit;
 
     /// @dev Constructor initializes the wallet top up limit and the vault contract.
     /// @param _owner is the owner account of the wallet contract.
@@ -368,122 +368,122 @@ contract Wallet is Vault {
     /// @param _resolver is the oracle resolver contract address.
     /// @param _controller is the controller contract address.
     constructor(address _owner, bool _transferable, address _resolver, address _controller, uint _spendLimit) Vault(_owner, _transferable, _resolver, _controller, _spendLimit) public {
-        _topupLimitDay = now;
-        topupLimit = MAXIMUM_TOPUP_LIMIT;
-        _topupAvailable = topupLimit;
+        _topUpLimitDay = now;
+        topUpLimit = MAXIMUM_TOPUP_LIMIT;
+        _topUpAvailable = topUpLimit;
     }
 
     /// @dev Returns the available daily gas top up balance - accounts for daily limit reset.
     /// @return amount of gas in wei.
-    function topupAvailable() external view returns (uint) {
-        if (now > _topupLimitDay + 24 hours) {
-            return topupLimit;
+    function topUpAvailable() external view returns (uint) {
+        if (now > _topUpLimitDay + 24 hours) {
+            return topUpLimit;
         } else {
-            return _topupAvailable;
+            return _topUpAvailable;
         }
     }
 
     /// @dev Initialize a daily gas top up limit.
     /// @param _amount is the gas top up amount in wei.
-    function initializeTopupLimit(uint _amount) external onlyOwner {
-        // Require that the topup limit has not been initialized.
-        require(!initializedTopupLimit, "topup limit has already been initialized");
+    function initializeTopUpLimit(uint _amount) external onlyOwner {
+        // Require that the top up limit has not been initialized.
+        require(!initializedTopUpLimit, "top up limit has already been initialized");
         // Require that the limit amount is within the acceptable range.
-        require(MINIMUM_TOPUP_LIMIT <= _amount && _amount <= MAXIMUM_TOPUP_LIMIT, "topup amount is outside of the min/max range");
+        require(MINIMUM_TOPUP_LIMIT <= _amount && _amount <= MAXIMUM_TOPUP_LIMIT, "top up amount is outside of the min/max range");
         // Modify spend limit based on the provided value.
-        modifyTopupLimit(_amount);
+        modifyTopUpLimit(_amount);
         // Flag operation as initialized.
-        initializedTopupLimit = true;
+        initializedTopUpLimit = true;
         // Emit the set limit event.
-        emit SetTopupLimit(msg.sender, _amount);
+        emit SetTopUpLimit(msg.sender, _amount);
     }
 
-    /// @dev Set a daily topup top up limit.
-    /// @param _amount is the daily topup limit amount in wei.
-    function submitTopupLimit(uint _amount) external onlyOwner {
-        // Require that the topup limit has been initialized.
-        require(initializedTopupLimit, "topup limit has not been initialized");
+    /// @dev Set a daily top up top up limit.
+    /// @param _amount is the daily top up limit amount in wei.
+    function submitTopUpLimit(uint _amount) external onlyOwner {
+        // Require that the top up limit has been initialized.
+        require(initializedTopUpLimit, "top up limit has not been initialized");
         // Require that the operation has not been submitted.
-        require(!submittedTopupLimit, "topup limit has already been submitted");
+        require(!submittedTopUpLimit, "top up limit has already been submitted");
         // Require that the limit amount is within the acceptable range.
-        require(MINIMUM_TOPUP_LIMIT <= _amount && _amount <= MAXIMUM_TOPUP_LIMIT, "topup amount is outside of the min/max range");
+        require(MINIMUM_TOPUP_LIMIT <= _amount && _amount <= MAXIMUM_TOPUP_LIMIT, "top up amount is outside of the min/max range");
         // Assign the provided amount to pending daily limit change.
-        pendingTopupLimit = _amount;
+        pendingTopUpLimit = _amount;
         // Flag the operation as submitted.
-        submittedTopupLimit = true;
+        submittedTopUpLimit = true;
         // Emit the submission event.
-        emit SubmittedTopupLimitChange(_amount);
+        emit SubmittedTopUpLimitChange(_amount);
     }
 
     /// @dev Confirm pending set top up limit operation.
-    function confirmTopupLimit() external onlyController {
+    function confirmTopUpLimit() external onlyController {
         // Require that the operation has been submitted.
-        require(submittedTopupLimit, "topup limit has not been submitted");
-        // Assert that the pending topup limit amount is within the acceptable range.
-        assert(MINIMUM_TOPUP_LIMIT <= pendingTopupLimit && pendingTopupLimit <= MAXIMUM_TOPUP_LIMIT);
-        // Modify topup limit based on the pending value.
-        modifyTopupLimit(pendingTopupLimit);
+        require(submittedTopUpLimit, "top up limit has not been submitted");
+        // Assert that the pending top up limit amount is within the acceptable range.
+        assert(MINIMUM_TOPUP_LIMIT <= pendingTopUpLimit && pendingTopUpLimit <= MAXIMUM_TOPUP_LIMIT);
+        // Modify top up limit based on the pending value.
+        modifyTopUpLimit(pendingTopUpLimit);
         // Emit the set limit event.
-        emit SetTopupLimit(msg.sender, pendingTopupLimit);
+        emit SetTopUpLimit(msg.sender, pendingTopUpLimit);
         // Reset pending daily limit.
-        pendingTopupLimit = 0;
+        pendingTopUpLimit = 0;
         // Reset the submission flag.
-        submittedTopupLimit = false;
+        submittedTopUpLimit = false;
     }
 
     /// @dev Cancel pending set top up limit operation.
-    function cancelTopupLimit() external onlyController {
+    function cancelTopUpLimit() external onlyController {
         // Reset pending daily limit.
-        pendingTopupLimit = 0;
+        pendingTopUpLimit = 0;
         // Reset the submitted operation flag.
-        submittedTopupLimit = false;
+        submittedTopUpLimit = false;
         // Emit the cancellation event.
-        emit CancelledTopupLimitChange(msg.sender);
+        emit CancelledTopUpLimitChange(msg.sender);
     }
 
     /// @dev Refill owner's gas balance.
     /// @param _amount is the amount of ether to transfer to the owner account in wei.
-    function topupGas(uint _amount) external isNotZero(_amount) {
+    function topUpGas(uint _amount) external isNotZero(_amount) {
         // Require that the sender is either the owner or a controller.
         require(isOwner() || isController(msg.sender), "sender is neither an owner nor a controller");
-        // Account for the topup limit daily reset.
-        updateTopupAvailable();
-        // Make sure the available topup amount is not zero.
-        require(_topupAvailable != 0, "available topup limit cannot be zero");
-        // Limit topup amount to the available topup level.
+        // Account for the top up limit daily reset.
+        updateTopUpAvailable();
+        // Make sure the available top up amount is not zero.
+        require(_topUpAvailable != 0, "available top up limit cannot be zero");
+        // Limit top up amount to the available top up level.
         uint amount = _amount;
-        if (amount > _topupAvailable) {
-            amount = _topupAvailable;
+        if (amount > _topUpAvailable) {
+            amount = _topUpAvailable;
         }
         // Reduce the top up amount from available balance and transfer corresponding
         // ether to the owner's account.
-        _topupAvailable -= amount;
+        _topUpAvailable -= amount;
         owner().transfer(amount);
-        // Emit the gas topup event.
-        emit ToppedupGas(tx.origin, owner(), amount);
+        // Emit the gas top up event.
+        emit ToppedUpGas(tx.origin, owner(), amount);
     }
 
-    /// @dev Modify the topup limit and topup available based on the provided value.
+    /// @dev Modify the top up limit and top up available based on the provided value.
     /// @dev _amount is the daily limit amount in wei.
-    function modifyTopupLimit(uint _amount) private {
-        // Account for the topup limit daily reset.
-        updateTopupAvailable();
+    function modifyTopUpLimit(uint _amount) private {
+        // Account for the top up limit daily reset.
+        updateTopUpAvailable();
         // Set the daily limit to the provided amount.
-        topupLimit = _amount;
+        topUpLimit = _amount;
         // Lower the available limit if it's higher than the new daily limit.
-        if (_topupAvailable > topupLimit) {
-            _topupAvailable = topupLimit;
+        if (_topUpAvailable > topUpLimit) {
+            _topUpAvailable = topUpLimit;
         }
     }
 
-    /// @dev Update available topup limit based on the daily reset.
-    function updateTopupAvailable() private {
-        if (now > _topupLimitDay + 24 hours) {
+    /// @dev Update available top up limit based on the daily reset.
+    function updateTopUpAvailable() private {
+        if (now > _topUpLimitDay + 24 hours) {
             // Advance the current day by how many days have passed.
-            uint extraDays = (now - _topupLimitDay) / 24 hours;
-            _topupLimitDay += extraDays * 24 hours;
-            // Set the available limit to the current topup limit.
-            _topupAvailable = topupLimit;
+            uint extraDays = (now - _topUpLimitDay) / 24 hours;
+            _topUpLimitDay += extraDays * 24 hours;
+            // Set the available limit to the current top up limit.
+            _topUpAvailable = topUpLimit;
         }
     }
 }
