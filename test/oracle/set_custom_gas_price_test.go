@@ -6,6 +6,7 @@ import (
 	"github.com/ethereum/go-ethereum/core/types"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
+	. "github.com/tokencard/ethertest"
 )
 
 var _ = Describe("setCustomGasPrice", func() {
@@ -15,7 +16,7 @@ var _ = Describe("setCustomGasPrice", func() {
 
 		BeforeEach(func() {
 			var err error
-			tx, err = oracle.SetCustomGasPrice(controllerWallet.TransactOpts(), big.NewInt(777))
+			tx, err = oracle.SetCustomGasPrice(controller.TransactOpts(), big.NewInt(777))
 			Expect(err).ToNot(HaveOccurred())
 			be.Commit()
 		})
@@ -25,7 +26,7 @@ var _ = Describe("setCustomGasPrice", func() {
 		})
 
 		It("Should emit a SetGasPrice event", func() {
-			it, err := oracle.FilterGasPriceSet(nil)
+			it, err := oracle.FilterSetGasPrice(nil)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(it.Next()).To(BeTrue())
 			evt := it.Event
@@ -35,7 +36,7 @@ var _ = Describe("setCustomGasPrice", func() {
 	})
 	Context("When not called by the controller", func() {
 		It("Should fail", func() {
-			tx, err := oracle.SetCustomGasPrice(randomWallet.TransactOptsWithGasLimit(100000), big.NewInt(777))
+			tx, err := oracle.SetCustomGasPrice(randomAccount.TransactOpts(WithGasLimit(100000)), big.NewInt(777))
 			Expect(err).ToNot(HaveOccurred())
 			be.Commit()
 			Expect(isGasExhausted(tx, 100000)).To(BeFalse())
