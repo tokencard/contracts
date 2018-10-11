@@ -14,8 +14,8 @@ var _ = Describe("transfer", func() {
 
 	Context("when the wallet has enough ETH", func() {
 		BeforeEach(func() {
-			bankWallet.MustTransfer(be, wa, ONE_ETH)
-			bankWallet.MustTransfer(be, controller.Address(), ONE_ETH)
+			bankAccount.MustTransfer(be, wa, ONE_ETH)
+			bankAccount.MustTransfer(be, controller.Address(), ONE_ETH)
 		})
 
 		var tx *types.Transaction
@@ -23,7 +23,7 @@ var _ = Describe("transfer", func() {
 		Context("When I transfer 1 Finney to a randon person", func() {
 			BeforeEach(func() {
 				var err error
-				tx, err = w.Transfer(owner.TransactOpts(WithGasLimit(81000)), randomPerson.Address(), common.HexToAddress("0x"), ONE_FINNEY)
+				tx, err = w.Transfer(owner.TransactOpts(WithGasLimit(81000)), randomAccount.Address(), common.HexToAddress("0x"), ONE_FINNEY)
 				Expect(err).ToNot(HaveOccurred())
 				be.Commit()
 			})
@@ -43,7 +43,7 @@ var _ = Describe("transfer", func() {
 
 			BeforeEach(func() {
 				var err error
-				tx, err = w.Transfer(controller.TransactOpts(WithGasLimit(81000)), randomPerson.Address(), common.HexToAddress("0x"), ONE_FINNEY)
+				tx, err = w.Transfer(controller.TransactOpts(WithGasLimit(81000)), randomAccount.Address(), common.HexToAddress("0x"), ONE_FINNEY)
 				Expect(err).ToNot(HaveOccurred())
 				be.Commit()
 			})
@@ -58,7 +58,7 @@ var _ = Describe("transfer", func() {
 
 			BeforeEach(func() {
 				var err error
-				tx, err = w.Transfer(randomPerson.TransactOpts(WithGasLimit(81000)), randomPerson.Address(), common.HexToAddress("0x"), ONE_FINNEY)
+				tx, err = w.Transfer(randomAccount.TransactOpts(WithGasLimit(81000)), randomAccount.Address(), common.HexToAddress("0x"), ONE_FINNEY)
 				Expect(err).ToNot(HaveOccurred())
 				be.Commit()
 			})
@@ -72,7 +72,7 @@ var _ = Describe("transfer", func() {
 		Context("When I have one thousand tokens", func() {
 			BeforeEach(func() {
 				var err error
-				tx, err = tkn.Credit(bankWallet.TransactOpts(), wa, big.NewInt(1000))
+				tx, err = tkn.Credit(bankAccount.TransactOpts(), wa, big.NewInt(1000))
 				Expect(err).ToNot(HaveOccurred())
 				be.Commit()
 				Expect(isSuccessful(tx)).To(BeTrue())
@@ -81,14 +81,14 @@ var _ = Describe("transfer", func() {
 
 			Context("When I transfer 300 tokens to a random person", func() {
 				BeforeEach(func() {
-					tx, err := w.Transfer(owner.TransactOpts(), randomPerson.Address(), tkna, big.NewInt(300))
+					tx, err := w.Transfer(owner.TransactOpts(), randomAccount.Address(), tkna, big.NewInt(300))
 					Expect(err).ToNot(HaveOccurred())
 					be.Commit()
 					Expect(isSuccessful(tx)).To(BeTrue())
 				})
 
 				It("should increase TKN balance of the random person", func() {
-					b, err := tkn.BalanceOf(nil, randomPerson.Address())
+					b, err := tkn.BalanceOf(nil, randomAccount.Address())
 					Expect(err).ToNot(HaveOccurred())
 					Expect(b.String()).To(Equal("300"))
 				})
@@ -109,7 +109,7 @@ var _ = Describe("transfer", func() {
 			Context("When controller tries to transfer one token to a random person", func() {
 				BeforeEach(func() {
 					var err error
-					tx, err = w.Transfer(controller.TransactOpts(WithGasLimit(80000)), randomPerson.Address(), tkna, big.NewInt(1))
+					tx, err = w.Transfer(controller.TransactOpts(WithGasLimit(80000)), randomAccount.Address(), tkna, big.NewInt(1))
 					Expect(err).ToNot(HaveOccurred())
 					be.Commit()
 				})
@@ -123,7 +123,7 @@ var _ = Describe("transfer", func() {
 
 				BeforeEach(func() {
 					var err error
-					tx, err = w.Transfer(randomPerson.TransactOpts(WithGasLimit(80000)), randomPerson.Address(), tkna, big.NewInt(1))
+					tx, err = w.Transfer(randomAccount.TransactOpts(WithGasLimit(80000)), randomAccount.Address(), tkna, big.NewInt(1))
 					Expect(err).ToNot(HaveOccurred())
 					be.Commit()
 				})

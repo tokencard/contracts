@@ -14,7 +14,7 @@ var _ = Describe("convert", func() {
 
 	Context("When the token is already supported", func() {
 		BeforeEach(func() {
-			tx, err := oracle.AddTokens(controllerWallet.TransactOpts(), []common.Address{common.HexToAddress("0xfe209bdE5CA32fa20E6728A005F26D651FFF5982")}, stringsToByte32("TKN"), []byte{8})
+			tx, err := oracle.AddTokens(controller.TransactOpts(), []common.Address{common.HexToAddress("0xfe209bdE5CA32fa20E6728A005F26D651FFF5982")}, stringsToByte32("TKN"), []byte{8})
 			Expect(err).ToNot(HaveOccurred())
 			be.Commit()
 			Expect(isSuccessful(tx)).To(BeTrue())
@@ -27,7 +27,7 @@ var _ = Describe("convert", func() {
 		})
 		Context("When exchange rate is NOT 0", func() {
 			BeforeEach(func() {
-				tx, err := oracle.UpdateTokenRate(controllerWallet.TransactOpts(), common.HexToAddress("0xfe209bdE5CA32fa20E6728A005F26D651FFF5982"), big.NewInt(int64(0.001633*math.Pow10(18))))
+				tx, err := oracle.UpdateTokenRate(controller.TransactOpts(), common.HexToAddress("0xfe209bdE5CA32fa20E6728A005F26D651FFF5982"), big.NewInt(int64(0.001633*math.Pow10(18))))
 				Expect(err).ToNot(HaveOccurred())
 				be.Commit()
 				Expect(isSuccessful(tx)).To(BeTrue())
@@ -51,19 +51,19 @@ var _ = Describe("convert", func() {
 	Context("When the token is not supported", func() {
 		//the subsequent BeforeEach ensure that the the token fields are initialized but it is not supported longer
 		BeforeEach(func() {
-			tx, err := oracle.AddTokens(controllerWallet.TransactOpts(), []common.Address{common.HexToAddress("0x1")}, stringsToByte32("ETH"), []byte{4})
+			tx, err := oracle.AddTokens(controller.TransactOpts(), []common.Address{common.HexToAddress("0x1")}, stringsToByte32("ETH"), []byte{4})
 			Expect(err).ToNot(HaveOccurred())
 			be.Commit()
 			Expect(isSuccessful(tx)).To(BeTrue())
 		})
 		BeforeEach(func() {
-			tx, err := oracle.UpdateTokenRate(controllerWallet.TransactOpts(), common.HexToAddress("0x1"), big.NewInt(100))
+			tx, err := oracle.UpdateTokenRate(controller.TransactOpts(), common.HexToAddress("0x1"), big.NewInt(100))
 			Expect(err).ToNot(HaveOccurred())
 			be.Commit()
 			Expect(isSuccessful(tx)).To(BeTrue())
 		})
 		BeforeEach(func() {
-			tx, err := oracle.RemoveTokens(controllerWallet.TransactOpts(), []common.Address{common.HexToAddress("0x1")})
+			tx, err := oracle.RemoveTokens(controller.TransactOpts(), []common.Address{common.HexToAddress("0x1")})
 			Expect(err).ToNot(HaveOccurred())
 			be.Commit()
 			Expect(isSuccessful(tx)).To(BeTrue())

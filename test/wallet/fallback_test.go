@@ -12,7 +12,7 @@ import (
 var _ = Describe("fallback", func() {
 	Context("When a random person deposits ETH to the wallet address", func() {
 		BeforeEach(func() {
-			randomPerson.MustTransfer(be, wa, ONE_FINNEY)
+			randomAccount.MustTransfer(be, wa, ONE_FINNEY)
 		})
 
 		It("should increase the wallet's ETH balance by the same amount", func() {
@@ -27,7 +27,7 @@ var _ = Describe("fallback", func() {
 			Expect(it.Next()).To(BeTrue())
 			evt := it.Event
 			Expect(it.Next()).To(BeFalse())
-			Expect(evt.From).To(Equal(randomPerson.Address()))
+			Expect(evt.From).To(Equal(randomAccount.Address()))
 			Expect(evt.Amount.String()).To(Equal(ONE_FINNEY.String()))
 		})
 	})
@@ -36,7 +36,7 @@ var _ = Describe("fallback", func() {
 		It("should fail", func() {
 			privateKey, err := crypto.GenerateKey()
 			Expect(err).ToNot(HaveOccurred())
-			bankWallet.MustTransfer(be, crypto.PubkeyToAddress(privateKey.PublicKey), ONE_ETH)
+			bankAccount.MustTransfer(be, crypto.PubkeyToAddress(privateKey.PublicKey), ONE_ETH)
 			unsignedTx := types.NewTransaction(0, wa, ONE_FINNEY, 30000, gweiToWei(20), []byte{0xf8, 0xa8, 0xfd, 0xd6})
 			signedTx, err := types.SignTx(unsignedTx, types.HomesteadSigner{}, privateKey)
 			Expect(err).ToNot(HaveOccurred())

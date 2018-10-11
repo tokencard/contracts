@@ -6,7 +6,6 @@ import (
 	"math/big"
 	"os"
 	"testing"
-
 	"math"
 
 	"github.com/ethereum/go-ethereum/common"
@@ -46,12 +45,12 @@ func init() {
 		panic("Could not parse one ETH")
 	}
 
-	testRig.AddGenesisAccountAllocation(bankWallet.Address(), ethToWei(100))
+	testRig.AddGenesisAccountAllocation(bankAccount.Address(), ethToWei(100))
 	testRig.AddCoverageForContracts("../../build/wallet/combined.json", "../../contracts/wallet.sol")
 }
 
 var testRig = ethertest.NewTestRig()
-var bankWallet = ethertest.NewWallet()
+var bankAccount = ethertest.NewAccount()
 
 var _ = AfterSuite(func() {
 	testRig.ExpectMinimumCoverage("wallet.sol:Wallet", 100.00)
@@ -125,16 +124,16 @@ func (m almostEqual) NegatedFailureMessage(actual interface{}) (message string) 
 	return fmt.Sprintf("Actual value %v is almost equal to expected %v", m, actual)
 }
 
-var owner *ethertest.Wallet
-var controller *ethertest.Wallet
-var randomPerson *ethertest.Wallet
+var owner *ethertest.Account
+var controller *ethertest.Account
+var randomAccount *ethertest.Account
 
 var _ = BeforeEach(func() {
-	owner = ethertest.NewWallet()
-	bankWallet.MustTransfer(be, owner.Address(), ONE_ETH)
-	controller = ethertest.NewWallet()
-	randomPerson = ethertest.NewWallet()
-	bankWallet.MustTransfer(be, randomPerson.Address(), finneyToWei(500))
+	owner = ethertest.NewAccount()
+	bankAccount.MustTransfer(be, owner.Address(), ONE_ETH)
+	controller = ethertest.NewAccount()
+	randomAccount = ethertest.NewAccount()
+	bankAccount.MustTransfer(be, randomAccount.Address(), finneyToWei(500))
 })
 
 var controllerContract *bindings.Controller
@@ -156,34 +155,34 @@ var _ = BeforeEach(func() {
 	var err error
 	var tx *types.Transaction
 
-	controllerContractAddress, tx, controllerContract, err = bindings.DeployController(bankWallet.TransactOpts(), be, bankWallet.Address())
+	controllerContractAddress, tx, controllerContract, err = bindings.DeployController(bankAccount.TransactOpts(), be, bankAccount.Address())
 	Expect(err).ToNot(HaveOccurred())
 	be.Commit()
 	Expect(isSuccessful(tx)).To(BeTrue())
 
-	tx, err = controllerContract.AddController(bankWallet.TransactOpts(), controller.Address())
+	tx, err = controllerContract.AddController(bankAccount.TransactOpts(), controller.Address())
 	Expect(err).ToNot(HaveOccurred())
 	be.Commit()
 	Expect(isSuccessful(tx)).To(BeTrue())
 
-	Expect(bankWallet.Transfer(be, controller.Address(), ethToWei(1))).To(Succeed())
+	Expect(bankAccount.Transfer(be, controller.Address(), ethToWei(1))).To(Succeed())
 
-	oraclizeMockAddress, tx, oraclizeMock, err = mocks.DeployOraclize(bankWallet.TransactOpts(), be, bankWallet.Address())
+	oraclizeMockAddress, tx, oraclizeMock, err = mocks.DeployOraclize(bankAccount.TransactOpts(), be, bankAccount.Address())
 	Expect(err).ToNot(HaveOccurred())
 	be.Commit()
 	Expect(isSuccessful(tx)).To(BeTrue())
 
-	oraclizeMockAddrResolverAddress, tx, oraclizeMockAddrResolver, err = mocks.DeployOraclizeAddrResolver(bankWallet.TransactOpts(), be, oraclizeMockAddress)
+	oraclizeMockAddrResolverAddress, tx, oraclizeMockAddrResolver, err = mocks.DeployOraclizeAddrResolver(bankAccount.TransactOpts(), be, oraclizeMockAddress)
 	Expect(err).ToNot(HaveOccurred())
 	be.Commit()
 	Expect(isSuccessful(tx)).To(BeTrue())
 
-	oracleAddress, tx, oracle, err = bindings.DeployOracle(bankWallet.TransactOpts(), be, oraclizeMockAddrResolverAddress, controllerContractAddress)
+	oracleAddress, tx, oracle, err = bindings.DeployOracle(bankAccount.TransactOpts(), be, oraclizeMockAddrResolverAddress, controllerContractAddress)
 	Expect(err).ToNot(HaveOccurred())
 	be.Commit()
 	Expect(isSuccessful(tx)).To(BeTrue())
 
-	oracleResolverAddress, tx, oracleResolver, err = bindings.DeployResolver(bankWallet.TransactOpts(), be, oracleAddress, controllerContractAddress)
+	oracleResolverAddress, tx, oracleResolver, err = bindings.DeployResolver(bankAccount.TransactOpts(), be, oracleAddress, controllerContractAddress)
 	Expect(err).ToNot(HaveOccurred())
 	be.Commit()
 	Expect(isSuccessful(tx)).To(BeTrue())
@@ -205,7 +204,7 @@ var tkna common.Address
 var _ = BeforeEach(func() {
 	var err error
 	var tx *types.Transaction
-	tkna, tx, tkn, err = mocks.DeployToken(bankWallet.TransactOpts(), be)
+	tkna, tx, tkn, err = mocks.DeployToken(bankAccount.TransactOpts(), be)
 	Expect(err).ToNot(HaveOccurred())
 	be.Commit()
 	Expect(isSuccessful(tx)).To(BeTrue())
@@ -229,7 +228,7 @@ var _ = BeforeEach(func() {
 	var err error
 	var tx *types.Transaction
 	wa, tx, w, err = bindings.DeployWallet(
-		bankWallet.TransactOpts(),
+		bankAccount.TransactOpts(),
 		be,
 		owner.Address(),
 		true,

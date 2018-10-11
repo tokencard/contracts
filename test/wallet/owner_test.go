@@ -40,7 +40,7 @@ var _ = Describe("ownable", func() {
 			var err error
 			var tx *types.Transaction
 			wa, tx, w, err = bindings.DeployWallet(
-				bankWallet.TransactOpts(),
+				bankAccount.TransactOpts(),
 				be,
 				owner.Address(),
 				false,
