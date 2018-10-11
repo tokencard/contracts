@@ -11,7 +11,7 @@ import (
 	. "github.com/tokencard/ethertest"
 )
 
-var _ = Describe("topupGas", func() {
+var _ = Describe("topUpGas", func() {
 
 	Context("when the wallet has enough ETH", func() {
 		BeforeEach(func() {
@@ -27,7 +27,7 @@ var _ = Describe("topupGas", func() {
 			bankAccount.MustTransfer(be, controller.Address(), ONE_ETH)
 		})
 
-		Context("When called by the wallet controller and is lower than topup limit", func() {
+		Context("When called by the wallet controller and is lower than top up limit", func() {
 
 			BeforeEach(func() {
 				tx, err = w.TopUpGas(caller.TransactOpts(WithGasLimit(81000)), ONE_FINNEY)
@@ -43,7 +43,7 @@ var _ = Describe("topupGas", func() {
 			})
 		})
 
-		Context("When the value is above topup limit", func() {
+		Context("When the value is above top up limit", func() {
 
 			BeforeEach(func() {
 				tx, err = w.TopUpGas(caller.TransactOpts(WithGasLimit(81000)), ONE_ETH)
@@ -51,7 +51,7 @@ var _ = Describe("topupGas", func() {
 				be.Commit()
 			})
 
-			It("Should not return error", func() {
+			It("should not return error", func() {
 				Expect(err).ToNot(HaveOccurred())
 			})
 
@@ -59,7 +59,7 @@ var _ = Describe("topupGas", func() {
 				Expect(isSuccessful(tx)).To(BeTrue())
 			})
 
-			It("Should topup only the topup limit of the gas", func() {
+			It("should top up only the top up limit of the gas", func() {
 				b, e := be.BalanceAt(context.Background(), wa, nil)
 				Expect(e).ToNot(HaveOccurred())
 				Expect(b.String()).To(Equal("9500000000000000000"))
@@ -87,7 +87,7 @@ var _ = Describe("topupGas", func() {
 				be.Commit()
 			})
 
-			It("Should not return error", func() {
+			It("should not return error", func() {
 				Expect(err).ToNot(HaveOccurred())
 			})
 
@@ -107,7 +107,7 @@ var _ = Describe("topupGas", func() {
 					be.Commit()
 				})
 
-				It("Should not return error", func() {
+				It("should not return error", func() {
 					Expect(err).ToNot(HaveOccurred())
 				})
 
@@ -115,7 +115,7 @@ var _ = Describe("topupGas", func() {
 					Expect(isSuccessful(tx)).To(BeTrue())
 				})
 
-				It("Should topup only the topup limit of the gas", func() {
+				It("should top up only the top up limit of the gas", func() {
 
 					b, e := be.BalanceAt(context.Background(), wa, nil)
 					Expect(e).ToNot(HaveOccurred())
@@ -132,7 +132,7 @@ var _ = Describe("topupGas", func() {
 				caller = owner
 			})
 
-			Context("when the value is lower than topup limit", func() {
+			Context("When the value is lower than top up limit", func() {
 
 				BeforeEach(func() {
 					tx, err = w.TopUpGas(caller.TransactOpts(WithGasLimit(81000)), finneyToWei(500))
@@ -140,7 +140,7 @@ var _ = Describe("topupGas", func() {
 					be.Commit()
 				})
 
-				It("Should not return error", func() {
+				It("should not return error", func() {
 					Expect(err).ToNot(HaveOccurred())
 				})
 
@@ -150,7 +150,7 @@ var _ = Describe("topupGas", func() {
 
 			})
 
-			Context("When the value is above topup limit", func() {
+			Context("When the value is above top up limit", func() {
 
 				BeforeEach(func() {
 					tx, err = w.TopUpGas(caller.TransactOpts(WithGasLimit(81000)), finneyToWei(800))
@@ -158,7 +158,7 @@ var _ = Describe("topupGas", func() {
 					be.Commit()
 				})
 
-				It("Should not return error", func() {
+				It("should not return error", func() {
 					Expect(err).ToNot(HaveOccurred())
 				})
 
@@ -166,7 +166,7 @@ var _ = Describe("topupGas", func() {
 					Expect(isSuccessful(tx)).To(BeTrue())
 				})
 
-				It("Should topup only the topup limit of the gas", func() {
+				It("should top up only the top up limit of the gas", func() {
 					b, e := be.BalanceAt(context.Background(), wa, nil)
 					Expect(e).ToNot(HaveOccurred())
 					Expect(b.String()).To(Equal("9500000000000000000"))
@@ -188,7 +188,7 @@ var _ = Describe("topupGas", func() {
 					be.Commit()
 				})
 
-				It("Should not return error", func() {
+				It("should not return error", func() {
 					Expect(err).ToNot(HaveOccurred())
 				})
 
@@ -207,7 +207,7 @@ var _ = Describe("topupGas", func() {
 						be.Commit()
 					})
 
-					It("Should not return error", func() {
+					It("should not return error", func() {
 						Expect(err).ToNot(HaveOccurred())
 					})
 
@@ -216,7 +216,7 @@ var _ = Describe("topupGas", func() {
 						Expect(isSuccessful(tx)).To(BeTrue())
 					})
 
-					It("Should topup only the topup limit of the gas", func() {
+					It("should top up only the top up limit of the gas", func() {
 						b, e := be.BalanceAt(context.Background(), wa, nil)
 						Expect(e).ToNot(HaveOccurred())
 						Expect(b.String()).To(Equal("9000000000000000000"))
@@ -227,7 +227,7 @@ var _ = Describe("topupGas", func() {
 			})
 		})
 
-		Context("When called by some random address and is lower than topup limit", func() {
+		Context("When called by some random address and is lower than top up limit", func() {
 
 			BeforeEach(func() {
 				caller = randomAccount
@@ -239,7 +239,7 @@ var _ = Describe("topupGas", func() {
 				be.Commit()
 			})
 
-			It("Should not return error", func() {
+			It("should not return error", func() {
 				Expect(err).ToNot(HaveOccurred())
 			})
 
