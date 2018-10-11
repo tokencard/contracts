@@ -28,7 +28,7 @@ var _ = Describe("updateRates", func() {
 					Expect(isSuccessful(tx)).To(BeTrue())
 				})
 				It("Should emit an OraclizeQuerySuccess event", func() {
-					it, err := oracle.FilterOraclizeQuerySucceeded(nil)
+					it, err := oracle.FilterRequestedUpdate(nil)
 					Expect(err).ToNot(HaveOccurred())
 					Expect(it.Next()).To(BeTrue())
 					evt := it.Event
