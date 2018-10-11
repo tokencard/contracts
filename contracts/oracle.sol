@@ -165,11 +165,11 @@ contract Oracle is UsingOraclize, Base64, Date, JSON, Controllable, IOracle {
     event SetGasPrice(uint _gasPrice);
     event Converted(address _token, uint _amount, uint _ether);
 
-    event OraclizeQuerySucceeded(string _label);
-    event OraclizeQueryFailed(string _reason);
+    event RequestedUpdate(string _label);
+    event FailedUpdateRequest(string _reason);
 
-    event VerificationSucceeded(bytes _publicKey, string _result);
-    event VerificationFailed(bytes _publicKey, string _result, string _reason);
+    event VerifiedProof(bytes _publicKey, string _result);
+    event FailedProofVerification(bytes _publicKey, string _result, string _reason);
 
     event SetCryptoComparePrivateKey(bytes _publicKey);
 
@@ -347,7 +347,7 @@ contract Oracle is UsingOraclize, Base64, Date, JSON, Controllable, IOracle {
         // Check if the contract has enough Ether to pay for the query.
         if (oraclize_getPrice("URL") * _tokenAddresses.length > address(this).balance) {
             // Emit the query failure event.
-            emit OraclizeQueryFailed("not enough balance to pay for the query");
+            emit FailedUpdateRequest("not enough balance to pay for the query");
         } else {
           // Set up the crypto compare API query strings.
           Strings.slice memory apiPrefix = "https://min-api.cryptocompare.com/data/price?fsym=".toSlice();
@@ -363,7 +363,7 @@ contract Oracle is UsingOraclize, Base64, Date, JSON, Controllable, IOracle {
               // Store the query ID together with the associated token address.
               _queryToToken[queryID] = _tokenAddresses[i];
               // Emit the query success event.
-              emit OraclizeQuerySucceeded(label.toString());
+              emit RequestedUpdate(label.toString());
           }
         }
     }
@@ -386,14 +386,14 @@ contract Oracle is UsingOraclize, Base64, Date, JSON, Controllable, IOracle {
         bytes memory dateHeader = new bytes(30);
         dateHeader = copyBytes(headers, 5, 30, dateHeader, 0);
         if (!verifyDate(string(dateHeader), _lastUpdate)) {
-            emit VerificationFailed(_publicKey, _result, "date");
+            emit FailedProofVerification(_publicKey, _result, "date");
             return false;
         }
         // Check if the signed digest hash matches the result hash.
         bytes memory digest = new bytes(headersLength - 52);
         digest = copyBytes(headers, 52, headersLength - 52, digest, 0);
         if (keccak256(sha256(_result)) != keccak256(base64decode(digest))) {
-            emit VerificationFailed(_publicKey, _result, "hash");
+            emit FailedProofVerification(_publicKey, _result, "hash");
             return false;
         }
         // Check if the signature is valid and if the signer addresses match.
@@ -401,10 +401,10 @@ contract Oracle is UsingOraclize, Base64, Date, JSON, Controllable, IOracle {
         bool signatureOK;
         (signatureOK, signer) = ecrecovery(sha256(headers), signature);
         if (signatureOK && signer == address(keccak256(_publicKey))) {
-            emit VerificationSucceeded(_publicKey, _result);
+            emit VerifiedProof(_publicKey, _result);
             return true;
         }
-        emit VerificationFailed(_publicKey, _result, "signature");
+        emit FailedProofVerification(_publicKey, _result, "signature");
         return false;
     }
 
