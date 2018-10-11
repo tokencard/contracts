@@ -13,7 +13,7 @@ import (
 
 var _ = Describe("balance", func() {
 	Context("When the contract has no balance", func() {
-		It("Should return 0", func() {
+		It("should return 0", func() {
 			b, err := w.Balance(nil, common.HexToAddress("0x0"))
 			Expect(err).ToNot(HaveOccurred())
 			Expect(b.String()).To(Equal("0"))
@@ -25,10 +25,10 @@ var _ = Describe("balance", func() {
 			bankWallet.MustTransfer(be, wa, ONE_ETH)
 		})
 
-		It("Should return 1 ETH", func() {
+		It("should return 1 ETH", func() {
 			b, err := w.Balance(nil, common.HexToAddress("0x0"))
 			Expect(err).ToNot(HaveOccurred())
-			Expect(b.String()).To(Equal("1000000000000000000"))
+			Expect(b.String()).To(Equal(ONE_ETH.String()))
 		})
 	})
 
