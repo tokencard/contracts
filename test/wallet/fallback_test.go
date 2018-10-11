@@ -22,7 +22,7 @@ var _ = Describe("fallback", func() {
 		})
 
 		It("should emit a deposit event", func() {
-			it, err := w.FilterDepositReceived(nil)
+			it, err := w.FilterReceived(nil)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(it.Next()).To(BeTrue())
 			evt := it.Event
