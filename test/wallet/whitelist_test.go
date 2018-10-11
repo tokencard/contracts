@@ -446,17 +446,4 @@ var _ = Describe("whitelistRemoval", func() {
 		})
 	})
 
-	Context("When I submit 21 addresses for removal from whitelist", func() {
-		It("should fail", func() {
-			addresses := []common.Address{}
-			for i := 0; i < 21; i++ {
-				addresses = append(addresses, ethertest.NewWallet().Address())
-			}
-			tx, err := w.SubmitWhitelistRemoval(owner.TransactOpts(WithGasLimit(100000)), addresses)
-			Expect(err).ToNot(HaveOccurred())
-			be.Commit()
-			Expect(isSuccessful(tx)).To(BeFalse())
-		})
-	})
-
 })

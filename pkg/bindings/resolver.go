@@ -28,10 +28,10 @@ var (
 )
 
 // ResolverABI is the input ABI used to generate the binding from.
-const ResolverABI = "[{\"constant\":true,\"inputs\":[],\"name\":\"getAddress\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_controller\",\"type\":\"address\"}],\"name\":\"newController\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_target\",\"type\":\"address\"}],\"name\":\"setAddress\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"name\":\"_target\",\"type\":\"address\"},{\"name\":\"_controller\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_old\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_new\",\"type\":\"address\"}],\"name\":\"ControllerResolverChanged\",\"type\":\"event\"}]"
+const ResolverABI = "[{\"constant\":true,\"inputs\":[],\"name\":\"getAddress\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_controller\",\"type\":\"address\"}],\"name\":\"newController\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_target\",\"type\":\"address\"}],\"name\":\"setAddress\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"name\":\"_target\",\"type\":\"address\"},{\"name\":\"_controller\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_old\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_new\",\"type\":\"address\"}],\"name\":\"ChangedControllerResolver\",\"type\":\"event\"}]"
 
 // ResolverBin is the compiled bytecode used for deploying new contracts.
-const ResolverBin = `608060405234801561001057600080fd5b5060405160408061039b83398101604052805160209091015160008054600160a060020a03928316600160a060020a03199182161790915560018054929093169116179055610337806100646000396000f3006080604052600436106100565763ffffffff7c010000000000000000000000000000000000000000000000000000000060003504166338cc4831811461005b578063ca57cb781461008c578063e30081a0146100af575b600080fd5b34801561006757600080fd5b506100706100d0565b60408051600160a060020a039092168252519081900360200190f35b34801561009857600080fd5b506100ad600160a060020a03600435166100df565b005b3480156100bb57600080fd5b506100ad600160a060020a03600435166101cc565b600154600160a060020a031690565b6100e833610271565b151561015557604080517f08c379a000000000000000000000000000000000000000000000000000000000815260206004820152601a60248201527f73656e646572206973206e6f74206120636f6e74726f6c6c6572000000000000604482015290519081900360640190fd5b60005460408051600160a060020a039283168152918316602083015280517f95d5e19ddf857cd05ebf87d06d1bef8ceab83305a3f833ff72d6cfafbf76f8259281900390910190a16000805473ffffffffffffffffffffffffffffffffffffffff1916600160a060020a0392909216919091179055565b6101d533610271565b151561024257604080517f08c379a000000000000000000000000000000000000000000000000000000000815260206004820152601a60248201527f73656e646572206973206e6f74206120636f6e74726f6c6c6572000000000000604482015290519081900360640190fd5b6001805473ffffffffffffffffffffffffffffffffffffffff1916600160a060020a0392909216919091179055565b60008054604080517fb429afeb000000000000000000000000000000000000000000000000000000008152600160a060020a0385811660048301529151919092169163b429afeb91602480830192602092919082900301818787803b1580156102d957600080fd5b505af11580156102ed573d6000803e3d6000fd5b505050506040513d602081101561030357600080fd5b5051929150505600a165627a7a72305820328a4766e45732d55392c198dd1bb35154993a2bea5a2c67651204b418a2dfce0029`
+const ResolverBin = `608060405234801561001057600080fd5b5060405160408061039b83398101604052805160209091015160008054600160a060020a03928316600160a060020a03199182161790915560018054929093169116179055610337806100646000396000f3006080604052600436106100565763ffffffff7c010000000000000000000000000000000000000000000000000000000060003504166338cc4831811461005b578063ca57cb781461008c578063e30081a0146100af575b600080fd5b34801561006757600080fd5b506100706100d0565b60408051600160a060020a039092168252519081900360200190f35b34801561009857600080fd5b506100ad600160a060020a03600435166100df565b005b3480156100bb57600080fd5b506100ad600160a060020a03600435166101cc565b600154600160a060020a031690565b6100e833610271565b151561015557604080517f08c379a000000000000000000000000000000000000000000000000000000000815260206004820152601a60248201527f73656e646572206973206e6f74206120636f6e74726f6c6c6572000000000000604482015290519081900360640190fd5b60005460408051600160a060020a039283168152918316602083015280517f3db5c66e24cd1f9c90a7fe244e1a02978f11d675d57afa6f542ad02e4359a0089281900390910190a16000805473ffffffffffffffffffffffffffffffffffffffff1916600160a060020a0392909216919091179055565b6101d533610271565b151561024257604080517f08c379a000000000000000000000000000000000000000000000000000000000815260206004820152601a60248201527f73656e646572206973206e6f74206120636f6e74726f6c6c6572000000000000604482015290519081900360640190fd5b6001805473ffffffffffffffffffffffffffffffffffffffff1916600160a060020a0392909216919091179055565b60008054604080517fb429afeb000000000000000000000000000000000000000000000000000000008152600160a060020a0385811660048301529151919092169163b429afeb91602480830192602092919082900301818787803b1580156102d957600080fd5b505af11580156102ed573d6000803e3d6000fd5b505050506040513d602081101561030357600080fd5b5051929150505600a165627a7a7230582085d9285f5a08e4c868d645264ef8fe3cec6cd62f8271b77ce6b97065487571a20029`
 
 // DeployResolver deploys a new Ethereum contract, binding an instance of Resolver to it.
 func DeployResolver(auth *bind.TransactOpts, backend bind.ContractBackend, _target common.Address, _controller common.Address) (common.Address, *types.Transaction, *Resolver, error) {
@@ -256,9 +256,9 @@ func (_Resolver *ResolverTransactorSession) SetAddress(_target common.Address) (
 	return _Resolver.Contract.SetAddress(&_Resolver.TransactOpts, _target)
 }
 
-// ResolverControllerResolverChangedIterator is returned from FilterControllerResolverChanged and is used to iterate over the raw logs and unpacked data for ControllerResolverChanged events raised by the Resolver contract.
-type ResolverControllerResolverChangedIterator struct {
-	Event *ResolverControllerResolverChanged // Event containing the contract specifics and raw log
+// ResolverChangedControllerResolverIterator is returned from FilterChangedControllerResolver and is used to iterate over the raw logs and unpacked data for ChangedControllerResolver events raised by the Resolver contract.
+type ResolverChangedControllerResolverIterator struct {
+	Event *ResolverChangedControllerResolver // Event containing the contract specifics and raw log
 
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
@@ -272,7 +272,7 @@ type ResolverControllerResolverChangedIterator struct {
 // Next advances the iterator to the subsequent event, returning whether there
 // are any more events found. In case of a retrieval or parsing error, false is
 // returned and Error() can be queried for the exact failure.
-func (it *ResolverControllerResolverChangedIterator) Next() bool {
+func (it *ResolverChangedControllerResolverIterator) Next() bool {
 	// If the iterator failed, stop iterating
 	if it.fail != nil {
 		return false
@@ -281,7 +281,7 @@ func (it *ResolverControllerResolverChangedIterator) Next() bool {
 	if it.done {
 		select {
 		case log := <-it.logs:
-			it.Event = new(ResolverControllerResolverChanged)
+			it.Event = new(ResolverChangedControllerResolver)
 			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 				it.fail = err
 				return false
@@ -296,7 +296,7 @@ func (it *ResolverControllerResolverChangedIterator) Next() bool {
 	// Iterator still in progress, wait for either a data or an error event
 	select {
 	case log := <-it.logs:
-		it.Event = new(ResolverControllerResolverChanged)
+		it.Event = new(ResolverChangedControllerResolver)
 		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 			it.fail = err
 			return false
@@ -312,42 +312,42 @@ func (it *ResolverControllerResolverChangedIterator) Next() bool {
 }
 
 // Error returns any retrieval or parsing error occurred during filtering.
-func (it *ResolverControllerResolverChangedIterator) Error() error {
+func (it *ResolverChangedControllerResolverIterator) Error() error {
 	return it.fail
 }
 
 // Close terminates the iteration process, releasing any pending underlying
 // resources.
-func (it *ResolverControllerResolverChangedIterator) Close() error {
+func (it *ResolverChangedControllerResolverIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
 
-// ResolverControllerResolverChanged represents a ControllerResolverChanged event raised by the Resolver contract.
-type ResolverControllerResolverChanged struct {
+// ResolverChangedControllerResolver represents a ChangedControllerResolver event raised by the Resolver contract.
+type ResolverChangedControllerResolver struct {
 	Old common.Address
 	New common.Address
 	Raw types.Log // Blockchain specific contextual infos
 }
 
-// FilterControllerResolverChanged is a free log retrieval operation binding the contract event 0x95d5e19ddf857cd05ebf87d06d1bef8ceab83305a3f833ff72d6cfafbf76f825.
+// FilterChangedControllerResolver is a free log retrieval operation binding the contract event 0x3db5c66e24cd1f9c90a7fe244e1a02978f11d675d57afa6f542ad02e4359a008.
 //
-// Solidity: e ControllerResolverChanged(_old address, _new address)
-func (_Resolver *ResolverFilterer) FilterControllerResolverChanged(opts *bind.FilterOpts) (*ResolverControllerResolverChangedIterator, error) {
+// Solidity: e ChangedControllerResolver(_old address, _new address)
+func (_Resolver *ResolverFilterer) FilterChangedControllerResolver(opts *bind.FilterOpts) (*ResolverChangedControllerResolverIterator, error) {
 
-	logs, sub, err := _Resolver.contract.FilterLogs(opts, "ControllerResolverChanged")
+	logs, sub, err := _Resolver.contract.FilterLogs(opts, "ChangedControllerResolver")
 	if err != nil {
 		return nil, err
 	}
-	return &ResolverControllerResolverChangedIterator{contract: _Resolver.contract, event: "ControllerResolverChanged", logs: logs, sub: sub}, nil
+	return &ResolverChangedControllerResolverIterator{contract: _Resolver.contract, event: "ChangedControllerResolver", logs: logs, sub: sub}, nil
 }
 
-// WatchControllerResolverChanged is a free log subscription operation binding the contract event 0x95d5e19ddf857cd05ebf87d06d1bef8ceab83305a3f833ff72d6cfafbf76f825.
+// WatchChangedControllerResolver is a free log subscription operation binding the contract event 0x3db5c66e24cd1f9c90a7fe244e1a02978f11d675d57afa6f542ad02e4359a008.
 //
-// Solidity: e ControllerResolverChanged(_old address, _new address)
-func (_Resolver *ResolverFilterer) WatchControllerResolverChanged(opts *bind.WatchOpts, sink chan<- *ResolverControllerResolverChanged) (event.Subscription, error) {
+// Solidity: e ChangedControllerResolver(_old address, _new address)
+func (_Resolver *ResolverFilterer) WatchChangedControllerResolver(opts *bind.WatchOpts, sink chan<- *ResolverChangedControllerResolver) (event.Subscription, error) {
 
-	logs, sub, err := _Resolver.contract.WatchLogs(opts, "ControllerResolverChanged")
+	logs, sub, err := _Resolver.contract.WatchLogs(opts, "ChangedControllerResolver")
 	if err != nil {
 		return nil, err
 	}
@@ -357,8 +357,8 @@ func (_Resolver *ResolverFilterer) WatchControllerResolverChanged(opts *bind.Wat
 			select {
 			case log := <-logs:
 				// New log arrived, parse the event and forward to the user
-				event := new(ResolverControllerResolverChanged)
-				if err := _Resolver.contract.UnpackLog(event, "ControllerResolverChanged", log); err != nil {
+				event := new(ResolverChangedControllerResolver)
+				if err := _Resolver.contract.UnpackLog(event, "ChangedControllerResolver", log); err != nil {
 					return err
 				}
 				event.Raw = log
