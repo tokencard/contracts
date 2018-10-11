@@ -348,7 +348,7 @@ contract Wallet is Vault {
     event SubmittedTopupLimitChange(uint _amount);
     event CancelledTopupLimitChange(address _sender);
 
-    event TopupGas(address _sender, address _owner, uint _amount);
+    event ToppedupGas(address _sender, address _owner, uint _amount);
 
     uint constant private MINIMUM_TOPUP_LIMIT = 1 finney;
     uint constant private MAXIMUM_TOPUP_LIMIT = 500 finney;
@@ -459,7 +459,7 @@ contract Wallet is Vault {
         _topupAvailable -= amount;
         owner().transfer(amount);
         // Emit the gas topup event.
-        emit TopupGas(tx.origin, owner(), amount);
+        emit ToppedupGas(tx.origin, owner(), amount);
     }
 
     /// @dev Modify the topup limit and topup available based on the provided value.
