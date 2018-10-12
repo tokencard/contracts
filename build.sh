@@ -16,7 +16,8 @@ contract_sources=(
   'mocks/oraclize-resolver'
   'oracle'
   'internal/controller'
-  'internal/resolver'
+  'resolver'
+  'external/ens-registry'
 )
 
 for c in "${contract_sources[@]}"
@@ -42,10 +43,11 @@ contracts=(
   "wallet/Wallet wallet.go Wallet bindings"
   "oracle/Oracle oracle.go Oracle bindings"
   "internal/controller/Controller controller.go Controller bindings"
-  "internal/resolver/Resolver resolver.go Resolver bindings"
+  "resolver/Resolver resolver.go Resolver bindings"
   "mocks/token/Token mocks/token.go Token mocks"
   "mocks/oraclize-resolver/OraclizeAddrResolver mocks/oraclize-resolver.go OraclizeAddrResolver mocks"
   "mocks/oraclize-connector/Oraclize mocks/oraclize-connector.go Oraclize mocks"
+  "external/ens-registry/ENSRegistry external/ens_registry.go ENSRegistry external"
 )
 
 for c in "${contracts[@]}"

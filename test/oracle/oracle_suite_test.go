@@ -4,13 +4,16 @@ import (
 	"context"
 	"math/big"
 	"os"
+	"strings"
 	"testing"
 
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
+	"github.com/ethereum/go-ethereum/crypto"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	"github.com/tokencard/contracts/pkg/bindings"
+	"github.com/tokencard/contracts/pkg/bindings/external"
 	"github.com/tokencard/contracts/pkg/bindings/mocks"
 	"github.com/tokencard/ethertest"
 )
@@ -18,6 +21,30 @@ import (
 func TestOracleSuite(t *testing.T) {
 	RegisterFailHandler(Fail)
 	RunSpecs(t, "Contract Suite")
+}
+
+// lifted from https://github.com/tronprotocol/tron-demo/blob/master/demo/go-client-api/vendor/github.com/ethereum/go-ethereum/contracts/ens/ens.go
+func ensParentNode(name string) (common.Hash, common.Hash) {
+	parts := strings.SplitN(name, ".", 2)
+	label := crypto.Keccak256Hash([]byte(parts[0]))
+	if len(parts) == 1 {
+		return [32]byte{}, label
+	} else {
+		parentNode, parentLabel := ensParentNode(parts[1])
+		return crypto.Keccak256Hash(parentNode[:], parentLabel[:]), label
+	}
+}
+
+func labelHash(label string) common.Hash {
+	return crypto.Keccak256Hash([]byte(label))
+}
+
+func ensNode(name string) common.Hash {
+	if name == "" {
+		return common.Hash{}
+	}
+	parentNode, parentLabel := ensParentNode(name)
+	return crypto.Keccak256Hash(parentNode[:], parentLabel[:])
 }
 
 func ethToWei(amount int) *big.Int {
@@ -76,13 +103,54 @@ var oracleAddress common.Address
 var controllerContract *bindings.Controller
 var controllerContractAddress common.Address
 
+var ensResolver *bindings.Resolver
+var ensResolverAddress common.Address
+
+var ensAddress common.Address
+var ens *external.ENSRegistry
+
 var _ = BeforeEach(func() {
 	be = testRig.NewTestBackend()
 
 	var err error
 	var tx *types.Transaction
 
+	ensAddress, tx, ens, err = external.DeployENSRegistry(controller.TransactOpts(), be)
+	Expect(err).ToNot(HaveOccurred())
+	be.Commit()
+	Expect(isSuccessful(tx)).To(BeTrue())
+
+	tx, err = ens.SetSubnodeOwner(controller.TransactOpts(), ensNode(""), labelHash("eth"), controller.Address())
+	Expect(err).ToNot(HaveOccurred())
+	be.Commit()
+	Expect(isSuccessful(tx)).To(BeTrue())
+
+	tx, err = ens.SetSubnodeOwner(controller.TransactOpts(), ensNode("eth"), labelHash("tokencard"), controller.Address())
+	Expect(err).ToNot(HaveOccurred())
+	be.Commit()
+	Expect(isSuccessful(tx)).To(BeTrue())
+
+	tx, err = ens.SetSubnodeOwner(controller.TransactOpts(), ensNode("tokencard.eth"), labelHash("controller"), controller.Address())
+	Expect(err).ToNot(HaveOccurred())
+	be.Commit()
+	Expect(isSuccessful(tx)).To(BeTrue())
+
+	ensResolverAddress, tx, ensResolver, err = bindings.DeployResolver(controller.TransactOpts(), be, ensAddress)
+	Expect(err).ToNot(HaveOccurred())
+	be.Commit()
+	Expect(isSuccessful(tx)).To(BeTrue())
+
+	tx, err = ens.SetResolver(controller.TransactOpts(), ensNode("controller.tokencard.eth"), ensResolverAddress)
+	Expect(err).ToNot(HaveOccurred())
+	be.Commit()
+	Expect(isSuccessful(tx)).To(BeTrue())
+
 	controllerContractAddress, tx, controllerContract, err = bindings.DeployController(controller.TransactOpts(), be, controller.Address())
+	Expect(err).ToNot(HaveOccurred())
+	be.Commit()
+	Expect(isSuccessful(tx)).To(BeTrue())
+
+	tx, err = ensResolver.SetAddr(controller.TransactOpts(), ensNode("controller.tokencard.eth"), controllerContractAddress)
 	Expect(err).ToNot(HaveOccurred())
 	be.Commit()
 	Expect(isSuccessful(tx)).To(BeTrue())
@@ -97,8 +165,18 @@ var _ = BeforeEach(func() {
 	be.Commit()
 	Expect(isSuccessful(tx)).To(BeTrue())
 
-	oracleAddress, tx, oracle, err = bindings.DeployOracle(controller.TransactOpts(), be, oraclizeMockAddrResolverAddress, controllerContractAddress)
+	oracleAddress, tx, oracle, err = bindings.DeployOracle(
+		controller.TransactOpts(),
+		be,
+		oraclizeMockAddrResolverAddress,
+		ensAddress,
+		ensNode("controller.tokencard.eth"),
+	)
 	Expect(err).ToNot(HaveOccurred())
 	be.Commit()
 	Expect(isSuccessful(tx)).To(BeTrue())
+
+	isController, err := controllerContract.IsController(nil, controller.Address())
+	Expect(err).ToNot(HaveOccurred())
+	Expect(isController).To(BeTrue())
 })

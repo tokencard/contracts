@@ -3,17 +3,20 @@ package wallet_test
 import (
 	"context"
 	"fmt"
+	"math"
 	"math/big"
 	"os"
+	"strings"
 	"testing"
-	"math"
 
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
+	"github.com/ethereum/go-ethereum/crypto"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	gtypes "github.com/onsi/gomega/types"
 	"github.com/tokencard/contracts/pkg/bindings"
+	"github.com/tokencard/contracts/pkg/bindings/external"
 	"github.com/tokencard/contracts/pkg/bindings/mocks"
 	"github.com/tokencard/ethertest"
 )
@@ -21,6 +24,30 @@ import (
 func TestWalletSuite(t *testing.T) {
 	RegisterFailHandler(Fail)
 	RunSpecs(t, "Contract Suite")
+}
+
+// lifted from https://github.com/tronprotocol/tron-demo/blob/master/demo/go-client-api/vendor/github.com/ethereum/go-ethereum/contracts/ens/ens.go
+func ensParentNode(name string) (common.Hash, common.Hash) {
+	parts := strings.SplitN(name, ".", 2)
+	label := crypto.Keccak256Hash([]byte(parts[0]))
+	if len(parts) == 1 {
+		return [32]byte{}, label
+	} else {
+		parentNode, parentLabel := ensParentNode(parts[1])
+		return crypto.Keccak256Hash(parentNode[:], parentLabel[:]), label
+	}
+}
+
+func labelHash(label string) common.Hash {
+	return crypto.Keccak256Hash([]byte(label))
+}
+
+func ensNode(name string) common.Hash {
+	if name == "" {
+		return common.Hash{}
+	}
+	parentNode, parentLabel := ensParentNode(name)
+	return crypto.Keccak256Hash(parentNode[:], parentLabel[:])
 }
 
 var ONE_ETH *big.Int
@@ -148,8 +175,14 @@ var oraclizeMockAddress common.Address
 var oracle *bindings.Oracle
 var oracleAddress common.Address
 
-var oracleResolver *bindings.Resolver
-var oracleResolverAddress common.Address
+var ensResolver *bindings.Resolver
+var ensResolverAddress common.Address
+
+var ensAddress common.Address
+var ens *external.ENSRegistry
+
+var oracleName = ensNode("oracle.tokencard.eth")
+var controllerName = ensNode("controller.tokencard.eth")
 
 var _ = BeforeEach(func() {
 	var err error
@@ -165,7 +198,50 @@ var _ = BeforeEach(func() {
 	be.Commit()
 	Expect(isSuccessful(tx)).To(BeTrue())
 
-	Expect(bankAccount.Transfer(be, controller.Address(), ethToWei(1))).To(Succeed())
+	ensAddress, tx, ens, err = external.DeployENSRegistry(bankAccount.TransactOpts(), be)
+	Expect(err).ToNot(HaveOccurred())
+	be.Commit()
+	Expect(isSuccessful(tx)).To(BeTrue())
+
+	tx, err = ens.SetSubnodeOwner(bankAccount.TransactOpts(), ensNode(""), labelHash("eth"), bankAccount.Address())
+	Expect(err).ToNot(HaveOccurred())
+	be.Commit()
+	Expect(isSuccessful(tx)).To(BeTrue())
+
+	tx, err = ens.SetSubnodeOwner(bankAccount.TransactOpts(), ensNode("eth"), labelHash("tokencard"), bankAccount.Address())
+	Expect(err).ToNot(HaveOccurred())
+	be.Commit()
+	Expect(isSuccessful(tx)).To(BeTrue())
+
+	tx, err = ens.SetSubnodeOwner(bankAccount.TransactOpts(), ensNode("tokencard.eth"), labelHash("controller"), bankAccount.Address())
+	Expect(err).ToNot(HaveOccurred())
+	be.Commit()
+	Expect(isSuccessful(tx)).To(BeTrue())
+
+	tx, err = ens.SetSubnodeOwner(bankAccount.TransactOpts(), ensNode("tokencard.eth"), labelHash("oracle"), bankAccount.Address())
+	Expect(err).ToNot(HaveOccurred())
+	be.Commit()
+	Expect(isSuccessful(tx)).To(BeTrue())
+
+	ensResolverAddress, tx, ensResolver, err = bindings.DeployResolver(bankAccount.TransactOpts(), be, ensAddress)
+	Expect(err).ToNot(HaveOccurred())
+	be.Commit()
+	Expect(isSuccessful(tx)).To(BeTrue())
+
+	{
+		// register controller with ENS
+
+		tx, err = ens.SetResolver(bankAccount.TransactOpts(), controllerName, ensResolverAddress)
+		Expect(err).ToNot(HaveOccurred())
+		be.Commit()
+		Expect(isSuccessful(tx)).To(BeTrue())
+
+		tx, err = ensResolver.SetAddr(bankAccount.TransactOpts(), controllerName, controllerContractAddress)
+		Expect(err).ToNot(HaveOccurred())
+		be.Commit()
+		Expect(isSuccessful(tx)).To(BeTrue())
+
+	}
 
 	oraclizeMockAddress, tx, oraclizeMock, err = mocks.DeployOraclize(bankAccount.TransactOpts(), be, bankAccount.Address())
 	Expect(err).ToNot(HaveOccurred())
@@ -177,15 +253,34 @@ var _ = BeforeEach(func() {
 	be.Commit()
 	Expect(isSuccessful(tx)).To(BeTrue())
 
-	oracleAddress, tx, oracle, err = bindings.DeployOracle(bankAccount.TransactOpts(), be, oraclizeMockAddrResolverAddress, controllerContractAddress)
+	oracleAddress, tx, oracle, err = bindings.DeployOracle(
+		bankAccount.TransactOpts(),
+		be,
+		oraclizeMockAddrResolverAddress,
+		ensAddress,
+		controllerName,
+	)
 	Expect(err).ToNot(HaveOccurred())
 	be.Commit()
 	Expect(isSuccessful(tx)).To(BeTrue())
 
-	oracleResolverAddress, tx, oracleResolver, err = bindings.DeployResolver(bankAccount.TransactOpts(), be, oracleAddress, controllerContractAddress)
-	Expect(err).ToNot(HaveOccurred())
-	be.Commit()
-	Expect(isSuccessful(tx)).To(BeTrue())
+	{
+
+		// register oracle with ENS
+
+		tx, err = ens.SetResolver(bankAccount.TransactOpts(), oracleName, ensResolverAddress)
+		Expect(err).ToNot(HaveOccurred())
+		be.Commit()
+		Expect(isSuccessful(tx)).To(BeTrue())
+
+		tx, err = ensResolver.SetAddr(bankAccount.TransactOpts(), oracleName, oracleAddress)
+		Expect(err).ToNot(HaveOccurred())
+		be.Commit()
+		Expect(isSuccessful(tx)).To(BeTrue())
+
+		Expect(bankAccount.Transfer(be, controller.Address(), ethToWei(1))).To(Succeed())
+
+	}
 
 })
 
@@ -232,8 +327,9 @@ var _ = BeforeEach(func() {
 		be,
 		owner.Address(),
 		true,
-		oracleResolverAddress,
-		controllerContractAddress,
+		ensAddress,
+		oracleName,
+		controllerName,
 		ethToWei(100),
 	)
 	Expect(err).ToNot(HaveOccurred())
