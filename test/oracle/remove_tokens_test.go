@@ -1,6 +1,8 @@
 package oracle_test
 
 import (
+	"math/big"
+
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	. "github.com/onsi/ginkgo"
@@ -13,10 +15,14 @@ var _ = Describe("removeTokens", func() {
 	Context("When called by the controller", func() {
 		Context("When removing a supported token", func() {
 			var tx *types.Transaction
-
+			base := big.NewInt(10)
+			expDec := big.NewInt(1)
+			for i := 0; i < 18; i++ {
+				expDec.Mul(expDec, base)
+			}
 			BeforeEach(func() {
 				var err error
-				tx, err = oracle.AddTokens(controller.TransactOpts(), []common.Address{common.HexToAddress("0x0")}, stringsToByte32("ETH"), []byte{18})
+				tx, err = oracle.AddTokens(controller.TransactOpts(), []common.Address{common.HexToAddress("0x0")}, stringsToByte32("ETH"), []*big.Int{expDec})
 				Expect(err).ToNot(HaveOccurred())
 				be.Commit()
 				Expect(isSuccessful(tx)).To(BeTrue())
