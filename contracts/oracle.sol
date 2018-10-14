@@ -206,6 +206,18 @@ contract Oracle is UsingOraclize, Base64, Date, JSON, Controllable, IOracle {
         _;
     }
 
+    /// @dev Checks if all addresses passed in, are existing ones
+    modifier allExistingAddresses(address[] _addresses) {
+
+        //check if more address than the ones existing are given, prevent duplicate address attack
+        require(_addresses.length <= _tokenAddresses.length, "more addresses provided than existing");
+
+        for (uint i = 0; i < _addresses.length; i++) {
+            require(tokens[_addresses[i]].exists);
+        }
+        _;
+    }
+
     /// @dev Checks if the parameter's length is within a valid range.
     modifier hasValidLength(address[] _addresses) {
         require(_addresses.length >= 1 && _addresses.length <= 20, "invalid parameter length");
@@ -271,7 +283,7 @@ contract Oracle is UsingOraclize, Base64, Date, JSON, Controllable, IOracle {
 
     /// @dev Remove ERC20 tokens from the list of supported tokens.
     /// @param _tokens ERC20 token contract addresses.
-    function removeTokens(address[] _tokens) external onlyController hasValidLength(_tokens) {
+    function removeTokens(address[] _tokens) external onlyController hasValidLength(_tokens) allExistingAddresses(_tokens) {
         // Delete each token object from the list of supported tokens based on the addresses provided.
         for (uint i = 0; i < _tokens.length; i++) {
             // Store the token address.
