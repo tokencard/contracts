@@ -294,8 +294,18 @@ func stringsToByte32(names ...string) [][32]byte {
 	return r
 }
 
+func exponentiateDecimals(decimals uint8) *big.Int {
+	base := big.NewInt(10)
+	expDec := big.NewInt(1)
+	for i := 0; i < 8; i++ {
+		expDec.Mul(expDec, base)
+	}
+	return expDec
+}
+
 var tkn *mocks.Token
 var tkna common.Address
+
 var _ = BeforeEach(func() {
 	var err error
 	var tx *types.Transaction
@@ -304,7 +314,7 @@ var _ = BeforeEach(func() {
 	be.Commit()
 	Expect(isSuccessful(tx)).To(BeTrue())
 
-	tx, err = oracle.AddTokens(controller.TransactOpts(), []common.Address{tkna}, stringsToByte32("TKN"), []byte{8})
+	tx, err = oracle.AddTokens(controller.TransactOpts(), []common.Address{tkna}, stringsToByte32("TKN"), []*big.Int{exponentiateDecimals(8)})
 	Expect(err).ToNot(HaveOccurred())
 	be.Commit()
 	Expect(isSuccessful(tx)).To(BeTrue())
