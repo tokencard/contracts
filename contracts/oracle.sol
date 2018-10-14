@@ -158,7 +158,7 @@ contract Oracle is UsingOraclize, Base64, Date, JSON, Controllable, IOracle {
     using Strings for *;
     using SafeMath for uint256;
 
-    event AddedToken(address _token, string _label, uint8 _decimals);
+    event AddedToken(address _token, string _label, uint _expDecimals);
     event RemovedToken(address _token);
     event UpdatedTokenRate(address _token, uint _rate);
 
@@ -175,7 +175,7 @@ contract Oracle is UsingOraclize, Base64, Date, JSON, Controllable, IOracle {
 
     struct Token {
         string label;     // Token symbol
-        uint8 decimals;   // Number of decimal places
+        uint expDecimals; // 10^decimal places
         uint rate;        // Token exchange rate in wei
         uint lastUpdate;  // Time of the last rate update
         bool exists;      // Flags if the struct is empty or not
@@ -233,11 +233,7 @@ contract Oracle is UsingOraclize, Base64, Date, JSON, Controllable, IOracle {
         // Require that the token exists and that its rate is not zero.
         require(token.exists && token.rate != 0, "token does not exist");
         // Safely convert the token amount to ether based on the exchange rate.
-        uint decimals = 1;
-        for (uint i = 0; i < token.decimals; i++) {
-            decimals = decimals.mul(10);
-        }
-        uint etherValue = _amount.mul(token.rate).div(decimals);
+        uint etherValue = _amount.mul(token.rate).div(token.expDecimals);
         // Emit the conversion event.
         emit Converted(_token, _amount, etherValue);
         return etherValue;
@@ -246,10 +242,10 @@ contract Oracle is UsingOraclize, Base64, Date, JSON, Controllable, IOracle {
     /// @dev Add ERC20 tokens to the list of supported tokens.
     /// @param _tokens ERC20 token contract addresses.
     /// @param _labels ERC20 token names.
-    /// @param _decimals number of decimal places used by each ERC20 token.
-    function addTokens(address[] _tokens, bytes32[] _labels, uint8[] _decimals) external onlyController hasValidLength(_tokens) hasNoExistingAddresses(_tokens) {
+    /// @param _expDecimals 10 to the power of number of decimal places used by each ERC20 token.
+    function addTokens(address[] _tokens, bytes32[] _labels, uint[] _expDecimals) external onlyController hasValidLength(_tokens) hasNoExistingAddresses(_tokens) {
         // Require that all parameters have the same length.
-        require(_tokens.length == _labels.length && _tokens.length == _decimals.length, "parameter lengths do not match");
+        require(_tokens.length == _labels.length && _tokens.length == _expDecimals.length, "parameter lengths do not match");
         // Add each token to the list of supported tokens.
         for (uint i = 0; i < _tokens.length; i++) {
             // Require that the token doesn't already exist.
@@ -257,11 +253,11 @@ contract Oracle is UsingOraclize, Base64, Date, JSON, Controllable, IOracle {
             require(!tokens[token].exists, "token already exists");
             // Store the intermediate values.
             string memory label = _labels[i].toSliceB32().toString();
-            uint8 decimals = _decimals[i];
+            uint expDecimals = _expDecimals[i];
             // Add the token to the token list.
             tokens[token] = Token({
                 label : label,
-                decimals : decimals,
+                expDecimals : expDecimals,
                 rate : 0,
                 exists : true,
                 lastUpdate: now
@@ -269,7 +265,7 @@ contract Oracle is UsingOraclize, Base64, Date, JSON, Controllable, IOracle {
             // Add the token address to the address list.
             _tokenAddresses.push(token);
             // Emit token addition event.
-            emit AddedToken(token, label, decimals);
+            emit AddedToken(token, label, expDecimals);
         }
     }
 
