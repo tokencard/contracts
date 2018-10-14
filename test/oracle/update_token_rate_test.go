@@ -13,8 +13,13 @@ import (
 var _ = Describe("updateTokenRate", func() {
 
 	Context("When the token is already supported", func() {
+		base := big.NewInt(10)
+		expDec := big.NewInt(1)
+		for i := 0; i < 18; i++ {
+			expDec.Mul(expDec, base)
+		}
 		BeforeEach(func() {
-			tx, err := oracle.AddTokens(controller.TransactOpts(), []common.Address{common.HexToAddress("0x1")}, stringsToByte32("ETH"), []byte{8})
+			tx, err := oracle.AddTokens(controller.TransactOpts(), []common.Address{common.HexToAddress("0x1")}, stringsToByte32("ETH"), []*big.Int{expDec})
 			Expect(err).ToNot(HaveOccurred())
 			be.Commit()
 			Expect(isSuccessful(tx)).To(BeTrue())
