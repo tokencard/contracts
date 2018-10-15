@@ -1,6 +1,6 @@
 pragma solidity ^0.4.25;
 
-import "../external/ens.sol";
+import "./external/ens.sol";
 
 
 /// @title Resolver returns the controller contract address.
