@@ -356,7 +356,7 @@ contract Oracle is UsingOraclize, Base64, Date, JSON, Controllable, IOracle {
         // Check if the contract has enough Ether to pay for the query.
         if (oraclize_getPrice("URL") * _tokenAddresses.length > address(this).balance) {
             // Emit the query failure event.
-            emit FailedUpdateRequest("not enough balance to pay for the query");
+            emit FailedUpdateRequest("zero balance");
         } else {
           // Set up the crypto compare API query strings.
           Strings.slice memory apiPrefix = "https://min-api.cryptocompare.com/data/price?fsym=".toSlice();
