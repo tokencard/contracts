@@ -2,7 +2,7 @@
 
 set -e -o pipefail
 
-SOLC="docker run --rm -u `id -u` -v $PWD:/solidity --workdir /solidity/contracts ethereum/solc:0.4.25 --optimize"
+SOLC="docker run --rm -u `id -u` -v $PWD:/solidity --workdir /solidity/contracts ethereum/solc:0.4.25 --optimize /=/"
 
 compile_solidity() {
   echo "compiling ${1}"
@@ -16,7 +16,7 @@ contract_sources=(
   'mocks/oraclize-resolver'
   'oracle'
   'internal/controller'
-  'resolver'
+  'internal/resolver'
   'external/ens-registry'
 )
 
@@ -43,7 +43,7 @@ contracts=(
   "wallet/Wallet wallet.go Wallet bindings"
   "oracle/Oracle oracle.go Oracle bindings"
   "internal/controller/Controller controller.go Controller bindings"
-  "resolver/Resolver resolver.go Resolver bindings"
+  "internal/resolver/Resolver resolver.go Resolver bindings"
   "mocks/token/Token mocks/token.go Token mocks"
   "mocks/oraclize-resolver/OraclizeAddrResolver mocks/oraclize-resolver.go OraclizeAddrResolver mocks"
   "mocks/oraclize-connector/Oraclize mocks/oraclize-connector.go Oraclize mocks"
