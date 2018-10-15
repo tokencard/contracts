@@ -20,7 +20,7 @@ var _ = Describe("callback", func() {
 				Expect(isSuccessful(tx)).To(BeTrue())
 			})
 			BeforeEach(func() {
-				tx, err := oracle.UpdateTokenRates(controller.TransactOpts())
+				tx, err := oracle.UpdateTokenRates(controller.TransactOpts(WithValue(big.NewInt(100000000))))
 				Expect(err).ToNot(HaveOccurred())
 				be.Commit()
 				Expect(isSuccessful(tx)).To(BeTrue())
