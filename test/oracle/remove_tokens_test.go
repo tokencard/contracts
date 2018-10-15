@@ -13,15 +13,10 @@ import (
 var _ = Describe("removeTokens", func() {
 
 	Context("When tokens are supported", func() {
-		base := big.NewInt(10)
-		expDec := big.NewInt(1)
-		for i := 0; i < 18; i++ {
-			expDec.Mul(expDec, base)
-		}
 		BeforeEach(func() {
 
 			tokens := []common.Address{common.HexToAddress("0x1"), common.HexToAddress("0x2"), common.HexToAddress("0x3")}
-			tx, err := oracle.AddTokens(controller.TransactOpts(), tokens, stringsToByte32("OMG", "EOS", "TKN"), []*big.Int{expDec, expDec, expDec})
+			tx, err := oracle.AddTokens(controller.TransactOpts(), tokens, stringsToByte32("OMG", "EOS", "TKN"), []*big.Int{exponentiateDecimals(18), exponentiateDecimals(18), exponentiateDecimals(18)})
 			Expect(err).ToNot(HaveOccurred())
 			be.Commit()
 			Expect(isSuccessful(tx)).To(BeTrue())
@@ -65,7 +60,7 @@ var _ = Describe("removeTokens", func() {
 					Expect(token.Exists).To(BeTrue())
 					Expect(token.LastUpdate.String()).NotTo(Equal("0"))
 					Expect(token.Label).To(Equal("OMG"))
-					Expect(token.ExpDecimals.String()).To(Equal(expDec.String()))
+					Expect(token.ExpDecimals.String()).To(Equal(exponentiateDecimals(18).String()))
 				})
 			})
 

@@ -92,6 +92,25 @@ func isGasExhausted(tx *types.Transaction, gasLimit uint64) bool {
 	return r.GasUsed == gasLimit
 }
 
+func stringsToByte32(names ...string) [][32]byte {
+	r := [][32]byte{}
+	for _, n := range names {
+		nb := [32]byte{}
+		copy(nb[:], []byte(n))
+		r = append(r, nb)
+	}
+	return r
+}
+
+func exponentiateDecimals(decimals uint8) *big.Int {
+	base := big.NewInt(10)
+	expDec := big.NewInt(1)
+	for i := 0; i < 8; i++ {
+		expDec.Mul(expDec, base)
+	}
+	return expDec
+}
+
 var oraclizeMockAddrResolver *mocks.OraclizeAddrResolver
 var oraclizeMockAddrResolverAddress common.Address
 

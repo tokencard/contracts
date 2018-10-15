@@ -11,14 +11,9 @@ import (
 )
 
 var _ = Describe("convert", func() {
-	base := big.NewInt(10)
-	expDec := big.NewInt(1)
-	for i := 0; i < 8; i++ {
-		expDec.Mul(expDec, base)
-	}
 	Context("When the token is already supported", func() {
 		BeforeEach(func() {
-			tx, err := oracle.AddTokens(controller.TransactOpts(), []common.Address{common.HexToAddress("0xfe209bdE5CA32fa20E6728A005F26D651FFF5982")}, stringsToByte32("TKN"), []*big.Int{expDec})
+			tx, err := oracle.AddTokens(controller.TransactOpts(), []common.Address{common.HexToAddress("0xfe209bdE5CA32fa20E6728A005F26D651FFF5982")}, stringsToByte32("TKN"), []*big.Int{exponentiateDecimals(18)})
 			Expect(err).ToNot(HaveOccurred())
 			be.Commit()
 			Expect(isSuccessful(tx)).To(BeTrue())
@@ -55,7 +50,7 @@ var _ = Describe("convert", func() {
 	Context("When the token is not supported", func() {
 		//the subsequent BeforeEach ensure that the the token fields are initialized but it is not supported longer
 		BeforeEach(func() {
-			tx, err := oracle.AddTokens(controller.TransactOpts(), []common.Address{common.HexToAddress("0x1")}, stringsToByte32("ETH"), []*big.Int{expDec})
+			tx, err := oracle.AddTokens(controller.TransactOpts(), []common.Address{common.HexToAddress("0x1")}, stringsToByte32("ETH"), []*big.Int{exponentiateDecimals(18)})
 			Expect(err).ToNot(HaveOccurred())
 			be.Commit()
 			Expect(isSuccessful(tx)).To(BeTrue())
