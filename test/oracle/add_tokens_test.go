@@ -40,29 +40,25 @@ var _ = Describe("addTokens", func() {
 			})
 
 			Context("When at least one of the added tokens is already supported", func() {
-				BeforeEach(func() {
+				It("Should fail", func() {
 					var err error
 					tokens := []common.Address{common.HexToAddress("0x0"), common.HexToAddress("0x2")}
 					tx, err = oracle.AddTokens(controller.TransactOpts(WithGasLimit(200000)), tokens, stringsToByte32("BNT", "OMG"), []*big.Int{exponentiateDecimals(18), exponentiateDecimals(18)})
 					Expect(err).ToNot(HaveOccurred())
 					be.Commit()
-				})
-
-				It("Should fail", func() {
+					Expect(isGasExhausted(tx, 200000)).To(BeFalse())
 					Expect(isSuccessful(tx)).To(BeFalse())
 				})
 			})
 
 			Context("When none of the added tokens are supported", func() {
-				BeforeEach(func() {
+				It("Should pass", func() {
 					var err error
 					tokens := []common.Address{common.HexToAddress("0x4"), common.HexToAddress("0x5")}
 					tx, err = oracle.AddTokens(controller.TransactOpts(WithGasLimit(300000)), tokens, stringsToByte32("MKR", "MTL"), []*big.Int{exponentiateDecimals(18), exponentiateDecimals(8)})
 					Expect(err).ToNot(HaveOccurred())
 					be.Commit()
-				})
-
-				It("Should pass", func() {
+					Expect(isGasExhausted(tx, 300000)).To(BeFalse())
 					Expect(isSuccessful(tx)).To(BeTrue())
 				})
 			})
@@ -71,7 +67,7 @@ var _ = Describe("addTokens", func() {
 
 		Context("When the parameters have different lengths", func() {
 			It("Should fail", func() {
-				tokens := []common.Address{common.HexToAddress("0x0"), common.HexToAddress("0x1")}
+				tokens := []common.Address{common.HexToAddress("0x4"), common.HexToAddress("0x5")}
 				tx, err := oracle.AddTokens(controller.TransactOpts(WithGasLimit(300000)), tokens, stringsToByte32("BNT", "TKN", "ZRX"), []*big.Int{exponentiateDecimals(18), exponentiateDecimals(8)})
 				Expect(err).ToNot(HaveOccurred())
 				be.Commit()
