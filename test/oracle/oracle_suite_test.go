@@ -5,6 +5,7 @@ import (
 	"math/big"
 	"os"
 	"testing"
+	"time"
 
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
@@ -77,7 +78,7 @@ var controllerContract *bindings.Controller
 var controllerContractAddress common.Address
 
 var _ = BeforeEach(func() {
-	be = testRig.NewTestBackend()
+	be = testRig.NewTestBackend(ethertest.WithBlockchainTime(time.Date(2018, 10, 13, 15, 10, 0, 0, time.Local)))
 
 	var err error
 	var tx *types.Transaction
