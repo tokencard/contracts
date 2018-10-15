@@ -2,9 +2,7 @@ pragma solidity ^0.4.25;
 
 import "./oracle.sol";
 import "./internal/ownable.sol";
-import "./internal/resolver.sol";
 import "./internal/controllable.sol";
-
 
 /// @title ERC20 is a subset of the ERC20 specification.
 interface ERC20 {
@@ -270,16 +268,21 @@ contract Vault is Whitelist, SpendLimit, ERC165 {
     //// @dev Supported ERC165 interface ID.
     bytes4 private constant _ERC165_INTERFACE_ID = 0x01ffc9a7; // solium-disable-line uppercase
 
-    /// @dev Resolver points to the oracle address resolver.
-    IResolver private _OR; // solium-disable-line mixedcase
+    /// @dev ENS points to the ENS registry smart contract.
+    IENS private _ENS;
+    /// @dev Is the registered ENS name of the oracle contract.
+    bytes32 private _node;
 
     /// @dev Constructor initializes the vault with an owner address and spend limit. It also sets up the oracle and controller contracts.
     /// @param _owner is the owner account of the wallet contract.
     /// @param _transferable indicates whether the contract ownership can be transferred.
-    /// @param _resolver is the oracle resolver contract address.
-    /// @param _controller is the controller contract address.
-    constructor(address _owner, bool _transferable, address _resolver, address _controller, uint _spendLimit) SpendLimit(_spendLimit) Ownable(_owner, _transferable) Controllable(_controller) public {
-        _OR = IResolver(_resolver);
+    /// @param _ens is the ENS public registry contract address.
+    /// @param _oracleName is the ENS name of the Oracle.
+    /// @param _controllerName is the ENS name of the controller.
+    //  @param _spendLimit is the initial spend limit.
+    constructor(address _owner, bool _transferable, address _ens, bytes32 _oracleName, bytes32 _controllerName, uint _spendLimit) SpendLimit(_spendLimit) Ownable(_owner, _transferable) Controllable(_ens, _controllerName) public {
+        _ENS = IENS(_ens);
+        _node = _oracleName;
     }
 
     /// @dev Checks if the value is not zero.
@@ -317,7 +320,7 @@ contract Vault is Whitelist, SpendLimit, ERC165 {
             // Convert token amount to ether value.
             uint etherValue;
             if (_asset != 0x0) {
-                etherValue = IOracle(_OR.getAddress()).convert(_asset, _amount);
+                etherValue = IOracle(IResolver(_ENS.resolver(_node)).addr(_node)).convert(_asset, _amount);
             } else {
                 etherValue = _amount;
             }
@@ -365,9 +368,11 @@ contract Wallet is Vault {
     /// @dev Constructor initializes the wallet top up limit and the vault contract.
     /// @param _owner is the owner account of the wallet contract.
     /// @param _transferable indicates whether the contract ownership can be transferred.
-    /// @param _resolver is the oracle resolver contract address.
-    /// @param _controller is the controller contract address.
-    constructor(address _owner, bool _transferable, address _resolver, address _controller, uint _spendLimit) Vault(_owner, _transferable, _resolver, _controller, _spendLimit) public {
+    //  @param _ens is the address of the ENS.
+    //  @param _oracleName is the ENS name of the Oracle.
+    //  @param _controllerName is the ENS name of the Controller.
+    //  @param _spendLimit is the initial spend limit.
+    constructor(address _owner, bool _transferable, address _ens, bytes32 _oracleName, bytes32 _controllerName, uint _spendLimit) Vault(_owner, _transferable, _ens, _oracleName, _controllerName, _spendLimit) public {
         _topUpLimitDay = now;
         topUpLimit = MAXIMUM_TOPUP_LIMIT;
         _topUpAvailable = topUpLimit;

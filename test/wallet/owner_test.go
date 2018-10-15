@@ -44,8 +44,9 @@ var _ = Describe("ownable", func() {
 				be,
 				owner.Address(),
 				false,
-				oracleResolverAddress,
-				controllerContractAddress,
+				ensAddress,
+				oracleName,
+				controllerName,
 				ethToWei(100),
 			)
 			Expect(err).ToNot(HaveOccurred())
