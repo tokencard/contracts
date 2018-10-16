@@ -16,7 +16,7 @@ var _ = Describe("updateRates", func() {
 	Context("When tokens are already supported", func() {
 		BeforeEach(func() {
 			tokens := []common.Address{common.HexToAddress("0x0"), common.HexToAddress("0x1")}
-			tx, err := oracle.AddTokens(controller.TransactOpts(), tokens, stringsToByte32("BNT", "TKN"), []*big.Int{exponentiateDecimals(18), exponentiateDecimals(8)})
+			tx, err := oracle.AddTokens(controller.TransactOpts(), tokens, stringsToByte32("BNT", "TKN"), []*big.Int{calculateMagnitude(big.NewInt(18)), calculateMagnitude(big.NewInt(8))})
 			Expect(err).ToNot(HaveOccurred())
 			be.Commit()
 			Expect(isSuccessful(tx)).To(BeTrue())
@@ -39,10 +39,10 @@ var _ = Describe("updateRates", func() {
 				Expect(it.Next()).To(BeTrue())
 				evt := it.Event
 				Expect(it.Next()).To(BeTrue())
-				Expect(evt.Label).To(Equal("BNT"))
+				Expect(evt.Symbol).To(Equal("BNT"))
 				evt = it.Event
 				Expect(it.Next()).To(BeFalse())
-				Expect(evt.Label).To(Equal("TKN"))
+				Expect(evt.Symbol).To(Equal("TKN"))
 			})
 			It("Should transfer value to oracle contract", func() {
 				b, err := be.BalanceAt(context.Background(), oracleAddress, nil)
