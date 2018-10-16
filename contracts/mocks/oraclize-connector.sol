@@ -33,11 +33,11 @@ contract Oraclize {
     }
 
     function getPrice(string _datasource) public returns (uint _dsprice) {
-      return 0;
+      return 1000000; //10^6
     }
 
     function getPrice(string _datasource, uint gaslimit) public returns (uint _dsprice) {
-      return 0;
+      return 1000000; //10^6
     }
 
     function setProofType(byte _proofType) external {

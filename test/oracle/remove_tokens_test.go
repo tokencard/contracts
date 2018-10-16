@@ -1,6 +1,8 @@
 package oracle_test
 
 import (
+	"math/big"
+
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	. "github.com/onsi/ginkgo"
@@ -10,59 +12,133 @@ import (
 
 var _ = Describe("removeTokens", func() {
 
-	Context("When called by the controller", func() {
-		Context("When removing a supported token", func() {
-			var tx *types.Transaction
+	Context("When tokens are supported", func() {
+		BeforeEach(func() {
 
-			BeforeEach(func() {
-				var err error
-				tx, err = oracle.AddTokens(controller.TransactOpts(), []common.Address{common.HexToAddress("0x0")}, stringsToByte32("ETH"), []byte{18})
-				Expect(err).ToNot(HaveOccurred())
-				be.Commit()
-				Expect(isSuccessful(tx)).To(BeTrue())
+			tokens := []common.Address{common.HexToAddress("0x1"), common.HexToAddress("0x2"), common.HexToAddress("0x3")}
+			tx, err := oracle.AddTokens(controller.TransactOpts(), tokens, stringsToByte32("OMG", "EOS", "TKN"), []*big.Int{exponentiateDecimals(18), exponentiateDecimals(18), exponentiateDecimals(18)})
+			Expect(err).ToNot(HaveOccurred())
+			be.Commit()
+			Expect(isSuccessful(tx)).To(BeTrue())
+		})
+		Context("When called by the controller", func() {
+
+			Context("When removing a supported token", func() {
+
+				var tx *types.Transaction
+				BeforeEach(func() {
+					var err error
+					tx, err = oracle.RemoveTokens(controller.TransactOpts(), []common.Address{common.HexToAddress("0x2")})
+					Expect(err).ToNot(HaveOccurred())
+					be.Commit()
+				})
+
+				It("Should succeed", func() {
+					Expect(isSuccessful(tx)).To(BeTrue())
+				})
+
+				It("Should emit a TokenRemoval event", func() {
+					it, err := oracle.FilterRemovedToken(nil)
+					Expect(err).ToNot(HaveOccurred())
+					Expect(it.Next()).To(BeTrue())
+					evt := it.Event
+					Expect(it.Next()).To(BeFalse())
+					Expect(evt.Token).To(Equal(common.HexToAddress("0x2")))
+				})
+
+				It("Should update the tokens map", func() {
+					token, err := oracle.Tokens(nil, common.HexToAddress("0x2"))
+					Expect(err).ToNot(HaveOccurred())
+					Expect(token.Exists).NotTo(BeTrue())
+					Expect(token.LastUpdate.String()).To(Equal("0"))
+					Expect(token.Label).To(Equal(""))
+					Expect(token.ExpDecimals.String()).To(Equal("0"))
+
+					//the other tokens should remain unchanged
+					token, err = oracle.Tokens(nil, common.HexToAddress("0x1"))
+					Expect(err).ToNot(HaveOccurred())
+					Expect(token.Exists).To(BeTrue())
+					Expect(token.LastUpdate.String()).NotTo(Equal("0"))
+					Expect(token.Label).To(Equal("OMG"))
+					Expect(token.ExpDecimals.String()).To(Equal(exponentiateDecimals(18).String()))
+				})
 			})
 
-			BeforeEach(func() {
-				var err error
-				tx, err = oracle.RemoveTokens(controller.TransactOpts(), []common.Address{common.HexToAddress("0x0")})
-				Expect(err).ToNot(HaveOccurred())
-				be.Commit()
+			Context("When removing all supported tokens", func() {
+
+				var tx *types.Transaction
+				BeforeEach(func() {
+					var err error
+					tokens := []common.Address{common.HexToAddress("0x1"), common.HexToAddress("0x2"), common.HexToAddress("0x3")}
+					tx, err = oracle.RemoveTokens(controller.TransactOpts(), tokens)
+					Expect(err).ToNot(HaveOccurred())
+					be.Commit()
+				})
+
+				It("Should succeed", func() {
+					Expect(isSuccessful(tx)).To(BeTrue())
+				})
+
+				It("Should emit 3 TokenRemoval events", func() {
+					it, err := oracle.FilterRemovedToken(nil)
+					Expect(err).ToNot(HaveOccurred())
+					Expect(it.Next()).To(BeTrue())
+					evt := it.Event
+					Expect(it.Next()).To(BeTrue())
+					Expect(evt.Token).To(Equal(common.HexToAddress("0x1")))
+					evt = it.Event
+					Expect(it.Next()).To(BeTrue())
+					Expect(evt.Token).To(Equal(common.HexToAddress("0x2")))
+					evt = it.Event
+					Expect(it.Next()).To(BeFalse())
+					Expect(evt.Token).To(Equal(common.HexToAddress("0x3")))
+				})
 			})
 
-			It("Should succeed", func() {
-				Expect(isSuccessful(tx)).To(BeTrue())
+			Context("When removing all supported tokens but a duplicate is passed", func() {
+				It("Should fail", func() {
+					tokens := []common.Address{common.HexToAddress("0x3"), common.HexToAddress("0x2"), common.HexToAddress("0x1"), common.HexToAddress("0x2")}
+					tx, err := oracle.RemoveTokens(controller.TransactOpts(WithGasLimit(300000)), tokens)
+					Expect(err).ToNot(HaveOccurred())
+					be.Commit()
+					Expect(isGasExhausted(tx, 300000)).To(BeFalse())
+					Expect(isSuccessful(tx)).To(BeFalse())
+				})
 			})
 
-			It("Should emit a TokenRemoval event", func() {
-				it, err := oracle.FilterRemovedToken(nil)
-				Expect(err).ToNot(HaveOccurred())
-				Expect(it.Next()).To(BeTrue())
-				evt := it.Event
-				Expect(it.Next()).To(BeFalse())
-				Expect(evt.Token).To(Equal(common.HexToAddress("0x0")))
+			Context("When removing at least one unsupported token", func() {
+				It("Should fail", func() {
+					tokens := []common.Address{common.HexToAddress("0x1"), common.HexToAddress("0x0"), common.HexToAddress("0x2")}
+					tx, err := oracle.RemoveTokens(controller.TransactOpts(WithGasLimit(300000)), tokens)
+					Expect(err).ToNot(HaveOccurred())
+					be.Commit()
+					Expect(isGasExhausted(tx, 300000)).To(BeFalse())
+					Expect(isSuccessful(tx)).To(BeFalse())
+				})
+			})
+
+			Context("When trying to remove #0 tokens (validLength modifier)", func() {
+				It("Should fail", func() {
+					tokens := []common.Address{}
+					tx, err := oracle.RemoveTokens(controller.TransactOpts(WithGasLimit(100000)), tokens)
+					Expect(err).ToNot(HaveOccurred())
+					be.Commit()
+					Expect(isGasExhausted(tx, 100000)).To(BeFalse())
+					Expect(isSuccessful(tx)).To(BeFalse())
+				})
 			})
 
 		})
-		Context("When removing an unsupported token", func() {
 
+		Context("When called by a random address", func() {
 			It("Should fail", func() {
-				tx, err := oracle.RemoveTokens(controller.TransactOpts(WithGasLimit(100000)), []common.Address{common.HexToAddress("0x0")})
+				tx, err := oracle.RemoveTokens(randomAccount.TransactOpts(WithGasLimit(300000)), []common.Address{common.HexToAddress("0x1")})
 				Expect(err).ToNot(HaveOccurred())
 				be.Commit()
+				Expect(isGasExhausted(tx, 300000)).To(BeFalse())
 				Expect(isSuccessful(tx)).To(BeFalse())
 			})
 		})
-	})
-
-	Context("When called by a random address", func() {
-		It("Should fail", func() {
-			tx, err := oracle.RemoveTokens(randomAccount.TransactOpts(WithGasLimit(300000)), []common.Address{common.HexToAddress("0x0")})
-			Expect(err).ToNot(HaveOccurred())
-			be.Commit()
-			Expect(isGasExhausted(tx, 300000)).To(BeFalse())
-			Expect(isSuccessful(tx)).To(BeFalse())
-
-		})
-	})
+	}) //when tokens are supported
 
 })

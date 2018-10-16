@@ -11,10 +11,9 @@ import (
 )
 
 var _ = Describe("convert", func() {
-
 	Context("When the token is already supported", func() {
 		BeforeEach(func() {
-			tx, err := oracle.AddTokens(controller.TransactOpts(), []common.Address{common.HexToAddress("0xfe209bdE5CA32fa20E6728A005F26D651FFF5982")}, stringsToByte32("TKN"), []byte{8})
+			tx, err := oracle.AddTokens(controller.TransactOpts(), []common.Address{common.HexToAddress("0xfe209bdE5CA32fa20E6728A005F26D651FFF5982")}, stringsToByte32("TKN"), []*big.Int{exponentiateDecimals(18)})
 			Expect(err).ToNot(HaveOccurred())
 			be.Commit()
 			Expect(isSuccessful(tx)).To(BeTrue())
@@ -42,7 +41,7 @@ var _ = Describe("convert", func() {
 				It("Should return 0.01(amount)*0.001633(rate)*10^18(in wei)", func() {
 					value, err := oracle.Convert(nil, common.HexToAddress("0xfe209bdE5CA32fa20E6728A005F26D651FFF5982"), big.NewInt(int64(0.01*math.Pow10(8))))
 					Expect(err).ToNot(HaveOccurred())
-					Expect(value.String()).To(Equal(big.NewInt(int64(0.00001633 * math.Pow10(18))).String()))
+					Expect(value.String()).To(Equal("16330000000000"))
 				})
 			})
 		})
@@ -51,7 +50,7 @@ var _ = Describe("convert", func() {
 	Context("When the token is not supported", func() {
 		//the subsequent BeforeEach ensure that the the token fields are initialized but it is not supported longer
 		BeforeEach(func() {
-			tx, err := oracle.AddTokens(controller.TransactOpts(), []common.Address{common.HexToAddress("0x1")}, stringsToByte32("ETH"), []byte{4})
+			tx, err := oracle.AddTokens(controller.TransactOpts(), []common.Address{common.HexToAddress("0x1")}, stringsToByte32("ETH"), []*big.Int{exponentiateDecimals(18)})
 			Expect(err).ToNot(HaveOccurred())
 			be.Commit()
 			Expect(isSuccessful(tx)).To(BeTrue())

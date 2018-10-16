@@ -11,17 +11,16 @@ import (
 )
 
 var _ = Describe("callback", func() {
-
 	Context("When called by oraclize", func() {
 		Context("When a token exists and rates update has been requested", func() {
 			BeforeEach(func() {
-				tx, err := oracle.AddTokens(controller.TransactOpts(), []common.Address{common.HexToAddress("0xfe209bdE5CA32fa20E6728A005F26D651FFF5982")}, stringsToByte32("TKN"), []byte{8})
+				tx, err := oracle.AddTokens(controller.TransactOpts(), []common.Address{common.HexToAddress("0xfe209bdE5CA32fa20E6728A005F26D651FFF5982")}, stringsToByte32("TKN"), []*big.Int{exponentiateDecimals(18)})
 				Expect(err).ToNot(HaveOccurred())
 				be.Commit()
 				Expect(isSuccessful(tx)).To(BeTrue())
 			})
 			BeforeEach(func() {
-				tx, err := oracle.UpdateTokenRates(controller.TransactOpts())
+				tx, err := oracle.UpdateTokenRates(controller.TransactOpts(WithValue(big.NewInt(100000000))))
 				Expect(err).ToNot(HaveOccurred())
 				be.Commit()
 				Expect(isSuccessful(tx)).To(BeTrue())
@@ -175,7 +174,7 @@ var _ = Describe("callback", func() {
 	Context("When called by a random address", func() {
 		Context("When the token exists", func() {
 			BeforeEach(func() {
-				tx, err := oracle.AddTokens(controller.TransactOpts(), []common.Address{common.HexToAddress("0x1")}, stringsToByte32("ETH"), []byte{8})
+				tx, err := oracle.AddTokens(controller.TransactOpts(), []common.Address{common.HexToAddress("0x1")}, stringsToByte32("ETH"), []*big.Int{exponentiateDecimals(18)})
 				Expect(err).ToNot(HaveOccurred())
 				be.Commit()
 				Expect(isSuccessful(tx)).To(BeTrue())
