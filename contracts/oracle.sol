@@ -206,12 +206,6 @@ contract Oracle is UsingOraclize, Base64, Date, JSON, Controllable, IOracle {
         _;
     }
 
-    /// @dev Checks if the parameter's length is within a valid range.
-    modifier hasValidLength(address[] _addresses) {
-        require(_addresses.length >= 1 && _addresses.length <= 20, "invalid parameter length");
-        _;
-    }
-
     /// @dev Updates the Crypto Compare public API key.
     function updateAPIPublicKey(bytes _publicKey) external onlyController {
         APIPublicKey = _publicKey;
@@ -243,7 +237,7 @@ contract Oracle is UsingOraclize, Base64, Date, JSON, Controllable, IOracle {
     /// @param _tokens ERC20 token contract addresses.
     /// @param _symbols ERC20 token names.
     /// @param _magnitude 10 to the power of number of decimal places used by each ERC20 token.
-    function addTokens(address[] _tokens, bytes32[] _symbols, uint[] _magnitude) external onlyController hasValidLength(_tokens) hasNoExistingAddresses(_tokens) {
+    function addTokens(address[] _tokens, bytes32[] _symbols, uint[] _magnitude) external onlyController  hasNoExistingAddresses(_tokens) {
         // Require that all parameters have the same length.
         require(_tokens.length == _symbols.length && _tokens.length == _magnitude.length, "parameter lengths do not match");
         // Add each token to the list of supported tokens.
@@ -271,7 +265,7 @@ contract Oracle is UsingOraclize, Base64, Date, JSON, Controllable, IOracle {
 
     /// @dev Remove ERC20 tokens from the list of supported tokens.
     /// @param _tokens ERC20 token contract addresses.
-    function removeTokens(address[] _tokens) external onlyController hasValidLength(_tokens) {
+    function removeTokens(address[] _tokens) external onlyController {
 
         // Delete each token object from the list of supported tokens based on the addresses provided.
         for (uint i = 0; i < _tokens.length; i++) {

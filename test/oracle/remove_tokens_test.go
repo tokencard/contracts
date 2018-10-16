@@ -117,14 +117,24 @@ var _ = Describe("removeTokens", func() {
 				})
 			})
 
-			Context("When trying to remove #0 tokens (validLength modifier)", func() {
-				It("Should fail", func() {
-					tokens := []common.Address{}
-					tx, err := oracle.RemoveTokens(controller.TransactOpts(WithGasLimit(100000)), tokens)
+			Context("When trying to remove #0 tokens (empty list)", func() {
+
+				var tx *types.Transaction
+				BeforeEach(func() {
+					var err error
+					tx, err = oracle.RemoveTokens(controller.TransactOpts(), nil)
 					Expect(err).ToNot(HaveOccurred())
 					be.Commit()
-					Expect(isGasExhausted(tx, 100000)).To(BeFalse())
-					Expect(isSuccessful(tx)).To(BeFalse())
+				})
+
+				It("Should succeed", func() {
+					Expect(isSuccessful(tx)).To(BeTrue())
+				})
+
+				It("Should emit no Removed Token event", func() {
+					it, err := oracle.FilterRemovedToken(nil)
+					Expect(err).ToNot(HaveOccurred())
+					Expect(it.Next()).To(BeFalse())
 				})
 			})
 
