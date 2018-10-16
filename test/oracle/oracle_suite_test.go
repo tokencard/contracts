@@ -102,7 +102,7 @@ func stringsToByte32(names ...string) [][32]byte {
 	return r
 }
 
-func getMagnitude(decimals *big.Int) *big.Int {
+func calculateMagnitude(decimals *big.Int) *big.Int {
 
 	return new(big.Int).Exp(big.NewInt(10), decimals, nil)
 
