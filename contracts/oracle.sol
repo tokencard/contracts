@@ -17,13 +17,13 @@ contract JSON {
 
     /// @dev Extracts JSON rate value from the response object.
     /// @param _json body of the JSON response from the CryptoCompare API.
-    /// @param _label asset label used to extract the correct json field.
-    function parseRate(string _json, string _label) internal pure returns (string) {
+    /// @param _symbol asset symbol used to extract the correct json field.
+    function parseRate(string _json, string _symbol) internal pure returns (string) {
         Strings.slice memory body = _json.toSlice();
         body.beyond("{".toSlice());
         body.until("}".toSlice());
         Strings.slice memory _quote_mark = "\"".toSlice();
-        body.find(_quote_mark.concat(_label.toSlice()).toSlice().concat(_quote_mark).toSlice());
+        body.find(_quote_mark.concat(_symbol.toSlice()).toSlice().concat(_quote_mark).toSlice());
         Strings.slice memory asset;
         body.split(",".toSlice(), asset);
         asset.split(":".toSlice());
@@ -158,14 +158,14 @@ contract Oracle is UsingOraclize, Base64, Date, JSON, Controllable, IOracle {
     using Strings for *;
     using SafeMath for uint256;
 
-    event AddedToken(address _token, string _label, uint _expDecimals);
+    event AddedToken(address _token, string _symbol, uint _magnitude);
     event RemovedToken(address _token);
     event UpdatedTokenRate(address _token, uint _rate);
 
     event SetGasPrice(uint _gasPrice);
     event Converted(address _token, uint _amount, uint _ether);
 
-    event RequestedUpdate(string _label);
+    event RequestedUpdate(string _symbol);
     event FailedUpdateRequest(string _reason);
 
     event VerifiedProof(bytes _publicKey, string _result);
@@ -174,8 +174,8 @@ contract Oracle is UsingOraclize, Base64, Date, JSON, Controllable, IOracle {
     event SetCryptoComparePrivateKey(bytes _publicKey);
 
     struct Token {
-        string label;     // Token symbol
-        uint expDecimals; // 10^decimal places
+        string symbol;     // Token symbol
+        uint magnitude;   // 10^decimals
         uint rate;        // Token exchange rate in wei
         uint lastUpdate;  // Time of the last rate update
         bool exists;      // Flags if the struct is empty or not
@@ -245,7 +245,7 @@ contract Oracle is UsingOraclize, Base64, Date, JSON, Controllable, IOracle {
         // Require that the token exists and that its rate is not zero.
         require(token.exists && token.rate != 0, "token does not exist");
         // Safely convert the token amount to ether based on the exchange rate.
-        uint etherValue = _amount.mul(token.rate).div(token.expDecimals);
+        uint etherValue = _amount.mul(token.rate).div(token.magnitude);
         // Emit the conversion event.
         emit Converted(_token, _amount, etherValue);
         return etherValue;
@@ -253,23 +253,23 @@ contract Oracle is UsingOraclize, Base64, Date, JSON, Controllable, IOracle {
 
     /// @dev Add ERC20 tokens to the list of supported tokens.
     /// @param _tokens ERC20 token contract addresses.
-    /// @param _labels ERC20 token names.
-    /// @param _expDecimals 10 to the power of number of decimal places used by each ERC20 token.
-    function addTokens(address[] _tokens, bytes32[] _labels, uint[] _expDecimals) external onlyController hasValidLength(_tokens) hasNoExistingAddresses(_tokens) {
+    /// @param _symbols ERC20 token names.
+    /// @param _magnitude 10 to the power of number of decimal places used by each ERC20 token.
+    function addTokens(address[] _tokens, bytes32[] _symbols, uint[] _magnitude) external onlyController hasValidLength(_tokens) hasNoExistingAddresses(_tokens) {
         // Require that all parameters have the same length.
-        require(_tokens.length == _labels.length && _tokens.length == _expDecimals.length, "parameter lengths do not match");
+        require(_tokens.length == _symbols.length && _tokens.length == _magnitude.length, "parameter lengths do not match");
         // Add each token to the list of supported tokens.
         for (uint i = 0; i < _tokens.length; i++) {
             // Require that the token doesn't already exist.
             address token = _tokens[i];
             require(!tokens[token].exists, "token already exists");
             // Store the intermediate values.
-            string memory label = _labels[i].toSliceB32().toString();
-            uint expDecimals = _expDecimals[i];
+            string memory symbol = _symbols[i].toSliceB32().toString();
+            uint magnitude = _magnitude[i];
             // Add the token to the token list.
             tokens[token] = Token({
-                label : label,
-                expDecimals : expDecimals,
+                symbol : symbol,
+                magnitude : magnitude,
                 rate : 0,
                 exists : true,
                 lastUpdate: now
@@ -277,7 +277,7 @@ contract Oracle is UsingOraclize, Base64, Date, JSON, Controllable, IOracle {
             // Add the token address to the address list.
             _tokenAddresses.push(token);
             // Emit token addition event.
-            emit AddedToken(token, label, expDecimals);
+            emit AddedToken(token, symbol, magnitude);
         }
     }
 
@@ -365,14 +365,14 @@ contract Oracle is UsingOraclize, Base64, Date, JSON, Controllable, IOracle {
           uint gaslimit = 2000000;
           // Create a new oraclize query for each supported token.
           for (uint i = 0; i < _tokenAddresses.length; i++) {
-              // Store the token label used in the query.
-              Strings.slice memory label = tokens[_tokenAddresses[i]].label.toSlice();
+              // Store the token symbol used in the query.
+              Strings.slice memory symbol = tokens[_tokenAddresses[i]].symbol.toSlice();
               // Create a new oraclize query from the component strings.
-              bytes32 queryID = oraclize_query("URL", apiPrefix.concat(label).toSlice().concat(apiSuffix), gaslimit);
+              bytes32 queryID = oraclize_query("URL", apiPrefix.concat(symbol).toSlice().concat(apiSuffix), gaslimit);
               // Store the query ID together with the associated token address.
               _queryToToken[queryID] = _tokenAddresses[i];
               // Emit the query success event.
-              emit RequestedUpdate(label.toString());
+              emit RequestedUpdate(symbol.toString());
           }
         }
     }
