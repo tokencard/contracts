@@ -198,14 +198,6 @@ contract Oracle is UsingOraclize, Base64, Date, JSON, Controllable, IOracle {
         oraclize_setProof(proofType_Native);
     }
 
-    /// @dev Checks if all addresses passed in, are new addresses
-    modifier hasNoExistingAddresses(address[] _addresses) {
-        for (uint i = 0; i < _addresses.length; i++) {
-            require(!tokens[_addresses[i]].exists);
-        }
-        _;
-    }
-
     /// @dev Updates the Crypto Compare public API key.
     function updateAPIPublicKey(bytes _publicKey) external onlyController {
         APIPublicKey = _publicKey;
@@ -237,11 +229,15 @@ contract Oracle is UsingOraclize, Base64, Date, JSON, Controllable, IOracle {
     /// @param _tokens ERC20 token contract addresses.
     /// @param _symbols ERC20 token names.
     /// @param _magnitude 10 to the power of number of decimal places used by each ERC20 token.
-    function addTokens(address[] _tokens, bytes32[] _symbols, uint[] _magnitude) external onlyController  hasNoExistingAddresses(_tokens) {
+    function addTokens(address[] _tokens, bytes32[] _symbols, uint[] _magnitude) external onlyController {
         // Require that all parameters have the same length.
         require(_tokens.length == _symbols.length && _tokens.length == _magnitude.length, "parameter lengths do not match");
-        // Add each token to the list of supported tokens.
+        //Check if all addresses are non existing ones
         for (uint i = 0; i < _tokens.length; i++) {
+            require(!tokens[_tokens[i]].exists);
+        }
+        // Add each token to the list of supported tokens.
+        for (i = 0; i < _tokens.length; i++) {
             // Require that the token doesn't already exist.
             address token = _tokens[i];
             require(!tokens[token].exists, "token already exists");

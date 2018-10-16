@@ -68,7 +68,7 @@ var _ = Describe("addTokens", func() {
 				})
 			})
 
-			Context("When none of the added tokens are supported", func() {
+			Context("When none of the added tokens is supported", func() {
 				It("Should pass", func() {
 					var err error
 					tokens := []common.Address{common.HexToAddress("0x4"), common.HexToAddress("0x5")}
