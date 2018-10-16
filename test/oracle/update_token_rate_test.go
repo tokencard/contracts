@@ -14,7 +14,7 @@ var _ = Describe("updateTokenRate", func() {
 
 	Context("When the token is already supported", func() {
 		BeforeEach(func() {
-			tx, err := oracle.AddTokens(controller.TransactOpts(), []common.Address{common.HexToAddress("0x1")}, stringsToByte32("ETH"), []*big.Int{exponentiateDecimals(18)})
+			tx, err := oracle.AddTokens(controller.TransactOpts(), []common.Address{common.HexToAddress("0x1")}, stringsToByte32("ETH"), []*big.Int{getMagnitude(big.NewInt(18))})
 			Expect(err).ToNot(HaveOccurred())
 			be.Commit()
 			Expect(isSuccessful(tx)).To(BeTrue())

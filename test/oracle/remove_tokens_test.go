@@ -16,7 +16,7 @@ var _ = Describe("removeTokens", func() {
 		BeforeEach(func() {
 
 			tokens := []common.Address{common.HexToAddress("0x1"), common.HexToAddress("0x2"), common.HexToAddress("0x3")}
-			tx, err := oracle.AddTokens(controller.TransactOpts(), tokens, stringsToByte32("OMG", "EOS", "TKN"), []*big.Int{exponentiateDecimals(18), exponentiateDecimals(18), exponentiateDecimals(18)})
+			tx, err := oracle.AddTokens(controller.TransactOpts(), tokens, stringsToByte32("OMG", "EOS", "TKN"), []*big.Int{getMagnitude(big.NewInt(18)), getMagnitude(big.NewInt(18)), getMagnitude(big.NewInt(8))})
 			Expect(err).ToNot(HaveOccurred())
 			be.Commit()
 			Expect(isSuccessful(tx)).To(BeTrue())
@@ -51,16 +51,16 @@ var _ = Describe("removeTokens", func() {
 					Expect(err).ToNot(HaveOccurred())
 					Expect(token.Exists).NotTo(BeTrue())
 					Expect(token.LastUpdate.String()).To(Equal("0"))
-					Expect(token.Label).To(Equal(""))
-					Expect(token.ExpDecimals.String()).To(Equal("0"))
+					Expect(token.Symbol).To(Equal(""))
+					Expect(token.Magnitude.String()).To(Equal("0"))
 
 					//the other tokens should remain unchanged
 					token, err = oracle.Tokens(nil, common.HexToAddress("0x1"))
 					Expect(err).ToNot(HaveOccurred())
 					Expect(token.Exists).To(BeTrue())
 					Expect(token.LastUpdate.String()).NotTo(Equal("0"))
-					Expect(token.Label).To(Equal("OMG"))
-					Expect(token.ExpDecimals.String()).To(Equal(exponentiateDecimals(18).String()))
+					Expect(token.Symbol).To(Equal("OMG"))
+					Expect(token.Magnitude.String()).To(Equal(getMagnitude(big.NewInt(18)).String()))
 				})
 			})
 

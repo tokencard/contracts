@@ -102,13 +102,10 @@ func stringsToByte32(names ...string) [][32]byte {
 	return r
 }
 
-func exponentiateDecimals(decimals uint8) *big.Int {
-	base := big.NewInt(10)
-	expDec := big.NewInt(1)
-	for i := 0; i < 8; i++ {
-		expDec.Mul(expDec, base)
-	}
-	return expDec
+func getMagnitude(decimals *big.Int) *big.Int {
+
+	return new(big.Int).Exp(big.NewInt(10), decimals, nil)
+
 }
 
 var oraclizeMockAddrResolver *mocks.OraclizeAddrResolver
