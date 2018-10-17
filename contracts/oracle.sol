@@ -229,7 +229,7 @@ contract Oracle is UsingOraclize, Base64, Date, JSON, Controllable, IOracle {
     /// @param _tokens ERC20 token contract addresses.
     /// @param _symbols ERC20 token names.
     /// @param _magnitude 10 to the power of number of decimal places used by each ERC20 token.
-    function addTokens(address[] _tokens, bytes32[] _symbols, uint[] _magnitude) external onlyController {
+    function addTokens(address[] _tokens, bytes32[] _symbols, uint[] _magnitude, uint _updateDate) external onlyController {
         // Require that all parameters have the same length.
         require(_tokens.length == _symbols.length && _tokens.length == _magnitude.length, "parameter lengths do not match");
         //Check if all addresses are non existing ones
@@ -250,7 +250,7 @@ contract Oracle is UsingOraclize, Base64, Date, JSON, Controllable, IOracle {
                 magnitude : magnitude,
                 rate : 0,
                 exists : true,
-                lastUpdate: now
+                lastUpdate: _updateDate
             });
             // Add the token address to the address list.
             _tokenAddresses.push(token);
@@ -291,13 +291,13 @@ contract Oracle is UsingOraclize, Base64, Date, JSON, Controllable, IOracle {
     /// @dev Update ERC20 token exchange rate manually.
     /// @param _token ERC20 token contract address.
     /// @param _rate ERC20 token exchange rate in wei.
-    function updateTokenRate(address _token, uint _rate) external onlyController {
+    function updateTokenRate(address _token, uint _rate, uint _updateDate) external onlyController {
         // Require that the token exists.
         require(tokens[_token].exists, "token does not exist");
         // Update the token's rate.
         tokens[_token].rate = _rate;
         // Update the token's last update timestamp.
-        tokens[_token].lastUpdate = now;
+        tokens[_token].lastUpdate = _updateDate;
         // Emit the rate update event.
         emit UpdatedTokenRate(_token, _rate);
     }
@@ -323,14 +323,19 @@ contract Oracle is UsingOraclize, Base64, Date, JSON, Controllable, IOracle {
         // Get the corresponding token object.
         Token storage token = tokens[_token];
 
+        bool valid;
+        uint timestamp;
+
+        (valid, timestamp) = verifyProof(_result, _proof, APIPublicKey, token.lastUpdate);
+
         // Require that the proof is valid.
-        if (verifyProof(_result, _proof, APIPublicKey, token.lastUpdate)) {
+        if (valid) {
           // Parse the JSON result to get the rate in wei.
           token.rate = parseInt(parseRate(_result, "ETH"), 18);
           // Emit the rate update event.
           emit UpdatedTokenRate(_token, token.rate);
           // Set the update time of the token rate.
-          token.lastUpdate = now;
+          token.lastUpdate = timestamp;
           // Remove query from the list.
           delete _queryToToken[_queryID];
         }
@@ -367,7 +372,7 @@ contract Oracle is UsingOraclize, Base64, Date, JSON, Controllable, IOracle {
     /// @param _proof origin proof from crypto compare.
     /// @param _publicKey crypto compare public key.
     /// @param _lastUpdate timestamp of the last time the requested token was updated.
-    function verifyProof(string _result, bytes _proof, bytes _publicKey, uint _lastUpdate) private returns (bool) {
+    function verifyProof(string _result, bytes _proof, bytes _publicKey, uint _lastUpdate) private returns (bool, uint) {
         // Extract the signature.
         uint signatureLength = uint(_proof[1]);
         bytes memory signature = new bytes(signatureLength);
@@ -379,33 +384,46 @@ contract Oracle is UsingOraclize, Base64, Date, JSON, Controllable, IOracle {
         // Check if the date is valid.
         bytes memory dateHeader = new bytes(30);
         dateHeader = copyBytes(headers, 5, 30, dateHeader, 0);
-        if (!verifyDate(string(dateHeader), _lastUpdate)) {
+
+        bool dateValid;
+        uint timestamp;
+        (dateValid, timestamp) = verifyDate(string(dateHeader), _lastUpdate);
+
+        if (!dateValid) {
             emit FailedProofVerification(_publicKey, _result, "date");
-            return false;
+            return (false, 0);
         }
+
         // Check if the signed digest hash matches the result hash.
         bytes memory digest = new bytes(headersLength - 52);
         digest = copyBytes(headers, 52, headersLength - 52, digest, 0);
         if (keccak256(sha256(_result)) != keccak256(base64decode(digest))) {
             emit FailedProofVerification(_publicKey, _result, "hash");
-            return false;
+            return (false, 0);
         }
+
         // Check if the signature is valid and if the signer addresses match.
-        address signer;
-        bool signatureOK;
-        (signatureOK, signer) = ecrecovery(sha256(headers), signature);
-        if (signatureOK && signer == address(keccak256(_publicKey))) {
+
+        if (verifySignature(headers, signature, _publicKey)) {
             emit VerifiedProof(_publicKey, _result);
-            return true;
+            return (true, timestamp);
         }
         emit FailedProofVerification(_publicKey, _result, "signature");
-        return false;
+        return (false, 0);
+    }
+
+
+    function verifySignature(bytes _headers, bytes _signature, bytes _publicKey) private returns (bool) {
+      address signer;
+      bool signatureOK;
+      (signatureOK, signer) = ecrecovery(sha256(_headers), _signature);
+      return signatureOK && signer == address(keccak256(_publicKey));
     }
 
     /// @dev Verify the signed HTTP date header.
     /// @param _dateHeader extracted date string e.g. Wed, 12 Sep 2018 15:18:14 GMT.
     /// @param _lastUpdate timestamp of the last time the requested token was updated.
-    function verifyDate(string _dateHeader, uint _lastUpdate) private pure returns (bool) {
+    function verifyDate(string _dateHeader, uint _lastUpdate) private pure returns (bool, uint) {
         Strings.slice memory date = _dateHeader.toSlice();
         Strings.slice memory timeDelimiter = ":".toSlice();
         Strings.slice memory dateDelimiter = " ".toSlice();
@@ -413,51 +431,14 @@ contract Oracle is UsingOraclize, Base64, Date, JSON, Controllable, IOracle {
         date.split(",".toSlice());
         date.split(dateDelimiter);
         // Get individual date components.
-        uint8 day = uint8(parseInt(date.split(dateDelimiter).toString(), 0));
-        uint8 month = monthToNumber(date.split(dateDelimiter).toString());
-        uint16 year = uint16(parseInt(date.split(dateDelimiter).toString(), 0));
-        uint8 hour = uint8(parseInt(date.split(timeDelimiter).toString(), 0));
-        uint8 minute = uint8(parseInt(date.split(timeDelimiter).toString(), 0));
-        uint8 second = uint8(parseInt(date.split(timeDelimiter).toString(), 0));
-        // Convert date components to a unix timestamp.
-        uint timestamp;
-        // Year
-        for (uint16 i = ORIGIN_YEAR; i < year; i++) {
-            if (isLeapYear(i)) {
-                timestamp += LEAP_YEAR_IN_SECONDS;
-            } else {
-                timestamp += YEAR_IN_SECONDS;
-            }
-        }
-        // Month
-        uint8[12] memory monthDayCounts;
-        monthDayCounts[0] = 31;
-        if (isLeapYear(year)) {
-            monthDayCounts[1] = 29;
-        } else {
-            monthDayCounts[1] = 28;
-        }
-        monthDayCounts[2] = 31;
-        monthDayCounts[3] = 30;
-        monthDayCounts[4] = 31;
-        monthDayCounts[5] = 30;
-        monthDayCounts[6] = 31;
-        monthDayCounts[7] = 31;
-        monthDayCounts[8] = 30;
-        monthDayCounts[9] = 31;
-        monthDayCounts[10] = 30;
-        monthDayCounts[11] = 31;
-        for (i = 1; i < month; i++) {
-            timestamp += DAY_IN_SECONDS * monthDayCounts[i - 1];
-        }
-        // Day
-        timestamp += DAY_IN_SECONDS * (day - 1);
-        // Hour
-        timestamp += HOUR_IN_SECONDS * (hour);
-        // Minute
-        timestamp += MINUTE_IN_SECONDS * (minute);
-        // Second
-        timestamp += second;
-        return timestamp > _lastUpdate;
+        uint day = parseInt(date.split(dateDelimiter).toString(), 0);
+        uint month = monthToNumber(date.split(dateDelimiter).toString());
+        uint year = parseInt(date.split(dateDelimiter).toString(), 0);
+        uint hour = parseInt(date.split(timeDelimiter).toString(), 0);
+        uint minute = parseInt(date.split(timeDelimiter).toString(), 0);
+        uint second = parseInt(date.split(timeDelimiter).toString(), 0);
+        uint timestamp = year*(10**10)+month*(10**8)+day*(10**6)+hour*(10**4)+minute*(10**2)+second;
+
+        return (timestamp > _lastUpdate, timestamp);
     }
 }

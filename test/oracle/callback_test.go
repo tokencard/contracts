@@ -32,7 +32,13 @@ var _ = Describe("callback", func() {
 
 		Context("When a token exists and rates update has been requested", func() {
 			BeforeEach(func() {
-				tx, err := oracle.AddTokens(controller.TransactOpts(), []common.Address{common.HexToAddress("0xfe209bdE5CA32fa20E6728A005F26D651FFF5982")}, stringsToByte32("TKN"), []*big.Int{calculateMagnitude(big.NewInt(18))})
+				tx, err := oracle.AddTokens(
+					controller.TransactOpts(),
+					[]common.Address{common.HexToAddress("0xfe209bdE5CA32fa20E6728A005F26D651FFF5982")},
+					stringsToByte32("TKN"),
+					[]*big.Int{calculateMagnitude(big.NewInt(18))},
+					big.NewInt(20180913153211),
+				)
 				Expect(err).ToNot(HaveOccurred())
 				be.Commit()
 				Expect(isSuccessful(tx)).To(BeTrue())
@@ -257,7 +263,13 @@ var _ = Describe("callback", func() {
 		Context("When a token exists but rates update has NOT been requested", func() {
 
 			BeforeEach(func() {
-				tx, err := oracle.AddTokens(controller.TransactOpts(), []common.Address{common.HexToAddress("0xfe209bdE5CA32fa20E6728A005F26D651FFF5982")}, stringsToByte32("TKN"), []*big.Int{calculateMagnitude(big.NewInt(18))})
+				tx, err := oracle.AddTokens(
+					controller.TransactOpts(),
+					[]common.Address{common.HexToAddress("0xfe209bdE5CA32fa20E6728A005F26D651FFF5982")},
+					stringsToByte32("TKN"),
+					[]*big.Int{calculateMagnitude(big.NewInt(18))},
+					big.NewInt(20180913153211),
+				)
 				Expect(err).ToNot(HaveOccurred())
 				be.Commit()
 				Expect(isSuccessful(tx)).To(BeTrue())
@@ -290,7 +302,13 @@ var _ = Describe("callback", func() {
 
 		Context("When a token exists and rates update has been requested", func() {
 			BeforeEach(func() {
-				tx, err := oracle.AddTokens(controller.TransactOpts(), []common.Address{common.HexToAddress("0xfe209bdE5CA32fa20E6728A005F26D651FFF5982")}, stringsToByte32("TKN"), []*big.Int{calculateMagnitude(big.NewInt(8))})
+				tx, err := oracle.AddTokens(
+					controller.TransactOpts(),
+					[]common.Address{common.HexToAddress("0xfe209bdE5CA32fa20E6728A005F26D651FFF5982")},
+					stringsToByte32("TKN"),
+					[]*big.Int{calculateMagnitude(big.NewInt(8))},
+					big.NewInt(20180913153211),
+				)
 				Expect(err).ToNot(HaveOccurred())
 				be.Commit()
 				Expect(isSuccessful(tx)).To(BeTrue())

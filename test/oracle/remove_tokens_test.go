@@ -16,7 +16,21 @@ var _ = Describe("removeTokens", func() {
 		BeforeEach(func() {
 
 			tokens := []common.Address{common.HexToAddress("0x1"), common.HexToAddress("0x2"), common.HexToAddress("0x3")}
-			tx, err := oracle.AddTokens(controller.TransactOpts(), tokens, stringsToByte32("OMG", "EOS", "TKN"), []*big.Int{calculateMagnitude(big.NewInt(18)), calculateMagnitude(big.NewInt(18)), calculateMagnitude(big.NewInt(8))})
+			tx, err := oracle.AddTokens(
+				controller.TransactOpts(),
+				tokens,
+				stringsToByte32(
+					"OMG",
+					"EOS",
+					"TKN",
+				),
+				[]*big.Int{
+					calculateMagnitude(big.NewInt(18)),
+					calculateMagnitude(big.NewInt(18)),
+					calculateMagnitude(big.NewInt(8)),
+				},
+				big.NewInt(20180913153211),
+			)
 			Expect(err).ToNot(HaveOccurred())
 			be.Commit()
 			Expect(isSuccessful(tx)).To(BeTrue())
