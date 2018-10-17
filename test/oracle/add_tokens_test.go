@@ -19,7 +19,19 @@ var _ = Describe("addTokens", func() {
 			BeforeEach(func() {
 				var err error
 				tokens := []common.Address{common.HexToAddress("0x0"), common.HexToAddress("0x1")}
-				tx, err = oracle.AddTokens(controller.TransactOpts(), tokens, stringsToByte32("BNT", "TKN"), []*big.Int{calculateMagnitude(big.NewInt(18)), calculateMagnitude(big.NewInt(8))})
+				tx, err = oracle.AddTokens(
+					controller.TransactOpts(),
+					tokens,
+					stringsToByte32(
+						"BNT",
+						"TKN",
+					),
+					[]*big.Int{
+						calculateMagnitude(big.NewInt(18)),
+						calculateMagnitude(big.NewInt(8)),
+					},
+					big.NewInt(20180913153211),
+				)
 				Expect(err).ToNot(HaveOccurred())
 				be.Commit()
 			})
@@ -60,7 +72,18 @@ var _ = Describe("addTokens", func() {
 				It("Should fail", func() {
 					var err error
 					tokens := []common.Address{common.HexToAddress("0x0"), common.HexToAddress("0x2")}
-					tx, err = oracle.AddTokens(controller.TransactOpts(WithGasLimit(200000)), tokens, stringsToByte32("BNT", "OMG"), []*big.Int{calculateMagnitude(big.NewInt(18)), calculateMagnitude(big.NewInt(18))})
+					tx, err = oracle.AddTokens(
+						controller.TransactOpts(WithGasLimit(200000)),
+						tokens, stringsToByte32(
+							"BNT",
+							"OMG",
+						),
+						[]*big.Int{
+							calculateMagnitude(big.NewInt(18)),
+							calculateMagnitude(big.NewInt(18)),
+						},
+						big.NewInt(20180913153211),
+					)
 					Expect(err).ToNot(HaveOccurred())
 					be.Commit()
 					Expect(isGasExhausted(tx, 200000)).To(BeFalse())
@@ -72,7 +95,19 @@ var _ = Describe("addTokens", func() {
 				It("Should pass", func() {
 					var err error
 					tokens := []common.Address{common.HexToAddress("0x4"), common.HexToAddress("0x5")}
-					tx, err = oracle.AddTokens(controller.TransactOpts(WithGasLimit(300000)), tokens, stringsToByte32("MKR", "MTL"), []*big.Int{calculateMagnitude(big.NewInt(18)), calculateMagnitude(big.NewInt(8))})
+					tx, err = oracle.AddTokens(
+						controller.TransactOpts(WithGasLimit(300000)),
+						tokens,
+						stringsToByte32(
+							"MKR",
+							"MTL",
+						),
+						[]*big.Int{
+							calculateMagnitude(big.NewInt(18)),
+							calculateMagnitude(big.NewInt(8)),
+						},
+						big.NewInt(20180913153211),
+					)
 					Expect(err).ToNot(HaveOccurred())
 					be.Commit()
 					Expect(isGasExhausted(tx, 300000)).To(BeFalse())
@@ -85,7 +120,20 @@ var _ = Describe("addTokens", func() {
 		Context("When the parameters have different lengths", func() {
 			It("Should fail", func() {
 				tokens := []common.Address{common.HexToAddress("0x4"), common.HexToAddress("0x5")}
-				tx, err := oracle.AddTokens(controller.TransactOpts(WithGasLimit(300000)), tokens, stringsToByte32("BNT", "TKN", "ZRX"), []*big.Int{calculateMagnitude(big.NewInt(18)), calculateMagnitude(big.NewInt(8))})
+				tx, err := oracle.AddTokens(
+					controller.TransactOpts(WithGasLimit(300000)),
+					tokens,
+					stringsToByte32(
+						"BNT",
+						"TKN",
+						"ZRX",
+					),
+					[]*big.Int{
+						calculateMagnitude(big.NewInt(18)),
+						calculateMagnitude(big.NewInt(8)),
+					},
+					big.NewInt(20180913153211),
+				)
 				Expect(err).ToNot(HaveOccurred())
 				be.Commit()
 				Expect(isGasExhausted(tx, 300000)).To(BeFalse())
@@ -98,7 +146,7 @@ var _ = Describe("addTokens", func() {
 			var tx *types.Transaction
 			BeforeEach(func() {
 				var err error
-				tx, err = oracle.AddTokens(controller.TransactOpts(), nil, nil, nil)
+				tx, err = oracle.AddTokens(controller.TransactOpts(), nil, nil, nil, big.NewInt(20180913153211))
 				Expect(err).ToNot(HaveOccurred())
 				be.Commit()
 			})
@@ -119,7 +167,19 @@ var _ = Describe("addTokens", func() {
 	Context("When called by a random address", func() {
 		It("Should fail", func() {
 			tokens := []common.Address{common.HexToAddress("0x0"), common.HexToAddress("0x1")}
-			tx, err := oracle.AddTokens(randomAccount.TransactOpts(WithGasLimit(300000)), tokens, stringsToByte32("BNT", "TKN"), []*big.Int{calculateMagnitude(big.NewInt(18)), calculateMagnitude(big.NewInt(8))})
+			tx, err := oracle.AddTokens(
+				randomAccount.TransactOpts(WithGasLimit(300000)),
+				tokens,
+				stringsToByte32(
+					"BNT",
+					"TKN",
+				),
+				[]*big.Int{
+					calculateMagnitude(big.NewInt(18)),
+					calculateMagnitude(big.NewInt(8)),
+				},
+				big.NewInt(20180913153211),
+			)
 			Expect(err).ToNot(HaveOccurred())
 			be.Commit()
 			Expect(isGasExhausted(tx, 300000)).To(BeFalse())

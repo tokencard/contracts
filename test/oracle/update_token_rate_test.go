@@ -14,7 +14,13 @@ var _ = Describe("updateTokenRate", func() {
 
 	Context("When the token is already supported", func() {
 		BeforeEach(func() {
-			tx, err := oracle.AddTokens(controller.TransactOpts(), []common.Address{common.HexToAddress("0x1")}, stringsToByte32("ETH"), []*big.Int{calculateMagnitude(big.NewInt(18))})
+			tx, err := oracle.AddTokens(
+				controller.TransactOpts(),
+				[]common.Address{common.HexToAddress("0x1")},
+				stringsToByte32("ETH"),
+				[]*big.Int{calculateMagnitude(big.NewInt(18))},
+				big.NewInt(20180913153211),
+			)
 			Expect(err).ToNot(HaveOccurred())
 			be.Commit()
 			Expect(isSuccessful(tx)).To(BeTrue())
@@ -24,7 +30,12 @@ var _ = Describe("updateTokenRate", func() {
 
 			BeforeEach(func() {
 				var err error
-				tx, err = oracle.UpdateTokenRate(controller.TransactOpts(), common.HexToAddress("0x1"), big.NewInt(555))
+				tx, err = oracle.UpdateTokenRate(
+					controller.TransactOpts(),
+					common.HexToAddress("0x1"),
+					big.NewInt(555),
+					big.NewInt(20180913153211),
+				)
 				Expect(err).ToNot(HaveOccurred())
 				be.Commit()
 			})
@@ -51,7 +62,12 @@ var _ = Describe("updateTokenRate", func() {
 		})
 		Context("When not called by the controller", func() {
 			It("Should fail", func() {
-				tx, err := oracle.UpdateTokenRate(randomAccount.TransactOpts(WithGasLimit(100000)), common.HexToAddress("0x1"), big.NewInt(666))
+				tx, err := oracle.UpdateTokenRate(
+					randomAccount.TransactOpts(WithGasLimit(100000)),
+					common.HexToAddress("0x1"),
+					big.NewInt(666),
+					big.NewInt(20180913153211),
+				)
 				Expect(err).ToNot(HaveOccurred())
 				be.Commit()
 				Expect(isGasExhausted(tx, 100000)).To(BeFalse())
@@ -63,7 +79,12 @@ var _ = Describe("updateTokenRate", func() {
 	Context("When the token is not supported", func() {
 		Context("When called by the controller", func() {
 			It("Should fail", func() {
-				tx, err := oracle.UpdateTokenRate(controller.TransactOpts(WithGasLimit(100000)), common.HexToAddress("0x1"), big.NewInt(666))
+				tx, err := oracle.UpdateTokenRate(
+					controller.TransactOpts(WithGasLimit(100000)),
+					common.HexToAddress("0x1"),
+					big.NewInt(666),
+					big.NewInt(20180913153211),
+				)
 				Expect(err).ToNot(HaveOccurred())
 				be.Commit()
 				Expect(isGasExhausted(tx, 100000)).To(BeFalse())
@@ -72,7 +93,12 @@ var _ = Describe("updateTokenRate", func() {
 		})
 		Context("When not called by the controller", func() {
 			It("Should fail", func() {
-				tx, err := oracle.UpdateTokenRate(randomAccount.TransactOpts(WithGasLimit(100000)), common.HexToAddress("0x1"), big.NewInt(666))
+				tx, err := oracle.UpdateTokenRate(
+					randomAccount.TransactOpts(WithGasLimit(100000)),
+					common.HexToAddress("0x1"),
+					big.NewInt(666),
+					big.NewInt(20180913153211),
+				)
 				Expect(err).ToNot(HaveOccurred())
 				be.Commit()
 				Expect(isGasExhausted(tx, 100000)).To(BeFalse())

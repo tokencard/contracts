@@ -314,12 +314,23 @@ var _ = BeforeEach(func() {
 	be.Commit()
 	Expect(isSuccessful(tx)).To(BeTrue())
 
-	tx, err = oracle.AddTokens(controller.TransactOpts(), []common.Address{tkna}, stringsToByte32("TKN"), []*big.Int{exponentiateDecimals(8)})
+	tx, err = oracle.AddTokens(
+		controller.TransactOpts(),
+		[]common.Address{tkna},
+		stringsToByte32("TKN"),
+		[]*big.Int{exponentiateDecimals(8)},
+		big.NewInt(20180913153211),
+	)
 	Expect(err).ToNot(HaveOccurred())
 	be.Commit()
 	Expect(isSuccessful(tx)).To(BeTrue())
 
-	tx, err = oracle.UpdateTokenRate(controller.TransactOpts(), tkna, big.NewInt(int64(0.00001633*math.Pow10(18))))
+	tx, err = oracle.UpdateTokenRate(
+		controller.TransactOpts(),
+		tkna,
+		big.NewInt(int64(0.00001633*math.Pow10(18))),
+		big.NewInt(20180913153211),
+	)
 	Expect(err).ToNot(HaveOccurred())
 	be.Commit()
 	Expect(isSuccessful(tx)).To(BeTrue())
