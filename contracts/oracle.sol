@@ -439,6 +439,33 @@ contract Oracle is UsingOraclize, Base64, Date, JSON, Controllable, IOracle {
         uint hour = parseInt(date.split(timeDelimiter).toString());
         uint minute = parseInt(date.split(timeDelimiter).toString());
         uint second = parseInt(date.split(timeDelimiter).toString());
+
+
+
+        if (day > 31 || day < 1) {
+          return (false, 0);
+        }
+
+        if (month > 12 || month < 1) {
+          return (false, 0);
+        }
+
+        if (year < 2018 || year > 3000) {
+          return (false, 0);
+        }
+
+        if (hour >= 24) {
+          return (false, 0);
+        }
+
+        if (minute >= 60) {
+          return (false, 0);
+        }
+
+        if (second >= 60) {
+          return (false, 0);
+        }
+
         uint timestamp = year*(10**10)+month*(10**8)+day*(10**6)+hour*(10**4)+minute*(10**2)+second;
 
         return (timestamp > _lastUpdate, timestamp);
