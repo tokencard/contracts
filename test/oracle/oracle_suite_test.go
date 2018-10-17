@@ -71,7 +71,7 @@ var _ = BeforeSuite(func() {
 })
 
 var _ = AfterSuite(func() {
-	testRig.ExpectMinimumCoverage("oracle.sol:Oracle", 90.0)
+	testRig.ExpectMinimumCoverage("oracle.sol:Oracle", 95.0)
 	testRig.PrintGasUsage(os.Stdout)
 })
 
@@ -127,7 +127,7 @@ var ensAddress common.Address
 var ens *external.ENSRegistry
 
 var _ = BeforeEach(func() {
-	be = testRig.NewTestBackend(ethertest.WithBlockchainTime(time.Date(2018, 10, 13, 15, 10, 0, 0, time.Local)))
+	be = testRig.NewTestBackend(ethertest.WithBlockchainTime(time.Date(2018, 9, 13, 15, 10, 0, 0, time.Local)))
 
 	var err error
 	var tx *types.Transaction

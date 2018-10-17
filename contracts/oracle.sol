@@ -171,7 +171,7 @@ contract Oracle is UsingOraclize, Base64, Date, JSON, Controllable, IOracle {
     event VerifiedProof(bytes _publicKey, string _result);
     event FailedProofVerification(bytes _publicKey, string _result, string _reason);
 
-    event SetCryptoComparePrivateKey(bytes _publicKey);
+    event SetCryptoComparePublicKey(bytes _publicKey);
 
     struct Token {
         string symbol;     // Token symbol
@@ -201,7 +201,7 @@ contract Oracle is UsingOraclize, Base64, Date, JSON, Controllable, IOracle {
     /// @dev Updates the Crypto Compare public API key.
     function updateAPIPublicKey(bytes _publicKey) external onlyController {
         APIPublicKey = _publicKey;
-        emit SetCryptoComparePrivateKey(_publicKey);
+        emit SetCryptoComparePublicKey(_publicKey);
     }
 
     /// @dev Sets the gas price used by oraclize query.
