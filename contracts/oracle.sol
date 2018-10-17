@@ -229,6 +229,7 @@ contract Oracle is UsingOraclize, Base64, Date, JSON, Controllable, IOracle {
     /// @param _tokens ERC20 token contract addresses.
     /// @param _symbols ERC20 token names.
     /// @param _magnitude 10 to the power of number of decimal places used by each ERC20 token.
+    /// @param _updateDate date for the token updates. This will be compared to when oracle updates are received.
     function addTokens(address[] _tokens, bytes32[] _symbols, uint[] _magnitude, uint _updateDate) external onlyController {
         // Require that all parameters have the same length.
         require(_tokens.length == _symbols.length && _tokens.length == _magnitude.length, "parameter lengths do not match");
@@ -291,6 +292,7 @@ contract Oracle is UsingOraclize, Base64, Date, JSON, Controllable, IOracle {
     /// @dev Update ERC20 token exchange rate manually.
     /// @param _token ERC20 token contract address.
     /// @param _rate ERC20 token exchange rate in wei.
+    /// @param _updateDate date for the token updates. This will be compared to when oracle updates are received.
     function updateTokenRate(address _token, uint _rate, uint _updateDate) external onlyController {
         // Require that the token exists.
         require(tokens[_token].exists, "token does not exist");
