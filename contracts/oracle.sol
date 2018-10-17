@@ -433,12 +433,12 @@ contract Oracle is UsingOraclize, Base64, Date, JSON, Controllable, IOracle {
         date.split(",".toSlice());
         date.split(dateDelimiter);
         // Get individual date components.
-        uint day = parseInt(date.split(dateDelimiter).toString(), 0);
+        uint day = parseInt(date.split(dateDelimiter).toString());
         uint month = monthToNumber(date.split(dateDelimiter).toString());
-        uint year = parseInt(date.split(dateDelimiter).toString(), 0);
-        uint hour = parseInt(date.split(timeDelimiter).toString(), 0);
-        uint minute = parseInt(date.split(timeDelimiter).toString(), 0);
-        uint second = parseInt(date.split(timeDelimiter).toString(), 0);
+        uint year = parseInt(date.split(dateDelimiter).toString());
+        uint hour = parseInt(date.split(timeDelimiter).toString());
+        uint minute = parseInt(date.split(timeDelimiter).toString());
+        uint second = parseInt(date.split(timeDelimiter).toString());
         uint timestamp = year*(10**10)+month*(10**8)+day*(10**6)+hour*(10**4)+minute*(10**2)+second;
 
         return (timestamp > _lastUpdate, timestamp);
