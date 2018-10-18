@@ -7,7 +7,7 @@ import (
 	"math/big"
 	"strings"
 
-	"github.com/ethereum/go-ethereum"
+	ethereum "github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/ethclient"
@@ -18,15 +18,15 @@ import (
 	"github.com/pkg/errors"
 )
 
-const (
-	depositTopic           = "0xe1fffcc4923d04b559f4d29a8bfc6cda04eb5b0d3c460751c2402c5c5cc9109c"
-	transferTopic          = "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef"
-	spendLimitTopic        = "0x21e1049325acc99b4f885709c6ca1a70281b586f585ef03485b62f7ad0a1e253"
-	topupLimitTopic        = "0x19ec72a595b8aab321636cc55d51478ac78e93a69b5c4a07ae548eb29e40c0a0"
-	whitelistAdditionTopic = "0xc76dd62bd7d0b2212e0d3445c1703a522dd816a749fe499b3bcb0f51b2500434"
-	whitelistRemovalTopic  = "0x4b089aff1cdd9a6984aa832d4a013996b3acd3d6244ce3de5e07e6ab050d2b94"
-	topupGasTopic          = "0x11bb310b94280c15845698b8ce945817e14456a5d1582e387e6e4a01ef2c6742"
-)
+var walletABI abi.ABI
+
+func init() {
+	parsed, err := abi.JSON(strings.NewReader(bindings.WalletABI))
+	if err != nil {
+		panic(err)
+	}
+	walletABI = parsed
+}
 
 var (
 	ErrFailedContractCall = errors.New("calling smart contract failed")
@@ -78,12 +78,12 @@ type Wallet struct {
 	ethereum *ethclient.Client
 }
 
-func DeployWallet(opts *ConstructOpts, eth *ethclient.Client, owner common.Address, oracle common.Address, controllers []common.Address) (common.Address, *types.Transaction, error) {
+func DeployWallet(opts *ConstructOpts, eth *ethclient.Client, owner common.Address, transferable bool, ens common.Address, oracleName [32]byte, controllerName [32]byte) (common.Address, *types.Transaction, error) {
 	contractABI, err := abi.JSON(strings.NewReader(bindings.WalletABI))
 	if err != nil {
 		return common.Address{}, nil, err
 	}
-	data, err := contractABI.Pack("", owner, oracle, controllers)
+	data, err := contractABI.Pack("", owner, transferable, ens, oracleName, controllerName)
 	if err != nil {
 		return common.Address{}, nil, err
 	}
@@ -214,8 +214,8 @@ func (w *Wallet) SpendAvailable(ctx context.Context, block *big.Int) (*big.Int, 
 	return new(big.Int).SetBytes(rsp), nil
 }
 
-func (w *Wallet) TopupLimit(ctx context.Context, block *big.Int) (*big.Int, error) {
-	data, err := w.abi.Pack("topupLimit")
+func (w *Wallet) TopUpLimit(ctx context.Context, block *big.Int) (*big.Int, error) {
+	data, err := w.abi.Pack("topUpLimit")
 	if err != nil {
 		return nil, err
 	}
@@ -227,13 +227,13 @@ func (w *Wallet) TopupLimit(ctx context.Context, block *big.Int) (*big.Int, erro
 		return nil, err
 	}
 	if len(rsp) != 32 {
-		return nil, errors.Wrap(ErrFailedContractCall, "topupLimit")
+		return nil, errors.Wrap(ErrFailedContractCall, "topUpLimit")
 	}
 	return new(big.Int).SetBytes(rsp), nil
 }
 
-func (w *Wallet) TopupAvailable(ctx context.Context, block *big.Int) (*big.Int, error) {
-	data, err := w.abi.Pack("topupAvailable")
+func (w *Wallet) TopUpAvailable(ctx context.Context, block *big.Int) (*big.Int, error) {
+	data, err := w.abi.Pack("topUpAvailable")
 	if err != nil {
 		return nil, err
 	}
@@ -245,31 +245,9 @@ func (w *Wallet) TopupAvailable(ctx context.Context, block *big.Int) (*big.Int, 
 		return nil, err
 	}
 	if len(rsp) != 32 {
-		return nil, errors.Wrap(ErrFailedContractCall, "topupAvailable")
+		return nil, errors.Wrap(ErrFailedContractCall, "topUpAvailable")
 	}
 	return new(big.Int).SetBytes(rsp), nil
-}
-
-func (w *Wallet) IsController(ctx context.Context, block *big.Int, address common.Address) (bool, error) {
-	data, err := w.abi.Pack("isController", address)
-	if err != nil {
-		return false, err
-	}
-	rsp, err := w.ethereum.CallContract(ctx, ethereum.CallMsg{
-		To:   &w.address,
-		Data: data,
-	}, block)
-	if err != nil {
-		return false, err
-	}
-	if len(rsp) != 32 {
-		return false, errors.Wrap(ErrFailedContractCall, "isController")
-	}
-	var result bool
-	if new(big.Int).SetBytes(rsp).Uint64() == 1 {
-		result = true
-	}
-	return result, nil
 }
 
 func (w *Wallet) IsWhitelisted(ctx context.Context, block *big.Int, address common.Address) (bool, error) {
@@ -292,24 +270,6 @@ func (w *Wallet) IsWhitelisted(ctx context.Context, block *big.Int, address comm
 		result = true
 	}
 	return result, nil
-}
-
-func (w *Wallet) Oracle(ctx context.Context, block *big.Int) (common.Address, error) {
-	data, err := w.abi.Pack("oracle")
-	if err != nil {
-		return common.Address{}, err
-	}
-	rsp, err := w.ethereum.CallContract(ctx, ethereum.CallMsg{
-		To:   &w.address,
-		Data: data,
-	}, block)
-	if err != nil {
-		return common.Address{}, err
-	}
-	if len(rsp) != 32 {
-		return common.Address{}, errors.Wrap(ErrFailedContractCall, "oracle")
-	}
-	return common.BytesToAddress(rsp), nil
 }
 
 func (w *Wallet) Owner(ctx context.Context, block *big.Int) (common.Address, error) {
@@ -398,8 +358,8 @@ func (w *Wallet) PendingSpendLimit(ctx context.Context, block *big.Int) (*big.In
 	return new(big.Int).SetBytes(rsp), nil
 }
 
-func (w *Wallet) PendingTopupLimit(ctx context.Context, block *big.Int) (*big.Int, error) {
-	data, err := w.abi.Pack("pendingTopupLimit")
+func (w *Wallet) PendingTopUpLimit(ctx context.Context, block *big.Int) (*big.Int, error) {
+	data, err := w.abi.Pack("pendingTopUpLimit")
 	if err != nil {
 		return nil, err
 	}
@@ -411,25 +371,9 @@ func (w *Wallet) PendingTopupLimit(ctx context.Context, block *big.Int) (*big.In
 		return nil, err
 	}
 	if len(rsp) != 32 {
-		return nil, errors.Wrap(ErrFailedContractCall, "pendingTopupLimit")
+		return nil, errors.Wrap(ErrFailedContractCall, "pendingTopUpLimit")
 	}
 	return new(big.Int).SetBytes(rsp), nil
-}
-
-func (w *Wallet) AddController(opts *ConstructOpts, account common.Address) (*types.Transaction, error) {
-	data, err := w.abi.Pack("addController", account)
-	if err != nil {
-		return nil, err
-	}
-	return construct(opts, w.ethereum, &w.address, data)
-}
-
-func (w *Wallet) RemoveController(opts *ConstructOpts, account common.Address) (*types.Transaction, error) {
-	data, err := w.abi.Pack("removeController", account)
-	if err != nil {
-		return nil, err
-	}
-	return construct(opts, w.ethereum, &w.address, data)
 }
 
 func (w *Wallet) InitializeWhitelist(opts *ConstructOpts, addresses []common.Address) (*types.Transaction, error) {
@@ -520,32 +464,32 @@ func (w *Wallet) CancelSpendLimit(opts *ConstructOpts) (*types.Transaction, erro
 	return construct(opts, w.ethereum, &w.address, data)
 }
 
-func (w *Wallet) InitializeTopupLimit(opts *ConstructOpts, amount *big.Int) (*types.Transaction, error) {
-	data, err := w.abi.Pack("initializeTopupLimit", amount)
+func (w *Wallet) InitializeTopUpLimit(opts *ConstructOpts, amount *big.Int) (*types.Transaction, error) {
+	data, err := w.abi.Pack("initializeTopUpLimit", amount)
 	if err != nil {
 		return nil, err
 	}
 	return construct(opts, w.ethereum, &w.address, data)
 }
 
-func (w *Wallet) SubmitTopupLimit(opts *ConstructOpts, amount *big.Int) (*types.Transaction, error) {
-	data, err := w.abi.Pack("submitTopupLimit", amount)
+func (w *Wallet) SubmitTopUpLimit(opts *ConstructOpts, amount *big.Int) (*types.Transaction, error) {
+	data, err := w.abi.Pack("submitTopUpLimit", amount)
 	if err != nil {
 		return nil, err
 	}
 	return construct(opts, w.ethereum, &w.address, data)
 }
 
-func (w *Wallet) ConfirmTopupLimit(opts *ConstructOpts) (*types.Transaction, error) {
-	data, err := w.abi.Pack("confirmTopupLimit")
+func (w *Wallet) ConfirmTopUpLimit(opts *ConstructOpts) (*types.Transaction, error) {
+	data, err := w.abi.Pack("confirmTopUpLimit")
 	if err != nil {
 		return nil, err
 	}
 	return construct(opts, w.ethereum, &w.address, data)
 }
 
-func (w *Wallet) CancelTopupLimit(opts *ConstructOpts) (*types.Transaction, error) {
-	data, err := w.abi.Pack("cancelTopupLimit")
+func (w *Wallet) CancelTopUpLimit(opts *ConstructOpts) (*types.Transaction, error) {
+	data, err := w.abi.Pack("cancelTopUpLimit")
 	if err != nil {
 		return nil, err
 	}
@@ -560,21 +504,21 @@ func (w *Wallet) Transfer(opts *ConstructOpts, to common.Address, asset common.A
 	return construct(opts, w.ethereum, &w.address, data)
 }
 
-func (w *Wallet) TopupGas(opts *ConstructOpts, amount *big.Int) (*types.Transaction, error) {
-	data, err := w.abi.Pack("topupGas", amount)
+func (w *Wallet) TopUpGas(opts *ConstructOpts, amount *big.Int) (*types.Transaction, error) {
+	data, err := w.abi.Pack("topUpGas", amount)
 	if err != nil {
 		return nil, err
 	}
 	return construct(opts, w.ethereum, &w.address, data)
 }
 
-func (w *Wallet) WhitelistAdditionEvents(ctx context.Context, block *big.Int) ([]*Event, error) {
+func (w *Wallet) AddedToWhitelistEvents(ctx context.Context, block *big.Int) ([]*Event, error) {
 	// Create a query for whitelist addition events.
 	query := ethereum.FilterQuery{
 		FromBlock: nil,
 		ToBlock:   block,
 		Addresses: []common.Address{w.address},
-		Topics:    [][]common.Hash{{common.HexToHash(whitelistAdditionTopic)}},
+		Topics:    [][]common.Hash{{walletABI.Events["AddedToWhitelist"].Id()}},
 	}
 	// Get the contract logs.
 	logs, err := w.ethereum.FilterLogs(ctx, query)
@@ -602,13 +546,13 @@ func (w *Wallet) WhitelistAdditionEvents(ctx context.Context, block *big.Int) ([
 	return events, nil
 }
 
-func (w *Wallet) WhitelistRemovalEvents(ctx context.Context, block *big.Int) ([]*Event, error) {
+func (w *Wallet) RemovedFromWhitelistEvents(ctx context.Context, block *big.Int) ([]*Event, error) {
 	// Create a query for whitelist removal events.
 	query := ethereum.FilterQuery{
 		FromBlock: nil,
 		ToBlock:   block,
 		Addresses: []common.Address{w.address},
-		Topics:    [][]common.Hash{{common.HexToHash(whitelistRemovalTopic)}},
+		Topics:    [][]common.Hash{{walletABI.Events["RemovedFromWhitelist"].Id()}},
 	}
 	// Get the contract logs.
 	logs, err := w.ethereum.FilterLogs(ctx, query)
@@ -642,7 +586,7 @@ func (w *Wallet) SetSpendLimitEvents(ctx context.Context, block *big.Int) ([]*Ev
 		FromBlock: nil,
 		ToBlock:   block,
 		Addresses: []common.Address{w.address},
-		Topics:    [][]common.Hash{{common.HexToHash(spendLimitTopic)}},
+		Topics:    [][]common.Hash{{walletABI.Events["SetSpendLimit"].Id()}},
 	}
 	// Get the contract logs.
 	logs, err := w.ethereum.FilterLogs(ctx, query)
@@ -670,13 +614,13 @@ func (w *Wallet) SetSpendLimitEvents(ctx context.Context, block *big.Int) ([]*Ev
 	return events, nil
 }
 
-func (w *Wallet) SetTopupLimitEvents(ctx context.Context, block *big.Int) ([]*Event, error) {
+func (w *Wallet) SetTopUpLimitEvents(ctx context.Context, block *big.Int) ([]*Event, error) {
 	// Create a query for set daily limit events.
 	query := ethereum.FilterQuery{
 		FromBlock: nil,
 		ToBlock:   block,
 		Addresses: []common.Address{w.address},
-		Topics:    [][]common.Hash{{common.HexToHash(topupLimitTopic)}},
+		Topics:    [][]common.Hash{{walletABI.Events["SetTopUpLimit"].Id()}},
 	}
 	// Get the contract logs.
 	logs, err := w.ethereum.FilterLogs(ctx, query)
@@ -704,13 +648,13 @@ func (w *Wallet) SetTopupLimitEvents(ctx context.Context, block *big.Int) ([]*Ev
 	return events, nil
 }
 
-func (w *Wallet) TopupGasEvents(ctx context.Context, block *big.Int) ([]*Event, error) {
+func (w *Wallet) ToppedUpGasEvents(ctx context.Context, block *big.Int) ([]*Event, error) {
 	// Create a query for gas top up events.
 	query := ethereum.FilterQuery{
 		FromBlock: nil,
 		ToBlock:   block,
 		Addresses: []common.Address{w.address},
-		Topics:    [][]common.Hash{{common.HexToHash(topupGasTopic)}},
+		Topics:    [][]common.Hash{{walletABI.Events["ToppedUpGas"].Id()}},
 	}
 	// Get the contract logs.
 	logs, err := w.ethereum.FilterLogs(ctx, query)
@@ -738,13 +682,13 @@ func (w *Wallet) TopupGasEvents(ctx context.Context, block *big.Int) ([]*Event, 
 	return events, nil
 }
 
-func (w *Wallet) TransferEvents(ctx context.Context, block *big.Int) ([]*Event, error) {
+func (w *Wallet) TransferredEvents(ctx context.Context, block *big.Int) ([]*Event, error) {
 	// Create a query for transfer events.
 	query := ethereum.FilterQuery{
 		FromBlock: nil,
 		ToBlock:   block,
 		Addresses: []common.Address{w.address},
-		Topics:    [][]common.Hash{{common.HexToHash(transferTopic)}},
+		Topics:    [][]common.Hash{{walletABI.Events["Transferred"].Id()}},
 	}
 	// Get the contract logs.
 	logs, err := w.ethereum.FilterLogs(ctx, query)
@@ -772,13 +716,13 @@ func (w *Wallet) TransferEvents(ctx context.Context, block *big.Int) ([]*Event, 
 	return events, nil
 }
 
-func (w *Wallet) DepositEvents(ctx context.Context, block *big.Int) ([]*Event, error) {
+func (w *Wallet) ReceivedEvents(ctx context.Context, block *big.Int) ([]*Event, error) {
 	// Create a query for deposit events.
 	query := ethereum.FilterQuery{
 		FromBlock: nil,
 		ToBlock:   block,
 		Addresses: []common.Address{w.address},
-		Topics:    [][]common.Hash{{common.HexToHash(depositTopic)}},
+		Topics:    [][]common.Hash{{walletABI.Events["Received"].Id()}},
 	}
 	// Get the contract logs.
 	logs, err := w.ethereum.FilterLogs(ctx, query)
