@@ -1,6 +1,6 @@
-// Package wrappers provides extra functionality in addition to the generated wallet bindings.
+// Package contracts provides extra functionality in addition to the generated wallet bindings.
 
-package wrappers
+package contracts
 
 import (
 	"context"
