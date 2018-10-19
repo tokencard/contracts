@@ -156,8 +156,8 @@ func (w *Wallet) InitializedWhitelist(ctx context.Context, block *big.Int) (bool
 	return result, nil
 }
 
-func (w *Wallet) InitializedTopupLimit(ctx context.Context, block *big.Int) (bool, error) {
-	data, err := w.abi.Pack("initializedTopupLimit")
+func (w *Wallet) InitializedTopUpLimit(ctx context.Context, block *big.Int) (bool, error) {
+	data, err := w.abi.Pack("initializedTopUpLimit")
 	if err != nil {
 		return false, err
 	}
@@ -169,7 +169,7 @@ func (w *Wallet) InitializedTopupLimit(ctx context.Context, block *big.Int) (boo
 		return false, err
 	}
 	if len(rsp) != 32 {
-		return false, errors.Wrap(ErrFailedContractCall, "initializedTopupLimit")
+		return false, errors.Wrap(ErrFailedContractCall, "initializedTopUpLimit")
 	}
 	var result bool
 	if new(big.Int).SetBytes(rsp).Uint64() == 1 {
