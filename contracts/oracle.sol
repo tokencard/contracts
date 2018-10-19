@@ -54,19 +54,6 @@ contract Date {
     bytes32 constant private NOVEMBER = keccak256("Nov");
     bytes32 constant private DECEMBER = keccak256("Dec");
 
-    /// @return true or false based on whether the year is a leap year.
-    /// @param _year the year number to be checked.
-    function isLeapYear(uint16 _year) internal pure returns (bool) {
-        if (_year % 4 != 0) {
-            return false;
-        } else if (_year % 100 != 0) {
-            return true;
-        } else if (_year % 400 != 0) {
-            return false;
-        }
-        return true;
-    }
-
     /// @return the number of the month based on its name.
     /// @param _month the first three letters of a month's name e.g. "Jan".
     function monthToNumber(string _month) internal pure returns (uint8) {
