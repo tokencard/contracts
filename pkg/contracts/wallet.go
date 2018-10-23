@@ -78,12 +78,12 @@ type Wallet struct {
 	ethereum *ethclient.Client
 }
 
-func DeployWallet(opts *ConstructOpts, eth *ethclient.Client, owner common.Address, transferable bool, ens common.Address, oracleName [32]byte, controllerName [32]byte) (common.Address, *types.Transaction, error) {
+func DeployWallet(opts *ConstructOpts, eth *ethclient.Client, owner common.Address, transferable bool, ens common.Address, oracleName [32]byte, controllerName [32]byte, spendLimit *big.Int) (common.Address, *types.Transaction, error) {
 	contractABI, err := abi.JSON(strings.NewReader(bindings.WalletABI))
 	if err != nil {
 		return common.Address{}, nil, err
 	}
-	data, err := contractABI.Pack("", owner, transferable, ens, oracleName, controllerName)
+	data, err := contractABI.Pack("", owner, transferable, ens, oracleName, controllerName, spendLimit)
 	if err != nil {
 		return common.Address{}, nil, err
 	}
