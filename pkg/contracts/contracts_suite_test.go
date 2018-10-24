@@ -51,6 +51,9 @@ var _ = BeforeEach(func() {
 	be = testRig.NewTestBackend()
 })
 
+var controllerContract *bindings.Controller
+var controllerContractAddress common.Address
+
 var _ = Describe("DeployWallet", func() {
 	It("Deploys a wallet", func() {
 

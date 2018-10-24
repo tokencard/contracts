@@ -377,11 +377,7 @@ func (w *Wallet) PendingTopUpLimit(ctx context.Context, block *big.Int) (*big.In
 }
 
 func (w *Wallet) InitializeWhitelist(opts *ConstructOpts, addresses []common.Address) (*types.Transaction, error) {
-	var args []interface{}
-	for i := 0; i < len(addresses); i++ {
-		args = append(args, addresses[i])
-	}
-	data, err := w.abi.Pack("initializeWhitelist", args...)
+	data, err := w.abi.Pack("initializeWhitelist", addresses)
 	if err != nil {
 		return nil, err
 	}
@@ -389,11 +385,7 @@ func (w *Wallet) InitializeWhitelist(opts *ConstructOpts, addresses []common.Add
 }
 
 func (w *Wallet) SubmitWhitelistAddition(opts *ConstructOpts, addresses []common.Address) (*types.Transaction, error) {
-	var args []interface{}
-	for i := 0; i < len(addresses); i++ {
-		args = append(args, addresses[i])
-	}
-	data, err := w.abi.Pack("submitWhitelistAddition", args...)
+	data, err := w.abi.Pack("submitWhitelistAddition", addresses)
 	if err != nil {
 		return nil, err
 	}
@@ -417,11 +409,7 @@ func (w *Wallet) CancelWhitelistAddition(opts *ConstructOpts) (*types.Transactio
 }
 
 func (w *Wallet) SubmitWhitelistRemoval(opts *ConstructOpts, addresses []common.Address) (*types.Transaction, error) {
-	var args []interface{}
-	for i := 0; i < len(addresses); i++ {
-		args = append(args, addresses[i])
-	}
-	data, err := w.abi.Pack("submitWhitelistRemoval", args...)
+	data, err := w.abi.Pack("submitWhitelistRemoval", addresses)
 	if err != nil {
 		return nil, err
 	}
