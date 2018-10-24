@@ -4,14 +4,14 @@ import "./oracle.sol";
 import "./internal/ownable.sol";
 import "./internal/controllable.sol";
 
-/// @title ERC20 is a subset of the ERC20 specification.
+/// @title ERC20 interface is a subset of the ERC20 specification.
 interface ERC20 {
     function transfer(address, uint) external returns (bool);
     function balanceOf(address) external view returns (uint);
 }
 
 
-/// @title ERC165 specifies a standard way of querying if a contract implements an interface.
+/// @title ERC165 interface specifies a standard way of querying if a contract implements an interface.
 interface ERC165 {
     function supportsInterface(bytes4) external view returns (bool);
 }
@@ -34,7 +34,7 @@ contract Whitelist is Controllable, Ownable {
     bool public submittedWhitelistRemoval;
     bool public initializedWhitelist;
 
-    /// @dev Check if the provided addresses contain the owner address.
+    // @dev Check if the provided addresses contain the owner address.
     modifier hasNoOwner(address[] _addresses) {
         for (uint i = 0; i < _addresses.length; i++) {
             require(_addresses[i] != owner(), "provided whitelist contains the owner address");
@@ -58,8 +58,8 @@ contract Whitelist is Controllable, Ownable {
         return _pendingWhitelistRemoval;
     }
 
-    /// @dev Add initial addresses to the whitelist.
-    /// @param _addresses are the Ethereum addresses to be whitelisted.
+    // @dev Add initial addresses to the whitelist.
+    // @param _addresses are the Ethereum addresses to be whitelisted.
     function initializeWhitelist(address[] _addresses) external onlyOwner hasNoOwner(_addresses) {
         // Require that the whitelist has not been initialized.
         require(!initializedWhitelist, "whitelist has already been initialized");
@@ -72,8 +72,8 @@ contract Whitelist is Controllable, Ownable {
         emit AddedToWhitelist(msg.sender, _addresses);
     }
 
-    /// @dev Add addresses to the whitelist.
-    /// @param _addresses are the Ethereum addresses to be whitelisted.
+    // @dev Add addresses to the whitelist.
+    // @param _addresses are the Ethereum addresses to be whitelisted.
     function submitWhitelistAddition(address[] _addresses) external onlyOwner noActiveSubmission hasNoOwner(_addresses)  {
         // Require that the whitelist has been initialized.
         require(initializedWhitelist, "whitelist has not been initialized");
@@ -85,7 +85,7 @@ contract Whitelist is Controllable, Ownable {
         emit SubmittedWhitelistAddition(_addresses);
     }
 
-    /// @dev Confirm pending whitelist addition.
+    // @dev Confirm pending whitelist addition.
     function confirmWhitelistAddition() external onlyController {
         // Require that the whitelist addition has been submitted.
         require(submittedWhitelistAddition, "whitelist addition has not been submitted");
@@ -101,7 +101,7 @@ contract Whitelist is Controllable, Ownable {
         submittedWhitelistAddition = false;
     }
 
-    /// @dev Cancel pending whitelist addition.
+    // @dev Cancel pending whitelist addition.
     function cancelWhitelistAddition() external onlyController {
         // Reset pending addresses.
         delete _pendingWhitelistAddition;
@@ -111,8 +111,8 @@ contract Whitelist is Controllable, Ownable {
         emit CancelledWhitelistAddition(msg.sender);
     }
 
-    /// @dev Remove addresses from the whitelist.
-    /// @param _addresses are the Ethereum addresses to be removed.
+    // @dev Remove addresses from the whitelist.
+    // @param _addresses are the Ethereum addresses to be removed.
     function submitWhitelistRemoval(address[] _addresses) external onlyOwner noActiveSubmission {
         // Add the provided addresses to the pending addition list.
         _pendingWhitelistRemoval = _addresses;
@@ -122,7 +122,7 @@ contract Whitelist is Controllable, Ownable {
         emit SubmittedWhitelistRemoval(_addresses);
     }
 
-    /// @dev Confirm pending removal of whitelisted addresses.
+    // @dev Confirm pending removal of whitelisted addresses.
     function confirmWhitelistRemoval() external onlyController {
         // Require that the pending whitelist is not empty and the operation has been submitted.
         require(submittedWhitelistRemoval, "whitelist removal has not been submitted");
@@ -139,7 +139,7 @@ contract Whitelist is Controllable, Ownable {
         submittedWhitelistRemoval = false;
     }
 
-    /// @dev Cancel pending removal of whitelisted addresses.
+    // @dev Cancel pending removal of whitelisted addresses.
     function cancelWhitelistRemoval() external onlyController {
         // Reset pending addresses.
         delete _pendingWhitelistRemoval;
@@ -165,15 +165,15 @@ contract SpendLimit is Controllable, Ownable {
     bool public submittedSpendLimit;
     bool public initializedSpendLimit;
 
-    /// @dev Constructor initializes the daily spend limit.
+    // @dev Constructor initializes the daily spend limit.
     constructor(uint _spendLimit) internal {
         spendLimit = _spendLimit;
         _spendLimitDay = now;
         _spendAvailable = spendLimit;
     }
 
-    /// @dev Returns the available daily balance - accounts for daily limit reset.
-    /// @return amount of ether in wei.
+    // @dev Returns the available daily balance - accounts for daily limit reset.
+    // @return amount of ether in wei.
     function spendAvailable() external view returns (uint) {
         if (now > _spendLimitDay + 24 hours) {
             return spendLimit;
