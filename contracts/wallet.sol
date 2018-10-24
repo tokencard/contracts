@@ -165,7 +165,7 @@ contract SpendLimit is Controllable, Ownable {
     bool public submittedSpendLimit;
     bool public initializedSpendLimit;
 
-    // @dev Constructor initializes the daily spend limit.
+    // @dev Constructor initializes the daily spend limit in wei.
     constructor(uint _spendLimit) internal {
         spendLimit = _spendLimit;
         _spendLimitDay = now;
@@ -182,8 +182,8 @@ contract SpendLimit is Controllable, Ownable {
         }
     }
 
-    /// @dev Initialize a daily transfer limit for non-whitelisted addresses.
-    /// @param _amount is the daily limit amount in wei.
+    // @dev Initialize a daily spend (aka transfer) limit for non-whitelisted addresses.
+    // @param _amount is the daily limit amount in wei.
     function initializeSpendLimit(uint _amount) external onlyOwner {
         // Require that the spend limit has not been initialized.
         require(!initializedSpendLimit, "spend limit has already been initialized");
@@ -195,8 +195,8 @@ contract SpendLimit is Controllable, Ownable {
         emit SetSpendLimit(msg.sender, _amount);
     }
 
-    /// @dev Set a daily transfer limit for non-whitelisted addresses.
-    /// @param _amount is the daily limit amount in wei.
+    // @dev Set a daily transfer limit for non-whitelisted addresses.
+    // @param _amount is the daily limit amount in wei.
     function submitSpendLimit(uint _amount) external onlyOwner {
         // Require that the spend limit has been initialized.
         require(initializedSpendLimit, "spend limit has not been initialized");
@@ -210,7 +210,7 @@ contract SpendLimit is Controllable, Ownable {
         emit SubmittedSpendLimitChange(_amount);
     }
 
-    /// @dev Confirm pending set daily limit operation.
+    // @dev Confirm pending set daily limit operation.
     function confirmSpendLimit() external onlyController {
         // Require that the operation has been submitted.
         require(submittedSpendLimit, "spend limit has not been submitted");
@@ -224,7 +224,7 @@ contract SpendLimit is Controllable, Ownable {
         pendingSpendLimit = 0;
     }
 
-    /// @dev Cancel pending set daily limit operation.
+    // @dev Cancel pending set daily limit operation.
     function cancelSpendLimit() external onlyController {
         // Reset pending daily limit.
         pendingSpendLimit = 0;
@@ -234,7 +234,7 @@ contract SpendLimit is Controllable, Ownable {
         emit CancelledSpendLimitChange(msg.sender);
     }
 
-    /// @dev Update available spend limit based on the daily reset.
+    // @dev Update available spend limit based on the daily reset.
     function updateSpendAvailable() internal {
         if (now > _spendLimitDay + 24 hours) {
             // Advance the current day by how many days have passed.
@@ -242,11 +242,12 @@ contract SpendLimit is Controllable, Ownable {
             _spendLimitDay += extraDays * 24 hours;
             // Set the available limit to the current spend limit.
             _spendAvailable = spendLimit;
+            //todo mischa do we want an event here, how do we test this, what event are we checking for ?
         }
     }
 
-    /// @dev Modify the spend limit and spend available based on the provided value.
-    /// @dev _amount is the daily limit amount in wei.
+    // @dev Modify the spend limit and spend available based on the provided value.
+    // @dev _amount is the daily limit amount in wei.
     function modifySpendLimit(uint _amount) private {
         // Account for the spend limit daily reset.
         updateSpendAvailable();
@@ -265,41 +266,42 @@ contract Vault is Whitelist, SpendLimit, ERC165 {
     event Received(address _from, uint _amount);
     event Transferred(address _to, address _asset, uint _amount);
 
-    //// @dev Supported ERC165 interface ID.
+    // @dev Supported ERC165 interface ID.
     bytes4 private constant _ERC165_INTERFACE_ID = 0x01ffc9a7; // solium-disable-line uppercase
 
-    /// @dev ENS points to the ENS registry smart contract.
+    // @dev ENS points to the ENS registry smart contract.
     IENS private _ENS;
-    /// @dev Is the registered ENS name of the oracle contract.
+    // @dev Is the registered ENS name of the oracle contract.
     bytes32 private _node;
 
-    /// @dev Constructor initializes the vault with an owner address and spend limit. It also sets up the oracle and controller contracts.
-    /// @param _owner is the owner account of the wallet contract.
-    /// @param _transferable indicates whether the contract ownership can be transferred.
-    /// @param _ens is the ENS public registry contract address.
-    /// @param _oracleName is the ENS name of the Oracle.
-    /// @param _controllerName is the ENS name of the controller.
-    //  @param _spendLimit is the initial spend limit.
+    // @dev Constructor initializes the vault with an owner address and spend limit. It also sets up the oracle and controller contracts.
+    // @param _owner is the owner account of the wallet contract.
+    // @param _transferable indicates whether the contract ownership can be transferred.
+    // @param _ens is the ENS public registry contract address.
+    // @param _oracleName is the ENS name of the Oracle.
+    // @param _controllerName is the ENS name of the controller.
+    // @param _spendLimit is the initial spend limit.
     constructor(address _owner, bool _transferable, address _ens, bytes32 _oracleName, bytes32 _controllerName, uint _spendLimit) SpendLimit(_spendLimit) Ownable(_owner, _transferable) Controllable(_ens, _controllerName) public {
         _ENS = IENS(_ens);
         _node = _oracleName;
     }
 
-    /// @dev Checks if the value is not zero.
+    // @dev Checks if the value is not zero.
     modifier isNotZero(uint _value) {
         require(_value != 0, "provided value cannot be zero");
         _;
     }
 
-    /// @dev Ether can be deposited from any source, so this contract must be payable by anyone.
+    // @dev Ether can be deposited from any source, so this contract must be payable by anyone.
     function() public payable {
+        //TODO question: Why is this check here, is it necessary or are we building into a corner?
         require(msg.data.length == 0);
         emit Received(msg.sender, msg.value);
     }
 
-    /// @dev Returns the amount of an asset owned by the contract.
-    /// @param _asset address of an ERC20 token or 0x0 for ether.
-    /// @return balance associated with the wallet address in wei.
+    // @dev Returns the amount of an asset owned by the contract.
+    // @param _asset address of an ERC20 token or 0x0 for ether.
+    // @return balance associated with the wallet address in wei.
     function balance(address _asset) external view returns (uint) {
         if (_asset != 0x0) {
             return ERC20(_asset).balanceOf(this);
@@ -308,10 +310,10 @@ contract Vault is Whitelist, SpendLimit, ERC165 {
         }
     }
 
-    /// @dev Transfers the specified asset to the recipient's address.
-    /// @param _to is the recipient's address.
-    /// @param _asset is the address of an ERC20 token or 0x0 for ether.
-    /// @param _amount is the amount of tokens to be transferred in base units.
+    // @dev Transfers the specified asset to the recipient's address.
+    // @param _to is the recipient's address.
+    // @param _asset is the address of an ERC20 token or 0x0 for ether.
+    // @param _amount is the amount of tokens to be transferred in base units.
     function transfer(address _to, address _asset, uint _amount) external onlyOwner isNotZero(_amount) {
         // If address is not whitelisted, take daily limit into account.
         if (!isWhitelisted[_to]) {
@@ -339,7 +341,7 @@ contract Vault is Whitelist, SpendLimit, ERC165 {
         emit Transferred(_to, _asset, _amount);
     }
 
-    /// @dev Checks for interface support based on ERC165.
+    // @dev Checks for interface support based on ERC165.
     function supportsInterface(bytes4 interfaceID) external view returns (bool) {
         return interfaceID == _ERC165_INTERFACE_ID;
     }
@@ -354,8 +356,8 @@ contract Wallet is Vault {
 
     event ToppedUpGas(address _sender, address _owner, uint _amount);
 
-    uint constant private MINIMUM_TOPUP_LIMIT = 1 finney;
-    uint constant private MAXIMUM_TOPUP_LIMIT = 500 finney;
+    uint constant private MINIMUM_TOPUP_LIMIT = 1 finney; // solium-disable-line uppercase
+    uint constant private MAXIMUM_TOPUP_LIMIT = 500 finney; // solium-disable-line uppercase
 
     uint public topUpLimit;
     uint private _topUpLimitDay;
@@ -365,21 +367,21 @@ contract Wallet is Vault {
     bool public submittedTopUpLimit;
     bool public initializedTopUpLimit;
 
-    /// @dev Constructor initializes the wallet top up limit and the vault contract.
-    /// @param _owner is the owner account of the wallet contract.
-    /// @param _transferable indicates whether the contract ownership can be transferred.
-    //  @param _ens is the address of the ENS.
-    //  @param _oracleName is the ENS name of the Oracle.
-    //  @param _controllerName is the ENS name of the Controller.
-    //  @param _spendLimit is the initial spend limit.
+    // @dev Constructor initializes the wallet top up limit and the vault contract.
+    // @param _owner is the owner account of the wallet contract.
+    // @param _transferable indicates whether the contract ownership can be transferred.
+    // @param _ens is the address of the ENS.
+    // @param _oracleName is the ENS name of the Oracle.
+    // @param _controllerName is the ENS name of the Controller.
+    // @param _spendLimit is the initial spend limit.
     constructor(address _owner, bool _transferable, address _ens, bytes32 _oracleName, bytes32 _controllerName, uint _spendLimit) Vault(_owner, _transferable, _ens, _oracleName, _controllerName, _spendLimit) public {
         _topUpLimitDay = now;
         topUpLimit = MAXIMUM_TOPUP_LIMIT;
         _topUpAvailable = topUpLimit;
     }
 
-    /// @dev Returns the available daily gas top up balance - accounts for daily limit reset.
-    /// @return amount of gas in wei.
+    // @dev Returns the available daily gas top up balance - accounts for daily limit reset.
+    // @return amount of gas in wei.
     function topUpAvailable() external view returns (uint) {
         if (now > _topUpLimitDay + 24 hours) {
             return topUpLimit;
@@ -388,8 +390,8 @@ contract Wallet is Vault {
         }
     }
 
-    /// @dev Initialize a daily gas top up limit.
-    /// @param _amount is the gas top up amount in wei.
+    // @dev Initialize a daily gas top up limit.
+    // @param _amount is the gas top up amount in wei.
     function initializeTopUpLimit(uint _amount) external onlyOwner {
         // Require that the top up limit has not been initialized.
         require(!initializedTopUpLimit, "top up limit has already been initialized");
@@ -403,8 +405,8 @@ contract Wallet is Vault {
         emit SetTopUpLimit(msg.sender, _amount);
     }
 
-    /// @dev Set a daily top up top up limit.
-    /// @param _amount is the daily top up limit amount in wei.
+    // @dev Set a daily top up top up limit.
+    // @param _amount is the daily top up limit amount in wei.
     function submitTopUpLimit(uint _amount) external onlyOwner {
         // Require that the top up limit has been initialized.
         require(initializedTopUpLimit, "top up limit has not been initialized");
@@ -420,7 +422,7 @@ contract Wallet is Vault {
         emit SubmittedTopUpLimitChange(_amount);
     }
 
-    /// @dev Confirm pending set top up limit operation.
+    // @dev Confirm pending set top up limit operation.
     function confirmTopUpLimit() external onlyController {
         // Require that the operation has been submitted.
         require(submittedTopUpLimit, "top up limit has not been submitted");
@@ -436,7 +438,7 @@ contract Wallet is Vault {
         submittedTopUpLimit = false;
     }
 
-    /// @dev Cancel pending set top up limit operation.
+    // @dev Cancel pending set top up limit operation.
     function cancelTopUpLimit() external onlyController {
         // Reset pending daily limit.
         pendingTopUpLimit = 0;
@@ -446,8 +448,8 @@ contract Wallet is Vault {
         emit CancelledTopUpLimitChange(msg.sender);
     }
 
-    /// @dev Refill owner's gas balance.
-    /// @param _amount is the amount of ether to transfer to the owner account in wei.
+    // @dev Refill owner's gas balance.
+    // @param _amount is the amount of ether to transfer to the owner account in wei.
     function topUpGas(uint _amount) external isNotZero(_amount) {
         // Require that the sender is either the owner or a controller.
         require(isOwner() || isController(msg.sender), "sender is neither an owner nor a controller");
@@ -468,8 +470,8 @@ contract Wallet is Vault {
         emit ToppedUpGas(tx.origin, owner(), amount);
     }
 
-    /// @dev Modify the top up limit and top up available based on the provided value.
-    /// @dev _amount is the daily limit amount in wei.
+    // @dev Modify the top up limit and top up available based on the provided value.
+    // @dev _amount is the daily limit amount in wei.
     function modifyTopUpLimit(uint _amount) private {
         // Account for the top up limit daily reset.
         updateTopUpAvailable();
@@ -481,7 +483,7 @@ contract Wallet is Vault {
         }
     }
 
-    /// @dev Update available top up limit based on the daily reset.
+    // @dev Update available top up limit based on the daily reset.
     function updateTopUpAvailable() private {
         if (now > _topUpLimitDay + 24 hours) {
             // Advance the current day by how many days have passed.
