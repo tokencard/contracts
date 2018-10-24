@@ -22,5 +22,6 @@ var _ = Describe("ERC165", func() {
 			Expect(err).ToNot(HaveOccurred())
 			Expect(supported).To(BeFalse())
 		})
+
 	})
 })
