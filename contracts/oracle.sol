@@ -332,10 +332,17 @@ contract Oracle is UsingOraclize, Base64, Date, JSON, Controllable, IOracle {
 
     /// @dev Re-usable helper function that performs the Oraclize Query.
     function _updateTokenRates() private {
+        // Check if there are any existing tokens.
+        if (_tokenAddresses.length == 0){
+          // Emit a query failure event.
+          emit FailedUpdateRequest("no tokens");
+          return;
+        }
         // Check if the contract has enough Ether to pay for the query.
-        if (oraclize_getPrice("URL") * _tokenAddresses.length > address(this).balance) {
-            // Emit the query failure event.
-            emit FailedUpdateRequest("zero balance");
+        else if (oraclize_getPrice("URL") * _tokenAddresses.length > address(this).balance) {
+            // Emit a query failure event.
+            emit FailedUpdateRequest("insufficient balance");
+            return;
         } else {
           // Set up the crypto compare API query strings.
           Strings.slice memory apiPrefix = "https://min-api.cryptocompare.com/data/price?fsym=".toSlice();
@@ -353,6 +360,7 @@ contract Oracle is UsingOraclize, Base64, Date, JSON, Controllable, IOracle {
               // Emit the query success event.
               emit RequestedUpdate(symbol.toString());
           }
+          return;
         }
     }
 

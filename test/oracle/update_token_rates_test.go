@@ -75,9 +75,9 @@ var _ = Describe("updateRates", func() {
 				Expect(it.Next()).To(BeTrue())
 				evt := it.Event
 				Expect(it.Next()).To(BeFalse())
-				Expect(evt.Reason).To(Equal("zero balance"))
+				Expect(evt.Reason).To(Equal("insufficient balance"))
 			})
-			It("Oracle contract balance should be 0", func() {
+			It("Oracle contract balance should remain 0", func() {
 				b, err := be.BalanceAt(context.Background(), oracleAddress, nil)
 				Expect(err).ToNot(HaveOccurred())
 				Expect(b.String()).To(Equal("0"))
@@ -113,6 +113,14 @@ var _ = Describe("updateRates", func() {
 				b, err := be.BalanceAt(context.Background(), oracleAddress, nil)
 				Expect(err).ToNot(HaveOccurred())
 				Expect(b.String()).To(Equal("100000000"))
+			})
+			It("Should emit an Failed Update Request event", func() {
+				it, err := oracle.FilterFailedUpdateRequest(nil)
+				Expect(err).ToNot(HaveOccurred())
+				Expect(it.Next()).To(BeTrue())
+				evt := it.Event
+				Expect(it.Next()).To(BeFalse())
+				Expect(evt.Reason).To(Equal("no tokens"))
 			})
 		})
 	})
