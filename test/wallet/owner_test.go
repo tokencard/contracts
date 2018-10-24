@@ -6,31 +6,32 @@ import (
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	"github.com/tokencard/contracts/pkg/bindings"
-	. "github.com/tokencard/ethertest"
+	. "github.com/tokencard/contracts/test/shared"
+	"github.com/tokencard/ethertest"
 )
 
 var _ = Describe("ownable", func() {
 	Context("When the contract with transferable ownership has been deployed", func() {
 		It("should have an owner", func() {
-			o, err := w.Owner(nil)
+			o, err := Wallet.Owner(nil)
 			Expect(err).ToNot(HaveOccurred())
-			Expect(o).To(Equal(owner.Address()))
+			Expect(o).To(Equal(Owner.Address()))
 		})
-		It("should not allow the ownership to be transferred to the 0x0 address", func() {
-			tx, err := w.TransferOwnership(owner.TransactOpts(WithGasLimit(60000)), common.HexToAddress("0x0"))
+		It("should not allow the ownership to Backend transferred to the 0x0 address", func() {
+			tx, err := Wallet.TransferOwnership(Owner.TransactOpts(ethertest.WithGasLimit(60000)), common.HexToAddress("0x0"))
 			Expect(err).ToNot(HaveOccurred())
-			be.Commit()
+			Backend.Commit()
 			Expect(isSuccessful(tx)).To(BeFalse())
-			transferable, err := w.IsTransferable(nil)
+			transferable, err := Wallet.IsTransferable(nil)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(transferable).To(BeTrue())
 		})
-		It("should allow the ownership to be transferred to any other address", func() {
-			tx, err := w.TransferOwnership(owner.TransactOpts(), common.HexToAddress("0x1"))
+		It("should allow the ownership to Backend transferred to any other address", func() {
+			tx, err := Wallet.TransferOwnership(Owner.TransactOpts(), common.HexToAddress("0x1"))
 			Expect(err).ToNot(HaveOccurred())
-			be.Commit()
+			Backend.Commit()
 			Expect(isSuccessful(tx)).To(BeTrue())
-			transferable, err := w.IsTransferable(nil)
+			transferable, err := Wallet.IsTransferable(nil)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(transferable).To(BeFalse())
 		})
@@ -39,31 +40,31 @@ var _ = Describe("ownable", func() {
 		BeforeEach(func() {
 			var err error
 			var tx *types.Transaction
-			wa, tx, w, err = bindings.DeployWallet(
-				bankAccount.TransactOpts(),
-				be,
-				owner.Address(),
+			WalletAddress, tx, Wallet, err = bindings.DeployWallet(
+				BankAccount.TransactOpts(),
+				Backend,
+				Owner.Address(),
 				false,
-				ensAddress,
-				oracleName,
-				controllerName,
-				ethToWei(100),
+				ENSRegistryAddress,
+				OracleName,
+				ControllerName,
+				EthToWei(100),
 			)
 			Expect(err).ToNot(HaveOccurred())
-			be.Commit()
+			Backend.Commit()
 			Expect(isSuccessful(tx)).To(BeTrue())
 		})
 		It("should have an owner", func() {
-			o, err := w.Owner(nil)
+			o, err := Wallet.Owner(nil)
 			Expect(err).ToNot(HaveOccurred())
-			Expect(o).To(Equal(owner.Address()))
+			Expect(o).To(Equal(Owner.Address()))
 		})
-		It("should not allow the ownership to be transferred", func() {
-			tx, err := w.TransferOwnership(owner.TransactOpts(WithGasLimit(60000)), common.HexToAddress("0x1"))
+		It("should not allow the ownership to Backend transferred", func() {
+			tx, err := Wallet.TransferOwnership(Owner.TransactOpts(ethertest.WithGasLimit(60000)), common.HexToAddress("0x1"))
 			Expect(err).ToNot(HaveOccurred())
-			be.Commit()
+			Backend.Commit()
 			Expect(isSuccessful(tx)).To(BeFalse())
-			transferable, err := w.IsTransferable(nil)
+			transferable, err := Wallet.IsTransferable(nil)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(transferable).To(BeFalse())
 		})

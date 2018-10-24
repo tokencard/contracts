@@ -746,9 +746,17 @@ func construct(opts *ConstructOpts, eth bind.ContractBackend, address *common.Ad
 	if value == nil {
 		value = new(big.Int)
 	}
-	var err error
+	nonce := opts.Nonce
+	if opts.Nonce == 0 {
+		var err error
+		nonce, err = eth.PendingNonceAt(opts.Context, opts.From)
+		if err != nil {
+			return nil, err
+		}
+	}
 	gasPrice := opts.GasPrice
 	if opts.GasPrice == nil {
+		var err error
 		gasPrice, err = eth.SuggestGasPrice(opts.Context)
 		if err != nil {
 			return nil, err
@@ -765,6 +773,7 @@ func construct(opts *ConstructOpts, eth bind.ContractBackend, address *common.Ad
 				return nil, ErrNoCode
 			}
 		}
+		var err error
 		gasLimit, err = eth.EstimateGas(opts.Context, ethereum.CallMsg{
 			From:  opts.From,
 			To:    address,
@@ -776,12 +785,12 @@ func construct(opts *ConstructOpts, eth bind.ContractBackend, address *common.Ad
 		}
 	}
 	if address == nil && opts.Sign == nil {
-		return types.NewContractCreation(opts.Nonce, new(big.Int), gasLimit+gasLimit/10, gasPrice, data), nil
+		return types.NewContractCreation(nonce, new(big.Int), gasLimit+gasLimit/10, gasPrice, data), nil
 	} else if address != nil && opts.Sign == nil {
-		return types.NewTransaction(opts.Nonce, *address, new(big.Int), gasLimit+gasLimit/10, gasPrice, data), nil
+		return types.NewTransaction(nonce, *address, new(big.Int), gasLimit+gasLimit/10, gasPrice, data), nil
 	} else if address == nil && opts.Sign != nil {
-		return opts.Sign(opts.Context, types.NewContractCreation(opts.Nonce, new(big.Int), gasLimit+gasLimit/10, gasPrice, data))
+		return opts.Sign(opts.Context, types.NewContractCreation(nonce, new(big.Int), gasLimit+gasLimit/10, gasPrice, data))
 	} else {
-		return opts.Sign(opts.Context, types.NewTransaction(opts.Nonce, *address, new(big.Int), gasLimit+gasLimit/10, gasPrice, data))
+		return opts.Sign(opts.Context, types.NewTransaction(nonce, *address, new(big.Int), gasLimit+gasLimit/10, gasPrice, data))
 	}
 }

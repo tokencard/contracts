@@ -5,7 +5,8 @@ import (
 	"github.com/ethereum/go-ethereum/core/types"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	. "github.com/tokencard/ethertest"
+	. "github.com/tokencard/contracts/test/shared"
+	"github.com/tokencard/ethertest"
 )
 
 var _ = Describe("updateAPIPublicKey", func() {
@@ -16,9 +17,9 @@ var _ = Describe("updateAPIPublicKey", func() {
 
 		BeforeEach(func() {
 			var err error
-			tx, err = oracle.UpdateAPIPublicKey(controller.TransactOpts(), common.Hex2Bytes("fffffff"))
+			tx, err = Oracle.UpdateAPIPublicKey(Controller.TransactOpts(), common.Hex2Bytes("fffffff"))
 			Expect(err).ToNot(HaveOccurred())
-			be.Commit()
+			Backend.Commit()
 		})
 
 		It("Should succeed", func() {
@@ -26,7 +27,7 @@ var _ = Describe("updateAPIPublicKey", func() {
 		})
 
 		It("Should emit a SetCryptoComparePublicKey event", func() {
-			it, err := oracle.FilterSetCryptoComparePublicKey(nil)
+			it, err := Oracle.FilterSetCryptoComparePublicKey(nil)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(it.Next()).To(BeTrue())
 			evt := it.Event
@@ -37,9 +38,9 @@ var _ = Describe("updateAPIPublicKey", func() {
 
 	Context("When not called by the controller", func() {
 		It("Should fail", func() {
-			tx, err := oracle.UpdateAPIPublicKey(randomAccount.TransactOpts(WithGasLimit(100000)), common.Hex2Bytes("fffffff"))
+			tx, err := Oracle.UpdateAPIPublicKey(RandomAccount.TransactOpts(ethertest.WithGasLimit(100000)), common.Hex2Bytes("fffffff"))
 			Expect(err).ToNot(HaveOccurred())
-			be.Commit()
+			Backend.Commit()
 			Expect(isGasExhausted(tx, 100000)).To(BeFalse())
 			Expect(isSuccessful(tx)).To(BeFalse())
 		})
