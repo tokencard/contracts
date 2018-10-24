@@ -9,8 +9,8 @@ import (
 
 	"github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/accounts/abi"
+	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/tokencard/contracts/pkg/bindings"
 
 	"github.com/ethereum/go-ethereum/core/types"
@@ -54,7 +54,7 @@ type ConstructOpts struct {
 	Context  context.Context // Network context to support cancellation and timeouts
 }
 
-func NewWallet(ethereum *ethclient.Client, address common.Address) (*Wallet, error) {
+func NewWallet(ethereum bind.ContractBackend, address common.Address) (*Wallet, error) {
 	contractBindings, err := bindings.NewWallet(address, ethereum)
 	if err != nil {
 		return nil, err
@@ -75,10 +75,10 @@ type Wallet struct {
 	address  common.Address
 	bindings *bindings.Wallet
 	abi      abi.ABI
-	ethereum *ethclient.Client
+	ethereum bind.ContractBackend
 }
 
-func DeployWallet(opts *ConstructOpts, eth *ethclient.Client, owner common.Address, transferable bool, ens common.Address, oracleName [32]byte, controllerName [32]byte, spendLimit *big.Int) (common.Address, *types.Transaction, error) {
+func DeployWallet(opts *ConstructOpts, eth bind.ContractBackend, owner common.Address, transferable bool, ens common.Address, oracleName [32]byte, controllerName [32]byte, spendLimit *big.Int) (common.Address, *types.Transaction, error) {
 	contractABI, err := abi.JSON(strings.NewReader(bindings.WalletABI))
 	if err != nil {
 		return common.Address{}, nil, err
@@ -763,7 +763,7 @@ func (w *Wallet) ReceivedEvents(ctx context.Context, block *big.Int) ([]*Event, 
 }
 
 // construct creates a signed transaction object from the provided parameters.
-func construct(opts *ConstructOpts, eth *ethclient.Client, address *common.Address, data []byte) (*types.Transaction, error) {
+func construct(opts *ConstructOpts, eth bind.ContractBackend, address *common.Address, data []byte) (*types.Transaction, error) {
 	value := opts.Value
 	if value == nil {
 		value = new(big.Int)
