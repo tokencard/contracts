@@ -18,16 +18,6 @@ import (
 	"github.com/pkg/errors"
 )
 
-var walletABI abi.ABI
-
-func init() {
-	parsed, err := abi.JSON(strings.NewReader(bindings.WalletABI))
-	if err != nil {
-		panic(err)
-	}
-	walletABI = parsed
-}
-
 var (
 	ErrFailedContractCall = errors.New("calling smart contract failed")
 	ErrInvalidEventData   = errors.New("event data could not be parsed")
@@ -518,7 +508,7 @@ func (w *Wallet) AddedToWhitelistEvents(ctx context.Context, block *big.Int) ([]
 		FromBlock: nil,
 		ToBlock:   block,
 		Addresses: []common.Address{w.address},
-		Topics:    [][]common.Hash{{walletABI.Events["AddedToWhitelist"].Id()}},
+		Topics:    [][]common.Hash{{w.abi.Events["AddedToWhitelist"].Id()}},
 	}
 	// Get the contract logs.
 	logs, err := w.ethereum.FilterLogs(ctx, query)
@@ -552,7 +542,7 @@ func (w *Wallet) RemovedFromWhitelistEvents(ctx context.Context, block *big.Int)
 		FromBlock: nil,
 		ToBlock:   block,
 		Addresses: []common.Address{w.address},
-		Topics:    [][]common.Hash{{walletABI.Events["RemovedFromWhitelist"].Id()}},
+		Topics:    [][]common.Hash{{w.abi.Events["RemovedFromWhitelist"].Id()}},
 	}
 	// Get the contract logs.
 	logs, err := w.ethereum.FilterLogs(ctx, query)
@@ -586,7 +576,7 @@ func (w *Wallet) SetSpendLimitEvents(ctx context.Context, block *big.Int) ([]*Ev
 		FromBlock: nil,
 		ToBlock:   block,
 		Addresses: []common.Address{w.address},
-		Topics:    [][]common.Hash{{walletABI.Events["SetSpendLimit"].Id()}},
+		Topics:    [][]common.Hash{{w.abi.Events["SetSpendLimit"].Id()}},
 	}
 	// Get the contract logs.
 	logs, err := w.ethereum.FilterLogs(ctx, query)
@@ -620,7 +610,7 @@ func (w *Wallet) SetTopUpLimitEvents(ctx context.Context, block *big.Int) ([]*Ev
 		FromBlock: nil,
 		ToBlock:   block,
 		Addresses: []common.Address{w.address},
-		Topics:    [][]common.Hash{{walletABI.Events["SetTopUpLimit"].Id()}},
+		Topics:    [][]common.Hash{{w.abi.Events["SetTopUpLimit"].Id()}},
 	}
 	// Get the contract logs.
 	logs, err := w.ethereum.FilterLogs(ctx, query)
@@ -654,7 +644,7 @@ func (w *Wallet) ToppedUpGasEvents(ctx context.Context, block *big.Int) ([]*Even
 		FromBlock: nil,
 		ToBlock:   block,
 		Addresses: []common.Address{w.address},
-		Topics:    [][]common.Hash{{walletABI.Events["ToppedUpGas"].Id()}},
+		Topics:    [][]common.Hash{{w.abi.Events["ToppedUpGas"].Id()}},
 	}
 	// Get the contract logs.
 	logs, err := w.ethereum.FilterLogs(ctx, query)
@@ -688,7 +678,7 @@ func (w *Wallet) TransferredEvents(ctx context.Context, block *big.Int) ([]*Even
 		FromBlock: nil,
 		ToBlock:   block,
 		Addresses: []common.Address{w.address},
-		Topics:    [][]common.Hash{{walletABI.Events["Transferred"].Id()}},
+		Topics:    [][]common.Hash{{w.abi.Events["Transferred"].Id()}},
 	}
 	// Get the contract logs.
 	logs, err := w.ethereum.FilterLogs(ctx, query)
@@ -722,7 +712,7 @@ func (w *Wallet) ReceivedEvents(ctx context.Context, block *big.Int) ([]*Event, 
 		FromBlock: nil,
 		ToBlock:   block,
 		Addresses: []common.Address{w.address},
-		Topics:    [][]common.Hash{{walletABI.Events["Received"].Id()}},
+		Topics:    [][]common.Hash{{w.abi.Events["Received"].Id()}},
 	}
 	// Get the contract logs.
 	logs, err := w.ethereum.FilterLogs(ctx, query)
