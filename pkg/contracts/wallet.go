@@ -18,16 +18,6 @@ import (
 	"github.com/pkg/errors"
 )
 
-var walletABI abi.ABI
-
-func init() {
-	parsed, err := abi.JSON(strings.NewReader(bindings.WalletABI))
-	if err != nil {
-		panic(err)
-	}
-	walletABI = parsed
-}
-
 var (
 	ErrFailedContractCall = errors.New("calling smart contract failed")
 	ErrInvalidEventData   = errors.New("event data could not be parsed")
@@ -377,11 +367,7 @@ func (w *Wallet) PendingTopUpLimit(ctx context.Context, block *big.Int) (*big.In
 }
 
 func (w *Wallet) InitializeWhitelist(opts *ConstructOpts, addresses []common.Address) (*types.Transaction, error) {
-	var args []interface{}
-	for i := 0; i < len(addresses); i++ {
-		args = append(args, addresses[i])
-	}
-	data, err := w.abi.Pack("initializeWhitelist", args...)
+	data, err := w.abi.Pack("initializeWhitelist", addresses)
 	if err != nil {
 		return nil, err
 	}
@@ -389,11 +375,7 @@ func (w *Wallet) InitializeWhitelist(opts *ConstructOpts, addresses []common.Add
 }
 
 func (w *Wallet) SubmitWhitelistAddition(opts *ConstructOpts, addresses []common.Address) (*types.Transaction, error) {
-	var args []interface{}
-	for i := 0; i < len(addresses); i++ {
-		args = append(args, addresses[i])
-	}
-	data, err := w.abi.Pack("submitWhitelistAddition", args...)
+	data, err := w.abi.Pack("submitWhitelistAddition", addresses)
 	if err != nil {
 		return nil, err
 	}
@@ -417,11 +399,7 @@ func (w *Wallet) CancelWhitelistAddition(opts *ConstructOpts) (*types.Transactio
 }
 
 func (w *Wallet) SubmitWhitelistRemoval(opts *ConstructOpts, addresses []common.Address) (*types.Transaction, error) {
-	var args []interface{}
-	for i := 0; i < len(addresses); i++ {
-		args = append(args, addresses[i])
-	}
-	data, err := w.abi.Pack("submitWhitelistRemoval", args...)
+	data, err := w.abi.Pack("submitWhitelistRemoval", addresses)
 	if err != nil {
 		return nil, err
 	}
@@ -530,14 +508,82 @@ func (w *Wallet) AddedToWhitelistEvents(ctx context.Context, block *big.Int) ([]
 		FromBlock: nil,
 		ToBlock:   block,
 		Addresses: []common.Address{w.address},
-		Topics:    [][]common.Hash{{walletABI.Events["AddedToWhitelist"].Id()}},
+		Topics:    [][]common.Hash{{w.abi.Events["AddedToWhitelist"].Id()}},
 	}
 	// Get the contract logs.
 	logs, err := w.ethereum.FilterLogs(ctx, query)
 	if err != nil {
 		return nil, err
 	}
-	// Create a list of logged outgoing events.
+	// Create an array of event objects.
+	var events []*Event
+	for _, v := range logs {
+		// Decode event parameters.
+		if len(v.Data) < 96 {
+			return nil, ErrInvalidEventData
+		}
+		var data [][]byte
+		for i := 0; i < len(v.Data); i += 32 {
+			data = append(data, v.Data[i:i+32])
+		}
+		events = append(events, &Event{
+			Address:   v.Address,
+			BlockHash: v.BlockHash,
+			Data:      data,
+			TxHash:    v.TxHash,
+		})
+	}
+	return events, nil
+}
+
+func (w *Wallet) SubmittedWhitelistAdditionEvents(ctx context.Context, block *big.Int) ([]*Event, error) {
+	// Create a query for whitelist addition events.
+	query := ethereum.FilterQuery{
+		FromBlock: nil,
+		ToBlock:   block,
+		Addresses: []common.Address{w.address},
+		Topics:    [][]common.Hash{{w.abi.Events["SubmittedWhitelistAddition"].Id()}},
+	}
+	// Get the contract logs.
+	logs, err := w.ethereum.FilterLogs(ctx, query)
+	if err != nil {
+		return nil, err
+	}
+	// Create an array of event objects.
+	var events []*Event
+	for _, v := range logs {
+		// Decode event parameters.
+		if len(v.Data) < 64 {
+			return nil, ErrInvalidEventData
+		}
+		var data [][]byte
+		for i := 0; i < len(v.Data); i += 32 {
+			data = append(data, v.Data[i:i+32])
+		}
+		events = append(events, &Event{
+			Address:   v.Address,
+			BlockHash: v.BlockHash,
+			Data:      data,
+			TxHash:    v.TxHash,
+		})
+	}
+	return events, nil
+}
+
+func (w *Wallet) SubmittedWhitelistRemovalEvents(ctx context.Context, block *big.Int) ([]*Event, error) {
+	// Create a query for whitelist addition events.
+	query := ethereum.FilterQuery{
+		FromBlock: nil,
+		ToBlock:   block,
+		Addresses: []common.Address{w.address},
+		Topics:    [][]common.Hash{{w.abi.Events["SubmittedWhitelistRemoval"].Id()}},
+	}
+	// Get the contract logs.
+	logs, err := w.ethereum.FilterLogs(ctx, query)
+	if err != nil {
+		return nil, err
+	}
+	// Create an array of event objects.
 	var events []*Event
 	for _, v := range logs {
 		// Decode event parameters.
@@ -564,18 +610,18 @@ func (w *Wallet) RemovedFromWhitelistEvents(ctx context.Context, block *big.Int)
 		FromBlock: nil,
 		ToBlock:   block,
 		Addresses: []common.Address{w.address},
-		Topics:    [][]common.Hash{{walletABI.Events["RemovedFromWhitelist"].Id()}},
+		Topics:    [][]common.Hash{{w.abi.Events["RemovedFromWhitelist"].Id()}},
 	}
 	// Get the contract logs.
 	logs, err := w.ethereum.FilterLogs(ctx, query)
 	if err != nil {
 		return nil, err
 	}
-	// Create a list of logged outgoing events.
+	// Create an array of event objects.
 	var events []*Event
 	for _, v := range logs {
 		// Decode event parameters.
-		if len(v.Data) < 64 {
+		if len(v.Data) < 96 {
 			return nil, ErrInvalidEventData
 		}
 		var data [][]byte
@@ -598,18 +644,18 @@ func (w *Wallet) SetSpendLimitEvents(ctx context.Context, block *big.Int) ([]*Ev
 		FromBlock: nil,
 		ToBlock:   block,
 		Addresses: []common.Address{w.address},
-		Topics:    [][]common.Hash{{walletABI.Events["SetSpendLimit"].Id()}},
+		Topics:    [][]common.Hash{{w.abi.Events["SetSpendLimit"].Id()}},
 	}
 	// Get the contract logs.
 	logs, err := w.ethereum.FilterLogs(ctx, query)
 	if err != nil {
 		return nil, err
 	}
-	// Create a list of logged outgoing events.
+	// Create an array of event objects.
 	var events []*Event
 	for _, v := range logs {
 		// Decode event parameters.
-		if len(v.Data) != 32 {
+		if len(v.Data) != 64 {
 			return nil, ErrInvalidEventData
 		}
 		var data [][]byte
@@ -632,18 +678,18 @@ func (w *Wallet) SetTopUpLimitEvents(ctx context.Context, block *big.Int) ([]*Ev
 		FromBlock: nil,
 		ToBlock:   block,
 		Addresses: []common.Address{w.address},
-		Topics:    [][]common.Hash{{walletABI.Events["SetTopUpLimit"].Id()}},
+		Topics:    [][]common.Hash{{w.abi.Events["SetTopUpLimit"].Id()}},
 	}
 	// Get the contract logs.
 	logs, err := w.ethereum.FilterLogs(ctx, query)
 	if err != nil {
 		return nil, err
 	}
-	// Create a list of logged outgoing events.
+	// Create an array of event objects.
 	var events []*Event
 	for _, v := range logs {
 		// Decode event parameters.
-		if len(v.Data) != 32 {
+		if len(v.Data) != 64 {
 			return nil, ErrInvalidEventData
 		}
 		var data [][]byte
@@ -666,14 +712,14 @@ func (w *Wallet) ToppedUpGasEvents(ctx context.Context, block *big.Int) ([]*Even
 		FromBlock: nil,
 		ToBlock:   block,
 		Addresses: []common.Address{w.address},
-		Topics:    [][]common.Hash{{walletABI.Events["ToppedUpGas"].Id()}},
+		Topics:    [][]common.Hash{{w.abi.Events["ToppedUpGas"].Id()}},
 	}
 	// Get the contract logs.
 	logs, err := w.ethereum.FilterLogs(ctx, query)
 	if err != nil {
 		return nil, err
 	}
-	// Create a list of logged outgoing events.
+	// Create an array of event objects.
 	var events []*Event
 	for _, v := range logs {
 		// Decode event parameters.
@@ -700,14 +746,14 @@ func (w *Wallet) TransferredEvents(ctx context.Context, block *big.Int) ([]*Even
 		FromBlock: nil,
 		ToBlock:   block,
 		Addresses: []common.Address{w.address},
-		Topics:    [][]common.Hash{{walletABI.Events["Transferred"].Id()}},
+		Topics:    [][]common.Hash{{w.abi.Events["Transferred"].Id()}},
 	}
 	// Get the contract logs.
 	logs, err := w.ethereum.FilterLogs(ctx, query)
 	if err != nil {
 		return nil, err
 	}
-	// Create a list of logged outgoing events.
+	// Create an array of event objects.
 	var events []*Event
 	for _, v := range logs {
 		// Decode event parameters.
@@ -734,14 +780,14 @@ func (w *Wallet) ReceivedEvents(ctx context.Context, block *big.Int) ([]*Event, 
 		FromBlock: nil,
 		ToBlock:   block,
 		Addresses: []common.Address{w.address},
-		Topics:    [][]common.Hash{{walletABI.Events["Received"].Id()}},
+		Topics:    [][]common.Hash{{w.abi.Events["Received"].Id()}},
 	}
 	// Get the contract logs.
 	logs, err := w.ethereum.FilterLogs(ctx, query)
 	if err != nil {
 		return nil, err
 	}
-	// Create a list of logged outgoing events.
+	// Create an array of event objects.
 	var events []*Event
 	for _, v := range logs {
 		// Decode event parameters.
@@ -768,9 +814,17 @@ func construct(opts *ConstructOpts, eth bind.ContractBackend, address *common.Ad
 	if value == nil {
 		value = new(big.Int)
 	}
-	var err error
+	nonce := opts.Nonce
+	if opts.Nonce == 0 {
+		var err error
+		nonce, err = eth.PendingNonceAt(opts.Context, opts.From)
+		if err != nil {
+			return nil, err
+		}
+	}
 	gasPrice := opts.GasPrice
 	if opts.GasPrice == nil {
+		var err error
 		gasPrice, err = eth.SuggestGasPrice(opts.Context)
 		if err != nil {
 			return nil, err
@@ -787,6 +841,7 @@ func construct(opts *ConstructOpts, eth bind.ContractBackend, address *common.Ad
 				return nil, ErrNoCode
 			}
 		}
+		var err error
 		gasLimit, err = eth.EstimateGas(opts.Context, ethereum.CallMsg{
 			From:  opts.From,
 			To:    address,
@@ -798,12 +853,12 @@ func construct(opts *ConstructOpts, eth bind.ContractBackend, address *common.Ad
 		}
 	}
 	if address == nil && opts.Sign == nil {
-		return types.NewContractCreation(opts.Nonce, new(big.Int), gasLimit+gasLimit/10, gasPrice, data), nil
+		return types.NewContractCreation(nonce, new(big.Int), gasLimit+gasLimit/10, gasPrice, data), nil
 	} else if address != nil && opts.Sign == nil {
-		return types.NewTransaction(opts.Nonce, *address, new(big.Int), gasLimit+gasLimit/10, gasPrice, data), nil
+		return types.NewTransaction(nonce, *address, new(big.Int), gasLimit+gasLimit/10, gasPrice, data), nil
 	} else if address == nil && opts.Sign != nil {
-		return opts.Sign(opts.Context, types.NewContractCreation(opts.Nonce, new(big.Int), gasLimit+gasLimit/10, gasPrice, data))
+		return opts.Sign(opts.Context, types.NewContractCreation(nonce, new(big.Int), gasLimit+gasLimit/10, gasPrice, data))
 	} else {
-		return opts.Sign(opts.Context, types.NewTransaction(opts.Nonce, *address, new(big.Int), gasLimit+gasLimit/10, gasPrice, data))
+		return opts.Sign(opts.Context, types.NewTransaction(nonce, *address, new(big.Int), gasLimit+gasLimit/10, gasPrice, data))
 	}
 }

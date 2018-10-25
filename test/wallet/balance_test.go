@@ -9,12 +9,13 @@ import (
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	"github.com/tokencard/contracts/pkg/bindings/mocks"
+	. "github.com/tokencard/contracts/test/shared"
 )
 
 var _ = Describe("balance", func() {
 	Context("When the contract has no balance", func() {
 		It("should return 0", func() {
-			b, err := w.Balance(nil, common.HexToAddress("0x0"))
+			b, err := Wallet.Balance(nil, common.HexToAddress("0x0"))
 			Expect(err).ToNot(HaveOccurred())
 			Expect(b.String()).To(Equal("0"))
 		})
@@ -22,13 +23,13 @@ var _ = Describe("balance", func() {
 
 	Context("When contract has 1 ETH", func() {
 		BeforeEach(func() {
-			bankAccount.MustTransfer(be, wa, ONE_ETH)
+			BankAccount.MustTransfer(Backend, WalletAddress, EthToWei(1))
 		})
 
 		It("should return 1 ETH", func() {
-			b, err := w.Balance(nil, common.HexToAddress("0x0"))
+			b, err := Wallet.Balance(nil, common.HexToAddress("0x0"))
 			Expect(err).ToNot(HaveOccurred())
-			Expect(b.String()).To(Equal(ONE_ETH.String()))
+			Expect(b.String()).To(Equal(EthToWei(1).String()))
 		})
 	})
 
@@ -37,22 +38,22 @@ var _ = Describe("balance", func() {
 		var ta common.Address
 		BeforeEach(func() {
 			var err error
-			ta, _, t, err = mocks.DeployToken(bankAccount.TransactOpts(), be)
+			ta, _, t, err = mocks.DeployToken(BankAccount.TransactOpts(), Backend)
 			Expect(err).ToNot(HaveOccurred())
 
-			tx, err := t.Credit(bankAccount.TransactOpts(), wa, big.NewInt(1))
+			tx, err := t.Credit(BankAccount.TransactOpts(), WalletAddress, big.NewInt(1))
 
 			Expect(err).ToNot(HaveOccurred())
-			be.Commit()
+			Backend.Commit()
 
-			r, err := be.TransactionReceipt(context.Background(), tx.Hash())
+			r, err := Backend.TransactionReceipt(context.Background(), tx.Hash())
 			Expect(err).ToNot(HaveOccurred())
 			Expect(r.Status).To(Equal(types.ReceiptStatusSuccessful))
 
 		})
 
 		It("Balance for that token should return 1", func() {
-			b, err := w.Balance(nil, ta)
+			b, err := Wallet.Balance(nil, ta)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(b.String()).To(Equal("1"))
 		})

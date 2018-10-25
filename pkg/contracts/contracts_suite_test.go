@@ -2,7 +2,6 @@ package contracts_test
 
 import (
 	"context"
-	"math/big"
 	"testing"
 
 	"github.com/ethereum/go-ethereum/common"
@@ -10,59 +9,50 @@ import (
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	"github.com/tokencard/contracts/pkg/contracts"
-	"github.com/tokencard/ethertest"
+	. "github.com/tokencard/contracts/test/shared"
 )
 
-func TestContracts(t *testing.T) {
+func TestContractsSuite(t *testing.T) {
 	RegisterFailHandler(Fail)
-	RunSpecs(t, "Contracts Suite")
+	RunSpecs(t, "Contract Suite")
 }
 
-var testRig = ethertest.NewTestRig()
-var bankAccount = ethertest.NewAccount()
+var walletWrapper *contracts.Wallet
+var walletWrapperAddress common.Address
+var opts *contracts.ConstructOpts
 
-var _ = BeforeSuite(func() {
-	testRig.AddGenesisAccountAllocation(bankAccount.Address(), ethToWei(200))
+var _ = BeforeEach(func() {
+	err := InitializeBackend()
+	Expect(err).ToNot(HaveOccurred())
+
+	opts = &contracts.ConstructOpts{
+		From:     BankAccount.Address(),
+		Nonce:    0,
+		Value:    nil,
+		GasPrice: nil,
+		GasLimit: 0,
+		Sign:     signTransaction,
+		Context:  context.Background(),
+	}
+
+	var signedTx *types.Transaction
+	walletWrapperAddress, signedTx, err = contracts.DeployWallet(opts, Backend, BankAccount.Address(), false, ENSRegistryAddress, OracleName, ControllerName, EthToWei(100))
+	Expect(err).ToNot(HaveOccurred())
+
+	Expect(Backend.SendTransaction(context.Background(), signedTx)).To(Succeed())
+	Backend.Commit()
+	Expect(isSuccessful(signedTx)).To(BeTrue())
+
+	walletWrapper, err = contracts.NewWallet(Backend, walletWrapperAddress)
+	Expect(err).ToNot(HaveOccurred())
 })
 
-func ethToWei(amount int) *big.Int {
-	r := big.NewInt(1000000000000000000)
-	return r.Mul(r, big.NewInt(int64(amount)))
-}
-func finneyToWei(amount int) *big.Int {
-	r := big.NewInt(1000000000000000)
-	return r.Mul(r, big.NewInt(int64(amount)))
-}
-
-func gweiToWei(amount int) *big.Int {
-	r := big.NewInt(1000000000)
-	return r.Mul(r, big.NewInt(int64(amount)))
+func signTransaction(_ context.Context, tx *types.Transaction) (*types.Transaction, error) {
+	return BankAccount.SignTransaction(Backend, tx)
 }
 
 func isSuccessful(tx *types.Transaction) bool {
-	r, err := be.TransactionReceipt(context.Background(), tx.Hash())
+	r, err := Backend.TransactionReceipt(context.Background(), tx.Hash())
 	Expect(err).ToNot(HaveOccurred())
 	return r.Status == types.ReceiptStatusSuccessful
 }
-
-var be ethertest.TestBackend
-
-var _ = BeforeEach(func() {
-	be = testRig.NewTestBackend()
-})
-
-var _ = Describe("DeployWallet", func() {
-	It("Deploys a wallet", func() {
-
-		_, tx, err := contracts.DeployWallet(&contracts.ConstructOpts{}, be, bankAccount.Address(), false, common.Address{}, [32]byte{}, [32]byte{}, big.NewInt(10))
-		Expect(err).ToNot(HaveOccurred())
-
-		signed, err := bankAccount.SignTransaction(be, tx)
-		Expect(err).ToNot(HaveOccurred())
-
-		Expect(be.SendTransaction(context.Background(), signed)).To(Succeed())
-		be.Commit()
-		Expect(isSuccessful(signed)).To(BeTrue())
-
-	})
-})

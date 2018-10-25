@@ -7,15 +7,15 @@ import (
 	"github.com/ethereum/go-ethereum/core/types"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
+	. "github.com/tokencard/contracts/test/shared"
 	"github.com/tokencard/ethertest"
-	. "github.com/tokencard/ethertest"
 )
 
 var _ = Describe("topUpGas", func() {
 
 	Context("when the wallet has enough ETH", func() {
 		BeforeEach(func() {
-			bankAccount.MustTransfer(be, wa, ethToWei(10))
+			BankAccount.MustTransfer(Backend, WalletAddress, EthToWei(10))
 		})
 
 		var tx *types.Transaction
@@ -23,15 +23,15 @@ var _ = Describe("topUpGas", func() {
 		var caller *ethertest.Account
 
 		BeforeEach(func() {
-			caller = controller
-			bankAccount.MustTransfer(be, controller.Address(), ONE_ETH)
+			caller = Controller
+			BankAccount.MustTransfer(Backend, Controller.Address(), EthToWei(1))
 		})
 
 		Context("When called by the wallet controller and is lower than top up limit", func() {
 
 			BeforeEach(func() {
-				tx, err = w.TopUpGas(caller.TransactOpts(WithGasLimit(81000)), ONE_FINNEY)
-				be.Commit()
+				tx, err = Wallet.TopUpGas(caller.TransactOpts(ethertest.WithGasLimit(81000)), FinneyToWei(1))
+				Backend.Commit()
 			})
 
 			It("Should not return error", func() {
@@ -46,9 +46,9 @@ var _ = Describe("topUpGas", func() {
 		Context("When the value is above top up limit", func() {
 
 			BeforeEach(func() {
-				tx, err = w.TopUpGas(caller.TransactOpts(WithGasLimit(81000)), ONE_ETH)
+				tx, err = Wallet.TopUpGas(caller.TransactOpts(ethertest.WithGasLimit(81000)), EthToWei(1))
 				Expect(err).ToNot(HaveOccurred())
-				be.Commit()
+				Backend.Commit()
 			})
 
 			It("should not return error", func() {
@@ -60,31 +60,31 @@ var _ = Describe("topUpGas", func() {
 			})
 
 			It("should top up only the top up limit of the gas", func() {
-				b, e := be.BalanceAt(context.Background(), wa, nil)
+				b, e := Backend.BalanceAt(context.Background(), WalletAddress, nil)
 				Expect(e).ToNot(HaveOccurred())
 				Expect(b.String()).To(Equal("9500000000000000000"))
-				Expect(owner.Balance(be).String()).To(Equal("1500000000000000000"))
+				Expect(Owner.Balance(Backend).String()).To(Equal("1500000000000000000"))
 			})
 
 		})
 
 		Context("When daily limit has been exausted", func() {
 			BeforeEach(func() {
-				caller = controller
-				bankAccount.MustTransfer(be, controller.Address(), ONE_ETH)
+				caller = Controller
+				BankAccount.MustTransfer(Backend, Controller.Address(), EthToWei(1))
 			})
 
 			BeforeEach(func() {
-				tx, err = w.TopUpGas(caller.TransactOpts(WithGasLimit(81000)), ONE_ETH)
+				tx, err = Wallet.TopUpGas(caller.TransactOpts(ethertest.WithGasLimit(81000)), EthToWei(1))
 				Expect(err).ToNot(HaveOccurred())
-				be.Commit()
+				Backend.Commit()
 				Expect(isSuccessful(tx)).To(BeTrue())
 			})
 
 			BeforeEach(func() {
-				tx, err = w.TopUpGas(caller.TransactOpts(WithGasLimit(165000)), ONE_ETH)
+				tx, err = Wallet.TopUpGas(caller.TransactOpts(ethertest.WithGasLimit(165000)), EthToWei(1))
 				Expect(err).ToNot(HaveOccurred())
-				be.Commit()
+				Backend.Commit()
 			})
 
 			It("should not return error", func() {
@@ -97,14 +97,14 @@ var _ = Describe("topUpGas", func() {
 
 			Context("When I wait for one day", func() {
 				BeforeEach(func() {
-					be.AdjustTime(time.Hour*24 + time.Second)
-					be.Commit()
+					Backend.AdjustTime(time.Hour*24 + time.Second)
+					Backend.Commit()
 				})
 
 				BeforeEach(func() {
-					tx, err = w.TopUpGas(caller.TransactOpts(WithGasLimit(165000)), ONE_ETH)
+					tx, err = Wallet.TopUpGas(caller.TransactOpts(ethertest.WithGasLimit(165000)), EthToWei(1))
 					Expect(err).ToNot(HaveOccurred())
-					be.Commit()
+					Backend.Commit()
 				})
 
 				It("should not return error", func() {
@@ -117,10 +117,10 @@ var _ = Describe("topUpGas", func() {
 
 				It("should top up only the top up limit of the gas", func() {
 
-					b, e := be.BalanceAt(context.Background(), wa, nil)
+					b, e := Backend.BalanceAt(context.Background(), WalletAddress, nil)
 					Expect(e).ToNot(HaveOccurred())
 					Expect(b.String()).To(Equal("9000000000000000000"))
-					Expect(owner.Balance(be).String()).To(Equal("2000000000000000000"))
+					Expect(Owner.Balance(Backend).String()).To(Equal("2000000000000000000"))
 				})
 
 			})
@@ -129,15 +129,15 @@ var _ = Describe("topUpGas", func() {
 
 		Context("When called bu the wallet owner", func() {
 			BeforeEach(func() {
-				caller = owner
+				caller = Owner
 			})
 
 			Context("When the value is lower than top up limit", func() {
 
 				BeforeEach(func() {
-					tx, err = w.TopUpGas(caller.TransactOpts(WithGasLimit(81000)), finneyToWei(500))
+					tx, err = Wallet.TopUpGas(caller.TransactOpts(ethertest.WithGasLimit(81000)), FinneyToWei(500))
 					Expect(err).ToNot(HaveOccurred())
-					be.Commit()
+					Backend.Commit()
 				})
 
 				It("should not return error", func() {
@@ -153,9 +153,9 @@ var _ = Describe("topUpGas", func() {
 			Context("When the value is above top up limit", func() {
 
 				BeforeEach(func() {
-					tx, err = w.TopUpGas(caller.TransactOpts(WithGasLimit(81000)), finneyToWei(800))
+					tx, err = Wallet.TopUpGas(caller.TransactOpts(ethertest.WithGasLimit(81000)), FinneyToWei(800))
 					Expect(err).ToNot(HaveOccurred())
-					be.Commit()
+					Backend.Commit()
 				})
 
 				It("should not return error", func() {
@@ -167,10 +167,10 @@ var _ = Describe("topUpGas", func() {
 				})
 
 				It("should top up only the top up limit of the gas", func() {
-					b, e := be.BalanceAt(context.Background(), wa, nil)
+					b, e := Backend.BalanceAt(context.Background(), WalletAddress, nil)
 					Expect(e).ToNot(HaveOccurred())
 					Expect(b.String()).To(Equal("9500000000000000000"))
-					Expect(owner.Balance(be).String()).To(AlmostEqual("1500000000000000000"))
+					Expect(Owner.Balance(Backend).String()).To(AlmostEqual("1500000000000000000"))
 				})
 
 			})
@@ -178,14 +178,14 @@ var _ = Describe("topUpGas", func() {
 			Context("When daily limit has been exausted", func() {
 
 				BeforeEach(func() {
-					tx, err = w.TopUpGas(caller.TransactOpts(WithGasLimit(81000)), finneyToWei(500))
+					tx, err = Wallet.TopUpGas(caller.TransactOpts(ethertest.WithGasLimit(81000)), FinneyToWei(500))
 					Expect(err).ToNot(HaveOccurred())
-					be.Commit()
+					Backend.Commit()
 				})
 
 				BeforeEach(func() {
-					tx, err = w.TopUpGas(caller.TransactOpts(WithGasLimit(165000)), ONE_ETH)
-					be.Commit()
+					tx, err = Wallet.TopUpGas(caller.TransactOpts(ethertest.WithGasLimit(165000)), EthToWei(1))
+					Backend.Commit()
 				})
 
 				It("should not return error", func() {
@@ -198,13 +198,13 @@ var _ = Describe("topUpGas", func() {
 
 				Context("When I wait for one day", func() {
 					BeforeEach(func() {
-						be.AdjustTime(time.Hour*24 + time.Second)
-						be.Commit()
+						Backend.AdjustTime(time.Hour*24 + time.Second)
+						Backend.Commit()
 					})
 
 					BeforeEach(func() {
-						tx, err = w.TopUpGas(caller.TransactOpts(WithGasLimit(165000)), ONE_ETH)
-						be.Commit()
+						tx, err = Wallet.TopUpGas(caller.TransactOpts(ethertest.WithGasLimit(165000)), EthToWei(1))
+						Backend.Commit()
 					})
 
 					It("should not return error", func() {
@@ -217,10 +217,10 @@ var _ = Describe("topUpGas", func() {
 					})
 
 					It("should top up only the top up limit of the gas", func() {
-						b, e := be.BalanceAt(context.Background(), wa, nil)
+						b, e := Backend.BalanceAt(context.Background(), WalletAddress, nil)
 						Expect(e).ToNot(HaveOccurred())
 						Expect(b.String()).To(Equal("9000000000000000000"))
-						Expect(owner.Balance(be).String()).To(AlmostEqual("2000000000000000000"))
+						Expect(Owner.Balance(Backend).String()).To(AlmostEqual("2000000000000000000"))
 					})
 
 				})
@@ -230,13 +230,13 @@ var _ = Describe("topUpGas", func() {
 		Context("When called by some random address and is lower than top up limit", func() {
 
 			BeforeEach(func() {
-				caller = randomAccount
+				caller = RandomAccount
 			})
 
 			BeforeEach(func() {
-				tx, err = w.TopUpGas(caller.TransactOpts(WithGasLimit(165000)), ONE_ETH)
+				tx, err = Wallet.TopUpGas(caller.TransactOpts(ethertest.WithGasLimit(165000)), EthToWei(1))
 				Expect(err).ToNot(HaveOccurred())
-				be.Commit()
+				Backend.Commit()
 			})
 
 			It("should not return error", func() {
