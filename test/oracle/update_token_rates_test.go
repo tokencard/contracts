@@ -8,7 +8,8 @@ import (
 	"github.com/ethereum/go-ethereum/core/types"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	. "github.com/tokencard/ethertest"
+	. "github.com/tokencard/contracts/test/shared"
+	"github.com/tokencard/ethertest"
 )
 
 var _ = Describe("updateRates", func() {
@@ -16,15 +17,15 @@ var _ = Describe("updateRates", func() {
 	Context("When tokens are already supported", func() {
 		BeforeEach(func() {
 			tokens := []common.Address{common.HexToAddress("0x0"), common.HexToAddress("0x1")}
-			tx, err := oracle.AddTokens(
-				controller.TransactOpts(),
+			tx, err := Oracle.AddTokens(
+				Controller.TransactOpts(),
 				tokens,
-				stringsToByte32("BNT", "TKN"),
-				[]*big.Int{calculateMagnitude(big.NewInt(18)), calculateMagnitude(big.NewInt(8))},
+				StringsToByte32("BNT", "TKN"),
+				[]*big.Int{DecimalsToMagnitude(big.NewInt(18)), DecimalsToMagnitude(big.NewInt(8))},
 				big.NewInt(20180913153211),
 			)
 			Expect(err).ToNot(HaveOccurred())
-			be.Commit()
+			Backend.Commit()
 			Expect(isSuccessful(tx)).To(BeTrue())
 		})
 
@@ -32,15 +33,15 @@ var _ = Describe("updateRates", func() {
 			var tx *types.Transaction
 			var err error
 			BeforeEach(func() {
-				tx, err = oracle.UpdateTokenRates(controller.TransactOpts(WithValue(big.NewInt(100000000))))
+				tx, err = Oracle.UpdateTokenRates(Controller.TransactOpts(ethertest.WithValue(big.NewInt(100000000))))
 				Expect(err).ToNot(HaveOccurred())
-				be.Commit()
+				Backend.Commit()
 			})
 			It("Should succeed", func() {
 				Expect(isSuccessful(tx)).To(BeTrue())
 			})
 			It("Should emit an Requested Update event", func() {
-				it, err := oracle.FilterRequestedUpdate(nil)
+				it, err := Oracle.FilterRequestedUpdate(nil)
 				Expect(err).ToNot(HaveOccurred())
 				Expect(it.Next()).To(BeTrue())
 				evt := it.Event
@@ -51,7 +52,7 @@ var _ = Describe("updateRates", func() {
 				Expect(evt.Symbol).To(Equal("TKN"))
 			})
 			It("Should transfer value to oracle contract", func() {
-				b, err := be.BalanceAt(context.Background(), oracleAddress, nil)
+				b, err := Backend.BalanceAt(context.Background(), OracleAddress, nil)
 				Expect(err).ToNot(HaveOccurred())
 				Expect(b.String()).NotTo(Equal("0"))
 				Expect(b.String()).NotTo(Equal("100000000"))
@@ -62,23 +63,23 @@ var _ = Describe("updateRates", func() {
 			var tx *types.Transaction
 			var err error
 			BeforeEach(func() {
-				tx, err = oracle.UpdateTokenRates(controller.TransactOpts())
+				tx, err = Oracle.UpdateTokenRates(Controller.TransactOpts())
 				Expect(err).ToNot(HaveOccurred())
-				be.Commit()
+				Backend.Commit()
 			})
 			It("Should succeed", func() {
 				Expect(isSuccessful(tx)).To(BeTrue())
 			})
 			It("Should emit an Failed Update Request event", func() {
-				it, err := oracle.FilterFailedUpdateRequest(nil)
+				it, err := Oracle.FilterFailedUpdateRequest(nil)
 				Expect(err).ToNot(HaveOccurred())
 				Expect(it.Next()).To(BeTrue())
 				evt := it.Event
 				Expect(it.Next()).To(BeFalse())
 				Expect(evt.Reason).To(Equal("insufficient balance"))
 			})
-			It("Oracle contract balance should remain 0", func() {
-				b, err := be.BalanceAt(context.Background(), oracleAddress, nil)
+			It("Oracle contract balance should Backend 0", func() {
+				b, err := Backend.BalanceAt(context.Background(), OracleAddress, nil)
 				Expect(err).ToNot(HaveOccurred())
 				Expect(b.String()).To(Equal("0"))
 			})
@@ -86,9 +87,9 @@ var _ = Describe("updateRates", func() {
 
 		Context("When called by a random address", func() {
 			It("Should fail", func() {
-				tx, err := oracle.UpdateTokenRates(randomAccount.TransactOpts(WithGasLimit(100000)))
+				tx, err := Oracle.UpdateTokenRates(RandomAccount.TransactOpts(ethertest.WithGasLimit(100000)))
 				Expect(err).ToNot(HaveOccurred())
-				be.Commit()
+				Backend.Commit()
 				Expect(isGasExhausted(tx, 100000)).To(BeFalse())
 				Expect(isSuccessful(tx)).To(BeFalse())
 			})
@@ -102,20 +103,20 @@ var _ = Describe("updateRates", func() {
 			var tx *types.Transaction
 			var err error
 			BeforeEach(func() {
-				tx, err = oracle.UpdateTokenRates(controller.TransactOpts(WithValue(big.NewInt(100000000))))
+				tx, err = Oracle.UpdateTokenRates(Controller.TransactOpts(ethertest.WithValue(big.NewInt(100000000))))
 				Expect(err).ToNot(HaveOccurred())
-				be.Commit()
+				Backend.Commit()
 			})
 			It("Should succeed", func() {
 				Expect(isSuccessful(tx)).To(BeTrue())
 			})
 			It("Should not make any query", func() {
-				b, err := be.BalanceAt(context.Background(), oracleAddress, nil)
+				b, err := Backend.BalanceAt(context.Background(), OracleAddress, nil)
 				Expect(err).ToNot(HaveOccurred())
 				Expect(b.String()).To(Equal("100000000"))
 			})
 			It("Should emit an Failed Update Request event", func() {
-				it, err := oracle.FilterFailedUpdateRequest(nil)
+				it, err := Oracle.FilterFailedUpdateRequest(nil)
 				Expect(err).ToNot(HaveOccurred())
 				Expect(it.Next()).To(BeTrue())
 				evt := it.Event
