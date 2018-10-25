@@ -242,7 +242,6 @@ contract SpendLimit is Controllable, Ownable {
             _spendLimitDay += extraDays * 24 hours;
             // Set the available limit to the current spend limit.
             _spendAvailable = spendLimit;
-            //TODO mischa do we want an event here, how do we test this, what event are we checking for ?
         }
     }
 
