@@ -16,9 +16,9 @@ interface IOracle {
 contract JSON {
     using Strings for *;
 
-    /// @dev Extracts JSON rate value from the response object.
-    /// @param _json body of the JSON response from the CryptoCompare API.
-    /// @param _symbol asset symbol used to extract the correct json field.
+    // @dev Extracts JSON rate value from the response object.
+    // @param _json body of the JSON response from the CryptoCompare API.
+    // @param _symbol asset symbol used to extract the correct json field.
     function parseRate(string _json, string _symbol) internal pure returns (string) {
         Strings.slice memory body = _json.toSlice();
         body.beyond("{".toSlice());
@@ -55,8 +55,8 @@ contract Date {
     bytes32 constant private NOVEMBER = keccak256("Nov");
     bytes32 constant private DECEMBER = keccak256("Dec");
 
-    /// @return the number of the month based on its name.
-    /// @param _month the first three letters of a month's name e.g. "Jan".
+    // @return the number of the month based on its name.
+    // @param _month the first three letters of a month's name e.g. "Jan".
     function monthToNumber(string _month) internal pure returns (uint8) {
         bytes32 month = keccak256(_month);
         if (month == JANUARY) {
@@ -94,8 +94,8 @@ contract Date {
 contract Base64 {
     bytes constant BASE64_DECODE_CHAR = hex"000000000000000000000000000000000000000000000000000000000000000000000000000000000000003e003e003f3435363738393a3b3c3d00000000000000000102030405060708090a0b0c0d0e0f10111213141516171819000000003f001a1b1c1d1e1f202122232425262728292a2b2c2d2e2f30313233";
 
-    /// @return decoded array of bytes.
-    /// @param _encoded base 64 encoded array of bytes.
+    // @return decoded array of bytes.
+    // @param _encoded base 64 encoded array of bytes.
     function base64decode(bytes _encoded) internal pure returns (bytes) {
         byte v1;
         byte v2;
@@ -146,11 +146,13 @@ contract Oracle is UsingOraclize, Base64, Date, JSON, Controllable, IOracle {
     using Strings for *;
     using SafeMath for uint256;
 
+    //todo mischa why don't we have our controller address here so we know who ?
     event AddedToken(address _token, string _symbol, uint _magnitude);
     event RemovedToken(address _token);
     event UpdatedTokenRate(address _token, uint _rate);
 
     event SetGasPrice(uint _gasPrice);
+    //todo mischa both of these guys as well 
     event Converted(address _token, uint _amount, uint _ether);
 
     event RequestedUpdate(string _symbol);
@@ -175,32 +177,33 @@ contract Oracle is UsingOraclize, Base64, Date, JSON, Controllable, IOracle {
     bytes public APIPublicKey;
     mapping(bytes32 => address) private _queryToToken;
 
-    /// @dev Construct the oracle with multiple controllers, address resolver and custom gas price.
-    /// @dev _resolver is the oraclize address resolver contract address.
-    //  @param _ens is the address of the ENS.
-    //  @param _controllerName is the ENS name of the Controller.
+    // @dev Construct the oracle with multiple controllers, address resolver and custom gas price.
+    // @dev _resolver is the oraclize address resolver contract address.
+    // @param _ens is the address of the ENS.
+    // @param _controllerName is the ENS name of the Controller.
     constructor(address _resolver, address _ens, bytes32 _controllerName) Controllable(_ens, _controllerName) public {
         APIPublicKey = hex"a0f4f688350018ad1b9785991c0bde5f704b005dc79972b114dbed4a615a983710bfc647ebe5a320daa28771dce6a2d104f5efa2e4a85ba3760b76d46f8571ca";
         OAR = OraclizeAddrResolverI(_resolver);
+        //todo mischa is this the right thing?
         oraclize_setCustomGasPrice(10000000000);
         oraclize_setProof(proofType_Native);
     }
 
-    /// @dev Updates the Crypto Compare public API key.
+    // @dev Updates the Crypto Compare public API key.
     function updateAPIPublicKey(bytes _publicKey) external onlyController {
         APIPublicKey = _publicKey;
         emit SetCryptoComparePublicKey(_publicKey);
     }
 
-    /// @dev Sets the gas price used by oraclize query.
+    // @dev Sets the gas price used by oraclize query.
     function setCustomGasPrice(uint _gasPrice) external onlyController {
         oraclize_setCustomGasPrice(_gasPrice);
         emit SetGasPrice(_gasPrice);
     }
 
-    /// @dev Convert ERC20 token amount to the corresponding ether amount (used by the wallet contract).
-    /// @param _token ERC20 token contract address.
-    /// @param _amount amount of token in base units.
+    // @dev Convert ERC20 token amount to the corresponding ether amount (used by the wallet contract).
+    // @param _token ERC20 token contract address.
+    // @param _amount amount of token in base units.
     function convert(address _token, uint _amount) external view returns (uint) {
         // Store the token in memory to save map entry lookup gas.
         Token storage token = tokens[_token];
@@ -210,11 +213,11 @@ contract Oracle is UsingOraclize, Base64, Date, JSON, Controllable, IOracle {
         return _amount.mul(token.rate).div(token.magnitude);
     }
 
-    /// @dev Add ERC20 tokens to the list of supported tokens.
-    /// @param _tokens ERC20 token contract addresses.
-    /// @param _symbols ERC20 token names.
-    /// @param _magnitude 10 to the power of number of decimal places used by each ERC20 token.
-    /// @param _updateDate date for the token updates. This will be compared to when oracle updates are received.
+    // @dev Add ERC20 tokens to the list of supported tokens.
+    // @param _tokens ERC20 token contract addresses.
+    // @param _symbols ERC20 token names.
+    // @param _magnitude 10 to the power of number of decimal places used by each ERC20 token.
+    // @param _updateDate date for the token updates. This will be compared to when oracle updates are received.
     function addTokens(address[] _tokens, bytes32[] _symbols, uint[] _magnitude, uint _updateDate) external onlyController {
         // Require that all parameters have the same length.
         require(_tokens.length == _symbols.length && _tokens.length == _magnitude.length, "parameter lengths do not match");
@@ -241,26 +244,21 @@ contract Oracle is UsingOraclize, Base64, Date, JSON, Controllable, IOracle {
         }
     }
 
-    /// @dev Remove ERC20 tokens from the list of supported tokens.
-    /// @param _tokens ERC20 token contract addresses.
+    // @dev Remove ERC20 tokens from the list of supported tokens.
+    // @param _tokens ERC20 token contract addresses.
     function removeTokens(address[] _tokens) external onlyController {
-
         // Delete each token object from the list of supported tokens based on the addresses provided.
         for (uint i = 0; i < _tokens.length; i++) {
-
             //token must exist, reverts on duplicates as well
             require(tokens[_tokens[i]].exists, "token does not exist");
-
             // Store the token address.
             address token = _tokens[i];
-
             // Delete the token object.
             delete tokens[token];
-
             // Remove the token address from the address list.
-            for (uint ii = 0; ii < _tokenAddresses.length.sub(1); ii++) {
-                if (_tokenAddresses[ii] == token) {
-                    _tokenAddresses[ii] = _tokenAddresses[_tokenAddresses.length.sub(1)];
+            for (uint j = 0; j < _tokenAddresses.length.sub(1); j++) {
+                if (_tokenAddresses[j] == token) {
+                    _tokenAddresses[j] = _tokenAddresses[_tokenAddresses.length.sub(1)];
                     break;
                 }
             }
@@ -270,10 +268,10 @@ contract Oracle is UsingOraclize, Base64, Date, JSON, Controllable, IOracle {
         }
     }
 
-    /// @dev Update ERC20 token exchange rate manually.
-    /// @param _token ERC20 token contract address.
-    /// @param _rate ERC20 token exchange rate in wei.
-    /// @param _updateDate date for the token updates. This will be compared to when oracle updates are received.
+    // @dev Update ERC20 token exchange rate manually.
+    // @param _token ERC20 token contract address.
+    // @param _rate ERC20 token exchange rate in wei.
+    // @param _updateDate date for the token updates. This will be compared to when oracle updates are received.
     function updateTokenRate(address _token, uint _rate, uint _updateDate) external onlyController {
         // Require that the token exists.
         require(tokens[_token].exists, "token does not exist");
@@ -285,7 +283,7 @@ contract Oracle is UsingOraclize, Base64, Date, JSON, Controllable, IOracle {
         emit UpdatedTokenRate(_token, _rate);
     }
 
-    /// @dev Update ERC20 token exchange rates for all supported tokens.
+    // @dev Update ERC20 token exchange rates for all supported tokens.
     function updateTokenRates() external payable onlyController {
         _updateTokenRates();
     }
@@ -303,17 +301,14 @@ contract Oracle is UsingOraclize, Base64, Date, JSON, Controllable, IOracle {
     function __callback(bytes32 _queryID, string _result, bytes _proof) public {
         // Require that the caller is the Oraclize contract.
         require(msg.sender == oraclize_cbAddress(), "sender is not oraclize");
-
         // Use the query ID to find the matching token address.
         address _token = _queryToToken[_queryID];
         require(_token != address(0), "queryID matches to address 0");
-
         // Get the corresponding token object.
         Token storage token = tokens[_token];
 
         bool valid;
         uint timestamp;
-
         (valid, timestamp) = verifyProof(_result, _proof, APIPublicKey, token.lastUpdate);
 
         // Require that the proof is valid.
@@ -326,10 +321,10 @@ contract Oracle is UsingOraclize, Base64, Date, JSON, Controllable, IOracle {
             token.lastUpdate = timestamp;
             // Remove query from the list.
             delete _queryToToken[_queryID];
-        }
+        } 
     }
 
-    /// @dev Re-usable helper function that performs the Oraclize Query.
+    // @dev Re-usable helper function that performs the Oraclize Query.
     function _updateTokenRates() private {
         // Check if there are any existing tokens.
         if (_tokenAddresses.length == 0) {
@@ -362,11 +357,11 @@ contract Oracle is UsingOraclize, Base64, Date, JSON, Controllable, IOracle {
         }
     }
 
-    /// @dev Verify the origin proof returned by the crypto compare API.
-    /// @param _result query result in JSON format.
-    /// @param _proof origin proof from crypto compare.
-    /// @param _publicKey crypto compare public key.
-    /// @param _lastUpdate timestamp of the last time the requested token was updated.
+    // @dev Verify the origin proof returned by the crypto compare API.
+    // @param _result query result in JSON format.
+    // @param _proof origin proof from crypto compare.
+    // @param _publicKey crypto compare public key.
+    // @param _lastUpdate timestamp of the last time the requested token was updated.
     function verifyProof(string _result, bytes _proof, bytes _publicKey, uint _lastUpdate) private returns (bool, uint) {
         // Extract the signature.
         uint signatureLength = uint(_proof[1]);
@@ -384,6 +379,7 @@ contract Oracle is UsingOraclize, Base64, Date, JSON, Controllable, IOracle {
         uint timestamp;
         (dateValid, timestamp) = verifyDate(string(dateHeader), _lastUpdate);
 
+        // Check if the Date returned is valid or not
         if (!dateValid) {
             emit FailedProofVerification(_publicKey, _result, "date");
             return (false, 0);
@@ -397,12 +393,13 @@ contract Oracle is UsingOraclize, Base64, Date, JSON, Controllable, IOracle {
             return (false, 0);
         }
 
+        //todo mischa ... this is ugly i would have it the other way round :)
         // Check if the signature is valid and if the signer addresses match.
-
         if (verifySignature(headers, signature, _publicKey)) {
             emit VerifiedProof(_publicKey, _result);
             return (true, timestamp);
         }
+
         emit FailedProofVerification(_publicKey, _result, "signature");
         return (false, 0);
     }
@@ -414,9 +411,9 @@ contract Oracle is UsingOraclize, Base64, Date, JSON, Controllable, IOracle {
         return signatureOK && signer == address(keccak256(_publicKey));
     }
 
-    /// @dev Verify the signed HTTP date header.
-    /// @param _dateHeader extracted date string e.g. Wed, 12 Sep 2018 15:18:14 GMT.
-    /// @param _lastUpdate timestamp of the last time the requested token was updated.
+    // @dev Verify the signed HTTP date header.
+    // @param _dateHeader extracted date string e.g. Wed, 12 Sep 2018 15:18:14 GMT.
+    // @param _lastUpdate timestamp of the last time the requested token was updated.
     function verifyDate(string _dateHeader, uint _lastUpdate) private pure returns (bool, uint) {
         Strings.slice memory date = _dateHeader.toSlice();
         Strings.slice memory timeDelimiter = ":".toSlice();
@@ -432,7 +429,6 @@ contract Oracle is UsingOraclize, Base64, Date, JSON, Controllable, IOracle {
         uint minute = parseInt(date.split(timeDelimiter).toString());
         uint second = parseInt(date.split(timeDelimiter).toString());
 
-
         if (day > 31 || day < 1) {
             return (false, 0);
         }
@@ -444,7 +440,7 @@ contract Oracle is UsingOraclize, Base64, Date, JSON, Controllable, IOracle {
         if (year < 2018 || year > 3000) {
             return (false, 0);
         }
-
+    
         if (hour >= 24) {
             return (false, 0);
         }

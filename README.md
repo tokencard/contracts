@@ -28,7 +28,9 @@ Each user deploys their own instance of the TokenWallet ([wallet.sol](/contracts
                                └───────────────┘   
                                                                           
 ```
+
 ## Assumptions
+
 - Every user will have their own Public and Private key pair, aka their `Address`
 - TokenCard's systems will never have access to the Private Key for the user’s `Address`
 - There are a number of different "pots of tokens" for a given user:
@@ -36,6 +38,7 @@ Each user deploys their own instance of the TokenWallet ([wallet.sol](/contracts
      - An amount of ETH to pay for Gas - *Gas Level*. The *Gas Level* an amount of ETH associate with the `Address`
 
 ## Requirements
+
 - This `Address` will own all of the user’s subsequent Smart Contracts aka *Owner*
 - TokenCard `Controller` - A set of Addresses for the TokenCard application used to programmatically access methods on the TokenCard 
 - ERC20 tokens to be stored in the TokenWallet so that user can configure best in class security

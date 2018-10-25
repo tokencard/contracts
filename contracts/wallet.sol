@@ -428,6 +428,7 @@ contract Wallet is Vault {
         require(submittedTopUpLimit, "top up limit has not been submitted");
         // Assert that the pending top up limit amount is within the acceptable range.
         assert(MINIMUM_TOPUP_LIMIT <= pendingTopUpLimit && pendingTopUpLimit <= MAXIMUM_TOPUP_LIMIT);
+        //todo mischa change to require?
         // Modify top up limit based on the pending value.
         modifyTopUpLimit(pendingTopUpLimit);
         // Emit the set limit event.

@@ -10,6 +10,7 @@ contract Ownable {
 
 
     /// @dev Constructor sets the original owner of the contract and the maximum number of ownership transfers.
+    //todo mischa ... boolean only
     constructor(address _account, bool _transferable) internal {
         _owner = _account;
         _isTransferable = _transferable;
