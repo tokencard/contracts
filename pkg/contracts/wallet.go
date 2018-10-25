@@ -515,7 +515,75 @@ func (w *Wallet) AddedToWhitelistEvents(ctx context.Context, block *big.Int) ([]
 	if err != nil {
 		return nil, err
 	}
-	// Create a list of logged outgoing events.
+	// Create an array of event objects.
+	var events []*Event
+	for _, v := range logs {
+		// Decode event parameters.
+		if len(v.Data) < 96 {
+			return nil, ErrInvalidEventData
+		}
+		var data [][]byte
+		for i := 0; i < len(v.Data); i += 32 {
+			data = append(data, v.Data[i:i+32])
+		}
+		events = append(events, &Event{
+			Address:   v.Address,
+			BlockHash: v.BlockHash,
+			Data:      data,
+			TxHash:    v.TxHash,
+		})
+	}
+	return events, nil
+}
+
+func (w *Wallet) SubmittedWhitelistAdditionEvents(ctx context.Context, block *big.Int) ([]*Event, error) {
+	// Create a query for whitelist addition events.
+	query := ethereum.FilterQuery{
+		FromBlock: nil,
+		ToBlock:   block,
+		Addresses: []common.Address{w.address},
+		Topics:    [][]common.Hash{{w.abi.Events["SubmittedWhitelistAddition"].Id()}},
+	}
+	// Get the contract logs.
+	logs, err := w.ethereum.FilterLogs(ctx, query)
+	if err != nil {
+		return nil, err
+	}
+	// Create an array of event objects.
+	var events []*Event
+	for _, v := range logs {
+		// Decode event parameters.
+		if len(v.Data) < 64 {
+			return nil, ErrInvalidEventData
+		}
+		var data [][]byte
+		for i := 0; i < len(v.Data); i += 32 {
+			data = append(data, v.Data[i:i+32])
+		}
+		events = append(events, &Event{
+			Address:   v.Address,
+			BlockHash: v.BlockHash,
+			Data:      data,
+			TxHash:    v.TxHash,
+		})
+	}
+	return events, nil
+}
+
+func (w *Wallet) SubmittedWhitelistRemovalEvents(ctx context.Context, block *big.Int) ([]*Event, error) {
+	// Create a query for whitelist addition events.
+	query := ethereum.FilterQuery{
+		FromBlock: nil,
+		ToBlock:   block,
+		Addresses: []common.Address{w.address},
+		Topics:    [][]common.Hash{{w.abi.Events["SubmittedWhitelistRemoval"].Id()}},
+	}
+	// Get the contract logs.
+	logs, err := w.ethereum.FilterLogs(ctx, query)
+	if err != nil {
+		return nil, err
+	}
+	// Create an array of event objects.
 	var events []*Event
 	for _, v := range logs {
 		// Decode event parameters.
@@ -549,11 +617,11 @@ func (w *Wallet) RemovedFromWhitelistEvents(ctx context.Context, block *big.Int)
 	if err != nil {
 		return nil, err
 	}
-	// Create a list of logged outgoing events.
+	// Create an array of event objects.
 	var events []*Event
 	for _, v := range logs {
 		// Decode event parameters.
-		if len(v.Data) < 64 {
+		if len(v.Data) < 96 {
 			return nil, ErrInvalidEventData
 		}
 		var data [][]byte
@@ -583,11 +651,11 @@ func (w *Wallet) SetSpendLimitEvents(ctx context.Context, block *big.Int) ([]*Ev
 	if err != nil {
 		return nil, err
 	}
-	// Create a list of logged outgoing events.
+	// Create an array of event objects.
 	var events []*Event
 	for _, v := range logs {
 		// Decode event parameters.
-		if len(v.Data) != 32 {
+		if len(v.Data) != 64 {
 			return nil, ErrInvalidEventData
 		}
 		var data [][]byte
@@ -617,11 +685,11 @@ func (w *Wallet) SetTopUpLimitEvents(ctx context.Context, block *big.Int) ([]*Ev
 	if err != nil {
 		return nil, err
 	}
-	// Create a list of logged outgoing events.
+	// Create an array of event objects.
 	var events []*Event
 	for _, v := range logs {
 		// Decode event parameters.
-		if len(v.Data) != 32 {
+		if len(v.Data) != 64 {
 			return nil, ErrInvalidEventData
 		}
 		var data [][]byte
@@ -651,7 +719,7 @@ func (w *Wallet) ToppedUpGasEvents(ctx context.Context, block *big.Int) ([]*Even
 	if err != nil {
 		return nil, err
 	}
-	// Create a list of logged outgoing events.
+	// Create an array of event objects.
 	var events []*Event
 	for _, v := range logs {
 		// Decode event parameters.
@@ -685,7 +753,7 @@ func (w *Wallet) TransferredEvents(ctx context.Context, block *big.Int) ([]*Even
 	if err != nil {
 		return nil, err
 	}
-	// Create a list of logged outgoing events.
+	// Create an array of event objects.
 	var events []*Event
 	for _, v := range logs {
 		// Decode event parameters.
@@ -719,7 +787,7 @@ func (w *Wallet) ReceivedEvents(ctx context.Context, block *big.Int) ([]*Event, 
 	if err != nil {
 		return nil, err
 	}
-	// Create a list of logged outgoing events.
+	// Create an array of event objects.
 	var events []*Event
 	for _, v := range logs {
 		// Decode event parameters.

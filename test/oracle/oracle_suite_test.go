@@ -2,13 +2,13 @@ package oracle_test
 
 import (
 	"context"
-	"github.com/tokencard/contracts/pkg/bindings"
 	"os"
 	"testing"
 
 	"github.com/ethereum/go-ethereum/core/types"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
+	"github.com/tokencard/contracts/pkg/bindings"
 	. "github.com/tokencard/contracts/test/shared"
 )
 
