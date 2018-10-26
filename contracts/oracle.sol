@@ -14,18 +14,18 @@ interface IOracle {
 
 /// @title JSON provides JSON parsing functionality.
 contract JSON {
-    using Strings for *;
+    using strings for *;
 
     // @dev Extracts JSON rate value from the response object.
     // @param _json body of the JSON response from the CryptoCompare API.
     // @param _symbol asset symbol used to extract the correct json field.
     function parseRate(string _json, string _symbol) internal pure returns (string) {
-        Strings.slice memory body = _json.toSlice();
+        strings.slice memory body = _json.toSlice();
         body.beyond("{".toSlice());
         body.until("}".toSlice());
-        Strings.slice memory quoteMark = "\"".toSlice();
-        body.find(quoteMark.concat(_symbol.toSlice()).toSlice().concat(quoteMark).toSlice());
-        Strings.slice memory asset;
+        strings.slice memory _quote_mark = "\"".toSlice();
+        body.find(_quote_mark.concat(_symbol.toSlice()).toSlice().concat(_quote_mark).toSlice());
+        strings.slice memory asset;
         body.split(",".toSlice(), asset);
         asset.split(":".toSlice());
         return asset.toString();
@@ -143,7 +143,7 @@ contract Base64 {
 
 /// @title Oracle provides asset exchange rates and conversion functionality.
 contract Oracle is UsingOraclize, Base64, Date, JSON, Controllable, IOracle {
-    using Strings for *;
+    using strings for *;
     using SafeMath for uint256;
 
     event AddedToken(address _sender, address _token, string _symbol, uint _magnitude);
@@ -335,14 +335,14 @@ contract Oracle is UsingOraclize, Base64, Date, JSON, Controllable, IOracle {
             emit FailedUpdateRequest("insufficient balance");
         } else {
             // Set up the cryptocompare API query strings.
-            Strings.slice memory apiPrefix = "https://min-api.cryptocompare.com/data/price?fsym=".toSlice();
-            Strings.slice memory apiSuffix = "&tsyms=ETH&sign=true".toSlice();
+            strings.slice memory apiPrefix = "https://min-api.cryptocompare.com/data/price?fsym=".toSlice();
+            strings.slice memory apiSuffix = "&tsyms=ETH&sign=true".toSlice();
   
             uint gaslimit = 2000000;
             // Create a new oraclize query for each supported token.
             for (uint i = 0; i < _tokenAddresses.length; i++) {
                 // Store the token symbol used in the query.
-                Strings.slice memory symbol = tokens[_tokenAddresses[i]].symbol.toSlice();
+                strings.slice memory symbol = tokens[_tokenAddresses[i]].symbol.toSlice();
                 // Create a new oraclize query from the component strings.
                 bytes32 queryID = oraclize_query("URL", apiPrefix.concat(symbol).toSlice().concat(apiSuffix), gaslimit);
                 // Store the query ID together with the associated token address.
@@ -416,9 +416,9 @@ contract Oracle is UsingOraclize, Base64, Date, JSON, Controllable, IOracle {
     // @param _dateHeader extracted date string e.g. Wed, 12 Sep 2018 15:18:14 GMT.
     // @param _lastUpdate timestamp of the last time the requested token was updated.
     function verifyDate(string _dateHeader, uint _lastUpdate) private pure returns (bool, uint) {
-        Strings.slice memory date = _dateHeader.toSlice();
-        Strings.slice memory timeDelimiter = ":".toSlice();
-        Strings.slice memory dateDelimiter = " ".toSlice();
+        strings.slice memory date = _dateHeader.toSlice();
+        strings.slice memory timeDelimiter = ":".toSlice();
+        strings.slice memory dateDelimiter = " ".toSlice();
         // Split the date string.
         date.split(",".toSlice());
         date.split(dateDelimiter);
