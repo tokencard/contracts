@@ -156,8 +156,8 @@ contract Oracle is UsingOraclize, Base64, Date, JSON, Controllable, IOracle {
     event RequestedUpdate(address _sender, string _symbol);
     event FailedUpdateRequest(string _reason);
 
-    event VerifiedProof(address _sender, bytes _publicKey, string _result);
-    event FailedProofVerification(address _sender, bytes _publicKey, string _result, string _reason);
+    event VerifiedProof(bytes _publicKey, string _result);
+    event FailedProofVerification(bytes _publicKey, string _result, string _reason);
 
     event SetCryptoComparePublicKey(address _sender, bytes _publicKey);
 
@@ -378,7 +378,7 @@ contract Oracle is UsingOraclize, Base64, Date, JSON, Controllable, IOracle {
 
         // Check if the Date returned is valid or not
         if (!dateValid) {
-            emit FailedProofVerification(msg.sender,_publicKey, _result, "date");
+            emit FailedProofVerification(_publicKey, _result, "date");
             return (false, 0);
         }
 
@@ -386,17 +386,17 @@ contract Oracle is UsingOraclize, Base64, Date, JSON, Controllable, IOracle {
         bytes memory digest = new bytes(headersLength - 52);
         digest = copyBytes(headers, 52, headersLength - 52, digest, 0);
         if (keccak256(sha256(_result)) != keccak256(base64decode(digest))) {
-            emit FailedProofVerification(msg.sender, _publicKey, _result, "hash");
+            emit FailedProofVerification(_publicKey, _result, "hash");
             return (false, 0);
         }
 
         // Check if the signature is valid and if the signer addresses match.
         if (!verifySignature(headers, signature, _publicKey)) {
-            emit FailedProofVerification(msg.sender, _publicKey, _result, "signature");
+            emit FailedProofVerification(_publicKey, _result, "signature");
             return (false, 0);
         }
 
-        emit VerifiedProof(msg.sender, _publicKey, _result);
+        emit VerifiedProof(_publicKey, _result);
         return (true, timestamp);
     }
 
