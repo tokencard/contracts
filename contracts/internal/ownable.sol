@@ -3,27 +3,26 @@ pragma solidity ^0.4.25;
 
 /// @title Ownable has an owner address and provides basic authorization control functions.
 contract Ownable {
-    event TransferredOwnership(address _to);
+    event TransferredOwnership(address _from, address _to);
 
     address private _owner;
     bool private _isTransferable;
 
-
-    /// @dev Constructor sets the original owner of the contract and the maximum number of ownership transfers.
-    //todo mischa ... boolean only
+    // @dev Constructor sets the original owner of the contract and whether or not it is one time transferable.
     constructor(address _account, bool _transferable) internal {
         _owner = _account;
         _isTransferable = _transferable;
+        emit TransferredOwnership(address(0), _account);
     }
 
-    /// @dev Reverts if called by any account other than the owner.
+    // @dev Reverts if called by any account other than the owner.
     modifier onlyOwner() {
         require(isOwner(), "sender is not an owner");
         _;
     }
 
-    /// @dev Allows the current owner to transfer control of the contract to a new address.
-    /// @param _account address to transfer ownership to.
+    // @dev Allows the current owner to transfer control of the contract to a new address.
+    // @param _account address to transfer ownership to.
     function transferOwnership(address _account) external onlyOwner {
         // Require that the ownership is transferable.
         require(_isTransferable, "ownership is not transferable");
@@ -31,23 +30,34 @@ contract Ownable {
         require(_account != address(0), "owner cannot be set to 0x0");
         // Set the transferable flag to false.
         _isTransferable = false;
+        // Emit the ownership transfer event.
+        emit TransferredOwnership(_owner, _account);
         // Set the owner to the provided address.
         _owner = _account;
-        // Emit the ownership transfer event.
-        emit TransferredOwnership(_account);
     }
 
-    /// @return the address of the owner.
+    // @dev Allows the current owner to relinquish control of the contract.
+    // @notice Renouncing to ownership will leave the contract without an owner and unusable.
+    // It will not be possible to call the functions with the `onlyOwner` modifier anymore.
+    function renounceOwnership() public onlyOwner {
+        // Require that the ownership is transferable.
+        require(_isTransferable, "ownership is not transferable");
+        emit TransferredOwnership(_owner, address(0));
+        // note that this could be terminal
+        _owner = address(0);
+    }
+
+    // @return the address of the owner.
     function owner() public view returns (address) {
         return _owner;
     }
 
-    /// @return true if the ownership is transferable.
+    // @return true if the ownership is transferable.
     function isTransferable() public view returns (bool) {
         return _isTransferable;
     }
 
-    /// @return true if sender is the owner of the contract.
+    // @return true if sender is the owner of the contract.
     function isOwner() internal view returns (bool) {
         return msg.sender == _owner;
     }
