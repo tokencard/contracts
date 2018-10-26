@@ -14,7 +14,8 @@ import (
 	gtypes "github.com/onsi/gomega/types"
 	"github.com/pkg/errors"
 	"github.com/tokencard/contracts/pkg/bindings"
-	"github.com/tokencard/contracts/pkg/bindings/external"
+	"github.com/tokencard/contracts/pkg/bindings/externals/ens"
+	"github.com/tokencard/contracts/pkg/bindings/internals"
 	"github.com/tokencard/contracts/pkg/bindings/mocks"
 	"github.com/tokencard/ethertest"
 )
@@ -59,13 +60,13 @@ func EnsNode(name string) common.Hash {
 	return crypto.Keccak256Hash(parentNode[:], parentLabel[:])
 }
 
-var ENSResolver *bindings.Resolver
+var ENSResolver *ens.PublicResolver
 var ENSResolverAddress common.Address
 
 var ENSRegistryAddress common.Address
-var ENSRegistry *external.ENSRegistry
+var ENSRegistry *ens.ENSRegistry
 
-var ControllerContract *bindings.Controller
+var ControllerContract *internals.Controller
 var ControllerContractAddress common.Address
 
 var OraclizeResolver *mocks.OraclizeAddrResolver
@@ -177,7 +178,7 @@ func InitializeBackend() error {
 	var err error
 	var tx *types.Transaction
 
-	ControllerContractAddress, tx, ControllerContract, err = bindings.DeployController(BankAccount.TransactOpts(), Backend, BankAccount.Address())
+	ControllerContractAddress, tx, ControllerContract, err = internals.DeployController(BankAccount.TransactOpts(), Backend, BankAccount.Address())
 	if err != nil {
 		return err
 	}
@@ -197,7 +198,7 @@ func InitializeBackend() error {
 		return errors.Wrap(err, "adding controller address")
 	}
 
-	ENSRegistryAddress, tx, ENSRegistry, err = external.DeployENSRegistry(BankAccount.TransactOpts(), Backend)
+	ENSRegistryAddress, tx, ENSRegistry, err = ens.DeployENSRegistry(BankAccount.TransactOpts(), Backend)
 	if err != nil {
 		return err
 	}
@@ -247,7 +248,7 @@ func InitializeBackend() error {
 		return errors.Wrap(err, "setting ENS 'oracle' node owner")
 	}
 
-	ENSResolverAddress, tx, ENSResolver, err = bindings.DeployResolver(BankAccount.TransactOpts(), Backend, ENSRegistryAddress)
+	ENSResolverAddress, tx, ENSResolver, err = ens.DeployPublicResolver(BankAccount.TransactOpts(), Backend, ENSRegistryAddress)
 	if err != nil {
 		return err
 	}

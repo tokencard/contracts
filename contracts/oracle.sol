@@ -1,9 +1,9 @@
 pragma solidity ^0.4.25;
 
-import "./internal/controllable.sol";
-import "./external/strings.sol";
-import "./external/safe-math.sol";
-import "./external/oraclize-api.sol";
+import "./internals/controllable.sol";
+import "./externals/strings.sol";
+import "./externals/safe-math.sol";
+import "./externals/oraclize-api.sol";
 
 
 /// @title Oracle converts ERC20 token amounts into equivalent ether amounts based on cryptocurrency exchange rates.

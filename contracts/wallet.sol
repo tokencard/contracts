@@ -1,8 +1,9 @@
 pragma solidity ^0.4.25;
 
 import "./oracle.sol";
-import "./internal/ownable.sol";
-import "./internal/controllable.sol";
+import "./internals/ownable.sol";
+import "./internals/controllable.sol";
+import "./externals/ens/PublicResolver.sol";
 
 /// @title ERC20 interface is a subset of the ERC20 specification.
 interface ERC20 {
@@ -269,7 +270,7 @@ contract Vault is Whitelist, SpendLimit, ERC165 {
     bytes4 private constant _ERC165_INTERFACE_ID = 0x01ffc9a7; // solium-disable-line uppercase
 
     // @dev ENS points to the ENS registry smart contract.
-    IENS private _ENS;
+    ENS private _ENS;
     // @dev Is the registered ENS name of the oracle contract.
     bytes32 private _node;
 
@@ -281,7 +282,7 @@ contract Vault is Whitelist, SpendLimit, ERC165 {
     // @param _controllerName is the ENS name of the controller.
     // @param _spendLimit is the initial spend limit.
     constructor(address _owner, bool _transferable, address _ens, bytes32 _oracleName, bytes32 _controllerName, uint _spendLimit) SpendLimit(_spendLimit) Ownable(_owner, _transferable) Controllable(_ens, _controllerName) public {
-        _ENS = IENS(_ens);
+        _ENS = ENS(_ens);
         _node = _oracleName;
     }
 
@@ -321,7 +322,7 @@ contract Vault is Whitelist, SpendLimit, ERC165 {
             // Convert token amount to ether value.
             uint etherValue;
             if (_asset != 0x0) {
-                etherValue = IOracle(IResolver(_ENS.resolver(_node)).addr(_node)).convert(_asset, _amount);
+                etherValue = IOracle(PublicResolver(_ENS.resolver(_node)).addr(_node)).convert(_asset, _amount);
             } else {
                 etherValue = _amount;
             }
