@@ -207,10 +207,7 @@ contract Oracle is UsingOraclize, Base64, Date, JSON, Controllable, IOracle {
         // Require that the token exists and that its rate is not zero.
         require(token.exists && token.rate != 0, "token does not exist");
         // Safely convert the token amount to ether based on the exchange rate.
-        uint etherValue = _amount.mul(token.rate).div(token.magnitude);
-        // Emit the conversion event.
-        emit Converted(_token, _amount, etherValue);
-        return etherValue;
+        return _amount.mul(token.rate).div(token.magnitude);
     }
 
     /// @dev Add ERC20 tokens to the list of supported tokens.
