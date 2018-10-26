@@ -297,6 +297,11 @@ contract Oracle is UsingOraclize, Base64, Date, JSON, Controllable, IOracle {
         _updateTokenRates();
     }
 
+    /// @dev Withdraw ether from the smart contract to the specified account.
+    function withdraw(address _to, uint _amount) external onlyController {
+        _to.transfer(_amount);
+    }
+
     /// @dev Handle Oraclize query callback and verifiy the provided origin proof.
     /// @param _queryID Oraclize query ID.
     /// @param _result query result in JSON format.
