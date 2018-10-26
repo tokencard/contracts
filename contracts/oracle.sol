@@ -1,143 +1,17 @@
 pragma solidity ^0.4.25;
 
 import "./internals/controllable.sol";
+import "./internals/date.sol";
+import "./internals/json.sol";
 import "./externals/strings.sol";
 import "./externals/SafeMath.sol";
 import "./externals/oraclizeAPI_0.4.25.sol";
+import "./externals/base64.sol";
 
 
 /// @title Oracle converts ERC20 token amounts into equivalent ether amounts based on cryptocurrency exchange rates.
 interface IOracle {
     function convert(address, uint) external view returns (uint);
-}
-
-
-/// @title JSON provides JSON parsing functionality.
-contract JSON {
-    using strings for *;
-
-    // @dev Extracts JSON rate value from the response object.
-    // @param _json body of the JSON response from the CryptoCompare API.
-    // @param _symbol asset symbol used to extract the correct json field.
-    function parseRate(string _json, string _symbol) internal pure returns (string) {
-        strings.slice memory body = _json.toSlice();
-        body.beyond("{".toSlice());
-        body.until("}".toSlice());
-        strings.slice memory _quote_mark = "\"".toSlice();
-        body.find(_quote_mark.concat(_symbol.toSlice()).toSlice().concat(_quote_mark).toSlice());
-        strings.slice memory asset;
-        body.split(",".toSlice(), asset);
-        asset.split(":".toSlice());
-        return asset.toString();
-    }
-}
-
-
-/// @title Date provides date parsing functionality.
-contract Date {
-    uint constant DAY_IN_SECONDS = 86400;
-    uint constant YEAR_IN_SECONDS = 31536000;
-    uint constant LEAP_YEAR_IN_SECONDS = 31622400;
-    uint constant HOUR_IN_SECONDS = 3600;
-    uint constant MINUTE_IN_SECONDS = 60;
-    uint16 constant ORIGIN_YEAR = 1970;
-
-    bytes32 constant private JANUARY = keccak256("Jan");
-    bytes32 constant private FEBRUARY = keccak256("Feb");
-    bytes32 constant private MARCH = keccak256("Mar");
-    bytes32 constant private APRIL = keccak256("Apr");
-    bytes32 constant private MAY = keccak256("May");
-    bytes32 constant private JUNE = keccak256("Jun");
-    bytes32 constant private JULY = keccak256("Jul");
-    bytes32 constant private AUGUST = keccak256("Aug");
-    bytes32 constant private SEPTEMBER = keccak256("Sep");
-    bytes32 constant private OCTOBER = keccak256("Oct");
-    bytes32 constant private NOVEMBER = keccak256("Nov");
-    bytes32 constant private DECEMBER = keccak256("Dec");
-
-    // @return the number of the month based on its name.
-    // @param _month the first three letters of a month's name e.g. "Jan".
-    function monthToNumber(string _month) internal pure returns (uint8) {
-        bytes32 month = keccak256(_month);
-        if (month == JANUARY) {
-            return 1;
-        } else if (month == FEBRUARY) {
-            return 2;
-        } else if (month == MARCH) {
-            return 3;
-        } else if (month == APRIL) {
-            return 4;
-        } else if (month == MAY) {
-            return 5;
-        } else if (month == JUNE) {
-            return 6;
-        } else if (month == JULY) {
-            return 7;
-        } else if (month == AUGUST) {
-            return 8;
-        } else if (month == SEPTEMBER) {
-            return 9;
-        } else if (month == OCTOBER) {
-            return 10;
-        } else if (month == NOVEMBER) {
-            return 11;
-        } else if (month == DECEMBER) {
-            return 12;
-        } else {
-            revert("not a valid month");
-        }
-    }
-}
-
-
-/// @title Base64 provides base 64 decoding functionality.
-contract Base64 {
-    bytes constant BASE64_DECODE_CHAR = hex"000000000000000000000000000000000000000000000000000000000000000000000000000000000000003e003e003f3435363738393a3b3c3d00000000000000000102030405060708090a0b0c0d0e0f10111213141516171819000000003f001a1b1c1d1e1f202122232425262728292a2b2c2d2e2f30313233";
-
-    // @return decoded array of bytes.
-    // @param _encoded base 64 encoded array of bytes.
-    function base64decode(bytes _encoded) internal pure returns (bytes) {
-        byte v1;
-        byte v2;
-        byte v3;
-        byte v4;
-        uint length = _encoded.length;
-        bytes memory result = new bytes(length);
-        uint index;
-        if (keccak256(_encoded[length - 2]) == keccak256("=")) {
-            length -= 2;
-        } else if (keccak256(_encoded[length - 1]) == keccak256("=")) {
-            length -= 1;
-        }
-        uint count = length >> 2 << 2;
-        for (uint i = 0; i < count;) {
-            v1 = BASE64_DECODE_CHAR[uint(_encoded[i++])];
-            v2 = BASE64_DECODE_CHAR[uint(_encoded[i++])];
-            v3 = BASE64_DECODE_CHAR[uint(_encoded[i++])];
-            v4 = BASE64_DECODE_CHAR[uint(_encoded[i++])];
-
-            result[index++] = (v1 << 2 | v2 >> 4) & 255;
-            result[index++] = (v2 << 4 | v3 >> 2) & 255;
-            result[index++] = (v3 << 6 | v4) & 255;
-        }
-        if (length - count == 2) {
-            v1 = BASE64_DECODE_CHAR[uint(_encoded[i++])];
-            v2 = BASE64_DECODE_CHAR[uint(_encoded[i++])];
-            result[index++] = (v1 << 2 | v2 >> 4) & 255;
-        } else if (length - count == 3) {
-            v1 = BASE64_DECODE_CHAR[uint(_encoded[i++])];
-            v2 = BASE64_DECODE_CHAR[uint(_encoded[i++])];
-            v3 = BASE64_DECODE_CHAR[uint(_encoded[i++])];
-
-            result[index++] = (v1 << 2 | v2 >> 4) & 255;
-            result[index++] = (v2 << 4 | v3 >> 2) & 255;
-        }
-        // Set to correct length.
-        assembly {
-            mstore(result, index)
-        }
-        return result;
-    }
 }
 
 
