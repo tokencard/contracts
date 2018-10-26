@@ -2,7 +2,7 @@ pragma solidity ^0.4.25;
 
 import "./internals/controllable.sol";
 import "./externals/strings.sol";
-import "./externals/safe-math.sol";
+import "./externals/SafeMath.sol";
 import "./externals/oraclize-api.sol";
 
 
