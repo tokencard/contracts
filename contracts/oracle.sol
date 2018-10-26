@@ -11,6 +11,7 @@ interface IOracle {
     function convert(address, uint) external view returns (uint);
 }
 
+
 /// @title JSON provides JSON parsing functionality.
 contract JSON {
     using Strings for *;
@@ -22,8 +23,8 @@ contract JSON {
         Strings.slice memory body = _json.toSlice();
         body.beyond("{".toSlice());
         body.until("}".toSlice());
-        Strings.slice memory _quote_mark = "\"".toSlice();
-        body.find(_quote_mark.concat(_symbol.toSlice()).toSlice().concat(_quote_mark).toSlice());
+        Strings.slice memory quoteMark = "\"".toSlice();
+        body.find(quoteMark.concat(_symbol.toSlice()).toSlice().concat(quoteMark).toSlice());
         Strings.slice memory asset;
         body.split(",".toSlice(), asset);
         asset.split(":".toSlice());
@@ -161,7 +162,7 @@ contract Oracle is UsingOraclize, Base64, Date, JSON, Controllable, IOracle {
     event SetCryptoComparePublicKey(bytes _publicKey);
 
     struct Token {
-        string symbol;     // Token symbol
+        string symbol;    // Token symbol
         uint magnitude;   // 10^decimals
         uint rate;        // Token exchange rate in wei
         uint lastUpdate;  // Time of the last rate update
@@ -206,10 +207,7 @@ contract Oracle is UsingOraclize, Base64, Date, JSON, Controllable, IOracle {
         // Require that the token exists and that its rate is not zero.
         require(token.exists && token.rate != 0, "token does not exist");
         // Safely convert the token amount to ether based on the exchange rate.
-        uint etherValue = _amount.mul(token.rate).div(token.magnitude);
-        // Emit the conversion event.
-        emit Converted(_token, _amount, etherValue);
-        return etherValue;
+        return _amount.mul(token.rate).div(token.magnitude);
     }
 
     /// @dev Add ERC20 tokens to the list of supported tokens.
@@ -222,7 +220,7 @@ contract Oracle is UsingOraclize, Base64, Date, JSON, Controllable, IOracle {
         require(_tokens.length == _symbols.length && _tokens.length == _magnitude.length, "parameter lengths do not match");
         //Check if all addresses are non existing ones
         for (uint i = 0; i < _tokens.length; i++) {
-            require(!tokens[_tokens[i]].exists);
+            require(!tokens[_tokens[i]].exists, "token already exists");
         }
         // Add each token to the list of supported tokens.
         for (i = 0; i < _tokens.length; i++) {
@@ -255,7 +253,7 @@ contract Oracle is UsingOraclize, Base64, Date, JSON, Controllable, IOracle {
         for (uint i = 0; i < _tokens.length; i++) {
 
             //token must exist, reverts on duplicates as well
-            require(tokens[_tokens[i]].exists,"non-existing token");
+            require(tokens[_tokens[i]].exists, "non-existing token");
 
             // Store the token address.
             address token = _tokens[i];
@@ -296,6 +294,11 @@ contract Oracle is UsingOraclize, Base64, Date, JSON, Controllable, IOracle {
         _updateTokenRates();
     }
 
+    /// @dev Withdraw ether from the smart contract to the specified account.
+    function withdraw(address _to, uint _amount) external onlyController {
+        _to.transfer(_amount);
+    }
+
     /// @dev Handle Oraclize query callback and verifiy the provided origin proof.
     /// @param _queryID Oraclize query ID.
     /// @param _result query result in JSON format.
@@ -307,7 +310,7 @@ contract Oracle is UsingOraclize, Base64, Date, JSON, Controllable, IOracle {
 
         // Use the query ID to find the matching token address.
         address _token = _queryToToken[_queryID];
-        require(_token != address(0),"queryID matches to address 0");
+        require(_token != address(0), "queryID matches to address 0");
 
         // Get the corresponding token object.
         Token storage token = tokens[_token];
@@ -319,48 +322,47 @@ contract Oracle is UsingOraclize, Base64, Date, JSON, Controllable, IOracle {
 
         // Require that the proof is valid.
         if (valid) {
-          // Parse the JSON result to get the rate in wei.
-          token.rate = parseInt(parseRate(_result, "ETH"), 18);
-          // Emit the rate update event.
-          emit UpdatedTokenRate(_token, token.rate);
-          // Set the update time of the token rate.
-          token.lastUpdate = timestamp;
-          // Remove query from the list.
-          delete _queryToToken[_queryID];
+            // Parse the JSON result to get the rate in wei.
+            token.rate = parseInt(parseRate(_result, "ETH"), 18);
+            // Emit the rate update event.
+            emit UpdatedTokenRate(_token, token.rate);
+            // Set the update time of the token rate.
+            token.lastUpdate = timestamp;
+            // Remove query from the list.
+            delete _queryToToken[_queryID];
         }
     }
 
     /// @dev Re-usable helper function that performs the Oraclize Query.
     function _updateTokenRates() private {
         // Check if there are any existing tokens.
-        if (_tokenAddresses.length == 0){
-          // Emit a query failure event.
-          emit FailedUpdateRequest("no tokens");
-          return;
-        }
+        if (_tokenAddresses.length == 0) {
+            // Emit a query failure event.
+            emit FailedUpdateRequest("no tokens");
+            return;
         // Check if the contract has enough Ether to pay for the query.
-        else if (oraclize_getPrice("URL") * _tokenAddresses.length > address(this).balance) {
+        } else if (oraclize_getPrice("URL") * _tokenAddresses.length > address(this).balance) {
             // Emit a query failure event.
             emit FailedUpdateRequest("insufficient balance");
             return;
         } else {
-          // Set up the crypto compare API query strings.
-          Strings.slice memory apiPrefix = "https://min-api.cryptocompare.com/data/price?fsym=".toSlice();
-          Strings.slice memory apiSuffix = "&tsyms=ETH&sign=true".toSlice();
+            // Set up the crypto compare API query strings.
+            Strings.slice memory apiPrefix = "https://min-api.cryptocompare.com/data/price?fsym=".toSlice();
+            Strings.slice memory apiSuffix = "&tsyms=ETH&sign=true".toSlice();
 
-          uint gaslimit = 2000000;
-          // Create a new oraclize query for each supported token.
-          for (uint i = 0; i < _tokenAddresses.length; i++) {
-              // Store the token symbol used in the query.
-              Strings.slice memory symbol = tokens[_tokenAddresses[i]].symbol.toSlice();
-              // Create a new oraclize query from the component strings.
-              bytes32 queryID = oraclize_query("URL", apiPrefix.concat(symbol).toSlice().concat(apiSuffix), gaslimit);
-              // Store the query ID together with the associated token address.
-              _queryToToken[queryID] = _tokenAddresses[i];
-              // Emit the query success event.
-              emit RequestedUpdate(symbol.toString());
-          }
-          return;
+            uint gaslimit = 2000000;
+            // Create a new oraclize query for each supported token.
+            for (uint i = 0; i < _tokenAddresses.length; i++) {
+                // Store the token symbol used in the query.
+                Strings.slice memory symbol = tokens[_tokenAddresses[i]].symbol.toSlice();
+                // Create a new oraclize query from the component strings.
+                bytes32 queryID = oraclize_query("URL", apiPrefix.concat(symbol).toSlice().concat(apiSuffix), gaslimit);
+                // Store the query ID together with the associated token address.
+                _queryToToken[queryID] = _tokenAddresses[i];
+                // Emit the query success event.
+                emit RequestedUpdate(symbol.toString());
+            }
+            return;
         }
     }
 
@@ -409,12 +411,11 @@ contract Oracle is UsingOraclize, Base64, Date, JSON, Controllable, IOracle {
         return (false, 0);
     }
 
-
     function verifySignature(bytes _headers, bytes _signature, bytes _publicKey) private returns (bool) {
-      address signer;
-      bool signatureOK;
-      (signatureOK, signer) = ecrecovery(sha256(_headers), _signature);
-      return signatureOK && signer == address(keccak256(_publicKey));
+        address signer;
+        bool signatureOK;
+        (signatureOK, signer) = ecrecovery(sha256(_headers), _signature);
+        return signatureOK && signer == address(keccak256(_publicKey));
     }
 
     /// @dev Verify the signed HTTP date header.
@@ -436,32 +437,31 @@ contract Oracle is UsingOraclize, Base64, Date, JSON, Controllable, IOracle {
         uint second = parseInt(date.split(timeDelimiter).toString());
 
 
-
         if (day > 31 || day < 1) {
-          return (false, 0);
+            return (false, 0);
         }
 
         if (month > 12 || month < 1) {
-          return (false, 0);
+            return (false, 0);
         }
 
         if (year < 2018 || year > 3000) {
-          return (false, 0);
+            return (false, 0);
         }
 
         if (hour >= 24) {
-          return (false, 0);
+            return (false, 0);
         }
 
         if (minute >= 60) {
-          return (false, 0);
+            return (false, 0);
         }
 
         if (second >= 60) {
-          return (false, 0);
+            return (false, 0);
         }
 
-        uint timestamp = year*(10**10)+month*(10**8)+day*(10**6)+hour*(10**4)+minute*(10**2)+second;
+        uint timestamp = year * (10 ** 10) + month * (10 ** 8) + day * (10 ** 6) + hour * (10 ** 4) + minute * (10 ** 2) + second;
 
         return (timestamp > _lastUpdate, timestamp);
     }
