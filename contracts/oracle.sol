@@ -3,7 +3,7 @@ pragma solidity ^0.4.25;
 import "./internals/controllable.sol";
 import "./externals/strings.sol";
 import "./externals/SafeMath.sol";
-import "./externals/oraclize-api.sol";
+import "./externals/oraclizeAPI_0.4.25.sol";
 
 
 /// @title Oracle converts ERC20 token amounts into equivalent ether amounts based on cryptocurrency exchange rates.
@@ -142,7 +142,7 @@ contract Base64 {
 
 
 /// @title Oracle provides asset exchange rates and conversion functionality.
-contract Oracle is UsingOraclize, Base64, Date, JSON, Controllable, IOracle {
+contract Oracle is usingOraclize, Base64, Date, JSON, Controllable, IOracle {
     using strings for *;
     using SafeMath for uint256;
 
