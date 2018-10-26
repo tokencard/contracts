@@ -1,6 +1,6 @@
 version: 2
 jobs:
-  build_test:
+  vendor:
     docker:
       - image: quay.io/token/go-build:v0.3.0
     working_directory: /home/circleci/github.com/tokencard/contracts
@@ -10,13 +10,12 @@ jobs:
           keys:
           - vendor-{{ checksum "go.sum" }}
       - run: go mod vendor
-      - run: go test -v ./test/...
       - save_cache:
           key: vendor-{{ checksum "go.sum" }}
           paths:
             - "vendor"
 
-  build_check:
+  build_artifacts:
     machine: true
     working_directory: /home/circleci/github.com/tokencard/contracts
     steps:
@@ -25,7 +24,24 @@ jobs:
           keys:
             - vendor-{{ checksum "go.sum" }}
       - run: ./build.sh
-      - run: '[[ -z $(git status -uno --porcelain) ]] || (git status ; echo "Please run ./build.sh before committing changes!"; exit 1)'
+      - save_cache:
+          key: artefacts-{{ .Revision }}
+          paths:
+            - "build"
+            - "pkg/bindings"
+
+  test:
+    docker:
+      - image: quay.io/token/go-build:v0.3.0
+    working_directory:  /home/circleci/github.com/tokencard/contracts
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+          - artefacts-{{ .Revision }}
+      - run: go mod download
+      - run: find .
+      - run: go test -v ./test/...
 
   mythril:
     docker:
@@ -41,25 +57,55 @@ jobs:
     working_directory: /go/src/github.com/tokencard/contracts
     steps:
       - checkout
-      - run: apk add -U --no-cache nodejs nodejs-npm
+      - restore_cache:
+          keys:
+          - artefacts-{{ .Revision }}
+      - run: mv /home/circleci/github.com/tokencard/contracts/pkg/bindings pkg
       - run: go get -u github.com/golang/dep/cmd/dep
       - run: dep init --no-examples
+      - run: dep ensure
+      - run: apk add -U --no-cache nodejs nodejs-npm
       - run: npm config set unsafe-perm true
       - run: npm install -g snyk@1.101.1
       - run: snyk auth ${SNYK_TOKEN}
       - run: snyk test --org=token
 
+  publish_github_release:
+    docker:
+      - image: cibuilds/github:0.10
+    working_directory: /home/circleci/github.com/tokencard/contracts
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+          - artefacts-{{ .Revision }}
+      - run: git config --global user.email "circleci-build@tokencard.io"
+      - run: git config --global user.name "CircleCI Build"
+      - run: rm .gitignore
+      - run: git add .
+      - run: git commit -m "build artefacts [skip ci]"
+      - run: git tag -f ${CIRCLE_TAG}
+      - run: git push origin -f ${CIRCLE_TAG}
+      # - run: export
+      # - run: set -x; ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete ${CIRCLE_TAG} .
+
 workflows:
   version: 2
   build_deploy:
     jobs:
-      - build_test:
+      - vendor:
           filters:
             tags:
               ignore: ""
-      - build_check:
+      - build_artifacts:
           requires:
-            - build_test
+            - vendor
+          filters:
+            tags:
+              ignore: ""
+      - test:
+          requires:
+            - build_artifacts
           filters:
             tags:
               ignore: ""
@@ -68,4 +114,17 @@ workflows:
             tags:
               ignore: ""
       - snyk_check:
+          requires:
+            - test
           context: snyk
+      - publish_github_release:
+          context: "github-releases"
+          requires:
+            - snyk_check
+            - test
+            - mythril
+          filters:
+            tags:
+              only: /^v.*/
+            branches:
+              ignore: /.*/

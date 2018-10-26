@@ -52,6 +52,18 @@ contracts=(
   "externals/ens/PublicResolver/PublicResolver externals/ens/public-resolver.go PublicResolver ens"
 )
 
+if [ ! -d 'pkg/bindings/mocks' ]; then
+  mkdir -p 'pkg/bindings/mocks'
+fi;
+
+if [ ! -d 'pkg/bindings/externals/ens' ]; then
+  mkdir -p 'pkg/bindings/externals/ens'
+fi;
+
+if [ ! -d 'pkg/bindings/internals' ]; then
+  mkdir -p 'pkg/bindings/internals'
+fi;
+
 for c in "${contracts[@]}"
 do
     generate_binding "$c"
