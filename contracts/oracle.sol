@@ -218,12 +218,8 @@ contract Oracle is UsingOraclize, Base64, Date, JSON, Controllable, IOracle {
     function addTokens(address[] _tokens, bytes32[] _symbols, uint[] _magnitude, uint _updateDate) external onlyController {
         // Require that all parameters have the same length.
         require(_tokens.length == _symbols.length && _tokens.length == _magnitude.length, "parameter lengths do not match");
-        //Check if all addresses are non existing ones
-        for (uint i = 0; i < _tokens.length; i++) {
-            require(!tokens[_tokens[i]].exists, "token already exists");
-        }
         // Add each token to the list of supported tokens.
-        for (i = 0; i < _tokens.length; i++) {
+        for (uint i = 0; i < _tokens.length; i++) {
             // Require that the token doesn't already exist.
             address token = _tokens[i];
             require(!tokens[token].exists, "token already exists");
@@ -253,7 +249,7 @@ contract Oracle is UsingOraclize, Base64, Date, JSON, Controllable, IOracle {
         for (uint i = 0; i < _tokens.length; i++) {
 
             //token must exist, reverts on duplicates as well
-            require(tokens[_tokens[i]].exists, "non-existing token");
+            require(tokens[_tokens[i]].exists, "token does not exist");
 
             // Store the token address.
             address token = _tokens[i];
