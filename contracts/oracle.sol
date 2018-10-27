@@ -6,12 +6,12 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
-
+ * 
  *  This program is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
-
+ * 
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
@@ -67,10 +67,10 @@ contract Oracle is usingOraclize, Base64, Date, JSON, Controllable, IOracle {
     bytes public APIPublicKey;
     mapping(bytes32 => address) private _queryToToken;
 
-    // @dev Construct the oracle with multiple controllers, address resolver and custom gas price.
-    // @dev _resolver is the oraclize address resolver contract address.
-    // @param _ens is the address of the ENS.
-    // @param _controllerName is the ENS name of the Controller.
+    /// @dev Construct the oracle with multiple controllers, address resolver and custom gas price.
+    /// @dev _resolver is the oraclize address resolver contract address.
+    /// @param _ens is the address of the ENS.
+    /// @param _controllerName is the ENS name of the Controller.
     constructor(address _resolver, address _ens, bytes32 _controllerName) Controllable(_ens, _controllerName) public {
         APIPublicKey = hex"a0f4f688350018ad1b9785991c0bde5f704b005dc79972b114dbed4a615a983710bfc647ebe5a320daa28771dce6a2d104f5efa2e4a85ba3760b76d46f8571ca";
         OAR = OraclizeAddrResolverI(_resolver);
@@ -78,21 +78,21 @@ contract Oracle is usingOraclize, Base64, Date, JSON, Controllable, IOracle {
         oraclize_setProof(proofType_Native);
     }
 
-    // @dev Updates the Crypto Compare public API key.
+    /// @dev Updates the Crypto Compare public API key.
     function updateAPIPublicKey(bytes _publicKey) external onlyController {
         APIPublicKey = _publicKey;
         emit SetCryptoComparePublicKey(msg.sender, _publicKey);
     }
 
-    // @dev Sets the gas price used by oraclize query.
+    /// @dev Sets the gas price used by oraclize query.
     function setCustomGasPrice(uint _gasPrice) external onlyController {
         oraclize_setCustomGasPrice(_gasPrice);
         emit SetGasPrice(msg.sender, _gasPrice);
     }
 
-    // @dev Convert ERC20 token amount to the corresponding ether amount (used by the wallet contract).
-    // @param _token ERC20 token contract address.
-    // @param _amount amount of token in base units.
+    /// @dev Convert ERC20 token amount to the corresponding ether amount (used by the wallet contract).
+    /// @param _token ERC20 token contract address.
+    /// @param _amount amount of token in base units.
     function convert(address _token, uint _amount) external view returns (uint) {
         // Store the token in memory to save map entry lookup gas.
         Token storage token = tokens[_token];
@@ -102,11 +102,11 @@ contract Oracle is usingOraclize, Base64, Date, JSON, Controllable, IOracle {
         return _amount.mul(token.rate).div(token.magnitude);
     }
 
-    // @dev Add ERC20 tokens to the list of supported tokens.
-    // @param _tokens ERC20 token contract addresses.
-    // @param _symbols ERC20 token names.
-    // @param _magnitude 10 to the power of number of decimal places used by each ERC20 token.
-    // @param _updateDate date for the token updates. This will be compared to when oracle updates are received.
+    /// @dev Add ERC20 tokens to the list of supported tokens.
+    /// @param _tokens ERC20 token contract addresses.
+    /// @param _symbols ERC20 token names.
+    /// @param _magnitude 10 to the power of number of decimal places used by each ERC20 token.
+    /// @param _updateDate date for the token updates. This will be compared to when oracle updates are received.
     function addTokens(address[] _tokens, bytes32[] _symbols, uint[] _magnitude, uint _updateDate) external onlyController {
         // Require that all parameters have the same length.
         require(_tokens.length == _symbols.length && _tokens.length == _magnitude.length, "parameter lengths do not match");
@@ -133,8 +133,8 @@ contract Oracle is usingOraclize, Base64, Date, JSON, Controllable, IOracle {
         }
     }
 
-    // @dev Remove ERC20 tokens from the list of supported tokens.
-    // @param _tokens ERC20 token contract addresses.
+    /// @dev Remove ERC20 tokens from the list of supported tokens.
+    /// @param _tokens ERC20 token contract addresses.
     function removeTokens(address[] _tokens) external onlyController {
         // Delete each token object from the list of supported tokens based on the addresses provided.
         for (uint i = 0; i < _tokens.length; i++) {
@@ -157,10 +157,10 @@ contract Oracle is usingOraclize, Base64, Date, JSON, Controllable, IOracle {
         }
     }
 
-    // @dev Update ERC20 token exchange rate manually.
-    // @param _token ERC20 token contract address.
-    // @param _rate ERC20 token exchange rate in wei.
-    // @param _updateDate date for the token updates. This will be compared to when oracle updates are received.
+    /// @dev Update ERC20 token exchange rate manually.
+    /// @param _token ERC20 token contract address.
+    /// @param _rate ERC20 token exchange rate in wei.
+    /// @param _updateDate date for the token updates. This will be compared to when oracle updates are received.
     function updateTokenRate(address _token, uint _rate, uint _updateDate) external onlyController {
         // Require that the token exists.
         require(tokens[_token].exists, "token does not exist");
@@ -172,20 +172,20 @@ contract Oracle is usingOraclize, Base64, Date, JSON, Controllable, IOracle {
         emit UpdatedTokenRate(msg.sender, _token, _rate);
     }
 
-    // @dev Update ERC20 token exchange rates for all supported tokens.
+    /// @dev Update ERC20 token exchange rates for all supported tokens.
     function updateTokenRates() external payable onlyController {
         _updateTokenRates();
     }
 
-    /// @dev Withdraw ether from the smart contract to the specified account.
+    //// @dev Withdraw ether from the smart contract to the specified account.
     function withdraw(address _to, uint _amount) external onlyController {
         _to.transfer(_amount);
     }
 
-    /// @dev Handle Oraclize query callback and verifiy the provided origin proof.
-    /// @param _queryID Oraclize query ID.
-    /// @param _result query result in JSON format.
-    /// @param _proof origin proof from crypto compare.
+    //// @dev Handle Oraclize query callback and verifiy the provided origin proof.
+    //// @param _queryID Oraclize query ID.
+    //// @param _result query result in JSON format.
+    //// @param _proof origin proof from crypto compare.
     // solium-disable-next-line mixedcase
     function __callback(bytes32 _queryID, string _result, bytes _proof) public {
         // Require that the caller is the Oraclize contract.
@@ -213,7 +213,7 @@ contract Oracle is usingOraclize, Base64, Date, JSON, Controllable, IOracle {
         } 
     }
 
-    // @dev Re-usable helper function that performs the Oraclize Query.
+    /// @dev Re-usable helper function that performs the Oraclize Query.
     function _updateTokenRates() private {
         // Check if there are any existing tokens.
         if (_tokenAddresses.length == 0) {
@@ -243,11 +243,11 @@ contract Oracle is usingOraclize, Base64, Date, JSON, Controllable, IOracle {
         }
     }
 
-    // @dev Verify the origin proof returned by the cryptocompare API.
-    // @param _result query result in JSON format.
-    // @param _proof origin proof from cryptocompare.
-    // @param _publicKey cryptocompare public key.
-    // @param _lastUpdate timestamp of the last time the requested token was updated.
+    /// @dev Verify the origin proof returned by the cryptocompare API.
+    /// @param _result query result in JSON format.
+    /// @param _proof origin proof from cryptocompare.
+    /// @param _publicKey cryptocompare public key.
+    /// @param _lastUpdate timestamp of the last time the requested token was updated.
     function verifyProof(string _result, bytes _proof, bytes _publicKey, uint _lastUpdate) private returns (bool, uint) {
         // Extract the signature.
         uint signatureLength = uint(_proof[1]);
@@ -289,10 +289,10 @@ contract Oracle is usingOraclize, Base64, Date, JSON, Controllable, IOracle {
         return (true, timestamp);
     }
 
-    // @dev Verify the HTTP headers and the signature
-    // @param _headers HTTP headers provided by the cryptocompare api
-    // @param _signature signature provided by the cryptocompare api
-    // @param _publicKey cryptocompare public key.
+    /// @dev Verify the HTTP headers and the signature
+    /// @param _headers HTTP headers provided by the cryptocompare api
+    /// @param _signature signature provided by the cryptocompare api
+    /// @param _publicKey cryptocompare public key.
     function verifySignature(bytes _headers, bytes _signature, bytes _publicKey) private returns (bool) {
         address signer;
         bool signatureOK;
@@ -302,9 +302,9 @@ contract Oracle is usingOraclize, Base64, Date, JSON, Controllable, IOracle {
         return signatureOK && signer == address(keccak256(_publicKey));
     }
 
-    // @dev Verify the signed HTTP date header.
-    // @param _dateHeader extracted date string e.g. Wed, 12 Sep 2018 15:18:14 GMT.
-    // @param _lastUpdate timestamp of the last time the requested token was updated.
+    /// @dev Verify the signed HTTP date header.
+    /// @param _dateHeader extracted date string e.g. Wed, 12 Sep 2018 15:18:14 GMT.
+    /// @param _lastUpdate timestamp of the last time the requested token was updated.
     function verifyDate(string _dateHeader, uint _lastUpdate) private pure returns (bool, uint) {
         strings.slice memory date = _dateHeader.toSlice();
         strings.slice memory timeDelimiter = ":".toSlice();
