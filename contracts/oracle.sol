@@ -274,7 +274,7 @@ contract Oracle is usingOraclize, Base64, Date, JSON, Controllable, IOracle {
         // Check if the signed digest hash matches the result hash.
         bytes memory digest = new bytes(headersLength - 52);
         digest = copyBytes(headers, 52, headersLength - 52, digest, 0);
-        if (keccak256(sha256(_result)) != keccak256(base64decode(digest))) {
+        if (keccak256(abi.encodePacked(sha256(abi.encodePacked(_result)))) != keccak256(base64decode(digest))) {
             emit FailedProofVerification(_publicKey, _result, "hash");
             return (false, 0);
         }
