@@ -27,7 +27,7 @@ contract Oracle is usingOraclize, Base64, Date, JSON, Controllable, IOracle {
     event SetGasPrice(address _sender, uint _gasPrice);
     event Converted(address _sender, address _token, uint _amount, uint _ether);
 
-    event RequestedUpdate(address _sender, string _symbol);
+    event RequestedUpdate(string _symbol);
     event FailedUpdateRequest(string _reason);
 
     event VerifiedProof(bytes _publicKey, string _result);
@@ -186,8 +186,6 @@ contract Oracle is usingOraclize, Base64, Date, JSON, Controllable, IOracle {
         if (valid) {
             // Parse the JSON result to get the rate in wei.
             token.rate = parseInt(parseRate(_result, "ETH"), 18);
-            // Emit the rate update event.
-            emit UpdatedTokenRate(_token, token.rate);
             // Set the update time of the token rate.
             token.lastUpdate = timestamp;
             // Remove query from the list.
