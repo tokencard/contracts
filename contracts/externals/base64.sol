@@ -19,9 +19,9 @@ contract Base64 {
         uint length = _encoded.length;
         bytes memory result = new bytes(length);
         uint index;
-        if (keccak256(_encoded[length - 2]) == keccak256("=")) {
+        if (keccak256(abi.encodePacked(_encoded[length - 2])) == keccak256("=")) {
             length -= 2;
-        } else if (keccak256(_encoded[length - 1]) == keccak256("=")) {
+        } else if (keccak256(abi.encodePacked(_encoded[length - 1])) == keccak256("=")) {
             length -= 1;
         }
         uint count = length >> 2 << 2;
