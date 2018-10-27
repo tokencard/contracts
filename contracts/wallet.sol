@@ -1,17 +1,36 @@
+/**
+ *  TokenWallet - The Consumer Contract Wallet
+ *  Copyright (C) 2018 Token Group Ltd
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 pragma solidity ^0.4.25;
 
 import "./oracle.sol";
-import "./internal/ownable.sol";
-import "./internal/controllable.sol";
+import "./internals/ownable.sol";
+import "./internals/controllable.sol";
+import "./externals/ens/PublicResolver.sol";
 
-/// @title ERC20 is a subset of the ERC20 specification.
+/// @title ERC20 interface is a subset of the ERC20 specification.
 interface ERC20 {
     function transfer(address, uint) external returns (bool);
     function balanceOf(address) external view returns (uint);
 }
 
 
-/// @title ERC165 specifies a standard way of querying if a contract implements an interface.
+/// @title ERC165 interface specifies a standard way of querying if a contract implements an interface.
 interface ERC165 {
     function supportsInterface(bytes4) external view returns (bool);
 }
@@ -42,18 +61,18 @@ contract Whitelist is Controllable, Ownable {
         _;
     }
 
-    // @dev Check that neither addition nor removal operations have already been submitted.
+    /// @dev Check that neither addition nor removal operations have already been submitted.
     modifier noActiveSubmission() {
         require(!submittedWhitelistAddition && !submittedWhitelistRemoval, "whitelist operation has already been submitted");
         _;
     }
 
-    // @dev Getter for pending addition array.
+    /// @dev Getter for pending addition array.
     function pendingWhitelistAddition() external view returns(address[]) {
         return _pendingWhitelistAddition;
     }
 
-    // @dev Getter for pending removal array.
+    /// @dev Getter for pending removal array.
     function pendingWhitelistRemoval() external view returns(address[]) {
         return _pendingWhitelistRemoval;
     }
@@ -151,7 +170,7 @@ contract Whitelist is Controllable, Ownable {
 }
 
 
-/// @title SpendLimit provides daily spend limit functionality.
+//// @title SpendLimit provides daily spend limit functionality.
 contract SpendLimit is Controllable, Ownable {
     event SetSpendLimit(address _sender, uint _amount);
     event SubmittedSpendLimitChange(uint _amount);
@@ -165,7 +184,7 @@ contract SpendLimit is Controllable, Ownable {
     bool public submittedSpendLimit;
     bool public initializedSpendLimit;
 
-    /// @dev Constructor initializes the daily spend limit.
+    /// @dev Constructor initializes the daily spend limit in wei.
     constructor(uint _spendLimit) internal {
         spendLimit = _spendLimit;
         _spendLimitDay = now;
@@ -182,7 +201,7 @@ contract SpendLimit is Controllable, Ownable {
         }
     }
 
-    /// @dev Initialize a daily transfer limit for non-whitelisted addresses.
+    /// @dev Initialize a daily spend (aka transfer) limit for non-whitelisted addresses.
     /// @param _amount is the daily limit amount in wei.
     function initializeSpendLimit(uint _amount) external onlyOwner {
         // Require that the spend limit has not been initialized.
@@ -260,16 +279,16 @@ contract SpendLimit is Controllable, Ownable {
 }
 
 
-/// @title Asset store with extra security features.
+//// @title Asset store with extra security features.
 contract Vault is Whitelist, SpendLimit, ERC165 {
     event Received(address _from, uint _amount);
     event Transferred(address _to, address _asset, uint _amount);
 
-    //// @dev Supported ERC165 interface ID.
+    /// @dev Supported ERC165 interface ID.
     bytes4 private constant _ERC165_INTERFACE_ID = 0x01ffc9a7; // solium-disable-line uppercase
 
     /// @dev ENS points to the ENS registry smart contract.
-    IENS private _ENS;
+    ENS private _ENS;
     /// @dev Is the registered ENS name of the oracle contract.
     bytes32 private _node;
 
@@ -279,9 +298,9 @@ contract Vault is Whitelist, SpendLimit, ERC165 {
     /// @param _ens is the ENS public registry contract address.
     /// @param _oracleName is the ENS name of the Oracle.
     /// @param _controllerName is the ENS name of the controller.
-    //  @param _spendLimit is the initial spend limit.
+    /// @param _spendLimit is the initial spend limit.
     constructor(address _owner, bool _transferable, address _ens, bytes32 _oracleName, bytes32 _controllerName, uint _spendLimit) SpendLimit(_spendLimit) Ownable(_owner, _transferable) Controllable(_ens, _controllerName) public {
-        _ENS = IENS(_ens);
+        _ENS = ENS(_ens);
         _node = _oracleName;
     }
 
@@ -293,6 +312,7 @@ contract Vault is Whitelist, SpendLimit, ERC165 {
 
     /// @dev Ether can be deposited from any source, so this contract must be payable by anyone.
     function() public payable {
+        //TODO question: Why is this check here, is it necessary or are we building into a corner?
         require(msg.data.length == 0);
         emit Received(msg.sender, msg.value);
     }
@@ -320,7 +340,7 @@ contract Vault is Whitelist, SpendLimit, ERC165 {
             // Convert token amount to ether value.
             uint etherValue;
             if (_asset != 0x0) {
-                etherValue = IOracle(IResolver(_ENS.resolver(_node)).addr(_node)).convert(_asset, _amount);
+                etherValue = IOracle(PublicResolver(_ENS.resolver(_node)).addr(_node)).convert(_asset, _amount);
             } else {
                 etherValue = _amount;
             }
@@ -346,7 +366,7 @@ contract Vault is Whitelist, SpendLimit, ERC165 {
 }
 
 
-/// @title Asset wallet with extra security features and gas top up management.
+//// @title Asset wallet with extra security features and gas top up management.
 contract Wallet is Vault {
     event SetTopUpLimit(address _sender, uint _amount);
     event SubmittedTopUpLimitChange(uint _amount);
@@ -354,8 +374,8 @@ contract Wallet is Vault {
 
     event ToppedUpGas(address _sender, address _owner, uint _amount);
 
-    uint constant private MINIMUM_TOPUP_LIMIT = 1 finney;
-    uint constant private MAXIMUM_TOPUP_LIMIT = 500 finney;
+    uint constant private MINIMUM_TOPUP_LIMIT = 1 finney; // solium-disable-line uppercase
+    uint constant private MAXIMUM_TOPUP_LIMIT = 500 finney; // solium-disable-line uppercase
 
     uint public topUpLimit;
     uint private _topUpLimitDay;
@@ -368,10 +388,10 @@ contract Wallet is Vault {
     /// @dev Constructor initializes the wallet top up limit and the vault contract.
     /// @param _owner is the owner account of the wallet contract.
     /// @param _transferable indicates whether the contract ownership can be transferred.
-    //  @param _ens is the address of the ENS.
-    //  @param _oracleName is the ENS name of the Oracle.
-    //  @param _controllerName is the ENS name of the Controller.
-    //  @param _spendLimit is the initial spend limit.
+    /// @param _ens is the address of the ENS.
+    /// @param _oracleName is the ENS name of the Oracle.
+    /// @param _controllerName is the ENS name of the Controller.
+    /// @param _spendLimit is the initial spend limit.
     constructor(address _owner, bool _transferable, address _ens, bytes32 _oracleName, bytes32 _controllerName, uint _spendLimit) Vault(_owner, _transferable, _ens, _oracleName, _controllerName, _spendLimit) public {
         _topUpLimitDay = now;
         topUpLimit = MAXIMUM_TOPUP_LIMIT;
@@ -425,7 +445,7 @@ contract Wallet is Vault {
         // Require that the operation has been submitted.
         require(submittedTopUpLimit, "top up limit has not been submitted");
         // Assert that the pending top up limit amount is within the acceptable range.
-        assert(MINIMUM_TOPUP_LIMIT <= pendingTopUpLimit && pendingTopUpLimit <= MAXIMUM_TOPUP_LIMIT);
+        require(MINIMUM_TOPUP_LIMIT <= pendingTopUpLimit && pendingTopUpLimit <= MAXIMUM_TOPUP_LIMIT, "top up amount is outside the min/max range");
         // Modify top up limit based on the pending value.
         modifyTopUpLimit(pendingTopUpLimit);
         // Emit the set limit event.
