@@ -7,16 +7,9 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-var _ = FDescribe("base64", func() {
+var _ = Describe("base64", func() {
 
-	Context("When oracle has been deployed", func() {
-
-		It("Should return ", func() {
-			_, err := Base64Exporter.Base64decode(nil, []byte(""))
-			Expect(err).To(MatchError(errors.New("abi: unmarshalling empty output")))
-			// Expect(err).ToNot(HaveOccurred())
-			// Expect(dec).To(Equal([]byte("")))
-		})
+	Context("When a valid base64 encoded string is passed", func() {
 
 		It("Should decode 'Zg==' to 'f'", func() {
 			dec, err := Base64Exporter.Base64decode(nil, []byte("Zg=="))
@@ -55,4 +48,29 @@ var _ = FDescribe("base64", func() {
 		})
 
 	})
+
+	Context("When a invalid base64 encoded string is passed", func() {
+
+		It("Should fail (trigger require)", func() {
+			_, err := Base64Exporter.Base64decode(nil, []byte(""))
+			Expect(err).To(MatchError(errors.New("abi: improperly formatted output")))
+		})
+
+		It("Should fail (trigger require)'", func() {
+			_, err := Base64Exporter.Base64decode(nil, []byte("Z"))
+			Expect(err).To(MatchError(errors.New("abi: improperly formatted output")))
+		})
+
+		It("Should fail (trigger require)'", func() {
+			_, err := Base64Exporter.Base64decode(nil, []byte("zZ="))
+			Expect(err).To(MatchError(errors.New("abi: improperly formatted output")))
+		})
+
+		It("Should fail (trigger require)'", func() {
+			_, err := Base64Exporter.Base64decode(nil, []byte("zZz=="))
+			Expect(err).To(MatchError(errors.New("abi: improperly formatted output")))
+		})
+
+	})
+
 })
