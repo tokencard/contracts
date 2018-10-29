@@ -11,7 +11,7 @@ contract Base64 {
 
     /// @return decoded array of bytes.
     /// @param _encoded base 64 encoded array of bytes.
-    function base64decode(bytes _encoded) internal pure returns (bytes) {
+    function _base64decode(bytes _encoded) internal pure returns (bytes) {
         byte v1;
         byte v2;
         byte v3;

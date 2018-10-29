@@ -6,12 +6,12 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
- * 
+ *
  *  This program is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
- * 
+ *
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
@@ -210,7 +210,7 @@ contract Oracle is usingOraclize, Base64, Date, JSON, Controllable, IOracle {
             delete _queryToToken[_queryID];
             // Emit the rate update event.
             emit UpdatedTokenRate(msg.sender, _token, token.rate);
-        } 
+        }
     }
 
     /// @dev Re-usable helper function that performs the Oraclize Query.
@@ -227,7 +227,7 @@ contract Oracle is usingOraclize, Base64, Date, JSON, Controllable, IOracle {
             // Set up the cryptocompare API query strings.
             strings.slice memory apiPrefix = "https://min-api.cryptocompare.com/data/price?fsym=".toSlice();
             strings.slice memory apiSuffix = "&tsyms=ETH&sign=true".toSlice();
-  
+
             uint gaslimit = 2000000;
             // Create a new oraclize query for each supported token.
             for (uint i = 0; i < _tokenAddresses.length; i++) {
@@ -274,7 +274,7 @@ contract Oracle is usingOraclize, Base64, Date, JSON, Controllable, IOracle {
         // Check if the signed digest hash matches the result hash.
         bytes memory digest = new bytes(headersLength - 52);
         digest = copyBytes(headers, 52, headersLength - 52, digest, 0);
-        if (keccak256(abi.encodePacked(sha256(abi.encodePacked(_result)))) != keccak256(base64decode(digest))) {
+        if (keccak256(abi.encodePacked(sha256(abi.encodePacked(_result)))) != keccak256(_base64decode(digest))) {
             emit FailedProofVerification(_publicKey, _result, "hash");
             return (false, 0);
         }
@@ -296,7 +296,7 @@ contract Oracle is usingOraclize, Base64, Date, JSON, Controllable, IOracle {
     function verifySignature(bytes _headers, bytes _signature, bytes _publicKey) private returns (bool) {
         address signer;
         bool signatureOK;
-        
+
         // Checks if the signature is valid by hashing the headers
         (signatureOK, signer) = ecrecovery(sha256(_headers), _signature);
         return signatureOK && signer == address(keccak256(_publicKey));
@@ -331,7 +331,7 @@ contract Oracle is usingOraclize, Base64, Date, JSON, Controllable, IOracle {
         if (year < 2018 || year > 3000) {
             return (false, 0);
         }
-    
+
         if (hour >= 24) {
             return (false, 0);
         }

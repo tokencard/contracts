@@ -1,0 +1,1 @@
+[{"constant":true,"inputs":[{"name":"_encoded","type":"bytes"}],"name":"base64decode","outputs":[{"name":"","type":"bytes"}],"payable":false,"stateMutability":"pure","type":"function"}]
