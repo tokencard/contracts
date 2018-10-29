@@ -2,6 +2,7 @@ package wallet_test
 
 import (
 	"context"
+	"fmt"
 	"os"
 	"testing"
 
@@ -35,3 +36,11 @@ func isSuccessful(tx *types.Transaction) bool {
 	Expect(err).ToNot(HaveOccurred())
 	return r.Status == types.ReceiptStatusSuccessful
 }
+
+var _ = AfterEach(func() {
+	td := CurrentGinkgoTestDescription()
+	if td.Failed {
+		fmt.Fprintf(GinkgoWriter, "\nLast Executed Smart Contract Line for %s:%d\n", td.FileName, td.LineNumber)
+		fmt.Fprintln(GinkgoWriter, TestRig.LastExecuted())
+	}
+})
