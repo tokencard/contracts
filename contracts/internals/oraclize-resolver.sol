@@ -28,8 +28,9 @@ contract OraclizeResolver is Controllable {
 
     /// @dev Constructor initializes the resolver target and sets up controller authentication.
     /// @param _target initial address of the target contract.
-    /// @param _controller is the controller contract address.
-    constructor(address _target, address _ens, byte32 _controller) Controllable(_ens, _controller) public {
+    /// @param _ens is the address of the ENS registry.
+    /// @param _controllerName is the registered ENS name for the controller contract.
+    constructor(address _target, address _ens, bytes32 _controllerName) Controllable(_ens, _controllerName) public {
         _address = _target;
     }
 
