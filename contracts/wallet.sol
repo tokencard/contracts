@@ -53,10 +53,11 @@ contract Whitelist is Controllable, Ownable {
     bool public submittedWhitelistRemoval;
     bool public initializedWhitelist;
 
-    /// @dev Check if the provided addresses contain the owner address.
-    modifier hasNoOwner(address[] _addresses) {
+    /// @dev Check if the provided addresses contain the owner or the zero-address address.
+    modifier hasNoOwnerOrZeroAddress(address[] _addresses) {
         for (uint i = 0; i < _addresses.length; i++) {
             require(_addresses[i] != owner(), "provided whitelist contains the owner address");
+            require(_addresses[i] != address(0), "provided whitelist contains the 0x0 zero address");
         }
         _;
     }
@@ -79,7 +80,7 @@ contract Whitelist is Controllable, Ownable {
 
     /// @dev Add initial addresses to the whitelist.
     /// @param _addresses are the Ethereum addresses to be whitelisted.
-    function initializeWhitelist(address[] _addresses) external onlyOwner hasNoOwner(_addresses) {
+    function initializeWhitelist(address[] _addresses) external onlyOwner hasNoOwnerOrZeroAddress(_addresses) {
         // Require that the whitelist has not been initialized.
         require(!initializedWhitelist, "whitelist has already been initialized");
         // Add each of the provided addresses to the whitelist.
@@ -93,7 +94,7 @@ contract Whitelist is Controllable, Ownable {
 
     /// @dev Add addresses to the whitelist.
     /// @param _addresses are the Ethereum addresses to be whitelisted.
-    function submitWhitelistAddition(address[] _addresses) external onlyOwner noActiveSubmission hasNoOwner(_addresses)  {
+    function submitWhitelistAddition(address[] _addresses) external onlyOwner noActiveSubmission hasNoOwnerOrZeroAddress(_addresses)  {
         // Require that the whitelist has been initialized.
         require(initializedWhitelist, "whitelist has not been initialized");
         // Set the provided addresses to the pending addition addresses.
@@ -310,6 +311,12 @@ contract Vault is Whitelist, SpendLimit, ERC165 {
         _;
     }
 
+    /// @dev Checks if the to address is not the zero-address.
+    modifier isNotZeroAddress(address _to) {
+        require(_to != address(0), "'to' address cannot be set to 0x0");     
+        _;
+    }
+
     /// @dev Ether can be deposited from any source, so this contract must be payable by anyone.
     function() public payable {
         //TODO question: Why is this check here, is it necessary or are we building into a corner?
@@ -332,7 +339,7 @@ contract Vault is Whitelist, SpendLimit, ERC165 {
     /// @param _to is the recipient's address.
     /// @param _asset is the address of an ERC20 token or 0x0 for ether.
     /// @param _amount is the amount of tokens to be transferred in base units.
-    function transfer(address _to, address _asset, uint _amount) external onlyOwner isNotZero(_amount) {
+    function transfer(address _to, address _asset, uint _amount) external onlyOwner isNotZero(_amount) isNotZeroAddress(_to) {
         // If address is not whitelisted, take daily limit into account.
         if (!isWhitelisted[_to]) {
             // Update the available spend limit.

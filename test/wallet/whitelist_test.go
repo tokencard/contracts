@@ -71,6 +71,43 @@ var _ = Describe("initializeWhitelist", func() {
 
 	})
 
+	Context("When I initialize whitelist with the 0x0 address", func() {
+		BeforeEach(func() {
+			tx, err := Wallet.InitializeWhitelist(Owner.TransactOpts(ethertest.WithGasLimit(100000)), []common.Address{common.HexToAddress("0x0")})
+			Expect(err).ToNot(HaveOccurred())
+			Backend.Commit()
+			Expect(isSuccessful(tx)).To(BeFalse())
+		})
+
+		It("should not update the initializedWhitelist flag", func() {
+			initialized, err := Wallet.InitializedWhitelist(nil)
+			Expect(err).ToNot(HaveOccurred())
+			Expect(initialized).To(BeFalse())
+		})
+
+		It("should not add the zero address to the whitelist", func() {
+			isWhitelisted, err := Wallet.IsWhitelisted(nil, common.HexToAddress("0x0"))
+			Expect(err).ToNot(HaveOccurred())
+			Expect(isWhitelisted).To(BeFalse())
+		})
+
+		It("should not emit WhitelistAddition event", func() {
+			it, err := Wallet.FilterAddedToWhitelist(nil)
+			Expect(err).ToNot(HaveOccurred())
+			Expect(it.Next()).To(BeFalse())
+		})
+
+		Context("When I try to initialize the whitelist again", func() {
+			It("should pass", func() {
+				tx, err := Wallet.InitializeWhitelist(Owner.TransactOpts(ethertest.WithGasLimit(100000)), []common.Address{RandomAccount.Address()})
+				Expect(err).ToNot(HaveOccurred())
+				Backend.Commit()
+				Expect(isSuccessful(tx)).To(BeTrue())
+			})
+		})
+
+	})
+
 	Context("When controller tries to initialize the whitelist", func() {
 		BeforeEach(func() {
 			BankAccount.MustTransfer(Backend, Controller.Address(), EthToWei(1))
