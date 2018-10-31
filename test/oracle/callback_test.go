@@ -27,7 +27,7 @@ func stringToQueryId(url string) [32]byte {
 	return id
 }
 
-var _ = FDescribe("callback", func() {
+var _ = Describe("callback", func() {
 
 	Context("When called by oraclize", func() {
 
