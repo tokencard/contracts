@@ -249,14 +249,48 @@ contract Oracle is usingOraclize, Base64, Date, JSON, Controllable, IOracle {
     /// @param _publicKey cryptocompare public key.
     /// @param _lastUpdate timestamp of the last time the requested token was updated.
     function verifyProof(string _result, bytes _proof, bytes _publicKey, uint _lastUpdate) private returns (bool, uint) {
-        // Extract the signature.
-        uint signatureLength = uint(_proof[1]);
-        bytes memory signature = new bytes(signatureLength);
-        signature = copyBytes(_proof, 2, signatureLength, signature, 0);
+
+        if (_proof.length == 0){
+          emit FailedProofVerification(_publicKey, _result, "emptyProof");
+          return (false, 0);
+        }
+
+        // Extract signature length
+        if (_proof.length >= 2){
+          uint signatureLength = uint(_proof[1]);
+
+          if (_proof.length >= signatureLength + 2){
+            bytes memory signature = new bytes(signatureLength);
+            signature = copyBytes(_proof, 2, signatureLength, signature, 0);
+          }
+          else{
+            emit FailedProofVerification(_publicKey, _result, "croppedProof:sig");
+            return (false, 0);
+          }
+        }
+        else{
+          emit FailedProofVerification(_publicKey, _result, "croppedProof:sig");
+          return (false, 0);
+        }
+
+
         // Extract the headers.
-        uint headersLength = uint(_proof[2 + signatureLength]) * 256 + uint(_proof[2 + signatureLength + 1]);
-        bytes memory headers = new bytes(headersLength);
-        headers = copyBytes(_proof, 4 + signatureLength, headersLength, headers, 0);
+        if (_proof.length >= signatureLength + 4){
+          uint headersLength = uint(_proof[2 + signatureLength]) * 256 + uint(_proof[2 + signatureLength + 1]);
+          if (_proof.length == signatureLength + headersLength + 4){ //'assert' proof length
+            bytes memory headers = new bytes(headersLength);
+            headers = copyBytes(_proof, 4 + signatureLength, headersLength, headers, 0);
+          }
+          else{
+            emit FailedProofVerification(_publicKey, _result, "croppedProof:headers");
+            return (false, 0);
+          }
+        }
+        else{
+          emit FailedProofVerification(_publicKey, _result, "croppedProof:headers");
+          return (false, 0);
+        }
+
         // Check if the date is valid.
         bytes memory dateHeader = new bytes(30);
         dateHeader = copyBytes(headers, 5, 30, dateHeader, 0);
