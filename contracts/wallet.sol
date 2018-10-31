@@ -57,7 +57,7 @@ contract Whitelist is Controllable, Ownable {
     modifier hasNoOwnerOrZeroAddress(address[] _addresses) {
         for (uint i = 0; i < _addresses.length; i++) {
             require(_addresses[i] != owner(), "provided whitelist contains the owner address");
-            require(_addresses[i] != address(0), "provided whitelist contains the 0x0 zero address");
+            require(_addresses[i] != address(0), "provided whitelist contains the zero address");
         }
         _;
     }
