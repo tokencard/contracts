@@ -14,6 +14,7 @@ contract_sources=(
   'mocks/token'
   'mocks/oraclize-connector'
   'mocks/oraclize-resolver'
+  'mocks/base64-exporter'
   'oracle'
   'internals/controller'
   'externals/ens/PublicResolver'
@@ -44,6 +45,7 @@ contracts=(
   "mocks/token/Token mocks/token.go Token mocks"
   "mocks/oraclize-connector/Oraclize mocks/oraclize-connector.go Oraclize mocks"
   "mocks/oraclize-resolver/OraclizeAddrResolver mocks/oraclize-resolver.go OraclizeAddrResolver mocks"
+  "mocks/base64-exporter/Base64Exporter mocks/base64-exporter.go Base64Exporter mocks"
   "oracle/Oracle oracle.go Oracle bindings"
   "internals/controller/Controller internals/controller.go Controller internals"
   "externals/ens/ENSRegistry/ENSRegistry externals/ens/ens-registry.go ENSRegistry ens"
