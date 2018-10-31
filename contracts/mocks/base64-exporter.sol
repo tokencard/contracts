@@ -1,5 +1,6 @@
 pragma solidity ^0.4.25;
 
+ /* solium-disable-next-line */ 
 import "../externals/base64.sol";
 
 
