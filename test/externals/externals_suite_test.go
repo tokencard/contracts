@@ -1,4 +1,4 @@
-package oracle_test
+package externals_test
 
 import (
 	"context"
@@ -15,10 +15,6 @@ import (
 var Base64Exporter *mocks.Base64Exporter
 var Base64ExporterAddress common.Address
 
-// func init() {
-// 	TestRig.AddCoverageForContracts("../../build/mocks/base64-exporter/combined.json", "../../contracts/externals/base64.sol")
-// }
-
 func TestBase64Suite(t *testing.T) {
 	RegisterFailHandler(Fail)
 	RunSpecs(t, "Contract Suite")
@@ -34,11 +30,6 @@ var _ = BeforeEach(func() {
 	Backend.Commit()
 	Expect(isSuccessful(tx)).To(BeTrue())
 })
-
-// var _ = AfterSuite(func() {
-// 	TestRig.ExpectMinimumCoverage("base64.sol:Base64", 10.0)
-// 	TestRig.PrintGasUsage(os.Stdout)
-// })
 
 func isSuccessful(tx *types.Transaction) bool {
 	r, err := Backend.TransactionReceipt(context.Background(), tx.Hash())

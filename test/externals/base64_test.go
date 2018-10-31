@@ -1,4 +1,4 @@
-package oracle_test
+package externals_test
 
 import (
 	"errors"
@@ -49,7 +49,7 @@ var _ = Describe("base64", func() {
 
 	})
 
-	Context("When a invalid base64 encoded string is passed", func() {
+	Context("When an invalid base64 encoded string is passed", func() {
 
 		It("Should fail (trigger require)", func() {
 			_, err := Base64Exporter.Base64decode(nil, []byte(""))
