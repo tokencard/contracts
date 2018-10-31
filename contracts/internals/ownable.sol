@@ -45,7 +45,7 @@ contract Ownable {
         // Require that the ownership is transferable.
         require(_isTransferable, "ownership is not transferable");
         // Require that the new owner is not the zero address.
-        require(_account != address(0), "owner cannot be set to 0x0");
+        require(_account != address(0), "owner cannot be set to zero address");
         // Set the transferable flag to false.
         _isTransferable = false;
         // Emit the ownership transfer event.

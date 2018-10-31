@@ -40,6 +40,25 @@ var _ = Describe("transfer", func() {
 
 		})
 
+		Context("When I transfer 1 Finney to a the zero address", func() {
+			BeforeEach(func() {
+				var err error
+				tx, err = Wallet.Transfer(Owner.TransactOpts(ethertest.WithGasLimit(81000)), common.HexToAddress("0x0"), common.HexToAddress("0x"), FinneyToWei(1))
+				Expect(err).ToNot(HaveOccurred())
+				Backend.Commit()
+			})
+			It("should fail", func() {
+				Expect(isSuccessful(tx)).To(BeFalse())
+			})
+
+			It("should reduce available transfer for today by 0 Finney", func() {
+				av, err := Wallet.SpendAvailable(nil)
+				Expect(err).ToNot(HaveOccurred())
+				Expect(av.String()).To(Equal("100000000000000000000"))
+			})
+
+		})
+
 		Context("When controller tries to transfer 1 Finney to a random person", func() {
 
 			BeforeEach(func() {
