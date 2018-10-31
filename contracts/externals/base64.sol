@@ -20,6 +20,7 @@ contract Base64 {
         bytes memory result = new bytes(length);
         uint index;
 
+        // base64 encoded strings can't be length 0 and they must be divisble by 4
         require(length > 0  && length % 4 == 0, "invalid base64 encoding");
 
           if (keccak256(abi.encodePacked(_encoded[length - 2])) == keccak256("=")) {
