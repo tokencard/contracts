@@ -72,5 +72,4 @@ var _ = Describe("base64", func() {
 		})
 
 	})
-
 })

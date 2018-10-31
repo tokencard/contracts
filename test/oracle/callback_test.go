@@ -188,7 +188,111 @@ var _ = Describe("callback", func() {
 								Expect(evt.Reason).To(Equal("signature"))
 							})
 						})
-					})
+						Context("When the proof is empty", func() {
+							BeforeEach(func() {
+								proof := []byte{}
+								tx, err := Oracle.Callback(OraclizeConnectorOwner.TransactOpts(), id, "{\"ETH\":0.001702}", proof)
+								Expect(err).ToNot(HaveOccurred())
+								Backend.Commit()
+								Expect(isSuccessful(tx)).To(BeTrue())
+							})
+							It("Should emit a Failed Proof Verification event", func() {
+								it, err := Oracle.FilterFailedProofVerification(nil)
+								Expect(err).ToNot(HaveOccurred())
+								Expect(it.Next()).To(BeTrue())
+								evt := it.Event
+								Expect(it.Next()).To(BeFalse())
+								Expect(evt.PublicKey).To(Equal(common.Hex2Bytes("a0f4f688350018ad1b9785991c0bde5f704b005dc79972b114dbed4a615a983710bfc647ebe5a320daa28771dce6a2d104f5efa2e4a85ba3760b76d46f8571ca")))
+								Expect(evt.Result).To(Equal("{\"ETH\":0.001702}"))
+								Expect(evt.Reason).To(Equal("emptyProof"))
+							})
+						})
+
+						Context("When the proof is cropped (signature)", func() {
+							BeforeEach(func() {
+								//last byte of sig is missing, sig[64] or proof[66] (0bytes + 1 byte for length)
+								proof := common.Hex2Bytes("0041ed930d0cf64c73b82c3a04b958f2d27572c09ef7faacb14f062b2ce63eb78331a885fda74e113383ead579337b7e02cc414a214c3bd210142628087dcf5ded78")
+								tx, err := Oracle.Callback(OraclizeConnectorOwner.TransactOpts(), id, "{\"ETH\":0.001702}", proof)
+								Expect(err).ToNot(HaveOccurred())
+								Backend.Commit()
+								Expect(isSuccessful(tx)).To(BeTrue())
+							})
+							It("Should emit a Failed Proof Verification event", func() {
+								it, err := Oracle.FilterFailedProofVerification(nil)
+								Expect(err).ToNot(HaveOccurred())
+								Expect(it.Next()).To(BeTrue())
+								evt := it.Event
+								Expect(it.Next()).To(BeFalse())
+								Expect(evt.PublicKey).To(Equal(common.Hex2Bytes("a0f4f688350018ad1b9785991c0bde5f704b005dc79972b114dbed4a615a983710bfc647ebe5a320daa28771dce6a2d104f5efa2e4a85ba3760b76d46f8571ca")))
+								Expect(evt.Result).To(Equal("{\"ETH\":0.001702}"))
+								Expect(evt.Reason).To(Equal("croppedProof:sig"))
+							})
+						})
+
+						Context("When the proof length is 1!", func() {
+							BeforeEach(func() {
+								//last byte of sig is missing, sig[64] or proof[66] (0bytes + 1 byte for length)
+								proof := common.Hex2Bytes("00")
+								tx, err := Oracle.Callback(OraclizeConnectorOwner.TransactOpts(), id, "{\"ETH\":0.001702}", proof)
+								Expect(err).ToNot(HaveOccurred())
+								Backend.Commit()
+								Expect(isSuccessful(tx)).To(BeTrue())
+							})
+							It("Should emit a Failed Proof Verification event", func() {
+								it, err := Oracle.FilterFailedProofVerification(nil)
+								Expect(err).ToNot(HaveOccurred())
+								Expect(it.Next()).To(BeTrue())
+								evt := it.Event
+								Expect(it.Next()).To(BeFalse())
+								Expect(evt.PublicKey).To(Equal(common.Hex2Bytes("a0f4f688350018ad1b9785991c0bde5f704b005dc79972b114dbed4a615a983710bfc647ebe5a320daa28771dce6a2d104f5efa2e4a85ba3760b76d46f8571ca")))
+								Expect(evt.Result).To(Equal("{\"ETH\":0.001702}"))
+								Expect(evt.Reason).To(Equal("croppedProof:sig"))
+							})
+						})
+
+						Context("When the proof is cropped (headers length)", func() {
+							BeforeEach(func() {
+								//proof length = 2 + sigLength + 1
+								proof := common.Hex2Bytes("0041ed930d0cf64c73b82c3a04b958f2d27572c09ef7faacb14f062b2ce63eb78331a885fda74e113383ead579337b7e02cc414a214c3bd210142628087dcf5ded780000")
+								tx, err := Oracle.Callback(OraclizeConnectorOwner.TransactOpts(), id, "{\"ETH\":0.001702}", proof)
+								Expect(err).ToNot(HaveOccurred())
+								Backend.Commit()
+								Expect(isSuccessful(tx)).To(BeTrue())
+							})
+							It("Should emit a Failed Proof Verification event", func() {
+								it, err := Oracle.FilterFailedProofVerification(nil)
+								Expect(err).ToNot(HaveOccurred())
+								Expect(it.Next()).To(BeTrue())
+								evt := it.Event
+								Expect(it.Next()).To(BeFalse())
+								Expect(evt.PublicKey).To(Equal(common.Hex2Bytes("a0f4f688350018ad1b9785991c0bde5f704b005dc79972b114dbed4a615a983710bfc647ebe5a320daa28771dce6a2d104f5efa2e4a85ba3760b76d46f8571ca")))
+								Expect(evt.Result).To(Equal("{\"ETH\":0.001702}"))
+								Expect(evt.Reason).To(Equal("croppedProof:headers"))
+							})
+						})
+
+						Context("When the proof is cropped (headers)", func() {
+							BeforeEach(func() {
+								//last byte of proof (last headers byte) is missing
+								proof := common.Hex2Bytes("0041ed930d0cf64c73b82c3a04b958f2d27572c09ef7faacb14f062b2ce63eb78331a885fda74e113383ead579337b7e02cc414a214c3bd210142628087dcf5ded781c0060646174653a205765642c203033204f637420323031382031373a30303a323220474d540a6469676573743a205348412d3235363d36514d48744c664e677576362b63795a6133376d68513962776f394449482f6451672f54715a3446745338")
+								tx, err := Oracle.Callback(OraclizeConnectorOwner.TransactOpts(), id, "{\"ETH\":0.001702}", proof)
+								Expect(err).ToNot(HaveOccurred())
+								Backend.Commit()
+								Expect(isSuccessful(tx)).To(BeTrue())
+							})
+							It("Should emit a Failed Proof Verification event", func() {
+								it, err := Oracle.FilterFailedProofVerification(nil)
+								Expect(err).ToNot(HaveOccurred())
+								Expect(it.Next()).To(BeTrue())
+								evt := it.Event
+								Expect(it.Next()).To(BeFalse())
+								Expect(evt.PublicKey).To(Equal(common.Hex2Bytes("a0f4f688350018ad1b9785991c0bde5f704b005dc79972b114dbed4a615a983710bfc647ebe5a320daa28771dce6a2d104f5efa2e4a85ba3760b76d46f8571ca")))
+								Expect(evt.Result).To(Equal("{\"ETH\":0.001702}"))
+								Expect(evt.Reason).To(Equal("croppedProof:headers"))
+							})
+						})
+
+					}) //invalid proof
 				}) //valid query id
 
 				Context("When an invalid queryID is passed", func() {

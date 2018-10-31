@@ -33,7 +33,7 @@ var _ = BeforeEach(func() {
 })
 
 var _ = AfterSuite(func() {
-	TestRig.ExpectMinimumCoverage("oracle.sol:Oracle", 95.0)
+	TestRig.ExpectMinimumCoverage("oracle.sol:Oracle", 98.70)
 	TestRig.PrintGasUsage(os.Stdout)
 })
 
