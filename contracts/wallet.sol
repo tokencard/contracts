@@ -311,12 +311,6 @@ contract Vault is Whitelist, SpendLimit, ERC165 {
         _;
     }
 
-    /// @dev Checks if the to address is not the zero-address.
-    modifier isNotZeroAddress(address _to) {
-        require(_to != address(0), "'to' address cannot be set to 0x0");     
-        _;
-    }
-
     /// @dev Ether can be deposited from any source, so this contract must be payable by anyone.
     function() public payable {
         //TODO question: Why is this check here, is it necessary or are we building into a corner?
@@ -339,7 +333,10 @@ contract Vault is Whitelist, SpendLimit, ERC165 {
     /// @param _to is the recipient's address.
     /// @param _asset is the address of an ERC20 token or 0x0 for ether.
     /// @param _amount is the amount of tokens to be transferred in base units.
-    function transfer(address _to, address _asset, uint _amount) external onlyOwner isNotZero(_amount) isNotZeroAddress(_to) {
+    function transfer(address _to, address _asset, uint _amount) external onlyOwner isNotZero(_amount) {
+        // Checks if the _to address is not the zero-address
+        require(_to != address(0), "'to' address cannot be set to 0x0");     
+
         // If address is not whitelisted, take daily limit into account.
         if (!isWhitelisted[_to]) {
             // Update the available spend limit.
