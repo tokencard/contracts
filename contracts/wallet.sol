@@ -22,6 +22,7 @@ import "./oracle.sol";
 import "./internals/ownable.sol";
 import "./internals/controllable.sol";
 import "./externals/ens/PublicResolver.sol";
+import "./externals/SafeMath.sol";
 
 /// @title ERC20 interface is a subset of the ERC20 specification.
 interface ERC20 {
@@ -177,6 +178,8 @@ contract SpendLimit is Controllable, Ownable {
     event SubmittedSpendLimitChange(uint _amount);
     event CancelledSpendLimitChange(address _sender);
 
+    using SafeMath for uint256;
+
     uint public spendLimit;
     uint internal _spendLimitDay;
     uint internal _spendAvailable;
@@ -256,10 +259,10 @@ contract SpendLimit is Controllable, Ownable {
 
     /// @dev Update available spend limit based on the daily reset.
     function updateSpendAvailable() internal {
-        if (now > _spendLimitDay + 24 hours) {
+        if (now > _spendLimitDay.add(24 hours)) {
             // Advance the current day by how many days have passed.
-            uint extraDays = (now - _spendLimitDay) / 24 hours;
-            _spendLimitDay += extraDays * 24 hours;
+            uint extraDays = now.sub(_spendLimitDay).div(24 hours);
+            _spendLimitDay = _spendLimitDay.add(extraDays.mul(24 hours));
             // Set the available limit to the current spend limit.
             _spendAvailable = spendLimit;
         }
@@ -284,6 +287,8 @@ contract SpendLimit is Controllable, Ownable {
 contract Vault is Whitelist, SpendLimit, ERC165 {
     event Received(address _from, uint _amount);
     event Transferred(address _to, address _asset, uint _amount);
+
+    using SafeMath for uint256;
 
     /// @dev Supported ERC165 interface ID.
     bytes4 private constant _ERC165_INTERFACE_ID = 0x01ffc9a7; // solium-disable-line uppercase
@@ -351,7 +356,7 @@ contract Vault is Whitelist, SpendLimit, ERC165 {
             // Require that the value is under remaining limit.
             require(etherValue <= _spendAvailable, "transfer amount exceeds available spend limit");
             // Update the available limit.
-            _spendAvailable -= etherValue;
+            _spendAvailable = _spendAvailable.sub(etherValue);
         }
         // Transfer token or ether based on the provided address.
         if (_asset != 0x0) {
@@ -377,6 +382,8 @@ contract Wallet is Vault {
     event CancelledTopUpLimitChange(address _sender);
 
     event ToppedUpGas(address _sender, address _owner, uint _amount);
+
+    using SafeMath for uint256;
 
     uint constant private MINIMUM_TOPUP_LIMIT = 1 finney; // solium-disable-line uppercase
     uint constant private MAXIMUM_TOPUP_LIMIT = 500 finney; // solium-disable-line uppercase
@@ -486,7 +493,7 @@ contract Wallet is Vault {
         }
         // Reduce the top up amount from available balance and transfer corresponding
         // ether to the owner's account.
-        _topUpAvailable -= amount;
+        _topUpAvailable = _topUpAvailable.sub(amount);
         owner().transfer(amount);
         // Emit the gas top up event.
         emit ToppedUpGas(tx.origin, owner(), amount);
@@ -507,10 +514,10 @@ contract Wallet is Vault {
 
     /// @dev Update available top up limit based on the daily reset.
     function updateTopUpAvailable() private {
-        if (now > _topUpLimitDay + 24 hours) {
+        if (now > _topUpLimitDay.add(24 hours)) {
             // Advance the current day by how many days have passed.
-            uint extraDays = (now - _topUpLimitDay) / 24 hours;
-            _topUpLimitDay += extraDays * 24 hours;
+            uint extraDays = now.sub(_topUpLimitDay).div(24 hours);
+            _topUpLimitDay = _topUpLimitDay.add(extraDays.mul(24 hours));
             // Set the available limit to the current top up limit.
             _topUpAvailable = topUpLimit;
         }
