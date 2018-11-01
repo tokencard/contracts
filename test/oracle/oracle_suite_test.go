@@ -2,6 +2,7 @@ package oracle_test
 
 import (
 	"context"
+	"fmt"
 	"os"
 	"testing"
 
@@ -30,6 +31,15 @@ var _ = BeforeEach(func() {
 	Expect(err).ToNot(HaveOccurred())
 	Backend.Commit()
 	Expect(isSuccessful(tx)).To(BeTrue())
+})
+
+var _ = AfterEach(func() {
+	td := CurrentGinkgoTestDescription()
+
+	if td.Failed {
+		fmt.Fprintf(GinkgoWriter, "\nLast Executed Smart Contract Line for %s:%d\n", td.FileName, td.LineNumber)
+		fmt.Fprintln(GinkgoWriter, TestRig.LastExecuted())
+	}
 })
 
 var _ = AfterSuite(func() {
