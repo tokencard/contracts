@@ -98,6 +98,8 @@ contract Whitelist is Controllable, Ownable {
     function submitWhitelistAddition(address[] _addresses) external onlyOwner noActiveSubmission hasNoOwnerOrZeroAddress(_addresses)  {
         // Require that the whitelist has been initialized.
         require(initializedWhitelist, "whitelist has not been initialized");
+        // Require that the operation has not been already submitted.
+        require(!submittedWhitelistAddition, "whitelist addition has already been submitted");
         // Set the provided addresses to the pending addition addresses.
         _pendingWhitelistAddition = _addresses;
         // Flag the operation as submitted.
@@ -135,6 +137,8 @@ contract Whitelist is Controllable, Ownable {
     /// @dev Remove addresses from the whitelist.
     /// @param _addresses are the Ethereum addresses to be removed.
     function submitWhitelistRemoval(address[] _addresses) external onlyOwner noActiveSubmission {
+        // Require that the operation has not been already submitted.
+        require(!submittedWhitelistRemoval, "whitelist removal has already been submitted");
         // Add the provided addresses to the pending addition list.
         _pendingWhitelistRemoval = _addresses;
         // Flag the operation as submitted.
