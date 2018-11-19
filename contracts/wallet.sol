@@ -260,9 +260,11 @@ contract SpendLimit is Controllable, Ownable {
     }
 
     /// @dev Confirm pending set daily limit operation.
-    function confirmSpendLimit() external onlyController {
+    function confirmSpendLimit(uint _amount) external onlyController {
         // Require that the operation has been submitted.
         require(submittedSpendLimit, "spend limit has not been submitted");
+        // Require that pending and confirmed spend limit are the same
+        require(pendingSpendLimit == _amount, "confirmed and submitted spend limits dont match");
         // Modify spend limit based on the pending value.
         modifySpendLimit(pendingSpendLimit);
         // Emit the set limit event.
@@ -274,7 +276,9 @@ contract SpendLimit is Controllable, Ownable {
     }
 
     /// @dev Cancel pending set daily limit operation.
-    function cancelSpendLimit() external onlyController {
+    function cancelSpendLimit(uint _amount) external onlyController {
+        // Require that pending and confirmed spend limit are the same
+        require(pendingSpendLimit == _amount, "confirmed and cancelled spend limits dont match");
         // Reset pending daily limit.
         pendingSpendLimit = 0;
         // Reset the submitted operation flag.
