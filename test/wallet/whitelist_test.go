@@ -17,7 +17,7 @@ var _ = Describe("initializeWhitelist", func() {
 
 	})
 
-	Context("When wallet has been deployed", func() {
+	When("wallet has been deployed", func() {
 		It("should have empty pending addition", func() {
 			pa, err := Wallet.PendingWhitelistAddition(nil)
 			Expect(err).ToNot(HaveOccurred())
@@ -31,7 +31,7 @@ var _ = Describe("initializeWhitelist", func() {
 		})
 	})
 
-	Context("When I initialize whitelist with random person's address", func() {
+	When("I initialize whitelist with random person's address", func() {
 		BeforeEach(func() {
 			tx, err := Wallet.InitializeWhitelist(Owner.TransactOpts(), []common.Address{RandomAccount.Address()})
 			Expect(err).ToNot(HaveOccurred())
@@ -60,7 +60,7 @@ var _ = Describe("initializeWhitelist", func() {
 			Expect(evt.Addresses).To(Equal([]common.Address{RandomAccount.Address()}))
 		})
 
-		Context("When I try to initialize the whitelist again", func() {
+		When("I try to initialize the whitelist again", func() {
 			It("should fail", func() {
 				tx, err := Wallet.InitializeWhitelist(Owner.TransactOpts(ethertest.WithGasLimit(100000)), []common.Address{RandomAccount.Address()})
 				Expect(err).ToNot(HaveOccurred())
@@ -71,7 +71,7 @@ var _ = Describe("initializeWhitelist", func() {
 
 	})
 
-	Context("When I initialize whitelist with the 0x0 address", func() {
+	When("I initialize whitelist with the 0x0 address", func() {
 		BeforeEach(func() {
 			tx, err := Wallet.InitializeWhitelist(Owner.TransactOpts(ethertest.WithGasLimit(100000)), []common.Address{common.HexToAddress("0x0")})
 			Expect(err).ToNot(HaveOccurred())
@@ -97,7 +97,7 @@ var _ = Describe("initializeWhitelist", func() {
 			Expect(it.Next()).To(BeFalse())
 		})
 
-		Context("When I try to initialize the whitelist again", func() {
+		When("I try to initialize the whitelist again", func() {
 			It("should pass", func() {
 				tx, err := Wallet.InitializeWhitelist(Owner.TransactOpts(ethertest.WithGasLimit(100000)), []common.Address{RandomAccount.Address()})
 				Expect(err).ToNot(HaveOccurred())
@@ -108,7 +108,7 @@ var _ = Describe("initializeWhitelist", func() {
 
 	})
 
-	Context("When controller tries to initialize the whitelist", func() {
+	When("controller tries to initialize the whitelist", func() {
 		BeforeEach(func() {
 			BankAccount.MustTransfer(Backend, Controller.Address(), EthToWei(1))
 		})
@@ -120,7 +120,7 @@ var _ = Describe("initializeWhitelist", func() {
 		})
 	})
 
-	Context("When random person tries to initialize the whitelist", func() {
+	When("random person tries to initialize the whitelist", func() {
 		BeforeEach(func() {
 			BankAccount.MustTransfer(Backend, RandomAccount.Address(), EthToWei(1))
 		})
@@ -138,7 +138,7 @@ var _ = Describe("whitelistAddition", func() {
 	BeforeEach(func() {
 		BankAccount.MustTransfer(Backend, Controller.Address(), EthToWei(1))
 	})
-	Context("When I add a random person to the whitelist before initialization", func() {
+	When("I add a random person to the whitelist before initialization", func() {
 		It("should fail", func() {
 			tx, err := Wallet.SubmitWhitelistAddition(Owner.TransactOpts(ethertest.WithGasLimit(1000000)), []common.Address{RandomAccount.Address()})
 			Expect(err).ToNot(HaveOccurred())
@@ -155,7 +155,7 @@ var _ = Describe("whitelistAddition", func() {
 		})
 	})
 
-	Context("When I add random person to the whitelist after initialization", func() {
+	When("I add random person to the whitelist after initialization", func() {
 		BeforeEach(func() {
 			tx, err := Wallet.InitializeWhitelist(Owner.TransactOpts(ethertest.WithGasLimit(500000)), []common.Address{common.HexToAddress("0x1")})
 			Expect(err).ToNot(HaveOccurred())
@@ -189,7 +189,7 @@ var _ = Describe("whitelistAddition", func() {
 			Expect(evt.Addresses).To(Equal([]common.Address{RandomAccount.Address()}))
 		})
 
-		Context("When I try to add another person to the whitelist", func() {
+		When("I try to add another person to the whitelist", func() {
 			It("should fail", func() {
 				tx, err := Wallet.SubmitWhitelistAddition(Owner.TransactOpts(ethertest.WithGasLimit(500000)), []common.Address{RandomAccount.Address()})
 				Expect(err).ToNot(HaveOccurred())
@@ -198,7 +198,7 @@ var _ = Describe("whitelistAddition", func() {
 			})
 		})
 
-		Context("When I try to remove a person from the whitelist while addition is pending", func() {
+		When("I try to remove a person from the whitelist while addition is pending", func() {
 			It("should fail", func() {
 				tx, err := Wallet.SubmitWhitelistRemoval(Owner.TransactOpts(ethertest.WithGasLimit(500000)), []common.Address{RandomAccount.Address()})
 				Expect(err).ToNot(HaveOccurred())
@@ -207,9 +207,27 @@ var _ = Describe("whitelistAddition", func() {
 			})
 		})
 
-		Context("When the controller confirms the adding to the whitelist", func() {
+		When("controller tries to confirm whitelist addition with a wrong hash", func() {
+
+			var txSuccessful bool
+
 			BeforeEach(func() {
-				tx, err := Wallet.ConfirmWhitelistAddition(Controller.TransactOpts(ethertest.WithGasLimit(500000)))
+				tx, err := Wallet.ConfirmWhitelistAddition(Controller.TransactOpts(ethertest.WithGasLimit(500000)), common.BytesToHash(nil))
+				Expect(err).ToNot(HaveOccurred())
+				Backend.Commit()
+				txSuccessful = isSuccessful(tx)
+			})
+
+			It("should fail", func() {
+				Expect(txSuccessful).To(BeFalse())
+			})
+		})
+
+		When("the controller confirms the adding to the whitelist", func() {
+			BeforeEach(func() {
+				hash, err := Wallet.PendingWhitelistAdditionHash(nil)
+				Expect(err).ToNot(HaveOccurred())
+				tx, err := Wallet.ConfirmWhitelistAddition(Controller.TransactOpts(ethertest.WithGasLimit(500000)), hash)
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 				Expect(isSuccessful(tx)).To(BeTrue())
@@ -231,7 +249,7 @@ var _ = Describe("whitelistAddition", func() {
 				Expect(evt.Addresses).To(Equal([]common.Address{RandomAccount.Address()}))
 			})
 
-			Context("When I try to add another person to the whitelist", func() {
+			When("I try to add another person to the whitelist", func() {
 				It("should succeed", func() {
 					tx, err := Wallet.SubmitWhitelistAddition(Owner.TransactOpts(), []common.Address{RandomAccount.Address()})
 					Expect(err).ToNot(HaveOccurred())
@@ -240,7 +258,7 @@ var _ = Describe("whitelistAddition", func() {
 				})
 			})
 
-			Context("When I try to initialize the whitelist", func() {
+			When("I try to initialize the whitelist", func() {
 				It("should fail", func() {
 					tx, err := Wallet.InitializeWhitelist(Owner.TransactOpts(ethertest.WithGasLimit(500000)), []common.Address{RandomAccount.Address()})
 					Expect(err).ToNot(HaveOccurred())
@@ -250,9 +268,27 @@ var _ = Describe("whitelistAddition", func() {
 			})
 		})
 
-		Context("When the controller cancels adding to the whitelist", func() {
+		When("controller tries to cancel whitelist addition with a wrong hash", func() {
+
+			var txSuccessful bool
+
 			BeforeEach(func() {
-				tx, err := Wallet.CancelWhitelistAddition(Controller.TransactOpts())
+				tx, err := Wallet.CancelWhitelistAddition(Controller.TransactOpts(ethertest.WithGasLimit(500000)), common.BytesToHash(nil))
+				Expect(err).ToNot(HaveOccurred())
+				Backend.Commit()
+				txSuccessful = isSuccessful(tx)
+			})
+
+			It("should fail", func() {
+				Expect(txSuccessful).To(BeFalse())
+			})
+		})
+
+		When("the controller cancels adding to the whitelist", func() {
+			BeforeEach(func() {
+				hash, err := Wallet.PendingWhitelistAdditionHash(nil)
+				Expect(err).ToNot(HaveOccurred())
+				tx, err := Wallet.CancelWhitelistAddition(Controller.TransactOpts(), hash)
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 				Expect(isSuccessful(tx)).To(BeTrue())
@@ -273,7 +309,7 @@ var _ = Describe("whitelistAddition", func() {
 				Expect(pending).To(HaveLen(0))
 			})
 
-			Context("When I try to initialize the whitelist", func() {
+			When("I try to initialize the whitelist", func() {
 				It("should fail", func() {
 					tx, err := Wallet.InitializeWhitelist(Owner.TransactOpts(ethertest.WithGasLimit(100000)), []common.Address{RandomAccount.Address()})
 					Expect(err).ToNot(HaveOccurred())
@@ -282,7 +318,7 @@ var _ = Describe("whitelistAddition", func() {
 				})
 			})
 
-			Context("When I try to add another person to the whitelist", func() {
+			When("I try to add another person to the whitelist", func() {
 				It("should succeed", func() {
 					tx, err := Wallet.SubmitWhitelistAddition(Owner.TransactOpts(), []common.Address{RandomAccount.Address()})
 					Expect(err).ToNot(HaveOccurred())
@@ -293,7 +329,7 @@ var _ = Describe("whitelistAddition", func() {
 		})
 	})
 
-	Context("When I submit a list of addresses to Backend added to the whitelist after initialization", func() {
+	When("I submit a list of addresses to Backend added to the whitelist after initialization", func() {
 		BeforeEach(func() {
 			tx, err := Wallet.InitializeWhitelist(Owner.TransactOpts(ethertest.WithGasLimit(500000)), []common.Address{common.HexToAddress("0x1")})
 			Expect(err).ToNot(HaveOccurred())
@@ -313,7 +349,7 @@ var _ = Describe("whitelistAddition", func() {
 		})
 	})
 
-	Context("When I submit an empty list of addresses to Backend added to the whitelist after initialization", func() {
+	When("I submit an empty list of addresses to Backend added to the whitelist after initialization", func() {
 		BeforeEach(func() {
 			tx, err := Wallet.InitializeWhitelist(Owner.TransactOpts(ethertest.WithGasLimit(500000)), []common.Address{common.HexToAddress("0x1")})
 			Expect(err).ToNot(HaveOccurred())
@@ -335,7 +371,7 @@ var _ = Describe("whitelistRemoval", func() {
 	BeforeEach(func() {
 		BankAccount.MustTransfer(Backend, Controller.Address(), EthToWei(1))
 	})
-	Context("When random person is in the whitelist", func() {
+	When("random person is in the whitelist", func() {
 		BeforeEach(func() {
 			tx, err := Wallet.InitializeWhitelist(Owner.TransactOpts(), []common.Address{RandomAccount.Address()})
 			Expect(err).ToNot(HaveOccurred())
@@ -343,7 +379,7 @@ var _ = Describe("whitelistRemoval", func() {
 			Expect(isSuccessful(tx)).To(BeTrue())
 		})
 
-		Context("When I submit removal of random person from the whitelist", func() {
+		When("I submit removal of random person from the whitelist", func() {
 			BeforeEach(func() {
 				tx, err := Wallet.SubmitWhitelistRemoval(Owner.TransactOpts(), []common.Address{RandomAccount.Address()})
 				Expect(err).ToNot(HaveOccurred())
@@ -372,7 +408,7 @@ var _ = Describe("whitelistRemoval", func() {
 				Expect(pending).To(Equal([]common.Address{RandomAccount.Address()}))
 			})
 
-			Context("When I try to submit another list for removal", func() {
+			When("I try to submit another list for removal", func() {
 				It("should fail", func() {
 					tx, err := Wallet.SubmitWhitelistRemoval(Owner.TransactOpts(ethertest.WithGasLimit(100000)), []common.Address{RandomAccount.Address()})
 					Expect(err).ToNot(HaveOccurred())
@@ -381,7 +417,7 @@ var _ = Describe("whitelistRemoval", func() {
 				})
 			})
 
-			Context("When I try to submit a list for addition while removal is pending", func() {
+			When("I try to submit a list for addition while removal is pending", func() {
 				It("should fail", func() {
 					tx, err := Wallet.SubmitWhitelistAddition(Owner.TransactOpts(ethertest.WithGasLimit(100000)), []common.Address{RandomAccount.Address()})
 					Expect(err).ToNot(HaveOccurred())
@@ -390,9 +426,11 @@ var _ = Describe("whitelistRemoval", func() {
 				})
 			})
 
-			Context("When controller confirms the whitelist removal", func() {
+			When("controller confirms the whitelist removal", func() {
 				BeforeEach(func() {
-					tx, err := Wallet.ConfirmWhitelistRemoval(Controller.TransactOpts())
+					hash, err := Wallet.PendingWhitelistRemovalHash(nil)
+					Expect(err).ToNot(HaveOccurred())
+					tx, err := Wallet.ConfirmWhitelistRemoval(Controller.TransactOpts(), hash)
 					Expect(err).ToNot(HaveOccurred())
 					Backend.Commit()
 					Expect(isSuccessful(tx)).To(BeTrue())
@@ -418,7 +456,8 @@ var _ = Describe("whitelistRemoval", func() {
 					Expect(err).ToNot(HaveOccurred())
 					Expect(pending).To(HaveLen(0))
 				})
-				Context("When I try to submit addreses for removal", func() {
+
+				When("I try to submit addreses for removal", func() {
 					It("should succeed", func() {
 						tx, err := Wallet.SubmitWhitelistRemoval(Owner.TransactOpts(), []common.Address{RandomAccount.Address()})
 						Expect(err).ToNot(HaveOccurred())
@@ -426,11 +465,46 @@ var _ = Describe("whitelistRemoval", func() {
 						Expect(isSuccessful(tx)).To(BeTrue())
 					})
 				})
+
+				When("controller tries to confirm whitelist removal with a wrong hash", func() {
+
+					var txSuccessful bool
+
+					BeforeEach(func() {
+						tx, err := Wallet.ConfirmWhitelistRemoval(Controller.TransactOpts(ethertest.WithGasLimit(100000)), common.BytesToHash(nil))
+						Expect(err).ToNot(HaveOccurred())
+						Backend.Commit()
+						txSuccessful = isSuccessful(tx)
+					})
+
+					It("should fail", func() {
+						Expect(txSuccessful).To(BeFalse())
+					})
+				})
+
 			})
 
-			Context("When controller cancels the whitelist removal", func() {
+			When("controller tries to cancel whitelist removal with a wrong hash", func() {
+
+				var txSuccessful bool
+
 				BeforeEach(func() {
-					tx, err := Wallet.CancelWhitelistRemoval(Controller.TransactOpts())
+					tx, err := Wallet.CancelWhitelistRemoval(Controller.TransactOpts(ethertest.WithGasLimit(100000)), common.BytesToHash(nil))
+					Expect(err).ToNot(HaveOccurred())
+					Backend.Commit()
+					txSuccessful = isSuccessful(tx)
+				})
+
+				It("should fail", func() {
+					Expect(txSuccessful).To(BeFalse())
+				})
+			})
+
+			When("controller cancels the whitelist removal", func() {
+				BeforeEach(func() {
+					hash, err := Wallet.PendingWhitelistRemovalHash(nil)
+					Expect(err).ToNot(HaveOccurred())
+					tx, err := Wallet.CancelWhitelistRemoval(Controller.TransactOpts(), hash)
 					Expect(err).ToNot(HaveOccurred())
 					Backend.Commit()
 					Expect(isSuccessful(tx)).To(BeTrue())
@@ -456,7 +530,7 @@ var _ = Describe("whitelistRemoval", func() {
 					Expect(err).ToNot(HaveOccurred())
 					Expect(isWhitelisted).To(BeTrue())
 				})
-				Context("When I try to submit another list for removal", func() {
+				When("I try to submit another list for removal", func() {
 					It("should succeed", func() {
 						tx, err := Wallet.SubmitWhitelistRemoval(Owner.TransactOpts(), []common.Address{RandomAccount.Address()})
 						Expect(err).ToNot(HaveOccurred())
@@ -470,7 +544,7 @@ var _ = Describe("whitelistRemoval", func() {
 
 	})
 
-	Context("When I submit 20 addresses for removal from whitelist", func() {
+	When("I submit 20 addresses for removal from whitelist", func() {
 		It("should succeed", func() {
 			addresses := []common.Address{}
 			for i := 0; i < 20; i++ {

@@ -40,12 +40,12 @@ interface ERC165 {
 /// @title Whitelist provides payee-whitelist functionality.
 contract Whitelist is Controllable, Ownable {
     event AddedToWhitelist(address _sender, address[] _addresses);
-    event SubmittedWhitelistAddition(address[] _addresses);
-    event CancelledWhitelistAddition(address _sender);
+    event SubmittedWhitelistAddition(address[] _addresses, bytes32 _hash);
+    event CancelledWhitelistAddition(address _sender, bytes32 _hash);
 
     event RemovedFromWhitelist(address _sender, address[] _addresses);
-    event SubmittedWhitelistRemoval(address[] _addresses);
-    event CancelledWhitelistRemoval(address _sender);
+    event SubmittedWhitelistRemoval(address[] _addresses, bytes32 _hash);
+    event CancelledWhitelistRemoval(address _sender, bytes32 _hash);
 
     mapping(address => bool) public isWhitelisted;
     address[] private _pendingWhitelistAddition;
@@ -74,9 +74,19 @@ contract Whitelist is Controllable, Ownable {
         return _pendingWhitelistAddition;
     }
 
+    /// @dev Getter for pending addition array hash.
+    function pendingWhitelistAdditionHash() public view returns(bytes32) {
+        return keccak256(abi.encodePacked(_pendingWhitelistAddition));
+    }
+
     /// @dev Getter for pending removal array.
     function pendingWhitelistRemoval() external view returns(address[]) {
         return _pendingWhitelistRemoval;
+    }
+
+    /// @dev Getter for pending removal array hash.
+    function pendingWhitelistRemovalHash() public view returns(bytes32) {
+        return keccak256(abi.encodePacked(_pendingWhitelistRemoval));
     }
 
     /// @dev Add initial addresses to the whitelist.
@@ -103,13 +113,17 @@ contract Whitelist is Controllable, Ownable {
         // Flag the operation as submitted.
         submittedWhitelistAddition = true;
         // Emit the submission event.
-        emit SubmittedWhitelistAddition(_addresses);
+        emit SubmittedWhitelistAddition(_addresses, pendingWhitelistAdditionHash());
     }
 
     /// @dev Confirm pending whitelist addition.
-    function confirmWhitelistAddition() external onlyController {
+    function confirmWhitelistAddition(bytes32 _hash) external onlyController {
         // Require that the whitelist addition has been submitted.
         require(submittedWhitelistAddition, "whitelist addition has not been submitted");
+
+        // Require that confirmation hash and the hash of the pending whitelist addition match
+        require(_hash == pendingWhitelistAdditionHash(), "hash of the pending white list addition do not match");
+
         // Whitelist pending addresses.
         for (uint i = 0; i < _pendingWhitelistAddition.length; i++) {
             isWhitelisted[_pendingWhitelistAddition[i]] = true;
@@ -123,13 +137,16 @@ contract Whitelist is Controllable, Ownable {
     }
 
     /// @dev Cancel pending whitelist addition.
-    function cancelWhitelistAddition() external onlyController {
+    function cancelWhitelistAddition(bytes32 _hash) external onlyController {
+        bytes32 pendingHash = pendingWhitelistAdditionHash();
+        // Require that confirmation hash and the hash of the pending whitelist addition match
+        require(_hash == pendingHash, "hash of the pending white list addition does not match");
         // Reset pending addresses.
         delete _pendingWhitelistAddition;
         // Reset the submitted operation flag.
         submittedWhitelistAddition = false;
         // Emit the cancellation event.
-        emit CancelledWhitelistAddition(msg.sender);
+        emit CancelledWhitelistAddition(msg.sender, pendingHash);
     }
 
     /// @dev Remove addresses from the whitelist.
@@ -140,14 +157,18 @@ contract Whitelist is Controllable, Ownable {
         // Flag the operation as submitted.
         submittedWhitelistRemoval = true;
         // Emit the submission event.
-        emit SubmittedWhitelistRemoval(_addresses);
+        emit SubmittedWhitelistRemoval(_addresses, pendingWhitelistAdditionHash());
     }
 
     /// @dev Confirm pending removal of whitelisted addresses.
-    function confirmWhitelistRemoval() external onlyController {
+    function confirmWhitelistRemoval(bytes32 _hash) external onlyController {
         // Require that the pending whitelist is not empty and the operation has been submitted.
         require(submittedWhitelistRemoval, "whitelist removal has not been submitted");
         require(_pendingWhitelistRemoval.length > 0, "pending whitelist removal is empty");
+
+        // Require that confirmation hash and the hash of the pending whitelist removal match
+        require(_hash == pendingWhitelistRemovalHash(), "hash of the pending white list removal do not match");
+
         // Remove pending addresses.
         for (uint i = 0; i < _pendingWhitelistRemoval.length; i++) {
             isWhitelisted[_pendingWhitelistRemoval[i]] = false;
@@ -161,13 +182,18 @@ contract Whitelist is Controllable, Ownable {
     }
 
     /// @dev Cancel pending removal of whitelisted addresses.
-    function cancelWhitelistRemoval() external onlyController {
+    function cancelWhitelistRemoval(bytes32 _hash) external onlyController {
+        bytes32 pendingHash = pendingWhitelistRemovalHash();
+
+        // Require that confirmation hash and the hash of the pending whitelist removal match
+        require(_hash == pendingHash, "hash of the pending white list removal do not match");
+
         // Reset pending addresses.
         delete _pendingWhitelistRemoval;
         // Reset the submitted operation flag.
         submittedWhitelistRemoval = false;
         // Emit the cancellation event.
-        emit CancelledWhitelistRemoval(msg.sender);
+        emit CancelledWhitelistRemoval(msg.sender, pendingHash);
     }
 }
 
@@ -345,7 +371,7 @@ contract Vault is Whitelist, SpendLimit, ERC165 {
     /// @param _amount is the amount of tokens to be transferred in base units.
     function transfer(address _to, address _asset, uint _amount) external onlyOwner isNotZero(_amount) {
         // Checks if the _to address is not the zero-address
-        require(_to != address(0), "_to address cannot be set to 0x0");     
+        require(_to != address(0), "_to address cannot be set to 0x0");
 
         // If address is not whitelisted, take daily limit into account.
         if (!isWhitelisted[_to]) {
