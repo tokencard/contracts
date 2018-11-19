@@ -414,7 +414,7 @@ contract Vault is Whitelist, SpendLimit, ERC165 {
 contract Wallet is Vault {
     event SetTopUpLimit(address _sender, uint _amount);
     event SubmittedTopUpLimitChange(uint _amount);
-    event CancelledTopUpLimitChange(address _sender);
+    event CancelledTopUpLimitChange(address _sender, uint _amount);
 
     event ToppedUpGas(address _sender, address _owner, uint _amount);
 
@@ -487,11 +487,13 @@ contract Wallet is Vault {
     }
 
     /// @dev Confirm pending set top up limit operation.
-    function confirmTopUpLimit() external onlyController {
+    function confirmTopUpLimit(uint _amount) external onlyController {
         // Require that the operation has been submitted.
         require(submittedTopUpLimit, "top up limit has not been submitted");
         // Assert that the pending top up limit amount is within the acceptable range.
         require(MINIMUM_TOPUP_LIMIT <= pendingTopUpLimit && pendingTopUpLimit <= MAXIMUM_TOPUP_LIMIT, "top up amount is outside the min/max range");
+        // Assert that confirmed and pending topup limit are the same.
+        require(_amount == pendingTopUpLimit, "confirmed and pending topup limit are not same");
         // Modify top up limit based on the pending value.
         modifyTopUpLimit(pendingTopUpLimit);
         // Emit the set limit event.
@@ -503,13 +505,13 @@ contract Wallet is Vault {
     }
 
     /// @dev Cancel pending set top up limit operation.
-    function cancelTopUpLimit() external onlyController {
+    function cancelTopUpLimit(uint _amount) external onlyController {
         // Reset pending daily limit.
         pendingTopUpLimit = 0;
         // Reset the submitted operation flag.
         submittedTopUpLimit = false;
         // Emit the cancellation event.
-        emit CancelledTopUpLimitChange(msg.sender);
+        emit CancelledTopUpLimitChange(msg.sender, _amount);
     }
 
     /// @dev Refill owner's gas balance.
