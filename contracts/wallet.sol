@@ -165,10 +165,8 @@ contract Whitelist is Controllable, Ownable {
         // Require that the pending whitelist is not empty and the operation has been submitted.
         require(submittedWhitelistRemoval, "whitelist removal has not been submitted");
         require(_pendingWhitelistRemoval.length > 0, "pending whitelist removal is empty");
-
         // Require that confirmation hash and the hash of the pending whitelist removal match
-        require(_hash == pendingWhitelistRemovalHash(), "hash of the pending white list removal do not match");
-
+        require(_hash == pendingWhitelistRemovalHash(), "hash of the pending white list removal does not match the confirmed hash");
         // Remove pending addresses.
         for (uint i = 0; i < _pendingWhitelistRemoval.length; i++) {
             isWhitelisted[_pendingWhitelistRemoval[i]] = false;
