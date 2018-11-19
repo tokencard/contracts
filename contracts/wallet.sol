@@ -181,8 +181,8 @@ contract SpendLimit is Controllable, Ownable {
     using SafeMath for uint256;
 
     uint public spendLimit;
-    uint internal _spendLimitDay;
-    uint internal _spendAvailable;
+    uint private _spendLimitDay;
+    uint private _spendAvailable;
 
     uint public pendingSpendLimit;
     bool public submittedSpendLimit;
@@ -197,7 +197,7 @@ contract SpendLimit is Controllable, Ownable {
 
     /// @dev Returns the available daily balance - accounts for daily limit reset.
     /// @return amount of ether in wei.
-    function spendAvailable() external view returns (uint) {
+    function spendAvailable() public view returns (uint) {
         if (now > _spendLimitDay + 24 hours) {
             return spendLimit;
         } else {
@@ -255,6 +255,11 @@ contract SpendLimit is Controllable, Ownable {
         submittedSpendLimit = false;
         // Emit the cancellation event.
         emit CancelledSpendLimitChange(msg.sender);
+    }
+
+    // @dev Setter method for the available daily spend limit.
+    function setSpendAvailable(uint _amount) internal {
+        _spendAvailable = _amount;
     }
 
     /// @dev Update available spend limit based on the daily reset.
@@ -354,9 +359,9 @@ contract Vault is Whitelist, SpendLimit, ERC165 {
                 etherValue = _amount;
             }
             // Require that the value is under remaining limit.
-            require(etherValue <= _spendAvailable, "transfer amount exceeds available spend limit");
+            require(etherValue <= spendAvailable(), "transfer amount exceeds available spend limit");
             // Update the available limit.
-            _spendAvailable = _spendAvailable.sub(etherValue);
+            setSpendAvailable(spendAvailable().sub(etherValue));
         }
         // Transfer token or ether based on the provided address.
         if (_asset != 0x0) {
