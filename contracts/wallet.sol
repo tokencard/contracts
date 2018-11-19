@@ -41,11 +41,11 @@ interface ERC165 {
 contract Whitelist is Controllable, Ownable {
     event AddedToWhitelist(address _sender, address[] _addresses);
     event SubmittedWhitelistAddition(address[] _addresses, bytes32 _hash);
-    event CancelledWhitelistAddition(address _sender, bytes32 _hash);
+    event CancelledWhitelistAddition(address _sender);
 
     event RemovedFromWhitelist(address _sender, address[] _addresses);
     event SubmittedWhitelistRemoval(address[] _addresses, bytes32 _hash);
-    event CancelledWhitelistRemoval(address _sender, bytes32 _hash);
+    event CancelledWhitelistRemoval(address _sender);
 
     mapping(address => bool) public isWhitelisted;
     address[] private _pendingWhitelistAddition;
@@ -138,15 +138,14 @@ contract Whitelist is Controllable, Ownable {
 
     /// @dev Cancel pending whitelist addition.
     function cancelWhitelistAddition(bytes32 _hash) external onlyController {
-        bytes32 pendingHash = pendingWhitelistAdditionHash();
         // Require that confirmation hash and the hash of the pending whitelist addition match
-        require(_hash == pendingHash, "hash of the pending white list addition does not match");
+        require(_hash == pendingWhitelistAdditionHash(), "hash of the pending white list addition does not match");
         // Reset pending addresses.
         delete _pendingWhitelistAddition;
         // Reset the submitted operation flag.
         submittedWhitelistAddition = false;
         // Emit the cancellation event.
-        emit CancelledWhitelistAddition(msg.sender, pendingHash);
+        emit CancelledWhitelistAddition(msg.sender);
     }
 
     /// @dev Remove addresses from the whitelist.
@@ -181,17 +180,16 @@ contract Whitelist is Controllable, Ownable {
 
     /// @dev Cancel pending removal of whitelisted addresses.
     function cancelWhitelistRemoval(bytes32 _hash) external onlyController {
-        bytes32 pendingHash = pendingWhitelistRemovalHash();
 
         // Require that confirmation hash and the hash of the pending whitelist removal match
-        require(_hash == pendingHash, "hash of the pending white list removal do not match");
+        require(_hash == pendingWhitelistRemovalHash(), "hash of the pending white list removal do not match");
 
         // Reset pending addresses.
         delete _pendingWhitelistRemoval;
         // Reset the submitted operation flag.
         submittedWhitelistRemoval = false;
         // Emit the cancellation event.
-        emit CancelledWhitelistRemoval(msg.sender, pendingHash);
+        emit CancelledWhitelistRemoval(msg.sender);
     }
 }
 
