@@ -23,7 +23,7 @@ import "./internals/date.sol";
 import "./internals/json.sol";
 import "./externals/strings.sol";
 import "./externals/SafeMath.sol";
-import "./externals/oraclizeAPI_0.4.25.sol";
+/* import "./externals/oraclizeAPI_0.4.25.sol"; */
 import "./externals/base64.sol";
 
 
@@ -203,7 +203,7 @@ contract Oracle is usingOraclize, Base64, Date, JSON, Controllable, IOracle {
         // Require that the proof is valid.
         if (valid) {
             // Parse the JSON result to get the rate in wei.
-            token.rate = parseInt(parseRate(_result, "ETH"), 18);
+            token.rate = parseInt(parseRate(_result), 18);
             // Set the update time of the token rate.
             token.lastUpdate = timestamp;
             // Remove query from the list.
@@ -258,7 +258,7 @@ contract Oracle is usingOraclize, Base64, Date, JSON, Controllable, IOracle {
         // Extract signature length
         if (_proof.length >= 2) {
             uint signatureLength = uint(_proof[1]);
-  
+
             if (_proof.length >= signatureLength + 2) {
                 bytes memory signature = new bytes(signatureLength);
                 signature = copyBytes(_proof, 2, signatureLength, signature, 0);

@@ -63,48 +63,106 @@ var _ = Describe("callback", func() {
 					Context("When the proof is valid", func() {
 						var tx *types.Transaction
 						var err error
+						Context("When the result has the expected format", func() {
+							BeforeEach(func() {
+								proof := common.Hex2Bytes("0041ed930d0cf64c73b82c3a04b958f2d27572c09ef7faacb14f062b2ce63eb78331a885fda74e113383ead579337b7e02cc414a214c3bd210142628087dcf5ded781c0060646174653a205765642c203033204f637420323031382031373a30303a323220474d540a6469676573743a205348412d3235363d36514d48744c664e677576362b63795a6133376d68513962776f394449482f6451672f54715a34467453383d")
+								tx, err = Oracle.Callback(OraclizeConnectorOwner.TransactOpts(), id, "{\"ETH\":0.001702}", proof)
+								Expect(err).ToNot(HaveOccurred())
+								Backend.Commit()
+							})
+							It("Should succeed", func() {
+								Expect(isSuccessful(tx)).To(BeTrue())
+							})
+							It("Should emit a Verified Proof event", func() {
+								it, err := Oracle.FilterVerifiedProof(nil)
+								Expect(err).ToNot(HaveOccurred())
+								Expect(it.Next()).To(BeTrue())
+								evt := it.Event
+								Expect(it.Next()).To(BeFalse())
+								Expect(evt.PublicKey).To(Equal(common.Hex2Bytes("a0f4f688350018ad1b9785991c0bde5f704b005dc79972b114dbed4a615a983710bfc647ebe5a320daa28771dce6a2d104f5efa2e4a85ba3760b76d46f8571ca")))
+								Expect(evt.Result).To(Equal("{\"ETH\":0.001702}"))
+							})
+							It("Should emit a TokenRateUpdate event", func() {
+								it, err := Oracle.FilterUpdatedTokenRate(nil)
+								Expect(err).ToNot(HaveOccurred())
+								Expect(it.Next()).To(BeTrue())
+								evt := it.Event
+								Expect(it.Next()).To(BeFalse())
+								Expect(evt.Token).To(Equal(common.HexToAddress("0xfe209bdE5CA32fa20E6728A005F26D651FFF5982")))
+								Expect(evt.Rate.String()).To(Equal(big.NewInt(int64(0.001702 * math.Pow10(18))).String()))
+							})
+							It("Should update the token's rate and timestamp ", func() {
+								token, err := Oracle.Tokens(nil, common.HexToAddress("0xfe209bdE5CA32fa20E6728A005F26D651FFF5982"))
+								Expect(err).ToNot(HaveOccurred())
+								Expect(token.Rate.String()).To(Equal(big.NewInt(int64(0.001702 * math.Pow10(18))).String()))
+								Expect(token.LastUpdate).NotTo(Equal(big.NewInt(0)))
+							})
+							It("Should fail when called again with the same (deleted, not valid) queryID", func() {
+								proof := common.Hex2Bytes("0041ed930d0cf64c73b82c3a04b958f2d27572c09ef7faacb14f062b2ce63eb78331a885fda74e113383ead579337b7e02cc414a214c3bd210142628087dcf5ded781c0060646174653a205765642c203033204f637420323031382031373a30303a323220474d540a6469676573743a205348412d3235363d36514d48744c664e677576362b63795a6133376d68513962776f394449482f6451672f54715a34467453383d")
+								tx, err = Oracle.Callback(OraclizeConnectorOwner.TransactOpts(ethertest.WithGasLimit(100000)), id, "{\"ETH\":0.001702}", proof)
+								Expect(err).ToNot(HaveOccurred())
+								Backend.Commit()
+								Expect(isGasExhausted(tx, 100000)).To(BeFalse())
+								Expect(isSuccessful(tx)).To(BeFalse())
+							})
+						})
 
-						BeforeEach(func() {
-							proof := common.Hex2Bytes("0041ed930d0cf64c73b82c3a04b958f2d27572c09ef7faacb14f062b2ce63eb78331a885fda74e113383ead579337b7e02cc414a214c3bd210142628087dcf5ded781c0060646174653a205765642c203033204f637420323031382031373a30303a323220474d540a6469676573743a205348412d3235363d36514d48744c664e677576362b63795a6133376d68513962776f394449482f6451672f54715a34467453383d")
-							tx, err = Oracle.Callback(OraclizeConnectorOwner.TransactOpts(), id, "{\"ETH\":0.001702}", proof)
-							Expect(err).ToNot(HaveOccurred())
-							Backend.Commit()
+						Context("When the result is is misformated", func() {
+
+							BeforeEach(func() {
+								//update the public key, needed because we sign our own (misformated) results for the callback
+								tx, err := Oracle.UpdateAPIPublicKey(Controller.TransactOpts(), common.Hex2Bytes("717580b4c7577ebe0a7c3c21213ffbfa1221d2c1fe455d4897800d86eb65d91f8fb6c2304a54d89ab5c13a690f03dce25f7d46af90f79908d6be8bcdcdf74c22"))
+								Expect(err).ToNot(HaveOccurred())
+								Backend.Commit()
+								Expect(isSuccessful(tx)).To(BeTrue())
+							})
+
+							It("It should Fail", func() {
+								//'=' instead of ':''
+								proof := common.Hex2Bytes("00418d0fbf90402017c9f5e4a92c4e09a05409c07efe6b26160c0935973ab79452330a44bee3b04fe01a784791a5a5bec02ddd1ef3cd80c08e8e551e034f456f48c21c0060646174653a204672692c203136204e6f7620323031382031363a32323a313820474d540a6469676573743a205348412d3235363d4259334f48496c5474497172744e725a69577a65315763657966496752364c31496b456c395070623651493d")
+								tx, err := Oracle.Callback(OraclizeConnectorOwner.TransactOpts(ethertest.WithGasLimit(500000)), id, "{\"ETH\"=0.003637}", proof)
+								Expect(err).ToNot(HaveOccurred())
+								Backend.Commit()
+								Expect(isGasExhausted(tx, 500000)).To(BeFalse())
+								Expect(isSuccessful(tx)).To(BeFalse())
+								Expect(TestRig.LastExecuted()).To(Equal("oracle.sol:Oracle:205\n\n            token.rate = parseInt(parseRate(_result), 18);\n"))
+							})
+
+							It("It should Fail", func() {
+								//json not terminated properly, missing '}'
+								proof := common.Hex2Bytes("004123ce60d99d27fa384793611661a7e4d061172201b0fac17afb5715da74633180ce9d6ac6c9a01df16c86f5bba227fbb15336045ca7efff4d85abdc382aceb8731c0060646174653a204672692c203136204e6f7620323031382031363a32323a313820474d540a6469676573743a205348412d3235363d435a307339584b44704f66494a54694e6e46696d34695a4275384c546572526a334135412b6d6a416b74733d")
+								tx, err := Oracle.Callback(OraclizeConnectorOwner.TransactOpts(ethertest.WithGasLimit(500000)), id, "{\"ETH\"=0.003637 mpla mpla mpla mpla", proof)
+								Expect(err).ToNot(HaveOccurred())
+								Backend.Commit()
+								Expect(isGasExhausted(tx, 500000)).To(BeFalse())
+								Expect(isSuccessful(tx)).To(BeFalse())
+								Expect(TestRig.LastExecuted()).To(Equal("oracle.sol:Oracle:205\n\n            token.rate = parseInt(parseRate(_result), 18);\n"))
+							})
+
+							It("It should Fail", func() {
+								//no matchin prefix i.e. {\"ETH\":
+								proof := common.Hex2Bytes("004132d410111b67765eddfb34e015bf070c27b1059ce92193136d476ff4735a6608225d6a9bc9ea1190ba79ba88eb8c58779a6a3a593574a36b7c365adce0dd2bd71c0060646174653a204672692c203136204e6f7620323031382031363a32323a313820474d540a6469676573743a205348412d3235363d34626531566b697051584b2f454b3453747a78706e2b63622b657673457a374c50507579533263737370493d")
+								tx, err := Oracle.Callback(OraclizeConnectorOwner.TransactOpts(ethertest.WithGasLimit(500000)), id, "chancellor on brink of second bailout for banks", proof)
+								Expect(err).ToNot(HaveOccurred())
+								Backend.Commit()
+								Expect(isGasExhausted(tx, 500000)).To(BeFalse())
+								Expect(isSuccessful(tx)).To(BeFalse())
+								Expect(TestRig.LastExecuted()).To(Equal("oracle.sol:Oracle:205\n\n            token.rate = parseInt(parseRate(_result), 18);\n"))
+							})
+
+							It("It should Fail", func() {
+								//result is toooo long
+								proof := common.Hex2Bytes("0041b9e2ae2711880db913d29f75eb424ba67cb1c9194ba215ee025f9639e03fde1610a530a20100730aea106f4f690eaa76c60660bb66a86c8214f0a8b500e3119f1b0060646174653a204672692c203136204e6f7620323031382031363a32323a313820474d540a6469676573743a205348412d3235363d56306678694339436e4a75566155563632416c554f4d52664c594c6950534179546e7958716f72696f46673d")
+								tx, err := Oracle.Callback(OraclizeConnectorOwner.TransactOpts(ethertest.WithGasLimit(500000)), id, "{\"ETH\"=this result is too long and it is going to inject malicious code}", proof)
+								Expect(err).ToNot(HaveOccurred())
+								Backend.Commit()
+								Expect(isGasExhausted(tx, 500000)).To(BeFalse())
+								Expect(isSuccessful(tx)).To(BeFalse())
+								Expect(TestRig.LastExecuted()).To(Equal("oracle.sol:Oracle:205\n\n            token.rate = parseInt(parseRate(_result), 18);\n"))
+							})
+
 						})
-						It("Should succeed", func() {
-							Expect(isSuccessful(tx)).To(BeTrue())
-						})
-						It("Should emit a Verified Proof event", func() {
-							it, err := Oracle.FilterVerifiedProof(nil)
-							Expect(err).ToNot(HaveOccurred())
-							Expect(it.Next()).To(BeTrue())
-							evt := it.Event
-							Expect(it.Next()).To(BeFalse())
-							Expect(evt.PublicKey).To(Equal(common.Hex2Bytes("a0f4f688350018ad1b9785991c0bde5f704b005dc79972b114dbed4a615a983710bfc647ebe5a320daa28771dce6a2d104f5efa2e4a85ba3760b76d46f8571ca")))
-							Expect(evt.Result).To(Equal("{\"ETH\":0.001702}"))
-						})
-						It("Should emit a TokenRateUpdate event", func() {
-							it, err := Oracle.FilterUpdatedTokenRate(nil)
-							Expect(err).ToNot(HaveOccurred())
-							Expect(it.Next()).To(BeTrue())
-							evt := it.Event
-							Expect(it.Next()).To(BeFalse())
-							Expect(evt.Token).To(Equal(common.HexToAddress("0xfe209bdE5CA32fa20E6728A005F26D651FFF5982")))
-							Expect(evt.Rate.String()).To(Equal(big.NewInt(int64(0.001702 * math.Pow10(18))).String()))
-						})
-						It("Should update the token's rate and timestamp ", func() {
-							token, err := Oracle.Tokens(nil, common.HexToAddress("0xfe209bdE5CA32fa20E6728A005F26D651FFF5982"))
-							Expect(err).ToNot(HaveOccurred())
-							Expect(token.Rate.String()).To(Equal(big.NewInt(int64(0.001702 * math.Pow10(18))).String()))
-							Expect(token.LastUpdate).NotTo(Equal(big.NewInt(0)))
-						})
-						It("Should fail when called again with the same (deleted, not valid) queryID", func() {
-							proof := common.Hex2Bytes("0041ed930d0cf64c73b82c3a04b958f2d27572c09ef7faacb14f062b2ce63eb78331a885fda74e113383ead579337b7e02cc414a214c3bd210142628087dcf5ded781c0060646174653a205765642c203033204f637420323031382031373a30303a323220474d540a6469676573743a205348412d3235363d36514d48744c664e677576362b63795a6133376d68513962776f394449482f6451672f54715a34467453383d")
-							tx, err = Oracle.Callback(OraclizeConnectorOwner.TransactOpts(ethertest.WithGasLimit(100000)), id, "{\"ETH\":0.001702}", proof)
-							Expect(err).ToNot(HaveOccurred())
-							Backend.Commit()
-							Expect(isGasExhausted(tx, 100000)).To(BeFalse())
-							Expect(isSuccessful(tx)).To(BeFalse())
-						})
+
 					}) //valid proof
 
 					Context("When the proof is not valid", func() {

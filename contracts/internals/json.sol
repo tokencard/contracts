@@ -19,24 +19,31 @@
 pragma solidity ^0.4.25;
 
 import "../externals/strings.sol";
-
+import "../externals/oraclizeAPI_0.4.25.sol";
 /// @title JSON provides JSON parsing functionality.
-contract JSON {
+contract JSON is usingOraclize{
     using strings for *;
+
+    bytes32 constant private prefixHash = keccak256("{\"ETH\":");
 
     /// @dev Extracts JSON rate value from the response object.
     /// @param _json body of the JSON response from the CryptoCompare API.
-    /// @param _symbol asset symbol used to extract the correct json field.
-    function parseRate(string _json, string _symbol) internal pure returns (string) {
+    function parseRate(string _json) public pure returns (string) {
+
+        uint json_len = abi.encodePacked(_json).length;
+        //{"ETH":}.length = 8, assuming a (maximum of) 18 digit prevision
+        require(json_len > 8 && json_len <= 28, "misformatted input");
+
+        bytes memory jsonPrefix = new bytes(7);
+        copyBytes(abi.encodePacked(_json), 0, 7, jsonPrefix, 0);
+        require(keccak256(jsonPrefix) == prefixHash, "prefix mismatch");
+
         strings.slice memory body = _json.toSlice();
-        body.beyond("{".toSlice());
+        body.split(":".toSlice()); //we are sure that ':' is included in the string, body now contains the rate+'}'
+        json_len = body._len;
         body.until("}".toSlice());
-        strings.slice memory _quote_mark = "\"".toSlice();
-        body.find(_quote_mark.concat(_symbol.toSlice()).toSlice().concat(_quote_mark).toSlice());
-        strings.slice memory asset;
-        body.split(",".toSlice(), asset);
-        asset.split(":".toSlice());
-        return asset.toString();
+        require(body._len == json_len-1,"not json format"); //ensure that the json is properly terminated with a '}'
+        return body.toString();
+
     }
 }
-
