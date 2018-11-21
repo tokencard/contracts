@@ -40,11 +40,11 @@ interface ERC165 {
 /// @title Whitelist provides payee-whitelist functionality.
 contract Whitelist is Controllable, Ownable {
     event AddedToWhitelist(address _sender, address[] _addresses);
-    event SubmittedWhitelistAddition(address[] _addresses);
+    event SubmittedWhitelistAddition(address[] _addresses, bytes32 _hash);
     event CancelledWhitelistAddition(address _sender);
 
     event RemovedFromWhitelist(address _sender, address[] _addresses);
-    event SubmittedWhitelistRemoval(address[] _addresses);
+    event SubmittedWhitelistRemoval(address[] _addresses, bytes32 _hash);
     event CancelledWhitelistRemoval(address _sender);
 
     mapping(address => bool) public isWhitelisted;
@@ -74,9 +74,19 @@ contract Whitelist is Controllable, Ownable {
         return _pendingWhitelistAddition;
     }
 
+    /// @dev Getter for pending addition array hash.
+    function pendingWhitelistAdditionHash() public view returns(bytes32) {
+        return keccak256(abi.encodePacked(_pendingWhitelistAddition));
+    }
+
     /// @dev Getter for pending removal array.
     function pendingWhitelistRemoval() external view returns(address[]) {
         return _pendingWhitelistRemoval;
+    }
+
+    /// @dev Getter for pending removal array hash.
+    function pendingWhitelistRemovalHash() public view returns(bytes32) {
+        return keccak256(abi.encodePacked(_pendingWhitelistRemoval));
     }
 
     /// @dev Add initial addresses to the whitelist.
@@ -103,13 +113,17 @@ contract Whitelist is Controllable, Ownable {
         // Flag the operation as submitted.
         submittedWhitelistAddition = true;
         // Emit the submission event.
-        emit SubmittedWhitelistAddition(_addresses);
+        emit SubmittedWhitelistAddition(_addresses, pendingWhitelistAdditionHash());
     }
 
     /// @dev Confirm pending whitelist addition.
-    function confirmWhitelistAddition() external onlyController {
+    function confirmWhitelistAddition(bytes32 _hash) external onlyController {
         // Require that the whitelist addition has been submitted.
         require(submittedWhitelistAddition, "whitelist addition has not been submitted");
+
+        // Require that confirmation hash and the hash of the pending whitelist addition match
+        require(_hash == pendingWhitelistAdditionHash(), "hash of the pending white list addition do not match");
+
         // Whitelist pending addresses.
         for (uint i = 0; i < _pendingWhitelistAddition.length; i++) {
             isWhitelisted[_pendingWhitelistAddition[i]] = true;
@@ -123,7 +137,9 @@ contract Whitelist is Controllable, Ownable {
     }
 
     /// @dev Cancel pending whitelist addition.
-    function cancelWhitelistAddition() external onlyController {
+    function cancelWhitelistAddition(bytes32 _hash) external onlyController {
+        // Require that confirmation hash and the hash of the pending whitelist addition match
+        require(_hash == pendingWhitelistAdditionHash(), "hash of the pending white list addition does not match");
         // Reset pending addresses.
         delete _pendingWhitelistAddition;
         // Reset the submitted operation flag.
@@ -140,14 +156,16 @@ contract Whitelist is Controllable, Ownable {
         // Flag the operation as submitted.
         submittedWhitelistRemoval = true;
         // Emit the submission event.
-        emit SubmittedWhitelistRemoval(_addresses);
+        emit SubmittedWhitelistRemoval(_addresses, pendingWhitelistAdditionHash());
     }
 
     /// @dev Confirm pending removal of whitelisted addresses.
-    function confirmWhitelistRemoval() external onlyController {
+    function confirmWhitelistRemoval(bytes32 _hash) external onlyController {
         // Require that the pending whitelist is not empty and the operation has been submitted.
         require(submittedWhitelistRemoval, "whitelist removal has not been submitted");
         require(_pendingWhitelistRemoval.length > 0, "pending whitelist removal is empty");
+        // Require that confirmation hash and the hash of the pending whitelist removal match
+        require(_hash == pendingWhitelistRemovalHash(), "hash of the pending white list removal does not match the confirmed hash");
         // Remove pending addresses.
         for (uint i = 0; i < _pendingWhitelistRemoval.length; i++) {
             isWhitelisted[_pendingWhitelistRemoval[i]] = false;
@@ -161,7 +179,11 @@ contract Whitelist is Controllable, Ownable {
     }
 
     /// @dev Cancel pending removal of whitelisted addresses.
-    function cancelWhitelistRemoval() external onlyController {
+    function cancelWhitelistRemoval(bytes32 _hash) external onlyController {
+
+        // Require that confirmation hash and the hash of the pending whitelist removal match
+        require(_hash == pendingWhitelistRemovalHash(), "hash of the pending white list removal do not match");
+
         // Reset pending addresses.
         delete _pendingWhitelistRemoval;
         // Reset the submitted operation flag.
@@ -234,9 +256,11 @@ contract SpendLimit is Controllable, Ownable {
     }
 
     /// @dev Confirm pending set daily limit operation.
-    function confirmSpendLimit() external onlyController {
+    function confirmSpendLimit(uint _amount) external onlyController {
         // Require that the operation has been submitted.
         require(submittedSpendLimit, "spend limit has not been submitted");
+        // Require that pending and confirmed spend limit are the same
+        require(pendingSpendLimit == _amount, "confirmed and submitted spend limits dont match");
         // Modify spend limit based on the pending value.
         modifySpendLimit(pendingSpendLimit);
         // Emit the set limit event.
@@ -248,7 +272,9 @@ contract SpendLimit is Controllable, Ownable {
     }
 
     /// @dev Cancel pending set daily limit operation.
-    function cancelSpendLimit() external onlyController {
+    function cancelSpendLimit(uint _amount) external onlyController {
+        // Require that pending and confirmed spend limit are the same
+        require(pendingSpendLimit == _amount, "confirmed and cancelled spend limits dont match");
         // Reset pending daily limit.
         pendingSpendLimit = 0;
         // Reset the submitted operation flag.
@@ -345,7 +371,7 @@ contract Vault is Whitelist, SpendLimit, ERC165 {
     /// @param _amount is the amount of tokens to be transferred in base units.
     function transfer(address _to, address _asset, uint _amount) external onlyOwner isNotZero(_amount) {
         // Checks if the _to address is not the zero-address
-        require(_to != address(0), "_to address cannot be set to 0x0");     
+        require(_to != address(0), "_to address cannot be set to 0x0");
 
         // If address is not whitelisted, take daily limit into account.
         if (!isWhitelisted[_to]) {
@@ -384,7 +410,7 @@ contract Vault is Whitelist, SpendLimit, ERC165 {
 contract Wallet is Vault {
     event SetTopUpLimit(address _sender, uint _amount);
     event SubmittedTopUpLimitChange(uint _amount);
-    event CancelledTopUpLimitChange(address _sender);
+    event CancelledTopUpLimitChange(address _sender, uint _amount);
 
     event ToppedUpGas(address _sender, address _owner, uint _amount);
 
@@ -457,11 +483,13 @@ contract Wallet is Vault {
     }
 
     /// @dev Confirm pending set top up limit operation.
-    function confirmTopUpLimit() external onlyController {
+    function confirmTopUpLimit(uint _amount) external onlyController {
         // Require that the operation has been submitted.
         require(submittedTopUpLimit, "top up limit has not been submitted");
         // Assert that the pending top up limit amount is within the acceptable range.
         require(MINIMUM_TOPUP_LIMIT <= pendingTopUpLimit && pendingTopUpLimit <= MAXIMUM_TOPUP_LIMIT, "top up amount is outside the min/max range");
+        // Assert that confirmed and pending topup limit are the same.
+        require(_amount == pendingTopUpLimit, "confirmed and pending topup limit are not same");
         // Modify top up limit based on the pending value.
         modifyTopUpLimit(pendingTopUpLimit);
         // Emit the set limit event.
@@ -473,13 +501,13 @@ contract Wallet is Vault {
     }
 
     /// @dev Cancel pending set top up limit operation.
-    function cancelTopUpLimit() external onlyController {
+    function cancelTopUpLimit(uint _amount) external onlyController {
         // Reset pending daily limit.
         pendingTopUpLimit = 0;
         // Reset the submitted operation flag.
         submittedTopUpLimit = false;
         // Emit the cancellation event.
-        emit CancelledTopUpLimitChange(msg.sender);
+        emit CancelledTopUpLimitChange(msg.sender, _amount);
     }
 
     /// @dev Refill owner's gas balance.
