@@ -63,6 +63,7 @@ var _ = Describe("callback", func() {
 					Context("When the proof is valid", func() {
 						var tx *types.Transaction
 						var err error
+
 						Context("When the result has the expected format", func() {
 							BeforeEach(func() {
 								proof := common.Hex2Bytes("0041ed930d0cf64c73b82c3a04b958f2d27572c09ef7faacb14f062b2ce63eb78331a885fda74e113383ead579337b7e02cc414a214c3bd210142628087dcf5ded781c0060646174653a205765642c203033204f637420323031382031373a30303a323220474d540a6469676573743a205348412d3235363d36514d48744c664e677576362b63795a6133376d68513962776f394449482f6451672f54715a34467453383d")

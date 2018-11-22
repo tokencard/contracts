@@ -89,6 +89,29 @@ contract Oracle is usingOraclize, Base64, Date, JSON, Controllable, IOracle {
         emit SetGasPrice(msg.sender, _gasPrice);
     }
 
+    function parseIntRevert(string _a) private pure returns (uint) {
+        return parseInt(_a, 0);
+    }
+
+    function parseIntRevert(string _a, uint _b) private pure returns (uint) {
+        bytes memory bresult = bytes(_a);
+        uint mint = 0;
+        bool decimals = false;
+        for (uint i=0; i<bresult.length; i++){
+            if ((bresult[i] >= 48)&&(bresult[i] <= 57)){
+                if (decimals){
+                   if (_b == 0) break;
+                    else _b--;
+                }
+                mint *= 10;
+                mint += uint(bresult[i]) - 48;
+            } else if (bresult[i] == 46) decimals = true;
+            else{ revert("not a digit");}
+        }
+        if (_b > 0) mint *= 10**_b;
+        return mint;
+    }
+
     /// @dev Convert ERC20 token amount to the corresponding ether amount (used by the wallet contract).
     /// @param _token ERC20 token contract address.
     /// @param _amount amount of token in base units.
@@ -286,8 +309,9 @@ contract Oracle is usingOraclize, Base64, Date, JSON, Controllable, IOracle {
         }
 
         // Check if the date is valid.
-        bytes memory dateHeader = new bytes(30);
-        dateHeader = copyBytes(headers, 5, 30, dateHeader, 0);
+        bytes memory dateHeader = new bytes(20);
+        //keep only the relevant string(e.g. "16 Nov 2018 16:22:18")
+        dateHeader = copyBytes(headers, 11, 20, dateHeader, 0);
 
         bool dateValid;
         uint timestamp;
@@ -334,43 +358,31 @@ contract Oracle is usingOraclize, Base64, Date, JSON, Controllable, IOracle {
     /// @param _dateHeader extracted date string e.g. Wed, 12 Sep 2018 15:18:14 GMT.
     /// @param _lastUpdate timestamp of the last time the requested token was updated.
     function verifyDate(string _dateHeader, uint _lastUpdate) private pure returns (bool, uint) {
+
+        require(abi.encodePacked(_dateHeader).length == 20, "unexpected date string");
+
+        //Split the date string and get individual date components.
         strings.slice memory date = _dateHeader.toSlice();
         strings.slice memory timeDelimiter = ":".toSlice();
         strings.slice memory dateDelimiter = " ".toSlice();
-        // Split the date string.
-        date.split(",".toSlice());
-        date.split(dateDelimiter);
-        // Get individual date components.
+
         uint day = parseInt(date.split(dateDelimiter).toString());
+        require(day > 0 && day < 32, "day error");
+
         uint month = monthToNumber(date.split(dateDelimiter).toString());
+        require(month > 0 && month < 13, "month error");
+
         uint year = parseInt(date.split(dateDelimiter).toString());
+        require(year > 2017 && year < 3000, "year error");
+
         uint hour = parseInt(date.split(timeDelimiter).toString());
+        require(hour < 25, "hour error");
+
         uint minute = parseInt(date.split(timeDelimiter).toString());
+        require(minute < 60, "minute error");
+
         uint second = parseInt(date.split(timeDelimiter).toString());
-
-        if (day > 31 || day < 1) {
-            return (false, 0);
-        }
-
-        if (month > 12 || month < 1) {
-            return (false, 0);
-        }
-
-        if (year < 2018 || year > 3000) {
-            return (false, 0);
-        }
-
-        if (hour >= 24) {
-            return (false, 0);
-        }
-
-        if (minute >= 60) {
-            return (false, 0);
-        }
-
-        if (second >= 60) {
-            return (false, 0);
-        }
+        require(second < 60, "second error");
 
         uint timestamp = year * (10 ** 10) + month * (10 ** 8) + day * (10 ** 6) + hour * (10 ** 4) + minute * (10 ** 2) + second;
 
