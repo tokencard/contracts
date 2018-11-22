@@ -90,7 +90,7 @@ contract Oracle is usingOraclize, Base64, Date, JSON, Controllable, IOracle {
     }
 
     function parseIntRevert(string _a) private pure returns (uint) {
-        return parseInt(_a, 0);
+        return parseIntRevert(_a, 0);
     }
 
     function parseIntRevert(string _a, uint _b) private pure returns (uint) {
@@ -105,8 +105,12 @@ contract Oracle is usingOraclize, Base64, Date, JSON, Controllable, IOracle {
                 }
                 mint *= 10;
                 mint += uint(bresult[i]) - 48;
-            } else if (bresult[i] == 46) decimals = true;
-            else{ revert("not a digit");}
+            } else if (bresult[i] == 46) {
+                decimals = true;
+              }
+            else {
+              revert("not a digit");
+            }
         }
         if (_b > 0) mint *= 10**_b;
         return mint;
@@ -225,7 +229,7 @@ contract Oracle is usingOraclize, Base64, Date, JSON, Controllable, IOracle {
         // Require that the proof is valid.
         if (valid) {
             // Parse the JSON result to get the rate in wei.
-            token.rate = parseInt(parseRate(_result), 18);
+            token.rate = parseIntRevert(parseRate(_result, "ETH"), 18);
             // Set the update time of the token rate.
             token.lastUpdate = timestamp;
             // Remove query from the list.
@@ -359,29 +363,30 @@ contract Oracle is usingOraclize, Base64, Date, JSON, Controllable, IOracle {
     /// @param _lastUpdate timestamp of the last time the requested token was updated.
     function verifyDate(string _dateHeader, uint _lastUpdate) private pure returns (bool, uint) {
 
-        require(abi.encodePacked(_dateHeader).length == 20, "unexpected date string");
+        //called by verifyProof(), _dateHeader is always a string of length = 20
+        assert(abi.encodePacked(_dateHeader).length == 20);
 
         //Split the date string and get individual date components.
         strings.slice memory date = _dateHeader.toSlice();
         strings.slice memory timeDelimiter = ":".toSlice();
         strings.slice memory dateDelimiter = " ".toSlice();
 
-        uint day = parseInt(date.split(dateDelimiter).toString());
+        uint day = parseIntRevert(date.split(dateDelimiter).toString());
         require(day > 0 && day < 32, "day error");
 
         uint month = monthToNumber(date.split(dateDelimiter).toString());
         require(month > 0 && month < 13, "month error");
 
-        uint year = parseInt(date.split(dateDelimiter).toString());
+        uint year = parseIntRevert(date.split(dateDelimiter).toString());
         require(year > 2017 && year < 3000, "year error");
 
-        uint hour = parseInt(date.split(timeDelimiter).toString());
+        uint hour = parseIntRevert(date.split(timeDelimiter).toString());
         require(hour < 25, "hour error");
 
-        uint minute = parseInt(date.split(timeDelimiter).toString());
+        uint minute = parseIntRevert(date.split(timeDelimiter).toString());
         require(minute < 60, "minute error");
 
-        uint second = parseInt(date.split(timeDelimiter).toString());
+        uint second = parseIntRevert(date.split(timeDelimiter).toString());
         require(second < 60, "second error");
 
         uint timestamp = year * (10 ** 10) + month * (10 ** 8) + day * (10 ** 6) + hour * (10 ** 4) + minute * (10 ** 2) + second;

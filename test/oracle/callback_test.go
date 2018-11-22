@@ -63,7 +63,6 @@ var _ = Describe("callback", func() {
 					Context("When the proof is valid", func() {
 						var tx *types.Transaction
 						var err error
-
 						Context("When the result has the expected format", func() {
 							BeforeEach(func() {
 								proof := common.Hex2Bytes("0041ed930d0cf64c73b82c3a04b958f2d27572c09ef7faacb14f062b2ce63eb78331a885fda74e113383ead579337b7e02cc414a214c3bd210142628087dcf5ded781c0060646174653a205765642c203033204f637420323031382031373a30303a323220474d540a6469676573743a205348412d3235363d36514d48744c664e677576362b63795a6133376d68513962776f394449482f6451672f54715a34467453383d")
@@ -162,8 +161,171 @@ var _ = Describe("callback", func() {
 								Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*token.rate = parseInt\(parseRate\(_result\), 18\);`))
 							})
 
-						})
+							Context("When the date is is misformated", func() {
 
+								BeforeEach(func() {
+									//update the public key, needed because we sign our own (misformated) results for the callback
+									tx, err := Oracle.UpdateAPIPublicKey(Controller.TransactOpts(), common.Hex2Bytes("717580b4c7577ebe0a7c3c21213ffbfa1221d2c1fe455d4897800d86eb65d91f8fb6c2304a54d89ab5c13a690f03dce25f7d46af90f79908d6be8bcdcdf74c22"))
+									Expect(err).ToNot(HaveOccurred())
+									Backend.Commit()
+									Expect(isSuccessful(tx)).To(BeTrue())
+								})
+
+								It("It should Fail", func() {
+									//day set to 99, should revert: require(day > 0 && day < 32, "day error");
+									proof := common.Hex2Bytes("0041106784bb4d25adb3dded51d19a781be8c7cc3e1633bbd720f40dbd87a83a414f418be0f5469efd4a1f643382440c89594d8b7b7b446108bef4b4134c0c6f56b31b0060646174653a204672692c203939204e6f7620323031382031363a32323a313820474d540a6469676573743a205348412d3235363d4459452b675a6c4147756c5630562f67774a4347452f78423171484b66516c42476a37586c3441496649383d")
+									tx, err := Oracle.Callback(OraclizeConnectorOwner.TransactOpts(ethertest.WithGasLimit(300000)), id, "{\"ETH\":0.003637}", proof)
+									Expect(err).ToNot(HaveOccurred())
+									Backend.Commit()
+									Expect(isGasExhausted(tx, 300000)).To(BeFalse())
+									Expect(isSuccessful(tx)).To(BeFalse())
+									lastExecuted := TestRig.LastExecuted()
+									Expect(lastExecuted[len(lastExecuted)-43:]).To(Equal("require(day > 0 && day < 32, \"day error\");\n"))
+								})
+
+								It("It should Fail", func() {
+									//month set to Mov, should revert: require(month > 0 && month < 13, "month error");
+									proof := common.Hex2Bytes("0041caffb89c34157e1238512dc97583b565373e3a1e8bf9aff29f2ca4bc766a05eb1ba36d1bafc5606acba0b57c71f638bf86755f5a88a9d4e1ef8839c6f6213a8f1b0060646174653a204672692c203136204d6f7620323031382031363a32323a313820474d540a6469676573743a205348412d3235363d4459452b675a6c4147756c5630562f67774a4347452f78423171484b66516c42476a37586c3441496649383d")
+									//0041caffb89c34157e1238512dc97583b565373e3a1e8bf9aff29f2ca4bc766a05eb1ba36d1bafc5606acba0b57c71f638bf86755f5a88a9d4e1ef8839c6f6213a8f1c0060646174653a204672692c203136204d6f7620323031382031363a32323a313820474d540a6469676573743a205348412d3235363d4459452b675a6c4147756c5630562f67774a4347452f78423171484b66516c42476a37586c3441496649383d
+									tx, err := Oracle.Callback(OraclizeConnectorOwner.TransactOpts(ethertest.WithGasLimit(300000)), id, "{\"ETH\":0.003637}", proof)
+									Expect(err).ToNot(HaveOccurred())
+									Backend.Commit()
+									Expect(isGasExhausted(tx, 300000)).To(BeFalse())
+									Expect(isSuccessful(tx)).To(BeFalse())
+									lastExecuted := TestRig.LastExecuted()
+									Expect(lastExecuted[len(lastExecuted)-66:]).To(Equal("uint month = monthToNumber(date.split(dateDelimiter).toString());\n"))
+								})
+
+								It("It should Fail", func() {
+									//year set to 2017, should revert: require(year > 2017 && year < 3000, "year error");
+									proof := common.Hex2Bytes("004167d7be41dfe1a7dfc59239d1c68f049c3d4ed3d6cc550ff48234009e224ae4463f18d6b1b5bfba929d3f20f754eeb1445653e127e5f46bb7e8602fd41dca58b41b0060646174653a204672692c203136204e6f7620323031372031363a32323a313820474d540a6469676573743a205348412d3235363d4459452b675a6c4147756c5630562f67774a4347452f78423171484b66516c42476a37586c3441496649383d")
+									tx, err := Oracle.Callback(OraclizeConnectorOwner.TransactOpts(ethertest.WithGasLimit(300000)), id, "{\"ETH\":0.003637}", proof)
+									Expect(err).ToNot(HaveOccurred())
+									Backend.Commit()
+									Expect(isGasExhausted(tx, 300000)).To(BeFalse())
+									Expect(isSuccessful(tx)).To(BeFalse())
+									lastExecuted := TestRig.LastExecuted()
+									Expect(lastExecuted[len(lastExecuted)-51:]).To(Equal("require(year > 2017 && year < 3000, \"year error\");\n"))
+								})
+
+								It("It should Fail", func() {
+									//hour set to bb, should revert: revert(\"not a digit\");
+									proof := common.Hex2Bytes("00414795d3cd436da3830e4675ec33b9986beec03a652e8343fe3d66c179cf0d533360fbb9822a566f99b27391da2d298601548b2b5e487fb3f1774a9bb8815474f71c0060646174653a204672692c203136204e6f7620323031382062623a32323a313820474d540a6469676573743a205348412d3235363d4459452b675a6c4147756c5630562f67774a4347452f78423171484b66516c42476a37586c3441496649383d")
+									//00414795d3cd436da3830e4675ec33b9986beec03a652e8343fe3d66c179cf0d533360fbb9822a566f99b27391da2d298601548b2b5e487fb3f1774a9bb8815474f71c0060646174653a204672692c203136204e6f7620323031382062623a32323a313820474d540a6469676573743a205348412d3235363d4459452b675a6c4147756c5630562f67774a4347452f78423171484b66516c42476a37586c3441496649383d
+									tx, err := Oracle.Callback(OraclizeConnectorOwner.TransactOpts(ethertest.WithGasLimit(300000)), id, "{\"ETH\":0.003637}", proof)
+									Expect(err).ToNot(HaveOccurred())
+									Backend.Commit()
+									Expect(isGasExhausted(tx, 300000)).To(BeFalse())
+									Expect(isSuccessful(tx)).To(BeFalse())
+									lastExecuted := TestRig.LastExecuted()
+									Expect(lastExecuted[len(lastExecuted)-23:]).To(Equal("revert(\"not a digit\");\n"))
+								})
+
+								It("It should Fail", func() {
+									//hour set to 25, should revert: require(hour < 25, "hour error");
+									proof := common.Hex2Bytes("0041e337e637f0dd990ea3c7a14e3b7836c6f71f511d2fa50d3c2322a171dfe94a997caf0ebcaef58eeedc99e121d64c2984f379bba7288846e2a10935e2da3834da1b0060646174653a204672692c203136204e6f7620323031382032353a32323a313820474d540a6469676573743a205348412d3235363d4459452b675a6c4147756c5630562f67774a4347452f78423171484b66516c42476a37586c3441496649383d")
+									//0041e337e637f0dd990ea3c7a14e3b7836c6f71f511d2fa50d3c2322a171dfe94a997caf0ebcaef58eeedc99e121d64c2984f379bba7288846e2a10935e2da3834da1c0060646174653a204672692c203136204e6f7620323031382032353a32323a313820474d540a6469676573743a205348412d3235363d4459452b675a6c4147756c5630562f67774a4347452f78423171484b66516c42476a37586c3441496649383d
+									tx, err := Oracle.Callback(OraclizeConnectorOwner.TransactOpts(ethertest.WithGasLimit(300000)), id, "{\"ETH\":0.003637}", proof)
+									Expect(err).ToNot(HaveOccurred())
+									Backend.Commit()
+									Expect(isGasExhausted(tx, 300000)).To(BeFalse())
+									Expect(isSuccessful(tx)).To(BeFalse())
+									lastExecuted := TestRig.LastExecuted()
+									Expect(lastExecuted[len(lastExecuted)-34:]).To(Equal("require(hour < 25, \"hour error\");\n"))
+								})
+
+								It("It should Fail", func() {
+									//minute set to 60, should revert: require(minute < 60, "minute error");
+									proof := common.Hex2Bytes("00419c41e305443d35209809205b8f754505390c1f39795d70755ef5e4825b27ffb5127cb6e8bf0b0b3ac083d502d7d29ce98ce2cca18721b027591cf575d7e5bd2a1b0060646174653a204672692c203136204e6f7620323031382031363a36303a313820474d540a6469676573743a205348412d3235363d4459452b675a6c4147756c5630562f67774a4347452f78423171484b66516c42476a37586c3441496649383d")
+									//00419c41e305443d35209809205b8f754505390c1f39795d70755ef5e4825b27ffb5127cb6e8bf0b0b3ac083d502d7d29ce98ce2cca18721b027591cf575d7e5bd2a1c0060646174653a204672692c203136204e6f7620323031382031363a36303a313820474d540a6469676573743a205348412d3235363d4459452b675a6c4147756c5630562f67774a4347452f78423171484b66516c42476a37586c3441496649383d
+									tx, err := Oracle.Callback(OraclizeConnectorOwner.TransactOpts(ethertest.WithGasLimit(300000)), id, "{\"ETH\":0.003637}", proof)
+									Expect(err).ToNot(HaveOccurred())
+									Backend.Commit()
+									Expect(isGasExhausted(tx, 300000)).To(BeFalse())
+									Expect(isSuccessful(tx)).To(BeFalse())
+									lastExecuted := TestRig.LastExecuted()
+									Expect(lastExecuted[len(lastExecuted)-38:]).To(Equal("require(minute < 60, \"minute error\");\n"))
+								})
+
+								It("It should Fail", func() {
+									//second set to 60, should revert: require(second < 60, "second error");
+									proof := common.Hex2Bytes("0041eb4ea654fb13df725ab41363a1cfacd564404f4cd79cb9b6436f0b3c04d2895e134e4a616a27451e7cc7cff10dbd848927d25a866c8847848d3da799b98b01351b0060646174653a204672692c203136204e6f7620323031382031363a32323a363020474d540a6469676573743a205348412d3235363d4459452b675a6c4147756c5630562f67774a4347452f78423171484b66516c42476a37586c3441496649383d")
+									//0041eb4ea654fb13df725ab41363a1cfacd564404f4cd79cb9b6436f0b3c04d2895e134e4a616a27451e7cc7cff10dbd848927d25a866c8847848d3da799b98b01351c0060646174653a204672692c203136204e6f7620323031382031363a32323a363020474d540a6469676573743a205348412d3235363d4459452b675a6c4147756c5630562f67774a4347452f78423171484b66516c42476a37586c3441496649383d
+									tx, err := Oracle.Callback(OraclizeConnectorOwner.TransactOpts(ethertest.WithGasLimit(300000)), id, "{\"ETH\":0.003637}", proof)
+									Expect(err).ToNot(HaveOccurred())
+									Backend.Commit()
+									Expect(isGasExhausted(tx, 300000)).To(BeFalse())
+									Expect(isSuccessful(tx)).To(BeFalse())
+									lastExecuted := TestRig.LastExecuted()
+									Expect(lastExecuted[len(lastExecuted)-38:]).To(Equal("require(second < 60, \"second error\");\n"))
+								})
+
+								It("It should Fail", func() {
+									//wrong delimiters, - instead of ' ', interpretes the whole string as the day
+									proof := common.Hex2Bytes("0041f1bcafadb5a8cb52218f0dade45bade9024a2cef4d5aae363e57e41ef765c5b86980d0fb5ff62fec6b529352b92025fbb595f29b9441759b8932483d9f7b40061b0060646174653a204672692c2031362d4e6f762d323031382d31363a32323a363020474d540a6469676573743a205348412d3235363d4459452b675a6c4147756c5630562f67774a4347452f78423171484b66516c42476a37586c3441496649383d")
+									//0041f1bcafadb5a8cb52218f0dade45bade9024a2cef4d5aae363e57e41ef765c5b86980d0fb5ff62fec6b529352b92025fbb595f29b9441759b8932483d9f7b40061c0060646174653a204672692c2031362d4e6f762d323031382d31363a32323a363020474d540a6469676573743a205348412d3235363d4459452b675a6c4147756c5630562f67774a4347452f78423171484b66516c42476a37586c3441496649383d
+									tx, err := Oracle.Callback(OraclizeConnectorOwner.TransactOpts(ethertest.WithGasLimit(300000)), id, "{\"ETH\":0.003637}", proof)
+									Expect(err).ToNot(HaveOccurred())
+									Backend.Commit()
+									Expect(isGasExhausted(tx, 300000)).To(BeFalse())
+									Expect(isSuccessful(tx)).To(BeFalse())
+									lastExecuted := TestRig.LastExecuted()
+									Expect(lastExecuted[len(lastExecuted)-23:]).To(Equal("revert(\"not a digit\");\n"))
+								})
+
+								It("It should Fail", func() {
+									//wrong delimiters, - instead of ' ' after month, month is concatenated with the rest of the string, monthToNumber() reverts
+									proof := common.Hex2Bytes("004148e54c2cf224b9711729a8d1c0e3ef40e15ceb04787fe6ded257f21fb16d6981adb93098f56088f4261af19c8a3d229784664128ec832a4ac43659a872c37fc01b0060646174653a204672692c203136204e6f762d323031382031363a32323a313020474d540a6469676573743a205348412d3235363d4459452b675a6c4147756c5630562f67774a4347452f78423171484b66516c42476a37586c3441496649383d")
+									//004148e54c2cf224b9711729a8d1c0e3ef40e15ceb04787fe6ded257f21fb16d6981adb93098f56088f4261af19c8a3d229784664128ec832a4ac43659a872c37fc01c0060646174653a204672692c203136204e6f762d323031382031363a32323a313020474d540a6469676573743a205348412d3235363d4459452b675a6c4147756c5630562f67774a4347452f78423171484b66516c42476a37586c3441496649383d
+									tx, err := Oracle.Callback(OraclizeConnectorOwner.TransactOpts(ethertest.WithGasLimit(300000)), id, "{\"ETH\":0.003637}", proof)
+									Expect(err).ToNot(HaveOccurred())
+									Backend.Commit()
+									Expect(isGasExhausted(tx, 300000)).To(BeFalse())
+									Expect(isSuccessful(tx)).To(BeFalse())
+									lastExecuted := TestRig.LastExecuted()
+									Expect(lastExecuted[len(lastExecuted)-66:]).To(Equal("uint month = monthToNumber(date.split(dateDelimiter).toString());\n"))
+								})
+
+								It("It should Fail", func() {
+									//wrong delimiters, - instead of ' ' after year, year is concatenated with the rest of the string, revert("not a digit");
+									proof := common.Hex2Bytes("004187a94db9df9f4f4a8e1a07d3993ca247bd62cbd4d5ef1a3f3c072480cae3bfe8202286bb81a006e52c1f07d62952bf389684328a7b684f56d169ee9451fbcda91b0060646174653a204672692c203136204e6f7620323031382d31363a32323a313020474d540a6469676573743a205348412d3235363d4459452b675a6c4147756c5630562f67774a4347452f78423171484b66516c42476a37586c3441496649383d")
+									//004187a94db9df9f4f4a8e1a07d3993ca247bd62cbd4d5ef1a3f3c072480cae3bfe8202286bb81a006e52c1f07d62952bf389684328a7b684f56d169ee9451fbcda91c0060646174653a204672692c203136204e6f7620323031382d31363a32323a313020474d540a6469676573743a205348412d3235363d4459452b675a6c4147756c5630562f67774a4347452f78423171484b66516c42476a37586c3441496649383d
+									tx, err := Oracle.Callback(OraclizeConnectorOwner.TransactOpts(ethertest.WithGasLimit(300000)), id, "{\"ETH\":0.003637}", proof)
+									Expect(err).ToNot(HaveOccurred())
+									Backend.Commit()
+									Expect(isGasExhausted(tx, 300000)).To(BeFalse())
+									Expect(isSuccessful(tx)).To(BeFalse())
+									lastExecuted := TestRig.LastExecuted()
+									Expect(lastExecuted[len(lastExecuted)-23:]).To(Equal("revert(\"not a digit\");\n"))
+								})
+
+								It("It should Fail", func() {
+									//wrong delimiters, - instead of ' ' after hour, hour is concatenated with the rest of the string, revert("not a digit");
+									proof := common.Hex2Bytes("0041e4eb35999bbf8de5410d7a35bfe39cbf630c0e10ef799e1defa6ad8de31e8a3be6b2d85e2ade74c61cfc0cdc68d9b87b964c33e02256e72fed2266681770721a1b0060646174653a204672692c203136204e6f7620323031382031362d32323a313020474d540a6469676573743a205348412d3235363d4459452b675a6c4147756c5630562f67774a4347452f78423171484b66516c42476a37586c3441496649383d")
+									//0041e4eb35999bbf8de5410d7a35bfe39cbf630c0e10ef799e1defa6ad8de31e8a3be6b2d85e2ade74c61cfc0cdc68d9b87b964c33e02256e72fed2266681770721a1c0060646174653a204672692c203136204e6f7620323031382031362d32323a313020474d540a6469676573743a205348412d3235363d4459452b675a6c4147756c5630562f67774a4347452f78423171484b66516c42476a37586c3441496649383d
+									tx, err := Oracle.Callback(OraclizeConnectorOwner.TransactOpts(ethertest.WithGasLimit(300000)), id, "{\"ETH\":0.003637}", proof)
+									Expect(err).ToNot(HaveOccurred())
+									Backend.Commit()
+									Expect(isGasExhausted(tx, 300000)).To(BeFalse())
+									Expect(isSuccessful(tx)).To(BeFalse())
+									lastExecuted := TestRig.LastExecuted()
+									Expect(lastExecuted[len(lastExecuted)-23:]).To(Equal("revert(\"not a digit\");\n"))
+								})
+
+								It("It should Fail", func() {
+									//wrong delimiters, - instead of ' ' after minute, minute is concatenated with the rest of the string, revert("not a digit");
+									proof := common.Hex2Bytes("00412f9fc5e8d0623fd3e65361a076bbed3f1b4ed80c5bcc4ca3b7b7c39e8bb23cfeefcca511be20bfb36c121e2f6cb4cf52824bb6a127d6cd82e1662618148de8491b0060646174653a204672692c203136204e6f7620323031382031363a32322d313020474d540a6469676573743a205348412d3235363d4459452b675a6c4147756c5630562f67774a4347452f78423171484b66516c42476a37586c3441496649383d")
+									//00412f9fc5e8d0623fd3e65361a076bbed3f1b4ed80c5bcc4ca3b7b7c39e8bb23cfeefcca511be20bfb36c121e2f6cb4cf52824bb6a127d6cd82e1662618148de8491c0060646174653a204672692c203136204e6f7620323031382031363a32322d313020474d540a6469676573743a205348412d3235363d4459452b675a6c4147756c5630562f67774a4347452f78423171484b66516c42476a37586c3441496649383d
+									tx, err := Oracle.Callback(OraclizeConnectorOwner.TransactOpts(ethertest.WithGasLimit(300000)), id, "{\"ETH\":0.003637}", proof)
+									Expect(err).ToNot(HaveOccurred())
+									Backend.Commit()
+									Expect(isGasExhausted(tx, 300000)).To(BeFalse())
+									Expect(isSuccessful(tx)).To(BeFalse())
+									lastExecuted := TestRig.LastExecuted()
+									Expect(lastExecuted[len(lastExecuted)-23:]).To(Equal("revert(\"not a digit\");\n"))
+								})
+								
+						})
 					}) //valid proof
 
 					Context("When the proof is not valid", func() {
