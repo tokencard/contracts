@@ -23,7 +23,6 @@ import "./internals/date.sol";
 import "./internals/json.sol";
 import "./externals/strings.sol";
 import "./externals/SafeMath.sol";
-/* import "./externals/oraclizeAPI_0.4.25.sol"; */
 import "./externals/base64.sol";
 
 

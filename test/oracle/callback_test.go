@@ -118,14 +118,14 @@ var _ = Describe("callback", func() {
 							})
 
 							It("It should Fail", func() {
-								//'=' instead of ':''
+								//'=' instead of ':'
 								proof := common.Hex2Bytes("00418d0fbf90402017c9f5e4a92c4e09a05409c07efe6b26160c0935973ab79452330a44bee3b04fe01a784791a5a5bec02ddd1ef3cd80c08e8e551e034f456f48c21c0060646174653a204672692c203136204e6f7620323031382031363a32323a313820474d540a6469676573743a205348412d3235363d4259334f48496c5474497172744e725a69577a65315763657966496752364c31496b456c395070623651493d")
 								tx, err := Oracle.Callback(OraclizeConnectorOwner.TransactOpts(ethertest.WithGasLimit(500000)), id, "{\"ETH\"=0.003637}", proof)
 								Expect(err).ToNot(HaveOccurred())
 								Backend.Commit()
 								Expect(isGasExhausted(tx, 500000)).To(BeFalse())
 								Expect(isSuccessful(tx)).To(BeFalse())
-								Expect(TestRig.LastExecuted()).To(Equal("oracle.sol:Oracle:205\n\n            token.rate = parseInt(parseRate(_result), 18);\n"))
+								Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*token.rate = parseInt\(parseRate\(_result\), 18\);`))
 							})
 
 							It("It should Fail", func() {
@@ -136,7 +136,7 @@ var _ = Describe("callback", func() {
 								Backend.Commit()
 								Expect(isGasExhausted(tx, 500000)).To(BeFalse())
 								Expect(isSuccessful(tx)).To(BeFalse())
-								Expect(TestRig.LastExecuted()).To(Equal("oracle.sol:Oracle:205\n\n            token.rate = parseInt(parseRate(_result), 18);\n"))
+								Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*token.rate = parseInt\(parseRate\(_result\), 18\);`))
 							})
 
 							It("It should Fail", func() {
@@ -147,7 +147,7 @@ var _ = Describe("callback", func() {
 								Backend.Commit()
 								Expect(isGasExhausted(tx, 500000)).To(BeFalse())
 								Expect(isSuccessful(tx)).To(BeFalse())
-								Expect(TestRig.LastExecuted()).To(Equal("oracle.sol:Oracle:205\n\n            token.rate = parseInt(parseRate(_result), 18);\n"))
+								Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*token.rate = parseInt\(parseRate\(_result\), 18\);`))
 							})
 
 							It("It should Fail", func() {
@@ -158,7 +158,7 @@ var _ = Describe("callback", func() {
 								Backend.Commit()
 								Expect(isGasExhausted(tx, 500000)).To(BeFalse())
 								Expect(isSuccessful(tx)).To(BeFalse())
-								Expect(TestRig.LastExecuted()).To(Equal("oracle.sol:Oracle:205\n\n            token.rate = parseInt(parseRate(_result), 18);\n"))
+								Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*token.rate = parseInt\(parseRate\(_result\), 18\);`))
 							})
 
 						})
