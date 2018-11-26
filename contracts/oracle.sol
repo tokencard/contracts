@@ -52,6 +52,14 @@ contract Oracle is usingOraclize, Base64, Date, JSON, Controllable, IOracle {
 
     event SetCryptoComparePublicKey(address _sender, bytes _publicKey);
 
+    uint constant private PROOF_LEN = 165;
+    uint constant private ECDSA_SIG_LEN = 65;
+    uint constant private ENCODING_BYTES = 2;
+    uint constant private HEADERS_LEN = PROOF_LEN - 2*ENCODING_BYTES - ECDSA_SIG_LEN; // 2 bytes encoding headers length + 2 for signature.
+    uint constant private DIGEST_BASE64_LEN = 44; //base64 encoding of the SHA256 hash (32-bytes) of the result: fixed length.
+    uint constant private DIGEST_OFFSET = HEADERS_LEN - DIGEST_BASE64_LEN; // the starting position of the result hash in the headers string.
+
+
     struct Token {
         string symbol;    // Token symbol
         uint magnitude;   // 10^decimals
@@ -229,7 +237,7 @@ contract Oracle is usingOraclize, Base64, Date, JSON, Controllable, IOracle {
         // Require that the proof is valid.
         if (valid) {
             // Parse the JSON result to get the rate in wei.
-            token.rate = parseIntRevert(parseRate(_result, "ETH"), 18);
+            token.rate = parseIntRevert(parseRate(_result), 18);
             // Set the update time of the token rate.
             token.lastUpdate = timestamp;
             // Remove query from the list.
@@ -276,40 +284,28 @@ contract Oracle is usingOraclize, Base64, Date, JSON, Controllable, IOracle {
     /// @param _lastUpdate timestamp of the last time the requested token was updated.
     function verifyProof(string _result, bytes _proof, bytes _publicKey, uint _lastUpdate) private returns (bool, uint) {
 
-        if (_proof.length == 0) {
-            emit FailedProofVerification(_publicKey, _result, "emptyProof");
-            return (false, 0);
-        }
+        //expecting fixed length proofs
+        if (_proof.length != PROOF_LEN)
+          revert("invalid proof length");
 
-        // Extract signature length
-        if (_proof.length >= 2) {
-            uint signatureLength = uint(_proof[1]);
+        //proof should be 65 bytes long: R (32 bytes) + S (32 bytes) + v (1 byte)
+        if (uint(_proof[1]) != ECDSA_SIG_LEN)
+          revert("invalid signature length");
 
-            if (_proof.length >= signatureLength + 2) {
-                bytes memory signature = new bytes(signatureLength);
-                signature = copyBytes(_proof, 2, signatureLength, signature, 0);
-            } else {
-                emit FailedProofVerification(_publicKey, _result, "croppedProof:sig");
-                return (false, 0);
-            }
-        } else {
-            emit FailedProofVerification(_publicKey, _result, "croppedProof:sig");
-            return (false, 0);
-        }
+        bytes memory signature = new bytes(ECDSA_SIG_LEN);
 
-        // Extract the headers.
-        if (_proof.length >= signatureLength + 4) {
-            uint headersLength = uint(_proof[2 + signatureLength]) * 256 + uint(_proof[2 + signatureLength + 1]);
-            if (_proof.length == signatureLength + headersLength + 4) { //'assert' proof length
-                bytes memory headers = new bytes(headersLength);
-                headers = copyBytes(_proof, 4 + signatureLength, headersLength, headers, 0);
-            } else {
-                emit FailedProofVerification(_publicKey, _result, "croppedProof:headers");
-                return (false, 0);
-            }
-        } else {
-            emit FailedProofVerification(_publicKey, _result, "croppedProof:headers");
-            return (false, 0);
+        signature = copyBytes(_proof, 2, ECDSA_SIG_LEN, signature, 0);
+
+        // Extract the headers, big endian encoding of headers length
+        if (uint(_proof[ENCODING_BYTES + ECDSA_SIG_LEN]) * 256 + uint(_proof[ENCODING_BYTES + ECDSA_SIG_LEN + 1]) != HEADERS_LEN)
+          revert("invalid signature length");
+
+        bytes memory headers = new bytes(HEADERS_LEN);
+        headers = copyBytes(_proof, 2*ENCODING_BYTES + ECDSA_SIG_LEN, HEADERS_LEN, headers, 0);
+
+        // Check if the signature is valid and if the signer address is matching.
+        if (!verifySignature(headers, signature, _publicKey)) {
+            revert("invalid signature");
         }
 
         // Check if the date is valid.
@@ -321,25 +317,16 @@ contract Oracle is usingOraclize, Base64, Date, JSON, Controllable, IOracle {
         uint timestamp;
         (dateValid, timestamp) = verifyDate(string(dateHeader), _lastUpdate);
 
-        // Check if the Date returned is valid or not
-        if (!dateValid) {
-            emit FailedProofVerification(_publicKey, _result, "date");
-            return (false, 0);
-        }
+        // Check whether the date returned is valid or not
+        if (!dateValid)
+            revert("invalid date");
 
         // Check if the signed digest hash matches the result hash.
-        bytes memory digest = new bytes(headersLength - 52);
-        digest = copyBytes(headers, 52, headersLength - 52, digest, 0);
-        if (keccak256(abi.encodePacked(sha256(abi.encodePacked(_result)))) != keccak256(_base64decode(digest))) {
-            emit FailedProofVerification(_publicKey, _result, "hash");
-            return (false, 0);
-        }
+        bytes memory digest = new bytes(DIGEST_BASE64_LEN);
+        digest = copyBytes(headers, DIGEST_OFFSET, DIGEST_BASE64_LEN, digest, 0);
 
-        // Check if the signature is valid and if the signer addresses match.
-        if (!verifySignature(headers, signature, _publicKey)) {
-            emit FailedProofVerification(_publicKey, _result, "signature");
-            return (false, 0);
-        }
+        if (keccak256(abi.encodePacked(sha256(abi.encodePacked(_result)))) != keccak256(_base64decode(digest)))
+          revert("result hash is not matching");
 
         emit VerifiedProof(_publicKey, _result);
         return (true, timestamp);
