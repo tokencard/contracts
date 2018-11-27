@@ -297,7 +297,7 @@ contract Oracle is usingOraclize, Base64, Date, JSON, Controllable, IOracle {
 
         // Extract the headers, big endian encoding of headers length
         if (uint(_proof[ENCODING_BYTES + ECDSA_SIG_LEN]) * 256 + uint(_proof[ENCODING_BYTES + ECDSA_SIG_LEN + 1]) != HEADERS_LEN)
-          revert("invalid signature length");
+          revert("invalid headers length");
 
         bytes memory headers = new bytes(HEADERS_LEN);
         headers = copyBytes(_proof, 2*ENCODING_BYTES + ECDSA_SIG_LEN, HEADERS_LEN, headers, 0);
@@ -325,7 +325,7 @@ contract Oracle is usingOraclize, Base64, Date, JSON, Controllable, IOracle {
         digest = copyBytes(headers, DIGEST_OFFSET, DIGEST_BASE64_LEN, digest, 0);
 
         if (keccak256(abi.encodePacked(sha256(abi.encodePacked(_result)))) != keccak256(_base64decode(digest)))
-          revert("result hash is not matching");
+          revert("result hash not matching");
 
         emit VerifiedProof(_publicKey, _result);
         return (true, timestamp);

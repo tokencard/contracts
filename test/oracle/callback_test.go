@@ -319,7 +319,7 @@ var _ = Describe("callback", func() {
 								Expect(token.LastUpdate).NotTo(Equal(big.NewInt(0)))
 							})
 							BeforeEach(func() {
-								//year set to Dec,2000, the date in the proof is different
+								//year set to Dec,2000 (could be set by oraclize), the date in the proof is different
 								proof := common.Hex2Bytes("0041ed930d0cf64c73b82c3a04b958f2d27572c09ef7faacb14f062b2ce63eb78331a885fda74e113383ead579337b7e02cc414a214c3bd210142628087dcf5ded781c0060646174653a205765642c2030332044656320323030302031373a30303a323220474d540a6469676573743a205348412d3235363d36514d48744c664e677576362b63795a6133376d68513962776f394449482f6451672f54715a34467454393d")
 								tx, err := Oracle.Callback(OraclizeConnectorOwner.TransactOpts(ethertest.WithGasLimit(300000)), id, "{\"ETH\":0.001702}", proof)
 								Expect(err).ToNot(HaveOccurred())
@@ -376,6 +376,69 @@ var _ = Describe("callback", func() {
 								Expect(isSuccessful(tx)).To(BeFalse())
 								Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*revert\("invalid proof length"\);`))
 							})
+							Context("When the signature is valid but the proof is not", func() {
+								BeforeEach(func() {
+									//update the public key, needed because we create our own proofs
+									tx, err := Oracle.UpdateAPIPublicKey(Controller.TransactOpts(), common.Hex2Bytes("717580b4c7577ebe0a7c3c21213ffbfa1221d2c1fe455d4897800d86eb65d91f8fb6c2304a54d89ab5c13a690f03dce25f7d46af90f79908d6be8bcdcdf74c22"))
+									Expect(err).ToNot(HaveOccurred())
+									Backend.Commit()
+									Expect(isSuccessful(tx)).To(BeTrue())
+								})
+								Context("When the sig length is not 65", func() {
+									// the 2nd byte indicating the sig length should be set to 65
+									It("It should Fail", func() {
+										proof := common.Hex2Bytes("0040cfb9355a630d4541c57b51319340854bde93f06b5095b7387b6e2b323f323d5f44bd6b69256844c76dd65e0989ae854cbd991927e984db220da15666b65d89e91b0060646174653a204672692c203136204e6f762d323031382031363a32323a313020474d540a6469676573743a205348412d3235363d4459452b675a6c4147756c5630562f67774a4347452f78423171484b66516c42476a37586c3441496649383d")
+										tx, err := Oracle.Callback(OraclizeConnectorOwner.TransactOpts(ethertest.WithGasLimit(300000)), id, "{\"ETH\":0.003637}", proof)
+										Expect(err).ToNot(HaveOccurred())
+										Backend.Commit()
+										Expect(isGasExhausted(tx, 300000)).To(BeFalse())
+										Expect(isSuccessful(tx)).To(BeFalse())
+										Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*revert\("invalid signature length"\);`))
+									})
+								})
+
+								Context("When the headers length is not the expected one", func() {
+									// it is set to HEADERS_LEN-1
+									It("It should Fail", func() {
+										proof := common.Hex2Bytes("0041cfb9355a630d4541c57b51319340854bde93f06b5095b7387b6e2b323f323d5f44bd6b69256844c76dd65e0989ae854cbd991927e984db220da15666b65d89e91b005f646174653a204672692c203136204e6f762d323031382031363a32323a313020474d540a6469676573743a205348412d3235363d4459452b675a6c4147756c5630562f67774a4347452f78423171484b66516c42476a37586c3441496649383d")
+										tx, err := Oracle.Callback(OraclizeConnectorOwner.TransactOpts(ethertest.WithGasLimit(300000)), id, "{\"ETH\":0.003637}", proof)
+										Expect(err).ToNot(HaveOccurred())
+										Backend.Commit()
+										Expect(isGasExhausted(tx, 300000)).To(BeFalse())
+										Expect(isSuccessful(tx)).To(BeFalse())
+										Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*revert\("invalid headers length"\);`))
+									})
+								})
+
+								Context("When the timestamp is not valid", func() {
+									// older timestamp(Jan 2018) than the last updated one
+									It("It should Fail", func() {
+										proof := common.Hex2Bytes("004187d560a2484b126416445ae2b842a520b54ebab2e5ffdca301fa79fa9d50c0114cf82abd3338245bb2e0982f24563e5b1ec422ccec2e4452cc9c08e908d1635c1b0060646174653a204672692c203136204a616e20323031382031363a32323a313020474d540a6469676573743a205348412d3235363d4459452b675a6c4147756c5630562f67774a4347452f78423171484b66516c42476a37586c3441496649383d")
+										tx, err := Oracle.Callback(OraclizeConnectorOwner.TransactOpts(ethertest.WithGasLimit(300000)), id, "{\"ETH\":0.003637}", proof)
+										Expect(err).ToNot(HaveOccurred())
+										Backend.Commit()
+										Expect(isGasExhausted(tx, 300000)).To(BeFalse())
+										Expect(isSuccessful(tx)).To(BeFalse())
+										Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*revert\("invalid date"\);`))
+									})
+								})
+
+								Context("When the result hash is not matching", func() {
+									// the result returned in the callback is not matching the one included in the proof/signature
+									It("It should Fail", func() {
+										proof := common.Hex2Bytes("00417b19518dc0850674278dfc47a7bef53fff574ccbcd8792d6e744e8b1db78d9439b812fffd03fcad8f5b3fd4e35c46729d6f4a2c8b8de9ce5cad4227c9f4f98691c0060646174653a204672692c203136204e6f7620323031382031363a32323a313020474d540a6469676573743a205348412d3235363d4459452b675a6c4147756c5630562f67774a4347452f78423171484b66516c42476a37586c3441496649383d")
+										tx, err := Oracle.Callback(OraclizeConnectorOwner.TransactOpts(ethertest.WithGasLimit(300000)), id, "{\"ETH\":Moon}", proof)
+										Expect(err).ToNot(HaveOccurred())
+										Backend.Commit()
+										Expect(isGasExhausted(tx, 300000)).To(BeFalse())
+										Expect(isSuccessful(tx)).To(BeFalse())
+										Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*revert\("result hash not matching"\);`))
+									})
+								})
+
+							})//When the signature is valid but the proof is not
+
+
 						})
 
 						Context("When the proof is cropped (signature)", func() {
