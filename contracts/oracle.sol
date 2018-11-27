@@ -48,7 +48,6 @@ contract Oracle is usingOraclize, Base64, Date, JSON, Controllable, IOracle {
     event FailedUpdateRequest(string _reason);
 
     event VerifiedProof(bytes _publicKey, string _result);
-    event FailedProofVerification(bytes _publicKey, string _result, string _reason);
 
     event SetCryptoComparePublicKey(address _sender, bytes _publicKey);
 
