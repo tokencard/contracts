@@ -48,9 +48,16 @@ contract Oracle is usingOraclize, Base64, Date, JSON, Controllable, IOracle {
     event FailedUpdateRequest(string _reason);
 
     event VerifiedProof(bytes _publicKey, string _result);
-    event FailedProofVerification(bytes _publicKey, string _result, string _reason);
 
     event SetCryptoComparePublicKey(address _sender, bytes _publicKey);
+
+    uint constant private PROOF_LEN = 165;
+    uint constant private ECDSA_SIG_LEN = 65;
+    uint constant private ENCODING_BYTES = 2;
+    uint constant private HEADERS_LEN = PROOF_LEN - 2*ENCODING_BYTES - ECDSA_SIG_LEN; // 2 bytes encoding headers length + 2 for signature.
+    uint constant private DIGEST_BASE64_LEN = 44; //base64 encoding of the SHA256 hash (32-bytes) of the result: fixed length.
+    uint constant private DIGEST_OFFSET = HEADERS_LEN - DIGEST_BASE64_LEN; // the starting position of the result hash in the headers string.
+
 
     struct Token {
         string symbol;    // Token symbol
@@ -87,6 +94,33 @@ contract Oracle is usingOraclize, Base64, Date, JSON, Controllable, IOracle {
     function setCustomGasPrice(uint _gasPrice) external onlyController {
         oraclize_setCustomGasPrice(_gasPrice);
         emit SetGasPrice(msg.sender, _gasPrice);
+    }
+
+    function parseIntRevert(string _a) private pure returns (uint) {
+        return parseIntRevert(_a, 0);
+    }
+
+    function parseIntRevert(string _a, uint _b) private pure returns (uint) {
+        bytes memory bresult = bytes(_a);
+        uint mint = 0;
+        bool decimals = false;
+        for (uint i=0; i<bresult.length; i++){
+            if ((bresult[i] >= 48)&&(bresult[i] <= 57)){
+                if (decimals){
+                   if (_b == 0) break;
+                    else _b--;
+                }
+                mint *= 10;
+                mint += uint(bresult[i]) - 48;
+            } else if (bresult[i] == 46) {
+                decimals = true;
+              }
+            else {
+              revert("not a digit");
+            }
+        }
+        if (_b > 0) mint *= 10**_b;
+        return mint;
     }
 
     /// @dev Convert ERC20 token amount to the corresponding ether amount (used by the wallet contract).
@@ -202,7 +236,7 @@ contract Oracle is usingOraclize, Base64, Date, JSON, Controllable, IOracle {
         // Require that the proof is valid.
         if (valid) {
             // Parse the JSON result to get the rate in wei.
-            token.rate = parseInt(parseRate(_result), 18);
+            token.rate = parseIntRevert(parseRate(_result), 18);
             // Set the update time of the token rate.
             token.lastUpdate = timestamp;
             // Remove query from the list.
@@ -249,69 +283,49 @@ contract Oracle is usingOraclize, Base64, Date, JSON, Controllable, IOracle {
     /// @param _lastUpdate timestamp of the last time the requested token was updated.
     function verifyProof(string _result, bytes _proof, bytes _publicKey, uint _lastUpdate) private returns (bool, uint) {
 
-        if (_proof.length == 0) {
-            emit FailedProofVerification(_publicKey, _result, "emptyProof");
-            return (false, 0);
-        }
+        //expecting fixed length proofs
+        if (_proof.length != PROOF_LEN)
+          revert("invalid proof length");
 
-        // Extract signature length
-        if (_proof.length >= 2) {
-            uint signatureLength = uint(_proof[1]);
+        //proof should be 65 bytes long: R (32 bytes) + S (32 bytes) + v (1 byte)
+        if (uint(_proof[1]) != ECDSA_SIG_LEN)
+          revert("invalid signature length");
 
-            if (_proof.length >= signatureLength + 2) {
-                bytes memory signature = new bytes(signatureLength);
-                signature = copyBytes(_proof, 2, signatureLength, signature, 0);
-            } else {
-                emit FailedProofVerification(_publicKey, _result, "croppedProof:sig");
-                return (false, 0);
-            }
-        } else {
-            emit FailedProofVerification(_publicKey, _result, "croppedProof:sig");
-            return (false, 0);
-        }
+        bytes memory signature = new bytes(ECDSA_SIG_LEN);
 
-        // Extract the headers.
-        if (_proof.length >= signatureLength + 4) {
-            uint headersLength = uint(_proof[2 + signatureLength]) * 256 + uint(_proof[2 + signatureLength + 1]);
-            if (_proof.length == signatureLength + headersLength + 4) { //'assert' proof length
-                bytes memory headers = new bytes(headersLength);
-                headers = copyBytes(_proof, 4 + signatureLength, headersLength, headers, 0);
-            } else {
-                emit FailedProofVerification(_publicKey, _result, "croppedProof:headers");
-                return (false, 0);
-            }
-        } else {
-            emit FailedProofVerification(_publicKey, _result, "croppedProof:headers");
-            return (false, 0);
+        signature = copyBytes(_proof, 2, ECDSA_SIG_LEN, signature, 0);
+
+        // Extract the headers, big endian encoding of headers length
+        if (uint(_proof[ENCODING_BYTES + ECDSA_SIG_LEN]) * 256 + uint(_proof[ENCODING_BYTES + ECDSA_SIG_LEN + 1]) != HEADERS_LEN)
+          revert("invalid headers length");
+
+        bytes memory headers = new bytes(HEADERS_LEN);
+        headers = copyBytes(_proof, 2*ENCODING_BYTES + ECDSA_SIG_LEN, HEADERS_LEN, headers, 0);
+
+        // Check if the signature is valid and if the signer address is matching.
+        if (!verifySignature(headers, signature, _publicKey)) {
+            revert("invalid signature");
         }
 
         // Check if the date is valid.
-        bytes memory dateHeader = new bytes(30);
-        dateHeader = copyBytes(headers, 5, 30, dateHeader, 0);
+        bytes memory dateHeader = new bytes(20);
+        //keep only the relevant string(e.g. "16 Nov 2018 16:22:18")
+        dateHeader = copyBytes(headers, 11, 20, dateHeader, 0);
 
         bool dateValid;
         uint timestamp;
         (dateValid, timestamp) = verifyDate(string(dateHeader), _lastUpdate);
 
-        // Check if the Date returned is valid or not
-        if (!dateValid) {
-            emit FailedProofVerification(_publicKey, _result, "date");
-            return (false, 0);
-        }
+        // Check whether the date returned is valid or not
+        if (!dateValid)
+            revert("invalid date");
 
         // Check if the signed digest hash matches the result hash.
-        bytes memory digest = new bytes(headersLength - 52);
-        digest = copyBytes(headers, 52, headersLength - 52, digest, 0);
-        if (keccak256(abi.encodePacked(sha256(abi.encodePacked(_result)))) != keccak256(_base64decode(digest))) {
-            emit FailedProofVerification(_publicKey, _result, "hash");
-            return (false, 0);
-        }
+        bytes memory digest = new bytes(DIGEST_BASE64_LEN);
+        digest = copyBytes(headers, DIGEST_OFFSET, DIGEST_BASE64_LEN, digest, 0);
 
-        // Check if the signature is valid and if the signer addresses match.
-        if (!verifySignature(headers, signature, _publicKey)) {
-            emit FailedProofVerification(_publicKey, _result, "signature");
-            return (false, 0);
-        }
+        if (keccak256(abi.encodePacked(sha256(abi.encodePacked(_result)))) != keccak256(_base64decode(digest)))
+          revert("result hash not matching");
 
         emit VerifiedProof(_publicKey, _result);
         return (true, timestamp);
@@ -334,43 +348,32 @@ contract Oracle is usingOraclize, Base64, Date, JSON, Controllable, IOracle {
     /// @param _dateHeader extracted date string e.g. Wed, 12 Sep 2018 15:18:14 GMT.
     /// @param _lastUpdate timestamp of the last time the requested token was updated.
     function verifyDate(string _dateHeader, uint _lastUpdate) private pure returns (bool, uint) {
+
+        //called by verifyProof(), _dateHeader is always a string of length = 20
+        assert(abi.encodePacked(_dateHeader).length == 20);
+
+        //Split the date string and get individual date components.
         strings.slice memory date = _dateHeader.toSlice();
         strings.slice memory timeDelimiter = ":".toSlice();
         strings.slice memory dateDelimiter = " ".toSlice();
-        // Split the date string.
-        date.split(",".toSlice());
-        date.split(dateDelimiter);
-        // Get individual date components.
-        uint day = parseInt(date.split(dateDelimiter).toString());
+
+        uint day = parseIntRevert(date.split(dateDelimiter).toString());
+        require(day > 0 && day < 32, "day error");
+
         uint month = monthToNumber(date.split(dateDelimiter).toString());
-        uint year = parseInt(date.split(dateDelimiter).toString());
-        uint hour = parseInt(date.split(timeDelimiter).toString());
-        uint minute = parseInt(date.split(timeDelimiter).toString());
-        uint second = parseInt(date.split(timeDelimiter).toString());
+        require(month > 0 && month < 13, "month error");
 
-        if (day > 31 || day < 1) {
-            return (false, 0);
-        }
+        uint year = parseIntRevert(date.split(dateDelimiter).toString());
+        require(year > 2017 && year < 3000, "year error");
 
-        if (month > 12 || month < 1) {
-            return (false, 0);
-        }
+        uint hour = parseIntRevert(date.split(timeDelimiter).toString());
+        require(hour < 25, "hour error");
 
-        if (year < 2018 || year > 3000) {
-            return (false, 0);
-        }
+        uint minute = parseIntRevert(date.split(timeDelimiter).toString());
+        require(minute < 60, "minute error");
 
-        if (hour >= 24) {
-            return (false, 0);
-        }
-
-        if (minute >= 60) {
-            return (false, 0);
-        }
-
-        if (second >= 60) {
-            return (false, 0);
-        }
+        uint second = parseIntRevert(date.split(timeDelimiter).toString());
+        require(second < 60, "second error");
 
         uint timestamp = year * (10 ** 10) + month * (10 ** 8) + day * (10 ** 6) + hour * (10 ** 4) + minute * (10 ** 2) + second;
 
