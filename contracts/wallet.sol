@@ -358,7 +358,7 @@ contract Vault is Whitelist, SpendLimit, ERC165 {
     /// @param _asset address of an ERC20 token or 0x0 for ether.
     /// @return balance associated with the wallet address in wei.
     function balance(address _asset) external view returns (uint) {
-        if (_asset != 0x0) {
+        if (_asset != address(0)) {
             return ERC20(_asset).balanceOf(this);
         } else {
             return address(this).balance;
@@ -379,7 +379,7 @@ contract Vault is Whitelist, SpendLimit, ERC165 {
             updateSpendAvailable();
             // Convert token amount to ether value.
             uint etherValue;
-            if (_asset != 0x0) {
+            if (_asset != address(0)) {
                 etherValue = IOracle(PublicResolver(_ENS.resolver(_node)).addr(_node)).convert(_asset, _amount);
             } else {
                 etherValue = _amount;
@@ -390,7 +390,7 @@ contract Vault is Whitelist, SpendLimit, ERC165 {
             setSpendAvailable(spendAvailable().sub(etherValue));
         }
         // Transfer token or ether based on the provided address.
-        if (_asset != 0x0) {
+        if (_asset != address(0)) {
             require(ERC20(_asset).transfer(_to, _amount), "ERC20 token transfer was unsuccessful");
         } else {
             _to.transfer(_amount);
