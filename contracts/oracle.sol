@@ -63,11 +63,11 @@ contract Oracle is usingOraclize, Base64, Date, JSON, Controllable, IOracle {
     uint constant private PROOF_LEN = 165;
     uint constant private ECDSA_SIG_LEN = 65;
     uint constant private ENCODING_BYTES = 2;
-    uint constant private HEADERS_LEN = PROOF_LEN - 2*ENCODING_BYTES - ECDSA_SIG_LEN; // 2 bytes encoding headers length + 2 for signature.
+    uint constant private HEADERS_LEN = PROOF_LEN - 2 * ENCODING_BYTES - ECDSA_SIG_LEN; // 2 bytes encoding headers length + 2 for signature.
     uint constant private DIGEST_BASE64_LEN = 44; //base64 encoding of the SHA256 hash (32-bytes) of the result: fixed length.
     uint constant private DIGEST_OFFSET = HEADERS_LEN - DIGEST_BASE64_LEN; // the starting position of the result hash in the headers string.
 
-    uint constant private GASLIMIT = 2000000;
+    uint constant private GAS_LIMIT = 2000000;
     uint constant private MAX_BYTE_SIZE = 256; //for calculating length encoding
 
     struct Token {
@@ -277,7 +277,7 @@ contract Oracle is usingOraclize, Base64, Date, JSON, Controllable, IOracle {
                 // Store the token symbol used in the query.
                 strings.slice memory symbol = tokens[_tokenAddresses[i]].symbol.toSlice();
                 // Create a new oraclize query from the component strings.
-                bytes32 queryID = oraclize_query("URL", apiPrefix.concat(symbol).toSlice().concat(apiSuffix), GASLIMIT);
+                bytes32 queryID = oraclize_query("URL", apiPrefix.concat(symbol).toSlice().concat(apiSuffix), GAS_LIMIT);
                 // Store the query ID together with the associated token address.
                 _queryToToken[queryID] = _tokenAddresses[i];
                 // Emit the query success event.
