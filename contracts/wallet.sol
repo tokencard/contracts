@@ -74,19 +74,14 @@ contract Whitelist is Controllable, Ownable {
         return _pendingWhitelistAddition;
     }
 
-    /// @dev Getter for pending addition array hash.
-    function pendingWhitelistAdditionHash() public view returns(bytes32) {
-        return keccak256(abi.encodePacked(_pendingWhitelistAddition));
-    }
-
     /// @dev Getter for pending removal array.
     function pendingWhitelistRemoval() external view returns(address[]) {
         return _pendingWhitelistRemoval;
     }
 
-    /// @dev Getter for pending removal array hash.
-    function pendingWhitelistRemovalHash() public view returns(bytes32) {
-        return keccak256(abi.encodePacked(_pendingWhitelistRemoval));
+    /// @dev Getter for pending addition/removal array hash.
+    function pendingWhitelistHash(address[] _pendingWhitelist) public pure returns(bytes32) {
+        return keccak256(abi.encodePacked(_pendingWhitelist));
     }
 
     /// @dev Add initial addresses to the whitelist.
@@ -113,7 +108,7 @@ contract Whitelist is Controllable, Ownable {
         // Flag the operation as submitted.
         submittedWhitelistAddition = true;
         // Emit the submission event.
-        emit SubmittedWhitelistAddition(_addresses, pendingWhitelistAdditionHash());
+        emit SubmittedWhitelistAddition(_addresses, pendingWhitelistHash(_pendingWhitelistAddition));
     }
 
     /// @dev Confirm pending whitelist addition.
@@ -122,7 +117,7 @@ contract Whitelist is Controllable, Ownable {
         require(submittedWhitelistAddition, "whitelist addition has not been submitted");
 
         // Require that confirmation hash and the hash of the pending whitelist addition match
-        require(_hash == pendingWhitelistAdditionHash(), "hash of the pending white list addition do not match");
+        require(_hash == pendingWhitelistHash(_pendingWhitelistAddition), "hash of the pending white list addition do not match");
 
         // Whitelist pending addresses.
         for (uint i = 0; i < _pendingWhitelistAddition.length; i++) {
@@ -139,7 +134,7 @@ contract Whitelist is Controllable, Ownable {
     /// @dev Cancel pending whitelist addition.
     function cancelWhitelistAddition(bytes32 _hash) external onlyController {
         // Require that confirmation hash and the hash of the pending whitelist addition match
-        require(_hash == pendingWhitelistAdditionHash(), "hash of the pending white list addition does not match");
+        require(_hash == pendingWhitelistHash(_pendingWhitelistAddition), "hash of the pending white list addition does not match");
         // Reset pending addresses.
         delete _pendingWhitelistAddition;
         // Reset the submitted operation flag.
@@ -156,7 +151,7 @@ contract Whitelist is Controllable, Ownable {
         // Flag the operation as submitted.
         submittedWhitelistRemoval = true;
         // Emit the submission event.
-        emit SubmittedWhitelistRemoval(_addresses, pendingWhitelistAdditionHash());
+        emit SubmittedWhitelistRemoval(_addresses, pendingWhitelistHash(_pendingWhitelistRemoval));
     }
 
     /// @dev Confirm pending removal of whitelisted addresses.
@@ -165,7 +160,7 @@ contract Whitelist is Controllable, Ownable {
         require(submittedWhitelistRemoval, "whitelist removal has not been submitted");
         require(_pendingWhitelistRemoval.length > 0, "pending whitelist removal is empty");
         // Require that confirmation hash and the hash of the pending whitelist removal match
-        require(_hash == pendingWhitelistRemovalHash(), "hash of the pending white list removal does not match the confirmed hash");
+        require(_hash == pendingWhitelistHash(_pendingWhitelistRemoval), "hash of the pending white list removal does not match the confirmed hash");
         // Remove pending addresses.
         for (uint i = 0; i < _pendingWhitelistRemoval.length; i++) {
             isWhitelisted[_pendingWhitelistRemoval[i]] = false;
@@ -182,7 +177,7 @@ contract Whitelist is Controllable, Ownable {
     function cancelWhitelistRemoval(bytes32 _hash) external onlyController {
 
         // Require that confirmation hash and the hash of the pending whitelist removal match
-        require(_hash == pendingWhitelistRemovalHash(), "hash of the pending white list removal do not match");
+        require(_hash == pendingWhitelistHash(_pendingWhitelistRemoval), "hash of the pending white list removal do not match");
 
         // Reset pending addresses.
         delete _pendingWhitelistRemoval;
