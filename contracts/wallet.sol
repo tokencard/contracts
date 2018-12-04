@@ -374,15 +374,21 @@ contract Vault is Whitelist, SpendLimit, ERC165 {
             updateSpendAvailable();
             // Convert token amount to ether value.
             uint etherValue;
+            bool tokenExists;
             if (_asset != address(0)) {
-                etherValue = IOracle(PublicResolver(_ENS.resolver(_node)).addr(_node)).convert(_asset, _amount);
+                (tokenExists, etherValue) = IOracle(PublicResolver(_ENS.resolver(_node)).addr(_node)).convert(_asset, _amount);
             } else {
                 etherValue = _amount;
             }
-            // Require that the value is under remaining limit.
-            require(etherValue <= spendAvailable(), "transfer amount exceeds available spend limit");
-            // Update the available limit.
-            setSpendAvailable(spendAvailable().sub(etherValue));
+            if (tokenExists){
+              // Require that the value is under remaining limit.
+              require(etherValue <= spendAvailable(), "transfer amount exceeds available spend limit");
+              // Update the available limit.
+              setSpendAvailable(spendAvailable().sub(etherValue));
+            }
+            else{
+              //delegate call
+            }
         }
         // Transfer token or ether based on the provided address.
         if (_asset != address(0)) {
