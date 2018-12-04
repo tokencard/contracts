@@ -55,15 +55,15 @@ var _ = Describe("topUpGas", func() {
 				Expect(err).ToNot(HaveOccurred())
 			})
 
-			It("should not fail", func() {
-				Expect(isSuccessful(tx)).To(BeTrue())
+			It("should fail", func() {
+				Expect(isSuccessful(tx)).To(BeFalse())
 			})
 
-			It("should top up only the top up limit of the gas", func() {
+			It("should not top up the gas", func() {
 				b, e := Backend.BalanceAt(context.Background(), WalletAddress, nil)
 				Expect(e).ToNot(HaveOccurred())
-				Expect(b.String()).To(Equal("9500000000000000000"))
-				Expect(Owner.Balance(Backend).String()).To(Equal("1500000000000000000"))
+				Expect(b.String()).To(Equal("10000000000000000000"))
+				Expect(Owner.Balance(Backend).String()).To(Equal("1000000000000000000"))
 			})
 
 		})
@@ -78,13 +78,7 @@ var _ = Describe("topUpGas", func() {
 				tx, err = Wallet.TopUpGas(caller.TransactOpts(ethertest.WithGasLimit(81000)), EthToWei(1))
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
-				Expect(isSuccessful(tx)).To(BeTrue())
-			})
-
-			BeforeEach(func() {
-				tx, err = Wallet.TopUpGas(caller.TransactOpts(ethertest.WithGasLimit(165000)), EthToWei(1))
-				Expect(err).ToNot(HaveOccurred())
-				Backend.Commit()
+				Expect(isSuccessful(tx)).To(BeFalse())
 			})
 
 			It("should not return error", func() {
@@ -102,7 +96,7 @@ var _ = Describe("topUpGas", func() {
 				})
 
 				BeforeEach(func() {
-					tx, err = Wallet.TopUpGas(caller.TransactOpts(ethertest.WithGasLimit(165000)), EthToWei(1))
+					tx, err = Wallet.TopUpGas(caller.TransactOpts(ethertest.WithGasLimit(165000)), FinneyToWei(1))
 					Expect(err).ToNot(HaveOccurred())
 					Backend.Commit()
 				})
@@ -119,8 +113,8 @@ var _ = Describe("topUpGas", func() {
 
 					b, e := Backend.BalanceAt(context.Background(), WalletAddress, nil)
 					Expect(e).ToNot(HaveOccurred())
-					Expect(b.String()).To(Equal("9000000000000000000"))
-					Expect(Owner.Balance(Backend).String()).To(Equal("2000000000000000000"))
+					Expect(b.String()).To(Equal("9999000000000000000"))
+					Expect(Owner.Balance(Backend).String()).To(Equal("1001000000000000000"))
 				})
 
 			})
@@ -162,15 +156,15 @@ var _ = Describe("topUpGas", func() {
 					Expect(err).ToNot(HaveOccurred())
 				})
 
-				It("should not fail", func() {
-					Expect(isSuccessful(tx)).To(BeTrue())
+				It("should fail", func() {
+					Expect(isSuccessful(tx)).To(BeFalse())
 				})
 
-				It("should top up only the top up limit of the gas", func() {
+				It("should not top up", func() {
 					b, e := Backend.BalanceAt(context.Background(), WalletAddress, nil)
 					Expect(e).ToNot(HaveOccurred())
-					Expect(b.String()).To(Equal("9500000000000000000"))
-					Expect(Owner.Balance(Backend).String()).To(AlmostEqual("1500000000000000000"))
+					Expect(b.String()).To(Equal("10000000000000000000"))
+					Expect(Owner.Balance(Backend).String()).To(AlmostEqual("1000000000000000000"))
 				})
 
 			})
@@ -203,7 +197,7 @@ var _ = Describe("topUpGas", func() {
 					})
 
 					BeforeEach(func() {
-						tx, err = Wallet.TopUpGas(caller.TransactOpts(ethertest.WithGasLimit(165000)), EthToWei(1))
+						tx, err = Wallet.TopUpGas(caller.TransactOpts(ethertest.WithGasLimit(165000)), FinneyToWei(1))
 						Backend.Commit()
 					})
 
@@ -212,15 +206,14 @@ var _ = Describe("topUpGas", func() {
 					})
 
 					It("should not fail", func() {
-
 						Expect(isSuccessful(tx)).To(BeTrue())
 					})
 
 					It("should top up only the top up limit of the gas", func() {
 						b, e := Backend.BalanceAt(context.Background(), WalletAddress, nil)
 						Expect(e).ToNot(HaveOccurred())
-						Expect(b.String()).To(Equal("9000000000000000000"))
-						Expect(Owner.Balance(Backend).String()).To(AlmostEqual("2000000000000000000"))
+						Expect(b.String()).To(Equal("9499000000000000000"))
+						Expect(Owner.Balance(Backend).String()).To(AlmostEqual("1500999999999886976"))
 					})
 
 				})
