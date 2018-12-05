@@ -37,6 +37,11 @@ contract Oracle is usingOraclize, Base64, Date, JSON, Controllable, IOracle {
     using strings for *;
     using SafeMath for uint256;
 
+
+    /*******************/
+    /*     Events     */
+    /*****************/
+
     event AddedToken(address _sender, address _token, string _symbol, uint _magnitude);
     event RemovedToken(address _sender, address _token);
     event UpdatedTokenRate(address _sender, address _token, uint _rate);
@@ -51,13 +56,19 @@ contract Oracle is usingOraclize, Base64, Date, JSON, Controllable, IOracle {
 
     event SetCryptoComparePublicKey(address _sender, bytes _publicKey);
 
+    /**********************/
+    /*     Constants     */
+    /********************/
+
     uint constant private PROOF_LEN = 165;
     uint constant private ECDSA_SIG_LEN = 65;
     uint constant private ENCODING_BYTES = 2;
-    uint constant private HEADERS_LEN = PROOF_LEN - 2*ENCODING_BYTES - ECDSA_SIG_LEN; // 2 bytes encoding headers length + 2 for signature.
+    uint constant private HEADERS_LEN = PROOF_LEN - 2 * ENCODING_BYTES - ECDSA_SIG_LEN; // 2 bytes encoding headers length + 2 for signature.
     uint constant private DIGEST_BASE64_LEN = 44; //base64 encoding of the SHA256 hash (32-bytes) of the result: fixed length.
     uint constant private DIGEST_OFFSET = HEADERS_LEN - DIGEST_BASE64_LEN; // the starting position of the result hash in the headers string.
 
+    uint constant private GAS_LIMIT = 2000000;
+    uint constant private MAX_BYTE_SIZE = 256; //for calculating length encoding
 
     struct Token {
         string symbol;    // Token symbol
@@ -261,13 +272,12 @@ contract Oracle is usingOraclize, Base64, Date, JSON, Controllable, IOracle {
             strings.slice memory apiPrefix = "https://min-api.cryptocompare.com/data/price?fsym=".toSlice();
             strings.slice memory apiSuffix = "&tsyms=ETH&sign=true".toSlice();
 
-            uint gaslimit = 2000000;
             // Create a new oraclize query for each supported token.
             for (uint i = 0; i < _tokenAddresses.length; i++) {
                 // Store the token symbol used in the query.
                 strings.slice memory symbol = tokens[_tokenAddresses[i]].symbol.toSlice();
                 // Create a new oraclize query from the component strings.
-                bytes32 queryID = oraclize_query("URL", apiPrefix.concat(symbol).toSlice().concat(apiSuffix), gaslimit);
+                bytes32 queryID = oraclize_query("URL", apiPrefix.concat(symbol).toSlice().concat(apiSuffix), GAS_LIMIT);
                 // Store the query ID together with the associated token address.
                 _queryToToken[queryID] = _tokenAddresses[i];
                 // Emit the query success event.
@@ -296,7 +306,7 @@ contract Oracle is usingOraclize, Base64, Date, JSON, Controllable, IOracle {
         signature = copyBytes(_proof, 2, ECDSA_SIG_LEN, signature, 0);
 
         // Extract the headers, big endian encoding of headers length
-        if (uint(_proof[ENCODING_BYTES + ECDSA_SIG_LEN]) * 256 + uint(_proof[ENCODING_BYTES + ECDSA_SIG_LEN + 1]) != HEADERS_LEN)
+        if (uint(_proof[ENCODING_BYTES + ECDSA_SIG_LEN]) * MAX_BYTE_SIZE + uint(_proof[ENCODING_BYTES + ECDSA_SIG_LEN + 1]) != HEADERS_LEN)
           revert("invalid headers length");
 
         bytes memory headers = new bytes(HEADERS_LEN);
