@@ -506,6 +506,7 @@ contract Wallet is Vault {
     }
 
     /// @dev Refill owner's gas balance.
+    /// @dev Revert if the transaction amount is too large
     /// @param _amount is the amount of ether to transfer to the owner account in wei.
     function topUpGas(uint _amount) external isNotZero(_amount) {
         // Require that the sender is either the owner or a controller.
@@ -514,17 +515,14 @@ contract Wallet is Vault {
         updateTopUpAvailable();
         // Make sure the available top up amount is not zero.
         require(_topUpAvailable != 0, "available top up limit cannot be zero");
-        // Limit top up amount to the available top up level.
-        uint amount = _amount;
-        if (amount > _topUpAvailable) {
-            amount = _topUpAvailable;
-        }
+        // Fail if there isn't enough in the daily top up limit to perform topUp
+        require(_amount <= _topUpAvailable, "available top up limit less than amount passed in");
         // Reduce the top up amount from available balance and transfer corresponding
         // ether to the owner's account.
-        _topUpAvailable = _topUpAvailable.sub(amount);
-        owner().transfer(amount);
+        _topUpAvailable = _topUpAvailable.sub(_amount);
+        owner().transfer(_amount);
         // Emit the gas top up event.
-        emit ToppedUpGas(tx.origin, owner(), amount);
+        emit ToppedUpGas(tx.origin, owner(), _amount);
     }
 
     /// @dev Modify the top up limit and top up available based on the provided value.
