@@ -225,7 +225,9 @@ var _ = Describe("whitelistAddition", func() {
 
 		When("the controller confirms the adding to the whitelist", func() {
 			BeforeEach(func() {
-				hash, err := Wallet.PendingWhitelistAdditionHash(nil)
+				pwl, err := Wallet.PendingWhitelistAddition(nil)
+				Expect(err).ToNot(HaveOccurred())
+				hash, err := Wallet.PendingWhitelistHash(nil, pwl)
 				Expect(err).ToNot(HaveOccurred())
 				tx, err := Wallet.ConfirmWhitelistAddition(Controller.TransactOpts(ethertest.WithGasLimit(500000)), hash)
 				Expect(err).ToNot(HaveOccurred())
@@ -286,7 +288,9 @@ var _ = Describe("whitelistAddition", func() {
 
 		When("the controller cancels adding to the whitelist", func() {
 			BeforeEach(func() {
-				hash, err := Wallet.PendingWhitelistAdditionHash(nil)
+				pwl, err := Wallet.PendingWhitelistAddition(nil)
+				Expect(err).ToNot(HaveOccurred())
+				hash, err := Wallet.PendingWhitelistHash(nil, pwl)
 				Expect(err).ToNot(HaveOccurred())
 				tx, err := Wallet.CancelWhitelistAddition(Controller.TransactOpts(), hash)
 				Expect(err).ToNot(HaveOccurred())
@@ -428,7 +432,9 @@ var _ = Describe("whitelistRemoval", func() {
 
 			When("controller confirms the whitelist removal", func() {
 				BeforeEach(func() {
-					hash, err := Wallet.PendingWhitelistRemovalHash(nil)
+					pwl, err := Wallet.PendingWhitelistRemoval(nil)
+					Expect(err).ToNot(HaveOccurred())
+					hash, err := Wallet.PendingWhitelistHash(nil, pwl)
 					Expect(err).ToNot(HaveOccurred())
 					tx, err := Wallet.ConfirmWhitelistRemoval(Controller.TransactOpts(), hash)
 					Expect(err).ToNot(HaveOccurred())
@@ -502,7 +508,9 @@ var _ = Describe("whitelistRemoval", func() {
 
 			When("controller cancels the whitelist removal", func() {
 				BeforeEach(func() {
-					hash, err := Wallet.PendingWhitelistRemovalHash(nil)
+					pwl, err := Wallet.PendingWhitelistRemoval(nil)
+					Expect(err).ToNot(HaveOccurred())
+					hash, err := Wallet.PendingWhitelistHash(nil, pwl)
 					Expect(err).ToNot(HaveOccurred())
 					tx, err := Wallet.CancelWhitelistRemoval(Controller.TransactOpts(), hash)
 					Expect(err).ToNot(HaveOccurred())
