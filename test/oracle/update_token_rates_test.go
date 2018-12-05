@@ -33,7 +33,7 @@ var _ = Describe("updateRates", func() {
 			var tx *types.Transaction
 			var err error
 			BeforeEach(func() {
-				tx, err = Oracle.UpdateTokenRates(Controller.TransactOpts(ethertest.WithValue(big.NewInt(100000000))))
+				tx, err = Oracle.UpdateTokenRates(Controller.TransactOpts(ethertest.WithValue(big.NewInt(100000000))), big.NewInt(GAS_LIMIT))
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 			})
@@ -63,7 +63,7 @@ var _ = Describe("updateRates", func() {
 			var tx *types.Transaction
 			var err error
 			BeforeEach(func() {
-				tx, err = Oracle.UpdateTokenRates(Controller.TransactOpts())
+				tx, err = Oracle.UpdateTokenRates(Controller.TransactOpts(), big.NewInt(GAS_LIMIT))
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 			})
@@ -87,7 +87,7 @@ var _ = Describe("updateRates", func() {
 
 		Context("When called by a random address", func() {
 			It("Should fail", func() {
-				tx, err := Oracle.UpdateTokenRates(RandomAccount.TransactOpts(ethertest.WithGasLimit(100000)))
+				tx, err := Oracle.UpdateTokenRates(RandomAccount.TransactOpts(ethertest.WithGasLimit(100000)), big.NewInt(GAS_LIMIT))
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 				Expect(isGasExhausted(tx, 100000)).To(BeFalse())
@@ -103,7 +103,7 @@ var _ = Describe("updateRates", func() {
 			var tx *types.Transaction
 			var err error
 			BeforeEach(func() {
-				tx, err = Oracle.UpdateTokenRates(Controller.TransactOpts(ethertest.WithValue(big.NewInt(100000000))))
+				tx, err = Oracle.UpdateTokenRates(Controller.TransactOpts(ethertest.WithValue(big.NewInt(100000000))), big.NewInt(GAS_LIMIT))
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 			})

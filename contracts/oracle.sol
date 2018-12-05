@@ -67,7 +67,6 @@ contract Oracle is usingOraclize, Base64, Date, JSON, Controllable, IOracle {
     uint constant private DIGEST_BASE64_LEN = 44; //base64 encoding of the SHA256 hash (32-bytes) of the result: fixed length.
     uint constant private DIGEST_OFFSET = HEADERS_LEN - DIGEST_BASE64_LEN; // the starting position of the result hash in the headers string.
 
-    uint constant private GAS_LIMIT = 2000000;
     uint constant private MAX_BYTE_SIZE = 256; //for calculating length encoding
 
     struct Token {
@@ -217,8 +216,9 @@ contract Oracle is usingOraclize, Base64, Date, JSON, Controllable, IOracle {
     }
 
     /// @dev Update ERC20 token exchange rates for all supported tokens.
-    function updateTokenRates() external payable onlyController {
-        _updateTokenRates();
+    //// @param _gasLimit the gas limit is passed, this is used for the Oraclize callback
+    function updateTokenRates(uint _gasLimit) external payable onlyController {
+        _updateTokenRates(_gasLimit);
     }
 
     //// @dev Withdraw ether from the smart contract to the specified account.
@@ -258,7 +258,8 @@ contract Oracle is usingOraclize, Base64, Date, JSON, Controllable, IOracle {
     }
 
     /// @dev Re-usable helper function that performs the Oraclize Query.
-    function _updateTokenRates() private {
+    //// @param _gasLimit the gas limit is passed, this is used for the Oraclize callback
+    function _updateTokenRates(uint _gasLimit) private {
         // Check if there are any existing tokens.
         if (_tokenAddresses.length == 0) {
             // Emit a query failure event.
@@ -277,7 +278,7 @@ contract Oracle is usingOraclize, Base64, Date, JSON, Controllable, IOracle {
                 // Store the token symbol used in the query.
                 strings.slice memory symbol = tokens[_tokenAddresses[i]].symbol.toSlice();
                 // Create a new oraclize query from the component strings.
-                bytes32 queryID = oraclize_query("URL", apiPrefix.concat(symbol).toSlice().concat(apiSuffix), GAS_LIMIT);
+                bytes32 queryID = oraclize_query("URL", apiPrefix.concat(symbol).toSlice().concat(apiSuffix), _gasLimit);
                 // Store the query ID together with the associated token address.
                 _queryToToken[queryID] = _tokenAddresses[i];
                 // Emit the query success event.
