@@ -13,6 +13,8 @@ import (
 	. "github.com/tokencard/contracts/test/shared"
 )
 
+const GAS_LIMIT = 2000000
+
 func init() {
 	TestRig.AddCoverageForContracts("../../build/oracle/combined.json", "../../contracts/oracle.sol")
 }
