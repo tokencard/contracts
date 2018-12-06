@@ -139,14 +139,16 @@ contract Oracle is usingOraclize, Base64, Date, JSON, Controllable, IOracle {
     function convert(address _token, uint _amount) external view returns (bool, uint) {
         // Store the token in memory to save map entry lookup gas.
         Token storage token = tokens[_token];
-        // If the token exists require that its rate is not zero, otherwise return (false, 0).
+        // If the token exists require that its rate is not zero
         if (token.exists) {
             require(token.rate != 0, "token rate is 0");
             // Safely convert the token amount to ether based on the exchange rate.
+            // return the value and a 'true' implying that the token is protected
             return (true, _amount.mul(token.rate).div(token.magnitude));
-        } else {
-            return (false, 0);
         }
+        // this returns a 'false' to imply that a card is not protected 
+        return (false, 0);
+        
     }
 
     /// @dev Add ERC20 tokens to the list of supported tokens.
