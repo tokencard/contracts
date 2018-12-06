@@ -125,7 +125,7 @@ var _ = Describe("callback", func() {
 								Backend.Commit()
 								Expect(isGasExhausted(tx, 500000)).To(BeFalse())
 								Expect(isSuccessful(tx)).To(BeFalse())
-								Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*token.rate = parseIntRevert\(parseRate\(_result\), 18\);`))
+								Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*token.rate = _parseIntScientificWei\(parseRate\(_result\)\);`))
 							})
 
 							It("It should Fail", func() {
@@ -136,7 +136,7 @@ var _ = Describe("callback", func() {
 								Backend.Commit()
 								Expect(isGasExhausted(tx, 500000)).To(BeFalse())
 								Expect(isSuccessful(tx)).To(BeFalse())
-								Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*token.rate = parseIntRevert\(parseRate\(_result\), 18\);`))
+								Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*token.rate = _parseIntScientificWei\(parseRate\(_result\)\);`))
 							})
 
 							It("It should Fail", func() {
@@ -147,7 +147,7 @@ var _ = Describe("callback", func() {
 								Backend.Commit()
 								Expect(isGasExhausted(tx, 500000)).To(BeFalse())
 								Expect(isSuccessful(tx)).To(BeFalse())
-								Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*token.rate = parseIntRevert\(parseRate\(_result\), 18\);`))
+								Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*token.rate = _parseIntScientificWei\(parseRate\(_result\)\);`))
 							})
 
 							It("It should Fail", func() {
@@ -158,7 +158,7 @@ var _ = Describe("callback", func() {
 								Backend.Commit()
 								Expect(isGasExhausted(tx, 500000)).To(BeFalse())
 								Expect(isSuccessful(tx)).To(BeFalse())
-								Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*token.rate = parseIntRevert\(parseRate\(_result\), 18\);`))
+								Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*token.rate = _parseIntScientificWei\(parseRate\(_result\)\);`))
 							})
 						})
 
@@ -213,7 +213,7 @@ var _ = Describe("callback", func() {
 								Backend.Commit()
 								Expect(isGasExhausted(tx, 300000)).To(BeFalse())
 								Expect(isSuccessful(tx)).To(BeFalse())
-								Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*revert\("not a digit"\);`))
+								Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*uint day = _parseIntScientific\(date.split\(dateDelimiter\).toString\(\)\);`))
 							})
 
 							It("It should Fail", func() {
@@ -257,7 +257,7 @@ var _ = Describe("callback", func() {
 								Backend.Commit()
 								Expect(isGasExhausted(tx, 300000)).To(BeFalse())
 								Expect(isSuccessful(tx)).To(BeFalse())
-								Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*revert\("not a digit"\);`))
+								Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*uint day = _parseIntScientific\(date.split\(dateDelimiter\).toString\(\)\);`))
 							})
 
 							It("It should Fail", func() {
@@ -279,7 +279,7 @@ var _ = Describe("callback", func() {
 								Backend.Commit()
 								Expect(isGasExhausted(tx, 300000)).To(BeFalse())
 								Expect(isSuccessful(tx)).To(BeFalse())
-								Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*revert\("not a digit"\);`))
+								Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*uint day = _parseIntScientific\(date.split\(dateDelimiter\).toString\(\)\);`))
 							})
 
 							It("It should Fail", func() {
@@ -290,7 +290,7 @@ var _ = Describe("callback", func() {
 								Backend.Commit()
 								Expect(isGasExhausted(tx, 300000)).To(BeFalse())
 								Expect(isSuccessful(tx)).To(BeFalse())
-								Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*revert\("not a digit"\);`))
+								Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*uint day = _parseIntScientific\(date.split\(dateDelimiter\).toString\(\)\);`))
 							})
 
 							It("It should Fail", func() {
@@ -301,7 +301,7 @@ var _ = Describe("callback", func() {
 								Backend.Commit()
 								Expect(isGasExhausted(tx, 300000)).To(BeFalse())
 								Expect(isSuccessful(tx)).To(BeFalse())
-								Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*revert\("not a digit"\);`))
+								Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*uint day = _parseIntScientific\(date.split\(dateDelimiter\).toString\(\)\);`))
 							})
 
 						})

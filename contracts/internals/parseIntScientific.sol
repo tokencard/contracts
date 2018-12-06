@@ -11,13 +11,22 @@ contract ParseIntScientific {
   byte constant private E_ASCII = byte(69); //decimal value of 'E'
   byte constant private e_ASCII = byte(101); //decimal value of 'e'
 
-  function _parseIntScientific(string inString) internal pure returns (uint) {
-    return _parseIntScientific(inString, 0);
+  /// @dev ParseIntScientific delegates the call to _parseIntScientific(string, uint) with the 2nd argument being 0.
+  function _parseIntScientific(string _inString) internal pure returns (uint) {
+    return _parseIntScientific(_inString, 0);
   }
 
-  function _parseIntScientific(string inString, uint magnitudeMult) internal pure returns (uint) {
+  /// @dev ParseIntScientificWei parses a rate expressed in ETH and returns its wei denomination
+  function _parseIntScientificWei(string _inString) internal pure returns (uint) {
+    return _parseIntScientific(_inString, 18);
+  }
 
-      bytes memory inBytes = bytes(inString);
+  /// @dev ParseIntScientific parses a JSON standard - floating point number.
+  /// @param _inString is input string.
+  /// @param _magnitudeMult multiplies the number with 10^_magnitudeMult.
+  function _parseIntScientific(string _inString, uint _magnitudeMult) internal pure returns (uint) {
+
+      bytes memory inBytes = bytes(_inString);
       uint mint = 0; //the final uint returned
       uint mintDec = 0; //the uint following the decimal point
       uint mintExp = 0; //the exponent
@@ -88,14 +97,14 @@ contract ParseIntScientific {
 
       if (minus){
         //e^(-x)
-        if (mintExp >= magnitudeMult){
+        if (mintExp >= _magnitudeMult){
           //the (negative) exponent is bigger than the given parameter for "shifting left".
           //use integer division to reduce the precision.
-          mint /= 10**(mintExp - magnitudeMult);
+          mint /= 10**(mintExp - _magnitudeMult);
         }
         else{
           //the (negative) exponent is smaller than the given parameter for "shifting left".
-          shifts = magnitudeMult - mintExp;
+          shifts = _magnitudeMult - mintExp;
           if (shifts >= decMinted){
             //the decimals are fewer or equal than the shifts: use all of them
             ////shift number and add the decimals at the end
@@ -117,7 +126,7 @@ contract ParseIntScientific {
       else{
         //e^(+x), positive exponent or no exponent)
         //just shift left as many times as indicated by the exponent and the shift parameter
-        shifts = magnitudeMult + mintExp;
+        shifts = _magnitudeMult + mintExp;
         //include decimals if present in the original input
         mint *= 10**(decMinted);
         mint += mintDec;
