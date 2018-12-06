@@ -28,7 +28,7 @@ import "./externals/base64.sol";
 
 /// @title Oracle converts ERC20 token amounts into equivalent ether amounts based on cryptocurrency exchange rates.
 interface IOracle {
-    function convert(address, uint) external view returns (uint);
+    function convert(address, uint) external view returns (bool, uint);
 }
 
 
@@ -136,13 +136,19 @@ contract Oracle is usingOraclize, Base64, Date, JSON, Controllable, IOracle {
     /// @dev Convert ERC20 token amount to the corresponding ether amount (used by the wallet contract).
     /// @param _token ERC20 token contract address.
     /// @param _amount amount of token in base units.
-    function convert(address _token, uint _amount) external view returns (uint) {
+    function convert(address _token, uint _amount) external view returns (bool, uint) {
         // Store the token in memory to save map entry lookup gas.
         Token storage token = tokens[_token];
-        // Require that the token exists and that its rate is not zero.
-        require(token.exists && token.rate != 0, "token does not exist");
-        // Safely convert the token amount to ether based on the exchange rate.
-        return _amount.mul(token.rate).div(token.magnitude);
+        // If the token exists require that its rate is not zero
+        if (token.exists) {
+            require(token.rate != 0, "token rate is 0");
+            // Safely convert the token amount to ether based on the exchange rate.
+            // return the value and a 'true' implying that the token is protected
+            return (true, _amount.mul(token.rate).div(token.magnitude));
+        }
+        // this returns a 'false' to imply that a card is not protected 
+        return (false, 0);
+        
     }
 
     /// @dev Add ERC20 tokens to the list of supported tokens.
