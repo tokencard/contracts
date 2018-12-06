@@ -380,14 +380,14 @@ contract Vault is Whitelist, SpendLimit, ERC165 {
             } else {
                 etherValue = _amount;
             }
-            if (tokenExists){
-              // Require that the value is under remaining limit.
-              require(etherValue <= spendAvailable(), "transfer amount exceeds available spend limit");
-              // Update the available limit.
-              setSpendAvailable(spendAvailable().sub(etherValue));
-            }
-            else{
-              //delegate call
+
+            // If token is supported by our oracle or is ether
+            // Check against the daily spent limit and update accordingly
+            if (tokenExists || _asset == address(0)) {
+                // Require that the value is under remaining limit.
+                require(etherValue <= spendAvailable(), "transfer amount exceeds available spend limit");
+                // Update the available limit.
+                setSpendAvailable(spendAvailable().sub(etherValue));
             }
         }
         // Transfer token or ether based on the provided address.

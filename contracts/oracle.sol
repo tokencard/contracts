@@ -140,15 +140,13 @@ contract Oracle is usingOraclize, Base64, Date, JSON, Controllable, IOracle {
         // Store the token in memory to save map entry lookup gas.
         Token storage token = tokens[_token];
         // If the token exists require that its rate is not zero, otherwise return (false, 0).
-        if(token.exists){
-          require(token.rate != 0, "token rate is 0");
-          // Safely convert the token amount to ether based on the exchange rate.
-          return (true, _amount.mul(token.rate).div(token.magnitude));
+        if (token.exists) {
+            require(token.rate != 0, "token rate is 0");
+            // Safely convert the token amount to ether based on the exchange rate.
+            return (true, _amount.mul(token.rate).div(token.magnitude));
+        } else {
+            return (false, 0);
         }
-        else{
-          return (false, 0);
-        }
-
     }
 
     /// @dev Add ERC20 tokens to the list of supported tokens.
