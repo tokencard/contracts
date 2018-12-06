@@ -8,7 +8,8 @@ contract ParseIntScientific {
   byte constant private DOT_ASCII = byte(46); //decimal value of '.'
   byte constant private ZERO_ASCII = byte(48); //decimal value of '0'
   byte constant private NINE_ASCII = byte(57); //decimal value of '9'
-  byte constant private E_ASCII = byte(101); //decimal value of 'e'
+  byte constant private E_ASCII = byte(69); //decimal value of 'E'
+  byte constant private e_ASCII = byte(101); //decimal value of 'e'
 
   function _parseIntScientific(string inString) internal pure returns (uint) {
     return _parseIntScientific(inString, 0);
@@ -43,31 +44,33 @@ contract ParseIntScientific {
                   mint += uint(inBytes[i]) - uint(ZERO_ASCII);
                 }
           }
-          else if ((inBytes[i] >= ZERO_ASCII) && (inBytes[i] <= NINE_ASCII) && (minus || plus)){
+          else if ((inBytes[i] >= ZERO_ASCII) && (inBytes[i] <= NINE_ASCII) && (exp)){
               //exponential notation (e-/+) has been detected, mint the exponent
               mintExp *= 10;
               mintExp += uint(inBytes[i]) - uint(ZERO_ASCII);
           }
           else if (inBytes[i] == DOT_ASCII){
             //an extra decimal point makes the format invalid
-            require(!decimals,"duplicate decimal point");
+            require(!decimals, "duplicate decimal point");
             decimals = true;
           }
           else if (inBytes[i] == DASH_ASCII) {
             //an extra '-' should be considered an invalid character
-            require(!minus,"duplicate -");
+            require(!minus, "duplicate -");
+            require(!plus, "extra sign");
             require(expIndex + 1 == i,"- sign not immediately after e");
             minus = true;
           }
           else if (inBytes[i] == PLUS_ASCII) {
             //an extra '+' should be considered an invalid character
-            require(!plus,"duplicate +");
+            require(!plus, "duplicate +");
+            require(!minus, "extra sign");
             require(expIndex + 1 == i,"+ sign not immediately after e");
             plus = true;
           }
-          else if (inBytes[i] == E_ASCII) {
-            //an extra 'e' should be considered an invalid character
-            require(!exp,"duplicate e");
+          else if (inBytes[i] == E_ASCII || inBytes[i] == e_ASCII) {
+            //an extra 'e' or 'E' should be considered an invalid character
+            require(!exp, "duplicate exponent symbol");
             exp = true;
             expIndex = i;
           }
@@ -76,15 +79,12 @@ contract ParseIntScientific {
           }
       }
 
-      if (exp && !minus && !plus)
-        //e12 is a valid notation FIX ME FIX ME FIX ME FIX ME FIX ME FIX ME
-        revert("exponent not followed by sign");
-      else if (exp && minus && i == expIndex + 2)
-        //end of string (e-) without specifying the exponent
-        revert("exponent not specified");
-      else if (exp && plus && i == expIndex + 2)
-        //end of string (e+) without specifying the exponent
-        revert("exponent not specified");
+        if (minus || plus)
+          //end of string (e+/-) without specifying the exponent
+          require(i > expIndex + 2);
+        else if (exp)
+          //end of string (e) without specifying the exponent
+          require(i > expIndex + 1);
 
       if (minus){
         //e^(-x)
@@ -115,7 +115,7 @@ contract ParseIntScientific {
         }
       }
       else{
-        //e^(+x), positive exponent (or not)
+        //e^(+x), positive exponent or no exponent)
         //just shift left as many times as indicated by the exponent and the shift parameter
         shifts = magnitudeMult + mintExp;
         //include decimals if present in the original input
