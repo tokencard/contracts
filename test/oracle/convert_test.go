@@ -93,7 +93,6 @@ var _ = Describe("convert", func() {
 		It("Should return (false, 0)", func() {
 			tokenExists, value, err := Oracle.Convert(nil, common.HexToAddress("0x1"), big.NewInt(100))
 			Expect(err).ToNot(HaveOccurred())
-			Backend.Commit()
 			Expect(tokenExists).ToNot(BeTrue())
 			Expect(value.String()).To(Equal("0"))
 		})
