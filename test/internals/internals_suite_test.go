@@ -3,7 +3,7 @@ package externals_test
 import (
 	"context"
 	"testing"
-
+	// "os"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	. "github.com/onsi/ginkgo"
@@ -30,6 +30,11 @@ var _ = BeforeEach(func() {
 	Backend.Commit()
 	Expect(isSuccessful(tx)).To(BeTrue())
 })
+
+// var _ = AfterSuite(func() {
+// 	TestRig.ExpectMinimumCoverage("parseIntScientific.sol:ParseIntScientific", 99.99)
+// 	TestRig.PrintGasUsage(os.Stdout)
+// })
 
 func isSuccessful(tx *types.Transaction) bool {
 	r, err := Backend.TransactionReceipt(context.Background(), tx.Hash())
