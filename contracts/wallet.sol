@@ -1,5 +1,5 @@
 /**
- *  TokenWallet - The Consumer Contract Wallet
+ *  The Consumer Contract Wallet
  *  Copyright (C) 2018 Token Group Ltd
  *
  *  This program is free software: you can redistribute it and/or modify
