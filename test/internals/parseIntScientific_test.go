@@ -3,6 +3,7 @@ package externals_test
 import (
 	"errors"
 	"math/big"
+
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	// . "github.com/tokencard/contracts/test/shared"
@@ -249,6 +250,62 @@ var _ = Describe("ParseIntScientific", func() {
 				res, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "123.00123e3", big.NewInt(4))
 				Expect(err).ToNot(HaveOccurred())
 				Expect(res.String()).To(Equal("1230012300"))
+			})
+		})
+
+		When("('0.000001', 6) is passed", func() {
+			It("Should return 1", func() {
+				res, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "0.000001", big.NewInt(6))
+				Expect(err).ToNot(HaveOccurred())
+				Expect(res.String()).To(Equal("1"))
+			})
+		})
+
+		When("('1e-7', 7) is passed", func() {
+			It("Should return 1", func() {
+				res, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "1e-7", big.NewInt(7))
+				Expect(err).ToNot(HaveOccurred())
+				Expect(res.String()).To(Equal("1"))
+			})
+		})
+
+		When("('100000000000000000000', 0) is passed", func() {
+			It("Should return 100000000000000000000", func() {
+				res, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "100000000000000000000", big.NewInt(0))
+				Expect(err).ToNot(HaveOccurred())
+				Expect(res.String()).To(Equal("100000000000000000000"))
+			})
+		})
+
+		When("('1e+21', 0) is passed", func() {
+			It("Should return 1000000000000000000000", func() {
+				res, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "1e+21", big.NewInt(0))
+				Expect(err).ToNot(HaveOccurred())
+				Expect(res.String()).To(Equal("1000000000000000000000"))
+			})
+		})
+
+		When("('999999999999999900000', 0) is passed", func() {
+			It("Should return 999999999999999900000", func() {
+				res, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "999999999999999900000", big.NewInt(0))
+				Expect(err).ToNot(HaveOccurred())
+				Expect(res.String()).To(Equal("999999999999999900000"))
+			})
+		})
+
+		When("('9007199254740992', 0) is passed", func() {
+			It("Should return 9007199254740992", func() {
+				res, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "9007199254740992", big.NewInt(0))
+				Expect(err).ToNot(HaveOccurred())
+				Expect(res.String()).To(Equal("9007199254740992"))
+			})
+		})
+
+		When("('9007199254740993', 0) is passed", func() {
+			It("Should return 9007199254740992", func() {
+				res, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "9007199254740993", big.NewInt(0))
+				Expect(err).ToNot(HaveOccurred())
+				Expect(res.String()).To(Equal("9007199254740993"))
 			})
 		})
 
@@ -513,6 +570,6 @@ var _ = Describe("ParseIntScientific", func() {
 			})
 		})
 
-		})
+	})
 
 })
