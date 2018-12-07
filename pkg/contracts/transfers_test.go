@@ -26,7 +26,7 @@ var _ = Describe("Wallet wrapper transfers", func() {
 		})
 		Context("When the Received events have been filtered", func() {
 			It("should return a single Received event with the correct data", func() {
-				events, err := walletWrapper.ReceivedEvents(context.Background(), nil)
+				events, err := walletWrapper.ReceivedEvents(context.Background(), nil, nil)
 				Expect(err).ToNot(HaveOccurred())
 				Expect(events).To(HaveLen(1))
 				Expect(events[0].Data).To(HaveLen(2))
@@ -49,7 +49,7 @@ var _ = Describe("Wallet wrapper transfers", func() {
 			})
 			Context("When the ToppedUpGas events have been filtered", func() {
 				It("should return a single ToppedUpGas event with the correct data", func() {
-					events, err := walletWrapper.ToppedUpGasEvents(context.Background(), nil)
+					events, err := walletWrapper.ToppedUpGasEvents(context.Background(), nil, nil)
 					Expect(err).ToNot(HaveOccurred())
 					Expect(events).To(HaveLen(1))
 					Expect(events[0].Data).To(HaveLen(3))
@@ -74,7 +74,7 @@ var _ = Describe("Wallet wrapper transfers", func() {
 			})
 			Context("When the Transferred events have been filtered", func() {
 				It("should return a single Transferred event with the correct data", func() {
-					events, err := walletWrapper.TransferredEvents(context.Background(), nil)
+					events, err := walletWrapper.TransferredEvents(context.Background(), nil, nil)
 					Expect(err).ToNot(HaveOccurred())
 					Expect(events).To(HaveLen(1))
 					Expect(events[0].Data).To(HaveLen(3))
