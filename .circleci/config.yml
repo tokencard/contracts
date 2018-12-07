@@ -10,7 +10,7 @@ jobs:
           keys:
           - vendor-{{ checksum "go.sum" }}
       - run: go mod vendor
-      - run: go test -v ./test/...
+      - run: go test -v ./...
       - save_cache:
           key: vendor-{{ checksum "go.sum" }}
           paths:

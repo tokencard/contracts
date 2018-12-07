@@ -382,8 +382,8 @@ func (w *Wallet) SubmitWhitelistAddition(opts *ConstructOpts, addresses []common
 	return construct(opts, w.ethereum, &w.address, data)
 }
 
-func (w *Wallet) ConfirmWhitelistAddition(opts *ConstructOpts) (*types.Transaction, error) {
-	data, err := w.abi.Pack("confirmWhitelistAddition")
+func (w *Wallet) ConfirmWhitelistAddition(opts *ConstructOpts, hash common.Hash) (*types.Transaction, error) {
+	data, err := w.abi.Pack("confirmWhitelistAddition", hash)
 	if err != nil {
 		return nil, err
 	}
@@ -406,8 +406,8 @@ func (w *Wallet) SubmitWhitelistRemoval(opts *ConstructOpts, addresses []common.
 	return construct(opts, w.ethereum, &w.address, data)
 }
 
-func (w *Wallet) ConfirmWhitelistRemoval(opts *ConstructOpts) (*types.Transaction, error) {
-	data, err := w.abi.Pack("confirmWhitelistRemoval")
+func (w *Wallet) ConfirmWhitelistRemoval(opts *ConstructOpts, hash common.Hash) (*types.Transaction, error) {
+	data, err := w.abi.Pack("confirmWhitelistRemoval", hash)
 	if err != nil {
 		return nil, err
 	}
@@ -502,11 +502,11 @@ func (w *Wallet) TopUpGas(opts *ConstructOpts, amount *big.Int) (*types.Transact
 	return construct(opts, w.ethereum, &w.address, data)
 }
 
-func (w *Wallet) AddedToWhitelistEvents(ctx context.Context, block *big.Int) ([]*Event, error) {
+func (w *Wallet) AddedToWhitelistEvents(ctx context.Context, fromBlock *big.Int, toBlock *big.Int) ([]*Event, error) {
 	// Create a query for whitelist addition events.
 	query := ethereum.FilterQuery{
-		FromBlock: nil,
-		ToBlock:   block,
+		FromBlock: fromBlock,
+		ToBlock:   toBlock,
 		Addresses: []common.Address{w.address},
 		Topics:    [][]common.Hash{{w.abi.Events["AddedToWhitelist"].Id()}},
 	}
@@ -536,11 +536,11 @@ func (w *Wallet) AddedToWhitelistEvents(ctx context.Context, block *big.Int) ([]
 	return events, nil
 }
 
-func (w *Wallet) SubmittedWhitelistAdditionEvents(ctx context.Context, block *big.Int) ([]*Event, error) {
+func (w *Wallet) SubmittedWhitelistAdditionEvents(ctx context.Context, fromBlock *big.Int, toBlock *big.Int) ([]*Event, error) {
 	// Create a query for whitelist addition events.
 	query := ethereum.FilterQuery{
-		FromBlock: nil,
-		ToBlock:   block,
+		FromBlock: fromBlock,
+		ToBlock:   toBlock,
 		Addresses: []common.Address{w.address},
 		Topics:    [][]common.Hash{{w.abi.Events["SubmittedWhitelistAddition"].Id()}},
 	}
@@ -553,7 +553,7 @@ func (w *Wallet) SubmittedWhitelistAdditionEvents(ctx context.Context, block *bi
 	var events []*Event
 	for _, v := range logs {
 		// Decode event parameters.
-		if len(v.Data) < 64 {
+		if len(v.Data) < 96 {
 			return nil, ErrInvalidEventData
 		}
 		var data [][]byte
@@ -570,11 +570,11 @@ func (w *Wallet) SubmittedWhitelistAdditionEvents(ctx context.Context, block *bi
 	return events, nil
 }
 
-func (w *Wallet) SubmittedWhitelistRemovalEvents(ctx context.Context, block *big.Int) ([]*Event, error) {
+func (w *Wallet) SubmittedWhitelistRemovalEvents(ctx context.Context, fromBlock *big.Int, toBlock *big.Int) ([]*Event, error) {
 	// Create a query for whitelist addition events.
 	query := ethereum.FilterQuery{
-		FromBlock: nil,
-		ToBlock:   block,
+		FromBlock: fromBlock,
+		ToBlock:   toBlock,
 		Addresses: []common.Address{w.address},
 		Topics:    [][]common.Hash{{w.abi.Events["SubmittedWhitelistRemoval"].Id()}},
 	}
@@ -587,7 +587,7 @@ func (w *Wallet) SubmittedWhitelistRemovalEvents(ctx context.Context, block *big
 	var events []*Event
 	for _, v := range logs {
 		// Decode event parameters.
-		if len(v.Data) < 64 {
+		if len(v.Data) < 96 {
 			return nil, ErrInvalidEventData
 		}
 		var data [][]byte
@@ -604,11 +604,11 @@ func (w *Wallet) SubmittedWhitelistRemovalEvents(ctx context.Context, block *big
 	return events, nil
 }
 
-func (w *Wallet) RemovedFromWhitelistEvents(ctx context.Context, block *big.Int) ([]*Event, error) {
+func (w *Wallet) RemovedFromWhitelistEvents(ctx context.Context, fromBlock *big.Int, toBlock *big.Int) ([]*Event, error) {
 	// Create a query for whitelist removal events.
 	query := ethereum.FilterQuery{
-		FromBlock: nil,
-		ToBlock:   block,
+		FromBlock: fromBlock,
+		ToBlock:   toBlock,
 		Addresses: []common.Address{w.address},
 		Topics:    [][]common.Hash{{w.abi.Events["RemovedFromWhitelist"].Id()}},
 	}
@@ -638,11 +638,11 @@ func (w *Wallet) RemovedFromWhitelistEvents(ctx context.Context, block *big.Int)
 	return events, nil
 }
 
-func (w *Wallet) SetSpendLimitEvents(ctx context.Context, block *big.Int) ([]*Event, error) {
+func (w *Wallet) SetSpendLimitEvents(ctx context.Context, fromBlock *big.Int, toBlock *big.Int) ([]*Event, error) {
 	// Create a query for set daily limit events.
 	query := ethereum.FilterQuery{
-		FromBlock: nil,
-		ToBlock:   block,
+		FromBlock: fromBlock,
+		ToBlock:   toBlock,
 		Addresses: []common.Address{w.address},
 		Topics:    [][]common.Hash{{w.abi.Events["SetSpendLimit"].Id()}},
 	}
@@ -672,11 +672,11 @@ func (w *Wallet) SetSpendLimitEvents(ctx context.Context, block *big.Int) ([]*Ev
 	return events, nil
 }
 
-func (w *Wallet) SetTopUpLimitEvents(ctx context.Context, block *big.Int) ([]*Event, error) {
+func (w *Wallet) SetTopUpLimitEvents(ctx context.Context, fromBlock *big.Int, toBlock *big.Int) ([]*Event, error) {
 	// Create a query for set daily limit events.
 	query := ethereum.FilterQuery{
-		FromBlock: nil,
-		ToBlock:   block,
+		FromBlock: fromBlock,
+		ToBlock:   toBlock,
 		Addresses: []common.Address{w.address},
 		Topics:    [][]common.Hash{{w.abi.Events["SetTopUpLimit"].Id()}},
 	}
@@ -706,11 +706,11 @@ func (w *Wallet) SetTopUpLimitEvents(ctx context.Context, block *big.Int) ([]*Ev
 	return events, nil
 }
 
-func (w *Wallet) ToppedUpGasEvents(ctx context.Context, block *big.Int) ([]*Event, error) {
+func (w *Wallet) ToppedUpGasEvents(ctx context.Context, fromBlock *big.Int, toBlock *big.Int) ([]*Event, error) {
 	// Create a query for gas top up events.
 	query := ethereum.FilterQuery{
-		FromBlock: nil,
-		ToBlock:   block,
+		FromBlock: fromBlock,
+		ToBlock:   toBlock,
 		Addresses: []common.Address{w.address},
 		Topics:    [][]common.Hash{{w.abi.Events["ToppedUpGas"].Id()}},
 	}
@@ -740,11 +740,11 @@ func (w *Wallet) ToppedUpGasEvents(ctx context.Context, block *big.Int) ([]*Even
 	return events, nil
 }
 
-func (w *Wallet) TransferredEvents(ctx context.Context, block *big.Int) ([]*Event, error) {
+func (w *Wallet) TransferredEvents(ctx context.Context, fromBlock *big.Int, toBlock *big.Int) ([]*Event, error) {
 	// Create a query for transfer events.
 	query := ethereum.FilterQuery{
-		FromBlock: nil,
-		ToBlock:   block,
+		FromBlock: fromBlock,
+		ToBlock:   toBlock,
 		Addresses: []common.Address{w.address},
 		Topics:    [][]common.Hash{{w.abi.Events["Transferred"].Id()}},
 	}
@@ -774,11 +774,11 @@ func (w *Wallet) TransferredEvents(ctx context.Context, block *big.Int) ([]*Even
 	return events, nil
 }
 
-func (w *Wallet) ReceivedEvents(ctx context.Context, block *big.Int) ([]*Event, error) {
+func (w *Wallet) ReceivedEvents(ctx context.Context, fromBlock *big.Int, toBlock *big.Int) ([]*Event, error) {
 	// Create a query for deposit events.
 	query := ethereum.FilterQuery{
-		FromBlock: nil,
-		ToBlock:   block,
+		FromBlock: fromBlock,
+		ToBlock:   toBlock,
 		Addresses: []common.Address{w.address},
 		Topics:    [][]common.Hash{{w.abi.Events["Received"].Id()}},
 	}

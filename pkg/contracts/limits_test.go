@@ -25,7 +25,7 @@ var _ = Describe("Wallet wrapper limits", func() {
 		})
 		Context("When the SetSpendLimit events have been filtered", func() {
 			It("should return a single SetSpendLimit event with the correct data", func() {
-				events, err := walletWrapper.SetSpendLimitEvents(context.Background(), nil)
+				events, err := walletWrapper.SetSpendLimitEvents(context.Background(), nil, nil)
 				Expect(err).ToNot(HaveOccurred())
 				Expect(events).To(HaveLen(1))
 				Expect(events[0].Data).To(HaveLen(2))
@@ -49,7 +49,7 @@ var _ = Describe("Wallet wrapper limits", func() {
 		})
 		Context("When the SetTopUpLimit events have been filtered", func() {
 			It("should return a single SetTopUpLimit event with the correct data", func() {
-				events, err := walletWrapper.SetTopUpLimitEvents(context.Background(), nil)
+				events, err := walletWrapper.SetTopUpLimitEvents(context.Background(), nil, nil)
 				Expect(err).ToNot(HaveOccurred())
 				Expect(events).To(HaveLen(1))
 				Expect(events[0].Data).To(HaveLen(2))
