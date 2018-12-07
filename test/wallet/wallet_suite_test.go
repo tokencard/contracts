@@ -13,7 +13,7 @@ import (
 )
 
 func init() {
-	TestRig.AddCoverageForContracts("../../build/wallet/combined.json", "../../contracts/wallet.sol")
+	TestRig.AddCoverageForContracts("../../build/wallet/combined.json", "../../contracts", []string{"wallet.sol"})
 }
 
 func TestWalletSuite(t *testing.T) {

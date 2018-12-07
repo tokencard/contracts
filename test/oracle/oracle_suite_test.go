@@ -16,7 +16,11 @@ import (
 const GAS_LIMIT = 2000000
 
 func init() {
-	TestRig.AddCoverageForContracts("../../build/oracle/combined.json", "../../contracts/oracle.sol")
+	TestRig.AddCoverageForContracts(
+		"../../build/oracle/combined.json",
+		"../../contracts",
+		[]string{"oracle.sol", "internals/date.sol"},
+	)
 }
 
 func TestOracleSuite(t *testing.T) {
@@ -46,6 +50,7 @@ var _ = AfterEach(func() {
 
 var _ = AfterSuite(func() {
 	TestRig.ExpectMinimumCoverage("oracle.sol:Oracle", 99.99)
+	TestRig.ExpectMinimumCoverage("internals/date.sol:Date", 100.0)
 	TestRig.PrintGasUsage(os.Stdout)
 })
 
