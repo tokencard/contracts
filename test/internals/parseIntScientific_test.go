@@ -85,6 +85,14 @@ var _ = Describe("ParseIntScientific", func() {
 			})
 		})
 
+		When("('1e+1', 0) is passed", func() {
+			It("Should return 10", func() {
+				res, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "1e+1", big.NewInt(0))
+				Expect(err).ToNot(HaveOccurred())
+				Expect(res.String()).To(Equal("10"))
+			})
+		})
+
 		When("('0.0123e-1', 5) is passed", func() {
 			It("Should return 123", func() {
 				res, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "0.0123e-1", big.NewInt(5))
@@ -569,6 +577,66 @@ var _ = Describe("ParseIntScientific", func() {
 				// Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*monthToNumber.*`))
 			})
 		})
+
+		When("there is an illegal character (non-digit,'e','-','+')", func() {
+			It("Should revert", func() {
+				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "1.0123e+P", big.NewInt(2))
+				Expect(err).To(HaveOccurred())
+				Expect(err).To(MatchError(errors.New("abi: improperly formatted output")))
+				// Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*monthToNumber.*`))
+			})
+		})
+
+		When("('e1', 0) is passed", func() {
+			It("Should revert", func() {
+				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "e1", big.NewInt(0))
+				Expect(err).To(HaveOccurred())
+				Expect(err).To(MatchError(errors.New("abi: improperly formatted output")))
+			})
+		})
+
+		When("('e+1', 0) is passed", func() {
+			It("Should revert", func() {
+				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "e1", big.NewInt(0))
+				Expect(err).To(HaveOccurred())
+				Expect(err).To(MatchError(errors.New("abi: improperly formatted output")))
+			})
+		})
+
+		When("('e-1', 0) is passed", func() {
+			It("Should revert", func() {
+				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "e1", big.NewInt(0))
+				Expect(err).To(HaveOccurred())
+				Expect(err).To(MatchError(errors.New("abi: improperly formatted output")))
+			})
+		})
+
+		When("('.1e-1', 0) is passed", func() {
+			It("Should revert", func() {
+				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, ".1e-1", big.NewInt(0))
+				Expect(err).To(HaveOccurred())
+				Expect(err).To(MatchError(errors.New("abi: improperly formatted output")))
+			})
+		})
+
+		When("('.1e1', 2) is passed", func() {
+			It("Should revert", func() {
+				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, ".1e1", big.NewInt(2))
+				Expect(err).To(HaveOccurred())
+				Expect(err).To(MatchError(errors.New("abi: improperly formatted output")))
+			})
+		})
+
+		When("('.1234', 2) is passed", func() {
+			It("Should revert", func() {
+				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, ".1234", big.NewInt(2))
+				Expect(err).To(HaveOccurred())
+				Expect(err).To(MatchError(errors.New("abi: improperly formatted output")))
+			})
+		})
+
+		
+
 
 	})
 

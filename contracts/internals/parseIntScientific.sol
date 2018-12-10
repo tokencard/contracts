@@ -28,22 +28,22 @@ contract ParseIntScientific {
     byte constant private NINE_ASCII = byte(57); //decimal value of '9'
     byte constant private E_ASCII = byte(69); //decimal value of 'E'
     byte constant private e_ASCII = byte(101); //decimal value of 'e'
-  
+
     /// @dev ParseIntScientific delegates the call to _parseIntScientific(string, uint) with the 2nd argument being 0.
     function _parseIntScientific(string _inString) internal pure returns (uint) {
         return _parseIntScientific(_inString, 0);
     }
-  
+
     /// @dev ParseIntScientificWei parses a rate expressed in ETH and returns its wei denomination
     function _parseIntScientificWei(string _inString) internal pure returns (uint) {
         return _parseIntScientific(_inString, 18);
     }
-  
+
     /// @dev ParseIntScientific parses a JSON standard - floating point number.
     /// @param _inString is input string.
     /// @param _magnitudeMult multiplies the number with 10^_magnitudeMult.
     function _parseIntScientific(string _inString, uint _magnitudeMult) internal pure returns (uint) {
-  
+
         bytes memory inBytes = bytes(_inString);
         uint mint = 0; // the final uint returned
         uint mintDec = 0; // the uint following the decimal point
@@ -51,11 +51,12 @@ contract ParseIntScientific {
         uint decMinted = 0; // how many decimals were 'minted'.
         uint expIndex = 0; // the position in the byte array that 'e' was found (if found)
         uint shifts; // how many times the final number has to be shifted (left or right) i.e. 10^shifts
+        bool integral = false; // indicates the existence of the integral part, it should always exist (even if 0) e.g. 'e+1'  or '.1' is not valid
         bool decimals = false; // indicates a decimal number, set to true if '.' is found
         bool exp = false; // indicates if the number being parsed has an exponential representation
         bool minus = false; // indicated if the exponent is negative
         bool plus = false; // indicated if the exponent is positive
-  
+
         for (uint i = 0; i < inBytes.length; i++) {
             if ((inBytes[i] >= ZERO_ASCII) && (inBytes[i] <= NINE_ASCII) && (!exp)) {
                 // 'e' not encountered yet, minting integer part or decimals
@@ -65,7 +66,8 @@ contract ParseIntScientific {
                     mintDec += uint(inBytes[i]) - uint(ZERO_ASCII);
                     decMinted++; //keep track of how many decimals the input number had
                 } else {
-                    // integer part (before '.')
+                    // integral part (before '.')
+                    integral = true;
                     mint *= 10;
                     mint += uint(inBytes[i]) - uint(ZERO_ASCII);
                 }
@@ -74,6 +76,8 @@ contract ParseIntScientific {
                 mintExp *= 10;
                 mintExp += uint(inBytes[i]) - uint(ZERO_ASCII);
             } else if (inBytes[i] == DOT_ASCII) {
+                //an integral part before should always exist before 'e'
+                require(integral, "missing integral part");
                 // an extra decimal point makes the format invalid
                 require(!decimals, "duplicate decimal point");
                 decimals = true;
@@ -90,6 +94,8 @@ contract ParseIntScientific {
                 require(expIndex + 1 == i, "+ sign not immediately after e");
                 plus = true;
             } else if ((inBytes[i] == E_ASCII) || (inBytes[i] == e_ASCII)) {
+                //an integral part before should always exist before 'e'
+                require(integral, "missing integral part");
                 // an extra 'e' or 'E' should be considered an invalid character
                 require(!exp, "duplicate exponent symbol");
                 exp = true;
@@ -98,7 +104,7 @@ contract ParseIntScientific {
                 revert("invalid digit");
             }
         }
-  
+
         if (minus || plus) {
             // end of string e[x|-] without specifying the exponent
             require(i > expIndex + 2);
@@ -106,7 +112,7 @@ contract ParseIntScientific {
             // end of string (e) without specifying the exponent
             require(i > expIndex + 1);
         }
-  
+
         if (minus) {
             // e^(-x)
             if (mintExp >= _magnitudeMult) {
