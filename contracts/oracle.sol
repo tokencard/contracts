@@ -222,7 +222,7 @@ contract Oracle is usingOraclize, Base64, Date, JSON, Controllable, ParseIntScie
 
         bool valid;
         uint timestamp;
-        (valid, timestamp) = verifyProof(_result, _proof, APIPublicKey, token.lastUpdate);
+        (valid, timestamp) = _verifyProof(_result, _proof, APIPublicKey, token.lastUpdate);
 
         // Require that the proof is valid.
         if (valid) {
@@ -272,7 +272,7 @@ contract Oracle is usingOraclize, Base64, Date, JSON, Controllable, ParseIntScie
     /// @param _proof origin proof from cryptocompare.
     /// @param _publicKey cryptocompare public key.
     /// @param _lastUpdate timestamp of the last time the requested token was updated.
-    function verifyProof(string _result, bytes _proof, bytes _publicKey, uint _lastUpdate) private returns (bool, uint) {
+    function _verifyProof(string _result, bytes _proof, bytes _publicKey, uint _lastUpdate) private returns (bool, uint) {
 
         //expecting fixed length proofs
         if (_proof.length != PROOF_LEN)
@@ -294,7 +294,7 @@ contract Oracle is usingOraclize, Base64, Date, JSON, Controllable, ParseIntScie
         headers = copyBytes(_proof, 2*ENCODING_BYTES + ECDSA_SIG_LEN, HEADERS_LEN, headers, 0);
 
         // Check if the signature is valid and if the signer address is matching.
-        if (!verifySignature(headers, signature, _publicKey)) {
+        if (!_verifySignature(headers, signature, _publicKey)) {
             revert("invalid signature");
         }
 
@@ -305,7 +305,7 @@ contract Oracle is usingOraclize, Base64, Date, JSON, Controllable, ParseIntScie
 
         bool dateValid;
         uint timestamp;
-        (dateValid, timestamp) = verifyDate(string(dateHeader), _lastUpdate);
+        (dateValid, timestamp) = _verifyDate(string(dateHeader), _lastUpdate);
 
         // Check whether the date returned is valid or not
         if (!dateValid)
@@ -326,7 +326,7 @@ contract Oracle is usingOraclize, Base64, Date, JSON, Controllable, ParseIntScie
     /// @param _headers HTTP headers provided by the cryptocompare api
     /// @param _signature signature provided by the cryptocompare api
     /// @param _publicKey cryptocompare public key.
-    function verifySignature(bytes _headers, bytes _signature, bytes _publicKey) private returns (bool) {
+    function _verifySignature(bytes _headers, bytes _signature, bytes _publicKey) private returns (bool) {
         address signer;
         bool signatureOK;
 
@@ -338,7 +338,7 @@ contract Oracle is usingOraclize, Base64, Date, JSON, Controllable, ParseIntScie
     /// @dev Verify the signed HTTP date header.
     /// @param _dateHeader extracted date string e.g. Wed, 12 Sep 2018 15:18:14 GMT.
     /// @param _lastUpdate timestamp of the last time the requested token was updated.
-    function verifyDate(string _dateHeader, uint _lastUpdate) private pure returns (bool, uint) {
+    function _verifyDate(string _dateHeader, uint _lastUpdate) private pure returns (bool, uint) {
 
         //called by verifyProof(), _dateHeader is always a string of length = 20
         assert(abi.encodePacked(_dateHeader).length == 20);
@@ -351,7 +351,7 @@ contract Oracle is usingOraclize, Base64, Date, JSON, Controllable, ParseIntScie
         uint day = _parseIntScientific(date.split(dateDelimiter).toString());
         require(day > 0 && day < 32, "day error");
 
-        uint month = monthToNumber(date.split(dateDelimiter).toString());
+        uint month = _monthToNumber(date.split(dateDelimiter).toString());
         require(month > 0 && month < 13, "month error");
 
         uint year = _parseIntScientific(date.split(dateDelimiter).toString());

@@ -36,7 +36,7 @@ contract Date {
 
     /// @return the number of the month based on its name.
     /// @param _month the first three letters of a month's name e.g. "Jan".
-    function monthToNumber(string _month) internal pure returns (uint8) {
+    function _monthToNumber(string _month) internal pure returns (uint8) {
         bytes32 month = keccak256(abi.encodePacked(_month));
         if (month == JANUARY) {
             return 1;
