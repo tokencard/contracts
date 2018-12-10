@@ -38,7 +38,7 @@ contract Ownable {
 
     /// @dev Reverts if called by any account other than the owner.
     modifier onlyOwner() {
-        require(isOwner(), "sender is not an owner");
+        require(_isOwner(), "sender is not an owner");
         _;
     }
 
@@ -79,7 +79,7 @@ contract Ownable {
     }
 
     /// @return true if sender is the owner of the contract.
-    function isOwner() internal view returns (bool) {
+    function _isOwner() internal view returns (bool) {
         return msg.sender == _owner;
     }
 }

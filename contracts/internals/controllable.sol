@@ -43,12 +43,12 @@ contract Controllable {
 
     /// @dev Checks if message sender is the controller.
     modifier onlyController() {
-        require(isController(msg.sender), "sender is not a controller");
+        require(_isController(msg.sender), "sender is not a controller");
         _;
     }
 
     /// @return true if the provided account is the controller.
-    function isController(address _account) internal view returns (bool) {
+    function _isController(address _account) internal view returns (bool) {
         return IController(IResolver(_ENS.resolver(_node)).addr(_node)).isController(_account);
     }
 }
