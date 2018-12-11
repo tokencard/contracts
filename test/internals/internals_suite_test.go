@@ -19,7 +19,7 @@ func init() {
 	TestRig.AddCoverageForContracts(
 		"../../build/oracle/combined.json",
 		"../../contracts",
-		[]string{"internals/parseIntScientific.sol"}, //"mocks/parseIntScientific-exporter.sol"
+		[]string{"internals/parseIntScientific.sol"},
 	)
 }
 
@@ -48,13 +48,4 @@ func isSuccessful(tx *types.Transaction) bool {
 	r, err := Backend.TransactionReceipt(context.Background(), tx.Hash())
 	Expect(err).ToNot(HaveOccurred())
 	return r.Status == types.ReceiptStatusSuccessful
-}
-
-func isGasExhausted(tx *types.Transaction, gasLimit uint64) bool {
-	r, err := Backend.TransactionReceipt(context.Background(), tx.Hash())
-	Expect(err).ToNot(HaveOccurred())
-	if r.Status == types.ReceiptStatusSuccessful {
-		return false
-	}
-	return r.GasUsed == gasLimit
 }
