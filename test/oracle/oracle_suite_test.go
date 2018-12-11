@@ -19,7 +19,6 @@ func init() {
 	TestRig.AddCoverageForContracts(
 		"../../build/oracle/combined.json",
 		"../../contracts",
-		[]string{"oracle.sol", "internals/date.sol"},
 	)
 }
 
@@ -49,7 +48,7 @@ var _ = AfterEach(func() {
 })
 
 var _ = AfterSuite(func() {
-	TestRig.ExpectMinimumCoverage("oracle.sol:Oracle", 99.99)
+	TestRig.ExpectMinimumCoverage("oracle.sol", 100.00)
 	TestRig.PrintGasUsage(os.Stdout)
 })
 
