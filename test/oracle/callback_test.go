@@ -125,7 +125,7 @@ var _ = Describe("callback", func() {
 								Backend.Commit()
 								Expect(isGasExhausted(tx, 500000)).To(BeFalse())
 								Expect(isSuccessful(tx)).To(BeFalse())
-								Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*token.rate = _parseIntScientificWei\(parseRate\(_result\)\);`))
+								Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*require\(keccak256\(jsonPrefix\) == prefixHash, "prefix mismatch"\);`))
 							})
 
 							It("It should Fail", func() {
@@ -136,7 +136,7 @@ var _ = Describe("callback", func() {
 								Backend.Commit()
 								Expect(isGasExhausted(tx, 500000)).To(BeFalse())
 								Expect(isSuccessful(tx)).To(BeFalse())
-								Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*token.rate = _parseIntScientificWei\(parseRate\(_result\)\);`))
+								Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*require\(json_len > 8 && json_len <= 28, "misformatted input"\);`))
 							})
 
 							It("It should Fail", func() {
@@ -147,7 +147,7 @@ var _ = Describe("callback", func() {
 								Backend.Commit()
 								Expect(isGasExhausted(tx, 500000)).To(BeFalse())
 								Expect(isSuccessful(tx)).To(BeFalse())
-								Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*token.rate = _parseIntScientificWei\(parseRate\(_result\)\);`))
+								Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*require\(json_len > 8 && json_len <= 28, "misformatted input"\);`))
 							})
 
 							It("It should Fail", func() {
@@ -158,7 +158,7 @@ var _ = Describe("callback", func() {
 								Backend.Commit()
 								Expect(isGasExhausted(tx, 500000)).To(BeFalse())
 								Expect(isSuccessful(tx)).To(BeFalse())
-								Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*token.rate = _parseIntScientificWei\(parseRate\(_result\)\);`))
+								Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*require\(json_len > 8 && json_len <= 28, "misformatted input"\);`))
 							})
 						})
 
@@ -191,7 +191,7 @@ var _ = Describe("callback", func() {
 								Backend.Commit()
 								Expect(isGasExhausted(tx, 300000)).To(BeFalse())
 								Expect(isSuccessful(tx)).To(BeFalse())
-								Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*monthToNumber.*`))
+								Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*revert\("not a valid month"\);`))
 							})
 
 							It("It should Fail", func() {
@@ -213,7 +213,7 @@ var _ = Describe("callback", func() {
 								Backend.Commit()
 								Expect(isGasExhausted(tx, 300000)).To(BeFalse())
 								Expect(isSuccessful(tx)).To(BeFalse())
-								Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*uint day = _parseIntScientific\(date.split\(dateDelimiter\).toString\(\)\);`))
+								Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*revert\("invalid digit"\);`))
 							})
 
 							It("It should Fail", func() {
@@ -257,7 +257,7 @@ var _ = Describe("callback", func() {
 								Backend.Commit()
 								Expect(isGasExhausted(tx, 300000)).To(BeFalse())
 								Expect(isSuccessful(tx)).To(BeFalse())
-								Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*uint day = _parseIntScientific\(date.split\(dateDelimiter\).toString\(\)\);`))
+								Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*require\(expIndex \+ 1 == i, "- sign not immediately after e"\);`))
 							})
 
 							It("It should Fail", func() {
@@ -268,7 +268,7 @@ var _ = Describe("callback", func() {
 								Backend.Commit()
 								Expect(isGasExhausted(tx, 300000)).To(BeFalse())
 								Expect(isSuccessful(tx)).To(BeFalse())
-								Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*monthToNumber.*`))
+								Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*revert\("not a valid month"\);`))
 							})
 
 							It("It should Fail", func() {
@@ -279,7 +279,7 @@ var _ = Describe("callback", func() {
 								Backend.Commit()
 								Expect(isGasExhausted(tx, 300000)).To(BeFalse())
 								Expect(isSuccessful(tx)).To(BeFalse())
-								Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*uint day = _parseIntScientific\(date.split\(dateDelimiter\).toString\(\)\);`))
+								Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*require\(expIndex \+ 1 == i, "- sign not immediately after e"\);`))
 							})
 
 							It("It should Fail", func() {
@@ -290,7 +290,7 @@ var _ = Describe("callback", func() {
 								Backend.Commit()
 								Expect(isGasExhausted(tx, 300000)).To(BeFalse())
 								Expect(isSuccessful(tx)).To(BeFalse())
-								Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*uint day = _parseIntScientific\(date.split\(dateDelimiter\).toString\(\)\);`))
+								Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*require\(expIndex \+ 1 == i, "- sign not immediately after e"\);`))
 							})
 
 							It("It should Fail", func() {
@@ -301,7 +301,7 @@ var _ = Describe("callback", func() {
 								Backend.Commit()
 								Expect(isGasExhausted(tx, 300000)).To(BeFalse())
 								Expect(isSuccessful(tx)).To(BeFalse())
-								Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*uint day = _parseIntScientific\(date.split\(dateDelimiter\).toString\(\)\);`))
+								Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*require\(expIndex \+ 1 == i, "- sign not immediately after e"\);`))
 							})
 
 						})
