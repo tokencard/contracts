@@ -31,7 +31,7 @@ var (
 const ParseIntScientificABI = "[]"
 
 // ParseIntScientificBin is the compiled bytecode used for deploying new contracts.
-const ParseIntScientificBin = `6080604052348015600f57600080fd5b50603580601d6000396000f3006080604052600080fd00a165627a7a7230582098e2ab3b0857e67c93ed03a2d095e9ec88395450c0277c6433f9211b413586920029`
+const ParseIntScientificBin = `6080604052348015600f57600080fd5b50603580601d6000396000f3006080604052600080fd00a165627a7a723058202fc14ad6683882943c7fae054ea766f6ea46722cc6f51950ad8d8149f3ed0ba70029`
 
 // DeployParseIntScientific deploys a new Ethereum contract, binding an instance of ParseIntScientific to it.
 func DeployParseIntScientific(auth *bind.TransactOpts, backend bind.ContractBackend) (common.Address, *types.Transaction, *ParseIntScientific, error) {

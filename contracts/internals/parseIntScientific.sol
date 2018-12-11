@@ -18,8 +18,12 @@
 
 pragma solidity ^0.4.25;
 
+import "../externals/SafeMath.sol";
+
 /// @title ParseIntScientific provides floating point in scientific notation (e.g. e-5) parsing functionality.
 contract ParseIntScientific {
+
+    using SafeMath for uint256;
 
     byte constant private PLUS_ASCII = byte(43); //decimal value of '+'
     byte constant private DASH_ASCII = byte(45); //decimal value of '-'
@@ -50,7 +54,7 @@ contract ParseIntScientific {
         uint mintExp = 0; // the exponent
         uint decMinted = 0; // how many decimals were 'minted'.
         uint expIndex = 0; // the position in the byte array that 'e' was found (if found)
-        uint shifts; // how many times the final number has to be shifted (left or right) i.e. 10^shifts
+        /* uint shifts; // how many times the final number has to be shifted (left or right) i.e. 10^shifts */
         bool integral = false; // indicates the existence of the integral part, it should always exist (even if 0) e.g. 'e+1'  or '.1' is not valid
         bool decimals = false; // indicates a decimal number, set to true if '.' is found
         bool exp = false; // indicates if the number being parsed has an exponential representation
@@ -62,19 +66,21 @@ contract ParseIntScientific {
                 // 'e' not encountered yet, minting integer part or decimals
                 if (decimals) {
                     // '.' encountered
-                    mintDec *= 10;
-                    mintDec += uint(inBytes[i]) - uint(ZERO_ASCII);
-                    decMinted++; //keep track of how many decimals the input number had
+                    //use safeMath in case there is an overflow
+                    mintDec = mintDec.mul(10);
+                    mintDec = mintDec.add(uint(inBytes[i]) - uint(ZERO_ASCII));
+                    decMinted++; //keep track of the #decimals
                 } else {
                     // integral part (before '.')
                     integral = true;
-                    mint *= 10;
-                    mint += uint(inBytes[i]) - uint(ZERO_ASCII);
+                    //use safeMath in case there is an overflow
+                    mint = mint.mul(10);
+                    mint = mint.add(uint(inBytes[i]) - uint(ZERO_ASCII));
                 }
             } else if ((inBytes[i] >= ZERO_ASCII) && (inBytes[i] <= NINE_ASCII) && (exp)) {
                 //exponential notation (e-/+) has been detected, mint the exponent
-                mintExp *= 10;
-                mintExp += uint(inBytes[i]) - uint(ZERO_ASCII);
+                mintExp = mintExp.mul(10);
+                mintExp = mintExp.add(uint(inBytes[i]) - uint(ZERO_ASCII));
             } else if (inBytes[i] == DOT_ASCII) {
                 //an integral part before should always exist before 'e'
                 require(integral, "missing integral part");
@@ -121,32 +127,33 @@ contract ParseIntScientific {
                 mint /= 10 ** (mintExp - _magnitudeMult);
             } else {
                 // the (negative) exponent is smaller than the given parameter for "shifting left".
-                shifts = _magnitudeMult - mintExp;
-                if (shifts >= decMinted) {
+                _magnitudeMult = _magnitudeMult - mintExp;
+                if (_magnitudeMult >= decMinted) {
                     // the decimals are fewer or equal than the shifts: use all of them
                     // shift number and add the decimals at the end
                     mint *= 10 ** (decMinted);
                     mint += mintDec;
                     // add zeros at the end if needed
-                    mint *= 10 ** (shifts - decMinted);
+                    mint *= 10 ** (_magnitudeMult - decMinted);
                 } else {
-                    // the decimals are more than the shifts
+                    // the decimals are more than the #_magnitudeMult shifts
                     // use only the ones needed, discard the rest
-                    mintDec /= 10 ** (decMinted-shifts);
+                    mintDec /= 10 ** (decMinted-_magnitudeMult);
                     // shift number and add the decimals at the end
-                    mint *= 10 ** (shifts);
+                    mint *= 10 ** (_magnitudeMult);
                     mint += mintDec;
                 }
             }
         } else {
             // e^(+x), positive exponent or no exponent
             // just shift left as many times as indicated by the exponent and the shift parameter
-            shifts = _magnitudeMult + mintExp;
+            _magnitudeMult = _magnitudeMult.add(mintExp);
             // include decimals if present in the original input
-            mint *= 10 ** (decMinted);
-            mint += mintDec;
-            //'shift' again if the decimals were fewer that the combined shifts
-            mint *= 10 ** (shifts - decMinted);
+            require(decMinted < 78, "more than 77 decimal digits parsed"); //
+            mint = mint.mul(10 ** (decMinted));
+            mint = mint.add(mintDec);
+            //'shift' again if the decimals were fewer that the combined (_magnitudeMult + mintExp) shifts
+            mint *= 10 ** (_magnitudeMult - decMinted);
         }
         return mint;
     }
