@@ -82,10 +82,12 @@ contract ParseIntScientific {
                 mintExp = mintExp.mul(10);
                 mintExp = mintExp.add(uint(inBytes[i]) - uint(ZERO_ASCII));
             } else if (inBytes[i] == DOT_ASCII) {
-                //an integral part before should always exist before 'e'
+                //an integral part before should always exist before '.'
                 require(integral, "missing integral part");
                 // an extra decimal point makes the format invalid
                 require(!decimals, "duplicate decimal point");
+                //the decimal point should always be before the exponent
+                require(!exp, "decimal after exponent");
                 decimals = true;
             } else if (inBytes[i] == DASH_ASCII) {
                 // an extra '-' should be considered an invalid character
@@ -124,37 +126,43 @@ contract ParseIntScientific {
             if (mintExp >= _magnitudeMult) {
                 // the (negative) exponent is bigger than the given parameter for "shifting left".
                 // use integer division to reduce the precision.
+                require(mintExp - _magnitudeMult < 78, "exponent > 77"); //
                 mint /= 10 ** (mintExp - _magnitudeMult);
+                return mint;
+
             } else {
                 // the (negative) exponent is smaller than the given parameter for "shifting left".
+                //no need for underflow check
                 _magnitudeMult = _magnitudeMult - mintExp;
-                if (_magnitudeMult >= decMinted) {
-                    // the decimals are fewer or equal than the shifts: use all of them
-                    // shift number and add the decimals at the end
-                    mint *= 10 ** (decMinted);
-                    mint += mintDec;
-                    // add zeros at the end if needed
-                    mint *= 10 ** (_magnitudeMult - decMinted);
-                } else {
-                    // the decimals are more than the #_magnitudeMult shifts
-                    // use only the ones needed, discard the rest
-                    mintDec /= 10 ** (decMinted-_magnitudeMult);
-                    // shift number and add the decimals at the end
-                    mint *= 10 ** (_magnitudeMult);
-                    mint += mintDec;
-                }
             }
         } else {
             // e^(+x), positive exponent or no exponent
             // just shift left as many times as indicated by the exponent and the shift parameter
             _magnitudeMult = _magnitudeMult.add(mintExp);
-            // include decimals if present in the original input
-            require(decMinted < 78, "more than 77 decimal digits parsed"); //
-            mint = mint.mul(10 ** (decMinted));
-            mint = mint.add(mintDec);
-            //'shift' again if the decimals were fewer that the combined (_magnitudeMult + mintExp) shifts
-            mint *= 10 ** (_magnitudeMult - decMinted);
-        }
+          }
+
+          if (_magnitudeMult >= decMinted) {
+              // the decimals are fewer or equal than the shifts: use all of them
+              // shift number and add the decimals at the end
+              // include decimals if present in the original input
+              require(decMinted < 78, "more than 77 decimal digits parsed"); //
+              mint = mint.mul(10 ** (decMinted));
+              mint = mint.add(mintDec);
+              //// add zeros at the end if the decimals were fewer than #_magnitudeMult
+              require(_magnitudeMult - decMinted < 78, "exponent > 77"); //
+              mint = mint.mul(10 ** (_magnitudeMult - decMinted));
+          } else {
+              // the decimals are more than the #_magnitudeMult shifts
+              // use only the ones needed, discard the rest
+              decMinted -= _magnitudeMult;
+              require(decMinted < 78, "more than 77 decimal digits parsed"); //
+              mintDec /= 10 ** (decMinted);
+              // shift number and add the decimals at the end
+              require(_magnitudeMult < 78, "more than 77 decimal digits parsed"); //
+              mint = mint.mul(10 ** (_magnitudeMult));
+              mint = mint.add(mintDec);
+          }
+
         return mint;
     }
 }

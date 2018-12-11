@@ -261,13 +261,14 @@ var _ = Describe("ParseIntScientific", func() {
 			})
 		})
 
-		// When("('123.00123', 4) is passed", func() {
-		// 	FIt("Should return 1230012300", func() {
-		// 		res, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "123.001234", big.NewInt(4))
-		// 		Expect(err).ToNot(HaveOccurred())
-		// 		Expect(res.String()).To(Equal("1230012300"))
-		// 	})
-		// })
+		When("('123.00123', 4) is passed", func() {
+			It("Should return 1230012", func() {
+				res, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "123.001234", big.NewInt(4))
+				Expect(err).ToNot(HaveOccurred())
+				Expect(res.String()).To(Equal("1230012"))
+			})
+		})
+
 
 		When("('0.000001', 6) is passed", func() {
 			It("Should return 1", func() {
@@ -355,6 +356,87 @@ var _ = Describe("ParseIntScientific", func() {
 		When("there is an extra '.'", func() {
 			It("Should revert", func() {
 				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "1.0123e-.3", big.NewInt(2))
+				Expect(err).To(HaveOccurred())
+				Expect(err).To(MatchError(errors.New("abi: improperly formatted output")))
+				// Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*monthToNumber.*`))
+			})
+		})
+
+		When("there is a '.' after the 'e'", func() {
+			It("Should revert", func() {
+				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "1e.3", big.NewInt(0))
+				Expect(err).To(HaveOccurred())
+				Expect(err).To(MatchError(errors.New("abi: improperly formatted output")))
+				// Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*monthToNumber.*`))
+			})
+		})
+
+		When("there is a '.' after the 'e'", func() {
+			It("Should revert", func() {
+				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "1e.+3", big.NewInt(0))
+				Expect(err).To(HaveOccurred())
+				Expect(err).To(MatchError(errors.New("abi: improperly formatted output")))
+				// Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*monthToNumber.*`))
+			})
+		})
+
+		When("there is a '.' after the 'e'", func() {
+			It("Should revert", func() {
+				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "1e.-3", big.NewInt(2))
+				Expect(err).To(HaveOccurred())
+				Expect(err).To(MatchError(errors.New("abi: improperly formatted output")))
+				// Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*monthToNumber.*`))
+			})
+		})
+
+		When("there is a '.' after the 'e'", func() {
+			It("Should revert", func() {
+				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "1e+.3", big.NewInt(0))
+				Expect(err).To(HaveOccurred())
+				Expect(err).To(MatchError(errors.New("abi: improperly formatted output")))
+				// Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*monthToNumber.*`))
+			})
+		})
+
+		When("there is a '.' after the 'e'", func() {
+			It("Should revert", func() {
+				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "1e-.3", big.NewInt(0))
+				Expect(err).To(HaveOccurred())
+				Expect(err).To(MatchError(errors.New("abi: improperly formatted output")))
+				// Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*monthToNumber.*`))
+			})
+		})
+
+		When("there is a '.' after the 'e'", func() {
+			It("Should revert", func() {
+				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "1e3.", big.NewInt(0))
+				Expect(err).To(HaveOccurred())
+				Expect(err).To(MatchError(errors.New("abi: improperly formatted output")))
+				// Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*monthToNumber.*`))
+			})
+		})
+
+		When("there is a '.' after the 'e'", func() {
+			It("Should revert", func() {
+				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "1e+3.", big.NewInt(0))
+				Expect(err).To(HaveOccurred())
+				Expect(err).To(MatchError(errors.New("abi: improperly formatted output")))
+				// Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*monthToNumber.*`))
+			})
+		})
+
+		When("there is a '.' after the 'e'", func() {
+			It("Should revert", func() {
+				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "1e-3.", big.NewInt(0))
+				Expect(err).To(HaveOccurred())
+				Expect(err).To(MatchError(errors.New("abi: improperly formatted output")))
+				// Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*monthToNumber.*`))
+			})
+		})
+
+		When("there is a '.' after the 'e'", func() {
+			It("Should revert", func() {
+				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "1e-3.", big.NewInt(0))
 				Expect(err).To(HaveOccurred())
 				Expect(err).To(MatchError(errors.New("abi: improperly formatted output")))
 				// Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*monthToNumber.*`))
@@ -720,13 +802,23 @@ var _ = Describe("ParseIntScientific", func() {
 				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "1.111111111111111111111111111111111111111111111111111111111111111111111111111111", big.NewInt(0))
 				Expect(err).To(HaveOccurred())
 				Expect(err).To(MatchError(errors.New("abi: improperly formatted output")))
+				// Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*require\(second < 60, "second error"\);`))
 			})
 		})
 
 		When("an overflow occurs when the integral part (10) is shifted 77 times", func() {
 			It("Should revert", func() {
 				//10^77 < 2^256 - 1 < 10^78
-				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "10.11111111111111111111111111111111111111111111111111111111111111111111111111111", big.NewInt(0))
+				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "10.2", big.NewInt(77))
+				Expect(err).To(HaveOccurred())
+				Expect(err).To(MatchError(errors.New("abi: unmarshalling empty output")))
+			})
+		})
+
+		When("an overflow occurs when the integral part (10) is shifted 77 times", func() {
+			It("Should revert", func() {
+				//10^77 < 2^256 - 1 < 10^78
+				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "10.11111111111111111111111111111111111111111111111111111111111111111111111111111", big.NewInt(77))
 				Expect(err).To(HaveOccurred())
 				Expect(err).To(MatchError(errors.New("abi: unmarshalling empty output")))
 			})
@@ -735,15 +827,11 @@ var _ = Describe("ParseIntScientific", func() {
 		When("an overflow occurs when the decimal part is added to the integral one", func() {
 			It("Should revert (safeMath.add())", func() {
 				//10^77 < 2^256 - 1 < 10^78
-				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "1.99999999999999999999999999999999999999999999999999999999999999999999999999999", big.NewInt(0))
+				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "1.99999999999999999999999999999999999999999999999999999999999999999999999999999", big.NewInt(77))
 				Expect(err).To(HaveOccurred())
 				Expect(err).To(MatchError(errors.New("abi: unmarshalling empty output")))
 			})
 		})
-
-
-		//FIX ME: add tests: '.'' after 'e'
-		//FIX ME: _magnitudeMult - decMinted <0???
 
 	})
 
