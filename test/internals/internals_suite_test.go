@@ -3,7 +3,7 @@ package externals_test
 import (
 	"context"
 	"testing"
-	// "os"
+	"os"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	. "github.com/onsi/ginkgo"
@@ -14,6 +14,14 @@ import (
 
 var ParseIntScientificExporter *mocks.ParseIntScientificExporter
 var ParseIntScientificExporterAddress common.Address
+
+func init() {
+	TestRig.AddCoverageForContracts(
+		// "../../build/internals/parseIntScientific/combined.json",
+		"../../build/mocks/parseIntScientific-exporter/combined.json",
+		"../../contracts",
+	)
+}
 
 func TestParseIntScientificSuite(t *testing.T) {
 	RegisterFailHandler(Fail)
@@ -31,22 +39,14 @@ var _ = BeforeEach(func() {
 	Expect(isSuccessful(tx)).To(BeTrue())
 })
 
-// var _ = AfterSuite(func() {
-// 	TestRig.ExpectMinimumCoverage("parseIntScientific.sol:ParseIntScientific", 99.99)
-// 	TestRig.PrintGasUsage(os.Stdout)
-// })
+var _ = AfterSuite(func() {
+	TestRig.ExpectMinimumCoverage("internals/parseIntScientific.sol", 100.0)
+	TestRig.ExpectMinimumCoverage("mocks/parseIntScientific-exporter.sol", 100.0)
+	TestRig.PrintGasUsage(os.Stdout)
+})
 
 func isSuccessful(tx *types.Transaction) bool {
 	r, err := Backend.TransactionReceipt(context.Background(), tx.Hash())
 	Expect(err).ToNot(HaveOccurred())
 	return r.Status == types.ReceiptStatusSuccessful
-}
-
-func isGasExhausted(tx *types.Transaction, gasLimit uint64) bool {
-	r, err := Backend.TransactionReceipt(context.Background(), tx.Hash())
-	Expect(err).ToNot(HaveOccurred())
-	if r.Status == types.ReceiptStatusSuccessful {
-		return false
-	}
-	return r.GasUsed == gasLimit
 }
