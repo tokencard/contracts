@@ -17,9 +17,9 @@ var ParseIntScientificExporterAddress common.Address
 
 func init() {
 	TestRig.AddCoverageForContracts(
-		"../../build/oracle/combined.json",
+		// "../../build/internals/parseIntScientific/combined.json",
+		"../../build/mocks/parseIntScientific-exporter/combined.json",
 		"../../contracts",
-		[]string{"internals/parseIntScientific.sol"},
 	)
 }
 
@@ -40,7 +40,8 @@ var _ = BeforeEach(func() {
 })
 
 var _ = AfterSuite(func() {
-	TestRig.ExpectMinimumCoverage("internals/parseIntScientific.sol:ParseIntScientific", 99.99)
+	TestRig.ExpectMinimumCoverage("internals/parseIntScientific.sol", 100.0)
+	TestRig.ExpectMinimumCoverage("mocks/parseIntScientific-exporter.sol", 100.0)
 	TestRig.PrintGasUsage(os.Stdout)
 })
 

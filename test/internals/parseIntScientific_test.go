@@ -6,7 +6,7 @@ import (
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	// . "github.com/tokencard/contracts/test/shared"
+	. "github.com/tokencard/contracts/test/shared"
 )
 
 var _ = Describe("ParseIntScientific", func() {
@@ -820,6 +820,7 @@ var _ = Describe("ParseIntScientific", func() {
 				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "10.11111111111111111111111111111111111111111111111111111111111111111111111111111", big.NewInt(77))
 				Expect(err).To(HaveOccurred())
 				Expect(err).To(MatchError(errors.New("abi: unmarshalling empty output")))
+				Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*require\(c / a == b\);`))
 			})
 		})
 
@@ -829,6 +830,17 @@ var _ = Describe("ParseIntScientific", func() {
 				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "1.99999999999999999999999999999999999999999999999999999999999999999999999999999", big.NewInt(77))
 				Expect(err).To(HaveOccurred())
 				Expect(err).To(MatchError(errors.New("abi: unmarshalling empty output")))
+				Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*require\(c >= a\);`))
+			})
+		})
+
+		When("'0.00208' is passed to ParseIntScientificWei", func() {
+			It("Should return 208", func() {
+				res, err := ParseIntScientificExporter.ParseIntScientificWei(nil, "0.00208")
+				Expect(err).ToNot(HaveOccurred())
+				resStr := res.String()
+				Expect(resStr).To(Equal("2080000000000000"))
+				Expect(len(resStr)).To(Equal(16))
 			})
 		})
 
