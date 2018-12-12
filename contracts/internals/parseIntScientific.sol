@@ -54,7 +54,6 @@ contract ParseIntScientific {
         uint mintExp = 0; // the exponent
         uint decMinted = 0; // how many decimals were 'minted'.
         uint expIndex = 0; // the position in the byte array that 'e' was found (if found)
-        /* uint shifts; // how many times the final number has to be shifted (left or right) i.e. 10^shifts */
         bool integral = false; // indicates the existence of the integral part, it should always exist (even if 0) e.g. 'e+1'  or '.1' is not valid
         bool decimals = false; // indicates a decimal number, set to true if '.' is found
         bool exp = false; // indicates if the number being parsed has an exponential representation

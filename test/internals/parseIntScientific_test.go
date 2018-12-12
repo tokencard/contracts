@@ -337,7 +337,6 @@ var _ = Describe("ParseIntScientific", func() {
 				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "1.01.23e-3", big.NewInt(2))
 				Expect(err).To(HaveOccurred())
 				Expect(err).To(MatchError(errors.New("abi: improperly formatted output")))
-				// Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*monthToNumber.*`))
 			})
 		})
 
@@ -346,7 +345,6 @@ var _ = Describe("ParseIntScientific", func() {
 				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "1.0123e-3.", big.NewInt(2))
 				Expect(err).To(HaveOccurred())
 				Expect(err).To(MatchError(errors.New("abi: improperly formatted output")))
-				// Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*monthToNumber.*`))
 			})
 		})
 
@@ -355,7 +353,6 @@ var _ = Describe("ParseIntScientific", func() {
 				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "1.0123e.-3", big.NewInt(2))
 				Expect(err).To(HaveOccurred())
 				Expect(err).To(MatchError(errors.New("abi: improperly formatted output")))
-				// Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*monthToNumber.*`))
 			})
 		})
 
@@ -364,7 +361,6 @@ var _ = Describe("ParseIntScientific", func() {
 				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "1.0123e-.3", big.NewInt(2))
 				Expect(err).To(HaveOccurred())
 				Expect(err).To(MatchError(errors.New("abi: improperly formatted output")))
-				// Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*monthToNumber.*`))
 			})
 		})
 
@@ -373,7 +369,6 @@ var _ = Describe("ParseIntScientific", func() {
 				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "1e.3", big.NewInt(0))
 				Expect(err).To(HaveOccurred())
 				Expect(err).To(MatchError(errors.New("abi: improperly formatted output")))
-				// Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*monthToNumber.*`))
 			})
 		})
 
@@ -382,7 +377,6 @@ var _ = Describe("ParseIntScientific", func() {
 				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "1e.+3", big.NewInt(0))
 				Expect(err).To(HaveOccurred())
 				Expect(err).To(MatchError(errors.New("abi: improperly formatted output")))
-				// Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*monthToNumber.*`))
 			})
 		})
 
@@ -391,7 +385,6 @@ var _ = Describe("ParseIntScientific", func() {
 				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "1e.-3", big.NewInt(2))
 				Expect(err).To(HaveOccurred())
 				Expect(err).To(MatchError(errors.New("abi: improperly formatted output")))
-				// Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*monthToNumber.*`))
 			})
 		})
 
@@ -400,7 +393,6 @@ var _ = Describe("ParseIntScientific", func() {
 				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "1e+.3", big.NewInt(0))
 				Expect(err).To(HaveOccurred())
 				Expect(err).To(MatchError(errors.New("abi: improperly formatted output")))
-				// Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*monthToNumber.*`))
 			})
 		})
 
@@ -409,7 +401,6 @@ var _ = Describe("ParseIntScientific", func() {
 				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "1e-.3", big.NewInt(0))
 				Expect(err).To(HaveOccurred())
 				Expect(err).To(MatchError(errors.New("abi: improperly formatted output")))
-				// Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*monthToNumber.*`))
 			})
 		})
 
@@ -418,7 +409,6 @@ var _ = Describe("ParseIntScientific", func() {
 				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "1e3.", big.NewInt(0))
 				Expect(err).To(HaveOccurred())
 				Expect(err).To(MatchError(errors.New("abi: improperly formatted output")))
-				// Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*monthToNumber.*`))
 			})
 		})
 
@@ -427,7 +417,6 @@ var _ = Describe("ParseIntScientific", func() {
 				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "1e+3.", big.NewInt(0))
 				Expect(err).To(HaveOccurred())
 				Expect(err).To(MatchError(errors.New("abi: improperly formatted output")))
-				// Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*monthToNumber.*`))
 			})
 		})
 
@@ -436,7 +425,6 @@ var _ = Describe("ParseIntScientific", func() {
 				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "1e-3.", big.NewInt(0))
 				Expect(err).To(HaveOccurred())
 				Expect(err).To(MatchError(errors.New("abi: improperly formatted output")))
-				// Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*monthToNumber.*`))
 			})
 		})
 
@@ -446,7 +434,6 @@ var _ = Describe("ParseIntScientific", func() {
 				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "1.0123e-3e", big.NewInt(2))
 				Expect(err).To(HaveOccurred())
 				Expect(err).To(MatchError(errors.New("abi: improperly formatted output")))
-				// Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*monthToNumber.*`))
 			})
 		})
 
@@ -455,7 +442,7 @@ var _ = Describe("ParseIntScientific", func() {
 				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "1.01E23e-3", big.NewInt(2))
 				Expect(err).To(HaveOccurred())
 				Expect(err).To(MatchError(errors.New("abi: improperly formatted output")))
-				// Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*monthToNumber.*`))
+
 			})
 		})
 
@@ -464,7 +451,6 @@ var _ = Describe("ParseIntScientific", func() {
 				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "1.012e3e-3", big.NewInt(2))
 				Expect(err).To(HaveOccurred())
 				Expect(err).To(MatchError(errors.New("abi: improperly formatted output")))
-				// Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*monthToNumber.*`))
 			})
 		})
 
@@ -473,7 +459,6 @@ var _ = Describe("ParseIntScientific", func() {
 				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "1.0123E-3e", big.NewInt(2))
 				Expect(err).To(HaveOccurred())
 				Expect(err).To(MatchError(errors.New("abi: improperly formatted output")))
-				// Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*monthToNumber.*`))
 			})
 		})
 
@@ -482,7 +467,6 @@ var _ = Describe("ParseIntScientific", func() {
 				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "1.01e23E-3", big.NewInt(2))
 				Expect(err).To(HaveOccurred())
 				Expect(err).To(MatchError(errors.New("abi: improperly formatted output")))
-				// Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*monthToNumber.*`))
 			})
 		})
 
@@ -491,7 +475,7 @@ var _ = Describe("ParseIntScientific", func() {
 				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "1.0123ee-3", big.NewInt(2))
 				Expect(err).To(HaveOccurred())
 				Expect(err).To(MatchError(errors.New("abi: improperly formatted output")))
-				// Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*monthToNumber.*`))
+
 			})
 		})
 
@@ -500,7 +484,7 @@ var _ = Describe("ParseIntScientific", func() {
 				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "1.0123eE-3", big.NewInt(2))
 				Expect(err).To(HaveOccurred())
 				Expect(err).To(MatchError(errors.New("abi: improperly formatted output")))
-				// Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*monthToNumber.*`))
+
 			})
 		})
 
@@ -509,7 +493,6 @@ var _ = Describe("ParseIntScientific", func() {
 				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "1.0123Ee-3", big.NewInt(2))
 				Expect(err).To(HaveOccurred())
 				Expect(err).To(MatchError(errors.New("abi: improperly formatted output")))
-				// Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*monthToNumber.*`))
 			})
 		})
 
@@ -518,7 +501,7 @@ var _ = Describe("ParseIntScientific", func() {
 				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "1.0123EE-3", big.NewInt(2))
 				Expect(err).To(HaveOccurred())
 				Expect(err).To(MatchError(errors.New("abi: improperly formatted output")))
-				// Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*monthToNumber.*`))
+
 			})
 		})
 
@@ -527,7 +510,7 @@ var _ = Describe("ParseIntScientific", func() {
 				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "1.01+23e-3", big.NewInt(2))
 				Expect(err).To(HaveOccurred())
 				Expect(err).To(MatchError(errors.New("abi: improperly formatted output")))
-				// Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*monthToNumber.*`))
+
 			})
 		})
 
@@ -536,7 +519,7 @@ var _ = Describe("ParseIntScientific", func() {
 				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "1.01+23e+3", big.NewInt(2))
 				Expect(err).To(HaveOccurred())
 				Expect(err).To(MatchError(errors.New("abi: improperly formatted output")))
-				// Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*monthToNumber.*`))
+
 			})
 		})
 
@@ -545,7 +528,7 @@ var _ = Describe("ParseIntScientific", func() {
 				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "1.01-23e-3", big.NewInt(2))
 				Expect(err).To(HaveOccurred())
 				Expect(err).To(MatchError(errors.New("abi: improperly formatted output")))
-				// Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*monthToNumber.*`))
+
 			})
 		})
 
@@ -554,7 +537,7 @@ var _ = Describe("ParseIntScientific", func() {
 				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "1.01-23e+3", big.NewInt(2))
 				Expect(err).To(HaveOccurred())
 				Expect(err).To(MatchError(errors.New("abi: improperly formatted output")))
-				// Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*monthToNumber.*`))
+
 			})
 		})
 
@@ -563,7 +546,7 @@ var _ = Describe("ParseIntScientific", func() {
 				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "1.01-23E+3", big.NewInt(2))
 				Expect(err).To(HaveOccurred())
 				Expect(err).To(MatchError(errors.New("abi: improperly formatted output")))
-				// Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*monthToNumber.*`))
+
 			})
 		})
 
@@ -572,7 +555,7 @@ var _ = Describe("ParseIntScientific", func() {
 				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "1.01-23E3", big.NewInt(2))
 				Expect(err).To(HaveOccurred())
 				Expect(err).To(MatchError(errors.New("abi: improperly formatted output")))
-				// Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*monthToNumber.*`))
+
 			})
 		})
 
@@ -581,7 +564,7 @@ var _ = Describe("ParseIntScientific", func() {
 				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "1.01-23e3", big.NewInt(2))
 				Expect(err).To(HaveOccurred())
 				Expect(err).To(MatchError(errors.New("abi: improperly formatted output")))
-				// Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*monthToNumber.*`))
+
 			})
 		})
 
@@ -590,7 +573,7 @@ var _ = Describe("ParseIntScientific", func() {
 				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "1.0123e--3", big.NewInt(2))
 				Expect(err).To(HaveOccurred())
 				Expect(err).To(MatchError(errors.New("abi: improperly formatted output")))
-				// Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*monthToNumber.*`))
+
 			})
 		})
 
@@ -599,7 +582,7 @@ var _ = Describe("ParseIntScientific", func() {
 				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "1.0123e-3-", big.NewInt(2))
 				Expect(err).To(HaveOccurred())
 				Expect(err).To(MatchError(errors.New("abi: improperly formatted output")))
-				// Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*monthToNumber.*`))
+
 			})
 		})
 
@@ -608,7 +591,7 @@ var _ = Describe("ParseIntScientific", func() {
 				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "1.0123e-+3", big.NewInt(2))
 				Expect(err).To(HaveOccurred())
 				Expect(err).To(MatchError(errors.New("abi: improperly formatted output")))
-				// Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*monthToNumber.*`))
+
 			})
 		})
 
@@ -617,7 +600,7 @@ var _ = Describe("ParseIntScientific", func() {
 				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "1.0123e-3+", big.NewInt(2))
 				Expect(err).To(HaveOccurred())
 				Expect(err).To(MatchError(errors.New("abi: improperly formatted output")))
-				// Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*monthToNumber.*`))
+
 			})
 		})
 
@@ -626,7 +609,7 @@ var _ = Describe("ParseIntScientific", func() {
 				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "1.0123e", big.NewInt(2))
 				Expect(err).To(HaveOccurred())
 				Expect(err).To(MatchError(errors.New("abi: unmarshalling empty output")))
-				// Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*monthToNumber.*`))
+
 			})
 		})
 
@@ -635,7 +618,7 @@ var _ = Describe("ParseIntScientific", func() {
 				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "1.0123e-", big.NewInt(2))
 				Expect(err).To(HaveOccurred())
 				Expect(err).To(MatchError(errors.New("abi: unmarshalling empty output")))
-				// Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*monthToNumber.*`))
+
 			})
 		})
 
@@ -644,7 +627,7 @@ var _ = Describe("ParseIntScientific", func() {
 				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "1.0123e+", big.NewInt(2))
 				Expect(err).To(HaveOccurred())
 				Expect(err).To(MatchError(errors.New("abi: unmarshalling empty output")))
-				// Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*monthToNumber.*`))
+
 			})
 		})
 
@@ -653,7 +636,7 @@ var _ = Describe("ParseIntScientific", func() {
 				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "1.01t23e+", big.NewInt(2))
 				Expect(err).To(HaveOccurred())
 				Expect(err).To(MatchError(errors.New("abi: improperly formatted output")))
-				// Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*monthToNumber.*`))
+
 			})
 		})
 
@@ -662,7 +645,7 @@ var _ = Describe("ParseIntScientific", func() {
 				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "#1.01t23e+", big.NewInt(2))
 				Expect(err).To(HaveOccurred())
 				Expect(err).To(MatchError(errors.New("abi: improperly formatted output")))
-				// Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*monthToNumber.*`))
+
 			})
 		})
 
@@ -671,7 +654,7 @@ var _ = Describe("ParseIntScientific", func() {
 				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "1.0123e+P", big.NewInt(2))
 				Expect(err).To(HaveOccurred())
 				Expect(err).To(MatchError(errors.New("abi: improperly formatted output")))
-				// Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*monthToNumber.*`))
+
 			})
 		})
 
@@ -680,7 +663,7 @@ var _ = Describe("ParseIntScientific", func() {
 				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "1.0123e+12&", big.NewInt(0))
 				Expect(err).To(HaveOccurred())
 				Expect(err).To(MatchError(errors.New("abi: improperly formatted output")))
-				// Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*monthToNumber.*`))
+
 			})
 		})
 
