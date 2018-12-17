@@ -144,11 +144,20 @@ contract ParseIntScientific {
               // the decimals are fewer or equal than the shifts: use all of them
               // shift number and add the decimals at the end
               // include decimals if present in the original input
-              require(decMinted < 78, "more than 77 decimal digits parsed"); //
-              mint = mint.mul(10 ** (decMinted));
-              mint = mint.add(mintDec);
+
+              require(decMinted < 78, "more than 77 decimal digits parsed"); //positive exp, decimal too big
+              /* mint = mint.mul(10 ** (decMinted)); */
+              mintExp = mint;//use mintExp as a temp var
+              mint *= 10 ** decMinted;
+              require(mint / (10 ** decMinted) == mintExp); //denominator can never be 0 (10^X)
+
+              /* mint = mint.add(mintDec); */
+              mintExp = mint;//use mintExp as a temp var
+              mint += mintDec;
+              require(mint >= mintExp, "integer + decimal overflow");
+
               //// add zeros at the end if the decimals were fewer than #_magnitudeMult
-              require(_magnitudeMult - decMinted < 78, "exponent > 77"); //
+              require(_magnitudeMult - decMinted < 78, "exponent > 77"); //positive exp, magnitude too big
               mint = mint.mul(10 ** (_magnitudeMult - decMinted));
           } else {
               // the decimals are more than the #_magnitudeMult shifts

@@ -775,7 +775,6 @@ var _ = Describe("ParseIntScientific", func() {
 				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "1.111111111111111111111111111111111111111111111111111111111111111111111111111111", big.NewInt(0))
 				Expect(err).To(HaveOccurred())
 				Expect(err).To(MatchError(errors.New("abi: improperly formatted output")))
-				// Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*require\(second < 60, "second error"\);`))
 			})
 		})
 
@@ -785,6 +784,7 @@ var _ = Describe("ParseIntScientific", func() {
 				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "10", big.NewInt(77))
 				Expect(err).To(HaveOccurred())
 				Expect(err).To(MatchError(errors.New("abi: unmarshalling empty output")))
+				Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*require\(c / a == b\);`))
 			})
 		})
 
@@ -794,26 +794,62 @@ var _ = Describe("ParseIntScientific", func() {
 				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "1", big.NewInt(78))
 				Expect(err).To(HaveOccurred())
 				Expect(err).To(MatchError(errors.New("abi: improperly formatted output")))
+				Expect(TestRig.LastExecuted()).To(MatchRegexp(`require\(_magnitudeMult - decMinted < 78, "exponent > 77"\);`))
+			})
+		})
+
+		When("an overflow occurs when the integral part is shifted 77 times", func() {
+			It("Should revert", func() {
+				//10^77 < 2^256 - 1 < 10^78
+				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "1", big.NewInt(123))
+				Expect(err).To(HaveOccurred())
+				Expect(err).To(MatchError(errors.New("abi: improperly formatted output")))
+				Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*require\(_magnitudeMult - decMinted < 78, "exponent > 77"\); //positive exp, magnitude too big`))
+			})
+		})
+
+		When("an overflow occurs when the decimal part is too long (>77)", func() {
+			It("Should revert", func() {
+				//10^77 < 2^256 - 1 < 10^78
+				integral := "1"
+				decimal := "111111111111111111111111111111111111111111111111111111111111111111111111111111"
+				Expect(len(decimal)).To(Equal(78))
+				input := integral + "." + decimal
+				//input = 10.11111111111111111111111111111111111111111111111111111111111111111111111111111
+				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, input, big.NewInt(78))
+				Expect(err).To(HaveOccurred())
+				Expect(err).To(MatchError(errors.New("abi: improperly formatted output")))
+				Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*require\(decMinted < 78, "more than 77 decimal digits parsed"\); //positive exp, decimal too big`))
 			})
 		})
 
 		When("an overflow occurs when the integral part (10) is shifted 77 times", func() {
 			It("Should revert", func() {
 				//10^77 < 2^256 - 1 < 10^78
-				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "10.11111111111111111111111111111111111111111111111111111111111111111111111111111", big.NewInt(77))
+				integral := "10"
+				decimal := "11111111111111111111111111111111111111111111111111111111111111111111111111111"
+				Expect(len(decimal)).To(Equal(77))
+				input := integral + "." + decimal
+				//input = 10.11111111111111111111111111111111111111111111111111111111111111111111111111111
+				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, input, big.NewInt(77))
 				Expect(err).To(HaveOccurred())
 				Expect(err).To(MatchError(errors.New("abi: unmarshalling empty output")))
-				Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*require\(c / a == b\);`))
+				Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*require\(mint / \(10 \*\* decMinted\) == mintExp\); //denominator can never be 0`))
 			})
 		})
 
 		When("an overflow occurs when the decimal part is added to the integral one", func() {
 			It("Should revert (safeMath.add())", func() {
 				//10^77 < 2^256 - 1 < 10^78
-				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "1.99999999999999999999999999999999999999999999999999999999999999999999999999999", big.NewInt(77))
+				integral := "1"
+				decimal := "99999999999999999999999999999999999999999999999999999999999999999999999999999"
+				Expect(len(decimal)).To(Equal(77))
+				input := integral + "." + decimal
+				//input = "1.99999999999999999999999999999999999999999999999999999999999999999999999999999"
+				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, input, big.NewInt(77))
 				Expect(err).To(HaveOccurred())
-				Expect(err).To(MatchError(errors.New("abi: unmarshalling empty output")))
-				Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*require\(c >= a\);`))
+				Expect(err).To(MatchError(errors.New("abi: improperly formatted output")))
+				Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*require\(mint >= mintExp, "integer \+ decimal overflow"\);`))
 			})
 		})
 
