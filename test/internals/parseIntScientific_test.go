@@ -804,7 +804,7 @@ var _ = Describe("ParseIntScientific", func() {
 				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "1", big.NewInt(123))
 				Expect(err).To(HaveOccurred())
 				Expect(err).To(MatchError(errors.New("abi: improperly formatted output")))
-				Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*require\(_magnitudeMult - decMinted < 78, "exponent > 77"\); //positive exp, magnitude too big`))
+				Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*require\(_magnitudeMult - decMinted < 78, "exponent > 77"\); //_magnitudeMult >= decMinted, magnitude too big`))
 			})
 		})
 
@@ -819,7 +819,7 @@ var _ = Describe("ParseIntScientific", func() {
 				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, input, big.NewInt(78))
 				Expect(err).To(HaveOccurred())
 				Expect(err).To(MatchError(errors.New("abi: improperly formatted output")))
-				Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*require\(decMinted < 78, "more than 77 decimal digits parsed"\); //positive exp, decimal too big`))
+				Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*require\(decMinted < 78, "more than 77 decimal digits parsed"\); //_magnitudeMult >= decMinted, decimal too big`))
 			})
 		})
 
