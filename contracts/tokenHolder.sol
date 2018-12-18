@@ -37,9 +37,9 @@ contract TokenHolder {
 
     // Construct a TokenHolder for the given burner token with the sender
     // as the owner.
-    function TokenHolder(address b) public {
+    constructor (address burnerContract) public {
         owner = msg.sender;
-        burner = b;
+        burner = burnerContract;
     }
 
     // Ether may be sent from anywhere.
