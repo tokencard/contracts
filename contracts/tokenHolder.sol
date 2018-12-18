@@ -3,7 +3,7 @@ pragma solidity >=0.4.18;
 // The Token interface is a subset of the ERC20 specification.
 interface Token {
     function transfer(address, uint) external returns (bool);
-    function balanceOf(address) constant external returns (uint);
+    function balanceOf(address) external view returns (uint);
 }
 
 // The BurnerToken interface is the interface to a token contract which
@@ -62,22 +62,22 @@ contract TokenHolder {
     }
 
     // Burn handles disbursing a share of tokens to an address.
-    function burn(address to, uint amount) external only (burner) returns (bool) {
-        if (amount == 0) {
+    function payOut(address to, uint poolShare) external only (burner) returns (bool) {
+        if (poolShare == 0) {
             return true;
         }
 
-        // The burner token deducts from the supply before calling.
-        uint supply = BurnerToken(burner).currentSupply() + amount;
+        /* // The burner token deducts from the supply before calling.
+        uint supply = BurnerToken(burner).currentSupply() + amount; */
 
-        require(amount <= supply);
+        /* require(amount <= supply); */
 
         for (uint i = 0; i < tokens.length; i++) {
             uint total = balance(tokens[i]);
 
             if (total > 0) {
-                require((total * amount) / amount == total); // Overflow check.
-                transfer(to, tokens[i], (total * amount) / supply);
+                /* require((total * amount) / amount == total); // Overflow check. */
+                transfer(to, tokens[i], total / poolShare);
             }
         }
 

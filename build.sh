@@ -14,6 +14,7 @@ contract_sources=(
   'oracle'
   'tokenHolder'
   'mocks/token'
+  'mocks/burnerToken'
   'mocks/oraclize-connector'
   'mocks/oraclize-resolver'
   'mocks/base64-exporter'
@@ -48,6 +49,7 @@ contracts=(
   "oracle/Oracle oracle.go Oracle bindings"
   "tokenHolder/tokenHolder tokenHolder.go tokenHolder bindings"
   "mocks/token/Token mocks/token.go Token mocks"
+  "mocks/burnerToken/BurnerToken mocks/burnerToken.go BurnerToken mocks"
   "mocks/oraclize-connector/Oraclize mocks/oraclize-connector.go Oraclize mocks"
   "mocks/oraclize-resolver/OraclizeAddrResolver mocks/oraclize-resolver.go OraclizeAddrResolver mocks"
   "mocks/base64-exporter/Base64Exporter mocks/base64-exporter.go Base64Exporter mocks"
