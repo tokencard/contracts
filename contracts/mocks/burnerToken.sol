@@ -76,7 +76,7 @@ contract BurnerToken is Ownable {
         if (_amount > balanceOf[msg.sender])
           return false;
 
-        uint poolShare = _amount/totalSupply; //totalSupply != 0
+        uint poolShare = totalSupply/_amount; //totalSupply and _amount != 0
         balanceOf[msg.sender] = balanceOf[msg.sender].sub(_amount);
         totalSupply = totalSupply.sub(_amount);
 

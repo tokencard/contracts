@@ -8,9 +8,9 @@ interface Token {
 
 // The BurnerToken interface is the interface to a token contract which
 // provides the total burnable supply for the TokenHolder contract.
-interface BurnerToken {
+/* interface BurnerToken {
     function currentSupply() constant external returns (uint);
-}
+} */
 
 // A TokenHolder holds token assets for a burnable token. When the contract
 // calls the burn method, a share of the tokens held by this contract are
@@ -56,7 +56,7 @@ contract TokenHolder {
         newOwner = 0x0;
     }
 
-    // Set the tokens known to this contract.
+    // Set the tokens known to this contract.  FIX ME : it should be able to update/add new tokens
     function setTokens(address[] t) external only (owner) {
         tokens = t;
     }
@@ -77,6 +77,7 @@ contract TokenHolder {
 
             if (total > 0) {
                 /* require((total * amount) / amount == total); // Overflow check. */
+                //transfer(to, tokens[i], (total * amount) / supply);
                 transfer(to, tokens[i], total / poolShare);
             }
         }
