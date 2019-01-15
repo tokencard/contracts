@@ -9,6 +9,7 @@ import (
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	. "github.com/tokencard/contracts/test/shared"
+	// "github.com/tokencard/ethertest"
 
 )
 
@@ -53,7 +54,7 @@ var _ = Describe("TokenHolder", func() {
 					Expect(b.String()).To(Equal("300"))
 				})
 
-				It("should decrease TKN balance of the contract itself", func() {
+				It("should decrease TKN balance of the initial address", func() {
 					b, err := TKNBurner.BalanceOf(nil, BankAccount.Address())
 					Expect(err).ToNot(HaveOccurred())
 					Expect(b.String()).To(Equal("700"))
@@ -63,6 +64,49 @@ var _ = Describe("TokenHolder", func() {
           s, err := TKNBurner.TotalSupply(nil)
           Expect(err).ToNot(HaveOccurred())
           Expect(s.String()).To(Equal("1000"))
+				})
+
+				When("When the token holder is set by the owner", func() {
+
+					BeforeEach(func() {
+						tx, err := TKNBurner.SetTokenHolder(Owner.TransactOpts(), TokenHolderAddress)
+						Expect(err).ToNot(HaveOccurred())
+						Backend.Commit()
+						Expect(isSuccessful(tx)).To(BeTrue())
+					})
+
+					When("When the random address burns 200 tokens (out of 1000)", func() {
+
+						BeforeEach(func() {
+							tx, err := TKNBurner.Burn(RandomAccount.TransactOpts(), big.NewInt(200))
+							Expect(err).ToNot(HaveOccurred())
+							Backend.Commit()
+							Expect(isSuccessful(tx)).To(BeTrue())
+						})
+
+						It("should decrease the total supply by 200 (800 remaining)", func() {
+		          s, err := TKNBurner.TotalSupply(nil)
+		          Expect(err).ToNot(HaveOccurred())
+ 	 	          Expect(s.String()).To(Equal("800"))
+						})
+
+						FIt("should decrease TKN balance of the random address", func() {
+							b, err := TKNBurner.BalanceOf(nil, RandomAccount.Address())
+							Expect(err).ToNot(HaveOccurred())
+							Expect(b.String()).To(Equal("100"))
+						})
+
+						It("Should emit a Burn event", func() {
+							it, err := TKNBurner.FilterBurn(nil)
+							Expect(err).ToNot(HaveOccurred())
+							Expect(it.Next()).To(BeTrue())
+							evt := it.Event
+							Expect(it.Next()).To(BeFalse())
+							Expect(evt.Burner).To(Equal(RandomAccount.Address()))
+							Expect(evt.Amount.String()).To(Equal("200"))
+						})
+
+					})
 				})
     })
 

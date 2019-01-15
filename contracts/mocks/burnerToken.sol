@@ -70,7 +70,7 @@ contract BurnerToken is Ownable {
     /// @dev Burn tokens.
     function burn(uint _amount) external returns (bool result) {
         require(totalSupply > 0);
-        assert(_amount <= totalSupply);
+        require(_amount <= totalSupply);
         //assert(_amount <= balanceOf[msg.sender]); //"punish" the sender
         //require(balanceOf[msg.sender] >= _amount); // FIXE ME: use require instead of returning false????
         if (_amount > balanceOf[msg.sender])

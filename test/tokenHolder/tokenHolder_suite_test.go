@@ -10,6 +10,7 @@ import (
 	. "github.com/onsi/gomega"
 	"github.com/tokencard/contracts/pkg/bindings/mocks"
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/tokencard/contracts/pkg/bindings"
 	"github.com/ethereum/go-ethereum/core/types"
 	. "github.com/tokencard/contracts/test/shared"
 )
@@ -23,11 +24,17 @@ var ERC20Contract2Address common.Address
 var TKNBurner *mocks.BurnerToken
 var TKNBurnerAddress common.Address
 
+var TokenHolder *bindings.TokenHolder
+var TokenHolderAddress common.Address
+
 func init() {
 	TestRig.AddCoverageForContracts(
 		"../../build/tokenHolder/combined.json",
-		// "../../build/burnerToken/combined.json",
 		 "../../contracts")
+
+	 TestRig.AddCoverageForContracts(
+ 		"../../build/mocks/burnerToken/combined.json",
+ 		 "../../contracts")
 }
 
 func TestTokenHolderSuite(t *testing.T) {
@@ -55,11 +62,16 @@ var _ = BeforeEach(func() {
 	Backend.Commit()
 	Expect(isSuccessful(tx)).To(BeTrue())
 
+	TokenHolderAddress, tx, TokenHolder, err = bindings.DeployTokenHolder(Owner.TransactOpts(), Backend, TKNBurnerAddress)
+	Expect(err).ToNot(HaveOccurred())
+	Backend.Commit()
+	Expect(isSuccessful(tx)).To(BeTrue())
+
 })
 
 var _ = AfterSuite(func() {
-	TestRig.ExpectMinimumCoverage("tokenHolder.sol", 10.00)
-	// TestRig.ExpectMinimumCoverage("burnerToken.sol", 10.00)
+	TestRig.ExpectMinimumCoverage("tokenHolder.sol", 0.00)
+	TestRig.ExpectMinimumCoverage("mocks/burnerToken.sol", 10.00)
 	TestRig.PrintGasUsage(os.Stdout)
 })
 
@@ -67,6 +79,15 @@ func isSuccessful(tx *types.Transaction) bool {
 	r, err := Backend.TransactionReceipt(context.Background(), tx.Hash())
 	Expect(err).ToNot(HaveOccurred())
 	return r.Status == types.ReceiptStatusSuccessful
+}
+
+func isGasExhausted(tx *types.Transaction, gasLimit uint64) bool {
+	r, err := Backend.TransactionReceipt(context.Background(), tx.Hash())
+	Expect(err).ToNot(HaveOccurred())
+	if r.Status == types.ReceiptStatusSuccessful {
+		return false
+	}
+	return r.GasUsed == gasLimit
 }
 
 var _ = AfterEach(func() {
