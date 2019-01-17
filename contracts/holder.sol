@@ -9,7 +9,7 @@ interface Token {
 // The BurnerToken interface is the interface to a token contract which
 // provides the total burnable supply for the TokenHolder contract.
 interface BurnerToken {
-    function currentSupply() constant external returns (uint);
+    function totalSupply() constant external returns (uint);
 }
 
 // A TokenHolder holds token assets for a burnable token. When the contract
@@ -68,7 +68,7 @@ contract Holder {
         }
 
         // The burner token deducts from the supply before calling.
-        uint supply = BurnerToken(burner).currentSupply() + amount;
+        uint supply = BurnerToken(burner).totalSupply() + amount;
 
         require(amount <= supply);
 
