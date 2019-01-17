@@ -61,6 +61,9 @@ contract BurnerToken is SafeMath, Owned {
     /// @dev Balances for each account.
     mapping(address => uint) public balanceOf;
 
+    constructor(address _owner) public {
+        owner = _owner;
+     }
     /// @dev Transfer a token. This throws on insufficient balance.
     function transfer(address to, uint amount) public returns (bool) {
         require(balanceOf[msg.sender] >= amount);
