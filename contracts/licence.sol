@@ -1,20 +1,20 @@
 pragma solidity >=0.4.25;
 
- // The Token interface is a subset of the ERC20 specification.    
+/// @title A subset of the ERC-20 specification.
 interface ERC20 {    
-    function transfer(address, uint) external returns (bool);    
+    function transferFrom(address _from, address _to, uint256 _value) public returns (bool success);
     function balanceOf(address) view external returns (uint);    
 }    
 
-/// @title The DAO interface to changing TKN licence fee
-// TODO do we need this, i think not, remove if not
-contract DAO {
-    function setLicenceFee(uint _amount) public returns (uint result) {
-        return 1;
-    }
-}
-
+/// @title This Contract is used to pay the TKN licence
 contract Licence {
+
+    event Received(address _from, uint _amount);
+    event LockedDAO();
+    event UpdatedDAO(address dao);
+    event LoadedTokenCard(address sender, uint _amount, uint _fee, address _asset);
+    event ChangedOwner(address owner);
+    event ChangedLicenceFee(uint _newFee);
 
     // TOP UP goes here
     // Gnosis Wallet 
@@ -42,12 +42,14 @@ contract Licence {
     // lock the dao
     function lockDAO() only(owner) public {
         lockedDAO = true;
+        emit LockedDAO();
     }
  
     // change the address of the dao
     function setDAO(address _dao) public only (owner) {
-        require(!lockedDAO, "DAO is not locked in");
+        require(!lockedDAO, "DAO is locked");
         dao = _dao;
+        emit UpdatedDAO(_dao);
     }
 
     // Only allow the given address to call the method.
@@ -56,14 +58,7 @@ contract Licence {
         _;
     }
 
-    // Only allow one of the two address to call the method.
-    modifier either(address a, address b) {
-        require(msg.sender == a || msg.sender == b);
-        _;
-    }
-
-    // Construct a TokenHolder for the given burner token with the sender
-    // as the owner.
+    /// @dev Constructor for the TokenCard Licence Contract
     constructor (address _dao, address _cryptoFloat, address _tokenHolder) public {
         owner = msg.sender;
         dao = _dao;
@@ -78,14 +73,19 @@ contract Licence {
         emit Received(msg.sender, msg.value);
     }
 
-    // TODO IS THIS correct 
     function changeLicenceFee(uint _newFee) external only (dao) {
         require(1 <= _newFee && _newFee <= 100, "percent fee out of range");
         licenceFee = _newFee; 
+        emit ChangedLicenceFee(_newFee);
     }
 
     // Change owner in a two-phase ownership transfer.
     function changeOwner(address to) external only (owner) {
+        // TODO This is kinda nasty i know
+        if (to == address(0)) {
+            owner = to; 
+            emit ChangedOwner(owner);
+        }
         newOwner = to;
     }
 
@@ -93,22 +93,24 @@ contract Licence {
     function acceptOwnership() external only (newOwner) {
         owner = msg.sender;
         newOwner = address(0);
+        emit ChangedOwner(newOwner);
     }
 
-    // this only works with ETH
-    // TODO make this work with ERC20 
-    function processTransaction(uint _amount, uint _fee, address _asset) external payable {
+    /// @dev this is the function that we need to call to do the top-up 
+    function loadTokenCard(uint _amount, uint _fee, address _asset) external payable {
         require(_amount != 0 || _fee != 0);
         require(_amount == _fee * 100 / licenceFee, "these don't add up");
 
         if (_asset != address(0)) {
-            require(ERC20(_asset).transfer(tokenHolder, _fee), "ERC20 token transfer was unsuccessful");
-            require(ERC20(_asset).transfer(cyptroFloat, _amount), "ERC20 token transfer was unsuccessful");
+            require(ERC20(_asset).transferFrom(msg.sender, tokenHolder, _fee), "ERC20 token transfer was unsuccessful");
+            require(ERC20(_asset).transferFrom(msg.sender, cryptoFloat, _amount), "ERC20 token transfer was unsuccessful");
         } else {
             require(msg.value == _amount + _fee, "eth sent it not equal to amount + fee");
             tokenHolder.transfer(_fee);
             cryptoFloat.transfer(_amount);
         }
+
+        emit LoadedTokenCard(msg.sender, _amount, _fee, _asset);
     }
     
 }
