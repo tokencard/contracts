@@ -21,7 +21,7 @@ var ERC20Contract1Address common.Address
 var ERC20Contract2 *mocks.Token
 var ERC20Contract2Address common.Address
 
-var TKNBurner *mocks.BurnerToken
+var TKNBurner *bindings.Token
 var TKNBurnerAddress common.Address
 
 var TokenHolder *bindings.Holder
@@ -33,7 +33,7 @@ func init() {
 		 "../../contracts")
 
 	 TestRig.AddCoverageForContracts(
- 		"../../build/mocks/burnerToken/combined.json",
+ 		"../../build/TKN/combined.json",
  		 "../../contracts")
 }
 
@@ -57,7 +57,7 @@ var _ = BeforeEach(func() {
 	Backend.Commit()
 	Expect(isSuccessful(tx)).To(BeTrue())
 
-	TKNBurnerAddress, tx, TKNBurner, err = mocks.DeployBurnerToken(Owner.TransactOpts(), Backend, Owner.Address())
+	TKNBurnerAddress, tx, TKNBurner, err = bindings.DeployToken(Owner.TransactOpts(), Backend)
 	Expect(err).ToNot(HaveOccurred())
 	Backend.Commit()
 	Expect(isSuccessful(tx)).To(BeTrue())
@@ -70,8 +70,8 @@ var _ = BeforeEach(func() {
 })
 
 var _ = AfterSuite(func() {
-	TestRig.ExpectMinimumCoverage("tokenHolder.sol", 0.00)
-	TestRig.ExpectMinimumCoverage("mocks/burnerToken.sol", 10.00)
+	TestRig.ExpectMinimumCoverage("holder.sol", 0.00)
+	TestRig.ExpectMinimumCoverage("TKN.sol", 10.00)
 	TestRig.PrintGasUsage(os.Stdout)
 })
 

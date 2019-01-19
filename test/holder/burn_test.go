@@ -21,12 +21,10 @@ package tokenHolder_test
 
 	    var tx *types.Transaction
 
-	    When("one thousand TKN are credited to an external address", func() {
-
+	    When("one thousand TKN are credited(minted) to an external address", func() {
 
 				BeforeEach(func() {
-					var err error
-					tx, err = TKNBurner.Credit(BankAccount.TransactOpts(), BankAccount.Address(), big.NewInt(1000))
+					tx, err := TKNBurner.Mint(Owner.TransactOpts(), BankAccount.Address(), big.NewInt(1000))
 					Expect(err).ToNot(HaveOccurred())
 					Backend.Commit()
 					Expect(isSuccessful(tx)).To(BeTrue())
@@ -44,7 +42,36 @@ package tokenHolder_test
 	        Expect(b.String()).To(Equal("1000"))
 	      })
 
+				It("Should emit a Transfer event", func() {
+					from := []common.Address{common.HexToAddress("0x0")}
+					to := []common.Address{BankAccount.Address()}
+					it, err := TKNBurner.FilterTransfer(nil, from, to)
+					Expect(err).ToNot(HaveOccurred())
+					Expect(it.Next()).To(BeTrue())
+					evt := it.Event
+					Expect(it.Next()).To(BeFalse())
+					Expect(evt.From).To(Equal(common.HexToAddress("0x0")))
+					Expect(evt.To).To(Equal(BankAccount.Address()))
+					Expect(evt.Value.String()).To(Equal("1000"))
+				})
+
+				When("it is launched by the owner", func() {
+
+					BeforeEach(func() {
+						tx, err := TKNBurner.Launch(Owner.TransactOpts())
+						Expect(err).ToNot(HaveOccurred())
+						Backend.Commit()
+						Expect(isSuccessful(tx)).To(BeTrue())
+					})
+
+					It("set launched to true!", func() {
+						launched, err := TKNBurner.Launched(nil)
+						Expect(err).ToNot(HaveOccurred())
+						Expect(launched).To(BeTrue())
+					})
+
 	      When("300 TKN are transfered to a random address", func() {
+
 					BeforeEach(func() {
 						tx, err := TKNBurner.Transfer(BankAccount.TransactOpts(), RandomAccount.Address(), big.NewInt(300))
 						Expect(err).ToNot(HaveOccurred())
@@ -68,6 +95,19 @@ package tokenHolder_test
 	          s, err := TKNBurner.TotalSupply(nil)
 	          Expect(err).ToNot(HaveOccurred())
 	          Expect(s.String()).To(Equal("1000"))
+					})
+
+					It("Should emit a Transfer event", func() {
+						from := []common.Address{BankAccount.Address()}
+						to := []common.Address{RandomAccount.Address()}
+						it, err := TKNBurner.FilterTransfer(nil, from, to)
+						Expect(err).ToNot(HaveOccurred())
+						Expect(it.Next()).To(BeTrue())
+						evt := it.Event
+						Expect(it.Next()).To(BeFalse())
+						Expect(evt.From).To(Equal(BankAccount.Address()))
+						Expect(evt.To).To(Equal(RandomAccount.Address()))
+						Expect(evt.Value.String()).To(Equal("300"))
 					})
 
 					When("The holder contract owns two types of ERC20 tokens and 1 ETH", func() {
@@ -175,14 +215,17 @@ package tokenHolder_test
 									Expect(b.String()).To(Equal("100"))
 								})
 
-								It("Should emit a Burn event", func() {
-									it, err := TKNBurner.FilterBurn(nil)
+								It("Should emit a Transfer event", func() {
+									from := []common.Address{RandomAccount.Address()}
+									to := []common.Address{common.HexToAddress("0x0")}
+									it, err := TKNBurner.FilterTransfer(nil, from, to)
 									Expect(err).ToNot(HaveOccurred())
 									Expect(it.Next()).To(BeTrue())
 									evt := it.Event
 									Expect(it.Next()).To(BeFalse())
-									Expect(evt.Burner).To(Equal(RandomAccount.Address()))
-									Expect(evt.Amount.String()).To(Equal("200"))
+									Expect(evt.From).To(Equal(RandomAccount.Address()))
+									Expect(evt.To).To(Equal(common.HexToAddress("0x0")))
+									Expect(evt.Value.String()).To(Equal("200"))
 								})
 
 								It("should increase the ERC20 type-1 balance of the random address by 200 (20%)", func() {
@@ -222,8 +265,8 @@ package tokenHolder_test
 	    //   Expect(isSuccessful(tx)).To(BeTrue())
 	    // })
 
-		 })
+		 })//When it is launched by the owner"
 	  })
-
-
 	})
+
+})
