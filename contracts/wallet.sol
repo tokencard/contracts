@@ -23,13 +23,15 @@ import "./internals/ownable.sol";
 import "./internals/controllable.sol";
 import "./externals/ens/PublicResolver.sol";
 import "./externals/SafeMath.sol";
+import "./licence.sol";
 
 /// @title ERC20 interface is a subset of the ERC20 specification.
 interface ERC20 {
-    function transfer(address, uint) external returns (bool);
+    function approve(address, uint256) external returns (bool);
     function balanceOf(address) external view returns (uint);
+    function transfer(address, uint) external returns (bool);
+    function transferFrom(address _from, address _to, uint256 _value) external returns (bool success);
 }
-
 
 /// @title ERC165 interface specifies a standard way of querying if a contract implements an interface.
 interface ERC165 {
@@ -415,6 +417,8 @@ contract Wallet is Vault {
 
     event ToppedUpGas(address _sender, address _owner, uint _amount);
 
+    event LoadedTokenCard(uint _amount, uint _licenceFee, address _asset);
+
     using SafeMath for uint256;
 
     uint constant private MINIMUM_TOPUP_LIMIT = 1 finney; // solium-disable-line uppercase
@@ -553,5 +557,21 @@ contract Wallet is Vault {
             // Set the available limit to the current top up limit.
             _topUpAvailable = topUpLimit;
         }
+    }
+
+    // Needs this
+    Licence licence;
+
+    function loadTokenCard(uint _amount, uint _licenceFee, address _asset) private {
+            
+        if (_asset != address(0)) {
+            require(ERC20(_asset).approve(licence, _amount + _licenceFee), "Failed to approve the proposed ERC20 approval");
+            //require(licence.loadTokenCard.value(_amount + _licenceFee)(_amount, _licenceFee, _asset), "failed to send enough ETH");
+            require(licence.load(_amount, _licenceFee, _asset), "lame");
+        } else {
+            require(licence.load.value(_amount + _licenceFee)(_amount, _licenceFee, _asset), "lame");
+        }  
+
+        emit LoadedTokenCard(_amount, _licenceFee, _asset);
     }
 }
