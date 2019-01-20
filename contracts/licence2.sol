@@ -1,4 +1,4 @@
-pragma solidity >=0.4.25;
+pragma solidity ^0.4.25;
 
 //import "./wallet.sol";
 import "./test.sol";
@@ -15,11 +15,11 @@ contract Licence {
 
     // TOP UP goes here
     // Gnosis Wallet 
-    address cryptoFloat;
+    address public cryptoFloat;
 
     // licence fee goes here
     // TKN Holder Contract
-    address tokenHolder;
+    address public tokenHolder;
 
     // Owner of this contract.
     address public owner;
@@ -112,3 +112,4 @@ contract Licence {
         return true;
     }
 }
+
