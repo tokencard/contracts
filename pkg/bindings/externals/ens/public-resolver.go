@@ -190,7 +190,7 @@ func (_PublicResolver *PublicResolverTransactorRaw) Transact(opts *bind.Transact
 
 // ABI is a free data retrieval call binding the contract method 0x2203ab56.
 //
-// Solidity: function ABI(node bytes32, contentTypes uint256) constant returns(contentType uint256, data bytes)
+// Solidity: function ABI(bytes32 node, uint256 contentTypes) constant returns(uint256 contentType, bytes data)
 func (_PublicResolver *PublicResolverCaller) ABI(opts *bind.CallOpts, node [32]byte, contentTypes *big.Int) (struct {
 	ContentType *big.Int
 	Data        []byte
@@ -206,7 +206,7 @@ func (_PublicResolver *PublicResolverCaller) ABI(opts *bind.CallOpts, node [32]b
 
 // ABI is a free data retrieval call binding the contract method 0x2203ab56.
 //
-// Solidity: function ABI(node bytes32, contentTypes uint256) constant returns(contentType uint256, data bytes)
+// Solidity: function ABI(bytes32 node, uint256 contentTypes) constant returns(uint256 contentType, bytes data)
 func (_PublicResolver *PublicResolverSession) ABI(node [32]byte, contentTypes *big.Int) (struct {
 	ContentType *big.Int
 	Data        []byte
@@ -216,7 +216,7 @@ func (_PublicResolver *PublicResolverSession) ABI(node [32]byte, contentTypes *b
 
 // ABI is a free data retrieval call binding the contract method 0x2203ab56.
 //
-// Solidity: function ABI(node bytes32, contentTypes uint256) constant returns(contentType uint256, data bytes)
+// Solidity: function ABI(bytes32 node, uint256 contentTypes) constant returns(uint256 contentType, bytes data)
 func (_PublicResolver *PublicResolverCallerSession) ABI(node [32]byte, contentTypes *big.Int) (struct {
 	ContentType *big.Int
 	Data        []byte
@@ -226,7 +226,7 @@ func (_PublicResolver *PublicResolverCallerSession) ABI(node [32]byte, contentTy
 
 // Addr is a free data retrieval call binding the contract method 0x3b3b57de.
 //
-// Solidity: function addr(node bytes32) constant returns(address)
+// Solidity: function addr(bytes32 node) constant returns(address)
 func (_PublicResolver *PublicResolverCaller) Addr(opts *bind.CallOpts, node [32]byte) (common.Address, error) {
 	var (
 		ret0 = new(common.Address)
@@ -238,21 +238,21 @@ func (_PublicResolver *PublicResolverCaller) Addr(opts *bind.CallOpts, node [32]
 
 // Addr is a free data retrieval call binding the contract method 0x3b3b57de.
 //
-// Solidity: function addr(node bytes32) constant returns(address)
+// Solidity: function addr(bytes32 node) constant returns(address)
 func (_PublicResolver *PublicResolverSession) Addr(node [32]byte) (common.Address, error) {
 	return _PublicResolver.Contract.Addr(&_PublicResolver.CallOpts, node)
 }
 
 // Addr is a free data retrieval call binding the contract method 0x3b3b57de.
 //
-// Solidity: function addr(node bytes32) constant returns(address)
+// Solidity: function addr(bytes32 node) constant returns(address)
 func (_PublicResolver *PublicResolverCallerSession) Addr(node [32]byte) (common.Address, error) {
 	return _PublicResolver.Contract.Addr(&_PublicResolver.CallOpts, node)
 }
 
 // Content is a free data retrieval call binding the contract method 0x2dff6941.
 //
-// Solidity: function content(node bytes32) constant returns(bytes32)
+// Solidity: function content(bytes32 node) constant returns(bytes32)
 func (_PublicResolver *PublicResolverCaller) Content(opts *bind.CallOpts, node [32]byte) ([32]byte, error) {
 	var (
 		ret0 = new([32]byte)
@@ -264,21 +264,21 @@ func (_PublicResolver *PublicResolverCaller) Content(opts *bind.CallOpts, node [
 
 // Content is a free data retrieval call binding the contract method 0x2dff6941.
 //
-// Solidity: function content(node bytes32) constant returns(bytes32)
+// Solidity: function content(bytes32 node) constant returns(bytes32)
 func (_PublicResolver *PublicResolverSession) Content(node [32]byte) ([32]byte, error) {
 	return _PublicResolver.Contract.Content(&_PublicResolver.CallOpts, node)
 }
 
 // Content is a free data retrieval call binding the contract method 0x2dff6941.
 //
-// Solidity: function content(node bytes32) constant returns(bytes32)
+// Solidity: function content(bytes32 node) constant returns(bytes32)
 func (_PublicResolver *PublicResolverCallerSession) Content(node [32]byte) ([32]byte, error) {
 	return _PublicResolver.Contract.Content(&_PublicResolver.CallOpts, node)
 }
 
 // Multihash is a free data retrieval call binding the contract method 0xe89401a1.
 //
-// Solidity: function multihash(node bytes32) constant returns(bytes)
+// Solidity: function multihash(bytes32 node) constant returns(bytes)
 func (_PublicResolver *PublicResolverCaller) Multihash(opts *bind.CallOpts, node [32]byte) ([]byte, error) {
 	var (
 		ret0 = new([]byte)
@@ -290,21 +290,21 @@ func (_PublicResolver *PublicResolverCaller) Multihash(opts *bind.CallOpts, node
 
 // Multihash is a free data retrieval call binding the contract method 0xe89401a1.
 //
-// Solidity: function multihash(node bytes32) constant returns(bytes)
+// Solidity: function multihash(bytes32 node) constant returns(bytes)
 func (_PublicResolver *PublicResolverSession) Multihash(node [32]byte) ([]byte, error) {
 	return _PublicResolver.Contract.Multihash(&_PublicResolver.CallOpts, node)
 }
 
 // Multihash is a free data retrieval call binding the contract method 0xe89401a1.
 //
-// Solidity: function multihash(node bytes32) constant returns(bytes)
+// Solidity: function multihash(bytes32 node) constant returns(bytes)
 func (_PublicResolver *PublicResolverCallerSession) Multihash(node [32]byte) ([]byte, error) {
 	return _PublicResolver.Contract.Multihash(&_PublicResolver.CallOpts, node)
 }
 
 // Name is a free data retrieval call binding the contract method 0x691f3431.
 //
-// Solidity: function name(node bytes32) constant returns(string)
+// Solidity: function name(bytes32 node) constant returns(string)
 func (_PublicResolver *PublicResolverCaller) Name(opts *bind.CallOpts, node [32]byte) (string, error) {
 	var (
 		ret0 = new(string)
@@ -316,21 +316,21 @@ func (_PublicResolver *PublicResolverCaller) Name(opts *bind.CallOpts, node [32]
 
 // Name is a free data retrieval call binding the contract method 0x691f3431.
 //
-// Solidity: function name(node bytes32) constant returns(string)
+// Solidity: function name(bytes32 node) constant returns(string)
 func (_PublicResolver *PublicResolverSession) Name(node [32]byte) (string, error) {
 	return _PublicResolver.Contract.Name(&_PublicResolver.CallOpts, node)
 }
 
 // Name is a free data retrieval call binding the contract method 0x691f3431.
 //
-// Solidity: function name(node bytes32) constant returns(string)
+// Solidity: function name(bytes32 node) constant returns(string)
 func (_PublicResolver *PublicResolverCallerSession) Name(node [32]byte) (string, error) {
 	return _PublicResolver.Contract.Name(&_PublicResolver.CallOpts, node)
 }
 
 // Pubkey is a free data retrieval call binding the contract method 0xc8690233.
 //
-// Solidity: function pubkey(node bytes32) constant returns(x bytes32, y bytes32)
+// Solidity: function pubkey(bytes32 node) constant returns(bytes32 x, bytes32 y)
 func (_PublicResolver *PublicResolverCaller) Pubkey(opts *bind.CallOpts, node [32]byte) (struct {
 	X [32]byte
 	Y [32]byte
@@ -346,7 +346,7 @@ func (_PublicResolver *PublicResolverCaller) Pubkey(opts *bind.CallOpts, node [3
 
 // Pubkey is a free data retrieval call binding the contract method 0xc8690233.
 //
-// Solidity: function pubkey(node bytes32) constant returns(x bytes32, y bytes32)
+// Solidity: function pubkey(bytes32 node) constant returns(bytes32 x, bytes32 y)
 func (_PublicResolver *PublicResolverSession) Pubkey(node [32]byte) (struct {
 	X [32]byte
 	Y [32]byte
@@ -356,7 +356,7 @@ func (_PublicResolver *PublicResolverSession) Pubkey(node [32]byte) (struct {
 
 // Pubkey is a free data retrieval call binding the contract method 0xc8690233.
 //
-// Solidity: function pubkey(node bytes32) constant returns(x bytes32, y bytes32)
+// Solidity: function pubkey(bytes32 node) constant returns(bytes32 x, bytes32 y)
 func (_PublicResolver *PublicResolverCallerSession) Pubkey(node [32]byte) (struct {
 	X [32]byte
 	Y [32]byte
@@ -366,7 +366,7 @@ func (_PublicResolver *PublicResolverCallerSession) Pubkey(node [32]byte) (struc
 
 // SupportsInterface is a free data retrieval call binding the contract method 0x01ffc9a7.
 //
-// Solidity: function supportsInterface(interfaceID bytes4) constant returns(bool)
+// Solidity: function supportsInterface(bytes4 interfaceID) constant returns(bool)
 func (_PublicResolver *PublicResolverCaller) SupportsInterface(opts *bind.CallOpts, interfaceID [4]byte) (bool, error) {
 	var (
 		ret0 = new(bool)
@@ -378,21 +378,21 @@ func (_PublicResolver *PublicResolverCaller) SupportsInterface(opts *bind.CallOp
 
 // SupportsInterface is a free data retrieval call binding the contract method 0x01ffc9a7.
 //
-// Solidity: function supportsInterface(interfaceID bytes4) constant returns(bool)
+// Solidity: function supportsInterface(bytes4 interfaceID) constant returns(bool)
 func (_PublicResolver *PublicResolverSession) SupportsInterface(interfaceID [4]byte) (bool, error) {
 	return _PublicResolver.Contract.SupportsInterface(&_PublicResolver.CallOpts, interfaceID)
 }
 
 // SupportsInterface is a free data retrieval call binding the contract method 0x01ffc9a7.
 //
-// Solidity: function supportsInterface(interfaceID bytes4) constant returns(bool)
+// Solidity: function supportsInterface(bytes4 interfaceID) constant returns(bool)
 func (_PublicResolver *PublicResolverCallerSession) SupportsInterface(interfaceID [4]byte) (bool, error) {
 	return _PublicResolver.Contract.SupportsInterface(&_PublicResolver.CallOpts, interfaceID)
 }
 
 // Text is a free data retrieval call binding the contract method 0x59d1d43c.
 //
-// Solidity: function text(node bytes32, key string) constant returns(string)
+// Solidity: function text(bytes32 node, string key) constant returns(string)
 func (_PublicResolver *PublicResolverCaller) Text(opts *bind.CallOpts, node [32]byte, key string) (string, error) {
 	var (
 		ret0 = new(string)
@@ -404,161 +404,161 @@ func (_PublicResolver *PublicResolverCaller) Text(opts *bind.CallOpts, node [32]
 
 // Text is a free data retrieval call binding the contract method 0x59d1d43c.
 //
-// Solidity: function text(node bytes32, key string) constant returns(string)
+// Solidity: function text(bytes32 node, string key) constant returns(string)
 func (_PublicResolver *PublicResolverSession) Text(node [32]byte, key string) (string, error) {
 	return _PublicResolver.Contract.Text(&_PublicResolver.CallOpts, node, key)
 }
 
 // Text is a free data retrieval call binding the contract method 0x59d1d43c.
 //
-// Solidity: function text(node bytes32, key string) constant returns(string)
+// Solidity: function text(bytes32 node, string key) constant returns(string)
 func (_PublicResolver *PublicResolverCallerSession) Text(node [32]byte, key string) (string, error) {
 	return _PublicResolver.Contract.Text(&_PublicResolver.CallOpts, node, key)
 }
 
 // SetABI is a paid mutator transaction binding the contract method 0x623195b0.
 //
-// Solidity: function setABI(node bytes32, contentType uint256, data bytes) returns()
+// Solidity: function setABI(bytes32 node, uint256 contentType, bytes data) returns()
 func (_PublicResolver *PublicResolverTransactor) SetABI(opts *bind.TransactOpts, node [32]byte, contentType *big.Int, data []byte) (*types.Transaction, error) {
 	return _PublicResolver.contract.Transact(opts, "setABI", node, contentType, data)
 }
 
 // SetABI is a paid mutator transaction binding the contract method 0x623195b0.
 //
-// Solidity: function setABI(node bytes32, contentType uint256, data bytes) returns()
+// Solidity: function setABI(bytes32 node, uint256 contentType, bytes data) returns()
 func (_PublicResolver *PublicResolverSession) SetABI(node [32]byte, contentType *big.Int, data []byte) (*types.Transaction, error) {
 	return _PublicResolver.Contract.SetABI(&_PublicResolver.TransactOpts, node, contentType, data)
 }
 
 // SetABI is a paid mutator transaction binding the contract method 0x623195b0.
 //
-// Solidity: function setABI(node bytes32, contentType uint256, data bytes) returns()
+// Solidity: function setABI(bytes32 node, uint256 contentType, bytes data) returns()
 func (_PublicResolver *PublicResolverTransactorSession) SetABI(node [32]byte, contentType *big.Int, data []byte) (*types.Transaction, error) {
 	return _PublicResolver.Contract.SetABI(&_PublicResolver.TransactOpts, node, contentType, data)
 }
 
 // SetAddr is a paid mutator transaction binding the contract method 0xd5fa2b00.
 //
-// Solidity: function setAddr(node bytes32, addr address) returns()
+// Solidity: function setAddr(bytes32 node, address addr) returns()
 func (_PublicResolver *PublicResolverTransactor) SetAddr(opts *bind.TransactOpts, node [32]byte, addr common.Address) (*types.Transaction, error) {
 	return _PublicResolver.contract.Transact(opts, "setAddr", node, addr)
 }
 
 // SetAddr is a paid mutator transaction binding the contract method 0xd5fa2b00.
 //
-// Solidity: function setAddr(node bytes32, addr address) returns()
+// Solidity: function setAddr(bytes32 node, address addr) returns()
 func (_PublicResolver *PublicResolverSession) SetAddr(node [32]byte, addr common.Address) (*types.Transaction, error) {
 	return _PublicResolver.Contract.SetAddr(&_PublicResolver.TransactOpts, node, addr)
 }
 
 // SetAddr is a paid mutator transaction binding the contract method 0xd5fa2b00.
 //
-// Solidity: function setAddr(node bytes32, addr address) returns()
+// Solidity: function setAddr(bytes32 node, address addr) returns()
 func (_PublicResolver *PublicResolverTransactorSession) SetAddr(node [32]byte, addr common.Address) (*types.Transaction, error) {
 	return _PublicResolver.Contract.SetAddr(&_PublicResolver.TransactOpts, node, addr)
 }
 
 // SetContent is a paid mutator transaction binding the contract method 0xc3d014d6.
 //
-// Solidity: function setContent(node bytes32, hash bytes32) returns()
+// Solidity: function setContent(bytes32 node, bytes32 hash) returns()
 func (_PublicResolver *PublicResolverTransactor) SetContent(opts *bind.TransactOpts, node [32]byte, hash [32]byte) (*types.Transaction, error) {
 	return _PublicResolver.contract.Transact(opts, "setContent", node, hash)
 }
 
 // SetContent is a paid mutator transaction binding the contract method 0xc3d014d6.
 //
-// Solidity: function setContent(node bytes32, hash bytes32) returns()
+// Solidity: function setContent(bytes32 node, bytes32 hash) returns()
 func (_PublicResolver *PublicResolverSession) SetContent(node [32]byte, hash [32]byte) (*types.Transaction, error) {
 	return _PublicResolver.Contract.SetContent(&_PublicResolver.TransactOpts, node, hash)
 }
 
 // SetContent is a paid mutator transaction binding the contract method 0xc3d014d6.
 //
-// Solidity: function setContent(node bytes32, hash bytes32) returns()
+// Solidity: function setContent(bytes32 node, bytes32 hash) returns()
 func (_PublicResolver *PublicResolverTransactorSession) SetContent(node [32]byte, hash [32]byte) (*types.Transaction, error) {
 	return _PublicResolver.Contract.SetContent(&_PublicResolver.TransactOpts, node, hash)
 }
 
 // SetMultihash is a paid mutator transaction binding the contract method 0xaa4cb547.
 //
-// Solidity: function setMultihash(node bytes32, hash bytes) returns()
+// Solidity: function setMultihash(bytes32 node, bytes hash) returns()
 func (_PublicResolver *PublicResolverTransactor) SetMultihash(opts *bind.TransactOpts, node [32]byte, hash []byte) (*types.Transaction, error) {
 	return _PublicResolver.contract.Transact(opts, "setMultihash", node, hash)
 }
 
 // SetMultihash is a paid mutator transaction binding the contract method 0xaa4cb547.
 //
-// Solidity: function setMultihash(node bytes32, hash bytes) returns()
+// Solidity: function setMultihash(bytes32 node, bytes hash) returns()
 func (_PublicResolver *PublicResolverSession) SetMultihash(node [32]byte, hash []byte) (*types.Transaction, error) {
 	return _PublicResolver.Contract.SetMultihash(&_PublicResolver.TransactOpts, node, hash)
 }
 
 // SetMultihash is a paid mutator transaction binding the contract method 0xaa4cb547.
 //
-// Solidity: function setMultihash(node bytes32, hash bytes) returns()
+// Solidity: function setMultihash(bytes32 node, bytes hash) returns()
 func (_PublicResolver *PublicResolverTransactorSession) SetMultihash(node [32]byte, hash []byte) (*types.Transaction, error) {
 	return _PublicResolver.Contract.SetMultihash(&_PublicResolver.TransactOpts, node, hash)
 }
 
 // SetName is a paid mutator transaction binding the contract method 0x77372213.
 //
-// Solidity: function setName(node bytes32, name string) returns()
+// Solidity: function setName(bytes32 node, string name) returns()
 func (_PublicResolver *PublicResolverTransactor) SetName(opts *bind.TransactOpts, node [32]byte, name string) (*types.Transaction, error) {
 	return _PublicResolver.contract.Transact(opts, "setName", node, name)
 }
 
 // SetName is a paid mutator transaction binding the contract method 0x77372213.
 //
-// Solidity: function setName(node bytes32, name string) returns()
+// Solidity: function setName(bytes32 node, string name) returns()
 func (_PublicResolver *PublicResolverSession) SetName(node [32]byte, name string) (*types.Transaction, error) {
 	return _PublicResolver.Contract.SetName(&_PublicResolver.TransactOpts, node, name)
 }
 
 // SetName is a paid mutator transaction binding the contract method 0x77372213.
 //
-// Solidity: function setName(node bytes32, name string) returns()
+// Solidity: function setName(bytes32 node, string name) returns()
 func (_PublicResolver *PublicResolverTransactorSession) SetName(node [32]byte, name string) (*types.Transaction, error) {
 	return _PublicResolver.Contract.SetName(&_PublicResolver.TransactOpts, node, name)
 }
 
 // SetPubkey is a paid mutator transaction binding the contract method 0x29cd62ea.
 //
-// Solidity: function setPubkey(node bytes32, x bytes32, y bytes32) returns()
+// Solidity: function setPubkey(bytes32 node, bytes32 x, bytes32 y) returns()
 func (_PublicResolver *PublicResolverTransactor) SetPubkey(opts *bind.TransactOpts, node [32]byte, x [32]byte, y [32]byte) (*types.Transaction, error) {
 	return _PublicResolver.contract.Transact(opts, "setPubkey", node, x, y)
 }
 
 // SetPubkey is a paid mutator transaction binding the contract method 0x29cd62ea.
 //
-// Solidity: function setPubkey(node bytes32, x bytes32, y bytes32) returns()
+// Solidity: function setPubkey(bytes32 node, bytes32 x, bytes32 y) returns()
 func (_PublicResolver *PublicResolverSession) SetPubkey(node [32]byte, x [32]byte, y [32]byte) (*types.Transaction, error) {
 	return _PublicResolver.Contract.SetPubkey(&_PublicResolver.TransactOpts, node, x, y)
 }
 
 // SetPubkey is a paid mutator transaction binding the contract method 0x29cd62ea.
 //
-// Solidity: function setPubkey(node bytes32, x bytes32, y bytes32) returns()
+// Solidity: function setPubkey(bytes32 node, bytes32 x, bytes32 y) returns()
 func (_PublicResolver *PublicResolverTransactorSession) SetPubkey(node [32]byte, x [32]byte, y [32]byte) (*types.Transaction, error) {
 	return _PublicResolver.Contract.SetPubkey(&_PublicResolver.TransactOpts, node, x, y)
 }
 
 // SetText is a paid mutator transaction binding the contract method 0x10f13a8c.
 //
-// Solidity: function setText(node bytes32, key string, value string) returns()
+// Solidity: function setText(bytes32 node, string key, string value) returns()
 func (_PublicResolver *PublicResolverTransactor) SetText(opts *bind.TransactOpts, node [32]byte, key string, value string) (*types.Transaction, error) {
 	return _PublicResolver.contract.Transact(opts, "setText", node, key, value)
 }
 
 // SetText is a paid mutator transaction binding the contract method 0x10f13a8c.
 //
-// Solidity: function setText(node bytes32, key string, value string) returns()
+// Solidity: function setText(bytes32 node, string key, string value) returns()
 func (_PublicResolver *PublicResolverSession) SetText(node [32]byte, key string, value string) (*types.Transaction, error) {
 	return _PublicResolver.Contract.SetText(&_PublicResolver.TransactOpts, node, key, value)
 }
 
 // SetText is a paid mutator transaction binding the contract method 0x10f13a8c.
 //
-// Solidity: function setText(node bytes32, key string, value string) returns()
+// Solidity: function setText(bytes32 node, string key, string value) returns()
 func (_PublicResolver *PublicResolverTransactorSession) SetText(node [32]byte, key string, value string) (*types.Transaction, error) {
 	return _PublicResolver.Contract.SetText(&_PublicResolver.TransactOpts, node, key, value)
 }
@@ -639,7 +639,7 @@ type PublicResolverABIChanged struct {
 
 // FilterABIChanged is a free log retrieval operation binding the contract event 0xaa121bbeef5f32f5961a2a28966e769023910fc9479059ee3495d4c1a696efe3.
 //
-// Solidity: e ABIChanged(node indexed bytes32, contentType indexed uint256)
+// Solidity: event ABIChanged(bytes32 indexed node, uint256 indexed contentType)
 func (_PublicResolver *PublicResolverFilterer) FilterABIChanged(opts *bind.FilterOpts, node [][32]byte, contentType []*big.Int) (*PublicResolverABIChangedIterator, error) {
 
 	var nodeRule []interface{}
@@ -660,7 +660,7 @@ func (_PublicResolver *PublicResolverFilterer) FilterABIChanged(opts *bind.Filte
 
 // WatchABIChanged is a free log subscription operation binding the contract event 0xaa121bbeef5f32f5961a2a28966e769023910fc9479059ee3495d4c1a696efe3.
 //
-// Solidity: e ABIChanged(node indexed bytes32, contentType indexed uint256)
+// Solidity: event ABIChanged(bytes32 indexed node, uint256 indexed contentType)
 func (_PublicResolver *PublicResolverFilterer) WatchABIChanged(opts *bind.WatchOpts, sink chan<- *PublicResolverABIChanged, node [][32]byte, contentType []*big.Int) (event.Subscription, error) {
 
 	var nodeRule []interface{}
@@ -780,7 +780,7 @@ type PublicResolverAddrChanged struct {
 
 // FilterAddrChanged is a free log retrieval operation binding the contract event 0x52d7d861f09ab3d26239d492e8968629f95e9e318cf0b73bfddc441522a15fd2.
 //
-// Solidity: e AddrChanged(node indexed bytes32, a address)
+// Solidity: event AddrChanged(bytes32 indexed node, address a)
 func (_PublicResolver *PublicResolverFilterer) FilterAddrChanged(opts *bind.FilterOpts, node [][32]byte) (*PublicResolverAddrChangedIterator, error) {
 
 	var nodeRule []interface{}
@@ -797,7 +797,7 @@ func (_PublicResolver *PublicResolverFilterer) FilterAddrChanged(opts *bind.Filt
 
 // WatchAddrChanged is a free log subscription operation binding the contract event 0x52d7d861f09ab3d26239d492e8968629f95e9e318cf0b73bfddc441522a15fd2.
 //
-// Solidity: e AddrChanged(node indexed bytes32, a address)
+// Solidity: event AddrChanged(bytes32 indexed node, address a)
 func (_PublicResolver *PublicResolverFilterer) WatchAddrChanged(opts *bind.WatchOpts, sink chan<- *PublicResolverAddrChanged, node [][32]byte) (event.Subscription, error) {
 
 	var nodeRule []interface{}
@@ -913,7 +913,7 @@ type PublicResolverContentChanged struct {
 
 // FilterContentChanged is a free log retrieval operation binding the contract event 0x0424b6fe0d9c3bdbece0e7879dc241bb0c22e900be8b6c168b4ee08bd9bf83bc.
 //
-// Solidity: e ContentChanged(node indexed bytes32, hash bytes32)
+// Solidity: event ContentChanged(bytes32 indexed node, bytes32 hash)
 func (_PublicResolver *PublicResolverFilterer) FilterContentChanged(opts *bind.FilterOpts, node [][32]byte) (*PublicResolverContentChangedIterator, error) {
 
 	var nodeRule []interface{}
@@ -930,7 +930,7 @@ func (_PublicResolver *PublicResolverFilterer) FilterContentChanged(opts *bind.F
 
 // WatchContentChanged is a free log subscription operation binding the contract event 0x0424b6fe0d9c3bdbece0e7879dc241bb0c22e900be8b6c168b4ee08bd9bf83bc.
 //
-// Solidity: e ContentChanged(node indexed bytes32, hash bytes32)
+// Solidity: event ContentChanged(bytes32 indexed node, bytes32 hash)
 func (_PublicResolver *PublicResolverFilterer) WatchContentChanged(opts *bind.WatchOpts, sink chan<- *PublicResolverContentChanged, node [][32]byte) (event.Subscription, error) {
 
 	var nodeRule []interface{}
@@ -1046,7 +1046,7 @@ type PublicResolverMultihashChanged struct {
 
 // FilterMultihashChanged is a free log retrieval operation binding the contract event 0xc0b0fc07269fc2749adada3221c095a1d2187b2d075b51c915857b520f3a5021.
 //
-// Solidity: e MultihashChanged(node indexed bytes32, hash bytes)
+// Solidity: event MultihashChanged(bytes32 indexed node, bytes hash)
 func (_PublicResolver *PublicResolverFilterer) FilterMultihashChanged(opts *bind.FilterOpts, node [][32]byte) (*PublicResolverMultihashChangedIterator, error) {
 
 	var nodeRule []interface{}
@@ -1063,7 +1063,7 @@ func (_PublicResolver *PublicResolverFilterer) FilterMultihashChanged(opts *bind
 
 // WatchMultihashChanged is a free log subscription operation binding the contract event 0xc0b0fc07269fc2749adada3221c095a1d2187b2d075b51c915857b520f3a5021.
 //
-// Solidity: e MultihashChanged(node indexed bytes32, hash bytes)
+// Solidity: event MultihashChanged(bytes32 indexed node, bytes hash)
 func (_PublicResolver *PublicResolverFilterer) WatchMultihashChanged(opts *bind.WatchOpts, sink chan<- *PublicResolverMultihashChanged, node [][32]byte) (event.Subscription, error) {
 
 	var nodeRule []interface{}
@@ -1179,7 +1179,7 @@ type PublicResolverNameChanged struct {
 
 // FilterNameChanged is a free log retrieval operation binding the contract event 0xb7d29e911041e8d9b843369e890bcb72c9388692ba48b65ac54e7214c4c348f7.
 //
-// Solidity: e NameChanged(node indexed bytes32, name string)
+// Solidity: event NameChanged(bytes32 indexed node, string name)
 func (_PublicResolver *PublicResolverFilterer) FilterNameChanged(opts *bind.FilterOpts, node [][32]byte) (*PublicResolverNameChangedIterator, error) {
 
 	var nodeRule []interface{}
@@ -1196,7 +1196,7 @@ func (_PublicResolver *PublicResolverFilterer) FilterNameChanged(opts *bind.Filt
 
 // WatchNameChanged is a free log subscription operation binding the contract event 0xb7d29e911041e8d9b843369e890bcb72c9388692ba48b65ac54e7214c4c348f7.
 //
-// Solidity: e NameChanged(node indexed bytes32, name string)
+// Solidity: event NameChanged(bytes32 indexed node, string name)
 func (_PublicResolver *PublicResolverFilterer) WatchNameChanged(opts *bind.WatchOpts, sink chan<- *PublicResolverNameChanged, node [][32]byte) (event.Subscription, error) {
 
 	var nodeRule []interface{}
@@ -1313,7 +1313,7 @@ type PublicResolverPubkeyChanged struct {
 
 // FilterPubkeyChanged is a free log retrieval operation binding the contract event 0x1d6f5e03d3f63eb58751986629a5439baee5079ff04f345becb66e23eb154e46.
 //
-// Solidity: e PubkeyChanged(node indexed bytes32, x bytes32, y bytes32)
+// Solidity: event PubkeyChanged(bytes32 indexed node, bytes32 x, bytes32 y)
 func (_PublicResolver *PublicResolverFilterer) FilterPubkeyChanged(opts *bind.FilterOpts, node [][32]byte) (*PublicResolverPubkeyChangedIterator, error) {
 
 	var nodeRule []interface{}
@@ -1330,7 +1330,7 @@ func (_PublicResolver *PublicResolverFilterer) FilterPubkeyChanged(opts *bind.Fi
 
 // WatchPubkeyChanged is a free log subscription operation binding the contract event 0x1d6f5e03d3f63eb58751986629a5439baee5079ff04f345becb66e23eb154e46.
 //
-// Solidity: e PubkeyChanged(node indexed bytes32, x bytes32, y bytes32)
+// Solidity: event PubkeyChanged(bytes32 indexed node, bytes32 x, bytes32 y)
 func (_PublicResolver *PublicResolverFilterer) WatchPubkeyChanged(opts *bind.WatchOpts, sink chan<- *PublicResolverPubkeyChanged, node [][32]byte) (event.Subscription, error) {
 
 	var nodeRule []interface{}
@@ -1447,7 +1447,7 @@ type PublicResolverTextChanged struct {
 
 // FilterTextChanged is a free log retrieval operation binding the contract event 0xd8c9334b1a9c2f9da342a0a2b32629c1a229b6445dad78947f674b44444a7550.
 //
-// Solidity: e TextChanged(node indexed bytes32, indexedKey string, key string)
+// Solidity: event TextChanged(bytes32 indexed node, string indexedKey, string key)
 func (_PublicResolver *PublicResolverFilterer) FilterTextChanged(opts *bind.FilterOpts, node [][32]byte) (*PublicResolverTextChangedIterator, error) {
 
 	var nodeRule []interface{}
@@ -1464,7 +1464,7 @@ func (_PublicResolver *PublicResolverFilterer) FilterTextChanged(opts *bind.Filt
 
 // WatchTextChanged is a free log subscription operation binding the contract event 0xd8c9334b1a9c2f9da342a0a2b32629c1a229b6445dad78947f674b44444a7550.
 //
-// Solidity: e TextChanged(node indexed bytes32, indexedKey string, key string)
+// Solidity: event TextChanged(bytes32 indexed node, string indexedKey, string key)
 func (_PublicResolver *PublicResolverFilterer) WatchTextChanged(opts *bind.WatchOpts, sink chan<- *PublicResolverTextChanged, node [][32]byte) (event.Subscription, error) {
 
 	var nodeRule []interface{}

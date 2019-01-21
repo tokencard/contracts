@@ -190,7 +190,7 @@ func (_Wallet *WalletTransactorRaw) Transact(opts *bind.TransactOpts, method str
 
 // Balance is a free data retrieval call binding the contract method 0xe3d670d7.
 //
-// Solidity: function balance(_asset address) constant returns(uint256)
+// Solidity: function balance(address _asset) constant returns(uint256)
 func (_Wallet *WalletCaller) Balance(opts *bind.CallOpts, _asset common.Address) (*big.Int, error) {
 	var (
 		ret0 = new(*big.Int)
@@ -202,14 +202,14 @@ func (_Wallet *WalletCaller) Balance(opts *bind.CallOpts, _asset common.Address)
 
 // Balance is a free data retrieval call binding the contract method 0xe3d670d7.
 //
-// Solidity: function balance(_asset address) constant returns(uint256)
+// Solidity: function balance(address _asset) constant returns(uint256)
 func (_Wallet *WalletSession) Balance(_asset common.Address) (*big.Int, error) {
 	return _Wallet.Contract.Balance(&_Wallet.CallOpts, _asset)
 }
 
 // Balance is a free data retrieval call binding the contract method 0xe3d670d7.
 //
-// Solidity: function balance(_asset address) constant returns(uint256)
+// Solidity: function balance(address _asset) constant returns(uint256)
 func (_Wallet *WalletCallerSession) Balance(_asset common.Address) (*big.Int, error) {
 	return _Wallet.Contract.Balance(&_Wallet.CallOpts, _asset)
 }
@@ -320,7 +320,7 @@ func (_Wallet *WalletCallerSession) IsTransferable() (bool, error) {
 
 // IsWhitelisted is a free data retrieval call binding the contract method 0x3af32abf.
 //
-// Solidity: function isWhitelisted( address) constant returns(bool)
+// Solidity: function isWhitelisted(address ) constant returns(bool)
 func (_Wallet *WalletCaller) IsWhitelisted(opts *bind.CallOpts, arg0 common.Address) (bool, error) {
 	var (
 		ret0 = new(bool)
@@ -332,14 +332,14 @@ func (_Wallet *WalletCaller) IsWhitelisted(opts *bind.CallOpts, arg0 common.Addr
 
 // IsWhitelisted is a free data retrieval call binding the contract method 0x3af32abf.
 //
-// Solidity: function isWhitelisted( address) constant returns(bool)
+// Solidity: function isWhitelisted(address ) constant returns(bool)
 func (_Wallet *WalletSession) IsWhitelisted(arg0 common.Address) (bool, error) {
 	return _Wallet.Contract.IsWhitelisted(&_Wallet.CallOpts, arg0)
 }
 
 // IsWhitelisted is a free data retrieval call binding the contract method 0x3af32abf.
 //
-// Solidity: function isWhitelisted( address) constant returns(bool)
+// Solidity: function isWhitelisted(address ) constant returns(bool)
 func (_Wallet *WalletCallerSession) IsWhitelisted(arg0 common.Address) (bool, error) {
 	return _Wallet.Contract.IsWhitelisted(&_Wallet.CallOpts, arg0)
 }
@@ -450,7 +450,7 @@ func (_Wallet *WalletCallerSession) PendingWhitelistAddition() ([]common.Address
 
 // PendingWhitelistHash is a free data retrieval call binding the contract method 0x7c955583.
 //
-// Solidity: function pendingWhitelistHash(_pendingWhitelist address[]) constant returns(bytes32)
+// Solidity: function pendingWhitelistHash(address[] _pendingWhitelist) constant returns(bytes32)
 func (_Wallet *WalletCaller) PendingWhitelistHash(opts *bind.CallOpts, _pendingWhitelist []common.Address) ([32]byte, error) {
 	var (
 		ret0 = new([32]byte)
@@ -462,14 +462,14 @@ func (_Wallet *WalletCaller) PendingWhitelistHash(opts *bind.CallOpts, _pendingW
 
 // PendingWhitelistHash is a free data retrieval call binding the contract method 0x7c955583.
 //
-// Solidity: function pendingWhitelistHash(_pendingWhitelist address[]) constant returns(bytes32)
+// Solidity: function pendingWhitelistHash(address[] _pendingWhitelist) constant returns(bytes32)
 func (_Wallet *WalletSession) PendingWhitelistHash(_pendingWhitelist []common.Address) ([32]byte, error) {
 	return _Wallet.Contract.PendingWhitelistHash(&_Wallet.CallOpts, _pendingWhitelist)
 }
 
 // PendingWhitelistHash is a free data retrieval call binding the contract method 0x7c955583.
 //
-// Solidity: function pendingWhitelistHash(_pendingWhitelist address[]) constant returns(bytes32)
+// Solidity: function pendingWhitelistHash(address[] _pendingWhitelist) constant returns(bytes32)
 func (_Wallet *WalletCallerSession) PendingWhitelistHash(_pendingWhitelist []common.Address) ([32]byte, error) {
 	return _Wallet.Contract.PendingWhitelistHash(&_Wallet.CallOpts, _pendingWhitelist)
 }
@@ -658,7 +658,7 @@ func (_Wallet *WalletCallerSession) SubmittedWhitelistRemoval() (bool, error) {
 
 // SupportsInterface is a free data retrieval call binding the contract method 0x01ffc9a7.
 //
-// Solidity: function supportsInterface(interfaceID bytes4) constant returns(bool)
+// Solidity: function supportsInterface(bytes4 interfaceID) constant returns(bool)
 func (_Wallet *WalletCaller) SupportsInterface(opts *bind.CallOpts, interfaceID [4]byte) (bool, error) {
 	var (
 		ret0 = new(bool)
@@ -670,14 +670,14 @@ func (_Wallet *WalletCaller) SupportsInterface(opts *bind.CallOpts, interfaceID 
 
 // SupportsInterface is a free data retrieval call binding the contract method 0x01ffc9a7.
 //
-// Solidity: function supportsInterface(interfaceID bytes4) constant returns(bool)
+// Solidity: function supportsInterface(bytes4 interfaceID) constant returns(bool)
 func (_Wallet *WalletSession) SupportsInterface(interfaceID [4]byte) (bool, error) {
 	return _Wallet.Contract.SupportsInterface(&_Wallet.CallOpts, interfaceID)
 }
 
 // SupportsInterface is a free data retrieval call binding the contract method 0x01ffc9a7.
 //
-// Solidity: function supportsInterface(interfaceID bytes4) constant returns(bool)
+// Solidity: function supportsInterface(bytes4 interfaceID) constant returns(bool)
 func (_Wallet *WalletCallerSession) SupportsInterface(interfaceID [4]byte) (bool, error) {
 	return _Wallet.Contract.SupportsInterface(&_Wallet.CallOpts, interfaceID)
 }
@@ -736,252 +736,252 @@ func (_Wallet *WalletCallerSession) TopUpLimit() (*big.Int, error) {
 
 // CancelSpendLimit is a paid mutator transaction binding the contract method 0xe4682f00.
 //
-// Solidity: function cancelSpendLimit(_amount uint256) returns()
+// Solidity: function cancelSpendLimit(uint256 _amount) returns()
 func (_Wallet *WalletTransactor) CancelSpendLimit(opts *bind.TransactOpts, _amount *big.Int) (*types.Transaction, error) {
 	return _Wallet.contract.Transact(opts, "cancelSpendLimit", _amount)
 }
 
 // CancelSpendLimit is a paid mutator transaction binding the contract method 0xe4682f00.
 //
-// Solidity: function cancelSpendLimit(_amount uint256) returns()
+// Solidity: function cancelSpendLimit(uint256 _amount) returns()
 func (_Wallet *WalletSession) CancelSpendLimit(_amount *big.Int) (*types.Transaction, error) {
 	return _Wallet.Contract.CancelSpendLimit(&_Wallet.TransactOpts, _amount)
 }
 
 // CancelSpendLimit is a paid mutator transaction binding the contract method 0xe4682f00.
 //
-// Solidity: function cancelSpendLimit(_amount uint256) returns()
+// Solidity: function cancelSpendLimit(uint256 _amount) returns()
 func (_Wallet *WalletTransactorSession) CancelSpendLimit(_amount *big.Int) (*types.Transaction, error) {
 	return _Wallet.Contract.CancelSpendLimit(&_Wallet.TransactOpts, _amount)
 }
 
 // CancelTopUpLimit is a paid mutator transaction binding the contract method 0x754628d0.
 //
-// Solidity: function cancelTopUpLimit(_amount uint256) returns()
+// Solidity: function cancelTopUpLimit(uint256 _amount) returns()
 func (_Wallet *WalletTransactor) CancelTopUpLimit(opts *bind.TransactOpts, _amount *big.Int) (*types.Transaction, error) {
 	return _Wallet.contract.Transact(opts, "cancelTopUpLimit", _amount)
 }
 
 // CancelTopUpLimit is a paid mutator transaction binding the contract method 0x754628d0.
 //
-// Solidity: function cancelTopUpLimit(_amount uint256) returns()
+// Solidity: function cancelTopUpLimit(uint256 _amount) returns()
 func (_Wallet *WalletSession) CancelTopUpLimit(_amount *big.Int) (*types.Transaction, error) {
 	return _Wallet.Contract.CancelTopUpLimit(&_Wallet.TransactOpts, _amount)
 }
 
 // CancelTopUpLimit is a paid mutator transaction binding the contract method 0x754628d0.
 //
-// Solidity: function cancelTopUpLimit(_amount uint256) returns()
+// Solidity: function cancelTopUpLimit(uint256 _amount) returns()
 func (_Wallet *WalletTransactorSession) CancelTopUpLimit(_amount *big.Int) (*types.Transaction, error) {
 	return _Wallet.Contract.CancelTopUpLimit(&_Wallet.TransactOpts, _amount)
 }
 
 // CancelWhitelistAddition is a paid mutator transaction binding the contract method 0x100f23fd.
 //
-// Solidity: function cancelWhitelistAddition(_hash bytes32) returns()
+// Solidity: function cancelWhitelistAddition(bytes32 _hash) returns()
 func (_Wallet *WalletTransactor) CancelWhitelistAddition(opts *bind.TransactOpts, _hash [32]byte) (*types.Transaction, error) {
 	return _Wallet.contract.Transact(opts, "cancelWhitelistAddition", _hash)
 }
 
 // CancelWhitelistAddition is a paid mutator transaction binding the contract method 0x100f23fd.
 //
-// Solidity: function cancelWhitelistAddition(_hash bytes32) returns()
+// Solidity: function cancelWhitelistAddition(bytes32 _hash) returns()
 func (_Wallet *WalletSession) CancelWhitelistAddition(_hash [32]byte) (*types.Transaction, error) {
 	return _Wallet.Contract.CancelWhitelistAddition(&_Wallet.TransactOpts, _hash)
 }
 
 // CancelWhitelistAddition is a paid mutator transaction binding the contract method 0x100f23fd.
 //
-// Solidity: function cancelWhitelistAddition(_hash bytes32) returns()
+// Solidity: function cancelWhitelistAddition(bytes32 _hash) returns()
 func (_Wallet *WalletTransactorSession) CancelWhitelistAddition(_hash [32]byte) (*types.Transaction, error) {
 	return _Wallet.Contract.CancelWhitelistAddition(&_Wallet.TransactOpts, _hash)
 }
 
 // CancelWhitelistRemoval is a paid mutator transaction binding the contract method 0xce0b5bd5.
 //
-// Solidity: function cancelWhitelistRemoval(_hash bytes32) returns()
+// Solidity: function cancelWhitelistRemoval(bytes32 _hash) returns()
 func (_Wallet *WalletTransactor) CancelWhitelistRemoval(opts *bind.TransactOpts, _hash [32]byte) (*types.Transaction, error) {
 	return _Wallet.contract.Transact(opts, "cancelWhitelistRemoval", _hash)
 }
 
 // CancelWhitelistRemoval is a paid mutator transaction binding the contract method 0xce0b5bd5.
 //
-// Solidity: function cancelWhitelistRemoval(_hash bytes32) returns()
+// Solidity: function cancelWhitelistRemoval(bytes32 _hash) returns()
 func (_Wallet *WalletSession) CancelWhitelistRemoval(_hash [32]byte) (*types.Transaction, error) {
 	return _Wallet.Contract.CancelWhitelistRemoval(&_Wallet.TransactOpts, _hash)
 }
 
 // CancelWhitelistRemoval is a paid mutator transaction binding the contract method 0xce0b5bd5.
 //
-// Solidity: function cancelWhitelistRemoval(_hash bytes32) returns()
+// Solidity: function cancelWhitelistRemoval(bytes32 _hash) returns()
 func (_Wallet *WalletTransactorSession) CancelWhitelistRemoval(_hash [32]byte) (*types.Transaction, error) {
 	return _Wallet.Contract.CancelWhitelistRemoval(&_Wallet.TransactOpts, _hash)
 }
 
 // ConfirmSpendLimit is a paid mutator transaction binding the contract method 0xf3492915.
 //
-// Solidity: function confirmSpendLimit(_amount uint256) returns()
+// Solidity: function confirmSpendLimit(uint256 _amount) returns()
 func (_Wallet *WalletTransactor) ConfirmSpendLimit(opts *bind.TransactOpts, _amount *big.Int) (*types.Transaction, error) {
 	return _Wallet.contract.Transact(opts, "confirmSpendLimit", _amount)
 }
 
 // ConfirmSpendLimit is a paid mutator transaction binding the contract method 0xf3492915.
 //
-// Solidity: function confirmSpendLimit(_amount uint256) returns()
+// Solidity: function confirmSpendLimit(uint256 _amount) returns()
 func (_Wallet *WalletSession) ConfirmSpendLimit(_amount *big.Int) (*types.Transaction, error) {
 	return _Wallet.Contract.ConfirmSpendLimit(&_Wallet.TransactOpts, _amount)
 }
 
 // ConfirmSpendLimit is a paid mutator transaction binding the contract method 0xf3492915.
 //
-// Solidity: function confirmSpendLimit(_amount uint256) returns()
+// Solidity: function confirmSpendLimit(uint256 _amount) returns()
 func (_Wallet *WalletTransactorSession) ConfirmSpendLimit(_amount *big.Int) (*types.Transaction, error) {
 	return _Wallet.Contract.ConfirmSpendLimit(&_Wallet.TransactOpts, _amount)
 }
 
 // ConfirmTopUpLimit is a paid mutator transaction binding the contract method 0x278ffa13.
 //
-// Solidity: function confirmTopUpLimit(_amount uint256) returns()
+// Solidity: function confirmTopUpLimit(uint256 _amount) returns()
 func (_Wallet *WalletTransactor) ConfirmTopUpLimit(opts *bind.TransactOpts, _amount *big.Int) (*types.Transaction, error) {
 	return _Wallet.contract.Transact(opts, "confirmTopUpLimit", _amount)
 }
 
 // ConfirmTopUpLimit is a paid mutator transaction binding the contract method 0x278ffa13.
 //
-// Solidity: function confirmTopUpLimit(_amount uint256) returns()
+// Solidity: function confirmTopUpLimit(uint256 _amount) returns()
 func (_Wallet *WalletSession) ConfirmTopUpLimit(_amount *big.Int) (*types.Transaction, error) {
 	return _Wallet.Contract.ConfirmTopUpLimit(&_Wallet.TransactOpts, _amount)
 }
 
 // ConfirmTopUpLimit is a paid mutator transaction binding the contract method 0x278ffa13.
 //
-// Solidity: function confirmTopUpLimit(_amount uint256) returns()
+// Solidity: function confirmTopUpLimit(uint256 _amount) returns()
 func (_Wallet *WalletTransactorSession) ConfirmTopUpLimit(_amount *big.Int) (*types.Transaction, error) {
 	return _Wallet.Contract.ConfirmTopUpLimit(&_Wallet.TransactOpts, _amount)
 }
 
 // ConfirmWhitelistAddition is a paid mutator transaction binding the contract method 0x5adc02ab.
 //
-// Solidity: function confirmWhitelistAddition(_hash bytes32) returns()
+// Solidity: function confirmWhitelistAddition(bytes32 _hash) returns()
 func (_Wallet *WalletTransactor) ConfirmWhitelistAddition(opts *bind.TransactOpts, _hash [32]byte) (*types.Transaction, error) {
 	return _Wallet.contract.Transact(opts, "confirmWhitelistAddition", _hash)
 }
 
 // ConfirmWhitelistAddition is a paid mutator transaction binding the contract method 0x5adc02ab.
 //
-// Solidity: function confirmWhitelistAddition(_hash bytes32) returns()
+// Solidity: function confirmWhitelistAddition(bytes32 _hash) returns()
 func (_Wallet *WalletSession) ConfirmWhitelistAddition(_hash [32]byte) (*types.Transaction, error) {
 	return _Wallet.Contract.ConfirmWhitelistAddition(&_Wallet.TransactOpts, _hash)
 }
 
 // ConfirmWhitelistAddition is a paid mutator transaction binding the contract method 0x5adc02ab.
 //
-// Solidity: function confirmWhitelistAddition(_hash bytes32) returns()
+// Solidity: function confirmWhitelistAddition(bytes32 _hash) returns()
 func (_Wallet *WalletTransactorSession) ConfirmWhitelistAddition(_hash [32]byte) (*types.Transaction, error) {
 	return _Wallet.Contract.ConfirmWhitelistAddition(&_Wallet.TransactOpts, _hash)
 }
 
 // ConfirmWhitelistRemoval is a paid mutator transaction binding the contract method 0xcbd2ac68.
 //
-// Solidity: function confirmWhitelistRemoval(_hash bytes32) returns()
+// Solidity: function confirmWhitelistRemoval(bytes32 _hash) returns()
 func (_Wallet *WalletTransactor) ConfirmWhitelistRemoval(opts *bind.TransactOpts, _hash [32]byte) (*types.Transaction, error) {
 	return _Wallet.contract.Transact(opts, "confirmWhitelistRemoval", _hash)
 }
 
 // ConfirmWhitelistRemoval is a paid mutator transaction binding the contract method 0xcbd2ac68.
 //
-// Solidity: function confirmWhitelistRemoval(_hash bytes32) returns()
+// Solidity: function confirmWhitelistRemoval(bytes32 _hash) returns()
 func (_Wallet *WalletSession) ConfirmWhitelistRemoval(_hash [32]byte) (*types.Transaction, error) {
 	return _Wallet.Contract.ConfirmWhitelistRemoval(&_Wallet.TransactOpts, _hash)
 }
 
 // ConfirmWhitelistRemoval is a paid mutator transaction binding the contract method 0xcbd2ac68.
 //
-// Solidity: function confirmWhitelistRemoval(_hash bytes32) returns()
+// Solidity: function confirmWhitelistRemoval(bytes32 _hash) returns()
 func (_Wallet *WalletTransactorSession) ConfirmWhitelistRemoval(_hash [32]byte) (*types.Transaction, error) {
 	return _Wallet.Contract.ConfirmWhitelistRemoval(&_Wallet.TransactOpts, _hash)
 }
 
 // InitializeSpendLimit is a paid mutator transaction binding the contract method 0x58453569.
 //
-// Solidity: function initializeSpendLimit(_amount uint256) returns()
+// Solidity: function initializeSpendLimit(uint256 _amount) returns()
 func (_Wallet *WalletTransactor) InitializeSpendLimit(opts *bind.TransactOpts, _amount *big.Int) (*types.Transaction, error) {
 	return _Wallet.contract.Transact(opts, "initializeSpendLimit", _amount)
 }
 
 // InitializeSpendLimit is a paid mutator transaction binding the contract method 0x58453569.
 //
-// Solidity: function initializeSpendLimit(_amount uint256) returns()
+// Solidity: function initializeSpendLimit(uint256 _amount) returns()
 func (_Wallet *WalletSession) InitializeSpendLimit(_amount *big.Int) (*types.Transaction, error) {
 	return _Wallet.Contract.InitializeSpendLimit(&_Wallet.TransactOpts, _amount)
 }
 
 // InitializeSpendLimit is a paid mutator transaction binding the contract method 0x58453569.
 //
-// Solidity: function initializeSpendLimit(_amount uint256) returns()
+// Solidity: function initializeSpendLimit(uint256 _amount) returns()
 func (_Wallet *WalletTransactorSession) InitializeSpendLimit(_amount *big.Int) (*types.Transaction, error) {
 	return _Wallet.Contract.InitializeSpendLimit(&_Wallet.TransactOpts, _amount)
 }
 
 // InitializeTopUpLimit is a paid mutator transaction binding the contract method 0x6ea6f0c3.
 //
-// Solidity: function initializeTopUpLimit(_amount uint256) returns()
+// Solidity: function initializeTopUpLimit(uint256 _amount) returns()
 func (_Wallet *WalletTransactor) InitializeTopUpLimit(opts *bind.TransactOpts, _amount *big.Int) (*types.Transaction, error) {
 	return _Wallet.contract.Transact(opts, "initializeTopUpLimit", _amount)
 }
 
 // InitializeTopUpLimit is a paid mutator transaction binding the contract method 0x6ea6f0c3.
 //
-// Solidity: function initializeTopUpLimit(_amount uint256) returns()
+// Solidity: function initializeTopUpLimit(uint256 _amount) returns()
 func (_Wallet *WalletSession) InitializeTopUpLimit(_amount *big.Int) (*types.Transaction, error) {
 	return _Wallet.Contract.InitializeTopUpLimit(&_Wallet.TransactOpts, _amount)
 }
 
 // InitializeTopUpLimit is a paid mutator transaction binding the contract method 0x6ea6f0c3.
 //
-// Solidity: function initializeTopUpLimit(_amount uint256) returns()
+// Solidity: function initializeTopUpLimit(uint256 _amount) returns()
 func (_Wallet *WalletTransactorSession) InitializeTopUpLimit(_amount *big.Int) (*types.Transaction, error) {
 	return _Wallet.Contract.InitializeTopUpLimit(&_Wallet.TransactOpts, _amount)
 }
 
 // InitializeWhitelist is a paid mutator transaction binding the contract method 0xf4199bb8.
 //
-// Solidity: function initializeWhitelist(_addresses address[]) returns()
+// Solidity: function initializeWhitelist(address[] _addresses) returns()
 func (_Wallet *WalletTransactor) InitializeWhitelist(opts *bind.TransactOpts, _addresses []common.Address) (*types.Transaction, error) {
 	return _Wallet.contract.Transact(opts, "initializeWhitelist", _addresses)
 }
 
 // InitializeWhitelist is a paid mutator transaction binding the contract method 0xf4199bb8.
 //
-// Solidity: function initializeWhitelist(_addresses address[]) returns()
+// Solidity: function initializeWhitelist(address[] _addresses) returns()
 func (_Wallet *WalletSession) InitializeWhitelist(_addresses []common.Address) (*types.Transaction, error) {
 	return _Wallet.Contract.InitializeWhitelist(&_Wallet.TransactOpts, _addresses)
 }
 
 // InitializeWhitelist is a paid mutator transaction binding the contract method 0xf4199bb8.
 //
-// Solidity: function initializeWhitelist(_addresses address[]) returns()
+// Solidity: function initializeWhitelist(address[] _addresses) returns()
 func (_Wallet *WalletTransactorSession) InitializeWhitelist(_addresses []common.Address) (*types.Transaction, error) {
 	return _Wallet.Contract.InitializeWhitelist(&_Wallet.TransactOpts, _addresses)
 }
 
 // LoadTokenCard is a paid mutator transaction binding the contract method 0x3a43199f.
 //
-// Solidity: function loadTokenCard(_asset address, _amount uint256) returns()
+// Solidity: function loadTokenCard(address _asset, uint256 _amount) returns()
 func (_Wallet *WalletTransactor) LoadTokenCard(opts *bind.TransactOpts, _asset common.Address, _amount *big.Int) (*types.Transaction, error) {
 	return _Wallet.contract.Transact(opts, "loadTokenCard", _asset, _amount)
 }
 
 // LoadTokenCard is a paid mutator transaction binding the contract method 0x3a43199f.
 //
-// Solidity: function loadTokenCard(_asset address, _amount uint256) returns()
+// Solidity: function loadTokenCard(address _asset, uint256 _amount) returns()
 func (_Wallet *WalletSession) LoadTokenCard(_asset common.Address, _amount *big.Int) (*types.Transaction, error) {
 	return _Wallet.Contract.LoadTokenCard(&_Wallet.TransactOpts, _asset, _amount)
 }
 
 // LoadTokenCard is a paid mutator transaction binding the contract method 0x3a43199f.
 //
-// Solidity: function loadTokenCard(_asset address, _amount uint256) returns()
+// Solidity: function loadTokenCard(address _asset, uint256 _amount) returns()
 func (_Wallet *WalletTransactorSession) LoadTokenCard(_asset common.Address, _amount *big.Int) (*types.Transaction, error) {
 	return _Wallet.Contract.LoadTokenCard(&_Wallet.TransactOpts, _asset, _amount)
 }
@@ -1009,147 +1009,147 @@ func (_Wallet *WalletTransactorSession) RenounceOwnership() (*types.Transaction,
 
 // SubmitSpendLimit is a paid mutator transaction binding the contract method 0xd9ec3018.
 //
-// Solidity: function submitSpendLimit(_amount uint256) returns()
+// Solidity: function submitSpendLimit(uint256 _amount) returns()
 func (_Wallet *WalletTransactor) SubmitSpendLimit(opts *bind.TransactOpts, _amount *big.Int) (*types.Transaction, error) {
 	return _Wallet.contract.Transact(opts, "submitSpendLimit", _amount)
 }
 
 // SubmitSpendLimit is a paid mutator transaction binding the contract method 0xd9ec3018.
 //
-// Solidity: function submitSpendLimit(_amount uint256) returns()
+// Solidity: function submitSpendLimit(uint256 _amount) returns()
 func (_Wallet *WalletSession) SubmitSpendLimit(_amount *big.Int) (*types.Transaction, error) {
 	return _Wallet.Contract.SubmitSpendLimit(&_Wallet.TransactOpts, _amount)
 }
 
 // SubmitSpendLimit is a paid mutator transaction binding the contract method 0xd9ec3018.
 //
-// Solidity: function submitSpendLimit(_amount uint256) returns()
+// Solidity: function submitSpendLimit(uint256 _amount) returns()
 func (_Wallet *WalletTransactorSession) SubmitSpendLimit(_amount *big.Int) (*types.Transaction, error) {
 	return _Wallet.Contract.SubmitSpendLimit(&_Wallet.TransactOpts, _amount)
 }
 
 // SubmitTopUpLimit is a paid mutator transaction binding the contract method 0x295b3299.
 //
-// Solidity: function submitTopUpLimit(_amount uint256) returns()
+// Solidity: function submitTopUpLimit(uint256 _amount) returns()
 func (_Wallet *WalletTransactor) SubmitTopUpLimit(opts *bind.TransactOpts, _amount *big.Int) (*types.Transaction, error) {
 	return _Wallet.contract.Transact(opts, "submitTopUpLimit", _amount)
 }
 
 // SubmitTopUpLimit is a paid mutator transaction binding the contract method 0x295b3299.
 //
-// Solidity: function submitTopUpLimit(_amount uint256) returns()
+// Solidity: function submitTopUpLimit(uint256 _amount) returns()
 func (_Wallet *WalletSession) SubmitTopUpLimit(_amount *big.Int) (*types.Transaction, error) {
 	return _Wallet.Contract.SubmitTopUpLimit(&_Wallet.TransactOpts, _amount)
 }
 
 // SubmitTopUpLimit is a paid mutator transaction binding the contract method 0x295b3299.
 //
-// Solidity: function submitTopUpLimit(_amount uint256) returns()
+// Solidity: function submitTopUpLimit(uint256 _amount) returns()
 func (_Wallet *WalletTransactorSession) SubmitTopUpLimit(_amount *big.Int) (*types.Transaction, error) {
 	return _Wallet.Contract.SubmitTopUpLimit(&_Wallet.TransactOpts, _amount)
 }
 
 // SubmitWhitelistAddition is a paid mutator transaction binding the contract method 0x7fd004fa.
 //
-// Solidity: function submitWhitelistAddition(_addresses address[]) returns()
+// Solidity: function submitWhitelistAddition(address[] _addresses) returns()
 func (_Wallet *WalletTransactor) SubmitWhitelistAddition(opts *bind.TransactOpts, _addresses []common.Address) (*types.Transaction, error) {
 	return _Wallet.contract.Transact(opts, "submitWhitelistAddition", _addresses)
 }
 
 // SubmitWhitelistAddition is a paid mutator transaction binding the contract method 0x7fd004fa.
 //
-// Solidity: function submitWhitelistAddition(_addresses address[]) returns()
+// Solidity: function submitWhitelistAddition(address[] _addresses) returns()
 func (_Wallet *WalletSession) SubmitWhitelistAddition(_addresses []common.Address) (*types.Transaction, error) {
 	return _Wallet.Contract.SubmitWhitelistAddition(&_Wallet.TransactOpts, _addresses)
 }
 
 // SubmitWhitelistAddition is a paid mutator transaction binding the contract method 0x7fd004fa.
 //
-// Solidity: function submitWhitelistAddition(_addresses address[]) returns()
+// Solidity: function submitWhitelistAddition(address[] _addresses) returns()
 func (_Wallet *WalletTransactorSession) SubmitWhitelistAddition(_addresses []common.Address) (*types.Transaction, error) {
 	return _Wallet.Contract.SubmitWhitelistAddition(&_Wallet.TransactOpts, _addresses)
 }
 
 // SubmitWhitelistRemoval is a paid mutator transaction binding the contract method 0x6137d670.
 //
-// Solidity: function submitWhitelistRemoval(_addresses address[]) returns()
+// Solidity: function submitWhitelistRemoval(address[] _addresses) returns()
 func (_Wallet *WalletTransactor) SubmitWhitelistRemoval(opts *bind.TransactOpts, _addresses []common.Address) (*types.Transaction, error) {
 	return _Wallet.contract.Transact(opts, "submitWhitelistRemoval", _addresses)
 }
 
 // SubmitWhitelistRemoval is a paid mutator transaction binding the contract method 0x6137d670.
 //
-// Solidity: function submitWhitelistRemoval(_addresses address[]) returns()
+// Solidity: function submitWhitelistRemoval(address[] _addresses) returns()
 func (_Wallet *WalletSession) SubmitWhitelistRemoval(_addresses []common.Address) (*types.Transaction, error) {
 	return _Wallet.Contract.SubmitWhitelistRemoval(&_Wallet.TransactOpts, _addresses)
 }
 
 // SubmitWhitelistRemoval is a paid mutator transaction binding the contract method 0x6137d670.
 //
-// Solidity: function submitWhitelistRemoval(_addresses address[]) returns()
+// Solidity: function submitWhitelistRemoval(address[] _addresses) returns()
 func (_Wallet *WalletTransactorSession) SubmitWhitelistRemoval(_addresses []common.Address) (*types.Transaction, error) {
 	return _Wallet.Contract.SubmitWhitelistRemoval(&_Wallet.TransactOpts, _addresses)
 }
 
 // TopUpGas is a paid mutator transaction binding the contract method 0xe61c51ca.
 //
-// Solidity: function topUpGas(_amount uint256) returns()
+// Solidity: function topUpGas(uint256 _amount) returns()
 func (_Wallet *WalletTransactor) TopUpGas(opts *bind.TransactOpts, _amount *big.Int) (*types.Transaction, error) {
 	return _Wallet.contract.Transact(opts, "topUpGas", _amount)
 }
 
 // TopUpGas is a paid mutator transaction binding the contract method 0xe61c51ca.
 //
-// Solidity: function topUpGas(_amount uint256) returns()
+// Solidity: function topUpGas(uint256 _amount) returns()
 func (_Wallet *WalletSession) TopUpGas(_amount *big.Int) (*types.Transaction, error) {
 	return _Wallet.Contract.TopUpGas(&_Wallet.TransactOpts, _amount)
 }
 
 // TopUpGas is a paid mutator transaction binding the contract method 0xe61c51ca.
 //
-// Solidity: function topUpGas(_amount uint256) returns()
+// Solidity: function topUpGas(uint256 _amount) returns()
 func (_Wallet *WalletTransactorSession) TopUpGas(_amount *big.Int) (*types.Transaction, error) {
 	return _Wallet.Contract.TopUpGas(&_Wallet.TransactOpts, _amount)
 }
 
 // Transfer is a paid mutator transaction binding the contract method 0xbeabacc8.
 //
-// Solidity: function transfer(_to address, _asset address, _amount uint256) returns()
+// Solidity: function transfer(address _to, address _asset, uint256 _amount) returns()
 func (_Wallet *WalletTransactor) Transfer(opts *bind.TransactOpts, _to common.Address, _asset common.Address, _amount *big.Int) (*types.Transaction, error) {
 	return _Wallet.contract.Transact(opts, "transfer", _to, _asset, _amount)
 }
 
 // Transfer is a paid mutator transaction binding the contract method 0xbeabacc8.
 //
-// Solidity: function transfer(_to address, _asset address, _amount uint256) returns()
+// Solidity: function transfer(address _to, address _asset, uint256 _amount) returns()
 func (_Wallet *WalletSession) Transfer(_to common.Address, _asset common.Address, _amount *big.Int) (*types.Transaction, error) {
 	return _Wallet.Contract.Transfer(&_Wallet.TransactOpts, _to, _asset, _amount)
 }
 
 // Transfer is a paid mutator transaction binding the contract method 0xbeabacc8.
 //
-// Solidity: function transfer(_to address, _asset address, _amount uint256) returns()
+// Solidity: function transfer(address _to, address _asset, uint256 _amount) returns()
 func (_Wallet *WalletTransactorSession) Transfer(_to common.Address, _asset common.Address, _amount *big.Int) (*types.Transaction, error) {
 	return _Wallet.Contract.Transfer(&_Wallet.TransactOpts, _to, _asset, _amount)
 }
 
 // TransferOwnership is a paid mutator transaction binding the contract method 0xb242e534.
 //
-// Solidity: function transferOwnership(_account address, _transferable bool) returns()
+// Solidity: function transferOwnership(address _account, bool _transferable) returns()
 func (_Wallet *WalletTransactor) TransferOwnership(opts *bind.TransactOpts, _account common.Address, _transferable bool) (*types.Transaction, error) {
 	return _Wallet.contract.Transact(opts, "transferOwnership", _account, _transferable)
 }
 
 // TransferOwnership is a paid mutator transaction binding the contract method 0xb242e534.
 //
-// Solidity: function transferOwnership(_account address, _transferable bool) returns()
+// Solidity: function transferOwnership(address _account, bool _transferable) returns()
 func (_Wallet *WalletSession) TransferOwnership(_account common.Address, _transferable bool) (*types.Transaction, error) {
 	return _Wallet.Contract.TransferOwnership(&_Wallet.TransactOpts, _account, _transferable)
 }
 
 // TransferOwnership is a paid mutator transaction binding the contract method 0xb242e534.
 //
-// Solidity: function transferOwnership(_account address, _transferable bool) returns()
+// Solidity: function transferOwnership(address _account, bool _transferable) returns()
 func (_Wallet *WalletTransactorSession) TransferOwnership(_account common.Address, _transferable bool) (*types.Transaction, error) {
 	return _Wallet.Contract.TransferOwnership(&_Wallet.TransactOpts, _account, _transferable)
 }
@@ -1230,7 +1230,7 @@ type WalletAddedToWhitelist struct {
 
 // FilterAddedToWhitelist is a free log retrieval operation binding the contract event 0xb2f6cccee7a369e23e293c25aa19bef80af11eb26deba3ea0f2a02783f752e4a.
 //
-// Solidity: e AddedToWhitelist(_sender address, _addresses address[])
+// Solidity: event AddedToWhitelist(address _sender, address[] _addresses)
 func (_Wallet *WalletFilterer) FilterAddedToWhitelist(opts *bind.FilterOpts) (*WalletAddedToWhitelistIterator, error) {
 
 	logs, sub, err := _Wallet.contract.FilterLogs(opts, "AddedToWhitelist")
@@ -1242,7 +1242,7 @@ func (_Wallet *WalletFilterer) FilterAddedToWhitelist(opts *bind.FilterOpts) (*W
 
 // WatchAddedToWhitelist is a free log subscription operation binding the contract event 0xb2f6cccee7a369e23e293c25aa19bef80af11eb26deba3ea0f2a02783f752e4a.
 //
-// Solidity: e AddedToWhitelist(_sender address, _addresses address[])
+// Solidity: event AddedToWhitelist(address _sender, address[] _addresses)
 func (_Wallet *WalletFilterer) WatchAddedToWhitelist(opts *bind.WatchOpts, sink chan<- *WalletAddedToWhitelist) (event.Subscription, error) {
 
 	logs, sub, err := _Wallet.contract.WatchLogs(opts, "AddedToWhitelist")
@@ -1353,7 +1353,7 @@ type WalletCancelledSpendLimitChange struct {
 
 // FilterCancelledSpendLimitChange is a free log retrieval operation binding the contract event 0x83e15565cfc238cf8d4e7a0a2cefeda3c9d6621e44a4d2ee96034ea403648b6a.
 //
-// Solidity: e CancelledSpendLimitChange(_sender address, _amount uint256)
+// Solidity: event CancelledSpendLimitChange(address _sender, uint256 _amount)
 func (_Wallet *WalletFilterer) FilterCancelledSpendLimitChange(opts *bind.FilterOpts) (*WalletCancelledSpendLimitChangeIterator, error) {
 
 	logs, sub, err := _Wallet.contract.FilterLogs(opts, "CancelledSpendLimitChange")
@@ -1365,7 +1365,7 @@ func (_Wallet *WalletFilterer) FilterCancelledSpendLimitChange(opts *bind.Filter
 
 // WatchCancelledSpendLimitChange is a free log subscription operation binding the contract event 0x83e15565cfc238cf8d4e7a0a2cefeda3c9d6621e44a4d2ee96034ea403648b6a.
 //
-// Solidity: e CancelledSpendLimitChange(_sender address, _amount uint256)
+// Solidity: event CancelledSpendLimitChange(address _sender, uint256 _amount)
 func (_Wallet *WalletFilterer) WatchCancelledSpendLimitChange(opts *bind.WatchOpts, sink chan<- *WalletCancelledSpendLimitChange) (event.Subscription, error) {
 
 	logs, sub, err := _Wallet.contract.WatchLogs(opts, "CancelledSpendLimitChange")
@@ -1476,7 +1476,7 @@ type WalletCancelledTopUpLimitChange struct {
 
 // FilterCancelledTopUpLimitChange is a free log retrieval operation binding the contract event 0x25d36a8351febb568fa2c8f5a167990291168552d0f3381a618eb120f42d91f4.
 //
-// Solidity: e CancelledTopUpLimitChange(_sender address, _amount uint256)
+// Solidity: event CancelledTopUpLimitChange(address _sender, uint256 _amount)
 func (_Wallet *WalletFilterer) FilterCancelledTopUpLimitChange(opts *bind.FilterOpts) (*WalletCancelledTopUpLimitChangeIterator, error) {
 
 	logs, sub, err := _Wallet.contract.FilterLogs(opts, "CancelledTopUpLimitChange")
@@ -1488,7 +1488,7 @@ func (_Wallet *WalletFilterer) FilterCancelledTopUpLimitChange(opts *bind.Filter
 
 // WatchCancelledTopUpLimitChange is a free log subscription operation binding the contract event 0x25d36a8351febb568fa2c8f5a167990291168552d0f3381a618eb120f42d91f4.
 //
-// Solidity: e CancelledTopUpLimitChange(_sender address, _amount uint256)
+// Solidity: event CancelledTopUpLimitChange(address _sender, uint256 _amount)
 func (_Wallet *WalletFilterer) WatchCancelledTopUpLimitChange(opts *bind.WatchOpts, sink chan<- *WalletCancelledTopUpLimitChange) (event.Subscription, error) {
 
 	logs, sub, err := _Wallet.contract.WatchLogs(opts, "CancelledTopUpLimitChange")
@@ -1599,7 +1599,7 @@ type WalletCancelledWhitelistAddition struct {
 
 // FilterCancelledWhitelistAddition is a free log retrieval operation binding the contract event 0x7794eff834d760583543e6e510e717a5e66d2c064e225f4db448343c3e66afcf.
 //
-// Solidity: e CancelledWhitelistAddition(_sender address, _hash bytes32)
+// Solidity: event CancelledWhitelistAddition(address _sender, bytes32 _hash)
 func (_Wallet *WalletFilterer) FilterCancelledWhitelistAddition(opts *bind.FilterOpts) (*WalletCancelledWhitelistAdditionIterator, error) {
 
 	logs, sub, err := _Wallet.contract.FilterLogs(opts, "CancelledWhitelistAddition")
@@ -1611,7 +1611,7 @@ func (_Wallet *WalletFilterer) FilterCancelledWhitelistAddition(opts *bind.Filte
 
 // WatchCancelledWhitelistAddition is a free log subscription operation binding the contract event 0x7794eff834d760583543e6e510e717a5e66d2c064e225f4db448343c3e66afcf.
 //
-// Solidity: e CancelledWhitelistAddition(_sender address, _hash bytes32)
+// Solidity: event CancelledWhitelistAddition(address _sender, bytes32 _hash)
 func (_Wallet *WalletFilterer) WatchCancelledWhitelistAddition(opts *bind.WatchOpts, sink chan<- *WalletCancelledWhitelistAddition) (event.Subscription, error) {
 
 	logs, sub, err := _Wallet.contract.WatchLogs(opts, "CancelledWhitelistAddition")
@@ -1722,7 +1722,7 @@ type WalletCancelledWhitelistRemoval struct {
 
 // FilterCancelledWhitelistRemoval is a free log retrieval operation binding the contract event 0x13c935eb475aa0f6e931fece83e2ac44569ce2d53460d29a6dedab40b965c8a3.
 //
-// Solidity: e CancelledWhitelistRemoval(_sender address, _hash bytes32)
+// Solidity: event CancelledWhitelistRemoval(address _sender, bytes32 _hash)
 func (_Wallet *WalletFilterer) FilterCancelledWhitelistRemoval(opts *bind.FilterOpts) (*WalletCancelledWhitelistRemovalIterator, error) {
 
 	logs, sub, err := _Wallet.contract.FilterLogs(opts, "CancelledWhitelistRemoval")
@@ -1734,7 +1734,7 @@ func (_Wallet *WalletFilterer) FilterCancelledWhitelistRemoval(opts *bind.Filter
 
 // WatchCancelledWhitelistRemoval is a free log subscription operation binding the contract event 0x13c935eb475aa0f6e931fece83e2ac44569ce2d53460d29a6dedab40b965c8a3.
 //
-// Solidity: e CancelledWhitelistRemoval(_sender address, _hash bytes32)
+// Solidity: event CancelledWhitelistRemoval(address _sender, bytes32 _hash)
 func (_Wallet *WalletFilterer) WatchCancelledWhitelistRemoval(opts *bind.WatchOpts, sink chan<- *WalletCancelledWhitelistRemoval) (event.Subscription, error) {
 
 	logs, sub, err := _Wallet.contract.WatchLogs(opts, "CancelledWhitelistRemoval")
@@ -1845,7 +1845,7 @@ type WalletLoadedTokenCard struct {
 
 // FilterLoadedTokenCard is a free log retrieval operation binding the contract event 0x5f65674bec9af81f71be68674135a0ea3f163fb91984e3893d06da9f6ea2ce8a.
 //
-// Solidity: e LoadedTokenCard(_asset address, _amount uint256)
+// Solidity: event LoadedTokenCard(address _asset, uint256 _amount)
 func (_Wallet *WalletFilterer) FilterLoadedTokenCard(opts *bind.FilterOpts) (*WalletLoadedTokenCardIterator, error) {
 
 	logs, sub, err := _Wallet.contract.FilterLogs(opts, "LoadedTokenCard")
@@ -1857,7 +1857,7 @@ func (_Wallet *WalletFilterer) FilterLoadedTokenCard(opts *bind.FilterOpts) (*Wa
 
 // WatchLoadedTokenCard is a free log subscription operation binding the contract event 0x5f65674bec9af81f71be68674135a0ea3f163fb91984e3893d06da9f6ea2ce8a.
 //
-// Solidity: e LoadedTokenCard(_asset address, _amount uint256)
+// Solidity: event LoadedTokenCard(address _asset, uint256 _amount)
 func (_Wallet *WalletFilterer) WatchLoadedTokenCard(opts *bind.WatchOpts, sink chan<- *WalletLoadedTokenCard) (event.Subscription, error) {
 
 	logs, sub, err := _Wallet.contract.WatchLogs(opts, "LoadedTokenCard")
@@ -1968,7 +1968,7 @@ type WalletReceived struct {
 
 // FilterReceived is a free log retrieval operation binding the contract event 0x88a5966d370b9919b20f3e2c13ff65706f196a4e32cc2c12bf57088f88525874.
 //
-// Solidity: e Received(_from address, _amount uint256)
+// Solidity: event Received(address _from, uint256 _amount)
 func (_Wallet *WalletFilterer) FilterReceived(opts *bind.FilterOpts) (*WalletReceivedIterator, error) {
 
 	logs, sub, err := _Wallet.contract.FilterLogs(opts, "Received")
@@ -1980,7 +1980,7 @@ func (_Wallet *WalletFilterer) FilterReceived(opts *bind.FilterOpts) (*WalletRec
 
 // WatchReceived is a free log subscription operation binding the contract event 0x88a5966d370b9919b20f3e2c13ff65706f196a4e32cc2c12bf57088f88525874.
 //
-// Solidity: e Received(_from address, _amount uint256)
+// Solidity: event Received(address _from, uint256 _amount)
 func (_Wallet *WalletFilterer) WatchReceived(opts *bind.WatchOpts, sink chan<- *WalletReceived) (event.Subscription, error) {
 
 	logs, sub, err := _Wallet.contract.WatchLogs(opts, "Received")
@@ -2091,7 +2091,7 @@ type WalletRemovedFromWhitelist struct {
 
 // FilterRemovedFromWhitelist is a free log retrieval operation binding the contract event 0xd218c430fa348f4ce67791021b6b89c0c3eacd4ead1d8f5b83c60038ec28249b.
 //
-// Solidity: e RemovedFromWhitelist(_sender address, _addresses address[])
+// Solidity: event RemovedFromWhitelist(address _sender, address[] _addresses)
 func (_Wallet *WalletFilterer) FilterRemovedFromWhitelist(opts *bind.FilterOpts) (*WalletRemovedFromWhitelistIterator, error) {
 
 	logs, sub, err := _Wallet.contract.FilterLogs(opts, "RemovedFromWhitelist")
@@ -2103,7 +2103,7 @@ func (_Wallet *WalletFilterer) FilterRemovedFromWhitelist(opts *bind.FilterOpts)
 
 // WatchRemovedFromWhitelist is a free log subscription operation binding the contract event 0xd218c430fa348f4ce67791021b6b89c0c3eacd4ead1d8f5b83c60038ec28249b.
 //
-// Solidity: e RemovedFromWhitelist(_sender address, _addresses address[])
+// Solidity: event RemovedFromWhitelist(address _sender, address[] _addresses)
 func (_Wallet *WalletFilterer) WatchRemovedFromWhitelist(opts *bind.WatchOpts, sink chan<- *WalletRemovedFromWhitelist) (event.Subscription, error) {
 
 	logs, sub, err := _Wallet.contract.WatchLogs(opts, "RemovedFromWhitelist")
@@ -2214,7 +2214,7 @@ type WalletSetSpendLimit struct {
 
 // FilterSetSpendLimit is a free log retrieval operation binding the contract event 0x068f112e5ec923d412be64779fe69e0fcbb6784c6617e94cccc8fd348f2e0f21.
 //
-// Solidity: e SetSpendLimit(_sender address, _amount uint256)
+// Solidity: event SetSpendLimit(address _sender, uint256 _amount)
 func (_Wallet *WalletFilterer) FilterSetSpendLimit(opts *bind.FilterOpts) (*WalletSetSpendLimitIterator, error) {
 
 	logs, sub, err := _Wallet.contract.FilterLogs(opts, "SetSpendLimit")
@@ -2226,7 +2226,7 @@ func (_Wallet *WalletFilterer) FilterSetSpendLimit(opts *bind.FilterOpts) (*Wall
 
 // WatchSetSpendLimit is a free log subscription operation binding the contract event 0x068f112e5ec923d412be64779fe69e0fcbb6784c6617e94cccc8fd348f2e0f21.
 //
-// Solidity: e SetSpendLimit(_sender address, _amount uint256)
+// Solidity: event SetSpendLimit(address _sender, uint256 _amount)
 func (_Wallet *WalletFilterer) WatchSetSpendLimit(opts *bind.WatchOpts, sink chan<- *WalletSetSpendLimit) (event.Subscription, error) {
 
 	logs, sub, err := _Wallet.contract.WatchLogs(opts, "SetSpendLimit")
@@ -2337,7 +2337,7 @@ type WalletSetTopUpLimit struct {
 
 // FilterSetTopUpLimit is a free log retrieval operation binding the contract event 0xb0b775ba506691c666928dfe7120eb5ccedd17f4554dc85ce86eb2b4cc437e36.
 //
-// Solidity: e SetTopUpLimit(_sender address, _amount uint256)
+// Solidity: event SetTopUpLimit(address _sender, uint256 _amount)
 func (_Wallet *WalletFilterer) FilterSetTopUpLimit(opts *bind.FilterOpts) (*WalletSetTopUpLimitIterator, error) {
 
 	logs, sub, err := _Wallet.contract.FilterLogs(opts, "SetTopUpLimit")
@@ -2349,7 +2349,7 @@ func (_Wallet *WalletFilterer) FilterSetTopUpLimit(opts *bind.FilterOpts) (*Wall
 
 // WatchSetTopUpLimit is a free log subscription operation binding the contract event 0xb0b775ba506691c666928dfe7120eb5ccedd17f4554dc85ce86eb2b4cc437e36.
 //
-// Solidity: e SetTopUpLimit(_sender address, _amount uint256)
+// Solidity: event SetTopUpLimit(address _sender, uint256 _amount)
 func (_Wallet *WalletFilterer) WatchSetTopUpLimit(opts *bind.WatchOpts, sink chan<- *WalletSetTopUpLimit) (event.Subscription, error) {
 
 	logs, sub, err := _Wallet.contract.WatchLogs(opts, "SetTopUpLimit")
@@ -2459,7 +2459,7 @@ type WalletSubmittedSpendLimitChange struct {
 
 // FilterSubmittedSpendLimitChange is a free log retrieval operation binding the contract event 0xf7155f467a69de148f41fc3c39089f07e9bff6d91519f3d69d46936643d5197a.
 //
-// Solidity: e SubmittedSpendLimitChange(_amount uint256)
+// Solidity: event SubmittedSpendLimitChange(uint256 _amount)
 func (_Wallet *WalletFilterer) FilterSubmittedSpendLimitChange(opts *bind.FilterOpts) (*WalletSubmittedSpendLimitChangeIterator, error) {
 
 	logs, sub, err := _Wallet.contract.FilterLogs(opts, "SubmittedSpendLimitChange")
@@ -2471,7 +2471,7 @@ func (_Wallet *WalletFilterer) FilterSubmittedSpendLimitChange(opts *bind.Filter
 
 // WatchSubmittedSpendLimitChange is a free log subscription operation binding the contract event 0xf7155f467a69de148f41fc3c39089f07e9bff6d91519f3d69d46936643d5197a.
 //
-// Solidity: e SubmittedSpendLimitChange(_amount uint256)
+// Solidity: event SubmittedSpendLimitChange(uint256 _amount)
 func (_Wallet *WalletFilterer) WatchSubmittedSpendLimitChange(opts *bind.WatchOpts, sink chan<- *WalletSubmittedSpendLimitChange) (event.Subscription, error) {
 
 	logs, sub, err := _Wallet.contract.WatchLogs(opts, "SubmittedSpendLimitChange")
@@ -2581,7 +2581,7 @@ type WalletSubmittedTopUpLimitChange struct {
 
 // FilterSubmittedTopUpLimitChange is a free log retrieval operation binding the contract event 0x9312377d84b68703929715872be9f0309065e102db6152de9c0587d9e294216d.
 //
-// Solidity: e SubmittedTopUpLimitChange(_amount uint256)
+// Solidity: event SubmittedTopUpLimitChange(uint256 _amount)
 func (_Wallet *WalletFilterer) FilterSubmittedTopUpLimitChange(opts *bind.FilterOpts) (*WalletSubmittedTopUpLimitChangeIterator, error) {
 
 	logs, sub, err := _Wallet.contract.FilterLogs(opts, "SubmittedTopUpLimitChange")
@@ -2593,7 +2593,7 @@ func (_Wallet *WalletFilterer) FilterSubmittedTopUpLimitChange(opts *bind.Filter
 
 // WatchSubmittedTopUpLimitChange is a free log subscription operation binding the contract event 0x9312377d84b68703929715872be9f0309065e102db6152de9c0587d9e294216d.
 //
-// Solidity: e SubmittedTopUpLimitChange(_amount uint256)
+// Solidity: event SubmittedTopUpLimitChange(uint256 _amount)
 func (_Wallet *WalletFilterer) WatchSubmittedTopUpLimitChange(opts *bind.WatchOpts, sink chan<- *WalletSubmittedTopUpLimitChange) (event.Subscription, error) {
 
 	logs, sub, err := _Wallet.contract.WatchLogs(opts, "SubmittedTopUpLimitChange")
@@ -2704,7 +2704,7 @@ type WalletSubmittedWhitelistAddition struct {
 
 // FilterSubmittedWhitelistAddition is a free log retrieval operation binding the contract event 0x9c80b3b5f68b3e017766d59e8d09b34efe6462b05c398f35cab9e271d9bc3b9c.
 //
-// Solidity: e SubmittedWhitelistAddition(_addresses address[], _hash bytes32)
+// Solidity: event SubmittedWhitelistAddition(address[] _addresses, bytes32 _hash)
 func (_Wallet *WalletFilterer) FilterSubmittedWhitelistAddition(opts *bind.FilterOpts) (*WalletSubmittedWhitelistAdditionIterator, error) {
 
 	logs, sub, err := _Wallet.contract.FilterLogs(opts, "SubmittedWhitelistAddition")
@@ -2716,7 +2716,7 @@ func (_Wallet *WalletFilterer) FilterSubmittedWhitelistAddition(opts *bind.Filte
 
 // WatchSubmittedWhitelistAddition is a free log subscription operation binding the contract event 0x9c80b3b5f68b3e017766d59e8d09b34efe6462b05c398f35cab9e271d9bc3b9c.
 //
-// Solidity: e SubmittedWhitelistAddition(_addresses address[], _hash bytes32)
+// Solidity: event SubmittedWhitelistAddition(address[] _addresses, bytes32 _hash)
 func (_Wallet *WalletFilterer) WatchSubmittedWhitelistAddition(opts *bind.WatchOpts, sink chan<- *WalletSubmittedWhitelistAddition) (event.Subscription, error) {
 
 	logs, sub, err := _Wallet.contract.WatchLogs(opts, "SubmittedWhitelistAddition")
@@ -2827,7 +2827,7 @@ type WalletSubmittedWhitelistRemoval struct {
 
 // FilterSubmittedWhitelistRemoval is a free log retrieval operation binding the contract event 0xfbc0e5ca6c7e4858daf0fdb185ef5186203e74ec9c64737e93c0aeaec596e1d1.
 //
-// Solidity: e SubmittedWhitelistRemoval(_addresses address[], _hash bytes32)
+// Solidity: event SubmittedWhitelistRemoval(address[] _addresses, bytes32 _hash)
 func (_Wallet *WalletFilterer) FilterSubmittedWhitelistRemoval(opts *bind.FilterOpts) (*WalletSubmittedWhitelistRemovalIterator, error) {
 
 	logs, sub, err := _Wallet.contract.FilterLogs(opts, "SubmittedWhitelistRemoval")
@@ -2839,7 +2839,7 @@ func (_Wallet *WalletFilterer) FilterSubmittedWhitelistRemoval(opts *bind.Filter
 
 // WatchSubmittedWhitelistRemoval is a free log subscription operation binding the contract event 0xfbc0e5ca6c7e4858daf0fdb185ef5186203e74ec9c64737e93c0aeaec596e1d1.
 //
-// Solidity: e SubmittedWhitelistRemoval(_addresses address[], _hash bytes32)
+// Solidity: event SubmittedWhitelistRemoval(address[] _addresses, bytes32 _hash)
 func (_Wallet *WalletFilterer) WatchSubmittedWhitelistRemoval(opts *bind.WatchOpts, sink chan<- *WalletSubmittedWhitelistRemoval) (event.Subscription, error) {
 
 	logs, sub, err := _Wallet.contract.WatchLogs(opts, "SubmittedWhitelistRemoval")
@@ -2951,7 +2951,7 @@ type WalletToppedUpGas struct {
 
 // FilterToppedUpGas is a free log retrieval operation binding the contract event 0x611b7c0d84fda988026215bef9b3e4d81cbceced7e679be6d5e044b588467c0e.
 //
-// Solidity: e ToppedUpGas(_sender address, _owner address, _amount uint256)
+// Solidity: event ToppedUpGas(address _sender, address _owner, uint256 _amount)
 func (_Wallet *WalletFilterer) FilterToppedUpGas(opts *bind.FilterOpts) (*WalletToppedUpGasIterator, error) {
 
 	logs, sub, err := _Wallet.contract.FilterLogs(opts, "ToppedUpGas")
@@ -2963,7 +2963,7 @@ func (_Wallet *WalletFilterer) FilterToppedUpGas(opts *bind.FilterOpts) (*Wallet
 
 // WatchToppedUpGas is a free log subscription operation binding the contract event 0x611b7c0d84fda988026215bef9b3e4d81cbceced7e679be6d5e044b588467c0e.
 //
-// Solidity: e ToppedUpGas(_sender address, _owner address, _amount uint256)
+// Solidity: event ToppedUpGas(address _sender, address _owner, uint256 _amount)
 func (_Wallet *WalletFilterer) WatchToppedUpGas(opts *bind.WatchOpts, sink chan<- *WalletToppedUpGas) (event.Subscription, error) {
 
 	logs, sub, err := _Wallet.contract.WatchLogs(opts, "ToppedUpGas")
@@ -3075,7 +3075,7 @@ type WalletTransferred struct {
 
 // FilterTransferred is a free log retrieval operation binding the contract event 0xd1ba4ac2e2a11b5101f6cb4d978f514a155b421e8ec396d2d9abaf0bb02917ee.
 //
-// Solidity: e Transferred(_to address, _asset address, _amount uint256)
+// Solidity: event Transferred(address _to, address _asset, uint256 _amount)
 func (_Wallet *WalletFilterer) FilterTransferred(opts *bind.FilterOpts) (*WalletTransferredIterator, error) {
 
 	logs, sub, err := _Wallet.contract.FilterLogs(opts, "Transferred")
@@ -3087,7 +3087,7 @@ func (_Wallet *WalletFilterer) FilterTransferred(opts *bind.FilterOpts) (*Wallet
 
 // WatchTransferred is a free log subscription operation binding the contract event 0xd1ba4ac2e2a11b5101f6cb4d978f514a155b421e8ec396d2d9abaf0bb02917ee.
 //
-// Solidity: e Transferred(_to address, _asset address, _amount uint256)
+// Solidity: event Transferred(address _to, address _asset, uint256 _amount)
 func (_Wallet *WalletFilterer) WatchTransferred(opts *bind.WatchOpts, sink chan<- *WalletTransferred) (event.Subscription, error) {
 
 	logs, sub, err := _Wallet.contract.WatchLogs(opts, "Transferred")
@@ -3198,7 +3198,7 @@ type WalletTransferredOwnership struct {
 
 // FilterTransferredOwnership is a free log retrieval operation binding the contract event 0x850b3df64837d7d518b45f5aa64d104652c3b80eb5b34a8e3d9eb666cb7cdea5.
 //
-// Solidity: e TransferredOwnership(_from address, _to address)
+// Solidity: event TransferredOwnership(address _from, address _to)
 func (_Wallet *WalletFilterer) FilterTransferredOwnership(opts *bind.FilterOpts) (*WalletTransferredOwnershipIterator, error) {
 
 	logs, sub, err := _Wallet.contract.FilterLogs(opts, "TransferredOwnership")
@@ -3210,7 +3210,7 @@ func (_Wallet *WalletFilterer) FilterTransferredOwnership(opts *bind.FilterOpts)
 
 // WatchTransferredOwnership is a free log subscription operation binding the contract event 0x850b3df64837d7d518b45f5aa64d104652c3b80eb5b34a8e3d9eb666cb7cdea5.
 //
-// Solidity: e TransferredOwnership(_from address, _to address)
+// Solidity: event TransferredOwnership(address _from, address _to)
 func (_Wallet *WalletFilterer) WatchTransferredOwnership(opts *bind.WatchOpts, sink chan<- *WalletTransferredOwnership) (event.Subscription, error) {
 
 	logs, sub, err := _Wallet.contract.WatchLogs(opts, "TransferredOwnership")

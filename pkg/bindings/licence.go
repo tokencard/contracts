@@ -372,21 +372,21 @@ func (_Licence *LicenceCallerSession) TokenHolder() (common.Address, error) {
 
 // Load is a paid mutator transaction binding the contract method 0x1b3c96b4.
 //
-// Solidity: function load(_asset address, _amount uint256) returns()
+// Solidity: function load(address _asset, uint256 _amount) returns()
 func (_Licence *LicenceTransactor) Load(opts *bind.TransactOpts, _asset common.Address, _amount *big.Int) (*types.Transaction, error) {
 	return _Licence.contract.Transact(opts, "load", _asset, _amount)
 }
 
 // Load is a paid mutator transaction binding the contract method 0x1b3c96b4.
 //
-// Solidity: function load(_asset address, _amount uint256) returns()
+// Solidity: function load(address _asset, uint256 _amount) returns()
 func (_Licence *LicenceSession) Load(_asset common.Address, _amount *big.Int) (*types.Transaction, error) {
 	return _Licence.Contract.Load(&_Licence.TransactOpts, _asset, _amount)
 }
 
 // Load is a paid mutator transaction binding the contract method 0x1b3c96b4.
 //
-// Solidity: function load(_asset address, _amount uint256) returns()
+// Solidity: function load(address _asset, uint256 _amount) returns()
 func (_Licence *LicenceTransactorSession) Load(_asset common.Address, _amount *big.Int) (*types.Transaction, error) {
 	return _Licence.Contract.Load(&_Licence.TransactOpts, _asset, _amount)
 }
@@ -414,63 +414,63 @@ func (_Licence *LicenceTransactorSession) RenounceOwnership() (*types.Transactio
 
 // TransferOwnership is a paid mutator transaction binding the contract method 0xb242e534.
 //
-// Solidity: function transferOwnership(_account address, _transferable bool) returns()
+// Solidity: function transferOwnership(address _account, bool _transferable) returns()
 func (_Licence *LicenceTransactor) TransferOwnership(opts *bind.TransactOpts, _account common.Address, _transferable bool) (*types.Transaction, error) {
 	return _Licence.contract.Transact(opts, "transferOwnership", _account, _transferable)
 }
 
 // TransferOwnership is a paid mutator transaction binding the contract method 0xb242e534.
 //
-// Solidity: function transferOwnership(_account address, _transferable bool) returns()
+// Solidity: function transferOwnership(address _account, bool _transferable) returns()
 func (_Licence *LicenceSession) TransferOwnership(_account common.Address, _transferable bool) (*types.Transaction, error) {
 	return _Licence.Contract.TransferOwnership(&_Licence.TransactOpts, _account, _transferable)
 }
 
 // TransferOwnership is a paid mutator transaction binding the contract method 0xb242e534.
 //
-// Solidity: function transferOwnership(_account address, _transferable bool) returns()
+// Solidity: function transferOwnership(address _account, bool _transferable) returns()
 func (_Licence *LicenceTransactorSession) TransferOwnership(_account common.Address, _transferable bool) (*types.Transaction, error) {
 	return _Licence.Contract.TransferOwnership(&_Licence.TransactOpts, _account, _transferable)
 }
 
 // UpdateDAO is a paid mutator transaction binding the contract method 0xbcb6c0b5.
 //
-// Solidity: function updateDAO(_newDAO address) returns()
+// Solidity: function updateDAO(address _newDAO) returns()
 func (_Licence *LicenceTransactor) UpdateDAO(opts *bind.TransactOpts, _newDAO common.Address) (*types.Transaction, error) {
 	return _Licence.contract.Transact(opts, "updateDAO", _newDAO)
 }
 
 // UpdateDAO is a paid mutator transaction binding the contract method 0xbcb6c0b5.
 //
-// Solidity: function updateDAO(_newDAO address) returns()
+// Solidity: function updateDAO(address _newDAO) returns()
 func (_Licence *LicenceSession) UpdateDAO(_newDAO common.Address) (*types.Transaction, error) {
 	return _Licence.Contract.UpdateDAO(&_Licence.TransactOpts, _newDAO)
 }
 
 // UpdateDAO is a paid mutator transaction binding the contract method 0xbcb6c0b5.
 //
-// Solidity: function updateDAO(_newDAO address) returns()
+// Solidity: function updateDAO(address _newDAO) returns()
 func (_Licence *LicenceTransactorSession) UpdateDAO(_newDAO common.Address) (*types.Transaction, error) {
 	return _Licence.Contract.UpdateDAO(&_Licence.TransactOpts, _newDAO)
 }
 
 // UpdateFee is a paid mutator transaction binding the contract method 0x9012c4a8.
 //
-// Solidity: function updateFee(_newFee uint256) returns()
+// Solidity: function updateFee(uint256 _newFee) returns()
 func (_Licence *LicenceTransactor) UpdateFee(opts *bind.TransactOpts, _newFee *big.Int) (*types.Transaction, error) {
 	return _Licence.contract.Transact(opts, "updateFee", _newFee)
 }
 
 // UpdateFee is a paid mutator transaction binding the contract method 0x9012c4a8.
 //
-// Solidity: function updateFee(_newFee uint256) returns()
+// Solidity: function updateFee(uint256 _newFee) returns()
 func (_Licence *LicenceSession) UpdateFee(_newFee *big.Int) (*types.Transaction, error) {
 	return _Licence.Contract.UpdateFee(&_Licence.TransactOpts, _newFee)
 }
 
 // UpdateFee is a paid mutator transaction binding the contract method 0x9012c4a8.
 //
-// Solidity: function updateFee(_newFee uint256) returns()
+// Solidity: function updateFee(uint256 _newFee) returns()
 func (_Licence *LicenceTransactorSession) UpdateFee(_newFee *big.Int) (*types.Transaction, error) {
 	return _Licence.Contract.UpdateFee(&_Licence.TransactOpts, _newFee)
 }
@@ -551,7 +551,7 @@ type LicenceReceived struct {
 
 // FilterReceived is a free log retrieval operation binding the contract event 0x88a5966d370b9919b20f3e2c13ff65706f196a4e32cc2c12bf57088f88525874.
 //
-// Solidity: e Received(_from address, _amount uint256)
+// Solidity: event Received(address _from, uint256 _amount)
 func (_Licence *LicenceFilterer) FilterReceived(opts *bind.FilterOpts) (*LicenceReceivedIterator, error) {
 
 	logs, sub, err := _Licence.contract.FilterLogs(opts, "Received")
@@ -563,7 +563,7 @@ func (_Licence *LicenceFilterer) FilterReceived(opts *bind.FilterOpts) (*Licence
 
 // WatchReceived is a free log subscription operation binding the contract event 0x88a5966d370b9919b20f3e2c13ff65706f196a4e32cc2c12bf57088f88525874.
 //
-// Solidity: e Received(_from address, _amount uint256)
+// Solidity: event Received(address _from, uint256 _amount)
 func (_Licence *LicenceFilterer) WatchReceived(opts *bind.WatchOpts, sink chan<- *LicenceReceived) (event.Subscription, error) {
 
 	logs, sub, err := _Licence.contract.WatchLogs(opts, "Received")
@@ -674,7 +674,7 @@ type LicenceTransferredOwnership struct {
 
 // FilterTransferredOwnership is a free log retrieval operation binding the contract event 0x850b3df64837d7d518b45f5aa64d104652c3b80eb5b34a8e3d9eb666cb7cdea5.
 //
-// Solidity: e TransferredOwnership(_from address, _to address)
+// Solidity: event TransferredOwnership(address _from, address _to)
 func (_Licence *LicenceFilterer) FilterTransferredOwnership(opts *bind.FilterOpts) (*LicenceTransferredOwnershipIterator, error) {
 
 	logs, sub, err := _Licence.contract.FilterLogs(opts, "TransferredOwnership")
@@ -686,7 +686,7 @@ func (_Licence *LicenceFilterer) FilterTransferredOwnership(opts *bind.FilterOpt
 
 // WatchTransferredOwnership is a free log subscription operation binding the contract event 0x850b3df64837d7d518b45f5aa64d104652c3b80eb5b34a8e3d9eb666cb7cdea5.
 //
-// Solidity: e TransferredOwnership(_from address, _to address)
+// Solidity: event TransferredOwnership(address _from, address _to)
 func (_Licence *LicenceFilterer) WatchTransferredOwnership(opts *bind.WatchOpts, sink chan<- *LicenceTransferredOwnership) (event.Subscription, error) {
 
 	logs, sub, err := _Licence.contract.WatchLogs(opts, "TransferredOwnership")
@@ -799,7 +799,7 @@ type LicenceTransferredToCryptoFloat struct {
 
 // FilterTransferredToCryptoFloat is a free log retrieval operation binding the contract event 0xc8a7b0bd71097b47b2cad75e4e939d2aeb7fae88110e68f93b83fed08e9d3c38.
 //
-// Solidity: e TransferredToCryptoFloat(_from address, _to address, _asset address, _amount uint256)
+// Solidity: event TransferredToCryptoFloat(address _from, address _to, address _asset, uint256 _amount)
 func (_Licence *LicenceFilterer) FilterTransferredToCryptoFloat(opts *bind.FilterOpts) (*LicenceTransferredToCryptoFloatIterator, error) {
 
 	logs, sub, err := _Licence.contract.FilterLogs(opts, "TransferredToCryptoFloat")
@@ -811,7 +811,7 @@ func (_Licence *LicenceFilterer) FilterTransferredToCryptoFloat(opts *bind.Filte
 
 // WatchTransferredToCryptoFloat is a free log subscription operation binding the contract event 0xc8a7b0bd71097b47b2cad75e4e939d2aeb7fae88110e68f93b83fed08e9d3c38.
 //
-// Solidity: e TransferredToCryptoFloat(_from address, _to address, _asset address, _amount uint256)
+// Solidity: event TransferredToCryptoFloat(address _from, address _to, address _asset, uint256 _amount)
 func (_Licence *LicenceFilterer) WatchTransferredToCryptoFloat(opts *bind.WatchOpts, sink chan<- *LicenceTransferredToCryptoFloat) (event.Subscription, error) {
 
 	logs, sub, err := _Licence.contract.WatchLogs(opts, "TransferredToCryptoFloat")
@@ -924,7 +924,7 @@ type LicenceTransferredToTokenHolder struct {
 
 // FilterTransferredToTokenHolder is a free log retrieval operation binding the contract event 0xdd9dfad7b30d6b224e235f89565871419d3dec3b563a4e231f12d2cc97f9acfc.
 //
-// Solidity: e TransferredToTokenHolder(_from address, _to address, _asset address, _amount uint256)
+// Solidity: event TransferredToTokenHolder(address _from, address _to, address _asset, uint256 _amount)
 func (_Licence *LicenceFilterer) FilterTransferredToTokenHolder(opts *bind.FilterOpts) (*LicenceTransferredToTokenHolderIterator, error) {
 
 	logs, sub, err := _Licence.contract.FilterLogs(opts, "TransferredToTokenHolder")
@@ -936,7 +936,7 @@ func (_Licence *LicenceFilterer) FilterTransferredToTokenHolder(opts *bind.Filte
 
 // WatchTransferredToTokenHolder is a free log subscription operation binding the contract event 0xdd9dfad7b30d6b224e235f89565871419d3dec3b563a4e231f12d2cc97f9acfc.
 //
-// Solidity: e TransferredToTokenHolder(_from address, _to address, _asset address, _amount uint256)
+// Solidity: event TransferredToTokenHolder(address _from, address _to, address _asset, uint256 _amount)
 func (_Licence *LicenceFilterer) WatchTransferredToTokenHolder(opts *bind.WatchOpts, sink chan<- *LicenceTransferredToTokenHolder) (event.Subscription, error) {
 
 	logs, sub, err := _Licence.contract.WatchLogs(opts, "TransferredToTokenHolder")
@@ -1047,7 +1047,7 @@ type LicenceUpdatedDAO struct {
 
 // FilterUpdatedDAO is a free log retrieval operation binding the contract event 0x97ad44d5f57e52b66c8d238e30b7cccdc1e11ca21e52f3838a6d1d4fccc41ec3.
 //
-// Solidity: e UpdatedDAO(_sender address, _newDAO address)
+// Solidity: event UpdatedDAO(address _sender, address _newDAO)
 func (_Licence *LicenceFilterer) FilterUpdatedDAO(opts *bind.FilterOpts) (*LicenceUpdatedDAOIterator, error) {
 
 	logs, sub, err := _Licence.contract.FilterLogs(opts, "UpdatedDAO")
@@ -1059,7 +1059,7 @@ func (_Licence *LicenceFilterer) FilterUpdatedDAO(opts *bind.FilterOpts) (*Licen
 
 // WatchUpdatedDAO is a free log subscription operation binding the contract event 0x97ad44d5f57e52b66c8d238e30b7cccdc1e11ca21e52f3838a6d1d4fccc41ec3.
 //
-// Solidity: e UpdatedDAO(_sender address, _newDAO address)
+// Solidity: event UpdatedDAO(address _sender, address _newDAO)
 func (_Licence *LicenceFilterer) WatchUpdatedDAO(opts *bind.WatchOpts, sink chan<- *LicenceUpdatedDAO) (event.Subscription, error) {
 
 	logs, sub, err := _Licence.contract.WatchLogs(opts, "UpdatedDAO")
@@ -1170,7 +1170,7 @@ type LicenceUpdatedFee struct {
 
 // FilterUpdatedFee is a free log retrieval operation binding the contract event 0x6436bbb77997513c673b4327714d5ca63221edd8065af94ef7b7bbb4f2819b6c.
 //
-// Solidity: e UpdatedFee(_sender address, _newFee uint256)
+// Solidity: event UpdatedFee(address _sender, uint256 _newFee)
 func (_Licence *LicenceFilterer) FilterUpdatedFee(opts *bind.FilterOpts) (*LicenceUpdatedFeeIterator, error) {
 
 	logs, sub, err := _Licence.contract.FilterLogs(opts, "UpdatedFee")
@@ -1182,7 +1182,7 @@ func (_Licence *LicenceFilterer) FilterUpdatedFee(opts *bind.FilterOpts) (*Licen
 
 // WatchUpdatedFee is a free log subscription operation binding the contract event 0x6436bbb77997513c673b4327714d5ca63221edd8065af94ef7b7bbb4f2819b6c.
 //
-// Solidity: e UpdatedFee(_sender address, _newFee uint256)
+// Solidity: event UpdatedFee(address _sender, uint256 _newFee)
 func (_Licence *LicenceFilterer) WatchUpdatedFee(opts *bind.WatchOpts, sink chan<- *LicenceUpdatedFee) (event.Subscription, error) {
 
 	logs, sub, err := _Licence.contract.WatchLogs(opts, "UpdatedFee")

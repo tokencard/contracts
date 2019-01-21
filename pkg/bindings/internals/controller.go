@@ -242,7 +242,7 @@ func (_Controller *ControllerCallerSession) ControllerCount() (*big.Int, error) 
 
 // IsAdmin is a free data retrieval call binding the contract method 0x24d7806c.
 //
-// Solidity: function isAdmin(_account address) constant returns(bool)
+// Solidity: function isAdmin(address _account) constant returns(bool)
 func (_Controller *ControllerCaller) IsAdmin(opts *bind.CallOpts, _account common.Address) (bool, error) {
 	var (
 		ret0 = new(bool)
@@ -254,21 +254,21 @@ func (_Controller *ControllerCaller) IsAdmin(opts *bind.CallOpts, _account commo
 
 // IsAdmin is a free data retrieval call binding the contract method 0x24d7806c.
 //
-// Solidity: function isAdmin(_account address) constant returns(bool)
+// Solidity: function isAdmin(address _account) constant returns(bool)
 func (_Controller *ControllerSession) IsAdmin(_account common.Address) (bool, error) {
 	return _Controller.Contract.IsAdmin(&_Controller.CallOpts, _account)
 }
 
 // IsAdmin is a free data retrieval call binding the contract method 0x24d7806c.
 //
-// Solidity: function isAdmin(_account address) constant returns(bool)
+// Solidity: function isAdmin(address _account) constant returns(bool)
 func (_Controller *ControllerCallerSession) IsAdmin(_account common.Address) (bool, error) {
 	return _Controller.Contract.IsAdmin(&_Controller.CallOpts, _account)
 }
 
 // IsController is a free data retrieval call binding the contract method 0xb429afeb.
 //
-// Solidity: function isController(_account address) constant returns(bool)
+// Solidity: function isController(address _account) constant returns(bool)
 func (_Controller *ControllerCaller) IsController(opts *bind.CallOpts, _account common.Address) (bool, error) {
 	var (
 		ret0 = new(bool)
@@ -280,14 +280,14 @@ func (_Controller *ControllerCaller) IsController(opts *bind.CallOpts, _account 
 
 // IsController is a free data retrieval call binding the contract method 0xb429afeb.
 //
-// Solidity: function isController(_account address) constant returns(bool)
+// Solidity: function isController(address _account) constant returns(bool)
 func (_Controller *ControllerSession) IsController(_account common.Address) (bool, error) {
 	return _Controller.Contract.IsController(&_Controller.CallOpts, _account)
 }
 
 // IsController is a free data retrieval call binding the contract method 0xb429afeb.
 //
-// Solidity: function isController(_account address) constant returns(bool)
+// Solidity: function isController(address _account) constant returns(bool)
 func (_Controller *ControllerCallerSession) IsController(_account common.Address) (bool, error) {
 	return _Controller.Contract.IsController(&_Controller.CallOpts, _account)
 }
@@ -346,84 +346,84 @@ func (_Controller *ControllerCallerSession) Owner() (common.Address, error) {
 
 // AddAdmin is a paid mutator transaction binding the contract method 0x70480275.
 //
-// Solidity: function addAdmin(_account address) returns()
+// Solidity: function addAdmin(address _account) returns()
 func (_Controller *ControllerTransactor) AddAdmin(opts *bind.TransactOpts, _account common.Address) (*types.Transaction, error) {
 	return _Controller.contract.Transact(opts, "addAdmin", _account)
 }
 
 // AddAdmin is a paid mutator transaction binding the contract method 0x70480275.
 //
-// Solidity: function addAdmin(_account address) returns()
+// Solidity: function addAdmin(address _account) returns()
 func (_Controller *ControllerSession) AddAdmin(_account common.Address) (*types.Transaction, error) {
 	return _Controller.Contract.AddAdmin(&_Controller.TransactOpts, _account)
 }
 
 // AddAdmin is a paid mutator transaction binding the contract method 0x70480275.
 //
-// Solidity: function addAdmin(_account address) returns()
+// Solidity: function addAdmin(address _account) returns()
 func (_Controller *ControllerTransactorSession) AddAdmin(_account common.Address) (*types.Transaction, error) {
 	return _Controller.Contract.AddAdmin(&_Controller.TransactOpts, _account)
 }
 
 // AddController is a paid mutator transaction binding the contract method 0xa7fc7a07.
 //
-// Solidity: function addController(_account address) returns()
+// Solidity: function addController(address _account) returns()
 func (_Controller *ControllerTransactor) AddController(opts *bind.TransactOpts, _account common.Address) (*types.Transaction, error) {
 	return _Controller.contract.Transact(opts, "addController", _account)
 }
 
 // AddController is a paid mutator transaction binding the contract method 0xa7fc7a07.
 //
-// Solidity: function addController(_account address) returns()
+// Solidity: function addController(address _account) returns()
 func (_Controller *ControllerSession) AddController(_account common.Address) (*types.Transaction, error) {
 	return _Controller.Contract.AddController(&_Controller.TransactOpts, _account)
 }
 
 // AddController is a paid mutator transaction binding the contract method 0xa7fc7a07.
 //
-// Solidity: function addController(_account address) returns()
+// Solidity: function addController(address _account) returns()
 func (_Controller *ControllerTransactorSession) AddController(_account common.Address) (*types.Transaction, error) {
 	return _Controller.Contract.AddController(&_Controller.TransactOpts, _account)
 }
 
 // RemoveAdmin is a paid mutator transaction binding the contract method 0x1785f53c.
 //
-// Solidity: function removeAdmin(_account address) returns()
+// Solidity: function removeAdmin(address _account) returns()
 func (_Controller *ControllerTransactor) RemoveAdmin(opts *bind.TransactOpts, _account common.Address) (*types.Transaction, error) {
 	return _Controller.contract.Transact(opts, "removeAdmin", _account)
 }
 
 // RemoveAdmin is a paid mutator transaction binding the contract method 0x1785f53c.
 //
-// Solidity: function removeAdmin(_account address) returns()
+// Solidity: function removeAdmin(address _account) returns()
 func (_Controller *ControllerSession) RemoveAdmin(_account common.Address) (*types.Transaction, error) {
 	return _Controller.Contract.RemoveAdmin(&_Controller.TransactOpts, _account)
 }
 
 // RemoveAdmin is a paid mutator transaction binding the contract method 0x1785f53c.
 //
-// Solidity: function removeAdmin(_account address) returns()
+// Solidity: function removeAdmin(address _account) returns()
 func (_Controller *ControllerTransactorSession) RemoveAdmin(_account common.Address) (*types.Transaction, error) {
 	return _Controller.Contract.RemoveAdmin(&_Controller.TransactOpts, _account)
 }
 
 // RemoveController is a paid mutator transaction binding the contract method 0xf6a74ed7.
 //
-// Solidity: function removeController(_account address) returns()
+// Solidity: function removeController(address _account) returns()
 func (_Controller *ControllerTransactor) RemoveController(opts *bind.TransactOpts, _account common.Address) (*types.Transaction, error) {
 	return _Controller.contract.Transact(opts, "removeController", _account)
 }
 
 // RemoveController is a paid mutator transaction binding the contract method 0xf6a74ed7.
 //
-// Solidity: function removeController(_account address) returns()
+// Solidity: function removeController(address _account) returns()
 func (_Controller *ControllerSession) RemoveController(_account common.Address) (*types.Transaction, error) {
 	return _Controller.Contract.RemoveController(&_Controller.TransactOpts, _account)
 }
 
 // RemoveController is a paid mutator transaction binding the contract method 0xf6a74ed7.
 //
-// Solidity: function removeController(_account address) returns()
+// Solidity: function removeController(address _account) returns()
 func (_Controller *ControllerTransactorSession) RemoveController(_account common.Address) (*types.Transaction, error) {
 	return _Controller.Contract.RemoveController(&_Controller.TransactOpts, _account)
 }
@@ -451,21 +451,21 @@ func (_Controller *ControllerTransactorSession) RenounceOwnership() (*types.Tran
 
 // TransferOwnership is a paid mutator transaction binding the contract method 0xb242e534.
 //
-// Solidity: function transferOwnership(_account address, _transferable bool) returns()
+// Solidity: function transferOwnership(address _account, bool _transferable) returns()
 func (_Controller *ControllerTransactor) TransferOwnership(opts *bind.TransactOpts, _account common.Address, _transferable bool) (*types.Transaction, error) {
 	return _Controller.contract.Transact(opts, "transferOwnership", _account, _transferable)
 }
 
 // TransferOwnership is a paid mutator transaction binding the contract method 0xb242e534.
 //
-// Solidity: function transferOwnership(_account address, _transferable bool) returns()
+// Solidity: function transferOwnership(address _account, bool _transferable) returns()
 func (_Controller *ControllerSession) TransferOwnership(_account common.Address, _transferable bool) (*types.Transaction, error) {
 	return _Controller.Contract.TransferOwnership(&_Controller.TransactOpts, _account, _transferable)
 }
 
 // TransferOwnership is a paid mutator transaction binding the contract method 0xb242e534.
 //
-// Solidity: function transferOwnership(_account address, _transferable bool) returns()
+// Solidity: function transferOwnership(address _account, bool _transferable) returns()
 func (_Controller *ControllerTransactorSession) TransferOwnership(_account common.Address, _transferable bool) (*types.Transaction, error) {
 	return _Controller.Contract.TransferOwnership(&_Controller.TransactOpts, _account, _transferable)
 }
@@ -546,7 +546,7 @@ type ControllerAddedAdmin struct {
 
 // FilterAddedAdmin is a free log retrieval operation binding the contract event 0xc58b647b8ba5a8cab2f11f32673636cc1061324240972ed05e8cc005b81a4b7a.
 //
-// Solidity: e AddedAdmin(_sender address, _admin address)
+// Solidity: event AddedAdmin(address _sender, address _admin)
 func (_Controller *ControllerFilterer) FilterAddedAdmin(opts *bind.FilterOpts) (*ControllerAddedAdminIterator, error) {
 
 	logs, sub, err := _Controller.contract.FilterLogs(opts, "AddedAdmin")
@@ -558,7 +558,7 @@ func (_Controller *ControllerFilterer) FilterAddedAdmin(opts *bind.FilterOpts) (
 
 // WatchAddedAdmin is a free log subscription operation binding the contract event 0xc58b647b8ba5a8cab2f11f32673636cc1061324240972ed05e8cc005b81a4b7a.
 //
-// Solidity: e AddedAdmin(_sender address, _admin address)
+// Solidity: event AddedAdmin(address _sender, address _admin)
 func (_Controller *ControllerFilterer) WatchAddedAdmin(opts *bind.WatchOpts, sink chan<- *ControllerAddedAdmin) (event.Subscription, error) {
 
 	logs, sub, err := _Controller.contract.WatchLogs(opts, "AddedAdmin")
@@ -669,7 +669,7 @@ type ControllerAddedController struct {
 
 // FilterAddedController is a free log retrieval operation binding the contract event 0xb890d5abdcd5c2b61ce8bbc2cf6af9b6d7f7451830cbc85037cbdd182c86fe1d.
 //
-// Solidity: e AddedController(_sender address, _controller address)
+// Solidity: event AddedController(address _sender, address _controller)
 func (_Controller *ControllerFilterer) FilterAddedController(opts *bind.FilterOpts) (*ControllerAddedControllerIterator, error) {
 
 	logs, sub, err := _Controller.contract.FilterLogs(opts, "AddedController")
@@ -681,7 +681,7 @@ func (_Controller *ControllerFilterer) FilterAddedController(opts *bind.FilterOp
 
 // WatchAddedController is a free log subscription operation binding the contract event 0xb890d5abdcd5c2b61ce8bbc2cf6af9b6d7f7451830cbc85037cbdd182c86fe1d.
 //
-// Solidity: e AddedController(_sender address, _controller address)
+// Solidity: event AddedController(address _sender, address _controller)
 func (_Controller *ControllerFilterer) WatchAddedController(opts *bind.WatchOpts, sink chan<- *ControllerAddedController) (event.Subscription, error) {
 
 	logs, sub, err := _Controller.contract.WatchLogs(opts, "AddedController")
@@ -792,7 +792,7 @@ type ControllerRemovedAdmin struct {
 
 // FilterRemovedAdmin is a free log retrieval operation binding the contract event 0x787a2e12f4a55b658b8f573c32432ee11a5e8b51677d1e1e937aaf6a0bb5776e.
 //
-// Solidity: e RemovedAdmin(_sender address, _admin address)
+// Solidity: event RemovedAdmin(address _sender, address _admin)
 func (_Controller *ControllerFilterer) FilterRemovedAdmin(opts *bind.FilterOpts) (*ControllerRemovedAdminIterator, error) {
 
 	logs, sub, err := _Controller.contract.FilterLogs(opts, "RemovedAdmin")
@@ -804,7 +804,7 @@ func (_Controller *ControllerFilterer) FilterRemovedAdmin(opts *bind.FilterOpts)
 
 // WatchRemovedAdmin is a free log subscription operation binding the contract event 0x787a2e12f4a55b658b8f573c32432ee11a5e8b51677d1e1e937aaf6a0bb5776e.
 //
-// Solidity: e RemovedAdmin(_sender address, _admin address)
+// Solidity: event RemovedAdmin(address _sender, address _admin)
 func (_Controller *ControllerFilterer) WatchRemovedAdmin(opts *bind.WatchOpts, sink chan<- *ControllerRemovedAdmin) (event.Subscription, error) {
 
 	logs, sub, err := _Controller.contract.WatchLogs(opts, "RemovedAdmin")
@@ -915,7 +915,7 @@ type ControllerRemovedController struct {
 
 // FilterRemovedController is a free log retrieval operation binding the contract event 0xb6a283aaede08e15ef55c74e3014e30eb0c0040d4b156cccb77391268ea37394.
 //
-// Solidity: e RemovedController(_sender address, _controller address)
+// Solidity: event RemovedController(address _sender, address _controller)
 func (_Controller *ControllerFilterer) FilterRemovedController(opts *bind.FilterOpts) (*ControllerRemovedControllerIterator, error) {
 
 	logs, sub, err := _Controller.contract.FilterLogs(opts, "RemovedController")
@@ -927,7 +927,7 @@ func (_Controller *ControllerFilterer) FilterRemovedController(opts *bind.Filter
 
 // WatchRemovedController is a free log subscription operation binding the contract event 0xb6a283aaede08e15ef55c74e3014e30eb0c0040d4b156cccb77391268ea37394.
 //
-// Solidity: e RemovedController(_sender address, _controller address)
+// Solidity: event RemovedController(address _sender, address _controller)
 func (_Controller *ControllerFilterer) WatchRemovedController(opts *bind.WatchOpts, sink chan<- *ControllerRemovedController) (event.Subscription, error) {
 
 	logs, sub, err := _Controller.contract.WatchLogs(opts, "RemovedController")
@@ -1038,7 +1038,7 @@ type ControllerTransferredOwnership struct {
 
 // FilterTransferredOwnership is a free log retrieval operation binding the contract event 0x850b3df64837d7d518b45f5aa64d104652c3b80eb5b34a8e3d9eb666cb7cdea5.
 //
-// Solidity: e TransferredOwnership(_from address, _to address)
+// Solidity: event TransferredOwnership(address _from, address _to)
 func (_Controller *ControllerFilterer) FilterTransferredOwnership(opts *bind.FilterOpts) (*ControllerTransferredOwnershipIterator, error) {
 
 	logs, sub, err := _Controller.contract.FilterLogs(opts, "TransferredOwnership")
@@ -1050,7 +1050,7 @@ func (_Controller *ControllerFilterer) FilterTransferredOwnership(opts *bind.Fil
 
 // WatchTransferredOwnership is a free log subscription operation binding the contract event 0x850b3df64837d7d518b45f5aa64d104652c3b80eb5b34a8e3d9eb666cb7cdea5.
 //
-// Solidity: e TransferredOwnership(_from address, _to address)
+// Solidity: event TransferredOwnership(address _from, address _to)
 func (_Controller *ControllerFilterer) WatchTransferredOwnership(opts *bind.WatchOpts, sink chan<- *ControllerTransferredOwnership) (event.Subscription, error) {
 
 	logs, sub, err := _Controller.contract.WatchLogs(opts, "TransferredOwnership")

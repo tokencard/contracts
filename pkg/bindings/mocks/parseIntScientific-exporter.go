@@ -190,7 +190,7 @@ func (_ParseIntScientificExporter *ParseIntScientificExporterTransactorRaw) Tran
 
 // ParseIntScientific is a free data retrieval call binding the contract method 0xba070695.
 //
-// Solidity: function parseIntScientific(_a string) constant returns(uint256)
+// Solidity: function parseIntScientific(string _a) constant returns(uint256)
 func (_ParseIntScientificExporter *ParseIntScientificExporterCaller) ParseIntScientific(opts *bind.CallOpts, _a string) (*big.Int, error) {
 	var (
 		ret0 = new(*big.Int)
@@ -202,21 +202,21 @@ func (_ParseIntScientificExporter *ParseIntScientificExporterCaller) ParseIntSci
 
 // ParseIntScientific is a free data retrieval call binding the contract method 0xba070695.
 //
-// Solidity: function parseIntScientific(_a string) constant returns(uint256)
+// Solidity: function parseIntScientific(string _a) constant returns(uint256)
 func (_ParseIntScientificExporter *ParseIntScientificExporterSession) ParseIntScientific(_a string) (*big.Int, error) {
 	return _ParseIntScientificExporter.Contract.ParseIntScientific(&_ParseIntScientificExporter.CallOpts, _a)
 }
 
 // ParseIntScientific is a free data retrieval call binding the contract method 0xba070695.
 //
-// Solidity: function parseIntScientific(_a string) constant returns(uint256)
+// Solidity: function parseIntScientific(string _a) constant returns(uint256)
 func (_ParseIntScientificExporter *ParseIntScientificExporterCallerSession) ParseIntScientific(_a string) (*big.Int, error) {
 	return _ParseIntScientificExporter.Contract.ParseIntScientific(&_ParseIntScientificExporter.CallOpts, _a)
 }
 
 // ParseIntScientificDecimals is a free data retrieval call binding the contract method 0x87c8da5e.
 //
-// Solidity: function parseIntScientificDecimals(_a string, _b uint256) constant returns(uint256)
+// Solidity: function parseIntScientificDecimals(string _a, uint256 _b) constant returns(uint256)
 func (_ParseIntScientificExporter *ParseIntScientificExporterCaller) ParseIntScientificDecimals(opts *bind.CallOpts, _a string, _b *big.Int) (*big.Int, error) {
 	var (
 		ret0 = new(*big.Int)
@@ -228,21 +228,21 @@ func (_ParseIntScientificExporter *ParseIntScientificExporterCaller) ParseIntSci
 
 // ParseIntScientificDecimals is a free data retrieval call binding the contract method 0x87c8da5e.
 //
-// Solidity: function parseIntScientificDecimals(_a string, _b uint256) constant returns(uint256)
+// Solidity: function parseIntScientificDecimals(string _a, uint256 _b) constant returns(uint256)
 func (_ParseIntScientificExporter *ParseIntScientificExporterSession) ParseIntScientificDecimals(_a string, _b *big.Int) (*big.Int, error) {
 	return _ParseIntScientificExporter.Contract.ParseIntScientificDecimals(&_ParseIntScientificExporter.CallOpts, _a, _b)
 }
 
 // ParseIntScientificDecimals is a free data retrieval call binding the contract method 0x87c8da5e.
 //
-// Solidity: function parseIntScientificDecimals(_a string, _b uint256) constant returns(uint256)
+// Solidity: function parseIntScientificDecimals(string _a, uint256 _b) constant returns(uint256)
 func (_ParseIntScientificExporter *ParseIntScientificExporterCallerSession) ParseIntScientificDecimals(_a string, _b *big.Int) (*big.Int, error) {
 	return _ParseIntScientificExporter.Contract.ParseIntScientificDecimals(&_ParseIntScientificExporter.CallOpts, _a, _b)
 }
 
 // ParseIntScientificWei is a free data retrieval call binding the contract method 0x61f7e0ac.
 //
-// Solidity: function parseIntScientificWei(_a string) constant returns(uint256)
+// Solidity: function parseIntScientificWei(string _a) constant returns(uint256)
 func (_ParseIntScientificExporter *ParseIntScientificExporterCaller) ParseIntScientificWei(opts *bind.CallOpts, _a string) (*big.Int, error) {
 	var (
 		ret0 = new(*big.Int)
@@ -254,14 +254,14 @@ func (_ParseIntScientificExporter *ParseIntScientificExporterCaller) ParseIntSci
 
 // ParseIntScientificWei is a free data retrieval call binding the contract method 0x61f7e0ac.
 //
-// Solidity: function parseIntScientificWei(_a string) constant returns(uint256)
+// Solidity: function parseIntScientificWei(string _a) constant returns(uint256)
 func (_ParseIntScientificExporter *ParseIntScientificExporterSession) ParseIntScientificWei(_a string) (*big.Int, error) {
 	return _ParseIntScientificExporter.Contract.ParseIntScientificWei(&_ParseIntScientificExporter.CallOpts, _a)
 }
 
 // ParseIntScientificWei is a free data retrieval call binding the contract method 0x61f7e0ac.
 //
-// Solidity: function parseIntScientificWei(_a string) constant returns(uint256)
+// Solidity: function parseIntScientificWei(string _a) constant returns(uint256)
 func (_ParseIntScientificExporter *ParseIntScientificExporterCallerSession) ParseIntScientificWei(_a string) (*big.Int, error) {
 	return _ParseIntScientificExporter.Contract.ParseIntScientificWei(&_ParseIntScientificExporter.CallOpts, _a)
 }

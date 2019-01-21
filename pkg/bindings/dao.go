@@ -336,42 +336,42 @@ func (_Dao *DaoTransactorSession) RenounceOwnership() (*types.Transaction, error
 
 // TransferOwnership is a paid mutator transaction binding the contract method 0xb242e534.
 //
-// Solidity: function transferOwnership(_account address, _transferable bool) returns()
+// Solidity: function transferOwnership(address _account, bool _transferable) returns()
 func (_Dao *DaoTransactor) TransferOwnership(opts *bind.TransactOpts, _account common.Address, _transferable bool) (*types.Transaction, error) {
 	return _Dao.contract.Transact(opts, "transferOwnership", _account, _transferable)
 }
 
 // TransferOwnership is a paid mutator transaction binding the contract method 0xb242e534.
 //
-// Solidity: function transferOwnership(_account address, _transferable bool) returns()
+// Solidity: function transferOwnership(address _account, bool _transferable) returns()
 func (_Dao *DaoSession) TransferOwnership(_account common.Address, _transferable bool) (*types.Transaction, error) {
 	return _Dao.Contract.TransferOwnership(&_Dao.TransactOpts, _account, _transferable)
 }
 
 // TransferOwnership is a paid mutator transaction binding the contract method 0xb242e534.
 //
-// Solidity: function transferOwnership(_account address, _transferable bool) returns()
+// Solidity: function transferOwnership(address _account, bool _transferable) returns()
 func (_Dao *DaoTransactorSession) TransferOwnership(_account common.Address, _transferable bool) (*types.Transaction, error) {
 	return _Dao.Contract.TransferOwnership(&_Dao.TransactOpts, _account, _transferable)
 }
 
 // UpdateLicenceFee is a paid mutator transaction binding the contract method 0xde3d80d3.
 //
-// Solidity: function updateLicenceFee(_newFee uint256) returns()
+// Solidity: function updateLicenceFee(uint256 _newFee) returns()
 func (_Dao *DaoTransactor) UpdateLicenceFee(opts *bind.TransactOpts, _newFee *big.Int) (*types.Transaction, error) {
 	return _Dao.contract.Transact(opts, "updateLicenceFee", _newFee)
 }
 
 // UpdateLicenceFee is a paid mutator transaction binding the contract method 0xde3d80d3.
 //
-// Solidity: function updateLicenceFee(_newFee uint256) returns()
+// Solidity: function updateLicenceFee(uint256 _newFee) returns()
 func (_Dao *DaoSession) UpdateLicenceFee(_newFee *big.Int) (*types.Transaction, error) {
 	return _Dao.Contract.UpdateLicenceFee(&_Dao.TransactOpts, _newFee)
 }
 
 // UpdateLicenceFee is a paid mutator transaction binding the contract method 0xde3d80d3.
 //
-// Solidity: function updateLicenceFee(_newFee uint256) returns()
+// Solidity: function updateLicenceFee(uint256 _newFee) returns()
 func (_Dao *DaoTransactorSession) UpdateLicenceFee(_newFee *big.Int) (*types.Transaction, error) {
 	return _Dao.Contract.UpdateLicenceFee(&_Dao.TransactOpts, _newFee)
 }
@@ -452,7 +452,7 @@ type DaoTransferredOwnership struct {
 
 // FilterTransferredOwnership is a free log retrieval operation binding the contract event 0x850b3df64837d7d518b45f5aa64d104652c3b80eb5b34a8e3d9eb666cb7cdea5.
 //
-// Solidity: e TransferredOwnership(_from address, _to address)
+// Solidity: event TransferredOwnership(address _from, address _to)
 func (_Dao *DaoFilterer) FilterTransferredOwnership(opts *bind.FilterOpts) (*DaoTransferredOwnershipIterator, error) {
 
 	logs, sub, err := _Dao.contract.FilterLogs(opts, "TransferredOwnership")
@@ -464,7 +464,7 @@ func (_Dao *DaoFilterer) FilterTransferredOwnership(opts *bind.FilterOpts) (*Dao
 
 // WatchTransferredOwnership is a free log subscription operation binding the contract event 0x850b3df64837d7d518b45f5aa64d104652c3b80eb5b34a8e3d9eb666cb7cdea5.
 //
-// Solidity: e TransferredOwnership(_from address, _to address)
+// Solidity: event TransferredOwnership(address _from, address _to)
 func (_Dao *DaoFilterer) WatchTransferredOwnership(opts *bind.WatchOpts, sink chan<- *DaoTransferredOwnership) (event.Subscription, error) {
 
 	logs, sub, err := _Dao.contract.WatchLogs(opts, "TransferredOwnership")
