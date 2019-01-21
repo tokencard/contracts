@@ -335,7 +335,7 @@ var _ = Describe("ParseIntScientific", func() {
 			It("Should revert", func() {
 				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "1.01.23e-3", big.NewInt(2))
 				Expect(err).To(HaveOccurred())
-				Expect(err).To(MatchError(errors.New("abi: improperly formatted output")))
+				Expect(err.Error()).To(ContainSubstring("duplicate decimal point"))
 			})
 		})
 
@@ -343,7 +343,7 @@ var _ = Describe("ParseIntScientific", func() {
 			It("Should revert", func() {
 				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "1.0123e-3.", big.NewInt(2))
 				Expect(err).To(HaveOccurred())
-				Expect(err).To(MatchError(errors.New("abi: improperly formatted output")))
+				Expect(err.Error()).To(ContainSubstring("duplicate decimal point"))
 			})
 		})
 
@@ -351,7 +351,7 @@ var _ = Describe("ParseIntScientific", func() {
 			It("Should revert", func() {
 				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "1.0123e.-3", big.NewInt(2))
 				Expect(err).To(HaveOccurred())
-				Expect(err).To(MatchError(errors.New("abi: improperly formatted output")))
+				Expect(err.Error()).To(ContainSubstring("duplicate decimal point"))
 			})
 		})
 
@@ -359,7 +359,7 @@ var _ = Describe("ParseIntScientific", func() {
 			It("Should revert", func() {
 				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "1.0123e-.3", big.NewInt(2))
 				Expect(err).To(HaveOccurred())
-				Expect(err).To(MatchError(errors.New("abi: improperly formatted output")))
+				Expect(err.Error()).To(ContainSubstring("duplicate decimal point"))
 			})
 		})
 
@@ -367,7 +367,7 @@ var _ = Describe("ParseIntScientific", func() {
 			It("Should revert", func() {
 				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "1e.3", big.NewInt(0))
 				Expect(err).To(HaveOccurred())
-				Expect(err).To(MatchError(errors.New("abi: improperly formatted output")))
+				Expect(err.Error()).To(ContainSubstring("decimal after exponent"))
 			})
 		})
 
@@ -375,7 +375,7 @@ var _ = Describe("ParseIntScientific", func() {
 			It("Should revert", func() {
 				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "1e.+3", big.NewInt(0))
 				Expect(err).To(HaveOccurred())
-				Expect(err).To(MatchError(errors.New("abi: improperly formatted output")))
+				Expect(err.Error()).To(ContainSubstring("decimal after exponent"))
 			})
 		})
 
@@ -383,7 +383,7 @@ var _ = Describe("ParseIntScientific", func() {
 			It("Should revert", func() {
 				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "1e.-3", big.NewInt(2))
 				Expect(err).To(HaveOccurred())
-				Expect(err).To(MatchError(errors.New("abi: improperly formatted output")))
+				Expect(err.Error()).To(ContainSubstring("decimal after exponent"))
 			})
 		})
 
@@ -391,7 +391,7 @@ var _ = Describe("ParseIntScientific", func() {
 			It("Should revert", func() {
 				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "1e+.3", big.NewInt(0))
 				Expect(err).To(HaveOccurred())
-				Expect(err).To(MatchError(errors.New("abi: improperly formatted output")))
+				Expect(err.Error()).To(ContainSubstring("decimal after exponent"))
 			})
 		})
 
@@ -399,7 +399,7 @@ var _ = Describe("ParseIntScientific", func() {
 			It("Should revert", func() {
 				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "1e-.3", big.NewInt(0))
 				Expect(err).To(HaveOccurred())
-				Expect(err).To(MatchError(errors.New("abi: improperly formatted output")))
+				Expect(err.Error()).To(ContainSubstring("decimal after exponent"))
 			})
 		})
 
@@ -407,7 +407,7 @@ var _ = Describe("ParseIntScientific", func() {
 			It("Should revert", func() {
 				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "1e3.", big.NewInt(0))
 				Expect(err).To(HaveOccurred())
-				Expect(err).To(MatchError(errors.New("abi: improperly formatted output")))
+				Expect(err.Error()).To(ContainSubstring("decimal after exponent"))
 			})
 		})
 
@@ -415,7 +415,7 @@ var _ = Describe("ParseIntScientific", func() {
 			It("Should revert", func() {
 				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "1e+3.", big.NewInt(0))
 				Expect(err).To(HaveOccurred())
-				Expect(err).To(MatchError(errors.New("abi: improperly formatted output")))
+				Expect(err.Error()).To(ContainSubstring("decimal after exponent"))
 			})
 		})
 
@@ -423,7 +423,7 @@ var _ = Describe("ParseIntScientific", func() {
 			It("Should revert", func() {
 				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "1e-3.", big.NewInt(0))
 				Expect(err).To(HaveOccurred())
-				Expect(err).To(MatchError(errors.New("abi: improperly formatted output")))
+				Expect(err.Error()).To(ContainSubstring("decimal after exponent"))
 			})
 		})
 
@@ -431,7 +431,7 @@ var _ = Describe("ParseIntScientific", func() {
 			It("Should revert", func() {
 				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "1.0123e-3e", big.NewInt(2))
 				Expect(err).To(HaveOccurred())
-				Expect(err).To(MatchError(errors.New("abi: improperly formatted output")))
+				Expect(err.Error()).To(ContainSubstring("duplicate exponent symbol"))
 			})
 		})
 
@@ -439,7 +439,7 @@ var _ = Describe("ParseIntScientific", func() {
 			It("Should revert", func() {
 				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "1.01E23e-3", big.NewInt(2))
 				Expect(err).To(HaveOccurred())
-				Expect(err).To(MatchError(errors.New("abi: improperly formatted output")))
+				Expect(err.Error()).To(ContainSubstring("duplicate exponent symbol"))
 
 			})
 		})
@@ -448,7 +448,7 @@ var _ = Describe("ParseIntScientific", func() {
 			It("Should revert", func() {
 				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "1.012e3e-3", big.NewInt(2))
 				Expect(err).To(HaveOccurred())
-				Expect(err).To(MatchError(errors.New("abi: improperly formatted output")))
+				Expect(err.Error()).To(ContainSubstring("duplicate exponent symbol"))
 			})
 		})
 
@@ -456,7 +456,7 @@ var _ = Describe("ParseIntScientific", func() {
 			It("Should revert", func() {
 				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "1.0123E-3e", big.NewInt(2))
 				Expect(err).To(HaveOccurred())
-				Expect(err).To(MatchError(errors.New("abi: improperly formatted output")))
+				Expect(err.Error()).To(ContainSubstring("duplicate exponent symbol"))
 			})
 		})
 
@@ -464,7 +464,7 @@ var _ = Describe("ParseIntScientific", func() {
 			It("Should revert", func() {
 				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "1.01e23E-3", big.NewInt(2))
 				Expect(err).To(HaveOccurred())
-				Expect(err).To(MatchError(errors.New("abi: improperly formatted output")))
+				Expect(err.Error()).To(ContainSubstring("duplicate exponent symbol"))
 			})
 		})
 
@@ -472,7 +472,7 @@ var _ = Describe("ParseIntScientific", func() {
 			It("Should revert", func() {
 				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "1.0123ee-3", big.NewInt(2))
 				Expect(err).To(HaveOccurred())
-				Expect(err).To(MatchError(errors.New("abi: improperly formatted output")))
+				Expect(err.Error()).To(ContainSubstring("duplicate exponent symbol"))
 
 			})
 		})
@@ -481,7 +481,7 @@ var _ = Describe("ParseIntScientific", func() {
 			It("Should revert", func() {
 				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "1.0123eE-3", big.NewInt(2))
 				Expect(err).To(HaveOccurred())
-				Expect(err).To(MatchError(errors.New("abi: improperly formatted output")))
+				Expect(err.Error()).To(ContainSubstring("duplicate exponent symbol"))
 
 			})
 		})
@@ -490,7 +490,7 @@ var _ = Describe("ParseIntScientific", func() {
 			It("Should revert", func() {
 				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "1.0123Ee-3", big.NewInt(2))
 				Expect(err).To(HaveOccurred())
-				Expect(err).To(MatchError(errors.New("abi: improperly formatted output")))
+				Expect(err.Error()).To(ContainSubstring("duplicate exponent symbol"))
 			})
 		})
 
@@ -498,7 +498,7 @@ var _ = Describe("ParseIntScientific", func() {
 			It("Should revert", func() {
 				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "1.0123EE-3", big.NewInt(2))
 				Expect(err).To(HaveOccurred())
-				Expect(err).To(MatchError(errors.New("abi: improperly formatted output")))
+				Expect(err.Error()).To(ContainSubstring("duplicate exponent symbol"))
 
 			})
 		})
@@ -507,7 +507,7 @@ var _ = Describe("ParseIntScientific", func() {
 			It("Should revert", func() {
 				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "1.01+23e-3", big.NewInt(2))
 				Expect(err).To(HaveOccurred())
-				Expect(err).To(MatchError(errors.New("abi: improperly formatted output")))
+				Expect(err.Error()).To(ContainSubstring("+ sign not immediately after e"))
 
 			})
 		})
@@ -516,7 +516,7 @@ var _ = Describe("ParseIntScientific", func() {
 			It("Should revert", func() {
 				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "1.01+23e+3", big.NewInt(2))
 				Expect(err).To(HaveOccurred())
-				Expect(err).To(MatchError(errors.New("abi: improperly formatted output")))
+				Expect(err.Error()).To(ContainSubstring("+ sign not immediately after e"))
 
 			})
 		})
@@ -525,7 +525,7 @@ var _ = Describe("ParseIntScientific", func() {
 			It("Should revert", func() {
 				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "1.01-23e-3", big.NewInt(2))
 				Expect(err).To(HaveOccurred())
-				Expect(err).To(MatchError(errors.New("abi: improperly formatted output")))
+				Expect(err.Error()).To(ContainSubstring("- sign not immediately after e"))
 
 			})
 		})
@@ -534,7 +534,7 @@ var _ = Describe("ParseIntScientific", func() {
 			It("Should revert", func() {
 				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "1.01-23e+3", big.NewInt(2))
 				Expect(err).To(HaveOccurred())
-				Expect(err).To(MatchError(errors.New("abi: improperly formatted output")))
+				Expect(err.Error()).To(ContainSubstring("- sign not immediately after e"))
 
 			})
 		})
@@ -543,7 +543,7 @@ var _ = Describe("ParseIntScientific", func() {
 			It("Should revert", func() {
 				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "1.01-23E+3", big.NewInt(2))
 				Expect(err).To(HaveOccurred())
-				Expect(err).To(MatchError(errors.New("abi: improperly formatted output")))
+				Expect(err.Error()).To(ContainSubstring("- sign not immediately after e"))
 
 			})
 		})
@@ -552,7 +552,7 @@ var _ = Describe("ParseIntScientific", func() {
 			It("Should revert", func() {
 				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "1.01-23E3", big.NewInt(2))
 				Expect(err).To(HaveOccurred())
-				Expect(err).To(MatchError(errors.New("abi: improperly formatted output")))
+				Expect(err.Error()).To(ContainSubstring("- sign not immediately after e"))
 
 			})
 		})
@@ -561,7 +561,7 @@ var _ = Describe("ParseIntScientific", func() {
 			It("Should revert", func() {
 				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "1.01-23e3", big.NewInt(2))
 				Expect(err).To(HaveOccurred())
-				Expect(err).To(MatchError(errors.New("abi: improperly formatted output")))
+				Expect(err.Error()).To(ContainSubstring("- sign not immediately after e"))
 
 			})
 		})
@@ -570,7 +570,7 @@ var _ = Describe("ParseIntScientific", func() {
 			It("Should revert", func() {
 				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "1.0123e--3", big.NewInt(2))
 				Expect(err).To(HaveOccurred())
-				Expect(err).To(MatchError(errors.New("abi: improperly formatted output")))
+				Expect(err.Error()).To(ContainSubstring("duplicate -"))
 
 			})
 		})
@@ -579,7 +579,7 @@ var _ = Describe("ParseIntScientific", func() {
 			It("Should revert", func() {
 				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "1.0123e-3-", big.NewInt(2))
 				Expect(err).To(HaveOccurred())
-				Expect(err).To(MatchError(errors.New("abi: improperly formatted output")))
+				Expect(err.Error()).To(ContainSubstring("duplicate -"))
 
 			})
 		})
@@ -588,7 +588,7 @@ var _ = Describe("ParseIntScientific", func() {
 			It("Should revert", func() {
 				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "1.0123e-+3", big.NewInt(2))
 				Expect(err).To(HaveOccurred())
-				Expect(err).To(MatchError(errors.New("abi: improperly formatted output")))
+				Expect(err.Error()).To(ContainSubstring("extra sign"))
 
 			})
 		})
@@ -597,7 +597,7 @@ var _ = Describe("ParseIntScientific", func() {
 			It("Should revert", func() {
 				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "1.0123e-3+", big.NewInt(2))
 				Expect(err).To(HaveOccurred())
-				Expect(err).To(MatchError(errors.New("abi: improperly formatted output")))
+				Expect(err.Error()).To(ContainSubstring("extra sign"))
 
 			})
 		})
@@ -633,7 +633,7 @@ var _ = Describe("ParseIntScientific", func() {
 			It("Should revert", func() {
 				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "1.01t23e+", big.NewInt(2))
 				Expect(err).To(HaveOccurred())
-				Expect(err).To(MatchError(errors.New("abi: improperly formatted output")))
+				Expect(err.Error()).To(ContainSubstring("invalid digit"))
 
 			})
 		})
@@ -642,7 +642,7 @@ var _ = Describe("ParseIntScientific", func() {
 			It("Should revert", func() {
 				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "#1.01t23e+", big.NewInt(2))
 				Expect(err).To(HaveOccurred())
-				Expect(err).To(MatchError(errors.New("abi: improperly formatted output")))
+				Expect(err.Error()).To(ContainSubstring("invalid digit"))
 
 			})
 		})
@@ -651,7 +651,7 @@ var _ = Describe("ParseIntScientific", func() {
 			It("Should revert", func() {
 				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "1.0123e+P", big.NewInt(2))
 				Expect(err).To(HaveOccurred())
-				Expect(err).To(MatchError(errors.New("abi: improperly formatted output")))
+				Expect(err.Error()).To(ContainSubstring("invalid digit"))
 
 			})
 		})
@@ -660,7 +660,7 @@ var _ = Describe("ParseIntScientific", func() {
 			It("Should revert", func() {
 				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "1.0123e+12&", big.NewInt(0))
 				Expect(err).To(HaveOccurred())
-				Expect(err).To(MatchError(errors.New("abi: improperly formatted output")))
+				Expect(err.Error()).To(ContainSubstring("invalid digit"))
 
 			})
 		})
@@ -669,7 +669,7 @@ var _ = Describe("ParseIntScientific", func() {
 			It("Should revert", func() {
 				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "e1", big.NewInt(0))
 				Expect(err).To(HaveOccurred())
-				Expect(err).To(MatchError(errors.New("abi: improperly formatted output")))
+				Expect(err.Error()).To(ContainSubstring("missing integral part"))
 			})
 		})
 
@@ -677,7 +677,7 @@ var _ = Describe("ParseIntScientific", func() {
 			It("Should revert", func() {
 				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "e+1", big.NewInt(0))
 				Expect(err).To(HaveOccurred())
-				Expect(err).To(MatchError(errors.New("abi: improperly formatted output")))
+				Expect(err.Error()).To(ContainSubstring("missing integral part"))
 			})
 		})
 
@@ -685,7 +685,7 @@ var _ = Describe("ParseIntScientific", func() {
 			It("Should revert", func() {
 				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "e-1", big.NewInt(0))
 				Expect(err).To(HaveOccurred())
-				Expect(err).To(MatchError(errors.New("abi: improperly formatted output")))
+				Expect(err.Error()).To(ContainSubstring("missing integral part"))
 			})
 		})
 
@@ -693,7 +693,7 @@ var _ = Describe("ParseIntScientific", func() {
 			It("Should revert", func() {
 				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, ".1e-1", big.NewInt(0))
 				Expect(err).To(HaveOccurred())
-				Expect(err).To(MatchError(errors.New("abi: improperly formatted output")))
+				Expect(err.Error()).To(ContainSubstring("missing integral part"))
 			})
 		})
 
@@ -701,7 +701,7 @@ var _ = Describe("ParseIntScientific", func() {
 			It("Should revert", func() {
 				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, ".1e1", big.NewInt(2))
 				Expect(err).To(HaveOccurred())
-				Expect(err).To(MatchError(errors.New("abi: improperly formatted output")))
+				Expect(err.Error()).To(ContainSubstring("missing integral part"))
 			})
 		})
 
@@ -709,7 +709,7 @@ var _ = Describe("ParseIntScientific", func() {
 			It("Should revert", func() {
 				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, ".1234", big.NewInt(2))
 				Expect(err).To(HaveOccurred())
-				Expect(err).To(MatchError(errors.New("abi: improperly formatted output")))
+				Expect(err.Error()).To(ContainSubstring("missing integral part"))
 			})
 		})
 
@@ -772,7 +772,7 @@ var _ = Describe("ParseIntScientific", func() {
 				//10^77 < 2^256 - 1 < 10^78, #decimals = 78
 				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "1.111111111111111111111111111111111111111111111111111111111111111111111111111111", big.NewInt(0))
 				Expect(err).To(HaveOccurred())
-				Expect(err).To(MatchError(errors.New("abi: improperly formatted output")))
+				Expect(err.Error()).To(ContainSubstring("more than 77 decimal digits parsed"))
 				// Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*require\(second < 60, "second error"\);`))
 			})
 		})
@@ -791,7 +791,7 @@ var _ = Describe("ParseIntScientific", func() {
 				//10^77 < 2^256 - 1 < 10^78
 				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "1", big.NewInt(78))
 				Expect(err).To(HaveOccurred())
-				Expect(err).To(MatchError(errors.New("abi: improperly formatted output")))
+				Expect(err.Error()).To(ContainSubstring("exponent > 77"))
 			})
 		})
 
