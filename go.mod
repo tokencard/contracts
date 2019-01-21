@@ -1,7 +1,8 @@
 module github.com/tokencard/contracts
 
 require (
-	github.com/ethereum/go-ethereum v1.8.17
+	github.com/allegro/bigcache v1.1.0 // indirect
+	github.com/ethereum/go-ethereum v1.8.21
 	github.com/gobwas/glob v0.2.3
 	github.com/kr/pretty v0.1.0 // indirect
 	github.com/logrusorgru/aurora v0.0.0-20180419164547-d694e6f975a9

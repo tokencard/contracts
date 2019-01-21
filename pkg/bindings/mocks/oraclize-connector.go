@@ -242,189 +242,189 @@ func (_Oraclize *OraclizeCallerSession) RandomDSGetSessionPubKeyHash() ([32]byte
 
 // GetPrice is a paid mutator transaction binding the contract method 0x524f3889.
 //
-// Solidity: function getPrice(_datasource string) returns(_dsprice uint256)
+// Solidity: function getPrice(string _datasource) returns(uint256 _dsprice)
 func (_Oraclize *OraclizeTransactor) GetPrice(opts *bind.TransactOpts, _datasource string) (*types.Transaction, error) {
 	return _Oraclize.contract.Transact(opts, "getPrice", _datasource)
 }
 
 // GetPrice is a paid mutator transaction binding the contract method 0x524f3889.
 //
-// Solidity: function getPrice(_datasource string) returns(_dsprice uint256)
+// Solidity: function getPrice(string _datasource) returns(uint256 _dsprice)
 func (_Oraclize *OraclizeSession) GetPrice(_datasource string) (*types.Transaction, error) {
 	return _Oraclize.Contract.GetPrice(&_Oraclize.TransactOpts, _datasource)
 }
 
 // GetPrice is a paid mutator transaction binding the contract method 0x524f3889.
 //
-// Solidity: function getPrice(_datasource string) returns(_dsprice uint256)
+// Solidity: function getPrice(string _datasource) returns(uint256 _dsprice)
 func (_Oraclize *OraclizeTransactorSession) GetPrice(_datasource string) (*types.Transaction, error) {
 	return _Oraclize.Contract.GetPrice(&_Oraclize.TransactOpts, _datasource)
 }
 
 // Query is a paid mutator transaction binding the contract method 0xadf59f99.
 //
-// Solidity: function query(_timestamp uint256, _datasource string, _arg string) returns(_id bytes32)
+// Solidity: function query(uint256 _timestamp, string _datasource, string _arg) returns(bytes32 _id)
 func (_Oraclize *OraclizeTransactor) Query(opts *bind.TransactOpts, _timestamp *big.Int, _datasource string, _arg string) (*types.Transaction, error) {
 	return _Oraclize.contract.Transact(opts, "query", _timestamp, _datasource, _arg)
 }
 
 // Query is a paid mutator transaction binding the contract method 0xadf59f99.
 //
-// Solidity: function query(_timestamp uint256, _datasource string, _arg string) returns(_id bytes32)
+// Solidity: function query(uint256 _timestamp, string _datasource, string _arg) returns(bytes32 _id)
 func (_Oraclize *OraclizeSession) Query(_timestamp *big.Int, _datasource string, _arg string) (*types.Transaction, error) {
 	return _Oraclize.Contract.Query(&_Oraclize.TransactOpts, _timestamp, _datasource, _arg)
 }
 
 // Query is a paid mutator transaction binding the contract method 0xadf59f99.
 //
-// Solidity: function query(_timestamp uint256, _datasource string, _arg string) returns(_id bytes32)
+// Solidity: function query(uint256 _timestamp, string _datasource, string _arg) returns(bytes32 _id)
 func (_Oraclize *OraclizeTransactorSession) Query(_timestamp *big.Int, _datasource string, _arg string) (*types.Transaction, error) {
 	return _Oraclize.Contract.Query(&_Oraclize.TransactOpts, _timestamp, _datasource, _arg)
 }
 
 // Query2 is a paid mutator transaction binding the contract method 0x77228659.
 //
-// Solidity: function query2(_timestamp uint256, _datasource string, _arg1 string, _arg2 string) returns(_id bytes32)
+// Solidity: function query2(uint256 _timestamp, string _datasource, string _arg1, string _arg2) returns(bytes32 _id)
 func (_Oraclize *OraclizeTransactor) Query2(opts *bind.TransactOpts, _timestamp *big.Int, _datasource string, _arg1 string, _arg2 string) (*types.Transaction, error) {
 	return _Oraclize.contract.Transact(opts, "query2", _timestamp, _datasource, _arg1, _arg2)
 }
 
 // Query2 is a paid mutator transaction binding the contract method 0x77228659.
 //
-// Solidity: function query2(_timestamp uint256, _datasource string, _arg1 string, _arg2 string) returns(_id bytes32)
+// Solidity: function query2(uint256 _timestamp, string _datasource, string _arg1, string _arg2) returns(bytes32 _id)
 func (_Oraclize *OraclizeSession) Query2(_timestamp *big.Int, _datasource string, _arg1 string, _arg2 string) (*types.Transaction, error) {
 	return _Oraclize.Contract.Query2(&_Oraclize.TransactOpts, _timestamp, _datasource, _arg1, _arg2)
 }
 
 // Query2 is a paid mutator transaction binding the contract method 0x77228659.
 //
-// Solidity: function query2(_timestamp uint256, _datasource string, _arg1 string, _arg2 string) returns(_id bytes32)
+// Solidity: function query2(uint256 _timestamp, string _datasource, string _arg1, string _arg2) returns(bytes32 _id)
 func (_Oraclize *OraclizeTransactorSession) Query2(_timestamp *big.Int, _datasource string, _arg1 string, _arg2 string) (*types.Transaction, error) {
 	return _Oraclize.Contract.Query2(&_Oraclize.TransactOpts, _timestamp, _datasource, _arg1, _arg2)
 }
 
 // Query2WithGasLimit is a paid mutator transaction binding the contract method 0x85dee34c.
 //
-// Solidity: function query2_withGasLimit(_timestamp uint256, _datasource string, _arg1 string, _arg2 string, _gaslimit uint256) returns(_id bytes32)
+// Solidity: function query2_withGasLimit(uint256 _timestamp, string _datasource, string _arg1, string _arg2, uint256 _gaslimit) returns(bytes32 _id)
 func (_Oraclize *OraclizeTransactor) Query2WithGasLimit(opts *bind.TransactOpts, _timestamp *big.Int, _datasource string, _arg1 string, _arg2 string, _gaslimit *big.Int) (*types.Transaction, error) {
 	return _Oraclize.contract.Transact(opts, "query2_withGasLimit", _timestamp, _datasource, _arg1, _arg2, _gaslimit)
 }
 
 // Query2WithGasLimit is a paid mutator transaction binding the contract method 0x85dee34c.
 //
-// Solidity: function query2_withGasLimit(_timestamp uint256, _datasource string, _arg1 string, _arg2 string, _gaslimit uint256) returns(_id bytes32)
+// Solidity: function query2_withGasLimit(uint256 _timestamp, string _datasource, string _arg1, string _arg2, uint256 _gaslimit) returns(bytes32 _id)
 func (_Oraclize *OraclizeSession) Query2WithGasLimit(_timestamp *big.Int, _datasource string, _arg1 string, _arg2 string, _gaslimit *big.Int) (*types.Transaction, error) {
 	return _Oraclize.Contract.Query2WithGasLimit(&_Oraclize.TransactOpts, _timestamp, _datasource, _arg1, _arg2, _gaslimit)
 }
 
 // Query2WithGasLimit is a paid mutator transaction binding the contract method 0x85dee34c.
 //
-// Solidity: function query2_withGasLimit(_timestamp uint256, _datasource string, _arg1 string, _arg2 string, _gaslimit uint256) returns(_id bytes32)
+// Solidity: function query2_withGasLimit(uint256 _timestamp, string _datasource, string _arg1, string _arg2, uint256 _gaslimit) returns(bytes32 _id)
 func (_Oraclize *OraclizeTransactorSession) Query2WithGasLimit(_timestamp *big.Int, _datasource string, _arg1 string, _arg2 string, _gaslimit *big.Int) (*types.Transaction, error) {
 	return _Oraclize.Contract.Query2WithGasLimit(&_Oraclize.TransactOpts, _timestamp, _datasource, _arg1, _arg2, _gaslimit)
 }
 
 // QueryN is a paid mutator transaction binding the contract method 0x83eed3d5.
 //
-// Solidity: function queryN(_timestamp uint256, _datasource string, _argN bytes) returns(_id bytes32)
+// Solidity: function queryN(uint256 _timestamp, string _datasource, bytes _argN) returns(bytes32 _id)
 func (_Oraclize *OraclizeTransactor) QueryN(opts *bind.TransactOpts, _timestamp *big.Int, _datasource string, _argN []byte) (*types.Transaction, error) {
 	return _Oraclize.contract.Transact(opts, "queryN", _timestamp, _datasource, _argN)
 }
 
 // QueryN is a paid mutator transaction binding the contract method 0x83eed3d5.
 //
-// Solidity: function queryN(_timestamp uint256, _datasource string, _argN bytes) returns(_id bytes32)
+// Solidity: function queryN(uint256 _timestamp, string _datasource, bytes _argN) returns(bytes32 _id)
 func (_Oraclize *OraclizeSession) QueryN(_timestamp *big.Int, _datasource string, _argN []byte) (*types.Transaction, error) {
 	return _Oraclize.Contract.QueryN(&_Oraclize.TransactOpts, _timestamp, _datasource, _argN)
 }
 
 // QueryN is a paid mutator transaction binding the contract method 0x83eed3d5.
 //
-// Solidity: function queryN(_timestamp uint256, _datasource string, _argN bytes) returns(_id bytes32)
+// Solidity: function queryN(uint256 _timestamp, string _datasource, bytes _argN) returns(bytes32 _id)
 func (_Oraclize *OraclizeTransactorSession) QueryN(_timestamp *big.Int, _datasource string, _argN []byte) (*types.Transaction, error) {
 	return _Oraclize.Contract.QueryN(&_Oraclize.TransactOpts, _timestamp, _datasource, _argN)
 }
 
 // QueryNWithGasLimit is a paid mutator transaction binding the contract method 0xc55c1cb6.
 //
-// Solidity: function queryN_withGasLimit(_timestamp uint256, _datasource string, _argN bytes, _gaslimit uint256) returns(_id bytes32)
+// Solidity: function queryN_withGasLimit(uint256 _timestamp, string _datasource, bytes _argN, uint256 _gaslimit) returns(bytes32 _id)
 func (_Oraclize *OraclizeTransactor) QueryNWithGasLimit(opts *bind.TransactOpts, _timestamp *big.Int, _datasource string, _argN []byte, _gaslimit *big.Int) (*types.Transaction, error) {
 	return _Oraclize.contract.Transact(opts, "queryN_withGasLimit", _timestamp, _datasource, _argN, _gaslimit)
 }
 
 // QueryNWithGasLimit is a paid mutator transaction binding the contract method 0xc55c1cb6.
 //
-// Solidity: function queryN_withGasLimit(_timestamp uint256, _datasource string, _argN bytes, _gaslimit uint256) returns(_id bytes32)
+// Solidity: function queryN_withGasLimit(uint256 _timestamp, string _datasource, bytes _argN, uint256 _gaslimit) returns(bytes32 _id)
 func (_Oraclize *OraclizeSession) QueryNWithGasLimit(_timestamp *big.Int, _datasource string, _argN []byte, _gaslimit *big.Int) (*types.Transaction, error) {
 	return _Oraclize.Contract.QueryNWithGasLimit(&_Oraclize.TransactOpts, _timestamp, _datasource, _argN, _gaslimit)
 }
 
 // QueryNWithGasLimit is a paid mutator transaction binding the contract method 0xc55c1cb6.
 //
-// Solidity: function queryN_withGasLimit(_timestamp uint256, _datasource string, _argN bytes, _gaslimit uint256) returns(_id bytes32)
+// Solidity: function queryN_withGasLimit(uint256 _timestamp, string _datasource, bytes _argN, uint256 _gaslimit) returns(bytes32 _id)
 func (_Oraclize *OraclizeTransactorSession) QueryNWithGasLimit(_timestamp *big.Int, _datasource string, _argN []byte, _gaslimit *big.Int) (*types.Transaction, error) {
 	return _Oraclize.Contract.QueryNWithGasLimit(&_Oraclize.TransactOpts, _timestamp, _datasource, _argN, _gaslimit)
 }
 
 // QueryWithGasLimit is a paid mutator transaction binding the contract method 0xc51be90f.
 //
-// Solidity: function query_withGasLimit(_timestamp uint256, _datasource string, _arg string, _gaslimit uint256) returns(_id bytes32)
+// Solidity: function query_withGasLimit(uint256 _timestamp, string _datasource, string _arg, uint256 _gaslimit) returns(bytes32 _id)
 func (_Oraclize *OraclizeTransactor) QueryWithGasLimit(opts *bind.TransactOpts, _timestamp *big.Int, _datasource string, _arg string, _gaslimit *big.Int) (*types.Transaction, error) {
 	return _Oraclize.contract.Transact(opts, "query_withGasLimit", _timestamp, _datasource, _arg, _gaslimit)
 }
 
 // QueryWithGasLimit is a paid mutator transaction binding the contract method 0xc51be90f.
 //
-// Solidity: function query_withGasLimit(_timestamp uint256, _datasource string, _arg string, _gaslimit uint256) returns(_id bytes32)
+// Solidity: function query_withGasLimit(uint256 _timestamp, string _datasource, string _arg, uint256 _gaslimit) returns(bytes32 _id)
 func (_Oraclize *OraclizeSession) QueryWithGasLimit(_timestamp *big.Int, _datasource string, _arg string, _gaslimit *big.Int) (*types.Transaction, error) {
 	return _Oraclize.Contract.QueryWithGasLimit(&_Oraclize.TransactOpts, _timestamp, _datasource, _arg, _gaslimit)
 }
 
 // QueryWithGasLimit is a paid mutator transaction binding the contract method 0xc51be90f.
 //
-// Solidity: function query_withGasLimit(_timestamp uint256, _datasource string, _arg string, _gaslimit uint256) returns(_id bytes32)
+// Solidity: function query_withGasLimit(uint256 _timestamp, string _datasource, string _arg, uint256 _gaslimit) returns(bytes32 _id)
 func (_Oraclize *OraclizeTransactorSession) QueryWithGasLimit(_timestamp *big.Int, _datasource string, _arg string, _gaslimit *big.Int) (*types.Transaction, error) {
 	return _Oraclize.Contract.QueryWithGasLimit(&_Oraclize.TransactOpts, _timestamp, _datasource, _arg, _gaslimit)
 }
 
 // SetCustomGasPrice is a paid mutator transaction binding the contract method 0xca6ad1e4.
 //
-// Solidity: function setCustomGasPrice(_gasPrice uint256) returns()
+// Solidity: function setCustomGasPrice(uint256 _gasPrice) returns()
 func (_Oraclize *OraclizeTransactor) SetCustomGasPrice(opts *bind.TransactOpts, _gasPrice *big.Int) (*types.Transaction, error) {
 	return _Oraclize.contract.Transact(opts, "setCustomGasPrice", _gasPrice)
 }
 
 // SetCustomGasPrice is a paid mutator transaction binding the contract method 0xca6ad1e4.
 //
-// Solidity: function setCustomGasPrice(_gasPrice uint256) returns()
+// Solidity: function setCustomGasPrice(uint256 _gasPrice) returns()
 func (_Oraclize *OraclizeSession) SetCustomGasPrice(_gasPrice *big.Int) (*types.Transaction, error) {
 	return _Oraclize.Contract.SetCustomGasPrice(&_Oraclize.TransactOpts, _gasPrice)
 }
 
 // SetCustomGasPrice is a paid mutator transaction binding the contract method 0xca6ad1e4.
 //
-// Solidity: function setCustomGasPrice(_gasPrice uint256) returns()
+// Solidity: function setCustomGasPrice(uint256 _gasPrice) returns()
 func (_Oraclize *OraclizeTransactorSession) SetCustomGasPrice(_gasPrice *big.Int) (*types.Transaction, error) {
 	return _Oraclize.Contract.SetCustomGasPrice(&_Oraclize.TransactOpts, _gasPrice)
 }
 
 // SetProofType is a paid mutator transaction binding the contract method 0x688dcfd7.
 //
-// Solidity: function setProofType(_proofType bytes1) returns()
+// Solidity: function setProofType(bytes1 _proofType) returns()
 func (_Oraclize *OraclizeTransactor) SetProofType(opts *bind.TransactOpts, _proofType [1]byte) (*types.Transaction, error) {
 	return _Oraclize.contract.Transact(opts, "setProofType", _proofType)
 }
 
 // SetProofType is a paid mutator transaction binding the contract method 0x688dcfd7.
 //
-// Solidity: function setProofType(_proofType bytes1) returns()
+// Solidity: function setProofType(bytes1 _proofType) returns()
 func (_Oraclize *OraclizeSession) SetProofType(_proofType [1]byte) (*types.Transaction, error) {
 	return _Oraclize.Contract.SetProofType(&_Oraclize.TransactOpts, _proofType)
 }
 
 // SetProofType is a paid mutator transaction binding the contract method 0x688dcfd7.
 //
-// Solidity: function setProofType(_proofType bytes1) returns()
+// Solidity: function setProofType(bytes1 _proofType) returns()
 func (_Oraclize *OraclizeTransactorSession) SetProofType(_proofType [1]byte) (*types.Transaction, error) {
 	return _Oraclize.Contract.SetProofType(&_Oraclize.TransactOpts, _proofType)
 }

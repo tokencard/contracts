@@ -216,7 +216,7 @@ func (_Oracle *OracleCallerSession) APIPublicKey() ([]byte, error) {
 
 // Convert is a free data retrieval call binding the contract method 0x67c6e39c.
 //
-// Solidity: function convert(_token address, _amount uint256) constant returns(bool, uint256)
+// Solidity: function convert(address _token, uint256 _amount) constant returns(bool, uint256)
 func (_Oracle *OracleCaller) Convert(opts *bind.CallOpts, _token common.Address, _amount *big.Int) (bool, *big.Int, error) {
 	var (
 		ret0 = new(bool)
@@ -232,21 +232,21 @@ func (_Oracle *OracleCaller) Convert(opts *bind.CallOpts, _token common.Address,
 
 // Convert is a free data retrieval call binding the contract method 0x67c6e39c.
 //
-// Solidity: function convert(_token address, _amount uint256) constant returns(bool, uint256)
+// Solidity: function convert(address _token, uint256 _amount) constant returns(bool, uint256)
 func (_Oracle *OracleSession) Convert(_token common.Address, _amount *big.Int) (bool, *big.Int, error) {
 	return _Oracle.Contract.Convert(&_Oracle.CallOpts, _token, _amount)
 }
 
 // Convert is a free data retrieval call binding the contract method 0x67c6e39c.
 //
-// Solidity: function convert(_token address, _amount uint256) constant returns(bool, uint256)
+// Solidity: function convert(address _token, uint256 _amount) constant returns(bool, uint256)
 func (_Oracle *OracleCallerSession) Convert(_token common.Address, _amount *big.Int) (bool, *big.Int, error) {
 	return _Oracle.Contract.Convert(&_Oracle.CallOpts, _token, _amount)
 }
 
 // ParseRate is a free data retrieval call binding the contract method 0xa780b2f3.
 //
-// Solidity: function parseRate(_json string) constant returns(string)
+// Solidity: function parseRate(string _json) constant returns(string)
 func (_Oracle *OracleCaller) ParseRate(opts *bind.CallOpts, _json string) (string, error) {
 	var (
 		ret0 = new(string)
@@ -258,21 +258,21 @@ func (_Oracle *OracleCaller) ParseRate(opts *bind.CallOpts, _json string) (strin
 
 // ParseRate is a free data retrieval call binding the contract method 0xa780b2f3.
 //
-// Solidity: function parseRate(_json string) constant returns(string)
+// Solidity: function parseRate(string _json) constant returns(string)
 func (_Oracle *OracleSession) ParseRate(_json string) (string, error) {
 	return _Oracle.Contract.ParseRate(&_Oracle.CallOpts, _json)
 }
 
 // ParseRate is a free data retrieval call binding the contract method 0xa780b2f3.
 //
-// Solidity: function parseRate(_json string) constant returns(string)
+// Solidity: function parseRate(string _json) constant returns(string)
 func (_Oracle *OracleCallerSession) ParseRate(_json string) (string, error) {
 	return _Oracle.Contract.ParseRate(&_Oracle.CallOpts, _json)
 }
 
 // Tokens is a free data retrieval call binding the contract method 0xe4860339.
 //
-// Solidity: function tokens( address) constant returns(symbol string, magnitude uint256, rate uint256, lastUpdate uint256, exists bool)
+// Solidity: function tokens(address ) constant returns(string symbol, uint256 magnitude, uint256 rate, uint256 lastUpdate, bool exists)
 func (_Oracle *OracleCaller) Tokens(opts *bind.CallOpts, arg0 common.Address) (struct {
 	Symbol     string
 	Magnitude  *big.Int
@@ -294,7 +294,7 @@ func (_Oracle *OracleCaller) Tokens(opts *bind.CallOpts, arg0 common.Address) (s
 
 // Tokens is a free data retrieval call binding the contract method 0xe4860339.
 //
-// Solidity: function tokens( address) constant returns(symbol string, magnitude uint256, rate uint256, lastUpdate uint256, exists bool)
+// Solidity: function tokens(address ) constant returns(string symbol, uint256 magnitude, uint256 rate, uint256 lastUpdate, bool exists)
 func (_Oracle *OracleSession) Tokens(arg0 common.Address) (struct {
 	Symbol     string
 	Magnitude  *big.Int
@@ -307,7 +307,7 @@ func (_Oracle *OracleSession) Tokens(arg0 common.Address) (struct {
 
 // Tokens is a free data retrieval call binding the contract method 0xe4860339.
 //
-// Solidity: function tokens( address) constant returns(symbol string, magnitude uint256, rate uint256, lastUpdate uint256, exists bool)
+// Solidity: function tokens(address ) constant returns(string symbol, uint256 magnitude, uint256 rate, uint256 lastUpdate, bool exists)
 func (_Oracle *OracleCallerSession) Tokens(arg0 common.Address) (struct {
 	Symbol     string
 	Magnitude  *big.Int
@@ -320,168 +320,168 @@ func (_Oracle *OracleCallerSession) Tokens(arg0 common.Address) (struct {
 
 // Callback is a paid mutator transaction binding the contract method 0x38bbfa50.
 //
-// Solidity: function __callback(_queryID bytes32, _result string, _proof bytes) returns()
+// Solidity: function __callback(bytes32 _queryID, string _result, bytes _proof) returns()
 func (_Oracle *OracleTransactor) Callback(opts *bind.TransactOpts, _queryID [32]byte, _result string, _proof []byte) (*types.Transaction, error) {
 	return _Oracle.contract.Transact(opts, "__callback", _queryID, _result, _proof)
 }
 
 // Callback is a paid mutator transaction binding the contract method 0x38bbfa50.
 //
-// Solidity: function __callback(_queryID bytes32, _result string, _proof bytes) returns()
+// Solidity: function __callback(bytes32 _queryID, string _result, bytes _proof) returns()
 func (_Oracle *OracleSession) Callback(_queryID [32]byte, _result string, _proof []byte) (*types.Transaction, error) {
 	return _Oracle.Contract.Callback(&_Oracle.TransactOpts, _queryID, _result, _proof)
 }
 
 // Callback is a paid mutator transaction binding the contract method 0x38bbfa50.
 //
-// Solidity: function __callback(_queryID bytes32, _result string, _proof bytes) returns()
+// Solidity: function __callback(bytes32 _queryID, string _result, bytes _proof) returns()
 func (_Oracle *OracleTransactorSession) Callback(_queryID [32]byte, _result string, _proof []byte) (*types.Transaction, error) {
 	return _Oracle.Contract.Callback(&_Oracle.TransactOpts, _queryID, _result, _proof)
 }
 
 // AddTokens is a paid mutator transaction binding the contract method 0xfcde6831.
 //
-// Solidity: function addTokens(_tokens address[], _symbols bytes32[], _magnitude uint256[], _updateDate uint256) returns()
+// Solidity: function addTokens(address[] _tokens, bytes32[] _symbols, uint256[] _magnitude, uint256 _updateDate) returns()
 func (_Oracle *OracleTransactor) AddTokens(opts *bind.TransactOpts, _tokens []common.Address, _symbols [][32]byte, _magnitude []*big.Int, _updateDate *big.Int) (*types.Transaction, error) {
 	return _Oracle.contract.Transact(opts, "addTokens", _tokens, _symbols, _magnitude, _updateDate)
 }
 
 // AddTokens is a paid mutator transaction binding the contract method 0xfcde6831.
 //
-// Solidity: function addTokens(_tokens address[], _symbols bytes32[], _magnitude uint256[], _updateDate uint256) returns()
+// Solidity: function addTokens(address[] _tokens, bytes32[] _symbols, uint256[] _magnitude, uint256 _updateDate) returns()
 func (_Oracle *OracleSession) AddTokens(_tokens []common.Address, _symbols [][32]byte, _magnitude []*big.Int, _updateDate *big.Int) (*types.Transaction, error) {
 	return _Oracle.Contract.AddTokens(&_Oracle.TransactOpts, _tokens, _symbols, _magnitude, _updateDate)
 }
 
 // AddTokens is a paid mutator transaction binding the contract method 0xfcde6831.
 //
-// Solidity: function addTokens(_tokens address[], _symbols bytes32[], _magnitude uint256[], _updateDate uint256) returns()
+// Solidity: function addTokens(address[] _tokens, bytes32[] _symbols, uint256[] _magnitude, uint256 _updateDate) returns()
 func (_Oracle *OracleTransactorSession) AddTokens(_tokens []common.Address, _symbols [][32]byte, _magnitude []*big.Int, _updateDate *big.Int) (*types.Transaction, error) {
 	return _Oracle.Contract.AddTokens(&_Oracle.TransactOpts, _tokens, _symbols, _magnitude, _updateDate)
 }
 
 // RemoveTokens is a paid mutator transaction binding the contract method 0x6c3824ef.
 //
-// Solidity: function removeTokens(_tokens address[]) returns()
+// Solidity: function removeTokens(address[] _tokens) returns()
 func (_Oracle *OracleTransactor) RemoveTokens(opts *bind.TransactOpts, _tokens []common.Address) (*types.Transaction, error) {
 	return _Oracle.contract.Transact(opts, "removeTokens", _tokens)
 }
 
 // RemoveTokens is a paid mutator transaction binding the contract method 0x6c3824ef.
 //
-// Solidity: function removeTokens(_tokens address[]) returns()
+// Solidity: function removeTokens(address[] _tokens) returns()
 func (_Oracle *OracleSession) RemoveTokens(_tokens []common.Address) (*types.Transaction, error) {
 	return _Oracle.Contract.RemoveTokens(&_Oracle.TransactOpts, _tokens)
 }
 
 // RemoveTokens is a paid mutator transaction binding the contract method 0x6c3824ef.
 //
-// Solidity: function removeTokens(_tokens address[]) returns()
+// Solidity: function removeTokens(address[] _tokens) returns()
 func (_Oracle *OracleTransactorSession) RemoveTokens(_tokens []common.Address) (*types.Transaction, error) {
 	return _Oracle.Contract.RemoveTokens(&_Oracle.TransactOpts, _tokens)
 }
 
 // SetCustomGasPrice is a paid mutator transaction binding the contract method 0xca6ad1e4.
 //
-// Solidity: function setCustomGasPrice(_gasPrice uint256) returns()
+// Solidity: function setCustomGasPrice(uint256 _gasPrice) returns()
 func (_Oracle *OracleTransactor) SetCustomGasPrice(opts *bind.TransactOpts, _gasPrice *big.Int) (*types.Transaction, error) {
 	return _Oracle.contract.Transact(opts, "setCustomGasPrice", _gasPrice)
 }
 
 // SetCustomGasPrice is a paid mutator transaction binding the contract method 0xca6ad1e4.
 //
-// Solidity: function setCustomGasPrice(_gasPrice uint256) returns()
+// Solidity: function setCustomGasPrice(uint256 _gasPrice) returns()
 func (_Oracle *OracleSession) SetCustomGasPrice(_gasPrice *big.Int) (*types.Transaction, error) {
 	return _Oracle.Contract.SetCustomGasPrice(&_Oracle.TransactOpts, _gasPrice)
 }
 
 // SetCustomGasPrice is a paid mutator transaction binding the contract method 0xca6ad1e4.
 //
-// Solidity: function setCustomGasPrice(_gasPrice uint256) returns()
+// Solidity: function setCustomGasPrice(uint256 _gasPrice) returns()
 func (_Oracle *OracleTransactorSession) SetCustomGasPrice(_gasPrice *big.Int) (*types.Transaction, error) {
 	return _Oracle.Contract.SetCustomGasPrice(&_Oracle.TransactOpts, _gasPrice)
 }
 
 // UpdateAPIPublicKey is a paid mutator transaction binding the contract method 0x9f6f99ee.
 //
-// Solidity: function updateAPIPublicKey(_publicKey bytes) returns()
+// Solidity: function updateAPIPublicKey(bytes _publicKey) returns()
 func (_Oracle *OracleTransactor) UpdateAPIPublicKey(opts *bind.TransactOpts, _publicKey []byte) (*types.Transaction, error) {
 	return _Oracle.contract.Transact(opts, "updateAPIPublicKey", _publicKey)
 }
 
 // UpdateAPIPublicKey is a paid mutator transaction binding the contract method 0x9f6f99ee.
 //
-// Solidity: function updateAPIPublicKey(_publicKey bytes) returns()
+// Solidity: function updateAPIPublicKey(bytes _publicKey) returns()
 func (_Oracle *OracleSession) UpdateAPIPublicKey(_publicKey []byte) (*types.Transaction, error) {
 	return _Oracle.Contract.UpdateAPIPublicKey(&_Oracle.TransactOpts, _publicKey)
 }
 
 // UpdateAPIPublicKey is a paid mutator transaction binding the contract method 0x9f6f99ee.
 //
-// Solidity: function updateAPIPublicKey(_publicKey bytes) returns()
+// Solidity: function updateAPIPublicKey(bytes _publicKey) returns()
 func (_Oracle *OracleTransactorSession) UpdateAPIPublicKey(_publicKey []byte) (*types.Transaction, error) {
 	return _Oracle.Contract.UpdateAPIPublicKey(&_Oracle.TransactOpts, _publicKey)
 }
 
 // UpdateTokenRate is a paid mutator transaction binding the contract method 0xd545782e.
 //
-// Solidity: function updateTokenRate(_token address, _rate uint256, _updateDate uint256) returns()
+// Solidity: function updateTokenRate(address _token, uint256 _rate, uint256 _updateDate) returns()
 func (_Oracle *OracleTransactor) UpdateTokenRate(opts *bind.TransactOpts, _token common.Address, _rate *big.Int, _updateDate *big.Int) (*types.Transaction, error) {
 	return _Oracle.contract.Transact(opts, "updateTokenRate", _token, _rate, _updateDate)
 }
 
 // UpdateTokenRate is a paid mutator transaction binding the contract method 0xd545782e.
 //
-// Solidity: function updateTokenRate(_token address, _rate uint256, _updateDate uint256) returns()
+// Solidity: function updateTokenRate(address _token, uint256 _rate, uint256 _updateDate) returns()
 func (_Oracle *OracleSession) UpdateTokenRate(_token common.Address, _rate *big.Int, _updateDate *big.Int) (*types.Transaction, error) {
 	return _Oracle.Contract.UpdateTokenRate(&_Oracle.TransactOpts, _token, _rate, _updateDate)
 }
 
 // UpdateTokenRate is a paid mutator transaction binding the contract method 0xd545782e.
 //
-// Solidity: function updateTokenRate(_token address, _rate uint256, _updateDate uint256) returns()
+// Solidity: function updateTokenRate(address _token, uint256 _rate, uint256 _updateDate) returns()
 func (_Oracle *OracleTransactorSession) UpdateTokenRate(_token common.Address, _rate *big.Int, _updateDate *big.Int) (*types.Transaction, error) {
 	return _Oracle.Contract.UpdateTokenRate(&_Oracle.TransactOpts, _token, _rate, _updateDate)
 }
 
 // UpdateTokenRates is a paid mutator transaction binding the contract method 0xb598f882.
 //
-// Solidity: function updateTokenRates(_gasLimit uint256) returns()
+// Solidity: function updateTokenRates(uint256 _gasLimit) returns()
 func (_Oracle *OracleTransactor) UpdateTokenRates(opts *bind.TransactOpts, _gasLimit *big.Int) (*types.Transaction, error) {
 	return _Oracle.contract.Transact(opts, "updateTokenRates", _gasLimit)
 }
 
 // UpdateTokenRates is a paid mutator transaction binding the contract method 0xb598f882.
 //
-// Solidity: function updateTokenRates(_gasLimit uint256) returns()
+// Solidity: function updateTokenRates(uint256 _gasLimit) returns()
 func (_Oracle *OracleSession) UpdateTokenRates(_gasLimit *big.Int) (*types.Transaction, error) {
 	return _Oracle.Contract.UpdateTokenRates(&_Oracle.TransactOpts, _gasLimit)
 }
 
 // UpdateTokenRates is a paid mutator transaction binding the contract method 0xb598f882.
 //
-// Solidity: function updateTokenRates(_gasLimit uint256) returns()
+// Solidity: function updateTokenRates(uint256 _gasLimit) returns()
 func (_Oracle *OracleTransactorSession) UpdateTokenRates(_gasLimit *big.Int) (*types.Transaction, error) {
 	return _Oracle.Contract.UpdateTokenRates(&_Oracle.TransactOpts, _gasLimit)
 }
 
 // Withdraw is a paid mutator transaction binding the contract method 0xf3fef3a3.
 //
-// Solidity: function withdraw(_to address, _amount uint256) returns()
+// Solidity: function withdraw(address _to, uint256 _amount) returns()
 func (_Oracle *OracleTransactor) Withdraw(opts *bind.TransactOpts, _to common.Address, _amount *big.Int) (*types.Transaction, error) {
 	return _Oracle.contract.Transact(opts, "withdraw", _to, _amount)
 }
 
 // Withdraw is a paid mutator transaction binding the contract method 0xf3fef3a3.
 //
-// Solidity: function withdraw(_to address, _amount uint256) returns()
+// Solidity: function withdraw(address _to, uint256 _amount) returns()
 func (_Oracle *OracleSession) Withdraw(_to common.Address, _amount *big.Int) (*types.Transaction, error) {
 	return _Oracle.Contract.Withdraw(&_Oracle.TransactOpts, _to, _amount)
 }
 
 // Withdraw is a paid mutator transaction binding the contract method 0xf3fef3a3.
 //
-// Solidity: function withdraw(_to address, _amount uint256) returns()
+// Solidity: function withdraw(address _to, uint256 _amount) returns()
 func (_Oracle *OracleTransactorSession) Withdraw(_to common.Address, _amount *big.Int) (*types.Transaction, error) {
 	return _Oracle.Contract.Withdraw(&_Oracle.TransactOpts, _to, _amount)
 }
@@ -564,7 +564,7 @@ type OracleAddedToken struct {
 
 // FilterAddedToken is a free log retrieval operation binding the contract event 0xba330543a6374b0d418adc5700502b4baca00142690823a8c82d5365f3b01045.
 //
-// Solidity: e AddedToken(_sender address, _token address, _symbol string, _magnitude uint256)
+// Solidity: event AddedToken(address _sender, address _token, string _symbol, uint256 _magnitude)
 func (_Oracle *OracleFilterer) FilterAddedToken(opts *bind.FilterOpts) (*OracleAddedTokenIterator, error) {
 
 	logs, sub, err := _Oracle.contract.FilterLogs(opts, "AddedToken")
@@ -576,7 +576,7 @@ func (_Oracle *OracleFilterer) FilterAddedToken(opts *bind.FilterOpts) (*OracleA
 
 // WatchAddedToken is a free log subscription operation binding the contract event 0xba330543a6374b0d418adc5700502b4baca00142690823a8c82d5365f3b01045.
 //
-// Solidity: e AddedToken(_sender address, _token address, _symbol string, _magnitude uint256)
+// Solidity: event AddedToken(address _sender, address _token, string _symbol, uint256 _magnitude)
 func (_Oracle *OracleFilterer) WatchAddedToken(opts *bind.WatchOpts, sink chan<- *OracleAddedToken) (event.Subscription, error) {
 
 	logs, sub, err := _Oracle.contract.WatchLogs(opts, "AddedToken")
@@ -689,7 +689,7 @@ type OracleConverted struct {
 
 // FilterConverted is a free log retrieval operation binding the contract event 0x3eb9c827477658b168595969c2b83c99d882f7741df2545eb56754b796a968be.
 //
-// Solidity: e Converted(_sender address, _token address, _amount uint256, _ether uint256)
+// Solidity: event Converted(address _sender, address _token, uint256 _amount, uint256 _ether)
 func (_Oracle *OracleFilterer) FilterConverted(opts *bind.FilterOpts) (*OracleConvertedIterator, error) {
 
 	logs, sub, err := _Oracle.contract.FilterLogs(opts, "Converted")
@@ -701,7 +701,7 @@ func (_Oracle *OracleFilterer) FilterConverted(opts *bind.FilterOpts) (*OracleCo
 
 // WatchConverted is a free log subscription operation binding the contract event 0x3eb9c827477658b168595969c2b83c99d882f7741df2545eb56754b796a968be.
 //
-// Solidity: e Converted(_sender address, _token address, _amount uint256, _ether uint256)
+// Solidity: event Converted(address _sender, address _token, uint256 _amount, uint256 _ether)
 func (_Oracle *OracleFilterer) WatchConverted(opts *bind.WatchOpts, sink chan<- *OracleConverted) (event.Subscription, error) {
 
 	logs, sub, err := _Oracle.contract.WatchLogs(opts, "Converted")
@@ -811,7 +811,7 @@ type OracleFailedUpdateRequest struct {
 
 // FilterFailedUpdateRequest is a free log retrieval operation binding the contract event 0x4eb5629fd8501532aeb93b1b6a5b5b2ae398561e56514ed4b4b0c5ac2d381b6e.
 //
-// Solidity: e FailedUpdateRequest(_reason string)
+// Solidity: event FailedUpdateRequest(string _reason)
 func (_Oracle *OracleFilterer) FilterFailedUpdateRequest(opts *bind.FilterOpts) (*OracleFailedUpdateRequestIterator, error) {
 
 	logs, sub, err := _Oracle.contract.FilterLogs(opts, "FailedUpdateRequest")
@@ -823,7 +823,7 @@ func (_Oracle *OracleFilterer) FilterFailedUpdateRequest(opts *bind.FilterOpts) 
 
 // WatchFailedUpdateRequest is a free log subscription operation binding the contract event 0x4eb5629fd8501532aeb93b1b6a5b5b2ae398561e56514ed4b4b0c5ac2d381b6e.
 //
-// Solidity: e FailedUpdateRequest(_reason string)
+// Solidity: event FailedUpdateRequest(string _reason)
 func (_Oracle *OracleFilterer) WatchFailedUpdateRequest(opts *bind.WatchOpts, sink chan<- *OracleFailedUpdateRequest) (event.Subscription, error) {
 
 	logs, sub, err := _Oracle.contract.WatchLogs(opts, "FailedUpdateRequest")
@@ -934,7 +934,7 @@ type OracleRemovedToken struct {
 
 // FilterRemovedToken is a free log retrieval operation binding the contract event 0x703f7e3f084d5b8dcc12fddcfd9a70d65b6b21ec7659e4608dbaf4419ede3ad0.
 //
-// Solidity: e RemovedToken(_sender address, _token address)
+// Solidity: event RemovedToken(address _sender, address _token)
 func (_Oracle *OracleFilterer) FilterRemovedToken(opts *bind.FilterOpts) (*OracleRemovedTokenIterator, error) {
 
 	logs, sub, err := _Oracle.contract.FilterLogs(opts, "RemovedToken")
@@ -946,7 +946,7 @@ func (_Oracle *OracleFilterer) FilterRemovedToken(opts *bind.FilterOpts) (*Oracl
 
 // WatchRemovedToken is a free log subscription operation binding the contract event 0x703f7e3f084d5b8dcc12fddcfd9a70d65b6b21ec7659e4608dbaf4419ede3ad0.
 //
-// Solidity: e RemovedToken(_sender address, _token address)
+// Solidity: event RemovedToken(address _sender, address _token)
 func (_Oracle *OracleFilterer) WatchRemovedToken(opts *bind.WatchOpts, sink chan<- *OracleRemovedToken) (event.Subscription, error) {
 
 	logs, sub, err := _Oracle.contract.WatchLogs(opts, "RemovedToken")
@@ -1056,7 +1056,7 @@ type OracleRequestedUpdate struct {
 
 // FilterRequestedUpdate is a free log retrieval operation binding the contract event 0xd28a52bc81f387be057d69ee89db644f94b7064c4acec0d5bc33e201a2031c05.
 //
-// Solidity: e RequestedUpdate(_symbol string)
+// Solidity: event RequestedUpdate(string _symbol)
 func (_Oracle *OracleFilterer) FilterRequestedUpdate(opts *bind.FilterOpts) (*OracleRequestedUpdateIterator, error) {
 
 	logs, sub, err := _Oracle.contract.FilterLogs(opts, "RequestedUpdate")
@@ -1068,7 +1068,7 @@ func (_Oracle *OracleFilterer) FilterRequestedUpdate(opts *bind.FilterOpts) (*Or
 
 // WatchRequestedUpdate is a free log subscription operation binding the contract event 0xd28a52bc81f387be057d69ee89db644f94b7064c4acec0d5bc33e201a2031c05.
 //
-// Solidity: e RequestedUpdate(_symbol string)
+// Solidity: event RequestedUpdate(string _symbol)
 func (_Oracle *OracleFilterer) WatchRequestedUpdate(opts *bind.WatchOpts, sink chan<- *OracleRequestedUpdate) (event.Subscription, error) {
 
 	logs, sub, err := _Oracle.contract.WatchLogs(opts, "RequestedUpdate")
@@ -1179,7 +1179,7 @@ type OracleSetCryptoComparePublicKey struct {
 
 // FilterSetCryptoComparePublicKey is a free log retrieval operation binding the contract event 0xc6b0860ba9f580e9c5b6ba4e0954fe82827096a99d92e8c2d73009539ea8d9fa.
 //
-// Solidity: e SetCryptoComparePublicKey(_sender address, _publicKey bytes)
+// Solidity: event SetCryptoComparePublicKey(address _sender, bytes _publicKey)
 func (_Oracle *OracleFilterer) FilterSetCryptoComparePublicKey(opts *bind.FilterOpts) (*OracleSetCryptoComparePublicKeyIterator, error) {
 
 	logs, sub, err := _Oracle.contract.FilterLogs(opts, "SetCryptoComparePublicKey")
@@ -1191,7 +1191,7 @@ func (_Oracle *OracleFilterer) FilterSetCryptoComparePublicKey(opts *bind.Filter
 
 // WatchSetCryptoComparePublicKey is a free log subscription operation binding the contract event 0xc6b0860ba9f580e9c5b6ba4e0954fe82827096a99d92e8c2d73009539ea8d9fa.
 //
-// Solidity: e SetCryptoComparePublicKey(_sender address, _publicKey bytes)
+// Solidity: event SetCryptoComparePublicKey(address _sender, bytes _publicKey)
 func (_Oracle *OracleFilterer) WatchSetCryptoComparePublicKey(opts *bind.WatchOpts, sink chan<- *OracleSetCryptoComparePublicKey) (event.Subscription, error) {
 
 	logs, sub, err := _Oracle.contract.WatchLogs(opts, "SetCryptoComparePublicKey")
@@ -1302,7 +1302,7 @@ type OracleSetGasPrice struct {
 
 // FilterSetGasPrice is a free log retrieval operation binding the contract event 0xfbd406825addb09beef160afc17bb80ba28df4a3533dcd23592b82658a1c5ab4.
 //
-// Solidity: e SetGasPrice(_sender address, _gasPrice uint256)
+// Solidity: event SetGasPrice(address _sender, uint256 _gasPrice)
 func (_Oracle *OracleFilterer) FilterSetGasPrice(opts *bind.FilterOpts) (*OracleSetGasPriceIterator, error) {
 
 	logs, sub, err := _Oracle.contract.FilterLogs(opts, "SetGasPrice")
@@ -1314,7 +1314,7 @@ func (_Oracle *OracleFilterer) FilterSetGasPrice(opts *bind.FilterOpts) (*Oracle
 
 // WatchSetGasPrice is a free log subscription operation binding the contract event 0xfbd406825addb09beef160afc17bb80ba28df4a3533dcd23592b82658a1c5ab4.
 //
-// Solidity: e SetGasPrice(_sender address, _gasPrice uint256)
+// Solidity: event SetGasPrice(address _sender, uint256 _gasPrice)
 func (_Oracle *OracleFilterer) WatchSetGasPrice(opts *bind.WatchOpts, sink chan<- *OracleSetGasPrice) (event.Subscription, error) {
 
 	logs, sub, err := _Oracle.contract.WatchLogs(opts, "SetGasPrice")
@@ -1426,7 +1426,7 @@ type OracleUpdatedTokenRate struct {
 
 // FilterUpdatedTokenRate is a free log retrieval operation binding the contract event 0xdb3a4cfb4cd8ac94343ff7440cee8d05ade309056203f0e53ca49b6db8197c7d.
 //
-// Solidity: e UpdatedTokenRate(_sender address, _token address, _rate uint256)
+// Solidity: event UpdatedTokenRate(address _sender, address _token, uint256 _rate)
 func (_Oracle *OracleFilterer) FilterUpdatedTokenRate(opts *bind.FilterOpts) (*OracleUpdatedTokenRateIterator, error) {
 
 	logs, sub, err := _Oracle.contract.FilterLogs(opts, "UpdatedTokenRate")
@@ -1438,7 +1438,7 @@ func (_Oracle *OracleFilterer) FilterUpdatedTokenRate(opts *bind.FilterOpts) (*O
 
 // WatchUpdatedTokenRate is a free log subscription operation binding the contract event 0xdb3a4cfb4cd8ac94343ff7440cee8d05ade309056203f0e53ca49b6db8197c7d.
 //
-// Solidity: e UpdatedTokenRate(_sender address, _token address, _rate uint256)
+// Solidity: event UpdatedTokenRate(address _sender, address _token, uint256 _rate)
 func (_Oracle *OracleFilterer) WatchUpdatedTokenRate(opts *bind.WatchOpts, sink chan<- *OracleUpdatedTokenRate) (event.Subscription, error) {
 
 	logs, sub, err := _Oracle.contract.WatchLogs(opts, "UpdatedTokenRate")
@@ -1549,7 +1549,7 @@ type OracleVerifiedProof struct {
 
 // FilterVerifiedProof is a free log retrieval operation binding the contract event 0x0902fdd015aa1e56f7e6026b69c0595e82155dcbd83a83a23b40f9fe96babbd9.
 //
-// Solidity: e VerifiedProof(_publicKey bytes, _result string)
+// Solidity: event VerifiedProof(bytes _publicKey, string _result)
 func (_Oracle *OracleFilterer) FilterVerifiedProof(opts *bind.FilterOpts) (*OracleVerifiedProofIterator, error) {
 
 	logs, sub, err := _Oracle.contract.FilterLogs(opts, "VerifiedProof")
@@ -1561,7 +1561,7 @@ func (_Oracle *OracleFilterer) FilterVerifiedProof(opts *bind.FilterOpts) (*Orac
 
 // WatchVerifiedProof is a free log subscription operation binding the contract event 0x0902fdd015aa1e56f7e6026b69c0595e82155dcbd83a83a23b40f9fe96babbd9.
 //
-// Solidity: e VerifiedProof(_publicKey bytes, _result string)
+// Solidity: event VerifiedProof(bytes _publicKey, string _result)
 func (_Oracle *OracleFilterer) WatchVerifiedProof(opts *bind.WatchOpts, sink chan<- *OracleVerifiedProof) (event.Subscription, error) {
 
 	logs, sub, err := _Oracle.contract.WatchLogs(opts, "VerifiedProof")

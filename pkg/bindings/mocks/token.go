@@ -190,7 +190,7 @@ func (_Token *TokenTransactorRaw) Transact(opts *bind.TransactOpts, method strin
 
 // BalanceOf is a free data retrieval call binding the contract method 0x70a08231.
 //
-// Solidity: function balanceOf( address) constant returns(uint256)
+// Solidity: function balanceOf(address ) constant returns(uint256)
 func (_Token *TokenCaller) BalanceOf(opts *bind.CallOpts, arg0 common.Address) (*big.Int, error) {
 	var (
 		ret0 = new(*big.Int)
@@ -202,14 +202,14 @@ func (_Token *TokenCaller) BalanceOf(opts *bind.CallOpts, arg0 common.Address) (
 
 // BalanceOf is a free data retrieval call binding the contract method 0x70a08231.
 //
-// Solidity: function balanceOf( address) constant returns(uint256)
+// Solidity: function balanceOf(address ) constant returns(uint256)
 func (_Token *TokenSession) BalanceOf(arg0 common.Address) (*big.Int, error) {
 	return _Token.Contract.BalanceOf(&_Token.CallOpts, arg0)
 }
 
 // BalanceOf is a free data retrieval call binding the contract method 0x70a08231.
 //
-// Solidity: function balanceOf( address) constant returns(uint256)
+// Solidity: function balanceOf(address ) constant returns(uint256)
 func (_Token *TokenCallerSession) BalanceOf(arg0 common.Address) (*big.Int, error) {
 	return _Token.Contract.BalanceOf(&_Token.CallOpts, arg0)
 }
@@ -242,63 +242,63 @@ func (_Token *TokenCallerSession) TotalSupply() (*big.Int, error) {
 
 // Credit is a paid mutator transaction binding the contract method 0xef6506db.
 //
-// Solidity: function credit(to address, amount uint256) returns(bool)
+// Solidity: function credit(address to, uint256 amount) returns(bool)
 func (_Token *TokenTransactor) Credit(opts *bind.TransactOpts, to common.Address, amount *big.Int) (*types.Transaction, error) {
 	return _Token.contract.Transact(opts, "credit", to, amount)
 }
 
 // Credit is a paid mutator transaction binding the contract method 0xef6506db.
 //
-// Solidity: function credit(to address, amount uint256) returns(bool)
+// Solidity: function credit(address to, uint256 amount) returns(bool)
 func (_Token *TokenSession) Credit(to common.Address, amount *big.Int) (*types.Transaction, error) {
 	return _Token.Contract.Credit(&_Token.TransactOpts, to, amount)
 }
 
 // Credit is a paid mutator transaction binding the contract method 0xef6506db.
 //
-// Solidity: function credit(to address, amount uint256) returns(bool)
+// Solidity: function credit(address to, uint256 amount) returns(bool)
 func (_Token *TokenTransactorSession) Credit(to common.Address, amount *big.Int) (*types.Transaction, error) {
 	return _Token.Contract.Credit(&_Token.TransactOpts, to, amount)
 }
 
 // Debit is a paid mutator transaction binding the contract method 0x636be27a.
 //
-// Solidity: function debit(from address, amount uint256) returns()
+// Solidity: function debit(address from, uint256 amount) returns()
 func (_Token *TokenTransactor) Debit(opts *bind.TransactOpts, from common.Address, amount *big.Int) (*types.Transaction, error) {
 	return _Token.contract.Transact(opts, "debit", from, amount)
 }
 
 // Debit is a paid mutator transaction binding the contract method 0x636be27a.
 //
-// Solidity: function debit(from address, amount uint256) returns()
+// Solidity: function debit(address from, uint256 amount) returns()
 func (_Token *TokenSession) Debit(from common.Address, amount *big.Int) (*types.Transaction, error) {
 	return _Token.Contract.Debit(&_Token.TransactOpts, from, amount)
 }
 
 // Debit is a paid mutator transaction binding the contract method 0x636be27a.
 //
-// Solidity: function debit(from address, amount uint256) returns()
+// Solidity: function debit(address from, uint256 amount) returns()
 func (_Token *TokenTransactorSession) Debit(from common.Address, amount *big.Int) (*types.Transaction, error) {
 	return _Token.Contract.Debit(&_Token.TransactOpts, from, amount)
 }
 
 // Transfer is a paid mutator transaction binding the contract method 0xa9059cbb.
 //
-// Solidity: function transfer(to address, amount uint256) returns(bool)
+// Solidity: function transfer(address to, uint256 amount) returns(bool)
 func (_Token *TokenTransactor) Transfer(opts *bind.TransactOpts, to common.Address, amount *big.Int) (*types.Transaction, error) {
 	return _Token.contract.Transact(opts, "transfer", to, amount)
 }
 
 // Transfer is a paid mutator transaction binding the contract method 0xa9059cbb.
 //
-// Solidity: function transfer(to address, amount uint256) returns(bool)
+// Solidity: function transfer(address to, uint256 amount) returns(bool)
 func (_Token *TokenSession) Transfer(to common.Address, amount *big.Int) (*types.Transaction, error) {
 	return _Token.Contract.Transfer(&_Token.TransactOpts, to, amount)
 }
 
 // Transfer is a paid mutator transaction binding the contract method 0xa9059cbb.
 //
-// Solidity: function transfer(to address, amount uint256) returns(bool)
+// Solidity: function transfer(address to, uint256 amount) returns(bool)
 func (_Token *TokenTransactorSession) Transfer(to common.Address, amount *big.Int) (*types.Transaction, error) {
 	return _Token.Contract.Transfer(&_Token.TransactOpts, to, amount)
 }
@@ -380,7 +380,7 @@ type TokenTransfer struct {
 
 // FilterTransfer is a free log retrieval operation binding the contract event 0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef.
 //
-// Solidity: e Transfer(from indexed address, to indexed address, amount uint256)
+// Solidity: event Transfer(address indexed from, address indexed to, uint256 amount)
 func (_Token *TokenFilterer) FilterTransfer(opts *bind.FilterOpts, from []common.Address, to []common.Address) (*TokenTransferIterator, error) {
 
 	var fromRule []interface{}
@@ -401,7 +401,7 @@ func (_Token *TokenFilterer) FilterTransfer(opts *bind.FilterOpts, from []common
 
 // WatchTransfer is a free log subscription operation binding the contract event 0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef.
 //
-// Solidity: e Transfer(from indexed address, to indexed address, amount uint256)
+// Solidity: event Transfer(address indexed from, address indexed to, uint256 amount)
 func (_Token *TokenFilterer) WatchTransfer(opts *bind.WatchOpts, sink chan<- *TokenTransfer, from []common.Address, to []common.Address) (event.Subscription, error) {
 
 	var fromRule []interface{}
