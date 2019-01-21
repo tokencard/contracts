@@ -6,7 +6,7 @@ import (
 
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/crypto/sha3"
+	"golang.org/x/crypto/sha3"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	. "github.com/tokencard/contracts/test/shared"
@@ -15,7 +15,7 @@ import (
 
 func stringToQueryId(url string) [32]byte {
 	var id = [32]byte{}
-	sha := sha3.NewKeccak256()
+	sha := sha3.NewLegacyKeccak256()
 	_, err := sha.Write([]byte(url))
 	Expect(err).ToNot(HaveOccurred())
 
