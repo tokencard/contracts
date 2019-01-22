@@ -1,4 +1,4 @@
-package tokenHolder_test
+package holder_test
 
 	import (
 		// "errors"
