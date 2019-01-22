@@ -58,6 +58,17 @@ contract Ownable {
         _owner = _account;
     }
 
+    /// @dev Allows the current owner to relinquish control of the contract. 
+    /// @notice Renouncing to ownership will leave the contract without an owner and unusable.
+    /// It will not be possible to call the functions with the `onlyOwner` modifier anymore.
+    function renounceOwnership() public onlyOwner {
+        // Require that the ownership is transferable.
+        require(_isTransferable, "ownership is not transferable");
+        emit TransferredOwnership(_owner, address(0));
+        // note that this could be terminal
+        _owner = address(0);
+    }
+
     /// @return the address of the owner.
     function owner() public view returns (address) {
         return _owner;
