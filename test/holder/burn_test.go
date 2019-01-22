@@ -320,6 +320,84 @@ package tokenHolder_test
 								})
 
 							})
+
+							When("When the random address tries to burn more TKN than it owns", func() {
+
+								var initialBalance *big.Int
+								txCost := new(big.Int)
+
+								BeforeEach(func() {
+									var err error
+									initialBalance, err = Backend.BalanceAt(context.Background(), RandomAccount.Address(), nil)
+									Expect(err).ToNot(HaveOccurred())
+							 })
+
+								BeforeEach(func() {
+									tx, err := TKNBurner.Burn(RandomAccount.TransactOpts(), big.NewInt(0))
+									Expect(err).ToNot(HaveOccurred())
+									Backend.Commit()
+									Expect(isSuccessful(tx)).To(BeTrue())
+									r, err := Backend.TransactionReceipt(context.Background(), tx.Hash())
+									Expect(err).ToNot(HaveOccurred())
+									txCost.Mul(tx.GasPrice(), big.NewInt(int64(r.GasUsed)))
+								})
+
+								It("should NOT have an impact on the (ETH) balance of the holder contract", func() {
+									b, e := Backend.BalanceAt(context.Background(), TokenHolderAddress, nil)
+									Expect(e).ToNot(HaveOccurred())
+									finalBal := EthToWei(1)
+									Expect(b.String()).To(Equal(finalBal.String()))
+								})
+
+								It("should leave the total supply intact", func() {
+				          s, err := TKNBurner.TotalSupply(nil)
+				          Expect(err).ToNot(HaveOccurred())
+		 	 	          Expect(s.String()).To(Equal("1000"))
+								})
+
+								It("should leave the TKN balance of the random address intact", func() {
+									b, err := TKNBurner.BalanceOf(nil, RandomAccount.Address())
+									Expect(err).ToNot(HaveOccurred())
+									Expect(b.String()).To(Equal("300"))
+								})
+
+								It("Should emit a Transfer event of 0 value", func() {
+									from := []common.Address{RandomAccount.Address()}
+									to := []common.Address{common.HexToAddress("0x0")}
+									it, err := TKNBurner.FilterTransfer(nil, from, to)
+									Expect(err).ToNot(HaveOccurred())
+									Expect(it.Next()).To(BeTrue())
+									evt := it.Event
+									Expect(it.Next()).To(BeFalse())
+									Expect(evt.From).To(Equal(RandomAccount.Address()))
+									Expect(evt.To).To(Equal(common.HexToAddress("0x0")))
+									Expect(evt.Value.String()).To(Equal("0"))
+								})
+
+								It("should NOT increase the ERC20 type-1 balance of the random address", func() {
+									b, err := ERC20Contract1.BalanceOf(nil, RandomAccount.Address())
+									Expect(err).ToNot(HaveOccurred())
+									Expect(b.String()).To(Equal("0"))
+								})
+
+								It("shouldn't increase the ERC20 type-2 balance of the random address", func() {
+									b, err := ERC20Contract2.BalanceOf(nil, RandomAccount.Address())
+									Expect(err).ToNot(HaveOccurred())
+									Expect(b.String()).To(Equal("0"))
+								})
+
+								It("should NOT increase the ETH balance of the random address", func() {
+									b, e := Backend.BalanceAt(context.Background(), RandomAccount.Address(), nil)
+									Expect(e).ToNot(HaveOccurred())
+									bStr := b.String()
+									newBalance := initialBalance
+									newBalance.Sub(initialBalance, txCost) //we have to deduct the tx cost
+									Expect(bStr).To(Equal(newBalance.String()))
+								})
+
+							})
+
+
 						})
 					}) //When("The holder contract has two types of ERC20 tokens"
 	    })
