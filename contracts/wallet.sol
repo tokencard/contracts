@@ -346,7 +346,6 @@ contract Vault is Whitelist, SpendLimit, ERC165 {
 
     /// @dev Ether can be deposited from any source, so this contract must be payable by anyone.
     function() public payable {
-        //TODO question: Why is this check here, is it necessary or are we building into a corner?
         require(msg.data.length == 0);
         emit Received(msg.sender, msg.value);
     }
@@ -365,7 +364,7 @@ contract Vault is Whitelist, SpendLimit, ERC165 {
     /// @dev Transfers the specified asset to the recipient's address.
     /// @param _to is the recipient's address.
     /// @param _asset is the address of an ERC20 token or 0x0 for ether.
-    /// @param _amount is the amount of tokens to be transferred in base units.
+    /// @param _amount is the amount of assets to be transferred in base units.
     function transfer(address _to, address _asset, uint _amount) external onlyOwner isNotZero(_amount) {
         // Checks if the _to address is not the zero-address
         require(_to != address(0), "_to address cannot be set to 0x0");
@@ -387,7 +386,7 @@ contract Vault is Whitelist, SpendLimit, ERC165 {
             // Check against the daily spent limit and update accordingly
             if (tokenExists || _asset == address(0)) {
                 // Require that the value is under remaining limit.
-                require(etherValue <= spendAvailable(), "transfer amount exceeds available spend limit");
+                require(etherValue <= spendAvailable(), "transfer amount exceeded available spend limit");
                 // Update the available limit.
                 _setSpendAvailable(spendAvailable().sub(etherValue));
             }
@@ -409,7 +408,7 @@ contract Vault is Whitelist, SpendLimit, ERC165 {
 }
 
 
-//// @title Asset wallet with extra security features and gas top up management.
+//// @title Asset wallet with extra security features, gas top up management and card integration.
 contract Wallet is Vault {
     event SetTopUpLimit(address _sender, uint _amount);
     event SubmittedTopUpLimitChange(uint _amount);
@@ -432,6 +431,8 @@ contract Wallet is Vault {
     bool public submittedTopUpLimit;
     bool public initializedTopUpLimit;
 
+    ILicence private _licence;
+
     /// @dev Constructor initializes the wallet top up limit and the vault contract.
     /// @param _owner is the owner account of the wallet contract.
     /// @param _transferable indicates whether the contract ownership can be transferred.
@@ -439,10 +440,12 @@ contract Wallet is Vault {
     /// @param _oracleName is the ENS name of the Oracle.
     /// @param _controllerName is the ENS name of the Controller.
     /// @param _spendLimit is the initial spend limit.
-    constructor(address _owner, bool _transferable, address _ens, bytes32 _oracleName, bytes32 _controllerName, uint _spendLimit) Vault(_owner, _transferable, _ens, _oracleName, _controllerName, _spendLimit) public {
+    /// @param _licenceAddress is the licence contract address.
+    constructor(address _owner, bool _transferable, address _ens, bytes32 _oracleName, bytes32 _controllerName, uint _spendLimit, address _licenceAddress) Vault(_owner, _transferable, _ens, _oracleName, _controllerName, _spendLimit) public {
         _topUpLimitDay = now;
         topUpLimit = MAXIMUM_TOPUP_LIMIT;
         _topUpAvailable = topUpLimit;
+        _licence = ILicence(_licenceAddress);
     }
 
     /// @dev Returns the available daily gas top up balance - accounts for daily limit reset.
@@ -515,8 +518,7 @@ contract Wallet is Vault {
         emit CancelledTopUpLimitChange(msg.sender, _amount);
     }
 
-    /// @dev Refill owner's gas balance.
-    /// @dev Revert if the transaction amount is too large
+    /// @dev Refill owner's gas balance, revert if the transaction amount is too large
     /// @param _amount is the amount of ether to transfer to the owner account in wei.
     function topUpGas(uint _amount) external isNotZero(_amount) {
         // Require that the sender is either the owner or a controller.
@@ -533,6 +535,20 @@ contract Wallet is Vault {
         owner().transfer(_amount);
         // Emit the gas top up event.
         emit ToppedUpGas(tx.origin, owner(), _amount);
+    }
+
+    /// @dev Load a token card with the specified asset amount.
+    /// @param _fee is the card licence fee in wei.
+    /// @param _asset is the address of an ERC20 token or 0x0 for ether.
+    /// @param _amount is the amount of assets to be transferred in base units.
+    function loadTokenCard(uint _fee, address _asset, uint _amount) external onlyOwner {
+        if (_asset != address(0)) {
+            require(ERC20(_asset).approve(address(_licence), _amount.add(_fee)), "ERC20 token approval was unsuccessful");
+            require(_licence.load(_fee, _asset, _amount), "licence contract could not load the ERC20 tokens");
+        } else {
+            require(_licence.load.value(_amount.add(_fee))(_fee, _asset, _amount), "licence contract could not load the ether");
+        }
+        emit LoadedTokenCard(_fee, _asset, _amount);
     }
 
     /// @dev Modify the top up limit and top up available based on the provided value.
@@ -557,21 +573,5 @@ contract Wallet is Vault {
             // Set the available limit to the current top up limit.
             _topUpAvailable = topUpLimit;
         }
-    }
-
-    // Needs this
-    Licence licence;
-
-    function loadTokenCard(uint _amount, uint _licenceFee, address _asset) private {
-            
-        if (_asset != address(0)) {
-            require(ERC20(_asset).approve(licence, _amount + _licenceFee), "Failed to approve the proposed ERC20 approval");
-            //require(licence.loadTokenCard.value(_amount + _licenceFee)(_amount, _licenceFee, _asset), "failed to send enough ETH");
-            require(licence.load(_amount, _licenceFee, _asset), "lame");
-        } else {
-            require(licence.load.value(_amount + _licenceFee)(_amount, _licenceFee, _asset), "lame");
-        }  
-
-        emit LoadedTokenCard(_amount, _licenceFee, _asset);
     }
 }
