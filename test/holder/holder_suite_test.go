@@ -1,4 +1,4 @@
-package tokenHolder_test
+package holder_test
 
 import (
 	"context"
@@ -37,7 +37,7 @@ func init() {
  		 "../../contracts")
 }
 
-func TestTokenHolderSuite(t *testing.T) {
+func TestHolderSuite(t *testing.T) {
 	RegisterFailHandler(Fail)
 	RunSpecs(t, "Contract Suite")
 }
