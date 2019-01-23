@@ -66,14 +66,14 @@ contract Licence is Ownable {
     }
 
     /// @dev Updates the address of the DAO contract.
-    function UpdateDAO(address _newDAO) external onlyOwner {
+    function updateDAO(address _newDAO) external onlyOwner {
         require(!DAO.isLocked(), "DAO is locked");
         DAO = _newDAO;
         emit UpdatedDAO(owner(), _newDAO);
     }
 
     /// @dev Updates the card licence fee.
-    function UpdateFee(uint _newFee) external onlyDAO {
+    function updateFee(uint _newFee) external onlyDAO {
         require(1 <= _newFee && _newFee <= 100, "percent fee out of range"); // TODO(daniel): same as below, not sure if using percentages inside solidity is the optimal solution.
         fee = _newFee; 
         emit ChangedLicenceFee(owner(), _newFee);
