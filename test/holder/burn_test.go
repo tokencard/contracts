@@ -213,6 +213,18 @@ package holder_test
 									Expect(b.String()).To(Equal("300"))
 								})
 
+								It("should leave the ERC20 type-1 balance of the holder contract intact", func() {
+									b, err := ERC20Contract1.BalanceOf(nil, TokenHolderAddress)
+									Expect(err).ToNot(HaveOccurred())
+									Expect(b.String()).To(Equal("1000"))
+								})
+
+								It("should leave the ERC20 type-2 balance of the holder contract intact", func() {
+									b, err := ERC20Contract2.BalanceOf(nil, TokenHolderAddress)
+									Expect(err).ToNot(HaveOccurred())
+									Expect(b.String()).To(Equal("500"))
+								})
+
 								It("Should NOT emit a Transfer event", func() {
 									from := []common.Address{RandomAccount.Address()}
 									to := []common.Address{common.HexToAddress("0x0")}
@@ -283,6 +295,18 @@ package holder_test
 									b, err := TKNBurner.BalanceOf(nil, RandomAccount.Address())
 									Expect(err).ToNot(HaveOccurred())
 									Expect(b.String()).To(Equal("100"))
+								})
+
+								It("should decrease the ERC20 type-1 balance of the holder contract by 200", func() {
+									b, err := ERC20Contract1.BalanceOf(nil, TokenHolderAddress)
+									Expect(err).ToNot(HaveOccurred())
+									Expect(b.String()).To(Equal("800"))
+								})
+
+								It("should decrease the ERC20 type-2 balance of the holder contract by 100", func() {
+									b, err := ERC20Contract2.BalanceOf(nil, TokenHolderAddress)
+									Expect(err).ToNot(HaveOccurred())
+									Expect(b.String()).To(Equal("400"))
 								})
 
 								It("Should emit a Transfer event", func() {
@@ -361,6 +385,18 @@ package holder_test
 									Expect(b.String()).To(Equal("300"))
 								})
 
+								It("should leave the ERC20 type-1 balance of the holder contract intact", func() {
+									b, err := ERC20Contract1.BalanceOf(nil, TokenHolderAddress)
+									Expect(err).ToNot(HaveOccurred())
+									Expect(b.String()).To(Equal("1000"))
+								})
+
+								It("should leave the ERC20 type-2 balance of the holder contract intact", func() {
+									b, err := ERC20Contract2.BalanceOf(nil, TokenHolderAddress)
+									Expect(err).ToNot(HaveOccurred())
+									Expect(b.String()).To(Equal("500"))
+								})
+								
 								It("Should emit a Transfer event of 0 value", func() {
 									from := []common.Address{RandomAccount.Address()}
 									to := []common.Address{common.HexToAddress("0x0")}
