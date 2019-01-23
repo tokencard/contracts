@@ -79,7 +79,7 @@ package holder_test
 						Expect(isSuccessful(tx)).To(BeTrue())
 					})
 
-					It("should increase TKN balance of the random person", func() {
+					It("should increase TKN balance of the random address", func() {
 						b, err := TKNBurner.BalanceOf(nil, RandomAccount.Address())
 						Expect(err).ToNot(HaveOccurred())
 						Expect(b.String()).To(Equal("300"))
@@ -401,17 +401,6 @@ package holder_test
 						})
 					}) //When("The holder contract has two types of ERC20 tokens"
 	    })
-
-	    // BeforeEach(func() {
-	    //   var err error
-	    //   tx, err = TKNBurner.Burn(RandomAccount.TransactOpts(), big.NewInt(500))
-	    //   Expect(err).ToNot(HaveOccurred())
-	    //   Backend.Commit()
-	    // })
-	    //
-	    // It("Should succeed", func() {
-	    //   Expect(isSuccessful(tx)).To(BeTrue())
-	    // })
 
 		 })//When it is launched by the owner"
 	  })
