@@ -213,6 +213,18 @@ var _ = Describe("TokenHolder", func() {
                 Expect(b.String()).To(Equal("98"))
               })
 
+              It("should decrease the ERC20 type-1 balance of the holder contract by 60", func() { //token1  sypply: 396 - 60 = 336
+                b, err := ERC20Contract1.BalanceOf(nil, TokenHolderAddress)
+                Expect(err).ToNot(HaveOccurred())
+                Expect(b.String()).To(Equal("336"))
+              })
+
+              It("should decrease the ERC20 type-2 balance of the holder contract by 100", func() { //token2  sypply: 765 - 116 = 649
+                b, err := ERC20Contract2.BalanceOf(nil, TokenHolderAddress)
+                Expect(err).ToNot(HaveOccurred())
+                Expect(b.String()).To(Equal("649"))
+              })
+
               It("Should emit a Transfer event", func() {
                 from := []common.Address{RandomAccount.Address()}
                 to := []common.Address{common.HexToAddress("0x0")}
