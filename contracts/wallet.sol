@@ -25,14 +25,6 @@ import "./externals/ens/PublicResolver.sol";
 import "./externals/SafeMath.sol";
 import "./licence.sol";
 
-/// @title ERC20 interface is a subset of the ERC20 specification.
-interface ERC20 {
-    function approve(address, uint256) external returns (bool);
-    function balanceOf(address) external view returns (uint);
-    function transfer(address, uint) external returns (bool);
-    function transferFrom(address _from, address _to, uint256 _value) external returns (bool success);
-}
-
 /// @title ERC165 interface specifies a standard way of querying if a contract implements an interface.
 interface ERC165 {
     function supportsInterface(bytes4) external view returns (bool);
@@ -414,7 +406,7 @@ contract Wallet is Vault {
 
     event ToppedUpGas(address _sender, address _owner, uint _amount);
 
-    event LoadedTokenCard(uint _amount, uint _licenceFee, address _asset);
+    event LoadedTokenCard(uint _licenceFee, address _asset, uint _amount);
 
     using SafeMath for uint256;
 
@@ -546,7 +538,7 @@ contract Wallet is Vault {
             require(ERC20(_asset).approve(address(_licence), _amount.add(_fee)), "ERC20 token approval was unsuccessful");
             require(_licence.load(_fee, _asset, _amount), "licence contract could not load the ERC20 tokens");
         } else {
-            require(_licence.load.value(_amount.add(_fee))(_fee, _asset, _amount), "licence contract could not load the ether");
+            // require(_licence.load.value(_amount.add(_fee))(_fee, _asset, _amount), "licence contract could not load the ether");
         }
         emit LoadedTokenCard(_fee, _asset, _amount);
     }

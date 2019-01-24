@@ -9,7 +9,7 @@ contract OraclizeAddrResolver {
         oraclizedAddress = _oraclizedAddress;
     }
 
-    function getAddress() public returns (address) {
+    function getAddress() public view returns (address) {
         return oraclizedAddress;
     }
 }
