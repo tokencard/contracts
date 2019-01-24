@@ -11,7 +11,7 @@ import (
 	"github.com/tokencard/ethertest"
 )
 
-var _ = Describe("transfer", func() {
+var _ = FDescribe("transfer", func() {
 
 	Context("when the wallet has enough ETH", func() {
 		BeforeEach(func() {

@@ -10,7 +10,7 @@ import (
 	"github.com/tokencard/ethertest"
 )
 
-var _ = Describe("spendAvailable", func() {
+var _ = FDescribe("spendAvailable", func() {
 	BeforeEach(func() {
 		BankAccount.MustTransfer(Backend, Controller.Address(), EthToWei(1))
 	})
