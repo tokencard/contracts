@@ -18,7 +18,7 @@ var _ = Describe("ownable", func() {
 			Expect(o).To(Equal(Owner.Address()))
 		})
 		It("should not allow the ownership to Backend transferred to the 0x0 address", func() {
-			tx, err := Wallet.TransferOwnership(Owner.TransactOpts(ethertest.WithGasLimit(60000)), common.HexToAddress("0x0"))
+			tx, err := Wallet.TransferOwnership(Owner.TransactOpts(ethertest.WithGasLimit(60000)), common.HexToAddress("0x0"), true)
 			Expect(err).ToNot(HaveOccurred())
 			Backend.Commit()
 			Expect(isSuccessful(tx)).To(BeFalse())
@@ -27,7 +27,7 @@ var _ = Describe("ownable", func() {
 			Expect(transferable).To(BeTrue())
 		})
 		It("should allow the ownership to Backend transferred to any other address", func() {
-			tx, err := Wallet.TransferOwnership(Owner.TransactOpts(), common.HexToAddress("0x1"))
+			tx, err := Wallet.TransferOwnership(Owner.TransactOpts(), common.HexToAddress("0x1"), false)
 			Expect(err).ToNot(HaveOccurred())
 			Backend.Commit()
 			Expect(isSuccessful(tx)).To(BeTrue())
@@ -49,6 +49,7 @@ var _ = Describe("ownable", func() {
 				OracleName,
 				ControllerName,
 				EthToWei(100),
+				LicenceAddress,
 			)
 			Expect(err).ToNot(HaveOccurred())
 			Backend.Commit()
@@ -60,7 +61,7 @@ var _ = Describe("ownable", func() {
 			Expect(o).To(Equal(Owner.Address()))
 		})
 		It("should not allow the ownership to Backend transferred", func() {
-			tx, err := Wallet.TransferOwnership(Owner.TransactOpts(ethertest.WithGasLimit(60000)), common.HexToAddress("0x1"))
+			tx, err := Wallet.TransferOwnership(Owner.TransactOpts(ethertest.WithGasLimit(60000)), common.HexToAddress("0x1"), true)
 			Expect(err).ToNot(HaveOccurred())
 			Backend.Commit()
 			Expect(isSuccessful(tx)).To(BeFalse())

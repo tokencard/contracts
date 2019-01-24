@@ -78,6 +78,18 @@ var OraclizeConnectorAddress common.Address
 var Oracle *bindings.Oracle
 var OracleAddress common.Address
 
+var TKNBurner *bindings.Token
+var TKNBurnerAddress common.Address
+
+var TokenHolder *bindings.Holder
+var TokenHolderAddress common.Address
+
+var Dao *bindings.Dao
+var DaoAddress common.Address
+
+var Licence *bindings.Licence
+var LicenceAddress common.Address
+
 var Wallet *bindings.Wallet
 var WalletAddress common.Address
 
@@ -371,7 +383,38 @@ func InitializeBackend() error {
 		return errors.Wrap(err, "updating TKN token rate")
 	}
 
-	WalletAddress, tx, Wallet, err = bindings.DeployWallet(BankAccount.TransactOpts(), Backend, Owner.Address(), true, ENSRegistryAddress, OracleName, ControllerName, EthToWei(100))
+
+	TKNBurnerAddress, tx, TKNBurner, err = bindings.DeployToken(Controller.TransactOpts(), Backend)
+	if err != nil {
+		return err
+	}
+	Backend.Commit()
+	err = verifyTransaction(tx)
+	if err != nil {
+		return errors.Wrap(err, "deploying TKN contract")
+	}
+
+	TokenHolderAddress, tx, TokenHolder, err = bindings.DeployHolder(Controller.TransactOpts(), Backend, TKNBurnerAddress)
+	if err != nil {
+		return err
+	}
+	Backend.Commit()
+	err = verifyTransaction(tx)
+	if err != nil {
+		return errors.Wrap(err, "deploying holder contract")
+	}
+
+	LicenceAddress, tx, Licence, err = bindings.DeployLicence(BankAccount.TransactOpts(), Backend, Controller.Address(), true, DaoAddress, RandomAccount.Address(), TokenHolderAddress)//FIX ME: random should become CryptoFloat contract
+	if err != nil {
+		return err
+	}
+	Backend.Commit()
+	err = verifyTransaction(tx)
+	if err != nil {
+		return errors.Wrap(err, "deploying licence contract")
+	}
+
+	WalletAddress, tx, Wallet, err = bindings.DeployWallet(BankAccount.TransactOpts(), Backend, Owner.Address(), true, ENSRegistryAddress, OracleName, ControllerName, EthToWei(100), LicenceAddress)
 	if err != nil {
 		return err
 	}
