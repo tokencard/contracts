@@ -6,9 +6,16 @@ import "./dao.sol";
 
 /// @title ILicence interface describes methods for loading a TokenCard inclusive of licence fees.
 interface ILicence {
-    function load(address, uint, uint) external payable;
+    function load(uint, address, uint) external payable returns (bool);
 }
 
+/// @title ERC20 interface is a subset of the ERC20 specification.
+interface ERC20 {
+    function approve(address, uint256) external returns (bool);
+    function balanceOf(address) external view returns (uint);
+    function transfer(address, uint) external returns (bool);
+    function transferFrom(address _from, address _to, uint256 _value) external returns (bool success);
+}
 
 /// @title Licence loads the TokenCard and transfers the licence fee to the token holder contract.
 contract Licence is Ownable {
@@ -21,10 +28,12 @@ contract Licence is Ownable {
     event TransferredToTokenHolder(address _from, address _contract, address _asset, uint _amount);
     event TransferredToCryptoFloat(address _from, address _contract, address _asset, uint _amount);
 
+    event ChangedLicenceFee(address _dao, uint _newFee);
+
     using SafeMath for uint256;
 
-    address private _cryptoFloat;
-    address private _tokenHolder;
+    address public cryptoFloat;
+    address public tokenHolder;
 
     uint public fee;
 
@@ -44,7 +53,7 @@ contract Licence is Ownable {
     /// @param _cryptoFloat is the address of the multi-sig cryptocurrency float contract.
     /// @param _tokenHolder is the address of the token holder contract
     constructor(address _owner, bool _transferable, address _dao, address _cryptoFloat, address _tokenHolder) Ownable(_owner, _transferable) public {
-        DAO = _dao;
+        DAO = IDAO(_dao);
         cryptoFloat = _cryptoFloat;
         tokenHolder = _tokenHolder;
     }
@@ -57,33 +66,33 @@ contract Licence is Ownable {
 
     /// @return the address of the multi-sig cryptocurrency float contract.
     function cryptoFloat() external view returns (address) {
-        return _cryptoFloat;
+        return cryptoFloat;
     }
 
     /// @return the address of the token holder contract.
     function tokenHolder() external view returns (address) {
-        return _tokenHolder;
+        return tokenHolder;
     }
 
     /// @dev Updates the address of the DAO contract.
     function updateDAO(address _newDAO) external onlyOwner {
         require(!DAO.isLocked(), "DAO is locked");
-        DAO = _newDAO;
+        DAO = IDAO(_newDAO);
         emit UpdatedDAO(owner(), _newDAO);
     }
 
     /// @dev Updates the card licence fee.
     function updateFee(uint _newFee) external onlyDAO {
         require(1 <= _newFee && _newFee <= 100, "percent fee out of range"); // TODO(daniel): same as below, not sure if using percentages inside solidity is the optimal solution.
-        fee = _newFee; 
-        emit ChangedLicenceFee(owner(), _newFee);
+        fee = _newFee;
+        emit ChangedLicenceFee(address(DAO), _newFee);
     }
 
     /// @dev Load the holder and float contracts based on the licence fee and asset amount.
     /// @param _fee is the card licence fee in wei.
     /// @param _asset is the address of an ERC20 token or 0x0 for ether.
     /// @param _amount is the amount of assets to be transferred in base units.
-    function load(uint _fee, address _asset, uint _amount) external payable {
+    function load(uint _fee, address _asset, uint _amount) external payable returns (bool) {
         require(_amount != 0 || _fee != 0, "fee and amount cannot both be zero");
 
         require(_amount == _fee * 100 / fee, "these don't add up"); // TODO(daniel): don't know if it's a good idea to calculate percentages inside a smart contract, best to stick to uints. Also should use safe math here. I guess we could calculate the fee outside the chain and just submit the amount in wei?
@@ -98,6 +107,7 @@ contract Licence is Ownable {
         }
         emit TransferredToTokenHolder(msg.sender, tokenHolder, _asset, _fee);
         emit TransferredToCryptoFloat(msg.sender, cryptoFloat, _asset, _amount);
+
+        return true;
     }
 }
-
