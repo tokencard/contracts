@@ -116,7 +116,7 @@ var _ = Describe("TokenHolder", func() {
           BeforeEach(func() {
             var err error
             tokens := []common.Address{common.HexToAddress("0x0"), ERC20Contract1Address, ERC20Contract2Address}
-            tx, err = TokenHolder.SetTokens(Owner.TransactOpts(), tokens)
+            tx, err = TokenHolder.AddTokens(Owner.TransactOpts(), tokens)
             Expect(err).ToNot(HaveOccurred())
             Backend.Commit()
             Expect(isSuccessful(tx)).To(BeTrue())
