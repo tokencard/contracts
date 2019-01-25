@@ -21,7 +21,7 @@ var _ = Describe("balance", func() {
 		})
 	})
 
-	FContext("When contract has 1 ETH", func() {
+	Context("When contract has 1 ETH", func() {
 		BeforeEach(func() {
 			BankAccount.MustTransfer(Backend, WalletAddress, EthToWei(1))
 		})
