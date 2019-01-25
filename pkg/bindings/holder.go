@@ -28,10 +28,10 @@ var (
 )
 
 // HolderABI is the input ABI used to generate the binding from.
-const HolderABI = "[{\"constant\":true,\"inputs\":[],\"name\":\"burner\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"tokens\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"t\",\"type\":\"address[]\"}],\"name\":\"setTokens\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[],\"name\":\"acceptOwnership\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"to\",\"type\":\"address\"},{\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"burn\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"to\",\"type\":\"address\"}],\"name\":\"changeOwner\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"newOwner\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"token\",\"type\":\"address\"}],\"name\":\"balance\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"name\":\"burnerContract\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"payable\":true,\"stateMutability\":\"payable\",\"type\":\"fallback\"}]"
+const HolderABI = "[{\"constant\":true,\"inputs\":[],\"name\":\"burner\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_tokens\",\"type\":\"address[]\"}],\"name\":\"addTokens\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_tokens\",\"type\":\"address[]\"}],\"name\":\"removeTokens\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[],\"name\":\"acceptOwnership\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"to\",\"type\":\"address\"},{\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"burn\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"to\",\"type\":\"address\"}],\"name\":\"changeOwner\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"\",\"type\":\"address\"}],\"name\":\"tokenExists\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"newOwner\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"token\",\"type\":\"address\"}],\"name\":\"balance\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"name\":\"burnerContract\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"payable\":true,\"stateMutability\":\"payable\",\"type\":\"fallback\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_sender\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_token\",\"type\":\"address\"}],\"name\":\"AddedToken\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_sender\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_token\",\"type\":\"address\"}],\"name\":\"RemovedToken\",\"type\":\"event\"}]"
 
 // HolderBin is the compiled bytecode used for deploying new contracts.
-const HolderBin = `608060405234801561001057600080fd5b50604051602080610746833981016040525160008054600160a060020a0319908116331790915560028054600160a060020a03909316929091169190911790556106e78061005f6000396000f3006080604052600436106100985763ffffffff7c010000000000000000000000000000000000000000000000000000000060003504166327810b6e811461009a5780634f64b2be146100cb578063625adaf2146100e357806379ba5097146101035780638da5cb5b146101185780639dc29fac1461012d578063a6f9dae114610165578063d4ee1d9014610186578063e3d670d71461019b575b005b3480156100a657600080fd5b506100af6101ce565b60408051600160a060020a039092168252519081900360200190f35b3480156100d757600080fd5b506100af6004356101dd565b3480156100ef57600080fd5b506100986004803560248101910135610205565b34801561010f57600080fd5b5061009861022f565b34801561012457600080fd5b506100af610275565b34801561013957600080fd5b50610151600160a060020a0360043516602435610284565b604080519115158252519081900360200190f35b34801561017157600080fd5b50610098600160a060020a0360043516610404565b34801561019257600080fd5b506100af61044c565b3480156101a757600080fd5b506101bc600160a060020a036004351661045b565b60408051918252519081900360200190f35b600254600160a060020a031681565b60038054829081106101eb57fe5b600091825260209091200154600160a060020a0316905081565b600054600160a060020a031633811461021d57600080fd5b61022960038484610617565b50505050565b600154600160a060020a031633811461024757600080fd5b506000805473ffffffffffffffffffffffffffffffffffffffff199081163317909155600180549091169055565b600054600160a060020a031681565b600254600090819081908190600160a060020a03163381146102a557600080fd5b8515156102b557600194506103fa565b600254604080517f771282f600000000000000000000000000000000000000000000000000000000815290518892600160a060020a03169163771282f69160048083019260209291908290030181600087803b15801561031457600080fd5b505af1158015610328573d6000803e3d6000fd5b505050506040513d602081101561033e57600080fd5b50510193508386111561035057600080fd5b600092505b6003548310156103f55761038b60038481548110151561037157fe5b600091825260209091200154600160a060020a031661045b565b915060008211156103ea5781868784028115156103a457fe5b04146103af57600080fd5b6103ea876003858154811015156103c257fe5b600091825260209091200154600160a060020a031686858a028115156103e457fe5b04610509565b600190920191610355565b600194505b5050505092915050565b600054600160a060020a031633811461041c57600080fd5b506001805473ffffffffffffffffffffffffffffffffffffffff1916600160a060020a0392909216919091179055565b600154600160a060020a031681565b6000600160a060020a0382161561050057604080517f70a082310000000000000000000000000000000000000000000000000000000081523060048201529051600160a060020a038416916370a082319160248083019260209291908290030181600087803b1580156104cd57600080fd5b505af11580156104e1573d6000803e3d6000fd5b505050506040513d60208110156104f757600080fd5b50519050610504565b5030315b919050565b80151561051557610612565b600160a060020a038216156105dc5781600160a060020a031663a9059cbb84836040518363ffffffff167c01000000000000000000000000000000000000000000000000000000000281526004018083600160a060020a0316600160a060020a0316815260200182815260200192505050602060405180830381600087803b1580156105a057600080fd5b505af11580156105b4573d6000803e3d6000fd5b505050506040513d60208110156105ca57600080fd5b505115156105d757600080fd5b610612565b604051600160a060020a0384169082156108fc029083906000818181858888f19350505050158015610229573d6000803e3d6000fd5b505050565b828054828255906000526020600020908101928215610677579160200282015b8281111561067757815473ffffffffffffffffffffffffffffffffffffffff1916600160a060020a03843516178255602090920191600190910190610637565b50610683929150610687565b5090565b6106b891905b8082111561068357805473ffffffffffffffffffffffffffffffffffffffff1916815560010161068d565b905600a165627a7a7230582004c2cb35dabe94e168882eb809ca5f29c5c0d0021385f808aa82472f48e963c00029`
+const HolderBin = `608060405234801561001057600080fd5b50604051602080610aa7833981016040525160008054600160a060020a0319908116331790915560028054600160a060020a0390931692909116919091179055610a488061005f6000396000f3006080604052600436106100a35763ffffffff7c010000000000000000000000000000000000000000000000000000000060003504166327810b6e81146100a55780634ae05c7d146100d65780636c3824ef146100f657806379ba5097146101165780638da5cb5b1461012b5780639dc29fac14610140578063a6f9dae114610178578063b33f78ca14610199578063d4ee1d90146101ba578063e3d670d7146101cf575b005b3480156100b157600080fd5b506100ba610202565b60408051600160a060020a039092168252519081900360200190f35b3480156100e257600080fd5b506100a36004803560248101910135610211565b34801561010257600080fd5b506100a3600480356024810191013561039a565b34801561012257600080fd5b506100a36105c6565b34801561013757600080fd5b506100ba61060c565b34801561014c57600080fd5b50610164600160a060020a036004351660243561061b565b604080519115158252519081900360200190f35b34801561018457600080fd5b506100a3600160a060020a036004351661079b565b3480156101a557600080fd5b50610164600160a060020a03600435166107e3565b3480156101c657600080fd5b506100ba6107f8565b3480156101db57600080fd5b506101f0600160a060020a0360043516610807565b60408051918252519081900360200190f35b600254600160a060020a031681565b600080548190600160a060020a031633811461022c57600080fd5b600092505b838310156103935784848481811061024557fe5b60209081029290920135600160a060020a0316600081815260049093526040909220549193505060ff16156102db57604080517f08c379a000000000000000000000000000000000000000000000000000000000815260206004820152601460248201527f746f6b656e20616c726561647920657869737473000000000000000000000000604482015290519081900360640190fd5b6003805460018082019092557fc2575a0e9e593c00f959f8c92f12db2869c3395a3b0502d05e2516446f71f85b01805473ffffffffffffffffffffffffffffffffffffffff1916600160a060020a038516908117909155600081815260046020908152604091829020805460ff191690941790935580513381529283019190915280517fb688caad5e1d3e1a0fe69a509504a4849096cc519f7c542e07b8a9dbc7993e569281900390910190a1600190920191610231565b5050505050565b6000805481908190600160a060020a03163381146103b757600080fd5b600093505b848410156105be578585858181106103d057fe5b60209081029290920135600160a060020a0316600081815260049093526040909220549194505060ff16151561046757604080517f08c379a000000000000000000000000000000000000000000000000000000000815260206004820152601460248201527f746f6b656e20646f6573206e6f74206578697374000000000000000000000000604482015290519081900360640190fd5b600160a060020a0383166000908152600460205260408120805460ff1916905591505b60035461049e90600163ffffffff6108b516565b82101561055c5782600160a060020a03166003838154811015156104be57fe5b600091825260209091200154600160a060020a0316141561055157600380546104ee90600163ffffffff6108b516565b815481106104f857fe5b60009182526020909120015460038054600160a060020a03909216918490811061051e57fe5b9060005260206000200160006101000a815481600160a060020a030219169083600160a060020a0316021790555061055c565b60019091019061048a565b600380549061056f9060001983016109dc565b5060408051338152600160a060020a038516602082015281517f703f7e3f084d5b8dcc12fddcfd9a70d65b6b21ec7659e4608dbaf4419ede3ad0929181900390910190a16001909301926103bc565b505050505050565b600154600160a060020a03163381146105de57600080fd5b506000805473ffffffffffffffffffffffffffffffffffffffff199081163317909155600180549091169055565b600054600160a060020a031681565b600254600090819081908190600160a060020a031633811461063c57600080fd5b85151561064c5760019450610791565b600254604080517f771282f600000000000000000000000000000000000000000000000000000000815290518892600160a060020a03169163771282f69160048083019260209291908290030181600087803b1580156106ab57600080fd5b505af11580156106bf573d6000803e3d6000fd5b505050506040513d60208110156106d557600080fd5b5051019350838611156106e757600080fd5b600092505b60035483101561078c5761072260038481548110151561070857fe5b600091825260209091200154600160a060020a0316610807565b9150600082111561078157818687840281151561073b57fe5b041461074657600080fd5b6107818760038581548110151561075957fe5b600091825260209091200154600160a060020a031686858a0281151561077b57fe5b046108cc565b6001909201916106ec565b600194505b5050505092915050565b600054600160a060020a03163381146107b357600080fd5b506001805473ffffffffffffffffffffffffffffffffffffffff1916600160a060020a0392909216919091179055565b60046020526000908152604090205460ff1681565b600154600160a060020a031681565b6000600160a060020a038216156108ac57604080517f70a082310000000000000000000000000000000000000000000000000000000081523060048201529051600160a060020a038416916370a082319160248083019260209291908290030181600087803b15801561087957600080fd5b505af115801561088d573d6000803e3d6000fd5b505050506040513d60208110156108a357600080fd5b505190506108b0565b5030315b919050565b600080838311156108c557600080fd5b5050900390565b8015156108d8576109d7565b600160a060020a0382161561099f5781600160a060020a031663a9059cbb84836040518363ffffffff167c01000000000000000000000000000000000000000000000000000000000281526004018083600160a060020a0316600160a060020a0316815260200182815260200192505050602060405180830381600087803b15801561096357600080fd5b505af1158015610977573d6000803e3d6000fd5b505050506040513d602081101561098d57600080fd5b5051151561099a57600080fd5b6109d7565b604051600160a060020a0384169082156108fc029083906000818181858888f193505050501580156109d5573d6000803e3d6000fd5b505b505050565b8154818355818111156109d7576000838152602090206109d7918101908301610a1991905b80821115610a155760008155600101610a01565b5090565b905600a165627a7a72305820ceffec7e420e3c1dfbf85a1636705243b2d822ca59cbfc50f006da939b006f040029`
 
 // DeployHolder deploys a new Ethereum contract, binding an instance of Holder to it.
 func DeployHolder(auth *bind.TransactOpts, backend bind.ContractBackend, burnerContract common.Address) (common.Address, *types.Transaction, *Holder, error) {
@@ -292,30 +292,30 @@ func (_Holder *HolderCallerSession) Owner() (common.Address, error) {
 	return _Holder.Contract.Owner(&_Holder.CallOpts)
 }
 
-// Tokens is a free data retrieval call binding the contract method 0x4f64b2be.
+// TokenExists is a free data retrieval call binding the contract method 0xb33f78ca.
 //
-// Solidity: function tokens( uint256) constant returns(address)
-func (_Holder *HolderCaller) Tokens(opts *bind.CallOpts, arg0 *big.Int) (common.Address, error) {
+// Solidity: function tokenExists( address) constant returns(bool)
+func (_Holder *HolderCaller) TokenExists(opts *bind.CallOpts, arg0 common.Address) (bool, error) {
 	var (
-		ret0 = new(common.Address)
+		ret0 = new(bool)
 	)
 	out := ret0
-	err := _Holder.contract.Call(opts, out, "tokens", arg0)
+	err := _Holder.contract.Call(opts, out, "tokenExists", arg0)
 	return *ret0, err
 }
 
-// Tokens is a free data retrieval call binding the contract method 0x4f64b2be.
+// TokenExists is a free data retrieval call binding the contract method 0xb33f78ca.
 //
-// Solidity: function tokens( uint256) constant returns(address)
-func (_Holder *HolderSession) Tokens(arg0 *big.Int) (common.Address, error) {
-	return _Holder.Contract.Tokens(&_Holder.CallOpts, arg0)
+// Solidity: function tokenExists( address) constant returns(bool)
+func (_Holder *HolderSession) TokenExists(arg0 common.Address) (bool, error) {
+	return _Holder.Contract.TokenExists(&_Holder.CallOpts, arg0)
 }
 
-// Tokens is a free data retrieval call binding the contract method 0x4f64b2be.
+// TokenExists is a free data retrieval call binding the contract method 0xb33f78ca.
 //
-// Solidity: function tokens( uint256) constant returns(address)
-func (_Holder *HolderCallerSession) Tokens(arg0 *big.Int) (common.Address, error) {
-	return _Holder.Contract.Tokens(&_Holder.CallOpts, arg0)
+// Solidity: function tokenExists( address) constant returns(bool)
+func (_Holder *HolderCallerSession) TokenExists(arg0 common.Address) (bool, error) {
+	return _Holder.Contract.TokenExists(&_Holder.CallOpts, arg0)
 }
 
 // AcceptOwnership is a paid mutator transaction binding the contract method 0x79ba5097.
@@ -337,6 +337,27 @@ func (_Holder *HolderSession) AcceptOwnership() (*types.Transaction, error) {
 // Solidity: function acceptOwnership() returns()
 func (_Holder *HolderTransactorSession) AcceptOwnership() (*types.Transaction, error) {
 	return _Holder.Contract.AcceptOwnership(&_Holder.TransactOpts)
+}
+
+// AddTokens is a paid mutator transaction binding the contract method 0x4ae05c7d.
+//
+// Solidity: function addTokens(_tokens address[]) returns()
+func (_Holder *HolderTransactor) AddTokens(opts *bind.TransactOpts, _tokens []common.Address) (*types.Transaction, error) {
+	return _Holder.contract.Transact(opts, "addTokens", _tokens)
+}
+
+// AddTokens is a paid mutator transaction binding the contract method 0x4ae05c7d.
+//
+// Solidity: function addTokens(_tokens address[]) returns()
+func (_Holder *HolderSession) AddTokens(_tokens []common.Address) (*types.Transaction, error) {
+	return _Holder.Contract.AddTokens(&_Holder.TransactOpts, _tokens)
+}
+
+// AddTokens is a paid mutator transaction binding the contract method 0x4ae05c7d.
+//
+// Solidity: function addTokens(_tokens address[]) returns()
+func (_Holder *HolderTransactorSession) AddTokens(_tokens []common.Address) (*types.Transaction, error) {
+	return _Holder.Contract.AddTokens(&_Holder.TransactOpts, _tokens)
 }
 
 // Burn is a paid mutator transaction binding the contract method 0x9dc29fac.
@@ -381,23 +402,269 @@ func (_Holder *HolderTransactorSession) ChangeOwner(to common.Address) (*types.T
 	return _Holder.Contract.ChangeOwner(&_Holder.TransactOpts, to)
 }
 
-// SetTokens is a paid mutator transaction binding the contract method 0x625adaf2.
+// RemoveTokens is a paid mutator transaction binding the contract method 0x6c3824ef.
 //
-// Solidity: function setTokens(t address[]) returns()
-func (_Holder *HolderTransactor) SetTokens(opts *bind.TransactOpts, t []common.Address) (*types.Transaction, error) {
-	return _Holder.contract.Transact(opts, "setTokens", t)
+// Solidity: function removeTokens(_tokens address[]) returns()
+func (_Holder *HolderTransactor) RemoveTokens(opts *bind.TransactOpts, _tokens []common.Address) (*types.Transaction, error) {
+	return _Holder.contract.Transact(opts, "removeTokens", _tokens)
 }
 
-// SetTokens is a paid mutator transaction binding the contract method 0x625adaf2.
+// RemoveTokens is a paid mutator transaction binding the contract method 0x6c3824ef.
 //
-// Solidity: function setTokens(t address[]) returns()
-func (_Holder *HolderSession) SetTokens(t []common.Address) (*types.Transaction, error) {
-	return _Holder.Contract.SetTokens(&_Holder.TransactOpts, t)
+// Solidity: function removeTokens(_tokens address[]) returns()
+func (_Holder *HolderSession) RemoveTokens(_tokens []common.Address) (*types.Transaction, error) {
+	return _Holder.Contract.RemoveTokens(&_Holder.TransactOpts, _tokens)
 }
 
-// SetTokens is a paid mutator transaction binding the contract method 0x625adaf2.
+// RemoveTokens is a paid mutator transaction binding the contract method 0x6c3824ef.
 //
-// Solidity: function setTokens(t address[]) returns()
-func (_Holder *HolderTransactorSession) SetTokens(t []common.Address) (*types.Transaction, error) {
-	return _Holder.Contract.SetTokens(&_Holder.TransactOpts, t)
+// Solidity: function removeTokens(_tokens address[]) returns()
+func (_Holder *HolderTransactorSession) RemoveTokens(_tokens []common.Address) (*types.Transaction, error) {
+	return _Holder.Contract.RemoveTokens(&_Holder.TransactOpts, _tokens)
+}
+
+// HolderAddedTokenIterator is returned from FilterAddedToken and is used to iterate over the raw logs and unpacked data for AddedToken events raised by the Holder contract.
+type HolderAddedTokenIterator struct {
+	Event *HolderAddedToken // Event containing the contract specifics and raw log
+
+	contract *bind.BoundContract // Generic contract to use for unpacking event data
+	event    string              // Event name to use for unpacking event data
+
+	logs chan types.Log        // Log channel receiving the found contract events
+	sub  ethereum.Subscription // Subscription for errors, completion and termination
+	done bool                  // Whether the subscription completed delivering logs
+	fail error                 // Occurred error to stop iteration
+}
+
+// Next advances the iterator to the subsequent event, returning whether there
+// are any more events found. In case of a retrieval or parsing error, false is
+// returned and Error() can be queried for the exact failure.
+func (it *HolderAddedTokenIterator) Next() bool {
+	// If the iterator failed, stop iterating
+	if it.fail != nil {
+		return false
+	}
+	// If the iterator completed, deliver directly whatever's available
+	if it.done {
+		select {
+		case log := <-it.logs:
+			it.Event = new(HolderAddedToken)
+			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+				it.fail = err
+				return false
+			}
+			it.Event.Raw = log
+			return true
+
+		default:
+			return false
+		}
+	}
+	// Iterator still in progress, wait for either a data or an error event
+	select {
+	case log := <-it.logs:
+		it.Event = new(HolderAddedToken)
+		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+			it.fail = err
+			return false
+		}
+		it.Event.Raw = log
+		return true
+
+	case err := <-it.sub.Err():
+		it.done = true
+		it.fail = err
+		return it.Next()
+	}
+}
+
+// Error returns any retrieval or parsing error occurred during filtering.
+func (it *HolderAddedTokenIterator) Error() error {
+	return it.fail
+}
+
+// Close terminates the iteration process, releasing any pending underlying
+// resources.
+func (it *HolderAddedTokenIterator) Close() error {
+	it.sub.Unsubscribe()
+	return nil
+}
+
+// HolderAddedToken represents a AddedToken event raised by the Holder contract.
+type HolderAddedToken struct {
+	Sender common.Address
+	Token  common.Address
+	Raw    types.Log // Blockchain specific contextual infos
+}
+
+// FilterAddedToken is a free log retrieval operation binding the contract event 0xb688caad5e1d3e1a0fe69a509504a4849096cc519f7c542e07b8a9dbc7993e56.
+//
+// Solidity: e AddedToken(_sender address, _token address)
+func (_Holder *HolderFilterer) FilterAddedToken(opts *bind.FilterOpts) (*HolderAddedTokenIterator, error) {
+
+	logs, sub, err := _Holder.contract.FilterLogs(opts, "AddedToken")
+	if err != nil {
+		return nil, err
+	}
+	return &HolderAddedTokenIterator{contract: _Holder.contract, event: "AddedToken", logs: logs, sub: sub}, nil
+}
+
+// WatchAddedToken is a free log subscription operation binding the contract event 0xb688caad5e1d3e1a0fe69a509504a4849096cc519f7c542e07b8a9dbc7993e56.
+//
+// Solidity: e AddedToken(_sender address, _token address)
+func (_Holder *HolderFilterer) WatchAddedToken(opts *bind.WatchOpts, sink chan<- *HolderAddedToken) (event.Subscription, error) {
+
+	logs, sub, err := _Holder.contract.WatchLogs(opts, "AddedToken")
+	if err != nil {
+		return nil, err
+	}
+	return event.NewSubscription(func(quit <-chan struct{}) error {
+		defer sub.Unsubscribe()
+		for {
+			select {
+			case log := <-logs:
+				// New log arrived, parse the event and forward to the user
+				event := new(HolderAddedToken)
+				if err := _Holder.contract.UnpackLog(event, "AddedToken", log); err != nil {
+					return err
+				}
+				event.Raw = log
+
+				select {
+				case sink <- event:
+				case err := <-sub.Err():
+					return err
+				case <-quit:
+					return nil
+				}
+			case err := <-sub.Err():
+				return err
+			case <-quit:
+				return nil
+			}
+		}
+	}), nil
+}
+
+// HolderRemovedTokenIterator is returned from FilterRemovedToken and is used to iterate over the raw logs and unpacked data for RemovedToken events raised by the Holder contract.
+type HolderRemovedTokenIterator struct {
+	Event *HolderRemovedToken // Event containing the contract specifics and raw log
+
+	contract *bind.BoundContract // Generic contract to use for unpacking event data
+	event    string              // Event name to use for unpacking event data
+
+	logs chan types.Log        // Log channel receiving the found contract events
+	sub  ethereum.Subscription // Subscription for errors, completion and termination
+	done bool                  // Whether the subscription completed delivering logs
+	fail error                 // Occurred error to stop iteration
+}
+
+// Next advances the iterator to the subsequent event, returning whether there
+// are any more events found. In case of a retrieval or parsing error, false is
+// returned and Error() can be queried for the exact failure.
+func (it *HolderRemovedTokenIterator) Next() bool {
+	// If the iterator failed, stop iterating
+	if it.fail != nil {
+		return false
+	}
+	// If the iterator completed, deliver directly whatever's available
+	if it.done {
+		select {
+		case log := <-it.logs:
+			it.Event = new(HolderRemovedToken)
+			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+				it.fail = err
+				return false
+			}
+			it.Event.Raw = log
+			return true
+
+		default:
+			return false
+		}
+	}
+	// Iterator still in progress, wait for either a data or an error event
+	select {
+	case log := <-it.logs:
+		it.Event = new(HolderRemovedToken)
+		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+			it.fail = err
+			return false
+		}
+		it.Event.Raw = log
+		return true
+
+	case err := <-it.sub.Err():
+		it.done = true
+		it.fail = err
+		return it.Next()
+	}
+}
+
+// Error returns any retrieval or parsing error occurred during filtering.
+func (it *HolderRemovedTokenIterator) Error() error {
+	return it.fail
+}
+
+// Close terminates the iteration process, releasing any pending underlying
+// resources.
+func (it *HolderRemovedTokenIterator) Close() error {
+	it.sub.Unsubscribe()
+	return nil
+}
+
+// HolderRemovedToken represents a RemovedToken event raised by the Holder contract.
+type HolderRemovedToken struct {
+	Sender common.Address
+	Token  common.Address
+	Raw    types.Log // Blockchain specific contextual infos
+}
+
+// FilterRemovedToken is a free log retrieval operation binding the contract event 0x703f7e3f084d5b8dcc12fddcfd9a70d65b6b21ec7659e4608dbaf4419ede3ad0.
+//
+// Solidity: e RemovedToken(_sender address, _token address)
+func (_Holder *HolderFilterer) FilterRemovedToken(opts *bind.FilterOpts) (*HolderRemovedTokenIterator, error) {
+
+	logs, sub, err := _Holder.contract.FilterLogs(opts, "RemovedToken")
+	if err != nil {
+		return nil, err
+	}
+	return &HolderRemovedTokenIterator{contract: _Holder.contract, event: "RemovedToken", logs: logs, sub: sub}, nil
+}
+
+// WatchRemovedToken is a free log subscription operation binding the contract event 0x703f7e3f084d5b8dcc12fddcfd9a70d65b6b21ec7659e4608dbaf4419ede3ad0.
+//
+// Solidity: e RemovedToken(_sender address, _token address)
+func (_Holder *HolderFilterer) WatchRemovedToken(opts *bind.WatchOpts, sink chan<- *HolderRemovedToken) (event.Subscription, error) {
+
+	logs, sub, err := _Holder.contract.WatchLogs(opts, "RemovedToken")
+	if err != nil {
+		return nil, err
+	}
+	return event.NewSubscription(func(quit <-chan struct{}) error {
+		defer sub.Unsubscribe()
+		for {
+			select {
+			case log := <-logs:
+				// New log arrived, parse the event and forward to the user
+				event := new(HolderRemovedToken)
+				if err := _Holder.contract.UnpackLog(event, "RemovedToken", log); err != nil {
+					return err
+				}
+				event.Raw = log
+
+				select {
+				case sink <- event:
+				case err := <-sub.Err():
+					return err
+				case <-quit:
+					return nil
+				}
+			case err := <-sub.Err():
+				return err
+			case <-quit:
+				return nil
+			}
+		}
+	}), nil
 }

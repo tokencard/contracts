@@ -1,5 +1,7 @@
 pragma solidity >=0.4.18;
 
+import "./externals/SafeMath.sol";
+
 // The Token interface is a subset of the ERC20 specification.
 interface Token {
     function transfer(address, uint) external returns (bool);
@@ -16,24 +18,35 @@ interface BurnerToken {
 // calls the burn method, a share of the tokens held by this contract are
 // disbursed to the burner.
 contract Holder {
-    // Owner of this contract.
-    address public owner;
 
-    // New owner in a two-phase ownership transfer.
-    address public newOwner;
+  using SafeMath for uint256;
 
-    // Burner token which can be burned to redeem shares.
-    address public burner;
+  /*******************/
+  /*     Events     */
+  /*****************/
 
-    // Tokens known to this contract. When the burn method is called, only
-    // shares of these tokens will be disbursed.
-    address[] public tokens;
+  event AddedToken(address _sender, address _token);
+  event RemovedToken(address _sender, address _token);
 
-    // Only allow the given address to call the method.
-    modifier only(address a) {
-        require(msg.sender == a);
-        _;
-    }
+  // Owner of this contract.
+  address public owner;
+
+  // New owner in a two-phase ownership transfer.
+  address public newOwner;
+
+  // Burner token which can be burned to redeem shares.
+  address public burner;
+
+  // Tokens known to this contract. When the burn method is called, only
+  // shares of these tokens will be disbursed.
+  address[] private _tokenAddresses;
+  mapping(address => bool) public tokenExists;
+
+  // Only allow the given address to call the method.
+  modifier only(address a) {
+      require(msg.sender == a);
+      _;
+  }
 
     // Construct a TokenHolder for the given burner token with the sender
     // as the owner.
@@ -56,9 +69,44 @@ contract Holder {
         newOwner = 0x0;
     }
 
-    // Set the tokens known to this contract.
-    function setTokens(address[] t) external only (owner) {
-        tokens = t;
+    /// @dev Add ERC20 tokens to the list of supported tokens.
+    /// @param _tokens ERC20 token contract addresses.
+    function addTokens(address[] _tokens) external only (owner) {
+        // Add each token to the list of supported tokens.
+        for (uint i = 0; i < _tokens.length; i++) {
+            // Require that the token doesn't already exist.
+            address token = _tokens[i];
+            require(!tokenExists[token], "token already exists");
+            // Add the token address to the address list.
+            _tokenAddresses.push(token);
+            tokenExists[token] = true;
+            // Emit token addition event.
+            emit AddedToken(msg.sender, token);
+        }
+    }
+
+    /// @dev Remove ERC20 tokens from the list of supported tokens.
+    /// @param _tokens ERC20 token contract addresses.
+    function removeTokens(address[] _tokens) external only (owner) {
+        // Delete each token object from the list of supported tokens based on the addresses provided.
+        for (uint i = 0; i < _tokens.length; i++) {
+            // Store the token address.
+            address token = _tokens[i];
+            //token must exist, reverts on duplicates as well
+            require(tokenExists[token], "token does not exist");
+            // Delete the token entry.
+            delete tokenExists[token];
+            // Remove the token address from the address list.
+            for (uint j = 0; j < _tokenAddresses.length.sub(1); j++) {
+                if (_tokenAddresses[j] == token) {
+                    _tokenAddresses[j] = _tokenAddresses[_tokenAddresses.length.sub(1)];
+                    break;
+                }
+            }
+            _tokenAddresses.length--;
+            // Emit token removal event.
+            emit RemovedToken(msg.sender, token);
+        }
     }
 
     // Burn handles disbursing a share of tokens to an address.
@@ -72,12 +120,12 @@ contract Holder {
 
         require(amount <= supply);
 
-        for (uint i = 0; i < tokens.length; i++) {
-            uint total = balance(tokens[i]);
+        for (uint i = 0; i < _tokenAddresses.length; i++) {
+            uint total = balance(_tokenAddresses[i]);
 
             if (total > 0) {
                 require((total * amount) / amount == total); // Overflow check.
-                transfer(to, tokens[i], (total * amount) / supply);
+                transfer(to, _tokenAddresses[i], (total * amount) / supply);
             }
         }
 

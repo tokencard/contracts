@@ -21,12 +21,6 @@ var ERC20Contract1Address common.Address
 var ERC20Contract2 *mocks.Token
 var ERC20Contract2Address common.Address
 
-var TKNBurner *bindings.Token
-var TKNBurnerAddress common.Address
-
-var TokenHolder *bindings.Holder
-var TokenHolderAddress common.Address
-
 func init() {
 	TestRig.AddCoverageForContracts(
 		"../../build/holder/combined.json",

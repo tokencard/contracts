@@ -538,7 +538,7 @@ contract Wallet is Vault {
             require(ERC20(_asset).approve(address(_licence), _amount.add(_fee)), "ERC20 token approval was unsuccessful");
             require(_licence.load(_fee, _asset, _amount), "licence contract could not load the ERC20 tokens");
         } else {
-            // require(_licence.load.value(_amount.add(_fee))(_fee, _asset, _amount), "licence contract could not load the ether");
+            require(_licence.load.value(_amount.add(_fee))(_fee, _asset, _amount), "licence contract could not load the ether");
         }
         emit LoadedTokenCard(_fee, _asset, _amount);
     }

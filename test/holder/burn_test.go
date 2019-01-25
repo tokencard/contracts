@@ -116,7 +116,7 @@ package holder_test
 						BeforeEach(func() {
 							var err error
 							tokens := []common.Address{common.HexToAddress("0x0"), ERC20Contract1Address, ERC20Contract2Address}
-							tx, err = TokenHolder.SetTokens(Owner.TransactOpts(), tokens)
+							tx, err = TokenHolder.AddTokens(Owner.TransactOpts(), tokens)
 							Expect(err).ToNot(HaveOccurred())
 							Backend.Commit()
 							Expect(isSuccessful(tx)).To(BeTrue())
@@ -396,7 +396,7 @@ package holder_test
 									Expect(err).ToNot(HaveOccurred())
 									Expect(b.String()).To(Equal("500"))
 								})
-								
+
 								It("Should emit a Transfer event of 0 value", func() {
 									from := []common.Address{RandomAccount.Address()}
 									to := []common.Address{common.HexToAddress("0x0")}
