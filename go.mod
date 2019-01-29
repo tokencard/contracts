@@ -8,7 +8,7 @@ require (
 	github.com/onsi/ginkgo v1.6.0
 	github.com/onsi/gomega v1.4.2
 	github.com/pkg/errors v0.8.0
-	github.com/tokencard/ethertest v0.7.1
+	github.com/tokencard/ethertest v0.7.7
 	golang.org/x/crypto v0.0.0-20190103213133-ff983b9c42bc
 	gopkg.in/check.v1 v1.0.0-20180628173108-788fd7840127 // indirect
 )
