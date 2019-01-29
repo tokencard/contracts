@@ -2,11 +2,11 @@ pragma solidity ^0.4.25;
 
 import "./externals/SafeMath.sol";
 import "./internals/ownable.sol";
-import "./dao.sol";
 
-/// @title ILicence interface describes methods for loading a TokenCard inclusive of licence fees.
-interface ILicence {
-    function load(uint, address, uint) external payable returns (bool);
+/// @title The DAO interface (WIP stub).
+interface IDAO {
+    function lock() external;
+    function isLocked() external returns (bool);
 }
 
 /// @title ERC20 interface is a subset of the ERC20 specification.
@@ -22,13 +22,11 @@ contract Licence is Ownable {
 
     event Received(address _from, uint _amount);
 
-    event UpdatedDAO(address _owner, address _dao);
-    event UpdatedFee(address _owner, address _fee);
+    event UpdatedDAO(address _sender, address _newDAO);
+    event UpdatedFee(address _sender, uint _newFee);
 
     event TransferredToTokenHolder(address _from, address _contract, address _asset, uint _amount);
     event TransferredToCryptoFloat(address _from, address _contract, address _asset, uint _amount);
-
-    event ChangedLicenceFee(address _dao, uint _newFee);
 
     using SafeMath for uint256;
 
@@ -37,7 +35,7 @@ contract Licence is Ownable {
 
     uint public fee;
 
-    /// @dev IDAO is an interface to a DAO contract that manages licence fees.
+    /// @dev IDAO is an interface to a DAO contract that can update the licence contract.
     IDAO public DAO;
 
     /// @dev Reverts if called by any address other than the DAO contract.
@@ -49,11 +47,11 @@ contract Licence is Ownable {
     /// @dev Constructor initializes the card licence contract.
     /// @param _owner is the owner account of the wallet contract.
     /// @param _transferable indicates whether the contract ownership can be transferred.
-    /// @param _dao is the address of the DOA contract.
+    /// @param _fee is the initial card licence fee.
     /// @param _cryptoFloat is the address of the multi-sig cryptocurrency float contract.
     /// @param _tokenHolder is the address of the token holder contract
-    constructor(address _owner, bool _transferable, address _dao, address _cryptoFloat, address _tokenHolder) Ownable(_owner, _transferable) public {
-        DAO = IDAO(_dao);
+    constructor(address _owner, bool _transferable, uint _fee, address _cryptoFloat, address _tokenHolder) Ownable(_owner, _transferable) public {
+        fee = _fee;
         cryptoFloat = _cryptoFloat;
         tokenHolder = _tokenHolder;
     }
@@ -76,16 +74,17 @@ contract Licence is Ownable {
 
     /// @dev Updates the address of the DAO contract.
     function updateDAO(address _newDAO) external onlyOwner {
-        require(!DAO.isLocked(), "DAO is locked");
+        if (address(DAO) != address(0))
+          require(!DAO.isLocked(), "DAO is locked");
         DAO = IDAO(_newDAO);
-        emit UpdatedDAO(owner(), _newDAO);
+        emit UpdatedDAO(msg.sender, _newDAO);
     }
 
     /// @dev Updates the card licence fee.
     function updateFee(uint _newFee) external onlyDAO {
         require(1 <= _newFee && _newFee <= 100, "percent fee out of range"); // TODO(daniel): same as below, not sure if using percentages inside solidity is the optimal solution.
         fee = _newFee;
-        emit ChangedLicenceFee(address(DAO), _newFee);
+        emit UpdatedFee(address(DAO), _newFee);
     }
 
     /// @dev Load the holder and float contracts based on the licence fee and asset amount.
@@ -95,7 +94,7 @@ contract Licence is Ownable {
     function load(uint _fee, address _asset, uint _amount) external payable returns (bool) {
         require(_amount != 0 || _fee != 0, "fee and amount cannot both be zero");
 
-        require(_amount == _fee * 100 / fee, "these don't add up"); // TODO(daniel): don't know if it's a good idea to calculate percentages inside a smart contract, best to stick to uints. Also should use safe math here. I guess we could calculate the fee outside the chain and just submit the amount in wei?
+        require(_amount == _fee * 100 / fee, "these do not add up"); // TODO(daniel): don't know if it's a good idea to calculate percentages inside a smart contract, best to stick to uints. Also should use safe math here. I guess we could calculate the fee outside the chain and just submit the amount in wei?
 
         if (_asset != address(0)) {
             require(ERC20(_asset).transferFrom(msg.sender, tokenHolder, _fee), "ERC20 fee transfer from external account was unsuccessful");

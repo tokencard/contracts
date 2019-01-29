@@ -1,0 +1,1 @@
+[{"constant":false,"inputs":[{"name":"_newFee","type":"uint256"}],"name":"updateFee","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"}]

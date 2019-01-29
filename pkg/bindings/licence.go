@@ -28,18 +28,18 @@ var (
 )
 
 // LicenceABI is the input ABI used to generate the binding from.
-const LicenceABI = "[{\"constant\":true,\"inputs\":[],\"name\":\"isTransferable\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"tokenHolder\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[],\"name\":\"renounceOwnership\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_fee\",\"type\":\"uint256\"},{\"name\":\"_asset\",\"type\":\"address\"},{\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"load\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":true,\"stateMutability\":\"payable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_newFee\",\"type\":\"uint256\"}],\"name\":\"updateFee\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"DAO\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"cryptoFloat\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_account\",\"type\":\"address\"},{\"name\":\"_transferable\",\"type\":\"bool\"}],\"name\":\"transferOwnership\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_newDAO\",\"type\":\"address\"}],\"name\":\"updateDAO\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"fee\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"name\":\"_owner\",\"type\":\"address\"},{\"name\":\"_transferable\",\"type\":\"bool\"},{\"name\":\"_dao\",\"type\":\"address\"},{\"name\":\"_cryptoFloat\",\"type\":\"address\"},{\"name\":\"_tokenHolder\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"payable\":true,\"stateMutability\":\"payable\",\"type\":\"fallback\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_from\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"Received\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_owner\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_dao\",\"type\":\"address\"}],\"name\":\"UpdatedDAO\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_owner\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_fee\",\"type\":\"address\"}],\"name\":\"UpdatedFee\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_from\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_contract\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_asset\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"TransferredToTokenHolder\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_from\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_contract\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_asset\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"TransferredToCryptoFloat\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_dao\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_newFee\",\"type\":\"uint256\"}],\"name\":\"ChangedLicenceFee\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_from\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_to\",\"type\":\"address\"}],\"name\":\"TransferredOwnership\",\"type\":\"event\"}]"
+const LicenceABI = "[{\"constant\":true,\"inputs\":[],\"name\":\"isTransferable\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"tokenHolder\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[],\"name\":\"renounceOwnership\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_fee\",\"type\":\"uint256\"},{\"name\":\"_asset\",\"type\":\"address\"},{\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"load\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":true,\"stateMutability\":\"payable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_newFee\",\"type\":\"uint256\"}],\"name\":\"updateFee\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"DAO\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"cryptoFloat\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_account\",\"type\":\"address\"},{\"name\":\"_transferable\",\"type\":\"bool\"}],\"name\":\"transferOwnership\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_newDAO\",\"type\":\"address\"}],\"name\":\"updateDAO\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"fee\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"name\":\"_owner\",\"type\":\"address\"},{\"name\":\"_transferable\",\"type\":\"bool\"},{\"name\":\"_fee\",\"type\":\"uint256\"},{\"name\":\"_cryptoFloat\",\"type\":\"address\"},{\"name\":\"_tokenHolder\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"payable\":true,\"stateMutability\":\"payable\",\"type\":\"fallback\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_from\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"Received\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_sender\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_newDAO\",\"type\":\"address\"}],\"name\":\"UpdatedDAO\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_sender\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_newFee\",\"type\":\"uint256\"}],\"name\":\"UpdatedFee\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_from\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_contract\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_asset\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"TransferredToTokenHolder\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_from\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_contract\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_asset\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"TransferredToCryptoFloat\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_from\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_to\",\"type\":\"address\"}],\"name\":\"TransferredOwnership\",\"type\":\"event\"}]"
 
 // LicenceBin is the compiled bytecode used for deploying new contracts.
-const LicenceBin = `608060405234801561001057600080fd5b5060405160a080610ec3833981016040818152825160208085015183860151606087015160809097015160008054600160a060020a031916600160a060020a03871690811760a060020a60ff02191674010000000000000000000000000000000000000000861515021782559088529387019390935284519396919590949193879287927f850b3df64837d7d518b45f5aa64d104652c3b80eb5b34a8e3d9eb666cb7cdea5929081900390910190a1505060048054600160a060020a03948516600160a060020a0319918216179091556001805493851693821693909317909255600280549190931691161790555050610db48061010f6000396000f3006080604052600436106100ae5763ffffffff7c01000000000000000000000000000000000000000000000000000000006000350416632121dc7581146100f5578063420a83e71461011e578063715018a61461014f578063755677b9146101665780638da5cb5b146101805780639012c4a81461019557806398fabd3a146101ad578063a036ba60146101c2578063b242e534146101d7578063bcb6c0b5146101fd578063ddca3f431461021e575b36156100b957600080fd5b6040805133815234602082015281517f88a5966d370b9919b20f3e2c13ff65706f196a4e32cc2c12bf57088f88525874929181900390910190a1005b34801561010157600080fd5b5061010a610245565b604080519115158252519081900360200190f35b34801561012a57600080fd5b50610133610266565b60408051600160a060020a039092168252519081900360200190f35b34801561015b57600080fd5b50610164610275565b005b61010a600435600160a060020a03602435166044356103b0565b34801561018c57600080fd5b506101336108a3565b3480156101a157600080fd5b506101646004356108b2565b3480156101b957600080fd5b50610133610980565b3480156101ce57600080fd5b5061013361098f565b3480156101e357600080fd5b50610164600160a060020a0360043516602435151561099e565b34801561020957600080fd5b50610164600160a060020a0360043516610ba6565b34801561022a57600080fd5b50610233610d58565b60408051918252519081900360200190f35b60005474010000000000000000000000000000000000000000900460ff1690565b600254600160a060020a031690565b61027d610d5e565b15156102d3576040805160e560020a62461bcd02815260206004820152601660248201527f73656e646572206973206e6f7420616e206f776e657200000000000000000000604482015290519081900360640190fd5b60005474010000000000000000000000000000000000000000900460ff161515610347576040805160e560020a62461bcd02815260206004820152601d60248201527f6f776e657273686970206973206e6f74207472616e7366657261626c65000000604482015290519081900360640190fd5b6000805460408051600160a060020a039092168252602082019290925281517f850b3df64837d7d518b45f5aa64d104652c3b80eb5b34a8e3d9eb666cb7cdea5929181900390910190a16000805473ffffffffffffffffffffffffffffffffffffffff19169055565b6000811515806103bf57508315155b151561043b576040805160e560020a62461bcd02815260206004820152602260248201527f66656520616e6420616d6f756e742063616e6e6f7420626f7468206265207a6560448201527f726f000000000000000000000000000000000000000000000000000000000000606482015290519081900360840190fd5b6003548460640281151561044b57fe5b0482146104a2576040805160e560020a62461bcd02815260206004820152601260248201527f746865736520646f6e2774206164642075700000000000000000000000000000604482015290519081900360640190fd5b600160a060020a038316156106f057600254604080517f23b872dd000000000000000000000000000000000000000000000000000000008152336004820152600160a060020a039283166024820152604481018790529051918516916323b872dd916064808201926020929091908290030181600087803b15801561052657600080fd5b505af115801561053a573d6000803e3d6000fd5b505050506040513d602081101561055057600080fd5b505115156105ce576040805160e560020a62461bcd02815260206004820152603960248201527f455243323020666565207472616e736665722066726f6d2065787465726e616c60448201527f206163636f756e742077617320756e7375636365737366756c00000000000000606482015290519081900360840190fd5b600154604080517f23b872dd000000000000000000000000000000000000000000000000000000008152336004820152600160a060020a039283166024820152604481018590529051918516916323b872dd916064808201926020929091908290030181600087803b15801561064357600080fd5b505af1158015610657573d6000803e3d6000fd5b505050506040513d602081101561066d57600080fd5b505115156106eb576040805160e560020a62461bcd02815260206004820152603b60248201527f455243323020746f6b656e207472616e736665722066726f6d2065787465726e60448201527f616c206163636f756e742077617320756e7375636365737366756c0000000000606482015290519081900360840190fd5b6107f3565b610700828563ffffffff610d6f16565b341461077c576040805160e560020a62461bcd02815260206004820152602760248201527f65746865722073656e74206974206e6f7420657175616c20746f20616d6f756e60448201527f74202b2066656500000000000000000000000000000000000000000000000000606482015290519081900360840190fd5b600254604051600160a060020a039091169085156108fc029086906000818181858888f193505050501580156107b6573d6000803e3d6000fd5b50600154604051600160a060020a039091169083156108fc029084906000818181858888f193505050501580156107f1573d6000803e3d6000fd5b505b60025460408051338152600160a060020a0392831660208201529185168282015260608201869052517fdd9dfad7b30d6b224e235f89565871419d3dec3b563a4e231f12d2cc97f9acfc9181900360800190a160015460408051338152600160a060020a0392831660208201529185168282015260608201849052517fc8a7b0bd71097b47b2cad75e4e939d2aeb7fae88110e68f93b83fed08e9d3c389181900360800190a15060019392505050565b600054600160a060020a031690565b600454600160a060020a031633146108c957600080fd5b806001111580156108db575060648111155b1515610931576040805160e560020a62461bcd02815260206004820152601860248201527f70657263656e7420666565206f7574206f662072616e67650000000000000000604482015290519081900360640190fd5b600381905560045460408051600160a060020a0390921682526020820183905280517fed263c6ee1194d6a8ba3bee297ab0af0dd4b3b24f89ea68fea5c25e1642a975d9281900390910190a150565b600454600160a060020a031681565b600154600160a060020a031690565b6109a6610d5e565b15156109fc576040805160e560020a62461bcd02815260206004820152601660248201527f73656e646572206973206e6f7420616e206f776e657200000000000000000000604482015290519081900360640190fd5b60005474010000000000000000000000000000000000000000900460ff161515610a70576040805160e560020a62461bcd02815260206004820152601d60248201527f6f776e657273686970206973206e6f74207472616e7366657261626c65000000604482015290519081900360640190fd5b600160a060020a0382161515610af6576040805160e560020a62461bcd02815260206004820152602360248201527f6f776e65722063616e6e6f742062652073657420746f207a65726f206164647260448201527f6573730000000000000000000000000000000000000000000000000000000000606482015290519081900360840190fd5b6000805474ff000000000000000000000000000000000000000019167401000000000000000000000000000000000000000083151502179081905560408051600160a060020a039283168152918416602083015280517f850b3df64837d7d518b45f5aa64d104652c3b80eb5b34a8e3d9eb666cb7cdea59281900390910190a1506000805473ffffffffffffffffffffffffffffffffffffffff1916600160a060020a0392909216919091179055565b610bae610d5e565b1515610c04576040805160e560020a62461bcd02815260206004820152601660248201527f73656e646572206973206e6f7420616e206f776e657200000000000000000000604482015290519081900360640190fd5b60048054604080517fa4e2d6340000000000000000000000000000000000000000000000000000000081529051600160a060020a039092169263a4e2d6349282820192602092908290030181600087803b158015610c6157600080fd5b505af1158015610c75573d6000803e3d6000fd5b505050506040513d6020811015610c8b57600080fd5b505115610ce2576040805160e560020a62461bcd02815260206004820152600d60248201527f44414f206973206c6f636b656400000000000000000000000000000000000000604482015290519081900360640190fd5b6004805473ffffffffffffffffffffffffffffffffffffffff1916600160a060020a0383161790557f97ad44d5f57e52b66c8d238e30b7cccdc1e11ca21e52f3838a6d1d4fccc41ec3610d336108a3565b60408051600160a060020a03928316815291841660208301528051918290030190a150565b60035481565b600054600160a060020a0316331490565b600082820183811015610d8157600080fd5b93925050505600a165627a7a72305820dc6927f91999e15443f9c83197b25c09afc0f443680805fc38f98db0aa21492c0029`
+const LicenceBin = `608060405234801561001057600080fd5b5060405160a080610ebd833981016040818152825160208085015183860151606087015160809097015160008054600160a060020a031916600160a060020a03871690811760a060020a60ff02191674010000000000000000000000000000000000000000861515021782559088529387019390935284519396919590949193879287927f850b3df64837d7d518b45f5aa64d104652c3b80eb5b34a8e3d9eb666cb7cdea5929081900390910190a1505060039290925560018054600160a060020a03928316600160a060020a0319918216179091556002805492909316911617905550610db89050806101056000396000f3006080604052600436106100ae5763ffffffff7c01000000000000000000000000000000000000000000000000000000006000350416632121dc7581146100f5578063420a83e71461011e578063715018a61461014f578063755677b9146101665780638da5cb5b146101805780639012c4a81461019557806398fabd3a146101ad578063a036ba60146101c2578063b242e534146101d7578063bcb6c0b5146101fd578063ddca3f431461021e575b36156100b957600080fd5b6040805133815234602082015281517f88a5966d370b9919b20f3e2c13ff65706f196a4e32cc2c12bf57088f88525874929181900390910190a1005b34801561010157600080fd5b5061010a610245565b604080519115158252519081900360200190f35b34801561012a57600080fd5b50610133610266565b60408051600160a060020a039092168252519081900360200190f35b34801561015b57600080fd5b50610164610275565b005b61010a600435600160a060020a03602435166044356103b0565b34801561018c57600080fd5b506101336108a3565b3480156101a157600080fd5b506101646004356108b2565b3480156101b957600080fd5b50610133610980565b3480156101ce57600080fd5b5061013361098f565b3480156101e357600080fd5b50610164600160a060020a0360043516602435151561099e565b34801561020957600080fd5b50610164600160a060020a0360043516610ba6565b34801561022a57600080fd5b50610233610d5c565b60408051918252519081900360200190f35b60005474010000000000000000000000000000000000000000900460ff1690565b600254600160a060020a031690565b61027d610d62565b15156102d3576040805160e560020a62461bcd02815260206004820152601660248201527f73656e646572206973206e6f7420616e206f776e657200000000000000000000604482015290519081900360640190fd5b60005474010000000000000000000000000000000000000000900460ff161515610347576040805160e560020a62461bcd02815260206004820152601d60248201527f6f776e657273686970206973206e6f74207472616e7366657261626c65000000604482015290519081900360640190fd5b6000805460408051600160a060020a039092168252602082019290925281517f850b3df64837d7d518b45f5aa64d104652c3b80eb5b34a8e3d9eb666cb7cdea5929181900390910190a16000805473ffffffffffffffffffffffffffffffffffffffff19169055565b6000811515806103bf57508315155b151561043b576040805160e560020a62461bcd02815260206004820152602260248201527f66656520616e6420616d6f756e742063616e6e6f7420626f7468206265207a6560448201527f726f000000000000000000000000000000000000000000000000000000000000606482015290519081900360840190fd5b6003548460640281151561044b57fe5b0482146104a2576040805160e560020a62461bcd02815260206004820152601360248201527f746865736520646f206e6f742061646420757000000000000000000000000000604482015290519081900360640190fd5b600160a060020a038316156106f057600254604080517f23b872dd000000000000000000000000000000000000000000000000000000008152336004820152600160a060020a039283166024820152604481018790529051918516916323b872dd916064808201926020929091908290030181600087803b15801561052657600080fd5b505af115801561053a573d6000803e3d6000fd5b505050506040513d602081101561055057600080fd5b505115156105ce576040805160e560020a62461bcd02815260206004820152603960248201527f455243323020666565207472616e736665722066726f6d2065787465726e616c60448201527f206163636f756e742077617320756e7375636365737366756c00000000000000606482015290519081900360840190fd5b600154604080517f23b872dd000000000000000000000000000000000000000000000000000000008152336004820152600160a060020a039283166024820152604481018590529051918516916323b872dd916064808201926020929091908290030181600087803b15801561064357600080fd5b505af1158015610657573d6000803e3d6000fd5b505050506040513d602081101561066d57600080fd5b505115156106eb576040805160e560020a62461bcd02815260206004820152603b60248201527f455243323020746f6b656e207472616e736665722066726f6d2065787465726e60448201527f616c206163636f756e742077617320756e7375636365737366756c0000000000606482015290519081900360840190fd5b6107f3565b610700828563ffffffff610d7316565b341461077c576040805160e560020a62461bcd02815260206004820152602760248201527f65746865722073656e74206974206e6f7420657175616c20746f20616d6f756e60448201527f74202b2066656500000000000000000000000000000000000000000000000000606482015290519081900360840190fd5b600254604051600160a060020a039091169085156108fc029086906000818181858888f193505050501580156107b6573d6000803e3d6000fd5b50600154604051600160a060020a039091169083156108fc029084906000818181858888f193505050501580156107f1573d6000803e3d6000fd5b505b60025460408051338152600160a060020a0392831660208201529185168282015260608201869052517fdd9dfad7b30d6b224e235f89565871419d3dec3b563a4e231f12d2cc97f9acfc9181900360800190a160015460408051338152600160a060020a0392831660208201529185168282015260608201849052517fc8a7b0bd71097b47b2cad75e4e939d2aeb7fae88110e68f93b83fed08e9d3c389181900360800190a15060019392505050565b600054600160a060020a031690565b600454600160a060020a031633146108c957600080fd5b806001111580156108db575060648111155b1515610931576040805160e560020a62461bcd02815260206004820152601860248201527f70657263656e7420666565206f7574206f662072616e67650000000000000000604482015290519081900360640190fd5b600381905560045460408051600160a060020a0390921682526020820183905280517f6436bbb77997513c673b4327714d5ca63221edd8065af94ef7b7bbb4f2819b6c9281900390910190a150565b600454600160a060020a031681565b600154600160a060020a031690565b6109a6610d62565b15156109fc576040805160e560020a62461bcd02815260206004820152601660248201527f73656e646572206973206e6f7420616e206f776e657200000000000000000000604482015290519081900360640190fd5b60005474010000000000000000000000000000000000000000900460ff161515610a70576040805160e560020a62461bcd02815260206004820152601d60248201527f6f776e657273686970206973206e6f74207472616e7366657261626c65000000604482015290519081900360640190fd5b600160a060020a0382161515610af6576040805160e560020a62461bcd02815260206004820152602360248201527f6f776e65722063616e6e6f742062652073657420746f207a65726f206164647260448201527f6573730000000000000000000000000000000000000000000000000000000000606482015290519081900360840190fd5b6000805474ff000000000000000000000000000000000000000019167401000000000000000000000000000000000000000083151502179081905560408051600160a060020a039283168152918416602083015280517f850b3df64837d7d518b45f5aa64d104652c3b80eb5b34a8e3d9eb666cb7cdea59281900390910190a1506000805473ffffffffffffffffffffffffffffffffffffffff1916600160a060020a0392909216919091179055565b610bae610d62565b1515610c04576040805160e560020a62461bcd02815260206004820152601660248201527f73656e646572206973206e6f7420616e206f776e657200000000000000000000604482015290519081900360640190fd5b600454600160a060020a031615610cf35760048054604080517fa4e2d6340000000000000000000000000000000000000000000000000000000081529051600160a060020a039092169263a4e2d6349282820192602092908290030181600087803b158015610c7257600080fd5b505af1158015610c86573d6000803e3d6000fd5b505050506040513d6020811015610c9c57600080fd5b505115610cf3576040805160e560020a62461bcd02815260206004820152600d60248201527f44414f206973206c6f636b656400000000000000000000000000000000000000604482015290519081900360640190fd5b6004805473ffffffffffffffffffffffffffffffffffffffff1916600160a060020a03831690811790915560408051338152602081019290925280517f97ad44d5f57e52b66c8d238e30b7cccdc1e11ca21e52f3838a6d1d4fccc41ec39281900390910190a150565b60035481565b600054600160a060020a0316331490565b600082820183811015610d8557600080fd5b93925050505600a165627a7a72305820e0f0771fe584068437e8b28e95660ded99967aafe329415543de454e72e242960029`
 
 // DeployLicence deploys a new Ethereum contract, binding an instance of Licence to it.
-func DeployLicence(auth *bind.TransactOpts, backend bind.ContractBackend, _owner common.Address, _transferable bool, _dao common.Address, _cryptoFloat common.Address, _tokenHolder common.Address) (common.Address, *types.Transaction, *Licence, error) {
+func DeployLicence(auth *bind.TransactOpts, backend bind.ContractBackend, _owner common.Address, _transferable bool, _fee *big.Int, _cryptoFloat common.Address, _tokenHolder common.Address) (common.Address, *types.Transaction, *Licence, error) {
 	parsed, err := abi.JSON(strings.NewReader(LicenceABI))
 	if err != nil {
 		return common.Address{}, nil, nil, err
 	}
-	address, tx, contract, err := bind.DeployContract(auth, parsed, common.FromHex(LicenceBin), backend, _owner, _transferable, _dao, _cryptoFloat, _tokenHolder)
+	address, tx, contract, err := bind.DeployContract(auth, parsed, common.FromHex(LicenceBin), backend, _owner, _transferable, _fee, _cryptoFloat, _tokenHolder)
 	if err != nil {
 		return common.Address{}, nil, nil, err
 	}
@@ -447,129 +447,6 @@ func (_Licence *LicenceSession) UpdateFee(_newFee *big.Int) (*types.Transaction,
 // Solidity: function updateFee(_newFee uint256) returns()
 func (_Licence *LicenceTransactorSession) UpdateFee(_newFee *big.Int) (*types.Transaction, error) {
 	return _Licence.Contract.UpdateFee(&_Licence.TransactOpts, _newFee)
-}
-
-// LicenceChangedLicenceFeeIterator is returned from FilterChangedLicenceFee and is used to iterate over the raw logs and unpacked data for ChangedLicenceFee events raised by the Licence contract.
-type LicenceChangedLicenceFeeIterator struct {
-	Event *LicenceChangedLicenceFee // Event containing the contract specifics and raw log
-
-	contract *bind.BoundContract // Generic contract to use for unpacking event data
-	event    string              // Event name to use for unpacking event data
-
-	logs chan types.Log        // Log channel receiving the found contract events
-	sub  ethereum.Subscription // Subscription for errors, completion and termination
-	done bool                  // Whether the subscription completed delivering logs
-	fail error                 // Occurred error to stop iteration
-}
-
-// Next advances the iterator to the subsequent event, returning whether there
-// are any more events found. In case of a retrieval or parsing error, false is
-// returned and Error() can be queried for the exact failure.
-func (it *LicenceChangedLicenceFeeIterator) Next() bool {
-	// If the iterator failed, stop iterating
-	if it.fail != nil {
-		return false
-	}
-	// If the iterator completed, deliver directly whatever's available
-	if it.done {
-		select {
-		case log := <-it.logs:
-			it.Event = new(LicenceChangedLicenceFee)
-			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
-				it.fail = err
-				return false
-			}
-			it.Event.Raw = log
-			return true
-
-		default:
-			return false
-		}
-	}
-	// Iterator still in progress, wait for either a data or an error event
-	select {
-	case log := <-it.logs:
-		it.Event = new(LicenceChangedLicenceFee)
-		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
-			it.fail = err
-			return false
-		}
-		it.Event.Raw = log
-		return true
-
-	case err := <-it.sub.Err():
-		it.done = true
-		it.fail = err
-		return it.Next()
-	}
-}
-
-// Error returns any retrieval or parsing error occurred during filtering.
-func (it *LicenceChangedLicenceFeeIterator) Error() error {
-	return it.fail
-}
-
-// Close terminates the iteration process, releasing any pending underlying
-// resources.
-func (it *LicenceChangedLicenceFeeIterator) Close() error {
-	it.sub.Unsubscribe()
-	return nil
-}
-
-// LicenceChangedLicenceFee represents a ChangedLicenceFee event raised by the Licence contract.
-type LicenceChangedLicenceFee struct {
-	Dao    common.Address
-	NewFee *big.Int
-	Raw    types.Log // Blockchain specific contextual infos
-}
-
-// FilterChangedLicenceFee is a free log retrieval operation binding the contract event 0xed263c6ee1194d6a8ba3bee297ab0af0dd4b3b24f89ea68fea5c25e1642a975d.
-//
-// Solidity: e ChangedLicenceFee(_dao address, _newFee uint256)
-func (_Licence *LicenceFilterer) FilterChangedLicenceFee(opts *bind.FilterOpts) (*LicenceChangedLicenceFeeIterator, error) {
-
-	logs, sub, err := _Licence.contract.FilterLogs(opts, "ChangedLicenceFee")
-	if err != nil {
-		return nil, err
-	}
-	return &LicenceChangedLicenceFeeIterator{contract: _Licence.contract, event: "ChangedLicenceFee", logs: logs, sub: sub}, nil
-}
-
-// WatchChangedLicenceFee is a free log subscription operation binding the contract event 0xed263c6ee1194d6a8ba3bee297ab0af0dd4b3b24f89ea68fea5c25e1642a975d.
-//
-// Solidity: e ChangedLicenceFee(_dao address, _newFee uint256)
-func (_Licence *LicenceFilterer) WatchChangedLicenceFee(opts *bind.WatchOpts, sink chan<- *LicenceChangedLicenceFee) (event.Subscription, error) {
-
-	logs, sub, err := _Licence.contract.WatchLogs(opts, "ChangedLicenceFee")
-	if err != nil {
-		return nil, err
-	}
-	return event.NewSubscription(func(quit <-chan struct{}) error {
-		defer sub.Unsubscribe()
-		for {
-			select {
-			case log := <-logs:
-				// New log arrived, parse the event and forward to the user
-				event := new(LicenceChangedLicenceFee)
-				if err := _Licence.contract.UnpackLog(event, "ChangedLicenceFee", log); err != nil {
-					return err
-				}
-				event.Raw = log
-
-				select {
-				case sink <- event:
-				case err := <-sub.Err():
-					return err
-				case <-quit:
-					return nil
-				}
-			case err := <-sub.Err():
-				return err
-			case <-quit:
-				return nil
-			}
-		}
-	}), nil
 }
 
 // LicenceReceivedIterator is returned from FilterReceived and is used to iterate over the raw logs and unpacked data for Received events raised by the Licence contract.
@@ -1137,14 +1014,14 @@ func (it *LicenceUpdatedDAOIterator) Close() error {
 
 // LicenceUpdatedDAO represents a UpdatedDAO event raised by the Licence contract.
 type LicenceUpdatedDAO struct {
-	Owner common.Address
-	Dao   common.Address
-	Raw   types.Log // Blockchain specific contextual infos
+	Sender common.Address
+	NewDAO common.Address
+	Raw    types.Log // Blockchain specific contextual infos
 }
 
 // FilterUpdatedDAO is a free log retrieval operation binding the contract event 0x97ad44d5f57e52b66c8d238e30b7cccdc1e11ca21e52f3838a6d1d4fccc41ec3.
 //
-// Solidity: e UpdatedDAO(_owner address, _dao address)
+// Solidity: e UpdatedDAO(_sender address, _newDAO address)
 func (_Licence *LicenceFilterer) FilterUpdatedDAO(opts *bind.FilterOpts) (*LicenceUpdatedDAOIterator, error) {
 
 	logs, sub, err := _Licence.contract.FilterLogs(opts, "UpdatedDAO")
@@ -1156,7 +1033,7 @@ func (_Licence *LicenceFilterer) FilterUpdatedDAO(opts *bind.FilterOpts) (*Licen
 
 // WatchUpdatedDAO is a free log subscription operation binding the contract event 0x97ad44d5f57e52b66c8d238e30b7cccdc1e11ca21e52f3838a6d1d4fccc41ec3.
 //
-// Solidity: e UpdatedDAO(_owner address, _dao address)
+// Solidity: e UpdatedDAO(_sender address, _newDAO address)
 func (_Licence *LicenceFilterer) WatchUpdatedDAO(opts *bind.WatchOpts, sink chan<- *LicenceUpdatedDAO) (event.Subscription, error) {
 
 	logs, sub, err := _Licence.contract.WatchLogs(opts, "UpdatedDAO")
@@ -1260,14 +1137,14 @@ func (it *LicenceUpdatedFeeIterator) Close() error {
 
 // LicenceUpdatedFee represents a UpdatedFee event raised by the Licence contract.
 type LicenceUpdatedFee struct {
-	Owner common.Address
-	Fee   common.Address
-	Raw   types.Log // Blockchain specific contextual infos
+	Sender common.Address
+	NewFee *big.Int
+	Raw    types.Log // Blockchain specific contextual infos
 }
 
-// FilterUpdatedFee is a free log retrieval operation binding the contract event 0x05467857a672883f86395f63a4360793abece3cc5d6df6b03292f1087d8a5c35.
+// FilterUpdatedFee is a free log retrieval operation binding the contract event 0x6436bbb77997513c673b4327714d5ca63221edd8065af94ef7b7bbb4f2819b6c.
 //
-// Solidity: e UpdatedFee(_owner address, _fee address)
+// Solidity: e UpdatedFee(_sender address, _newFee uint256)
 func (_Licence *LicenceFilterer) FilterUpdatedFee(opts *bind.FilterOpts) (*LicenceUpdatedFeeIterator, error) {
 
 	logs, sub, err := _Licence.contract.FilterLogs(opts, "UpdatedFee")
@@ -1277,9 +1154,9 @@ func (_Licence *LicenceFilterer) FilterUpdatedFee(opts *bind.FilterOpts) (*Licen
 	return &LicenceUpdatedFeeIterator{contract: _Licence.contract, event: "UpdatedFee", logs: logs, sub: sub}, nil
 }
 
-// WatchUpdatedFee is a free log subscription operation binding the contract event 0x05467857a672883f86395f63a4360793abece3cc5d6df6b03292f1087d8a5c35.
+// WatchUpdatedFee is a free log subscription operation binding the contract event 0x6436bbb77997513c673b4327714d5ca63221edd8065af94ef7b7bbb4f2819b6c.
 //
-// Solidity: e UpdatedFee(_owner address, _fee address)
+// Solidity: e UpdatedFee(_sender address, _newFee uint256)
 func (_Licence *LicenceFilterer) WatchUpdatedFee(opts *bind.WatchOpts, sink chan<- *LicenceUpdatedFee) (event.Subscription, error) {
 
 	logs, sub, err := _Licence.contract.WatchLogs(opts, "UpdatedFee")

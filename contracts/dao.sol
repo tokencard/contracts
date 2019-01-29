@@ -1,25 +1,42 @@
 pragma solidity ^0.4.25;
 
-/// @title The DAO interface (WIP stub).
-interface IDAO {
-    function lock() external;
-    function isLocked() external returns (bool);
+import "./internals/ownable.sol";
+
+/// @title ILicence interface describes methods for loading a TokenCard inclusive of licence fees.
+interface ILicence {
+    function updateFee(uint _newFee) external;
 }
 
+contract Dao is Ownable{
 
-contract Dao {
+  bool private _locked;
 
-  bool public locked;
+  /// @dev ILicence is an interface to the licence contract that manages licence fees.
+  ILicence public licence;
 
-  function lock() external{
+  /// @dev Constructor initializes the DAO contract.
+  /// @param _owner is the owner account of the Dao contract.
+  /// @param _transferable indicates whether the contract ownership can be transferred.
+  /// @param _licence is the address of the licence contract.
+  constructor(address _owner, bool _transferable, address _licence) Ownable(_owner, _transferable) public {
+      licence = ILicence(_licence);
+  }
 
-    locked = true;
+  function lock() external onlyOwner{
+
+    _locked = true;
 
   }
 
   function isLocked() external view returns (bool){
 
-    return locked;
+    return _locked;
+
+  }
+
+  function updateLicenceFee(uint _newFee) external onlyOwner {
+
+    ILicence(licence).updateFee(_newFee);
 
   }
 
