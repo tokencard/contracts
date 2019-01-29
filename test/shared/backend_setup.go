@@ -84,9 +84,6 @@ var TKNBurnerAddress common.Address
 var TokenHolder *bindings.Holder
 var TokenHolderAddress common.Address
 
-var Dao *bindings.Dao
-var DaoAddress common.Address
-
 var Licence *bindings.Licence
 var LicenceAddress common.Address
 
@@ -404,7 +401,7 @@ func InitializeBackend() error {
 		return errors.Wrap(err, "deploying holder contract")
 	}
 
-	LicenceAddress, tx, Licence, err = bindings.DeployLicence(BankAccount.TransactOpts(), Backend, Controller.Address(), true, DaoAddress, RandomAccount.Address(), TokenHolderAddress)//FIX ME: random should become CryptoFloat contract
+	LicenceAddress, tx, Licence, err = bindings.DeployLicence(BankAccount.TransactOpts(), Backend, Controller.Address(), true, big.NewInt(1), common.HexToAddress("0x0"), TokenHolderAddress)//FIX ME: random should become CryptoFloat contract
 	if err != nil {
 		return err
 	}

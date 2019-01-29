@@ -23,13 +23,24 @@ import "./internals/ownable.sol";
 import "./internals/controllable.sol";
 import "./externals/ens/PublicResolver.sol";
 import "./externals/SafeMath.sol";
-import "./licence.sol";
 
 /// @title ERC165 interface specifies a standard way of querying if a contract implements an interface.
 interface ERC165 {
     function supportsInterface(bytes4) external view returns (bool);
 }
 
+/// @title ILicence interface describes methods for loading a TokenCard inclusive of licence fees.
+interface ILicence {
+    function load(uint, address, uint) external payable returns (bool);
+}
+
+/// @title ERC20 interface is a subset of the ERC20 specification.
+interface ERC20 {
+    function approve(address, uint256) external returns (bool);
+    function balanceOf(address) external view returns (uint);
+    function transfer(address, uint) external returns (bool);
+    function transferFrom(address _from, address _to, uint256 _value) external returns (bool success);
+}
 
 /// @title Whitelist provides payee-whitelist functionality.
 contract Whitelist is Controllable, Ownable {
