@@ -2,12 +2,7 @@ pragma solidity ^0.4.25;
 
 import "./externals/SafeMath.sol";
 import "./internals/ownable.sol";
-
-/// @title The DAO interface (WIP stub).
-interface IDAO {
-    function lock() external;
-    function isLocked() external returns (bool);
-}
+import "./dao.sol";
 
 /// @title ERC20 interface is a subset of the ERC20 specification.
 interface ERC20 {
@@ -15,6 +10,12 @@ interface ERC20 {
     function balanceOf(address) external view returns (uint);
     function transfer(address, uint) external returns (bool);
     function transferFrom(address _from, address _to, uint256 _value) external returns (bool success);
+}
+
+/// @title ILicence interface describes methods for loading a TokenCard inclusive of licence fees.
+interface ILicence {
+    function load(address, uint, uint) external payable returns (bool);
+    function updateFee(uint) external;
 }
 
 /// @title Licence loads the TokenCard and transfers the licence fee to the token holder contract.
@@ -91,7 +92,7 @@ contract Licence is Ownable {
     /// @param _fee is the card licence fee in wei.
     /// @param _asset is the address of an ERC20 token or 0x0 for ether.
     /// @param _amount is the amount of assets to be transferred in base units.
-    function load(uint _fee, address _asset, uint _amount) external payable returns (bool) {
+    function load(address _asset, uint _amount, uint _fee) external payable returns (bool) {
         require(_amount != 0 || _fee != 0, "fee and amount cannot both be zero");
 
         require(_amount == _fee * 100 / fee, "these do not add up"); // TODO(daniel): don't know if it's a good idea to calculate percentages inside a smart contract, best to stick to uints. Also should use safe math here. I guess we could calculate the fee outside the chain and just submit the amount in wei?
