@@ -19,6 +19,7 @@
 pragma solidity ^0.4.25;
 
 import "./oracle.sol";
+import "./licence.sol";
 import "./internals/ownable.sol";
 import "./internals/controllable.sol";
 import "./externals/ens/PublicResolver.sol";
@@ -27,19 +28,6 @@ import "./externals/SafeMath.sol";
 /// @title ERC165 interface specifies a standard way of querying if a contract implements an interface.
 interface ERC165 {
     function supportsInterface(bytes4) external view returns (bool);
-}
-
-/// @title ILicence interface describes methods for loading a TokenCard inclusive of licence fees.
-interface ILicence {
-    function load(uint, address, uint) external payable returns (bool);
-}
-
-/// @title ERC20 interface is a subset of the ERC20 specification.
-interface ERC20 {
-    function approve(address, uint256) external returns (bool);
-    function balanceOf(address) external view returns (uint);
-    function transfer(address, uint) external returns (bool);
-    function transferFrom(address _from, address _to, uint256 _value) external returns (bool success);
 }
 
 /// @title Whitelist provides payee-whitelist functionality.
@@ -419,7 +407,7 @@ contract Wallet is Vault {
 
     event ToppedUpGas(address _sender, address _owner, uint _amount);
 
-    event LoadedTokenCard(uint _licenceFee, address _asset, uint _amount);
+    event LoadedTokenCard(address _asset, uint _amount, uint _licenceFee);
 
     using SafeMath for uint256;
 
@@ -544,14 +532,14 @@ contract Wallet is Vault {
     /// @param _fee is the card licence fee in wei.
     /// @param _asset is the address of an ERC20 token or 0x0 for ether.
     /// @param _amount is the amount of assets to be transferred in base units.
-    function loadTokenCard(uint _fee, address _asset, uint _amount) external onlyOwner {
+    function loadTokenCard(address _asset, uint _amount, uint _fee) external onlyOwner {
         if (_asset != address(0)) {
             require(ERC20(_asset).approve(address(_licence), _amount.add(_fee)), "ERC20 token approval was unsuccessful");
-            require(_licence.load(_fee, _asset, _amount), "licence contract could not load the ERC20 tokens");
+            require(_licence.load(_asset, _amount, _fee), "licence contract could not load the ERC20 tokens");
         } else {
-            require(_licence.load.value(_amount.add(_fee))(_fee, _asset, _amount), "licence contract could not load the ether");
+            require(_licence.load.value(_amount.add(_fee))(_asset, _amount, _fee), "licence contract could not load the ether");
         }
-        emit LoadedTokenCard(_fee, _asset, _amount);
+        emit LoadedTokenCard(_asset, _amount, _fee);
     }
 
     /// @dev Modify the top up limit and top up available based on the provided value.

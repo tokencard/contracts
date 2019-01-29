@@ -1,10 +1,12 @@
 pragma solidity ^0.4.25;
 
 import "./internals/ownable.sol";
+import "./licence.sol";
 
-/// @title ILicence interface describes methods for loading a TokenCard inclusive of licence fees.
-interface ILicence {
-    function updateFee(uint _newFee) external;
+/// @title The DAO interface (WIP stub).
+interface IDAO {
+    function lock() external;
+    function isLocked() external returns (bool);
 }
 
 contract Dao is Ownable{
