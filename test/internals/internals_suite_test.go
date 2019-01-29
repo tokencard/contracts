@@ -39,6 +39,11 @@ var _ = BeforeEach(func() {
 	Expect(isSuccessful(tx)).To(BeTrue())
 })
 
+var _ = AfterEach(func() {
+	err := Backend.Close()
+	Expect(err).ToNot(HaveOccurred())
+})
+
 var _ = AfterSuite(func() {
 	TestRig.ExpectMinimumCoverage("internals/parseIntScientific.sol", 100.0)
 	TestRig.ExpectMinimumCoverage("mocks/parseIntScientific-exporter.sol", 100.0)
