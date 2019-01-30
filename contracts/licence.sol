@@ -1,16 +1,9 @@
 pragma solidity ^0.4.25;
 
 import "./externals/SafeMath.sol";
+import "./externals/ERC20.sol";
 import "./internals/ownable.sol";
 import "./dao.sol";
-
-/// @title ERC20 interface is a subset of the ERC20 specification.
-interface ERC20 {
-    function approve(address, uint256) external returns (bool);
-    function balanceOf(address) external view returns (uint);
-    function transfer(address, uint) external returns (bool);
-    function transferFrom(address _from, address _to, uint256 _value) external returns (bool success);
-}
 
 /// @title ILicence interface describes methods for loading a TokenCard inclusive of licence fees.
 interface ILicence {
