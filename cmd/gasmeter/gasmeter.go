@@ -5,9 +5,11 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"math/big"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"sort"
 	"strings"
 
@@ -20,16 +22,11 @@ import (
 )
 
 // TODO(tav): Figure out the base cost at runtime.
-const baseCost = 21400
-
-var (
-	evmFalse = []byte{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
-	evmTrue  = []byte{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1}
-)
+const baseCost = 21000
 
 var solcArgs = []string{
 	"--combined-json",
-	"abi,bin,metadata",
+	"abi,ast,bin,bin-runtime,metadata,srcmap,srcmap-runtime",
 	"--optimize",
 }
 
@@ -45,7 +42,7 @@ type contract struct {
 func (c *contract) call(fn string) {
 	tx, err := c.binding.Transact(c.network.auth, fn)
 	if err != nil {
-		logError("Could not run %s", fn)
+		logError("Could not run %s. Errored at line %s", fn, strings.TrimSpace(c.network.rig.LastExecuted()))
 		return
 	}
 	c.network.backend.Commit()
@@ -73,9 +70,7 @@ func (c *contract) call(fn string) {
 			fmt.Printf("      -> %s(", eventName)
 			last := len(v) - 1
 			for i, val := range v {
-				// TODO(tav): Make a decision on whether to print the event
-				// parameter name, i.e. evt.Inputs[i].Name, or not.
-				fmt.Printf("%#v", val)
+				fmt.Printf("%s: %#v", evt.Inputs[i].Name, val)
 				if i != last {
 					fmt.Printf(", ")
 				}
@@ -115,6 +110,7 @@ func (c *contract) test(pattern glob.Glob) {
 type network struct {
 	auth    *bind.TransactOpts
 	backend ethertest.TestBackend
+	rig     *ethertest.TestRig
 }
 
 func (n *network) deploy(source *source) (c *contract) {
@@ -154,7 +150,7 @@ type source struct {
 	filename string
 }
 
-func compile(filenames []string) map[string]*source {
+func compile(filenames []string) ([]byte, map[string]*source) {
 	var (
 		stderr, stdout bytes.Buffer
 	)
@@ -166,11 +162,12 @@ func compile(filenames []string) map[string]*source {
 		fmt.Println(stderr.String())
 		logFatal("Failed to compile contracts: %s", err)
 	}
-	sources, err := parse(stdout.Bytes())
+	raw := stdout.Bytes()
+	sources, err := parse(raw)
 	if err != nil {
 		logFatal("Failed to process the compiled JSON output: %s", err)
 	}
-	return sources
+	return raw, sources
 }
 
 func ensure(filenames []string, sources map[string]*source) {
@@ -251,10 +248,9 @@ func initNetwork() *network {
 	root := ethertest.NewAccount()
 	rig := ethertest.NewTestRig()
 	rig.AddGenesisAccountAllocation(root.Address(), eth(1000000000))
-	backend := rig.NewTestBackend()
 	return &network{
-		auth:    root.TransactOpts(),
-		backend: backend,
+		auth: root.TransactOpts(),
+		rig:  rig,
 	}
 }
 
@@ -330,10 +326,25 @@ func parseArgs(args []string) ([]string, map[string]glob.Glob) {
 
 func process(args []string) {
 	filenames, patterns := parseArgs(args)
-	sources := compile(filenames)
+	raw, sources := compile(filenames)
+	dir, err := ioutil.TempDir("", "gasmeter")
+	if err != nil {
+		logFatal("Unable to create a temporary directory: %s", err)
+	}
+	defer func() {
+		if err := os.RemoveAll(dir); err != nil {
+			logFatal("Unable to clean up temporary directory %s: %s", dir, err)
+		}
+	}()
+	combinedPath := filepath.Join(dir, "combined.json")
+	if err := ioutil.WriteFile(combinedPath, raw, 0644); err != nil {
+		logFatal("Unable to write temporary combined.json: %s", err)
+	}
 	ensure(filenames, sources)
 	testnet := initNetwork()
 	for _, filename := range filenames {
+		testnet.backend = testnet.rig.NewTestBackend()
+		testnet.rig.AddCoverageForContracts(combinedPath, filepath.Dir(filename))
 		contract := testnet.deploy(sources[filename])
 		if contract == nil {
 			continue
