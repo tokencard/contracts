@@ -24,6 +24,7 @@ import "./internals/ownable.sol";
 import "./internals/controllable.sol";
 import "./externals/ens/PublicResolver.sol";
 import "./externals/SafeMath.sol";
+import "./externals/ERC20.sol";
 
 /// @title ERC165 interface specifies a standard way of querying if a contract implements an interface.
 interface ERC165 {
@@ -529,17 +530,16 @@ contract Wallet is Vault {
     }
 
     /// @dev Load a token card with the specified asset amount.
-    /// @param _fee is the card licence fee in wei.
     /// @param _asset is the address of an ERC20 token or 0x0 for ether.
     /// @param _amount is the amount of assets to be transferred in base units.
-    function loadTokenCard(address _asset, uint _amount, uint _fee) external onlyOwner {
+    function loadTokenCard(address _asset, uint _amount) external onlyOwner {
         if (_asset != address(0)) {
-            require(ERC20(_asset).approve(address(_licence), _amount.add(_fee)), "ERC20 token approval was unsuccessful");
-            require(_licence.load(_asset, _amount, _fee), "licence contract could not load the ERC20 tokens");
+            require(ERC20(_asset).approve(address(_licence), _amount), "ERC20 token approval was unsuccessful");
+            _licence.load(_asset, _amount);
         } else {
-            require(_licence.load.value(_amount.add(_fee))(_asset, _amount, _fee), "licence contract could not load the ether");
+            _licence.load.value(_amount)(_asset, _amount);
         }
-        emit LoadedTokenCard(_asset, _amount, _fee);
+        emit LoadedTokenCard(_asset, _amount);
     }
 
     /// @dev Modify the top up limit and top up available based on the provided value.
