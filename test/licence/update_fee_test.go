@@ -17,7 +17,7 @@ var _ = Describe("updateFee", func() {
   Context("Before the first fee update", func() {
 
     It("should be 1", func() {
-      f, err := Licence.Fee(nil)
+      f, err := Licence.FeeFactor(nil)
       Expect(err).ToNot(HaveOccurred())
       Expect(f.String()).To(Equal("1"))
     })
@@ -60,11 +60,11 @@ var _ = Describe("updateFee", func() {
   		})
   	})// 1 <= fee <= 100
 
-    When("the fee value is invalid (0 || >100)", func() {
+    When("the fee value is invalid (0 || > MAX_FEE_FACTOR)", func() {
 
       It("Should fail", func() {
   			var err error
-  			tx, err = Dao.UpdateLicenceFee(Owner.TransactOpts(ethertest.WithGasLimit(100000)), big.NewInt(101))
+  			tx, err = Dao.UpdateLicenceFee(Owner.TransactOpts(ethertest.WithGasLimit(100000)), big.NewInt(1001))
   			Expect(err).ToNot(HaveOccurred())
   			Backend.Commit()
         Expect(isGasExhausted(tx, 100000)).To(BeFalse())
