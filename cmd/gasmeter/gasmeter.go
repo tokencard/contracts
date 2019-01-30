@@ -58,10 +58,29 @@ func (c *contract) call(fn string) {
 	if len(receipt.Logs) > 0 {
 		fmt.Printf("   .. %s\n\n", fn)
 		for _, entry := range receipt.Logs {
-			val := formatEventData(entry.Data)
-			for _, event := range entry.Topics {
-				fmt.Printf("      -> %s(%s)\n", c.events[event], val)
+			// TODO(tav): Figure out why topics is a slice.
+			eventName := c.events[entry.Topics[0]]
+			if len(entry.Data) == 0 {
+				fmt.Printf("      -> %s()\n", eventName)
+				continue
 			}
+			evt := c.abi.Events[eventName]
+			v, err := evt.Inputs.UnpackValues(entry.Data)
+			if err != nil {
+				fmt.Printf("      -> %s(UNABLE TO DECODE PARAMS)", eventName)
+				continue
+			}
+			fmt.Printf("      -> %s(", eventName)
+			last := len(v) - 1
+			for i, val := range v {
+				// TODO(tav): Make a decision on whether to print the event
+				// parameter name, i.e. evt.Inputs[i].Name, or not.
+				fmt.Printf("%#v", val)
+				if i != last {
+					fmt.Printf(", ")
+				}
+			}
+			fmt.Print(")\n")
 		}
 		fmt.Println("")
 	}
@@ -166,20 +185,6 @@ func ensure(filenames []string, sources map[string]*source) {
 func eth(amount int64) *big.Int {
 	v := big.NewInt(1000000000000000000)
 	return v.Mul(v, big.NewInt(amount))
-}
-
-func formatEventData(data []byte) string {
-	val := ""
-	if len(data) != 32 {
-		val = "?"
-	} else if bytes.Equal(data, evmTrue) {
-		val = "true"
-	} else if bytes.Equal(data, evmFalse) {
-		val = "false"
-	} else {
-		val = "?"
-	}
-	return val
 }
 
 func getFunctions(abi abi.ABI, pattern glob.Glob) ([]string, int) {
