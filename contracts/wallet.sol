@@ -406,7 +406,7 @@ contract Wallet is Vault {
 
     event ToppedUpGas(address _sender, address _owner, uint _amount);
 
-    event LoadedTokenCard(address _asset, uint _amount, uint _licenceFee);
+    event LoadedTokenCard(address _asset, uint _amount);
 
     using SafeMath for uint256;
 

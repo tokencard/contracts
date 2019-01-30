@@ -1,3 +1,5 @@
+pragma solidity ^0.4.25;
+
 /// @title ERC20 interface is a subset of the ERC20 specification.
 interface ERC20 {
     function approve(address, uint256) external returns (bool);
