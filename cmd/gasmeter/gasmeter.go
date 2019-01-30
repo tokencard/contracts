@@ -67,7 +67,7 @@ func (c *contract) call(fn string) {
 			evt := c.abi.Events[eventName]
 			v, err := evt.Inputs.UnpackValues(entry.Data)
 			if err != nil {
-				fmt.Printf("      -> %s(UNABLE TO DECODE PARAMS)", eventName)
+				fmt.Printf("      -> %s(UNABLE TO DECODE PARAMS: %s)\n", eventName, err)
 				continue
 			}
 			fmt.Printf("      -> %s(", eventName)
