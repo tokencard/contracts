@@ -18,9 +18,6 @@ import (
 var Dao *bindings.Dao
 var DaoAddress common.Address
 
-// var CryptoFloat *bindings.CryptoFloat
-var CryptoFloatAddress common.Address
-
 func init() {
 	TestRig.AddCoverageForContracts(
 		"../../build/licence/combined.json",
@@ -37,7 +34,6 @@ var _ = BeforeEach(func() {
 	Expect(err).ToNot(HaveOccurred())
 
 	var tx *types.Transaction
-	CryptoFloatAddress := common.HexToAddress("0x0")
 
 	LicenceAddress, tx, Licence, err = bindings.DeployLicence(BankAccount.TransactOpts(), Backend, Owner.Address(), true, big.NewInt(10), CryptoFloatAddress, TokenHolderAddress)//FIX ME: random should become CryptoFloat contract
 	Expect(err).ToNot(HaveOccurred())
