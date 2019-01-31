@@ -216,7 +216,7 @@ func (_Controller *ControllerCallerSession) ControllerCount() (*big.Int, error) 
 
 // IsController is a free data retrieval call binding the contract method 0xb429afeb.
 //
-// Solidity: function isController(_account address) constant returns(bool)
+// Solidity: function isController(address _account) constant returns(bool)
 func (_Controller *ControllerCaller) IsController(opts *bind.CallOpts, _account common.Address) (bool, error) {
 	var (
 		ret0 = new(bool)
@@ -228,56 +228,56 @@ func (_Controller *ControllerCaller) IsController(opts *bind.CallOpts, _account 
 
 // IsController is a free data retrieval call binding the contract method 0xb429afeb.
 //
-// Solidity: function isController(_account address) constant returns(bool)
+// Solidity: function isController(address _account) constant returns(bool)
 func (_Controller *ControllerSession) IsController(_account common.Address) (bool, error) {
 	return _Controller.Contract.IsController(&_Controller.CallOpts, _account)
 }
 
 // IsController is a free data retrieval call binding the contract method 0xb429afeb.
 //
-// Solidity: function isController(_account address) constant returns(bool)
+// Solidity: function isController(address _account) constant returns(bool)
 func (_Controller *ControllerCallerSession) IsController(_account common.Address) (bool, error) {
 	return _Controller.Contract.IsController(&_Controller.CallOpts, _account)
 }
 
 // AddController is a paid mutator transaction binding the contract method 0xa7fc7a07.
 //
-// Solidity: function addController(_account address) returns()
+// Solidity: function addController(address _account) returns()
 func (_Controller *ControllerTransactor) AddController(opts *bind.TransactOpts, _account common.Address) (*types.Transaction, error) {
 	return _Controller.contract.Transact(opts, "addController", _account)
 }
 
 // AddController is a paid mutator transaction binding the contract method 0xa7fc7a07.
 //
-// Solidity: function addController(_account address) returns()
+// Solidity: function addController(address _account) returns()
 func (_Controller *ControllerSession) AddController(_account common.Address) (*types.Transaction, error) {
 	return _Controller.Contract.AddController(&_Controller.TransactOpts, _account)
 }
 
 // AddController is a paid mutator transaction binding the contract method 0xa7fc7a07.
 //
-// Solidity: function addController(_account address) returns()
+// Solidity: function addController(address _account) returns()
 func (_Controller *ControllerTransactorSession) AddController(_account common.Address) (*types.Transaction, error) {
 	return _Controller.Contract.AddController(&_Controller.TransactOpts, _account)
 }
 
 // RemoveController is a paid mutator transaction binding the contract method 0xf6a74ed7.
 //
-// Solidity: function removeController(_account address) returns()
+// Solidity: function removeController(address _account) returns()
 func (_Controller *ControllerTransactor) RemoveController(opts *bind.TransactOpts, _account common.Address) (*types.Transaction, error) {
 	return _Controller.contract.Transact(opts, "removeController", _account)
 }
 
 // RemoveController is a paid mutator transaction binding the contract method 0xf6a74ed7.
 //
-// Solidity: function removeController(_account address) returns()
+// Solidity: function removeController(address _account) returns()
 func (_Controller *ControllerSession) RemoveController(_account common.Address) (*types.Transaction, error) {
 	return _Controller.Contract.RemoveController(&_Controller.TransactOpts, _account)
 }
 
 // RemoveController is a paid mutator transaction binding the contract method 0xf6a74ed7.
 //
-// Solidity: function removeController(_account address) returns()
+// Solidity: function removeController(address _account) returns()
 func (_Controller *ControllerTransactorSession) RemoveController(_account common.Address) (*types.Transaction, error) {
 	return _Controller.Contract.RemoveController(&_Controller.TransactOpts, _account)
 }
@@ -358,7 +358,7 @@ type ControllerAddedController struct {
 
 // FilterAddedController is a free log retrieval operation binding the contract event 0xb890d5abdcd5c2b61ce8bbc2cf6af9b6d7f7451830cbc85037cbdd182c86fe1d.
 //
-// Solidity: e AddedController(_sender address, _controller address)
+// Solidity: event AddedController(address _sender, address _controller)
 func (_Controller *ControllerFilterer) FilterAddedController(opts *bind.FilterOpts) (*ControllerAddedControllerIterator, error) {
 
 	logs, sub, err := _Controller.contract.FilterLogs(opts, "AddedController")
@@ -370,7 +370,7 @@ func (_Controller *ControllerFilterer) FilterAddedController(opts *bind.FilterOp
 
 // WatchAddedController is a free log subscription operation binding the contract event 0xb890d5abdcd5c2b61ce8bbc2cf6af9b6d7f7451830cbc85037cbdd182c86fe1d.
 //
-// Solidity: e AddedController(_sender address, _controller address)
+// Solidity: event AddedController(address _sender, address _controller)
 func (_Controller *ControllerFilterer) WatchAddedController(opts *bind.WatchOpts, sink chan<- *ControllerAddedController) (event.Subscription, error) {
 
 	logs, sub, err := _Controller.contract.WatchLogs(opts, "AddedController")
@@ -481,7 +481,7 @@ type ControllerRemovedController struct {
 
 // FilterRemovedController is a free log retrieval operation binding the contract event 0xb6a283aaede08e15ef55c74e3014e30eb0c0040d4b156cccb77391268ea37394.
 //
-// Solidity: e RemovedController(_sender address, _controller address)
+// Solidity: event RemovedController(address _sender, address _controller)
 func (_Controller *ControllerFilterer) FilterRemovedController(opts *bind.FilterOpts) (*ControllerRemovedControllerIterator, error) {
 
 	logs, sub, err := _Controller.contract.FilterLogs(opts, "RemovedController")
@@ -493,7 +493,7 @@ func (_Controller *ControllerFilterer) FilterRemovedController(opts *bind.Filter
 
 // WatchRemovedController is a free log subscription operation binding the contract event 0xb6a283aaede08e15ef55c74e3014e30eb0c0040d4b156cccb77391268ea37394.
 //
-// Solidity: e RemovedController(_sender address, _controller address)
+// Solidity: event RemovedController(address _sender, address _controller)
 func (_Controller *ControllerFilterer) WatchRemovedController(opts *bind.WatchOpts, sink chan<- *ControllerRemovedController) (event.Subscription, error) {
 
 	logs, sub, err := _Controller.contract.WatchLogs(opts, "RemovedController")

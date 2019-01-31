@@ -190,7 +190,7 @@ func (_Base64Exporter *Base64ExporterTransactorRaw) Transact(opts *bind.Transact
 
 // Base64decode is a free data retrieval call binding the contract method 0x3a718bfb.
 //
-// Solidity: function base64decode(_encoded bytes) constant returns(bytes)
+// Solidity: function base64decode(bytes _encoded) constant returns(bytes)
 func (_Base64Exporter *Base64ExporterCaller) Base64decode(opts *bind.CallOpts, _encoded []byte) ([]byte, error) {
 	var (
 		ret0 = new([]byte)
@@ -202,14 +202,14 @@ func (_Base64Exporter *Base64ExporterCaller) Base64decode(opts *bind.CallOpts, _
 
 // Base64decode is a free data retrieval call binding the contract method 0x3a718bfb.
 //
-// Solidity: function base64decode(_encoded bytes) constant returns(bytes)
+// Solidity: function base64decode(bytes _encoded) constant returns(bytes)
 func (_Base64Exporter *Base64ExporterSession) Base64decode(_encoded []byte) ([]byte, error) {
 	return _Base64Exporter.Contract.Base64decode(&_Base64Exporter.CallOpts, _encoded)
 }
 
 // Base64decode is a free data retrieval call binding the contract method 0x3a718bfb.
 //
-// Solidity: function base64decode(_encoded bytes) constant returns(bytes)
+// Solidity: function base64decode(bytes _encoded) constant returns(bytes)
 func (_Base64Exporter *Base64ExporterCallerSession) Base64decode(_encoded []byte) ([]byte, error) {
 	return _Base64Exporter.Contract.Base64decode(&_Base64Exporter.CallOpts, _encoded)
 }

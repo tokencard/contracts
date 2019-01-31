@@ -190,7 +190,7 @@ func (_Holder *HolderTransactorRaw) Transact(opts *bind.TransactOpts, method str
 
 // Balance is a free data retrieval call binding the contract method 0xe3d670d7.
 //
-// Solidity: function balance(token address) constant returns(uint256)
+// Solidity: function balance(address token) constant returns(uint256)
 func (_Holder *HolderCaller) Balance(opts *bind.CallOpts, token common.Address) (*big.Int, error) {
 	var (
 		ret0 = new(*big.Int)
@@ -202,14 +202,14 @@ func (_Holder *HolderCaller) Balance(opts *bind.CallOpts, token common.Address) 
 
 // Balance is a free data retrieval call binding the contract method 0xe3d670d7.
 //
-// Solidity: function balance(token address) constant returns(uint256)
+// Solidity: function balance(address token) constant returns(uint256)
 func (_Holder *HolderSession) Balance(token common.Address) (*big.Int, error) {
 	return _Holder.Contract.Balance(&_Holder.CallOpts, token)
 }
 
 // Balance is a free data retrieval call binding the contract method 0xe3d670d7.
 //
-// Solidity: function balance(token address) constant returns(uint256)
+// Solidity: function balance(address token) constant returns(uint256)
 func (_Holder *HolderCallerSession) Balance(token common.Address) (*big.Int, error) {
 	return _Holder.Contract.Balance(&_Holder.CallOpts, token)
 }
@@ -294,7 +294,7 @@ func (_Holder *HolderCallerSession) Owner() (common.Address, error) {
 
 // TokenExists is a free data retrieval call binding the contract method 0xb33f78ca.
 //
-// Solidity: function tokenExists( address) constant returns(bool)
+// Solidity: function tokenExists(address ) constant returns(bool)
 func (_Holder *HolderCaller) TokenExists(opts *bind.CallOpts, arg0 common.Address) (bool, error) {
 	var (
 		ret0 = new(bool)
@@ -306,14 +306,14 @@ func (_Holder *HolderCaller) TokenExists(opts *bind.CallOpts, arg0 common.Addres
 
 // TokenExists is a free data retrieval call binding the contract method 0xb33f78ca.
 //
-// Solidity: function tokenExists( address) constant returns(bool)
+// Solidity: function tokenExists(address ) constant returns(bool)
 func (_Holder *HolderSession) TokenExists(arg0 common.Address) (bool, error) {
 	return _Holder.Contract.TokenExists(&_Holder.CallOpts, arg0)
 }
 
 // TokenExists is a free data retrieval call binding the contract method 0xb33f78ca.
 //
-// Solidity: function tokenExists( address) constant returns(bool)
+// Solidity: function tokenExists(address ) constant returns(bool)
 func (_Holder *HolderCallerSession) TokenExists(arg0 common.Address) (bool, error) {
 	return _Holder.Contract.TokenExists(&_Holder.CallOpts, arg0)
 }
@@ -341,84 +341,84 @@ func (_Holder *HolderTransactorSession) AcceptOwnership() (*types.Transaction, e
 
 // AddTokens is a paid mutator transaction binding the contract method 0x4ae05c7d.
 //
-// Solidity: function addTokens(_tokens address[]) returns()
+// Solidity: function addTokens(address[] _tokens) returns()
 func (_Holder *HolderTransactor) AddTokens(opts *bind.TransactOpts, _tokens []common.Address) (*types.Transaction, error) {
 	return _Holder.contract.Transact(opts, "addTokens", _tokens)
 }
 
 // AddTokens is a paid mutator transaction binding the contract method 0x4ae05c7d.
 //
-// Solidity: function addTokens(_tokens address[]) returns()
+// Solidity: function addTokens(address[] _tokens) returns()
 func (_Holder *HolderSession) AddTokens(_tokens []common.Address) (*types.Transaction, error) {
 	return _Holder.Contract.AddTokens(&_Holder.TransactOpts, _tokens)
 }
 
 // AddTokens is a paid mutator transaction binding the contract method 0x4ae05c7d.
 //
-// Solidity: function addTokens(_tokens address[]) returns()
+// Solidity: function addTokens(address[] _tokens) returns()
 func (_Holder *HolderTransactorSession) AddTokens(_tokens []common.Address) (*types.Transaction, error) {
 	return _Holder.Contract.AddTokens(&_Holder.TransactOpts, _tokens)
 }
 
 // Burn is a paid mutator transaction binding the contract method 0x9dc29fac.
 //
-// Solidity: function burn(to address, amount uint256) returns(bool)
+// Solidity: function burn(address to, uint256 amount) returns(bool)
 func (_Holder *HolderTransactor) Burn(opts *bind.TransactOpts, to common.Address, amount *big.Int) (*types.Transaction, error) {
 	return _Holder.contract.Transact(opts, "burn", to, amount)
 }
 
 // Burn is a paid mutator transaction binding the contract method 0x9dc29fac.
 //
-// Solidity: function burn(to address, amount uint256) returns(bool)
+// Solidity: function burn(address to, uint256 amount) returns(bool)
 func (_Holder *HolderSession) Burn(to common.Address, amount *big.Int) (*types.Transaction, error) {
 	return _Holder.Contract.Burn(&_Holder.TransactOpts, to, amount)
 }
 
 // Burn is a paid mutator transaction binding the contract method 0x9dc29fac.
 //
-// Solidity: function burn(to address, amount uint256) returns(bool)
+// Solidity: function burn(address to, uint256 amount) returns(bool)
 func (_Holder *HolderTransactorSession) Burn(to common.Address, amount *big.Int) (*types.Transaction, error) {
 	return _Holder.Contract.Burn(&_Holder.TransactOpts, to, amount)
 }
 
 // ChangeOwner is a paid mutator transaction binding the contract method 0xa6f9dae1.
 //
-// Solidity: function changeOwner(to address) returns()
+// Solidity: function changeOwner(address to) returns()
 func (_Holder *HolderTransactor) ChangeOwner(opts *bind.TransactOpts, to common.Address) (*types.Transaction, error) {
 	return _Holder.contract.Transact(opts, "changeOwner", to)
 }
 
 // ChangeOwner is a paid mutator transaction binding the contract method 0xa6f9dae1.
 //
-// Solidity: function changeOwner(to address) returns()
+// Solidity: function changeOwner(address to) returns()
 func (_Holder *HolderSession) ChangeOwner(to common.Address) (*types.Transaction, error) {
 	return _Holder.Contract.ChangeOwner(&_Holder.TransactOpts, to)
 }
 
 // ChangeOwner is a paid mutator transaction binding the contract method 0xa6f9dae1.
 //
-// Solidity: function changeOwner(to address) returns()
+// Solidity: function changeOwner(address to) returns()
 func (_Holder *HolderTransactorSession) ChangeOwner(to common.Address) (*types.Transaction, error) {
 	return _Holder.Contract.ChangeOwner(&_Holder.TransactOpts, to)
 }
 
 // RemoveTokens is a paid mutator transaction binding the contract method 0x6c3824ef.
 //
-// Solidity: function removeTokens(_tokens address[]) returns()
+// Solidity: function removeTokens(address[] _tokens) returns()
 func (_Holder *HolderTransactor) RemoveTokens(opts *bind.TransactOpts, _tokens []common.Address) (*types.Transaction, error) {
 	return _Holder.contract.Transact(opts, "removeTokens", _tokens)
 }
 
 // RemoveTokens is a paid mutator transaction binding the contract method 0x6c3824ef.
 //
-// Solidity: function removeTokens(_tokens address[]) returns()
+// Solidity: function removeTokens(address[] _tokens) returns()
 func (_Holder *HolderSession) RemoveTokens(_tokens []common.Address) (*types.Transaction, error) {
 	return _Holder.Contract.RemoveTokens(&_Holder.TransactOpts, _tokens)
 }
 
 // RemoveTokens is a paid mutator transaction binding the contract method 0x6c3824ef.
 //
-// Solidity: function removeTokens(_tokens address[]) returns()
+// Solidity: function removeTokens(address[] _tokens) returns()
 func (_Holder *HolderTransactorSession) RemoveTokens(_tokens []common.Address) (*types.Transaction, error) {
 	return _Holder.Contract.RemoveTokens(&_Holder.TransactOpts, _tokens)
 }
@@ -499,7 +499,7 @@ type HolderAddedToken struct {
 
 // FilterAddedToken is a free log retrieval operation binding the contract event 0xb688caad5e1d3e1a0fe69a509504a4849096cc519f7c542e07b8a9dbc7993e56.
 //
-// Solidity: e AddedToken(_sender address, _token address)
+// Solidity: event AddedToken(address _sender, address _token)
 func (_Holder *HolderFilterer) FilterAddedToken(opts *bind.FilterOpts) (*HolderAddedTokenIterator, error) {
 
 	logs, sub, err := _Holder.contract.FilterLogs(opts, "AddedToken")
@@ -511,7 +511,7 @@ func (_Holder *HolderFilterer) FilterAddedToken(opts *bind.FilterOpts) (*HolderA
 
 // WatchAddedToken is a free log subscription operation binding the contract event 0xb688caad5e1d3e1a0fe69a509504a4849096cc519f7c542e07b8a9dbc7993e56.
 //
-// Solidity: e AddedToken(_sender address, _token address)
+// Solidity: event AddedToken(address _sender, address _token)
 func (_Holder *HolderFilterer) WatchAddedToken(opts *bind.WatchOpts, sink chan<- *HolderAddedToken) (event.Subscription, error) {
 
 	logs, sub, err := _Holder.contract.WatchLogs(opts, "AddedToken")
@@ -622,7 +622,7 @@ type HolderRemovedToken struct {
 
 // FilterRemovedToken is a free log retrieval operation binding the contract event 0x703f7e3f084d5b8dcc12fddcfd9a70d65b6b21ec7659e4608dbaf4419ede3ad0.
 //
-// Solidity: e RemovedToken(_sender address, _token address)
+// Solidity: event RemovedToken(address _sender, address _token)
 func (_Holder *HolderFilterer) FilterRemovedToken(opts *bind.FilterOpts) (*HolderRemovedTokenIterator, error) {
 
 	logs, sub, err := _Holder.contract.FilterLogs(opts, "RemovedToken")
@@ -634,7 +634,7 @@ func (_Holder *HolderFilterer) FilterRemovedToken(opts *bind.FilterOpts) (*Holde
 
 // WatchRemovedToken is a free log subscription operation binding the contract event 0x703f7e3f084d5b8dcc12fddcfd9a70d65b6b21ec7659e4608dbaf4419ede3ad0.
 //
-// Solidity: e RemovedToken(_sender address, _token address)
+// Solidity: event RemovedToken(address _sender, address _token)
 func (_Holder *HolderFilterer) WatchRemovedToken(opts *bind.WatchOpts, sink chan<- *HolderRemovedToken) (event.Subscription, error) {
 
 	logs, sub, err := _Holder.contract.WatchLogs(opts, "RemovedToken")

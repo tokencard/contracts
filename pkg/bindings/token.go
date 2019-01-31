@@ -190,7 +190,7 @@ func (_Token *TokenTransactorRaw) Transact(opts *bind.TransactOpts, method strin
 
 // Allowance is a free data retrieval call binding the contract method 0xdd62ed3e.
 //
-// Solidity: function allowance( address,  address) constant returns(uint256)
+// Solidity: function allowance(address , address ) constant returns(uint256)
 func (_Token *TokenCaller) Allowance(opts *bind.CallOpts, arg0 common.Address, arg1 common.Address) (*big.Int, error) {
 	var (
 		ret0 = new(*big.Int)
@@ -202,21 +202,21 @@ func (_Token *TokenCaller) Allowance(opts *bind.CallOpts, arg0 common.Address, a
 
 // Allowance is a free data retrieval call binding the contract method 0xdd62ed3e.
 //
-// Solidity: function allowance( address,  address) constant returns(uint256)
+// Solidity: function allowance(address , address ) constant returns(uint256)
 func (_Token *TokenSession) Allowance(arg0 common.Address, arg1 common.Address) (*big.Int, error) {
 	return _Token.Contract.Allowance(&_Token.CallOpts, arg0, arg1)
 }
 
 // Allowance is a free data retrieval call binding the contract method 0xdd62ed3e.
 //
-// Solidity: function allowance( address,  address) constant returns(uint256)
+// Solidity: function allowance(address , address ) constant returns(uint256)
 func (_Token *TokenCallerSession) Allowance(arg0 common.Address, arg1 common.Address) (*big.Int, error) {
 	return _Token.Contract.Allowance(&_Token.CallOpts, arg0, arg1)
 }
 
 // BalanceOf is a free data retrieval call binding the contract method 0x70a08231.
 //
-// Solidity: function balanceOf( address) constant returns(uint256)
+// Solidity: function balanceOf(address ) constant returns(uint256)
 func (_Token *TokenCaller) BalanceOf(opts *bind.CallOpts, arg0 common.Address) (*big.Int, error) {
 	var (
 		ret0 = new(*big.Int)
@@ -228,14 +228,14 @@ func (_Token *TokenCaller) BalanceOf(opts *bind.CallOpts, arg0 common.Address) (
 
 // BalanceOf is a free data retrieval call binding the contract method 0x70a08231.
 //
-// Solidity: function balanceOf( address) constant returns(uint256)
+// Solidity: function balanceOf(address ) constant returns(uint256)
 func (_Token *TokenSession) BalanceOf(arg0 common.Address) (*big.Int, error) {
 	return _Token.Contract.BalanceOf(&_Token.CallOpts, arg0)
 }
 
 // BalanceOf is a free data retrieval call binding the contract method 0x70a08231.
 //
-// Solidity: function balanceOf( address) constant returns(uint256)
+// Solidity: function balanceOf(address ) constant returns(uint256)
 func (_Token *TokenCallerSession) BalanceOf(arg0 common.Address) (*big.Int, error) {
 	return _Token.Contract.BalanceOf(&_Token.CallOpts, arg0)
 }
@@ -726,105 +726,105 @@ func (_Token *TokenTransactorSession) AcceptOwnership() (*types.Transaction, err
 
 // Approve is a paid mutator transaction binding the contract method 0x095ea7b3.
 //
-// Solidity: function approve(_spender address, _value uint256) returns(success bool)
+// Solidity: function approve(address _spender, uint256 _value) returns(bool success)
 func (_Token *TokenTransactor) Approve(opts *bind.TransactOpts, _spender common.Address, _value *big.Int) (*types.Transaction, error) {
 	return _Token.contract.Transact(opts, "approve", _spender, _value)
 }
 
 // Approve is a paid mutator transaction binding the contract method 0x095ea7b3.
 //
-// Solidity: function approve(_spender address, _value uint256) returns(success bool)
+// Solidity: function approve(address _spender, uint256 _value) returns(bool success)
 func (_Token *TokenSession) Approve(_spender common.Address, _value *big.Int) (*types.Transaction, error) {
 	return _Token.Contract.Approve(&_Token.TransactOpts, _spender, _value)
 }
 
 // Approve is a paid mutator transaction binding the contract method 0x095ea7b3.
 //
-// Solidity: function approve(_spender address, _value uint256) returns(success bool)
+// Solidity: function approve(address _spender, uint256 _value) returns(bool success)
 func (_Token *TokenTransactorSession) Approve(_spender common.Address, _value *big.Int) (*types.Transaction, error) {
 	return _Token.Contract.Approve(&_Token.TransactOpts, _spender, _value)
 }
 
 // ApproveAndCall is a paid mutator transaction binding the contract method 0xcae9ca51.
 //
-// Solidity: function approveAndCall(_spender address, _amount uint256, _extraData bytes) returns(success bool)
+// Solidity: function approveAndCall(address _spender, uint256 _amount, bytes _extraData) returns(bool success)
 func (_Token *TokenTransactor) ApproveAndCall(opts *bind.TransactOpts, _spender common.Address, _amount *big.Int, _extraData []byte) (*types.Transaction, error) {
 	return _Token.contract.Transact(opts, "approveAndCall", _spender, _amount, _extraData)
 }
 
 // ApproveAndCall is a paid mutator transaction binding the contract method 0xcae9ca51.
 //
-// Solidity: function approveAndCall(_spender address, _amount uint256, _extraData bytes) returns(success bool)
+// Solidity: function approveAndCall(address _spender, uint256 _amount, bytes _extraData) returns(bool success)
 func (_Token *TokenSession) ApproveAndCall(_spender common.Address, _amount *big.Int, _extraData []byte) (*types.Transaction, error) {
 	return _Token.Contract.ApproveAndCall(&_Token.TransactOpts, _spender, _amount, _extraData)
 }
 
 // ApproveAndCall is a paid mutator transaction binding the contract method 0xcae9ca51.
 //
-// Solidity: function approveAndCall(_spender address, _amount uint256, _extraData bytes) returns(success bool)
+// Solidity: function approveAndCall(address _spender, uint256 _amount, bytes _extraData) returns(bool success)
 func (_Token *TokenTransactorSession) ApproveAndCall(_spender common.Address, _amount *big.Int, _extraData []byte) (*types.Transaction, error) {
 	return _Token.Contract.ApproveAndCall(&_Token.TransactOpts, _spender, _amount, _extraData)
 }
 
 // Burn is a paid mutator transaction binding the contract method 0x42966c68.
 //
-// Solidity: function burn(_amount uint256) returns(result bool)
+// Solidity: function burn(uint256 _amount) returns(bool result)
 func (_Token *TokenTransactor) Burn(opts *bind.TransactOpts, _amount *big.Int) (*types.Transaction, error) {
 	return _Token.contract.Transact(opts, "burn", _amount)
 }
 
 // Burn is a paid mutator transaction binding the contract method 0x42966c68.
 //
-// Solidity: function burn(_amount uint256) returns(result bool)
+// Solidity: function burn(uint256 _amount) returns(bool result)
 func (_Token *TokenSession) Burn(_amount *big.Int) (*types.Transaction, error) {
 	return _Token.Contract.Burn(&_Token.TransactOpts, _amount)
 }
 
 // Burn is a paid mutator transaction binding the contract method 0x42966c68.
 //
-// Solidity: function burn(_amount uint256) returns(result bool)
+// Solidity: function burn(uint256 _amount) returns(bool result)
 func (_Token *TokenTransactorSession) Burn(_amount *big.Int) (*types.Transaction, error) {
 	return _Token.Contract.Burn(&_Token.TransactOpts, _amount)
 }
 
 // ChangeOwner is a paid mutator transaction binding the contract method 0xa6f9dae1.
 //
-// Solidity: function changeOwner(_newOwner address) returns()
+// Solidity: function changeOwner(address _newOwner) returns()
 func (_Token *TokenTransactor) ChangeOwner(opts *bind.TransactOpts, _newOwner common.Address) (*types.Transaction, error) {
 	return _Token.contract.Transact(opts, "changeOwner", _newOwner)
 }
 
 // ChangeOwner is a paid mutator transaction binding the contract method 0xa6f9dae1.
 //
-// Solidity: function changeOwner(_newOwner address) returns()
+// Solidity: function changeOwner(address _newOwner) returns()
 func (_Token *TokenSession) ChangeOwner(_newOwner common.Address) (*types.Transaction, error) {
 	return _Token.Contract.ChangeOwner(&_Token.TransactOpts, _newOwner)
 }
 
 // ChangeOwner is a paid mutator transaction binding the contract method 0xa6f9dae1.
 //
-// Solidity: function changeOwner(_newOwner address) returns()
+// Solidity: function changeOwner(address _newOwner) returns()
 func (_Token *TokenTransactorSession) ChangeOwner(_newOwner common.Address) (*types.Transaction, error) {
 	return _Token.Contract.ChangeOwner(&_Token.TransactOpts, _newOwner)
 }
 
 // ClaimAuctionableTokens is a paid mutator transaction binding the contract method 0xb357a552.
 //
-// Solidity: function claimAuctionableTokens(amount uint256) returns()
+// Solidity: function claimAuctionableTokens(uint256 amount) returns()
 func (_Token *TokenTransactor) ClaimAuctionableTokens(opts *bind.TransactOpts, amount *big.Int) (*types.Transaction, error) {
 	return _Token.contract.Transact(opts, "claimAuctionableTokens", amount)
 }
 
 // ClaimAuctionableTokens is a paid mutator transaction binding the contract method 0xb357a552.
 //
-// Solidity: function claimAuctionableTokens(amount uint256) returns()
+// Solidity: function claimAuctionableTokens(uint256 amount) returns()
 func (_Token *TokenSession) ClaimAuctionableTokens(amount *big.Int) (*types.Transaction, error) {
 	return _Token.Contract.ClaimAuctionableTokens(&_Token.TransactOpts, amount)
 }
 
 // ClaimAuctionableTokens is a paid mutator transaction binding the contract method 0xb357a552.
 //
-// Solidity: function claimAuctionableTokens(amount uint256) returns()
+// Solidity: function claimAuctionableTokens(uint256 amount) returns()
 func (_Token *TokenTransactorSession) ClaimAuctionableTokens(amount *big.Int) (*types.Transaction, error) {
 	return _Token.Contract.ClaimAuctionableTokens(&_Token.TransactOpts, amount)
 }
@@ -852,21 +852,21 @@ func (_Token *TokenTransactorSession) ClaimOwnerSupply() (*types.Transaction, er
 
 // ClaimTokens is a paid mutator transaction binding the contract method 0xdf8de3e7.
 //
-// Solidity: function claimTokens(_token address) returns()
+// Solidity: function claimTokens(address _token) returns()
 func (_Token *TokenTransactor) ClaimTokens(opts *bind.TransactOpts, _token common.Address) (*types.Transaction, error) {
 	return _Token.contract.Transact(opts, "claimTokens", _token)
 }
 
 // ClaimTokens is a paid mutator transaction binding the contract method 0xdf8de3e7.
 //
-// Solidity: function claimTokens(_token address) returns()
+// Solidity: function claimTokens(address _token) returns()
 func (_Token *TokenSession) ClaimTokens(_token common.Address) (*types.Transaction, error) {
 	return _Token.Contract.ClaimTokens(&_Token.TransactOpts, _token)
 }
 
 // ClaimTokens is a paid mutator transaction binding the contract method 0xdf8de3e7.
 //
-// Solidity: function claimTokens(_token address) returns()
+// Solidity: function claimTokens(address _token) returns()
 func (_Token *TokenTransactorSession) ClaimTokens(_token common.Address) (*types.Transaction, error) {
 	return _Token.Contract.ClaimTokens(&_Token.TransactOpts, _token)
 }
@@ -894,21 +894,21 @@ func (_Token *TokenTransactorSession) CompleteMinting() (*types.Transaction, err
 
 // DecreaseApproval is a paid mutator transaction binding the contract method 0x66188463.
 //
-// Solidity: function decreaseApproval(_spender address, _subtractedValue uint256) returns(success bool)
+// Solidity: function decreaseApproval(address _spender, uint256 _subtractedValue) returns(bool success)
 func (_Token *TokenTransactor) DecreaseApproval(opts *bind.TransactOpts, _spender common.Address, _subtractedValue *big.Int) (*types.Transaction, error) {
 	return _Token.contract.Transact(opts, "decreaseApproval", _spender, _subtractedValue)
 }
 
 // DecreaseApproval is a paid mutator transaction binding the contract method 0x66188463.
 //
-// Solidity: function decreaseApproval(_spender address, _subtractedValue uint256) returns(success bool)
+// Solidity: function decreaseApproval(address _spender, uint256 _subtractedValue) returns(bool success)
 func (_Token *TokenSession) DecreaseApproval(_spender common.Address, _subtractedValue *big.Int) (*types.Transaction, error) {
 	return _Token.Contract.DecreaseApproval(&_Token.TransactOpts, _spender, _subtractedValue)
 }
 
 // DecreaseApproval is a paid mutator transaction binding the contract method 0x66188463.
 //
-// Solidity: function decreaseApproval(_spender address, _subtractedValue uint256) returns(success bool)
+// Solidity: function decreaseApproval(address _spender, uint256 _subtractedValue) returns(bool success)
 func (_Token *TokenTransactorSession) DecreaseApproval(_spender common.Address, _subtractedValue *big.Int) (*types.Transaction, error) {
 	return _Token.Contract.DecreaseApproval(&_Token.TransactOpts, _spender, _subtractedValue)
 }
@@ -936,21 +936,21 @@ func (_Token *TokenTransactorSession) FinalizeRemainders() (*types.Transaction, 
 
 // IncreaseApproval is a paid mutator transaction binding the contract method 0xd73dd623.
 //
-// Solidity: function increaseApproval(_spender address, _addedValue uint256) returns(success bool)
+// Solidity: function increaseApproval(address _spender, uint256 _addedValue) returns(bool success)
 func (_Token *TokenTransactor) IncreaseApproval(opts *bind.TransactOpts, _spender common.Address, _addedValue *big.Int) (*types.Transaction, error) {
 	return _Token.contract.Transact(opts, "increaseApproval", _spender, _addedValue)
 }
 
 // IncreaseApproval is a paid mutator transaction binding the contract method 0xd73dd623.
 //
-// Solidity: function increaseApproval(_spender address, _addedValue uint256) returns(success bool)
+// Solidity: function increaseApproval(address _spender, uint256 _addedValue) returns(bool success)
 func (_Token *TokenSession) IncreaseApproval(_spender common.Address, _addedValue *big.Int) (*types.Transaction, error) {
 	return _Token.Contract.IncreaseApproval(&_Token.TransactOpts, _spender, _addedValue)
 }
 
 // IncreaseApproval is a paid mutator transaction binding the contract method 0xd73dd623.
 //
-// Solidity: function increaseApproval(_spender address, _addedValue uint256) returns(success bool)
+// Solidity: function increaseApproval(address _spender, uint256 _addedValue) returns(bool success)
 func (_Token *TokenTransactorSession) IncreaseApproval(_spender common.Address, _addedValue *big.Int) (*types.Transaction, error) {
 	return _Token.Contract.IncreaseApproval(&_Token.TransactOpts, _spender, _addedValue)
 }
@@ -978,42 +978,42 @@ func (_Token *TokenTransactorSession) LockTokenHolder() (*types.Transaction, err
 
 // Mint is a paid mutator transaction binding the contract method 0x40c10f19.
 //
-// Solidity: function mint(addr address, amount uint256) returns()
+// Solidity: function mint(address addr, uint256 amount) returns()
 func (_Token *TokenTransactor) Mint(opts *bind.TransactOpts, addr common.Address, amount *big.Int) (*types.Transaction, error) {
 	return _Token.contract.Transact(opts, "mint", addr, amount)
 }
 
 // Mint is a paid mutator transaction binding the contract method 0x40c10f19.
 //
-// Solidity: function mint(addr address, amount uint256) returns()
+// Solidity: function mint(address addr, uint256 amount) returns()
 func (_Token *TokenSession) Mint(addr common.Address, amount *big.Int) (*types.Transaction, error) {
 	return _Token.Contract.Mint(&_Token.TransactOpts, addr, amount)
 }
 
 // Mint is a paid mutator transaction binding the contract method 0x40c10f19.
 //
-// Solidity: function mint(addr address, amount uint256) returns()
+// Solidity: function mint(address addr, uint256 amount) returns()
 func (_Token *TokenTransactorSession) Mint(addr common.Address, amount *big.Int) (*types.Transaction, error) {
 	return _Token.Contract.Mint(&_Token.TransactOpts, addr, amount)
 }
 
 // MultiMint is a paid mutator transaction binding the contract method 0x9a0e4ebb.
 //
-// Solidity: function multiMint(data uint256[]) returns()
+// Solidity: function multiMint(uint256[] data) returns()
 func (_Token *TokenTransactor) MultiMint(opts *bind.TransactOpts, data []*big.Int) (*types.Transaction, error) {
 	return _Token.contract.Transact(opts, "multiMint", data)
 }
 
 // MultiMint is a paid mutator transaction binding the contract method 0x9a0e4ebb.
 //
-// Solidity: function multiMint(data uint256[]) returns()
+// Solidity: function multiMint(uint256[] data) returns()
 func (_Token *TokenSession) MultiMint(data []*big.Int) (*types.Transaction, error) {
 	return _Token.Contract.MultiMint(&_Token.TransactOpts, data)
 }
 
 // MultiMint is a paid mutator transaction binding the contract method 0x9a0e4ebb.
 //
-// Solidity: function multiMint(data uint256[]) returns()
+// Solidity: function multiMint(uint256[] data) returns()
 func (_Token *TokenTransactorSession) MultiMint(data []*big.Int) (*types.Transaction, error) {
 	return _Token.Contract.MultiMint(&_Token.TransactOpts, data)
 }
@@ -1062,126 +1062,126 @@ func (_Token *TokenTransactorSession) Pause() (*types.Transaction, error) {
 
 // SetController is a paid mutator transaction binding the contract method 0x92eefe9b.
 //
-// Solidity: function setController(_controller address) returns()
+// Solidity: function setController(address _controller) returns()
 func (_Token *TokenTransactor) SetController(opts *bind.TransactOpts, _controller common.Address) (*types.Transaction, error) {
 	return _Token.contract.Transact(opts, "setController", _controller)
 }
 
 // SetController is a paid mutator transaction binding the contract method 0x92eefe9b.
 //
-// Solidity: function setController(_controller address) returns()
+// Solidity: function setController(address _controller) returns()
 func (_Token *TokenSession) SetController(_controller common.Address) (*types.Transaction, error) {
 	return _Token.Contract.SetController(&_Token.TransactOpts, _controller)
 }
 
 // SetController is a paid mutator transaction binding the contract method 0x92eefe9b.
 //
-// Solidity: function setController(_controller address) returns()
+// Solidity: function setController(address _controller) returns()
 func (_Token *TokenTransactorSession) SetController(_controller common.Address) (*types.Transaction, error) {
 	return _Token.Contract.SetController(&_Token.TransactOpts, _controller)
 }
 
 // SetOwnerFreeDay is a paid mutator transaction binding the contract method 0x81e529cd.
 //
-// Solidity: function setOwnerFreeDay(day uint256) returns()
+// Solidity: function setOwnerFreeDay(uint256 day) returns()
 func (_Token *TokenTransactor) SetOwnerFreeDay(opts *bind.TransactOpts, day *big.Int) (*types.Transaction, error) {
 	return _Token.contract.Transact(opts, "setOwnerFreeDay", day)
 }
 
 // SetOwnerFreeDay is a paid mutator transaction binding the contract method 0x81e529cd.
 //
-// Solidity: function setOwnerFreeDay(day uint256) returns()
+// Solidity: function setOwnerFreeDay(uint256 day) returns()
 func (_Token *TokenSession) SetOwnerFreeDay(day *big.Int) (*types.Transaction, error) {
 	return _Token.Contract.SetOwnerFreeDay(&_Token.TransactOpts, day)
 }
 
 // SetOwnerFreeDay is a paid mutator transaction binding the contract method 0x81e529cd.
 //
-// Solidity: function setOwnerFreeDay(day uint256) returns()
+// Solidity: function setOwnerFreeDay(uint256 day) returns()
 func (_Token *TokenTransactorSession) SetOwnerFreeDay(day *big.Int) (*types.Transaction, error) {
 	return _Token.Contract.SetOwnerFreeDay(&_Token.TransactOpts, day)
 }
 
 // SetRemainders is a paid mutator transaction binding the contract method 0xc27549d9.
 //
-// Solidity: function setRemainders(_remainingOwner uint256, _remainingAuctionable uint256) returns()
+// Solidity: function setRemainders(uint256 _remainingOwner, uint256 _remainingAuctionable) returns()
 func (_Token *TokenTransactor) SetRemainders(opts *bind.TransactOpts, _remainingOwner *big.Int, _remainingAuctionable *big.Int) (*types.Transaction, error) {
 	return _Token.contract.Transact(opts, "setRemainders", _remainingOwner, _remainingAuctionable)
 }
 
 // SetRemainders is a paid mutator transaction binding the contract method 0xc27549d9.
 //
-// Solidity: function setRemainders(_remainingOwner uint256, _remainingAuctionable uint256) returns()
+// Solidity: function setRemainders(uint256 _remainingOwner, uint256 _remainingAuctionable) returns()
 func (_Token *TokenSession) SetRemainders(_remainingOwner *big.Int, _remainingAuctionable *big.Int) (*types.Transaction, error) {
 	return _Token.Contract.SetRemainders(&_Token.TransactOpts, _remainingOwner, _remainingAuctionable)
 }
 
 // SetRemainders is a paid mutator transaction binding the contract method 0xc27549d9.
 //
-// Solidity: function setRemainders(_remainingOwner uint256, _remainingAuctionable uint256) returns()
+// Solidity: function setRemainders(uint256 _remainingOwner, uint256 _remainingAuctionable) returns()
 func (_Token *TokenTransactorSession) SetRemainders(_remainingOwner *big.Int, _remainingAuctionable *big.Int) (*types.Transaction, error) {
 	return _Token.Contract.SetRemainders(&_Token.TransactOpts, _remainingOwner, _remainingAuctionable)
 }
 
 // SetTokenHolder is a paid mutator transaction binding the contract method 0xf29d2f28.
 //
-// Solidity: function setTokenHolder(_th address) returns()
+// Solidity: function setTokenHolder(address _th) returns()
 func (_Token *TokenTransactor) SetTokenHolder(opts *bind.TransactOpts, _th common.Address) (*types.Transaction, error) {
 	return _Token.contract.Transact(opts, "setTokenHolder", _th)
 }
 
 // SetTokenHolder is a paid mutator transaction binding the contract method 0xf29d2f28.
 //
-// Solidity: function setTokenHolder(_th address) returns()
+// Solidity: function setTokenHolder(address _th) returns()
 func (_Token *TokenSession) SetTokenHolder(_th common.Address) (*types.Transaction, error) {
 	return _Token.Contract.SetTokenHolder(&_Token.TransactOpts, _th)
 }
 
 // SetTokenHolder is a paid mutator transaction binding the contract method 0xf29d2f28.
 //
-// Solidity: function setTokenHolder(_th address) returns()
+// Solidity: function setTokenHolder(address _th) returns()
 func (_Token *TokenTransactorSession) SetTokenHolder(_th common.Address) (*types.Transaction, error) {
 	return _Token.Contract.SetTokenHolder(&_Token.TransactOpts, _th)
 }
 
 // Transfer is a paid mutator transaction binding the contract method 0xa9059cbb.
 //
-// Solidity: function transfer(_to address, _value uint256) returns(success bool)
+// Solidity: function transfer(address _to, uint256 _value) returns(bool success)
 func (_Token *TokenTransactor) Transfer(opts *bind.TransactOpts, _to common.Address, _value *big.Int) (*types.Transaction, error) {
 	return _Token.contract.Transact(opts, "transfer", _to, _value)
 }
 
 // Transfer is a paid mutator transaction binding the contract method 0xa9059cbb.
 //
-// Solidity: function transfer(_to address, _value uint256) returns(success bool)
+// Solidity: function transfer(address _to, uint256 _value) returns(bool success)
 func (_Token *TokenSession) Transfer(_to common.Address, _value *big.Int) (*types.Transaction, error) {
 	return _Token.Contract.Transfer(&_Token.TransactOpts, _to, _value)
 }
 
 // Transfer is a paid mutator transaction binding the contract method 0xa9059cbb.
 //
-// Solidity: function transfer(_to address, _value uint256) returns(success bool)
+// Solidity: function transfer(address _to, uint256 _value) returns(bool success)
 func (_Token *TokenTransactorSession) Transfer(_to common.Address, _value *big.Int) (*types.Transaction, error) {
 	return _Token.Contract.Transfer(&_Token.TransactOpts, _to, _value)
 }
 
 // TransferFrom is a paid mutator transaction binding the contract method 0x23b872dd.
 //
-// Solidity: function transferFrom(_from address, _to address, _value uint256) returns(success bool)
+// Solidity: function transferFrom(address _from, address _to, uint256 _value) returns(bool success)
 func (_Token *TokenTransactor) TransferFrom(opts *bind.TransactOpts, _from common.Address, _to common.Address, _value *big.Int) (*types.Transaction, error) {
 	return _Token.contract.Transact(opts, "transferFrom", _from, _to, _value)
 }
 
 // TransferFrom is a paid mutator transaction binding the contract method 0x23b872dd.
 //
-// Solidity: function transferFrom(_from address, _to address, _value uint256) returns(success bool)
+// Solidity: function transferFrom(address _from, address _to, uint256 _value) returns(bool success)
 func (_Token *TokenSession) TransferFrom(_from common.Address, _to common.Address, _value *big.Int) (*types.Transaction, error) {
 	return _Token.Contract.TransferFrom(&_Token.TransactOpts, _from, _to, _value)
 }
 
 // TransferFrom is a paid mutator transaction binding the contract method 0x23b872dd.
 //
-// Solidity: function transferFrom(_from address, _to address, _value uint256) returns(success bool)
+// Solidity: function transferFrom(address _from, address _to, uint256 _value) returns(bool success)
 func (_Token *TokenTransactorSession) TransferFrom(_from common.Address, _to common.Address, _value *big.Int) (*types.Transaction, error) {
 	return _Token.Contract.TransferFrom(&_Token.TransactOpts, _from, _to, _value)
 }
@@ -1284,7 +1284,7 @@ type TokenApproval struct {
 
 // FilterApproval is a free log retrieval operation binding the contract event 0x8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925.
 //
-// Solidity: e Approval(owner indexed address, spender indexed address, value uint256)
+// Solidity: event Approval(address indexed owner, address indexed spender, uint256 value)
 func (_Token *TokenFilterer) FilterApproval(opts *bind.FilterOpts, owner []common.Address, spender []common.Address) (*TokenApprovalIterator, error) {
 
 	var ownerRule []interface{}
@@ -1305,7 +1305,7 @@ func (_Token *TokenFilterer) FilterApproval(opts *bind.FilterOpts, owner []commo
 
 // WatchApproval is a free log subscription operation binding the contract event 0x8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925.
 //
-// Solidity: e Approval(owner indexed address, spender indexed address, value uint256)
+// Solidity: event Approval(address indexed owner, address indexed spender, uint256 value)
 func (_Token *TokenFilterer) WatchApproval(opts *bind.WatchOpts, sink chan<- *TokenApproval, owner []common.Address, spender []common.Address) (event.Subscription, error) {
 
 	var ownerRule []interface{}
@@ -1426,7 +1426,7 @@ type TokenTransfer struct {
 
 // FilterTransfer is a free log retrieval operation binding the contract event 0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef.
 //
-// Solidity: e Transfer(from indexed address, to indexed address, value uint256)
+// Solidity: event Transfer(address indexed from, address indexed to, uint256 value)
 func (_Token *TokenFilterer) FilterTransfer(opts *bind.FilterOpts, from []common.Address, to []common.Address) (*TokenTransferIterator, error) {
 
 	var fromRule []interface{}
@@ -1447,7 +1447,7 @@ func (_Token *TokenFilterer) FilterTransfer(opts *bind.FilterOpts, from []common
 
 // WatchTransfer is a free log subscription operation binding the contract event 0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef.
 //
-// Solidity: e Transfer(from indexed address, to indexed address, value uint256)
+// Solidity: event Transfer(address indexed from, address indexed to, uint256 value)
 func (_Token *TokenFilterer) WatchTransfer(opts *bind.WatchOpts, sink chan<- *TokenTransfer, from []common.Address, to []common.Address) (event.Subscription, error) {
 
 	var fromRule []interface{}
@@ -1568,7 +1568,7 @@ type TokenLogTokenTransfer struct {
 
 // FilterLogTokenTransfer is a free log retrieval operation binding the contract event 0x977a8f1bdcf5f444d404662ea2c090d707ebcef1be61b37fe6ce74d0c6288fb8.
 //
-// Solidity: e logTokenTransfer(token address, to address, amount uint256)
+// Solidity: event logTokenTransfer(address token, address to, uint256 amount)
 func (_Token *TokenFilterer) FilterLogTokenTransfer(opts *bind.FilterOpts) (*TokenLogTokenTransferIterator, error) {
 
 	logs, sub, err := _Token.contract.FilterLogs(opts, "logTokenTransfer")
@@ -1580,7 +1580,7 @@ func (_Token *TokenFilterer) FilterLogTokenTransfer(opts *bind.FilterOpts) (*Tok
 
 // WatchLogTokenTransfer is a free log subscription operation binding the contract event 0x977a8f1bdcf5f444d404662ea2c090d707ebcef1be61b37fe6ce74d0c6288fb8.
 //
-// Solidity: e logTokenTransfer(token address, to address, amount uint256)
+// Solidity: event logTokenTransfer(address token, address to, uint256 amount)
 func (_Token *TokenFilterer) WatchLogTokenTransfer(opts *bind.WatchOpts, sink chan<- *TokenLogTokenTransfer) (event.Subscription, error) {
 
 	logs, sub, err := _Token.contract.WatchLogs(opts, "logTokenTransfer")

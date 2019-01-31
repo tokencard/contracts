@@ -31,6 +31,11 @@ var _ = BeforeEach(func() {
 	Expect(isSuccessful(tx)).To(BeTrue())
 })
 
+var _ = AfterEach(func() {
+	err := Backend.Close()
+	Expect(err).ToNot(HaveOccurred())
+})
+
 func isSuccessful(tx *types.Transaction) bool {
 	r, err := Backend.TransactionReceipt(context.Background(), tx.Hash())
 	Expect(err).ToNot(HaveOccurred())

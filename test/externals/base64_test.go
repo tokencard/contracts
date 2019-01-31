@@ -1,8 +1,6 @@
 package externals_test
 
 import (
-	"errors"
-
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
@@ -53,22 +51,22 @@ var _ = Describe("base64", func() {
 
 		It("Should fail (trigger require)", func() {
 			_, err := Base64Exporter.Base64decode(nil, []byte(""))
-			Expect(err).To(MatchError(errors.New("abi: improperly formatted output")))
+			Expect(err.Error()).To(ContainSubstring("invalid base64 encoding"))
 		})
 
 		It("Should fail (trigger require)'", func() {
 			_, err := Base64Exporter.Base64decode(nil, []byte("Z"))
-			Expect(err).To(MatchError(errors.New("abi: improperly formatted output")))
+			Expect(err.Error()).To(ContainSubstring("invalid base64 encoding"))
 		})
 
 		It("Should fail (trigger require)'", func() {
 			_, err := Base64Exporter.Base64decode(nil, []byte("zZ="))
-			Expect(err).To(MatchError(errors.New("abi: improperly formatted output")))
+			Expect(err.Error()).To(ContainSubstring("invalid base64 encoding"))
 		})
 
 		It("Should fail (trigger require)'", func() {
 			_, err := Base64Exporter.Base64decode(nil, []byte("zZz=="))
-			Expect(err).To(MatchError(errors.New("abi: improperly formatted output")))
+			Expect(err.Error()).To(ContainSubstring("invalid base64 encoding"))
 		})
 
 	})

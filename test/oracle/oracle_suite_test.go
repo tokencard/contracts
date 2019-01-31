@@ -45,6 +45,8 @@ var _ = AfterEach(func() {
 		fmt.Fprintf(GinkgoWriter, "\nLast Executed Smart Contract Line for %s:%d\n", td.FileName, td.LineNumber)
 		fmt.Fprintln(GinkgoWriter, TestRig.LastExecuted())
 	}
+	err := Backend.Close()
+	Expect(err).ToNot(HaveOccurred())
 })
 
 var _ = AfterSuite(func() {
