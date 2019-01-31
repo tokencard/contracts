@@ -60,11 +60,11 @@ contract Holder {
 
     // Change owner in a two-phase ownership transfer.
     function changeOwner(address to) external only (_owner) {
-        newOwner = to;
+        _newOwner = to;
     }
 
     // Accept ownership in a two-phase ownership transfer.
-    function acceptOwnership() external only (newOwner) {
+    function acceptOwnership() external only (_newOwner) {
         _owner = msg.sender;
         _newOwner = 0x0;
     }
