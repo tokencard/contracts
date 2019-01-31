@@ -23,6 +23,8 @@ contract Licence is Ownable {
   event Received(address _from, uint _amount);
 
   event UpdatedDAO(address _sender, address _newDAO);
+  event UpdatedCryptoFloat(address _sender, address _newFloat);
+  event UpdatedTokenHolder(address _sender, address _newHolder);
   event UpdatedFee(address _sender, uint _newFee);
 
   event TransferredToTokenHolder(address _from, address _to, address _asset, uint _amount);
@@ -32,6 +34,9 @@ contract Licence is Ownable {
 
   address private _cryptoFloat;
   address private _tokenHolder;
+
+  bool private _lockedCryptoFloat;
+  bool private _lockedTokenHolder;
 
   uint private _feeFactor;
 
@@ -77,6 +82,22 @@ contract Licence is Ownable {
     return _feeFactor;
   }
 
+  function lockFloat() external onlyOwner{
+    _lockedCryptoFloat = true;
+  }
+
+  function lockHolder() external onlyOwner{
+    _lockedTokenHolder = true;
+  }
+
+  function floatLocked() public view returns (bool){
+    return _lockedCryptoFloat;
+  }
+
+  function holderLocked() public view returns (bool){
+    return _lockedTokenHolder;
+  }
+
   /// @dev Updates the address of the DAO contract.
   function updateDAO(address _newDAO) external onlyOwner {
       if (address(DAO) != address(0))
@@ -84,6 +105,20 @@ contract Licence is Ownable {
       DAO = IDAO(_newDAO);
       emit UpdatedDAO(msg.sender, _newDAO);
   }
+
+  /// @dev Updates the address of the cyptoFloat.
+  function updateFloat(address _newFloat) external onlyOwner {
+      require(!floatLocked(), "float is locked");
+      _cryptoFloat = _newFloat;
+      emit UpdatedCryptoFloat(msg.sender, _newFloat);
+  }
+
+  /// @dev Updates the address of the Holder contract.
+  function updateHolder(address _newHolder) external onlyOwner {
+    require(!holderLocked(), "holder contract is locked");
+    _tokenHolder = _newHolder;
+    emit UpdatedTokenHolder(msg.sender, _newHolder);
+}
 
   /// @dev Updates the card licence fee.
   function updateFee(uint _newFee) external onlyDAO {
