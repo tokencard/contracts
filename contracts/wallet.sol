@@ -25,11 +25,7 @@ import "./internals/controllable.sol";
 import "./externals/ens/PublicResolver.sol";
 import "./externals/SafeMath.sol";
 import "./externals/ERC20.sol";
-
-/// @title ERC165 interface specifies a standard way of querying if a contract implements an interface.
-interface ERC165 {
-    function supportsInterface(bytes4) external view returns (bool);
-}
+import "./externals/ERC165.sol";
 
 /// @title Whitelist provides payee-whitelist functionality.
 contract Whitelist is Controllable, Ownable {
