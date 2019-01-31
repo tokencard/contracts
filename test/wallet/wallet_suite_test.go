@@ -27,7 +27,7 @@ var _ = BeforeEach(func() {
 })
 
 var _ = AfterSuite(func() {
-	// TestRig.ExpectMinimumCoverage("wallet.sol", 100.00)
+	TestRig.ExpectMinimumCoverage("wallet.sol", 100.00)
 	TestRig.PrintGasUsage(os.Stdout)
 })
 
