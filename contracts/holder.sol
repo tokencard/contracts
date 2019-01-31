@@ -29,13 +29,13 @@ contract Holder {
   event RemovedToken(address _sender, address _token);
 
   // Owner of this contract.
-  address public owner;
+  address private _owner;
 
   // New owner in a two-phase ownership transfer.
-  address public newOwner;
+  address private _newOwner;
 
   // Burner token which can be burned to redeem shares.
-  address public burner;
+  address private _burner;
 
   // Tokens known to this contract. When the burn method is called, only
   // shares of these tokens will be disbursed.
