@@ -19,7 +19,7 @@ var _ = Describe("updateFee", func() {
     It("should be 1", func() {
       f, err := Licence.FeeFactor(nil)
       Expect(err).ToNot(HaveOccurred())
-      Expect(f.String()).To(Equal("1"))
+      Expect(f.String()).To(Equal("10"))
     })
   })
 

@@ -13,7 +13,7 @@ import (
 	"github.com/tokencard/ethertest"
 )
 
-var _ = FDescribe("load", func() {
+var _ = Describe("load", func() {
 
 
     When("no value is sent 0", func() {
@@ -25,6 +25,18 @@ var _ = FDescribe("load", func() {
   			Expect(isGasExhausted(tx, 100000)).To(BeFalse())
   			Expect(isSuccessful(tx)).To(BeFalse())
   		})
+    })
+
+    It("the initial balance of the Holder contract should be zero", func() {
+      b, e := Backend.BalanceAt(context.Background(), CryptoFloatAddress, nil)
+      Expect(e).ToNot(HaveOccurred())
+      Expect(b.String()).To(Equal("0"))
+    })
+
+    It("the initial balance of CryptoFloatAddress address should be zero", func() {
+      b, e := Backend.BalanceAt(context.Background(), TokenHolderAddress, nil)
+      Expect(e).ToNot(HaveOccurred())
+      Expect(b.String()).To(Equal("0"))
     })
 
     When("the amount sent is 101 ETH", func() {
@@ -64,19 +76,20 @@ var _ = FDescribe("load", func() {
       It("should increase the ETH balance of the holder contract address by 1 ETH", func() {
         b, e := Backend.BalanceAt(context.Background(), TokenHolderAddress, nil)
         Expect(e).ToNot(HaveOccurred())
-        bStr := b.String()
-        Expect(bStr).To(Equal("1000000000000000000"))
-        Expect(len(bStr)).To(Equal(19)) //1 ETH = 10^18 wei
+        Expect(b.String()).To(Equal(EthToWei(1).String()))
       })
 
-      // FIt("should increase the ETH balance of the holder contract address by 100 ETH", func() {
-      //   b, e := Backend.BalanceAt(context.Background(), CryptoFloatAddress, nil)
-      //   Expect(e).ToNot(HaveOccurred())
-      //   Expect(b.String()).To(Equal(EthToWei(100).String()))
-      // })
+      It("should increase the ETH balance of the holder contract address by 100 ETH", func() {
+        b, e := Backend.BalanceAt(context.Background(), CryptoFloatAddress, nil)
+        Expect(e).ToNot(HaveOccurred())
+        Expect(b.String()).To(Equal(EthToWei(100).String()))
+      })
+
     })
 
     When("the amount sent is 101 ETH + 1 wei", func() {
+
+      var fee *big.Int
 
       BeforeEach(func() {
         v := big.NewInt(1) //value
@@ -97,7 +110,7 @@ var _ = FDescribe("load", func() {
         Expect(evt.From).To(Equal(RandomAccount.Address()))
   			Expect(evt.To).To(Equal(TokenHolderAddress))
         Expect(evt.Asset).To(Equal(common.HexToAddress("0x0"))) //represents ETH
-        fee := EthToWei(1)
+        fee = EthToWei(1)
         fee.Add(fee,big.NewInt(1))
         Expect(evt.Amount.String()).To(Equal(fee.String()))
   		})
@@ -113,6 +126,18 @@ var _ = FDescribe("load", func() {
         Expect(evt.Asset).To(Equal(common.HexToAddress("0x0"))) //represents ETH
         Expect(evt.Amount.String()).To(Equal(EthToWei(100).String()))
   		})
+
+      It("should increase the ETH balance of the holder contract address by 1 ETH + 1 wei", func() {
+        b, e := Backend.BalanceAt(context.Background(), TokenHolderAddress, nil)
+        Expect(e).ToNot(HaveOccurred())
+        Expect(b.String()).To(Equal(fee.String()))
+      })
+
+      It("should increase the ETH balance of the holder contract address by 100 ETH", func() {
+        b, e := Backend.BalanceAt(context.Background(), CryptoFloatAddress, nil)
+        Expect(e).ToNot(HaveOccurred())
+        Expect(b.String()).To(Equal(EthToWei(100).String()))
+      })
 
     })
 
@@ -150,9 +175,22 @@ var _ = FDescribe("load", func() {
         Expect(evt.Amount.String()).To(Equal(big.NewInt(1).String()))
   		})
 
+      It("should increase the ETH balance of the holder contract address by 1 wei", func() {
+        b, e := Backend.BalanceAt(context.Background(), TokenHolderAddress, nil)
+        Expect(e).ToNot(HaveOccurred())
+        Expect(b.String()).To(Equal("1"))
+      })
+
+      It("should increase the ETH balance of the holder contract address by 1 wei", func() {
+        b, e := Backend.BalanceAt(context.Background(), CryptoFloatAddress, nil)
+        Expect(e).ToNot(HaveOccurred())
+        Expect(b.String()).To(Equal("1"))
+      })
     })
 
     When("the amount sent is 101 ETH + 9 wei", func() {
+
+      var fee, transferAmount *big.Int
 
       BeforeEach(func() {
         v := big.NewInt(9) //value
@@ -173,7 +211,7 @@ var _ = FDescribe("load", func() {
         Expect(evt.From).To(Equal(RandomAccount.Address()))
   			Expect(evt.To).To(Equal(TokenHolderAddress))
         Expect(evt.Asset).To(Equal(common.HexToAddress("0x0"))) //represents ETH
-        fee := EthToWei(1)
+        fee = EthToWei(1)
         fee.Add(fee,big.NewInt(1))
         Expect(evt.Amount.String()).To(Equal(fee.String()))
   		})
@@ -187,10 +225,23 @@ var _ = FDescribe("load", func() {
         Expect(evt.From).To(Equal(RandomAccount.Address()))
   			Expect(evt.To).To(Equal(CryptoFloatAddress))
         Expect(evt.Asset).To(Equal(common.HexToAddress("0x0"))) //represents ETH
-        transferAmount := EthToWei(100)
+        transferAmount = EthToWei(100)
         transferAmount.Add(transferAmount,big.NewInt(8))
         Expect(evt.Amount.String()).To(Equal(transferAmount.String()))
   		})
+
+      It("should increase the ETH balance of the holder contract address by 1 ETH + 1 wei", func() {
+        b, e := Backend.BalanceAt(context.Background(), TokenHolderAddress, nil)
+        Expect(e).ToNot(HaveOccurred())
+        Expect(b.String()).To(Equal(fee.String()))
+      })
+
+      It("should increase the ETH balance of the holder contract address by 100 ETH + 8 wei", func() {
+        b, e := Backend.BalanceAt(context.Background(), CryptoFloatAddress, nil)
+        Expect(e).ToNot(HaveOccurred())
+        Expect(b.String()).To(Equal(transferAmount.String()))
+      })
+
 
     })
 
