@@ -51,27 +51,27 @@ contract Holder {
     // Construct a TokenHolder for the given burner token with the sender
     // as the owner.
     constructor (address burnerContract) public {
-        owner = msg.sender;
-        burner = burnerContract;
+        _owner = msg.sender;
+        _burner = burnerContract;
     }
 
     // Ether may be sent from anywhere.
     function () external payable { }
 
     // Change owner in a two-phase ownership transfer.
-    function changeOwner(address to) external only (owner) {
+    function changeOwner(address to) external only (_owner) {
         newOwner = to;
     }
 
     // Accept ownership in a two-phase ownership transfer.
     function acceptOwnership() external only (newOwner) {
-        owner = msg.sender;
-        newOwner = 0x0;
+        _owner = msg.sender;
+        _newOwner = 0x0;
     }
 
     /// @dev Add ERC20 tokens to the list of supported tokens.
     /// @param _tokens ERC20 token contract addresses.
-    function addTokens(address[] _tokens) external only (owner) {
+    function addTokens(address[] _tokens) external only (_owner) {
         // Add each token to the list of supported tokens.
         for (uint i = 0; i < _tokens.length; i++) {
             // Require that the token doesn't already exist.
@@ -87,7 +87,7 @@ contract Holder {
 
     /// @dev Remove ERC20 tokens from the list of supported tokens.
     /// @param _tokens ERC20 token contract addresses.
-    function removeTokens(address[] _tokens) external only (owner) {
+    function removeTokens(address[] _tokens) external only (_owner) {
         // Delete each token object from the list of supported tokens based on the addresses provided.
         for (uint i = 0; i < _tokens.length; i++) {
             // Store the token address.
@@ -110,13 +110,13 @@ contract Holder {
     }
 
     // Burn handles disbursing a share of tokens to an address.
-    function burn(address to, uint amount) external only (burner) returns (bool) {
+    function burn(address to, uint amount) external only (_burner) returns (bool) {
         if (amount == 0) {
             return true;
         }
 
         // The burner token deducts from the supply before calling.
-        uint supply = BurnerToken(burner).currentSupply() + amount;
+        uint supply = BurnerToken(_burner).currentSupply() + amount;
 
         require(amount <= supply);
 
@@ -130,6 +130,10 @@ contract Holder {
         }
 
         return true;
+    }
+
+    function burner() external view returns (address) {
+        return _burner;
     }
 
     // Balance returns the amount of a token owned by the contract.
