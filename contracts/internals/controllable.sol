@@ -37,8 +37,8 @@ contract Controllable {
     /// @param _ens is the address of the ENS.
     /// @param _controllerName is the ENS name of the Controller.
     constructor(address _ens, bytes32 _controllerName) internal {
-      _ENS = ENS(_ens);
-      _node = _controllerName;
+        _ENS = ENS(_ens);
+        _node = _controllerName;
     }
 
     /// @dev Checks if message sender is the controller.
