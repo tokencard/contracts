@@ -7,11 +7,9 @@ import (
 	"testing"
 	"math/big"
 
-	"github.com/ethereum/go-ethereum/common"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	"github.com/tokencard/contracts/pkg/bindings"
-	"github.com/tokencard/contracts/pkg/bindings/mocks"
 	"github.com/ethereum/go-ethereum/core/types"
 	. "github.com/tokencard/contracts/test/shared"
 	"github.com/tokencard/ethertest"
@@ -19,12 +17,6 @@ import (
 
 // var DAO *bindings.Dao
 // var DAOAddress common.Address
-
-var ERC20Contract1 *mocks.Token
-var ERC20Contract1Address common.Address
-
-var ERC20Contract2 *mocks.Token
-var ERC20Contract2Address common.Address
 
 var DAO *ethertest.Account
 
@@ -49,16 +41,6 @@ var _ = BeforeEach(func() {
 	err = BankAccount.Transfer(Backend, DAO.Address(), EthToWei(50))
 
 	Expect(err).ToNot(HaveOccurred())
-
-	ERC20Contract1Address, tx, ERC20Contract1, err = mocks.DeployToken(RandomAccount.TransactOpts(), Backend)
-	Expect(err).ToNot(HaveOccurred())
-	Backend.Commit()
-	Expect(isSuccessful(tx)).To(BeTrue())
-
-	ERC20Contract2Address, tx, ERC20Contract2, err = mocks.DeployToken(RandomAccount.TransactOpts(), Backend)
-	Expect(err).ToNot(HaveOccurred())
-	Backend.Commit()
-	Expect(isSuccessful(tx)).To(BeTrue())
 
 	LicenceAddress, tx, Licence, err = bindings.DeployLicence(BankAccount.TransactOpts(), Backend, Owner.Address(), true, big.NewInt(10), CryptoFloatAddress, TokenHolderAddress)//FIX ME: random should become CryptoFloat contract
 	Expect(err).ToNot(HaveOccurred())
