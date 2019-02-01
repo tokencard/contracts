@@ -13,7 +13,7 @@ import (
 	"github.com/tokencard/ethertest"
 )
 
-var _ = Describe("load", func() {
+var _ = Describe("load ETH", func() {
 
 
     When("no value is sent 0", func() {
