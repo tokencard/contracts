@@ -14,16 +14,19 @@ import (
 	"github.com/tokencard/contracts/pkg/bindings/mocks"
 	"github.com/ethereum/go-ethereum/core/types"
 	. "github.com/tokencard/contracts/test/shared"
+	"github.com/tokencard/ethertest"
 )
 
-var Dao *bindings.Dao
-var DaoAddress common.Address
+// var DAO *bindings.Dao
+// var DAOAddress common.Address
 
 var ERC20Contract1 *mocks.Token
 var ERC20Contract1Address common.Address
 
 var ERC20Contract2 *mocks.Token
 var ERC20Contract2Address common.Address
+
+var DAO *ethertest.Account
 
 func init() {
 	TestRig.AddCoverageForContracts(
@@ -42,6 +45,11 @@ var _ = BeforeEach(func() {
 
 	var tx *types.Transaction
 
+	DAO = ethertest.NewAccount()
+	err = BankAccount.Transfer(Backend, DAO.Address(), EthToWei(50))
+
+	Expect(err).ToNot(HaveOccurred())
+
 	ERC20Contract1Address, tx, ERC20Contract1, err = mocks.DeployToken(RandomAccount.TransactOpts(), Backend)
 	Expect(err).ToNot(HaveOccurred())
 	Backend.Commit()
@@ -53,11 +61,6 @@ var _ = BeforeEach(func() {
 	Expect(isSuccessful(tx)).To(BeTrue())
 
 	LicenceAddress, tx, Licence, err = bindings.DeployLicence(BankAccount.TransactOpts(), Backend, Owner.Address(), true, big.NewInt(10), CryptoFloatAddress, TokenHolderAddress)//FIX ME: random should become CryptoFloat contract
-	Expect(err).ToNot(HaveOccurred())
-	Backend.Commit()
-	Expect(isSuccessful(tx)).To(BeTrue())
-
-	DaoAddress, tx, Dao, err = bindings.DeployDao(BankAccount.TransactOpts(), Backend, Owner.Address(), true, LicenceAddress)
 	Expect(err).ToNot(HaveOccurred())
 	Backend.Commit()
 	Expect(isSuccessful(tx)).To(BeTrue())

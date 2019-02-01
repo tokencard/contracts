@@ -48,7 +48,7 @@ var _ = Describe("updateFloat", func() {
 			Expect(it.Next()).To(BeTrue())
 			evt := it.Event
 			Expect(it.Next()).To(BeFalse())
-      Expect(evt.Sender).To(Equal(Owner.Address()))
+      		Expect(evt.Sender).To(Equal(Owner.Address()))
 			Expect(evt.NewFloat).To(Equal(TokenHolderAddress))
 		})
 
@@ -66,16 +66,16 @@ var _ = Describe("updateFloat", func() {
   		})
 
   		It("Should emit a new UpdatedCryptoFloat event", func() {
-  			it, err := Licence.FilterUpdatedCryptoFloat(nil)
-  			Expect(err).ToNot(HaveOccurred())
-  			Expect(it.Next()).To(BeTrue())
-  			evt := it.Event
-  			Expect(it.Next()).To(BeTrue())
-        Expect(evt.Sender).To(Equal(Owner.Address()))
+			it, err := Licence.FilterUpdatedCryptoFloat(nil)
+			Expect(err).ToNot(HaveOccurred())
+			Expect(it.Next()).To(BeTrue())
+			evt := it.Event
+			Expect(it.Next()).To(BeTrue())
+        	Expect(evt.Sender).To(Equal(Owner.Address()))
   			Expect(evt.NewFloat).To(Equal(TokenHolderAddress))
-        evt = it.Event
+        	evt = it.Event
   			Expect(it.Next()).To(BeFalse())
-        Expect(evt.Sender).To(Equal(Owner.Address()))
+        	Expect(evt.Sender).To(Equal(Owner.Address()))
   			Expect(evt.NewFloat).To(Equal(CryptoFloatAddress))
   		})
 
@@ -84,18 +84,18 @@ var _ = Describe("updateFloat", func() {
     Context("cryptoFloat is locked after the update", func(){
 
       BeforeEach(func() {
-  			tx, err := Licence.LockFloat(Owner.TransactOpts())
-  			Expect(err).ToNot(HaveOccurred())
-  			Backend.Commit()
+		tx, err := Licence.LockFloat(Owner.TransactOpts())
+		Expect(err).ToNot(HaveOccurred())
+		Backend.Commit()
         Expect(isSuccessful(tx)).To(BeTrue())
   		})
 
       It("Should not be possible to update again", func() {
         tx, err := Licence.UpdateFloat(Owner.TransactOpts(ethertest.WithGasLimit(100000)), CryptoFloatAddress)
-  			Expect(err).ToNot(HaveOccurred())
-  			Backend.Commit()
+		Expect(err).ToNot(HaveOccurred())
+		Backend.Commit()
         Expect(isGasExhausted(tx, 100000)).To(BeFalse())
-  			Expect(isSuccessful(tx)).To(BeFalse())
+		Expect(isSuccessful(tx)).To(BeFalse())
   		})
 
   		It("Should NOT emit a 2nd UpdateFloat event", func() {
@@ -104,7 +104,7 @@ var _ = Describe("updateFloat", func() {
   			Expect(it.Next()).To(BeTrue())
   			evt := it.Event
   			Expect(it.Next()).To(BeFalse())
-        Expect(evt.Sender).To(Equal(Owner.Address()))
+        	Expect(evt.Sender).To(Equal(Owner.Address()))
   			Expect(evt.NewFloat).To(Equal(TokenHolderAddress))
   		})
 
