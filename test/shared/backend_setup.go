@@ -111,6 +111,12 @@ var WalletAddress common.Address
 var TKN *mocks.Token
 var TKNAddress common.Address
 
+var ERC20Contract1 *mocks.Token
+var ERC20Contract1Address common.Address
+
+var ERC20Contract2 *mocks.Token
+var ERC20Contract2Address common.Address
+
 var OracleName = EnsNode("oracle.tokencard.eth")
 var ControllerName = EnsNode("controller.tokencard.eth")
 var LicenceName = EnsNode("licence.tokencard.eth")
@@ -470,6 +476,28 @@ func InitializeBackend() error {
 	if err != nil {
 		return errors.Wrap(err, "deploying TKN token contract")
 	}
+
+	ERC20Contract1Address, tx, ERC20Contract1, err = mocks.DeployToken(RandomAccount.TransactOpts(), Backend)
+	if err != nil {
+		return err
+	}
+	Backend.Commit()
+	err = verifyTransaction(tx)
+	if err != nil {
+		return errors.Wrap(err, "deploying ERC20-1 token contract")
+	}
+
+
+	ERC20Contract2Address, tx, ERC20Contract2, err = mocks.DeployToken(RandomAccount.TransactOpts(), Backend)
+	if err != nil {
+		return err
+	}
+	Backend.Commit()
+	err = verifyTransaction(tx)
+	if err != nil {
+		return errors.Wrap(err, "deploying ERC20-2 token contract")
+	}
+
 
 	// Add the mock token to the oracle list.
 	tx, err = Oracle.AddTokens(Controller.TransactOpts(), []common.Address{TKNAddress}, StringsToByte32("TKN"), []*big.Int{ExponentiateDecimals(8)}, big.NewInt(20180913153211))
