@@ -5,6 +5,7 @@ import "./externals/SafeMath.sol";
 // The Token interface is a subset of the ERC20 specification.
 interface Token {
     function transfer(address, uint) external returns (bool);
+
     function balanceOf(address) constant external returns (uint);
 }
 
@@ -19,34 +20,34 @@ interface BurnerToken {
 // disbursed to the burner.
 contract Holder {
 
-  using SafeMath for uint256;
+    using SafeMath for uint256;
 
-  /*******************/
-  /*     Events     */
-  /*****************/
+    /*******************/
+    /*     Events     */
+    /*****************/
 
-  event AddedToken(address _sender, address _token);
-  event RemovedToken(address _sender, address _token);
+    event AddedToken(address _sender, address _token);
+    event RemovedToken(address _sender, address _token);
 
-  // Owner of this contract.
-  address private _owner;
+    // Owner of this contract.
+    address private _owner;
 
-  // New owner in a two-phase ownership transfer.
-  address private _newOwner;
+    // New owner in a two-phase ownership transfer.
+    address private _newOwner;
 
-  // Burner token which can be burned to redeem shares.
-  address private _burner;
+    // Burner token which can be burned to redeem shares.
+    address private _burner;
 
-  // Tokens known to this contract. When the burn method is called, only
-  // shares of these tokens will be disbursed.
-  address[] private _tokenAddresses;
-  mapping(address => bool) public tokenExists;
+    // Tokens known to this contract. When the burn method is called, only
+    // shares of these tokens will be disbursed.
+    address[] private _tokenAddresses;
+    mapping(address => bool) public tokenExists;
 
-  // Only allow the given address to call the method.
-  modifier only(address a) {
-      require(msg.sender == a);
-      _;
-  }
+    // Only allow the given address to call the method.
+    modifier only(address a) {
+        require(msg.sender == a);
+        _;
+    }
 
     // Construct a TokenHolder for the given burner token with the sender
     // as the owner.
@@ -56,22 +57,22 @@ contract Holder {
     }
 
     // Ether may be sent from anywhere.
-    function () external payable { }
+    function() external payable {}
 
     // Change owner in a two-phase ownership transfer.
-    function changeOwner(address to) external only (_owner) {
+    function changeOwner(address to) external only(_owner) {
         _newOwner = to;
     }
 
     // Accept ownership in a two-phase ownership transfer.
-    function acceptOwnership() external only (_newOwner) {
+    function acceptOwnership() external only(_newOwner) {
         _owner = msg.sender;
         _newOwner = 0x0;
     }
 
     /// @dev Add ERC20 tokens to the list of supported tokens.
     /// @param _tokens ERC20 token contract addresses.
-    function addTokens(address[] _tokens) external only (_owner) {
+    function addTokens(address[] _tokens) external only(_owner) {
         // Add each token to the list of supported tokens.
         for (uint i = 0; i < _tokens.length; i++) {
             // Require that the token doesn't already exist.
@@ -87,7 +88,7 @@ contract Holder {
 
     /// @dev Remove ERC20 tokens from the list of supported tokens.
     /// @param _tokens ERC20 token contract addresses.
-    function removeTokens(address[] _tokens) external only (_owner) {
+    function removeTokens(address[] _tokens) external only(_owner) {
         // Delete each token object from the list of supported tokens based on the addresses provided.
         for (uint i = 0; i < _tokens.length; i++) {
             // Store the token address.
@@ -110,7 +111,7 @@ contract Holder {
     }
 
     // Burn handles disbursing a share of tokens to an address.
-    function burn(address to, uint amount) external only (_burner) returns (bool) {
+    function burn(address to, uint amount) external only(_burner) returns (bool) {
         if (amount == 0) {
             return true;
         }
@@ -124,7 +125,8 @@ contract Holder {
             uint total = balance(_tokenAddresses[i]);
 
             if (total > 0) {
-                require((total * amount) / amount == total); // Overflow check.
+                require((total * amount) / amount == total);
+                // Overflow check.
                 transfer(to, _tokenAddresses[i], (total * amount) / supply);
             }
         }

@@ -28,7 +28,7 @@ contract Controller is IController {
     event AddedController(address _sender, address _controller);
     event RemovedController(address _sender, address _controller);
 
-    mapping (address => bool) private _isController;
+    mapping(address => bool) private _isController;
     uint private _controllerCount;
 
     /// @dev Constructor initializes the list of controllers with the provided address.
