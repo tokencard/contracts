@@ -7,7 +7,6 @@ import "./internals/ownable.sol";
 /// @title ILicence interface describes methods for loading a TokenCard and updating licence amount.
 interface ILicence {
     function load(address, uint) external payable returns (bool);
-
     function updateLicenceAmount(uint) external;
 }
 
