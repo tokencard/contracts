@@ -90,31 +90,38 @@ contract Licence is Ownable {
         return _licenceDAO;
     }
 
+    /// @dev This locks the cryptoFloat addres
     function lockFloat() external onlyOwner {
         _lockedCryptoFloat = true;
     }
 
+    /// @dev This locks the TokenHolder address
     function lockHolder() external onlyOwner {
         _lockedTokenHolder = true;
     }
 
+    /// @dev This locks the DAO address
     function lockLicenceDAO() external onlyOwner {
         _lockedLicenceDAO = true;
     }
 
+    /// @dev returns whether or not the CryptoFloat address is locked
     function floatLocked() public view returns (bool) {
         return _lockedCryptoFloat;
     }
 
+    /// @dev returns whether or not the TokenHolder address is locked
     function holderLocked() public view returns (bool) {
         return _lockedTokenHolder;
     }
 
+    /// @dev returns whether or not the Licence DAO address is locked
     function licenceDAOLocked() public view returns (bool) {
         return _lockedLicenceDAO;
     }
 
     /// @dev Updates the address of the cyptoFloat.
+    /// @param _newFloat This is the new address for the CryptoFloat
     function updateFloat(address _newFloat) external onlyOwner {
         require(!floatLocked(), "float is locked");
         _cryptoFloat = _newFloat;
@@ -122,6 +129,7 @@ contract Licence is Ownable {
     }
 
     /// @dev Updates the address of the Holder contract.
+    /// @param _newHolder This is the new address for the TokenHolder
     function updateHolder(address _newHolder) external onlyOwner {
         require(!holderLocked(), "holder contract is locked");
         _tokenHolder = _newHolder;
@@ -129,6 +137,7 @@ contract Licence is Ownable {
     }
 
     /// @dev Updates the address of the DAO contract.
+    /// @param _newHolder This is the new address for the Licence DAO
     function updateLicenceDAO(address _newDAO) external onlyOwner {
         require(!licenceDAOLocked(), "DAO is locked");
         _licenceDAO = _newDAO;
@@ -160,7 +169,7 @@ contract Licence is Ownable {
                 require(ERC20(_asset).transferFrom(msg.sender, _tokenHolder, licenceAmount), "ERC20 licenceAmount transfer from external account was unsuccessful");
                 require(ERC20(_asset).transferFrom(msg.sender, _cryptoFloat, loadAmount), "ERC20 token transfer from external account was unsuccessful");
             } else {
-                require(msg.value == _amount, "ether sent is not equal to amount");
+                require(msg.value == _amount, "ETH sent is not equal to amount");
                 _tokenHolder.transfer(licenceAmount);
                 _cryptoFloat.transfer(loadAmount);
             }
