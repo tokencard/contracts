@@ -15,7 +15,6 @@ contract_sources=(
   'holder'
   'TKN'
   'licence'
-  'dao'
   'mocks/token'
   'mocks/oraclize-connector'
   'mocks/oraclize-resolver'
@@ -52,7 +51,6 @@ contracts=(
   "holder/Holder holder.go Holder bindings"
   "TKN/Token token.go Token bindings"
   "licence/Licence licence.go Licence bindings"
-  "dao/Dao dao.go Dao bindings"
   "mocks/token/Token mocks/token.go Token mocks"
   "mocks/oraclize-connector/Oraclize mocks/oraclize-connector.go Oraclize mocks"
   "mocks/oraclize-resolver/OraclizeAddrResolver mocks/oraclize-resolver.go OraclizeAddrResolver mocks"

@@ -122,7 +122,7 @@ contract Oracle is usingOraclize, Base64, Date, JSON, Controllable, ParseIntScie
         }
         // this returns a 'false' to imply that a card is not protected 
         return (false, 0);
-        
+
     }
 
     /// @dev Add ERC20 tokens to the list of supported tokens.
@@ -147,8 +147,8 @@ contract Oracle is usingOraclize, Base64, Date, JSON, Controllable, ParseIntScie
                 magnitude : magnitude,
                 rate : 0,
                 exists : true,
-                lastUpdate: _updateDate
-            });
+                lastUpdate : _updateDate
+                });
             // Add the token address to the address list.
             _tokenAddresses.push(token);
             // Emit token addition event.
@@ -244,7 +244,7 @@ contract Oracle is usingOraclize, Base64, Date, JSON, Controllable, ParseIntScie
         if (_tokenAddresses.length == 0) {
             // Emit a query failure event.
             emit FailedUpdateRequest("no tokens");
-        // Check if the contract has enough Ether to pay for the query.
+            // Check if the contract has enough Ether to pay for the query.
         } else if (oraclize_getPrice("URL") * _tokenAddresses.length > address(this).balance) {
             // Emit a query failure event.
             emit FailedUpdateRequest("insufficient balance");
@@ -276,11 +276,11 @@ contract Oracle is usingOraclize, Base64, Date, JSON, Controllable, ParseIntScie
 
         //expecting fixed length proofs
         if (_proof.length != PROOF_LEN)
-          revert("invalid proof length");
+            revert("invalid proof length");
 
         //proof should be 65 bytes long: R (32 bytes) + S (32 bytes) + v (1 byte)
         if (uint(_proof[1]) != ECDSA_SIG_LEN)
-          revert("invalid signature length");
+            revert("invalid signature length");
 
         bytes memory signature = new bytes(ECDSA_SIG_LEN);
 
@@ -288,10 +288,10 @@ contract Oracle is usingOraclize, Base64, Date, JSON, Controllable, ParseIntScie
 
         // Extract the headers, big endian encoding of headers length
         if (uint(_proof[ENCODING_BYTES + ECDSA_SIG_LEN]) * MAX_BYTE_SIZE + uint(_proof[ENCODING_BYTES + ECDSA_SIG_LEN + 1]) != HEADERS_LEN)
-          revert("invalid headers length");
+            revert("invalid headers length");
 
         bytes memory headers = new bytes(HEADERS_LEN);
-        headers = copyBytes(_proof, 2*ENCODING_BYTES + ECDSA_SIG_LEN, HEADERS_LEN, headers, 0);
+        headers = copyBytes(_proof, 2 * ENCODING_BYTES + ECDSA_SIG_LEN, HEADERS_LEN, headers, 0);
 
         // Check if the signature is valid and if the signer address is matching.
         if (!_verifySignature(headers, signature, _publicKey)) {
@@ -316,7 +316,7 @@ contract Oracle is usingOraclize, Base64, Date, JSON, Controllable, ParseIntScie
         digest = copyBytes(headers, DIGEST_OFFSET, DIGEST_BASE64_LEN, digest, 0);
 
         if (keccak256(abi.encodePacked(sha256(abi.encodePacked(_result)))) != keccak256(_base64decode(digest)))
-          revert("result hash not matching");
+            revert("result hash not matching");
 
         emit VerifiedProof(_publicKey, _result);
         return (true, timestamp);

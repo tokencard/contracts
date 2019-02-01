@@ -60,17 +60,17 @@ contract Whitelist is Controllable, Ownable {
     }
 
     /// @dev Getter for pending addition array.
-    function pendingWhitelistAddition() external view returns(address[]) {
+    function pendingWhitelistAddition() external view returns (address[]) {
         return _pendingWhitelistAddition;
     }
 
     /// @dev Getter for pending removal array.
-    function pendingWhitelistRemoval() external view returns(address[]) {
+    function pendingWhitelistRemoval() external view returns (address[]) {
         return _pendingWhitelistRemoval;
     }
 
     /// @dev Getter for pending addition/removal array hash.
-    function pendingWhitelistHash(address[] _pendingWhitelist) public pure returns(bytes32) {
+    function pendingWhitelistHash(address[] _pendingWhitelist) public pure returns (bytes32) {
         return keccak256(abi.encodePacked(_pendingWhitelist));
     }
 
@@ -90,7 +90,7 @@ contract Whitelist is Controllable, Ownable {
 
     /// @dev Add addresses to the whitelist.
     /// @param _addresses are the Ethereum addresses to be whitelisted.
-    function submitWhitelistAddition(address[] _addresses) external onlyOwner noActiveSubmission hasNoOwnerOrZeroAddress(_addresses)  {
+    function submitWhitelistAddition(address[] _addresses) external onlyOwner noActiveSubmission hasNoOwnerOrZeroAddress(_addresses) {
         // Require that the whitelist has been initialized.
         require(initializedWhitelist, "whitelist has not been initialized");
         // Set the provided addresses to the pending addition addresses.
@@ -408,6 +408,7 @@ contract Wallet is Vault {
 
     using SafeMath for uint256;
 
+
     uint constant private MINIMUM_TOPUP_LIMIT = 1 finney; // solium-disable-line uppercase
     uint constant private MAXIMUM_TOPUP_LIMIT = 500 finney; // solium-disable-line uppercase
 
@@ -526,6 +527,7 @@ contract Wallet is Vault {
     }
 
     /// @dev Load a token card with the specified asset amount.
+    /// the amount send should be inclusive of the percent licence.
     /// @param _asset is the address of an ERC20 token or 0x0 for ether.
     /// @param _amount is the amount of assets to be transferred in base units.
     function loadTokenCard(address _asset, uint _amount) external onlyOwner {

@@ -28,18 +28,18 @@ var (
 )
 
 // LicenceABI is the input ABI used to generate the binding from.
-const LicenceABI = "[{\"constant\":false,\"inputs\":[{\"name\":\"_asset\",\"type\":\"address\"},{\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"load\",\"outputs\":[],\"payable\":true,\"stateMutability\":\"payable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"isTransferable\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"tokenHolder\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[],\"name\":\"renounceOwnership\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_newFee\",\"type\":\"uint256\"}],\"name\":\"updateFee\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"DAO\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"cryptoFloat\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"MAX_FEE_FACTOR\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_account\",\"type\":\"address\"},{\"name\":\"_transferable\",\"type\":\"bool\"}],\"name\":\"transferOwnership\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_newDAO\",\"type\":\"address\"}],\"name\":\"updateDAO\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"feeFactor\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"name\":\"_owner\",\"type\":\"address\"},{\"name\":\"_transferable\",\"type\":\"bool\"},{\"name\":\"_fee\",\"type\":\"uint256\"},{\"name\":\"_float\",\"type\":\"address\"},{\"name\":\"_holder\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"payable\":true,\"stateMutability\":\"payable\",\"type\":\"fallback\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_from\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"Received\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_sender\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_newDAO\",\"type\":\"address\"}],\"name\":\"UpdatedDAO\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_sender\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_newFee\",\"type\":\"uint256\"}],\"name\":\"UpdatedFee\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_from\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_to\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_asset\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"TransferredToTokenHolder\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_from\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_to\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_asset\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"TransferredToCryptoFloat\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_from\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_to\",\"type\":\"address\"}],\"name\":\"TransferredOwnership\",\"type\":\"event\"}]"
+const LicenceABI = "[{\"constant\":false,\"inputs\":[{\"name\":\"_asset\",\"type\":\"address\"},{\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"load\",\"outputs\":[],\"payable\":true,\"stateMutability\":\"payable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"isTransferable\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"licenceDAO\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"tokenHolder\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_newHolder\",\"type\":\"address\"}],\"name\":\"updateHolder\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[],\"name\":\"lockLicenceDAO\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_newAmount\",\"type\":\"uint256\"}],\"name\":\"updateLicenceAmount\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[],\"name\":\"renounceOwnership\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"floatLocked\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"cryptoFloat\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"licenceAmountScaled\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_account\",\"type\":\"address\"},{\"name\":\"_transferable\",\"type\":\"bool\"}],\"name\":\"transferOwnership\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"MAX_AMOUNT_SCALE\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[],\"name\":\"lockFloat\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_newFloat\",\"type\":\"address\"}],\"name\":\"updateFloat\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[],\"name\":\"lockHolder\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"licenceDAOLocked\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_newDAO\",\"type\":\"address\"}],\"name\":\"updateLicenceDAO\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"holderLocked\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"name\":\"_owner\",\"type\":\"address\"},{\"name\":\"_transferable\",\"type\":\"bool\"},{\"name\":\"_licence\",\"type\":\"uint256\"},{\"name\":\"_float\",\"type\":\"address\"},{\"name\":\"_holder\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"payable\":true,\"stateMutability\":\"payable\",\"type\":\"fallback\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_from\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"Received\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_sender\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_newDAO\",\"type\":\"address\"}],\"name\":\"UpdatedLicenceDAO\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_sender\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_newFloat\",\"type\":\"address\"}],\"name\":\"UpdatedCryptoFloat\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_sender\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_newHolder\",\"type\":\"address\"}],\"name\":\"UpdatedTokenHolder\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_sender\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_newFee\",\"type\":\"uint256\"}],\"name\":\"UpdatedLicenceAmount\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_from\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_to\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_asset\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"TransferredToTokenHolder\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_from\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_to\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_asset\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"TransferredToCryptoFloat\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_from\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_to\",\"type\":\"address\"}],\"name\":\"TransferredOwnership\",\"type\":\"event\"}]"
 
 // LicenceBin is the compiled bytecode used for deploying new contracts.
-const LicenceBin = `608060405234801561001057600080fd5b5060405160a080610e78833981016040818152825160208085015183860151606087015160809097015160008054600160a060020a031916600160a060020a03871690811760a060020a60ff02191674010000000000000000000000000000000000000000861515021782559088529387019390935284519396919590949193879287927f850b3df64837d7d518b45f5aa64d104652c3b80eb5b34a8e3d9eb666cb7cdea5929081900390910190a1505060039290925560018054600160a060020a03928316600160a060020a0319918216179091556002805492909316911617905550610d739050806101056000396000f3006080604052600436106100b95763ffffffff7c01000000000000000000000000000000000000000000000000000000006000350416631b3c96b481146101005780632121dc7514610119578063420a83e714610142578063715018a6146101735780638da5cb5b146101885780639012c4a81461019d57806398fabd3a146101b5578063a036ba60146101ca578063af4937fc146101df578063b242e53414610206578063bcb6c0b51461022c578063f91d27c11461024d575b36156100c457600080fd5b6040805133815234602082015281517f88a5966d370b9919b20f3e2c13ff65706f196a4e32cc2c12bf57088f88525874929181900390910190a1005b610117600160a060020a0360043516602435610262565b005b34801561012557600080fd5b5061012e610692565b604080519115158252519081900360200190f35b34801561014e57600080fd5b506101576106b3565b60408051600160a060020a039092168252519081900360200190f35b34801561017f57600080fd5b506101176106c2565b34801561019457600080fd5b506101576107fd565b3480156101a957600080fd5b5061011760043561080c565b3480156101c157600080fd5b506101576108db565b3480156101d657600080fd5b506101576108ea565b3480156101eb57600080fd5b506101f46108f9565b60408051918252519081900360200190f35b34801561021257600080fd5b50610117600160a060020a036004351660243515156108ff565b34801561023857600080fd5b50610117600160a060020a0360043516610b07565b34801561025957600080fd5b506101f4610cbd565b6000806102906103e8600354016102846103e886610cc390919063ffffffff16565b9063ffffffff610cfc16565b91506102a2838363ffffffff610d1f16565b9050600160a060020a038416156104f257600254604080517f23b872dd000000000000000000000000000000000000000000000000000000008152336004820152600160a060020a039283166024820152604481018490529051918616916323b872dd916064808201926020929091908290030181600087803b15801561032857600080fd5b505af115801561033c573d6000803e3d6000fd5b505050506040513d602081101561035257600080fd5b505115156103d0576040805160e560020a62461bcd02815260206004820152603960248201527f455243323020666565207472616e736665722066726f6d2065787465726e616c60448201527f206163636f756e742077617320756e7375636365737366756c00000000000000606482015290519081900360840190fd5b600154604080517f23b872dd000000000000000000000000000000000000000000000000000000008152336004820152600160a060020a039283166024820152604481018590529051918616916323b872dd916064808201926020929091908290030181600087803b15801561044557600080fd5b505af1158015610459573d6000803e3d6000fd5b505050506040513d602081101561046f57600080fd5b505115156104ed576040805160e560020a62461bcd02815260206004820152603b60248201527f455243323020746f6b656e207472616e736665722066726f6d2065787465726e60448201527f616c206163636f756e742077617320756e7375636365737366756c0000000000606482015290519081900360840190fd5b6105e6565b34831461056f576040805160e560020a62461bcd02815260206004820152602160248201527f65746865722073656e74206973206e6f7420657175616c20746f20616d6f756e60448201527f7400000000000000000000000000000000000000000000000000000000000000606482015290519081900360840190fd5b600254604051600160a060020a039091169082156108fc029083906000818181858888f193505050501580156105a9573d6000803e3d6000fd5b50600154604051600160a060020a039091169083156108fc029084906000818181858888f193505050501580156105e4573d6000803e3d6000fd5b505b60025460408051338152600160a060020a0392831660208201529186168282015260608201839052517fdd9dfad7b30d6b224e235f89565871419d3dec3b563a4e231f12d2cc97f9acfc9181900360800190a160015460408051338152600160a060020a0392831660208201529186168282015260608201849052517fc8a7b0bd71097b47b2cad75e4e939d2aeb7fae88110e68f93b83fed08e9d3c389181900360800190a150505050565b60005474010000000000000000000000000000000000000000900460ff1690565b600254600160a060020a031690565b6106ca610d36565b1515610720576040805160e560020a62461bcd02815260206004820152601660248201527f73656e646572206973206e6f7420616e206f776e657200000000000000000000604482015290519081900360640190fd5b60005474010000000000000000000000000000000000000000900460ff161515610794576040805160e560020a62461bcd02815260206004820152601d60248201527f6f776e657273686970206973206e6f74207472616e7366657261626c65000000604482015290519081900360640190fd5b6000805460408051600160a060020a039092168252602082019290925281517f850b3df64837d7d518b45f5aa64d104652c3b80eb5b34a8e3d9eb666cb7cdea5929181900390910190a16000805473ffffffffffffffffffffffffffffffffffffffff19169055565b600054600160a060020a031690565b600454600160a060020a0316331461082357600080fd5b8060011115801561083657506103e88111155b151561088c576040805160e560020a62461bcd02815260206004820152601060248201527f666565206f7574206f662072616e676500000000000000000000000000000000604482015290519081900360640190fd5b600381905560045460408051600160a060020a0390921682526020820183905280517f6436bbb77997513c673b4327714d5ca63221edd8065af94ef7b7bbb4f2819b6c9281900390910190a150565b600454600160a060020a031690565b600154600160a060020a031690565b6103e881565b610907610d36565b151561095d576040805160e560020a62461bcd02815260206004820152601660248201527f73656e646572206973206e6f7420616e206f776e657200000000000000000000604482015290519081900360640190fd5b60005474010000000000000000000000000000000000000000900460ff1615156109d1576040805160e560020a62461bcd02815260206004820152601d60248201527f6f776e657273686970206973206e6f74207472616e7366657261626c65000000604482015290519081900360640190fd5b600160a060020a0382161515610a57576040805160e560020a62461bcd02815260206004820152602360248201527f6f776e65722063616e6e6f742062652073657420746f207a65726f206164647260448201527f6573730000000000000000000000000000000000000000000000000000000000606482015290519081900360840190fd5b6000805474ff000000000000000000000000000000000000000019167401000000000000000000000000000000000000000083151502179081905560408051600160a060020a039283168152918416602083015280517f850b3df64837d7d518b45f5aa64d104652c3b80eb5b34a8e3d9eb666cb7cdea59281900390910190a1506000805473ffffffffffffffffffffffffffffffffffffffff1916600160a060020a0392909216919091179055565b610b0f610d36565b1515610b65576040805160e560020a62461bcd02815260206004820152601660248201527f73656e646572206973206e6f7420616e206f776e657200000000000000000000604482015290519081900360640190fd5b600454600160a060020a031615610c545760048054604080517fa4e2d6340000000000000000000000000000000000000000000000000000000081529051600160a060020a039092169263a4e2d6349282820192602092908290030181600087803b158015610bd357600080fd5b505af1158015610be7573d6000803e3d6000fd5b505050506040513d6020811015610bfd57600080fd5b505115610c54576040805160e560020a62461bcd02815260206004820152600d60248201527f44414f206973206c6f636b656400000000000000000000000000000000000000604482015290519081900360640190fd5b6004805473ffffffffffffffffffffffffffffffffffffffff1916600160a060020a03831690811790915560408051338152602081019290925280517f97ad44d5f57e52b66c8d238e30b7cccdc1e11ca21e52f3838a6d1d4fccc41ec39281900390910190a150565b60035490565b600080831515610cd65760009150610cf5565b50828202828482811515610ce657fe5b0414610cf157600080fd5b8091505b5092915050565b600080808311610d0b57600080fd5b8284811515610d1657fe5b04949350505050565b60008083831115610d2f57600080fd5b5050900390565b600054600160a060020a03163314905600a165627a7a7230582069cada702d8d126dfea16826fc9ff9307772ed6931494dc891a648b47efedbe90029`
+const LicenceBin = `608060405234801561001057600080fd5b5060405160a0806113fd833981016040818152825160208085015183860151606087015160809097015160008054600160a060020a031916600160a060020a03871690811760a060020a60ff02191674010000000000000000000000000000000000000000861515021782559088529387019390935284519396919590949193879287927f850b3df64837d7d518b45f5aa64d104652c3b80eb5b34a8e3d9eb666cb7cdea5929081900390910190a1505060049290925560018054600160a060020a03928316600160a060020a03199182161790915560028054929093169116179055506112f89050806101056000396000f3006080604052600436106101115763ffffffff7c01000000000000000000000000000000000000000000000000000000006000350416631b3c96b481146101585780632121dc75146101715780633a7afe021461019a578063420a83e7146101cb57806342719faa146101e05780634ac22b3c1461020157806368ce74e714610216578063715018a61461022e5780638da5cb5b14610243578063940b9c3b14610258578063a036ba601461026d578063ac904c6314610282578063b242e534146102a9578063ca0e2e20146102cf578063d08b4ecc146102e4578063d0cddd67146102f9578063d1696b161461031a578063e30c5fa81461032f578063e3d8024214610344578063f15ff45514610365575b361561011c57600080fd5b6040805133815234602082015281517f88a5966d370b9919b20f3e2c13ff65706f196a4e32cc2c12bf57088f88525874929181900390910190a1005b61016f600160a060020a036004351660243561037a565b005b34801561017d57600080fd5b50610186610918565b604080519115158252519081900360200190f35b3480156101a657600080fd5b506101af610928565b60408051600160a060020a039092168252519081900360200190f35b3480156101d757600080fd5b506101af610937565b3480156101ec57600080fd5b5061016f600160a060020a0360043516610946565b34801561020d57600080fd5b5061016f610a58565b34801561022257600080fd5b5061016f600435610adf565b34801561023a57600080fd5b5061016f610ba2565b34801561024f57600080fd5b506101af610cba565b34801561026457600080fd5b50610186610cc9565b34801561027957600080fd5b506101af610cd9565b34801561028e57600080fd5b50610297610ce8565b60408051918252519081900360200190f35b3480156102b557600080fd5b5061016f600160a060020a03600435166024351515610cee565b3480156102db57600080fd5b50610297610ec2565b3480156102f057600080fd5b5061016f610ec8565b34801561030557600080fd5b5061016f600160a060020a0360043516610f3a565b34801561032657600080fd5b5061016f61104c565b34801561033b57600080fd5b506101866110d1565b34801561035057600080fd5b5061016f600160a060020a03600435166110f4565b34801561037157600080fd5b50610186611206565b806000600160a060020a03841673aaaf91d9b90df800df4f55c205fd6989c977e73a14156104c457600154604080517f23b872dd000000000000000000000000000000000000000000000000000000008152336004820152600160a060020a039283166024820152604481018590529051918616916323b872dd916064808201926020929091908290030181600087803b15801561041757600080fd5b505af115801561042b573d6000803e3d6000fd5b505050506040513d602081101561044157600080fd5b505115156104bf576040805160e560020a62461bcd02815260206004820152603360248201527f544b4e207472616e736665722066726f6d2065787465726e616c206163636f7560448201527f6e742077617320756e7375636365737366756c00000000000000000000000000606482015290519081900360840190fd5b6108bf565b6104ef6103e8600454016104e36103e88661122890919063ffffffff16565b9063ffffffff61126116565b9150610501838363ffffffff61128416565b9050600160a060020a0384161561077757600254604080517f23b872dd000000000000000000000000000000000000000000000000000000008152336004820152600160a060020a039283166024820152604481018490529051918616916323b872dd916064808201926020929091908290030181600087803b15801561058757600080fd5b505af115801561059b573d6000803e3d6000fd5b505050506040513d60208110156105b157600080fd5b50511515610655576040805160e560020a62461bcd02815260206004820152604360248201527f4552433230206c6963656e6365416d6f756e74207472616e736665722066726f60448201527f6d2065787465726e616c206163636f756e742077617320756e7375636365737360648201527f66756c0000000000000000000000000000000000000000000000000000000000608482015290519081900360a40190fd5b600154604080517f23b872dd000000000000000000000000000000000000000000000000000000008152336004820152600160a060020a039283166024820152604481018590529051918616916323b872dd916064808201926020929091908290030181600087803b1580156106ca57600080fd5b505af11580156106de573d6000803e3d6000fd5b505050506040513d60208110156106f457600080fd5b50511515610772576040805160e560020a62461bcd02815260206004820152603b60248201527f455243323020746f6b656e207472616e736665722066726f6d2065787465726e60448201527f616c206163636f756e742077617320756e7375636365737366756c0000000000606482015290519081900360840190fd5b61086b565b3483146107f4576040805160e560020a62461bcd02815260206004820152602160248201527f65746865722073656e74206973206e6f7420657175616c20746f20616d6f756e60448201527f7400000000000000000000000000000000000000000000000000000000000000606482015290519081900360840190fd5b600254604051600160a060020a039091169082156108fc029083906000818181858888f1935050505015801561082e573d6000803e3d6000fd5b50600154604051600160a060020a039091169083156108fc029084906000818181858888f19350505050158015610869573d6000803e3d6000fd5b505b60025460408051338152600160a060020a0392831660208201529186168282015260608201839052517fdd9dfad7b30d6b224e235f89565871419d3dec3b563a4e231f12d2cc97f9acfc9181900360800190a15b60015460408051338152600160a060020a0392831660208201529186168282015260608201849052517fc8a7b0bd71097b47b2cad75e4e939d2aeb7fae88110e68f93b83fed08e9d3c389181900360800190a150505050565b60005460a060020a900460ff1690565b600354600160a060020a031690565b600254600160a060020a031690565b61094e61129b565b1515610992576040805160e560020a62461bcd02815260206004820152601660248201526000805160206112ad833981519152604482015290519081900360640190fd5b61099a611206565b156109ef576040805160e560020a62461bcd02815260206004820152601960248201527f686f6c64657220636f6e7472616374206973206c6f636b656400000000000000604482015290519081900360640190fd5b6002805473ffffffffffffffffffffffffffffffffffffffff1916600160a060020a03831690811790915560408051338152602081019290925280517f4300dd20d76c61b98fc9a506895e4e17bba1c0013b077f61a1ab08df15a8b43d9281900390910190a150565b610a6061129b565b1515610aa4576040805160e560020a62461bcd02815260206004820152601660248201526000805160206112ad833981519152604482015290519081900360640190fd5b6003805476ff000000000000000000000000000000000000000000001916760100000000000000000000000000000000000000000000179055565b600354600160a060020a03163314610af657600080fd5b80600111158015610b0957506103e88111155b1515610b5f576040805160e560020a62461bcd02815260206004820152601b60248201527f6c6963656e636520616d6f756e74206f7574206f662072616e67650000000000604482015290519081900360640190fd5b6004819055604080513381526020810183905281517f69181b453596dd032174174ab0c83edd08651420cd71138d194dffe31536bbec929181900390910190a150565b610baa61129b565b1515610bee576040805160e560020a62461bcd02815260206004820152601660248201526000805160206112ad833981519152604482015290519081900360640190fd5b60005460a060020a900460ff161515610c51576040805160e560020a62461bcd02815260206004820152601d60248201527f6f776e657273686970206973206e6f74207472616e7366657261626c65000000604482015290519081900360640190fd5b6000805460408051600160a060020a039092168252602082019290925281517f850b3df64837d7d518b45f5aa64d104652c3b80eb5b34a8e3d9eb666cb7cdea5929181900390910190a16000805473ffffffffffffffffffffffffffffffffffffffff19169055565b600054600160a060020a031690565b60035460a060020a900460ff1690565b600154600160a060020a031690565b60045490565b610cf661129b565b1515610d3a576040805160e560020a62461bcd02815260206004820152601660248201526000805160206112ad833981519152604482015290519081900360640190fd5b60005460a060020a900460ff161515610d9d576040805160e560020a62461bcd02815260206004820152601d60248201527f6f776e657273686970206973206e6f74207472616e7366657261626c65000000604482015290519081900360640190fd5b600160a060020a0382161515610e23576040805160e560020a62461bcd02815260206004820152602360248201527f6f776e65722063616e6e6f742062652073657420746f207a65726f206164647260448201527f6573730000000000000000000000000000000000000000000000000000000000606482015290519081900360840190fd5b6000805474ff0000000000000000000000000000000000000000191660a060020a83151502179081905560408051600160a060020a039283168152918416602083015280517f850b3df64837d7d518b45f5aa64d104652c3b80eb5b34a8e3d9eb666cb7cdea59281900390910190a1506000805473ffffffffffffffffffffffffffffffffffffffff1916600160a060020a0392909216919091179055565b6103e881565b610ed061129b565b1515610f14576040805160e560020a62461bcd02815260206004820152601660248201526000805160206112ad833981519152604482015290519081900360640190fd5b6003805474ff0000000000000000000000000000000000000000191660a060020a179055565b610f4261129b565b1515610f86576040805160e560020a62461bcd02815260206004820152601660248201526000805160206112ad833981519152604482015290519081900360640190fd5b610f8e610cc9565b15610fe3576040805160e560020a62461bcd02815260206004820152600f60248201527f666c6f6174206973206c6f636b65640000000000000000000000000000000000604482015290519081900360640190fd5b6001805473ffffffffffffffffffffffffffffffffffffffff1916600160a060020a03831690811790915560408051338152602081019290925280517f75edfe66c080c8ba80545ff54ae0bd0d330150496e02bd7ff75726bd74df64ec9281900390910190a150565b61105461129b565b1515611098576040805160e560020a62461bcd02815260206004820152601660248201526000805160206112ad833981519152604482015290519081900360640190fd5b6003805475ff00000000000000000000000000000000000000000019167501000000000000000000000000000000000000000000179055565b600354760100000000000000000000000000000000000000000000900460ff1690565b6110fc61129b565b1515611140576040805160e560020a62461bcd02815260206004820152601660248201526000805160206112ad833981519152604482015290519081900360640190fd5b6111486110d1565b1561119d576040805160e560020a62461bcd02815260206004820152600d60248201527f44414f206973206c6f636b656400000000000000000000000000000000000000604482015290519081900360640190fd5b6003805473ffffffffffffffffffffffffffffffffffffffff1916600160a060020a03831690811790915560408051338152602081019290925280517fe972330499f56d3f5c53f5c01ee79b2b05ad3530b1025af5d46f265bcf2d1d649281900390910190a150565b6003547501000000000000000000000000000000000000000000900460ff1690565b60008083151561123b576000915061125a565b5082820282848281151561124b57fe5b041461125657600080fd5b8091505b5092915050565b60008080831161127057600080fd5b828481151561127b57fe5b04949350505050565b6000808383111561129457600080fd5b5050900390565b600054600160a060020a0316331490560073656e646572206973206e6f7420616e206f776e657200000000000000000000a165627a7a72305820aa6dc94a7114139dd850eda09b8bca82fe3f87a383d84e6c8524a4f9f6def3930029`
 
 // DeployLicence deploys a new Ethereum contract, binding an instance of Licence to it.
-func DeployLicence(auth *bind.TransactOpts, backend bind.ContractBackend, _owner common.Address, _transferable bool, _fee *big.Int, _float common.Address, _holder common.Address) (common.Address, *types.Transaction, *Licence, error) {
+func DeployLicence(auth *bind.TransactOpts, backend bind.ContractBackend, _owner common.Address, _transferable bool, _licence *big.Int, _float common.Address, _holder common.Address) (common.Address, *types.Transaction, *Licence, error) {
 	parsed, err := abi.JSON(strings.NewReader(LicenceABI))
 	if err != nil {
 		return common.Address{}, nil, nil, err
 	}
-	address, tx, contract, err := bind.DeployContract(auth, parsed, common.FromHex(LicenceBin), backend, _owner, _transferable, _fee, _float, _holder)
+	address, tx, contract, err := bind.DeployContract(auth, parsed, common.FromHex(LicenceBin), backend, _owner, _transferable, _licence, _float, _holder)
 	if err != nil {
 		return common.Address{}, nil, nil, err
 	}
@@ -188,56 +188,30 @@ func (_Licence *LicenceTransactorRaw) Transact(opts *bind.TransactOpts, method s
 	return _Licence.Contract.contract.Transact(opts, method, params...)
 }
 
-// DAO is a free data retrieval call binding the contract method 0x98fabd3a.
+// MAXAMOUNTSCALE is a free data retrieval call binding the contract method 0xca0e2e20.
 //
-// Solidity: function DAO() constant returns(address)
-func (_Licence *LicenceCaller) DAO(opts *bind.CallOpts) (common.Address, error) {
-	var (
-		ret0 = new(common.Address)
-	)
-	out := ret0
-	err := _Licence.contract.Call(opts, out, "DAO")
-	return *ret0, err
-}
-
-// DAO is a free data retrieval call binding the contract method 0x98fabd3a.
-//
-// Solidity: function DAO() constant returns(address)
-func (_Licence *LicenceSession) DAO() (common.Address, error) {
-	return _Licence.Contract.DAO(&_Licence.CallOpts)
-}
-
-// DAO is a free data retrieval call binding the contract method 0x98fabd3a.
-//
-// Solidity: function DAO() constant returns(address)
-func (_Licence *LicenceCallerSession) DAO() (common.Address, error) {
-	return _Licence.Contract.DAO(&_Licence.CallOpts)
-}
-
-// MAXFEEFACTOR is a free data retrieval call binding the contract method 0xaf4937fc.
-//
-// Solidity: function MAX_FEE_FACTOR() constant returns(uint256)
-func (_Licence *LicenceCaller) MAXFEEFACTOR(opts *bind.CallOpts) (*big.Int, error) {
+// Solidity: function MAX_AMOUNT_SCALE() constant returns(uint256)
+func (_Licence *LicenceCaller) MAXAMOUNTSCALE(opts *bind.CallOpts) (*big.Int, error) {
 	var (
 		ret0 = new(*big.Int)
 	)
 	out := ret0
-	err := _Licence.contract.Call(opts, out, "MAX_FEE_FACTOR")
+	err := _Licence.contract.Call(opts, out, "MAX_AMOUNT_SCALE")
 	return *ret0, err
 }
 
-// MAXFEEFACTOR is a free data retrieval call binding the contract method 0xaf4937fc.
+// MAXAMOUNTSCALE is a free data retrieval call binding the contract method 0xca0e2e20.
 //
-// Solidity: function MAX_FEE_FACTOR() constant returns(uint256)
-func (_Licence *LicenceSession) MAXFEEFACTOR() (*big.Int, error) {
-	return _Licence.Contract.MAXFEEFACTOR(&_Licence.CallOpts)
+// Solidity: function MAX_AMOUNT_SCALE() constant returns(uint256)
+func (_Licence *LicenceSession) MAXAMOUNTSCALE() (*big.Int, error) {
+	return _Licence.Contract.MAXAMOUNTSCALE(&_Licence.CallOpts)
 }
 
-// MAXFEEFACTOR is a free data retrieval call binding the contract method 0xaf4937fc.
+// MAXAMOUNTSCALE is a free data retrieval call binding the contract method 0xca0e2e20.
 //
-// Solidity: function MAX_FEE_FACTOR() constant returns(uint256)
-func (_Licence *LicenceCallerSession) MAXFEEFACTOR() (*big.Int, error) {
-	return _Licence.Contract.MAXFEEFACTOR(&_Licence.CallOpts)
+// Solidity: function MAX_AMOUNT_SCALE() constant returns(uint256)
+func (_Licence *LicenceCallerSession) MAXAMOUNTSCALE() (*big.Int, error) {
+	return _Licence.Contract.MAXAMOUNTSCALE(&_Licence.CallOpts)
 }
 
 // CryptoFloat is a free data retrieval call binding the contract method 0xa036ba60.
@@ -266,30 +240,56 @@ func (_Licence *LicenceCallerSession) CryptoFloat() (common.Address, error) {
 	return _Licence.Contract.CryptoFloat(&_Licence.CallOpts)
 }
 
-// FeeFactor is a free data retrieval call binding the contract method 0xf91d27c1.
+// FloatLocked is a free data retrieval call binding the contract method 0x940b9c3b.
 //
-// Solidity: function feeFactor() constant returns(uint256)
-func (_Licence *LicenceCaller) FeeFactor(opts *bind.CallOpts) (*big.Int, error) {
+// Solidity: function floatLocked() constant returns(bool)
+func (_Licence *LicenceCaller) FloatLocked(opts *bind.CallOpts) (bool, error) {
 	var (
-		ret0 = new(*big.Int)
+		ret0 = new(bool)
 	)
 	out := ret0
-	err := _Licence.contract.Call(opts, out, "feeFactor")
+	err := _Licence.contract.Call(opts, out, "floatLocked")
 	return *ret0, err
 }
 
-// FeeFactor is a free data retrieval call binding the contract method 0xf91d27c1.
+// FloatLocked is a free data retrieval call binding the contract method 0x940b9c3b.
 //
-// Solidity: function feeFactor() constant returns(uint256)
-func (_Licence *LicenceSession) FeeFactor() (*big.Int, error) {
-	return _Licence.Contract.FeeFactor(&_Licence.CallOpts)
+// Solidity: function floatLocked() constant returns(bool)
+func (_Licence *LicenceSession) FloatLocked() (bool, error) {
+	return _Licence.Contract.FloatLocked(&_Licence.CallOpts)
 }
 
-// FeeFactor is a free data retrieval call binding the contract method 0xf91d27c1.
+// FloatLocked is a free data retrieval call binding the contract method 0x940b9c3b.
 //
-// Solidity: function feeFactor() constant returns(uint256)
-func (_Licence *LicenceCallerSession) FeeFactor() (*big.Int, error) {
-	return _Licence.Contract.FeeFactor(&_Licence.CallOpts)
+// Solidity: function floatLocked() constant returns(bool)
+func (_Licence *LicenceCallerSession) FloatLocked() (bool, error) {
+	return _Licence.Contract.FloatLocked(&_Licence.CallOpts)
+}
+
+// HolderLocked is a free data retrieval call binding the contract method 0xf15ff455.
+//
+// Solidity: function holderLocked() constant returns(bool)
+func (_Licence *LicenceCaller) HolderLocked(opts *bind.CallOpts) (bool, error) {
+	var (
+		ret0 = new(bool)
+	)
+	out := ret0
+	err := _Licence.contract.Call(opts, out, "holderLocked")
+	return *ret0, err
+}
+
+// HolderLocked is a free data retrieval call binding the contract method 0xf15ff455.
+//
+// Solidity: function holderLocked() constant returns(bool)
+func (_Licence *LicenceSession) HolderLocked() (bool, error) {
+	return _Licence.Contract.HolderLocked(&_Licence.CallOpts)
+}
+
+// HolderLocked is a free data retrieval call binding the contract method 0xf15ff455.
+//
+// Solidity: function holderLocked() constant returns(bool)
+func (_Licence *LicenceCallerSession) HolderLocked() (bool, error) {
+	return _Licence.Contract.HolderLocked(&_Licence.CallOpts)
 }
 
 // IsTransferable is a free data retrieval call binding the contract method 0x2121dc75.
@@ -316,6 +316,84 @@ func (_Licence *LicenceSession) IsTransferable() (bool, error) {
 // Solidity: function isTransferable() constant returns(bool)
 func (_Licence *LicenceCallerSession) IsTransferable() (bool, error) {
 	return _Licence.Contract.IsTransferable(&_Licence.CallOpts)
+}
+
+// LicenceAmountScaled is a free data retrieval call binding the contract method 0xac904c63.
+//
+// Solidity: function licenceAmountScaled() constant returns(uint256)
+func (_Licence *LicenceCaller) LicenceAmountScaled(opts *bind.CallOpts) (*big.Int, error) {
+	var (
+		ret0 = new(*big.Int)
+	)
+	out := ret0
+	err := _Licence.contract.Call(opts, out, "licenceAmountScaled")
+	return *ret0, err
+}
+
+// LicenceAmountScaled is a free data retrieval call binding the contract method 0xac904c63.
+//
+// Solidity: function licenceAmountScaled() constant returns(uint256)
+func (_Licence *LicenceSession) LicenceAmountScaled() (*big.Int, error) {
+	return _Licence.Contract.LicenceAmountScaled(&_Licence.CallOpts)
+}
+
+// LicenceAmountScaled is a free data retrieval call binding the contract method 0xac904c63.
+//
+// Solidity: function licenceAmountScaled() constant returns(uint256)
+func (_Licence *LicenceCallerSession) LicenceAmountScaled() (*big.Int, error) {
+	return _Licence.Contract.LicenceAmountScaled(&_Licence.CallOpts)
+}
+
+// LicenceDAO is a free data retrieval call binding the contract method 0x3a7afe02.
+//
+// Solidity: function licenceDAO() constant returns(address)
+func (_Licence *LicenceCaller) LicenceDAO(opts *bind.CallOpts) (common.Address, error) {
+	var (
+		ret0 = new(common.Address)
+	)
+	out := ret0
+	err := _Licence.contract.Call(opts, out, "licenceDAO")
+	return *ret0, err
+}
+
+// LicenceDAO is a free data retrieval call binding the contract method 0x3a7afe02.
+//
+// Solidity: function licenceDAO() constant returns(address)
+func (_Licence *LicenceSession) LicenceDAO() (common.Address, error) {
+	return _Licence.Contract.LicenceDAO(&_Licence.CallOpts)
+}
+
+// LicenceDAO is a free data retrieval call binding the contract method 0x3a7afe02.
+//
+// Solidity: function licenceDAO() constant returns(address)
+func (_Licence *LicenceCallerSession) LicenceDAO() (common.Address, error) {
+	return _Licence.Contract.LicenceDAO(&_Licence.CallOpts)
+}
+
+// LicenceDAOLocked is a free data retrieval call binding the contract method 0xe30c5fa8.
+//
+// Solidity: function licenceDAOLocked() constant returns(bool)
+func (_Licence *LicenceCaller) LicenceDAOLocked(opts *bind.CallOpts) (bool, error) {
+	var (
+		ret0 = new(bool)
+	)
+	out := ret0
+	err := _Licence.contract.Call(opts, out, "licenceDAOLocked")
+	return *ret0, err
+}
+
+// LicenceDAOLocked is a free data retrieval call binding the contract method 0xe30c5fa8.
+//
+// Solidity: function licenceDAOLocked() constant returns(bool)
+func (_Licence *LicenceSession) LicenceDAOLocked() (bool, error) {
+	return _Licence.Contract.LicenceDAOLocked(&_Licence.CallOpts)
+}
+
+// LicenceDAOLocked is a free data retrieval call binding the contract method 0xe30c5fa8.
+//
+// Solidity: function licenceDAOLocked() constant returns(bool)
+func (_Licence *LicenceCallerSession) LicenceDAOLocked() (bool, error) {
+	return _Licence.Contract.LicenceDAOLocked(&_Licence.CallOpts)
 }
 
 // Owner is a free data retrieval call binding the contract method 0x8da5cb5b.
@@ -391,6 +469,69 @@ func (_Licence *LicenceTransactorSession) Load(_asset common.Address, _amount *b
 	return _Licence.Contract.Load(&_Licence.TransactOpts, _asset, _amount)
 }
 
+// LockFloat is a paid mutator transaction binding the contract method 0xd08b4ecc.
+//
+// Solidity: function lockFloat() returns()
+func (_Licence *LicenceTransactor) LockFloat(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _Licence.contract.Transact(opts, "lockFloat")
+}
+
+// LockFloat is a paid mutator transaction binding the contract method 0xd08b4ecc.
+//
+// Solidity: function lockFloat() returns()
+func (_Licence *LicenceSession) LockFloat() (*types.Transaction, error) {
+	return _Licence.Contract.LockFloat(&_Licence.TransactOpts)
+}
+
+// LockFloat is a paid mutator transaction binding the contract method 0xd08b4ecc.
+//
+// Solidity: function lockFloat() returns()
+func (_Licence *LicenceTransactorSession) LockFloat() (*types.Transaction, error) {
+	return _Licence.Contract.LockFloat(&_Licence.TransactOpts)
+}
+
+// LockHolder is a paid mutator transaction binding the contract method 0xd1696b16.
+//
+// Solidity: function lockHolder() returns()
+func (_Licence *LicenceTransactor) LockHolder(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _Licence.contract.Transact(opts, "lockHolder")
+}
+
+// LockHolder is a paid mutator transaction binding the contract method 0xd1696b16.
+//
+// Solidity: function lockHolder() returns()
+func (_Licence *LicenceSession) LockHolder() (*types.Transaction, error) {
+	return _Licence.Contract.LockHolder(&_Licence.TransactOpts)
+}
+
+// LockHolder is a paid mutator transaction binding the contract method 0xd1696b16.
+//
+// Solidity: function lockHolder() returns()
+func (_Licence *LicenceTransactorSession) LockHolder() (*types.Transaction, error) {
+	return _Licence.Contract.LockHolder(&_Licence.TransactOpts)
+}
+
+// LockLicenceDAO is a paid mutator transaction binding the contract method 0x4ac22b3c.
+//
+// Solidity: function lockLicenceDAO() returns()
+func (_Licence *LicenceTransactor) LockLicenceDAO(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _Licence.contract.Transact(opts, "lockLicenceDAO")
+}
+
+// LockLicenceDAO is a paid mutator transaction binding the contract method 0x4ac22b3c.
+//
+// Solidity: function lockLicenceDAO() returns()
+func (_Licence *LicenceSession) LockLicenceDAO() (*types.Transaction, error) {
+	return _Licence.Contract.LockLicenceDAO(&_Licence.TransactOpts)
+}
+
+// LockLicenceDAO is a paid mutator transaction binding the contract method 0x4ac22b3c.
+//
+// Solidity: function lockLicenceDAO() returns()
+func (_Licence *LicenceTransactorSession) LockLicenceDAO() (*types.Transaction, error) {
+	return _Licence.Contract.LockLicenceDAO(&_Licence.TransactOpts)
+}
+
 // RenounceOwnership is a paid mutator transaction binding the contract method 0x715018a6.
 //
 // Solidity: function renounceOwnership() returns()
@@ -433,46 +574,88 @@ func (_Licence *LicenceTransactorSession) TransferOwnership(_account common.Addr
 	return _Licence.Contract.TransferOwnership(&_Licence.TransactOpts, _account, _transferable)
 }
 
-// UpdateDAO is a paid mutator transaction binding the contract method 0xbcb6c0b5.
+// UpdateFloat is a paid mutator transaction binding the contract method 0xd0cddd67.
 //
-// Solidity: function updateDAO(address _newDAO) returns()
-func (_Licence *LicenceTransactor) UpdateDAO(opts *bind.TransactOpts, _newDAO common.Address) (*types.Transaction, error) {
-	return _Licence.contract.Transact(opts, "updateDAO", _newDAO)
+// Solidity: function updateFloat(address _newFloat) returns()
+func (_Licence *LicenceTransactor) UpdateFloat(opts *bind.TransactOpts, _newFloat common.Address) (*types.Transaction, error) {
+	return _Licence.contract.Transact(opts, "updateFloat", _newFloat)
 }
 
-// UpdateDAO is a paid mutator transaction binding the contract method 0xbcb6c0b5.
+// UpdateFloat is a paid mutator transaction binding the contract method 0xd0cddd67.
 //
-// Solidity: function updateDAO(address _newDAO) returns()
-func (_Licence *LicenceSession) UpdateDAO(_newDAO common.Address) (*types.Transaction, error) {
-	return _Licence.Contract.UpdateDAO(&_Licence.TransactOpts, _newDAO)
+// Solidity: function updateFloat(address _newFloat) returns()
+func (_Licence *LicenceSession) UpdateFloat(_newFloat common.Address) (*types.Transaction, error) {
+	return _Licence.Contract.UpdateFloat(&_Licence.TransactOpts, _newFloat)
 }
 
-// UpdateDAO is a paid mutator transaction binding the contract method 0xbcb6c0b5.
+// UpdateFloat is a paid mutator transaction binding the contract method 0xd0cddd67.
 //
-// Solidity: function updateDAO(address _newDAO) returns()
-func (_Licence *LicenceTransactorSession) UpdateDAO(_newDAO common.Address) (*types.Transaction, error) {
-	return _Licence.Contract.UpdateDAO(&_Licence.TransactOpts, _newDAO)
+// Solidity: function updateFloat(address _newFloat) returns()
+func (_Licence *LicenceTransactorSession) UpdateFloat(_newFloat common.Address) (*types.Transaction, error) {
+	return _Licence.Contract.UpdateFloat(&_Licence.TransactOpts, _newFloat)
 }
 
-// UpdateFee is a paid mutator transaction binding the contract method 0x9012c4a8.
+// UpdateHolder is a paid mutator transaction binding the contract method 0x42719faa.
 //
-// Solidity: function updateFee(uint256 _newFee) returns()
-func (_Licence *LicenceTransactor) UpdateFee(opts *bind.TransactOpts, _newFee *big.Int) (*types.Transaction, error) {
-	return _Licence.contract.Transact(opts, "updateFee", _newFee)
+// Solidity: function updateHolder(address _newHolder) returns()
+func (_Licence *LicenceTransactor) UpdateHolder(opts *bind.TransactOpts, _newHolder common.Address) (*types.Transaction, error) {
+	return _Licence.contract.Transact(opts, "updateHolder", _newHolder)
 }
 
-// UpdateFee is a paid mutator transaction binding the contract method 0x9012c4a8.
+// UpdateHolder is a paid mutator transaction binding the contract method 0x42719faa.
 //
-// Solidity: function updateFee(uint256 _newFee) returns()
-func (_Licence *LicenceSession) UpdateFee(_newFee *big.Int) (*types.Transaction, error) {
-	return _Licence.Contract.UpdateFee(&_Licence.TransactOpts, _newFee)
+// Solidity: function updateHolder(address _newHolder) returns()
+func (_Licence *LicenceSession) UpdateHolder(_newHolder common.Address) (*types.Transaction, error) {
+	return _Licence.Contract.UpdateHolder(&_Licence.TransactOpts, _newHolder)
 }
 
-// UpdateFee is a paid mutator transaction binding the contract method 0x9012c4a8.
+// UpdateHolder is a paid mutator transaction binding the contract method 0x42719faa.
 //
-// Solidity: function updateFee(uint256 _newFee) returns()
-func (_Licence *LicenceTransactorSession) UpdateFee(_newFee *big.Int) (*types.Transaction, error) {
-	return _Licence.Contract.UpdateFee(&_Licence.TransactOpts, _newFee)
+// Solidity: function updateHolder(address _newHolder) returns()
+func (_Licence *LicenceTransactorSession) UpdateHolder(_newHolder common.Address) (*types.Transaction, error) {
+	return _Licence.Contract.UpdateHolder(&_Licence.TransactOpts, _newHolder)
+}
+
+// UpdateLicenceAmount is a paid mutator transaction binding the contract method 0x68ce74e7.
+//
+// Solidity: function updateLicenceAmount(uint256 _newAmount) returns()
+func (_Licence *LicenceTransactor) UpdateLicenceAmount(opts *bind.TransactOpts, _newAmount *big.Int) (*types.Transaction, error) {
+	return _Licence.contract.Transact(opts, "updateLicenceAmount", _newAmount)
+}
+
+// UpdateLicenceAmount is a paid mutator transaction binding the contract method 0x68ce74e7.
+//
+// Solidity: function updateLicenceAmount(uint256 _newAmount) returns()
+func (_Licence *LicenceSession) UpdateLicenceAmount(_newAmount *big.Int) (*types.Transaction, error) {
+	return _Licence.Contract.UpdateLicenceAmount(&_Licence.TransactOpts, _newAmount)
+}
+
+// UpdateLicenceAmount is a paid mutator transaction binding the contract method 0x68ce74e7.
+//
+// Solidity: function updateLicenceAmount(uint256 _newAmount) returns()
+func (_Licence *LicenceTransactorSession) UpdateLicenceAmount(_newAmount *big.Int) (*types.Transaction, error) {
+	return _Licence.Contract.UpdateLicenceAmount(&_Licence.TransactOpts, _newAmount)
+}
+
+// UpdateLicenceDAO is a paid mutator transaction binding the contract method 0xe3d80242.
+//
+// Solidity: function updateLicenceDAO(address _newDAO) returns()
+func (_Licence *LicenceTransactor) UpdateLicenceDAO(opts *bind.TransactOpts, _newDAO common.Address) (*types.Transaction, error) {
+	return _Licence.contract.Transact(opts, "updateLicenceDAO", _newDAO)
+}
+
+// UpdateLicenceDAO is a paid mutator transaction binding the contract method 0xe3d80242.
+//
+// Solidity: function updateLicenceDAO(address _newDAO) returns()
+func (_Licence *LicenceSession) UpdateLicenceDAO(_newDAO common.Address) (*types.Transaction, error) {
+	return _Licence.Contract.UpdateLicenceDAO(&_Licence.TransactOpts, _newDAO)
+}
+
+// UpdateLicenceDAO is a paid mutator transaction binding the contract method 0xe3d80242.
+//
+// Solidity: function updateLicenceDAO(address _newDAO) returns()
+func (_Licence *LicenceTransactorSession) UpdateLicenceDAO(_newDAO common.Address) (*types.Transaction, error) {
+	return _Licence.Contract.UpdateLicenceDAO(&_Licence.TransactOpts, _newDAO)
 }
 
 // LicenceReceivedIterator is returned from FilterReceived and is used to iterate over the raw logs and unpacked data for Received events raised by the Licence contract.
@@ -971,9 +1154,9 @@ func (_Licence *LicenceFilterer) WatchTransferredToTokenHolder(opts *bind.WatchO
 	}), nil
 }
 
-// LicenceUpdatedDAOIterator is returned from FilterUpdatedDAO and is used to iterate over the raw logs and unpacked data for UpdatedDAO events raised by the Licence contract.
-type LicenceUpdatedDAOIterator struct {
-	Event *LicenceUpdatedDAO // Event containing the contract specifics and raw log
+// LicenceUpdatedCryptoFloatIterator is returned from FilterUpdatedCryptoFloat and is used to iterate over the raw logs and unpacked data for UpdatedCryptoFloat events raised by the Licence contract.
+type LicenceUpdatedCryptoFloatIterator struct {
+	Event *LicenceUpdatedCryptoFloat // Event containing the contract specifics and raw log
 
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
@@ -987,7 +1170,7 @@ type LicenceUpdatedDAOIterator struct {
 // Next advances the iterator to the subsequent event, returning whether there
 // are any more events found. In case of a retrieval or parsing error, false is
 // returned and Error() can be queried for the exact failure.
-func (it *LicenceUpdatedDAOIterator) Next() bool {
+func (it *LicenceUpdatedCryptoFloatIterator) Next() bool {
 	// If the iterator failed, stop iterating
 	if it.fail != nil {
 		return false
@@ -996,7 +1179,7 @@ func (it *LicenceUpdatedDAOIterator) Next() bool {
 	if it.done {
 		select {
 		case log := <-it.logs:
-			it.Event = new(LicenceUpdatedDAO)
+			it.Event = new(LicenceUpdatedCryptoFloat)
 			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 				it.fail = err
 				return false
@@ -1011,7 +1194,7 @@ func (it *LicenceUpdatedDAOIterator) Next() bool {
 	// Iterator still in progress, wait for either a data or an error event
 	select {
 	case log := <-it.logs:
-		it.Event = new(LicenceUpdatedDAO)
+		it.Event = new(LicenceUpdatedCryptoFloat)
 		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 			it.fail = err
 			return false
@@ -1027,42 +1210,42 @@ func (it *LicenceUpdatedDAOIterator) Next() bool {
 }
 
 // Error returns any retrieval or parsing error occurred during filtering.
-func (it *LicenceUpdatedDAOIterator) Error() error {
+func (it *LicenceUpdatedCryptoFloatIterator) Error() error {
 	return it.fail
 }
 
 // Close terminates the iteration process, releasing any pending underlying
 // resources.
-func (it *LicenceUpdatedDAOIterator) Close() error {
+func (it *LicenceUpdatedCryptoFloatIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
 
-// LicenceUpdatedDAO represents a UpdatedDAO event raised by the Licence contract.
-type LicenceUpdatedDAO struct {
-	Sender common.Address
-	NewDAO common.Address
-	Raw    types.Log // Blockchain specific contextual infos
+// LicenceUpdatedCryptoFloat represents a UpdatedCryptoFloat event raised by the Licence contract.
+type LicenceUpdatedCryptoFloat struct {
+	Sender   common.Address
+	NewFloat common.Address
+	Raw      types.Log // Blockchain specific contextual infos
 }
 
-// FilterUpdatedDAO is a free log retrieval operation binding the contract event 0x97ad44d5f57e52b66c8d238e30b7cccdc1e11ca21e52f3838a6d1d4fccc41ec3.
+// FilterUpdatedCryptoFloat is a free log retrieval operation binding the contract event 0x75edfe66c080c8ba80545ff54ae0bd0d330150496e02bd7ff75726bd74df64ec.
 //
-// Solidity: event UpdatedDAO(address _sender, address _newDAO)
-func (_Licence *LicenceFilterer) FilterUpdatedDAO(opts *bind.FilterOpts) (*LicenceUpdatedDAOIterator, error) {
+// Solidity: event UpdatedCryptoFloat(address _sender, address _newFloat)
+func (_Licence *LicenceFilterer) FilterUpdatedCryptoFloat(opts *bind.FilterOpts) (*LicenceUpdatedCryptoFloatIterator, error) {
 
-	logs, sub, err := _Licence.contract.FilterLogs(opts, "UpdatedDAO")
+	logs, sub, err := _Licence.contract.FilterLogs(opts, "UpdatedCryptoFloat")
 	if err != nil {
 		return nil, err
 	}
-	return &LicenceUpdatedDAOIterator{contract: _Licence.contract, event: "UpdatedDAO", logs: logs, sub: sub}, nil
+	return &LicenceUpdatedCryptoFloatIterator{contract: _Licence.contract, event: "UpdatedCryptoFloat", logs: logs, sub: sub}, nil
 }
 
-// WatchUpdatedDAO is a free log subscription operation binding the contract event 0x97ad44d5f57e52b66c8d238e30b7cccdc1e11ca21e52f3838a6d1d4fccc41ec3.
+// WatchUpdatedCryptoFloat is a free log subscription operation binding the contract event 0x75edfe66c080c8ba80545ff54ae0bd0d330150496e02bd7ff75726bd74df64ec.
 //
-// Solidity: event UpdatedDAO(address _sender, address _newDAO)
-func (_Licence *LicenceFilterer) WatchUpdatedDAO(opts *bind.WatchOpts, sink chan<- *LicenceUpdatedDAO) (event.Subscription, error) {
+// Solidity: event UpdatedCryptoFloat(address _sender, address _newFloat)
+func (_Licence *LicenceFilterer) WatchUpdatedCryptoFloat(opts *bind.WatchOpts, sink chan<- *LicenceUpdatedCryptoFloat) (event.Subscription, error) {
 
-	logs, sub, err := _Licence.contract.WatchLogs(opts, "UpdatedDAO")
+	logs, sub, err := _Licence.contract.WatchLogs(opts, "UpdatedCryptoFloat")
 	if err != nil {
 		return nil, err
 	}
@@ -1072,8 +1255,8 @@ func (_Licence *LicenceFilterer) WatchUpdatedDAO(opts *bind.WatchOpts, sink chan
 			select {
 			case log := <-logs:
 				// New log arrived, parse the event and forward to the user
-				event := new(LicenceUpdatedDAO)
-				if err := _Licence.contract.UnpackLog(event, "UpdatedDAO", log); err != nil {
+				event := new(LicenceUpdatedCryptoFloat)
+				if err := _Licence.contract.UnpackLog(event, "UpdatedCryptoFloat", log); err != nil {
 					return err
 				}
 				event.Raw = log
@@ -1094,9 +1277,9 @@ func (_Licence *LicenceFilterer) WatchUpdatedDAO(opts *bind.WatchOpts, sink chan
 	}), nil
 }
 
-// LicenceUpdatedFeeIterator is returned from FilterUpdatedFee and is used to iterate over the raw logs and unpacked data for UpdatedFee events raised by the Licence contract.
-type LicenceUpdatedFeeIterator struct {
-	Event *LicenceUpdatedFee // Event containing the contract specifics and raw log
+// LicenceUpdatedLicenceAmountIterator is returned from FilterUpdatedLicenceAmount and is used to iterate over the raw logs and unpacked data for UpdatedLicenceAmount events raised by the Licence contract.
+type LicenceUpdatedLicenceAmountIterator struct {
+	Event *LicenceUpdatedLicenceAmount // Event containing the contract specifics and raw log
 
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
@@ -1110,7 +1293,7 @@ type LicenceUpdatedFeeIterator struct {
 // Next advances the iterator to the subsequent event, returning whether there
 // are any more events found. In case of a retrieval or parsing error, false is
 // returned and Error() can be queried for the exact failure.
-func (it *LicenceUpdatedFeeIterator) Next() bool {
+func (it *LicenceUpdatedLicenceAmountIterator) Next() bool {
 	// If the iterator failed, stop iterating
 	if it.fail != nil {
 		return false
@@ -1119,7 +1302,7 @@ func (it *LicenceUpdatedFeeIterator) Next() bool {
 	if it.done {
 		select {
 		case log := <-it.logs:
-			it.Event = new(LicenceUpdatedFee)
+			it.Event = new(LicenceUpdatedLicenceAmount)
 			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 				it.fail = err
 				return false
@@ -1134,7 +1317,7 @@ func (it *LicenceUpdatedFeeIterator) Next() bool {
 	// Iterator still in progress, wait for either a data or an error event
 	select {
 	case log := <-it.logs:
-		it.Event = new(LicenceUpdatedFee)
+		it.Event = new(LicenceUpdatedLicenceAmount)
 		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 			it.fail = err
 			return false
@@ -1150,42 +1333,42 @@ func (it *LicenceUpdatedFeeIterator) Next() bool {
 }
 
 // Error returns any retrieval or parsing error occurred during filtering.
-func (it *LicenceUpdatedFeeIterator) Error() error {
+func (it *LicenceUpdatedLicenceAmountIterator) Error() error {
 	return it.fail
 }
 
 // Close terminates the iteration process, releasing any pending underlying
 // resources.
-func (it *LicenceUpdatedFeeIterator) Close() error {
+func (it *LicenceUpdatedLicenceAmountIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
 
-// LicenceUpdatedFee represents a UpdatedFee event raised by the Licence contract.
-type LicenceUpdatedFee struct {
+// LicenceUpdatedLicenceAmount represents a UpdatedLicenceAmount event raised by the Licence contract.
+type LicenceUpdatedLicenceAmount struct {
 	Sender common.Address
 	NewFee *big.Int
 	Raw    types.Log // Blockchain specific contextual infos
 }
 
-// FilterUpdatedFee is a free log retrieval operation binding the contract event 0x6436bbb77997513c673b4327714d5ca63221edd8065af94ef7b7bbb4f2819b6c.
+// FilterUpdatedLicenceAmount is a free log retrieval operation binding the contract event 0x69181b453596dd032174174ab0c83edd08651420cd71138d194dffe31536bbec.
 //
-// Solidity: event UpdatedFee(address _sender, uint256 _newFee)
-func (_Licence *LicenceFilterer) FilterUpdatedFee(opts *bind.FilterOpts) (*LicenceUpdatedFeeIterator, error) {
+// Solidity: event UpdatedLicenceAmount(address _sender, uint256 _newFee)
+func (_Licence *LicenceFilterer) FilterUpdatedLicenceAmount(opts *bind.FilterOpts) (*LicenceUpdatedLicenceAmountIterator, error) {
 
-	logs, sub, err := _Licence.contract.FilterLogs(opts, "UpdatedFee")
+	logs, sub, err := _Licence.contract.FilterLogs(opts, "UpdatedLicenceAmount")
 	if err != nil {
 		return nil, err
 	}
-	return &LicenceUpdatedFeeIterator{contract: _Licence.contract, event: "UpdatedFee", logs: logs, sub: sub}, nil
+	return &LicenceUpdatedLicenceAmountIterator{contract: _Licence.contract, event: "UpdatedLicenceAmount", logs: logs, sub: sub}, nil
 }
 
-// WatchUpdatedFee is a free log subscription operation binding the contract event 0x6436bbb77997513c673b4327714d5ca63221edd8065af94ef7b7bbb4f2819b6c.
+// WatchUpdatedLicenceAmount is a free log subscription operation binding the contract event 0x69181b453596dd032174174ab0c83edd08651420cd71138d194dffe31536bbec.
 //
-// Solidity: event UpdatedFee(address _sender, uint256 _newFee)
-func (_Licence *LicenceFilterer) WatchUpdatedFee(opts *bind.WatchOpts, sink chan<- *LicenceUpdatedFee) (event.Subscription, error) {
+// Solidity: event UpdatedLicenceAmount(address _sender, uint256 _newFee)
+func (_Licence *LicenceFilterer) WatchUpdatedLicenceAmount(opts *bind.WatchOpts, sink chan<- *LicenceUpdatedLicenceAmount) (event.Subscription, error) {
 
-	logs, sub, err := _Licence.contract.WatchLogs(opts, "UpdatedFee")
+	logs, sub, err := _Licence.contract.WatchLogs(opts, "UpdatedLicenceAmount")
 	if err != nil {
 		return nil, err
 	}
@@ -1195,8 +1378,254 @@ func (_Licence *LicenceFilterer) WatchUpdatedFee(opts *bind.WatchOpts, sink chan
 			select {
 			case log := <-logs:
 				// New log arrived, parse the event and forward to the user
-				event := new(LicenceUpdatedFee)
-				if err := _Licence.contract.UnpackLog(event, "UpdatedFee", log); err != nil {
+				event := new(LicenceUpdatedLicenceAmount)
+				if err := _Licence.contract.UnpackLog(event, "UpdatedLicenceAmount", log); err != nil {
+					return err
+				}
+				event.Raw = log
+
+				select {
+				case sink <- event:
+				case err := <-sub.Err():
+					return err
+				case <-quit:
+					return nil
+				}
+			case err := <-sub.Err():
+				return err
+			case <-quit:
+				return nil
+			}
+		}
+	}), nil
+}
+
+// LicenceUpdatedLicenceDAOIterator is returned from FilterUpdatedLicenceDAO and is used to iterate over the raw logs and unpacked data for UpdatedLicenceDAO events raised by the Licence contract.
+type LicenceUpdatedLicenceDAOIterator struct {
+	Event *LicenceUpdatedLicenceDAO // Event containing the contract specifics and raw log
+
+	contract *bind.BoundContract // Generic contract to use for unpacking event data
+	event    string              // Event name to use for unpacking event data
+
+	logs chan types.Log        // Log channel receiving the found contract events
+	sub  ethereum.Subscription // Subscription for errors, completion and termination
+	done bool                  // Whether the subscription completed delivering logs
+	fail error                 // Occurred error to stop iteration
+}
+
+// Next advances the iterator to the subsequent event, returning whether there
+// are any more events found. In case of a retrieval or parsing error, false is
+// returned and Error() can be queried for the exact failure.
+func (it *LicenceUpdatedLicenceDAOIterator) Next() bool {
+	// If the iterator failed, stop iterating
+	if it.fail != nil {
+		return false
+	}
+	// If the iterator completed, deliver directly whatever's available
+	if it.done {
+		select {
+		case log := <-it.logs:
+			it.Event = new(LicenceUpdatedLicenceDAO)
+			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+				it.fail = err
+				return false
+			}
+			it.Event.Raw = log
+			return true
+
+		default:
+			return false
+		}
+	}
+	// Iterator still in progress, wait for either a data or an error event
+	select {
+	case log := <-it.logs:
+		it.Event = new(LicenceUpdatedLicenceDAO)
+		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+			it.fail = err
+			return false
+		}
+		it.Event.Raw = log
+		return true
+
+	case err := <-it.sub.Err():
+		it.done = true
+		it.fail = err
+		return it.Next()
+	}
+}
+
+// Error returns any retrieval or parsing error occurred during filtering.
+func (it *LicenceUpdatedLicenceDAOIterator) Error() error {
+	return it.fail
+}
+
+// Close terminates the iteration process, releasing any pending underlying
+// resources.
+func (it *LicenceUpdatedLicenceDAOIterator) Close() error {
+	it.sub.Unsubscribe()
+	return nil
+}
+
+// LicenceUpdatedLicenceDAO represents a UpdatedLicenceDAO event raised by the Licence contract.
+type LicenceUpdatedLicenceDAO struct {
+	Sender common.Address
+	NewDAO common.Address
+	Raw    types.Log // Blockchain specific contextual infos
+}
+
+// FilterUpdatedLicenceDAO is a free log retrieval operation binding the contract event 0xe972330499f56d3f5c53f5c01ee79b2b05ad3530b1025af5d46f265bcf2d1d64.
+//
+// Solidity: event UpdatedLicenceDAO(address _sender, address _newDAO)
+func (_Licence *LicenceFilterer) FilterUpdatedLicenceDAO(opts *bind.FilterOpts) (*LicenceUpdatedLicenceDAOIterator, error) {
+
+	logs, sub, err := _Licence.contract.FilterLogs(opts, "UpdatedLicenceDAO")
+	if err != nil {
+		return nil, err
+	}
+	return &LicenceUpdatedLicenceDAOIterator{contract: _Licence.contract, event: "UpdatedLicenceDAO", logs: logs, sub: sub}, nil
+}
+
+// WatchUpdatedLicenceDAO is a free log subscription operation binding the contract event 0xe972330499f56d3f5c53f5c01ee79b2b05ad3530b1025af5d46f265bcf2d1d64.
+//
+// Solidity: event UpdatedLicenceDAO(address _sender, address _newDAO)
+func (_Licence *LicenceFilterer) WatchUpdatedLicenceDAO(opts *bind.WatchOpts, sink chan<- *LicenceUpdatedLicenceDAO) (event.Subscription, error) {
+
+	logs, sub, err := _Licence.contract.WatchLogs(opts, "UpdatedLicenceDAO")
+	if err != nil {
+		return nil, err
+	}
+	return event.NewSubscription(func(quit <-chan struct{}) error {
+		defer sub.Unsubscribe()
+		for {
+			select {
+			case log := <-logs:
+				// New log arrived, parse the event and forward to the user
+				event := new(LicenceUpdatedLicenceDAO)
+				if err := _Licence.contract.UnpackLog(event, "UpdatedLicenceDAO", log); err != nil {
+					return err
+				}
+				event.Raw = log
+
+				select {
+				case sink <- event:
+				case err := <-sub.Err():
+					return err
+				case <-quit:
+					return nil
+				}
+			case err := <-sub.Err():
+				return err
+			case <-quit:
+				return nil
+			}
+		}
+	}), nil
+}
+
+// LicenceUpdatedTokenHolderIterator is returned from FilterUpdatedTokenHolder and is used to iterate over the raw logs and unpacked data for UpdatedTokenHolder events raised by the Licence contract.
+type LicenceUpdatedTokenHolderIterator struct {
+	Event *LicenceUpdatedTokenHolder // Event containing the contract specifics and raw log
+
+	contract *bind.BoundContract // Generic contract to use for unpacking event data
+	event    string              // Event name to use for unpacking event data
+
+	logs chan types.Log        // Log channel receiving the found contract events
+	sub  ethereum.Subscription // Subscription for errors, completion and termination
+	done bool                  // Whether the subscription completed delivering logs
+	fail error                 // Occurred error to stop iteration
+}
+
+// Next advances the iterator to the subsequent event, returning whether there
+// are any more events found. In case of a retrieval or parsing error, false is
+// returned and Error() can be queried for the exact failure.
+func (it *LicenceUpdatedTokenHolderIterator) Next() bool {
+	// If the iterator failed, stop iterating
+	if it.fail != nil {
+		return false
+	}
+	// If the iterator completed, deliver directly whatever's available
+	if it.done {
+		select {
+		case log := <-it.logs:
+			it.Event = new(LicenceUpdatedTokenHolder)
+			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+				it.fail = err
+				return false
+			}
+			it.Event.Raw = log
+			return true
+
+		default:
+			return false
+		}
+	}
+	// Iterator still in progress, wait for either a data or an error event
+	select {
+	case log := <-it.logs:
+		it.Event = new(LicenceUpdatedTokenHolder)
+		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+			it.fail = err
+			return false
+		}
+		it.Event.Raw = log
+		return true
+
+	case err := <-it.sub.Err():
+		it.done = true
+		it.fail = err
+		return it.Next()
+	}
+}
+
+// Error returns any retrieval or parsing error occurred during filtering.
+func (it *LicenceUpdatedTokenHolderIterator) Error() error {
+	return it.fail
+}
+
+// Close terminates the iteration process, releasing any pending underlying
+// resources.
+func (it *LicenceUpdatedTokenHolderIterator) Close() error {
+	it.sub.Unsubscribe()
+	return nil
+}
+
+// LicenceUpdatedTokenHolder represents a UpdatedTokenHolder event raised by the Licence contract.
+type LicenceUpdatedTokenHolder struct {
+	Sender    common.Address
+	NewHolder common.Address
+	Raw       types.Log // Blockchain specific contextual infos
+}
+
+// FilterUpdatedTokenHolder is a free log retrieval operation binding the contract event 0x4300dd20d76c61b98fc9a506895e4e17bba1c0013b077f61a1ab08df15a8b43d.
+//
+// Solidity: event UpdatedTokenHolder(address _sender, address _newHolder)
+func (_Licence *LicenceFilterer) FilterUpdatedTokenHolder(opts *bind.FilterOpts) (*LicenceUpdatedTokenHolderIterator, error) {
+
+	logs, sub, err := _Licence.contract.FilterLogs(opts, "UpdatedTokenHolder")
+	if err != nil {
+		return nil, err
+	}
+	return &LicenceUpdatedTokenHolderIterator{contract: _Licence.contract, event: "UpdatedTokenHolder", logs: logs, sub: sub}, nil
+}
+
+// WatchUpdatedTokenHolder is a free log subscription operation binding the contract event 0x4300dd20d76c61b98fc9a506895e4e17bba1c0013b077f61a1ab08df15a8b43d.
+//
+// Solidity: event UpdatedTokenHolder(address _sender, address _newHolder)
+func (_Licence *LicenceFilterer) WatchUpdatedTokenHolder(opts *bind.WatchOpts, sink chan<- *LicenceUpdatedTokenHolder) (event.Subscription, error) {
+
+	logs, sub, err := _Licence.contract.WatchLogs(opts, "UpdatedTokenHolder")
+	if err != nil {
+		return nil, err
+	}
+	return event.NewSubscription(func(quit <-chan struct{}) error {
+		defer sub.Unsubscribe()
+		for {
+			select {
+			case log := <-logs:
+				// New log arrived, parse the event and forward to the user
+				event := new(LicenceUpdatedTokenHolder)
+				if err := _Licence.contract.UnpackLog(event, "UpdatedTokenHolder", log); err != nil {
 					return err
 				}
 				event.Raw = log
