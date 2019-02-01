@@ -32,6 +32,8 @@ contract Licence is Ownable {
 
   uint constant public MAX_FEE_FACTOR = 1000;
 
+  address constant private TKN = 0xaaaf91d9b90df800df4f55c205fd6989c977e73a; // solium-disable-line uppercase
+
   address private _cryptoFloat;
   address private _tokenHolder;
 
@@ -96,19 +98,11 @@ contract Licence is Ownable {
 
   function holderLocked() public view returns (bool){
     return _lockedTokenHolder;
-<<<<<<< Updated upstream
   }
 
   /// @return the address of the DAO contract.
   function DAO() external view returns (address) {
-      return address(_DAO);
-||||||| merged common ancestors
-
-  /// @return the address of the DAO contract.
-  function DAO() external view returns (address) {
-      return address(_DAO);
-=======
->>>>>>> Stashed changes
+      return address(DAO);
   }
 
   /// @dev Updates the address of the DAO contract.
@@ -144,21 +138,26 @@ contract Licence is Ownable {
   /// @param _asset is the address of an ERC20 token or 0x0 for ether.
   /// @param _amount is the amount of assets to be transferred including the fee.
   function load(address _asset, uint _amount) external payable {
+      uint loadAmount = _amount;    
+      // If TKN then no licence to be paid
+      if (_asset == TKN) {
+          require(ERC20(_asset).transferFrom(msg.sender, _cryptoFloat, _amount), "TKN transfer from external account was unsuccessful");
 
-      uint transferAmount = _amount.mul(MAX_FEE_FACTOR).div(_feeFactor + MAX_FEE_FACTOR);
-      uint fee = _amount.sub(transferAmount); //transferAmount is always <= amount
-
-    //  assert(_amount == transferAmount + fee);
-      if (_asset != address(0)) {
-          require(ERC20(_asset).transferFrom(msg.sender, _tokenHolder, fee), "ERC20 fee transfer from external account was unsuccessful");
-          require(ERC20(_asset).transferFrom(msg.sender, _cryptoFloat, transferAmount), "ERC20 token transfer from external account was unsuccessful");
       } else {
-          require(msg.value == _amount, "ether sent is not equal to amount");
-          _tokenHolder.transfer(fee);
-          _cryptoFloat.transfer(transferAmount);
-      }
-      emit TransferredToTokenHolder(msg.sender, _tokenHolder, _asset, fee);
-      emit TransferredToCryptoFloat(msg.sender, _cryptoFloat, _asset, transferAmount);
+          loadAmount = _amount.mul(MAX_FEE_FACTOR).div(_feeFactor + MAX_FEE_FACTOR);
+          uint fee = _amount.sub(loadAmount);
+    
+          if (_asset != address(0)) {
+              require(ERC20(_asset).transferFrom(msg.sender, _tokenHolder, fee), "ERC20 fee transfer from external account was unsuccessful");
+              require(ERC20(_asset).transferFrom(msg.sender, _cryptoFloat, loadAmount), "ERC20 token transfer from external account was unsuccessful");
+          } else {
+              require(msg.value == _amount, "ether sent is not equal to amount");
+              _tokenHolder.transfer(fee);
+              _cryptoFloat.transfer(loadAmount);
+          }
 
+          emit TransferredToTokenHolder(msg.sender, _tokenHolder, _asset, fee);
+      }
+      emit TransferredToCryptoFloat(msg.sender, _cryptoFloat, _asset, loadAmount);
   }
 }
