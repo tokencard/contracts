@@ -28,10 +28,10 @@ var (
 )
 
 // LicenceABI is the input ABI used to generate the binding from.
-const LicenceABI = "[{\"constant\":false,\"inputs\":[{\"name\":\"_asset\",\"type\":\"address\"},{\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"load\",\"outputs\":[],\"payable\":true,\"stateMutability\":\"payable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"isTransferable\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"tokenHolder\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[],\"name\":\"renounceOwnership\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_newFee\",\"type\":\"uint256\"}],\"name\":\"updateFee\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"DAO\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"cryptoFloat\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"MAX_FEE_FACTOR\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_account\",\"type\":\"address\"},{\"name\":\"_transferable\",\"type\":\"bool\"}],\"name\":\"transferOwnership\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_newDAO\",\"type\":\"address\"}],\"name\":\"updateDAO\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"feeFactor\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"name\":\"_owner\",\"type\":\"address\"},{\"name\":\"_transferable\",\"type\":\"bool\"},{\"name\":\"_fee\",\"type\":\"uint256\"},{\"name\":\"_float\",\"type\":\"address\"},{\"name\":\"_holder\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"payable\":true,\"stateMutability\":\"payable\",\"type\":\"fallback\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_from\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"Received\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_sender\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_newDAO\",\"type\":\"address\"}],\"name\":\"UpdatedDAO\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_sender\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_newFee\",\"type\":\"uint256\"}],\"name\":\"UpdatedFee\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_from\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_to\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_asset\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"TransferredToTokenHolder\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_from\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_to\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_asset\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"TransferredToCryptoFloat\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_from\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_to\",\"type\":\"address\"}],\"name\":\"TransferredOwnership\",\"type\":\"event\"}]"
+const LicenceABI = "[{\"constant\":false,\"inputs\":[{\"name\":\"_asset\",\"type\":\"address\"},{\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"load\",\"outputs\":[],\"payable\":true,\"stateMutability\":\"payable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"isTransferable\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"tokenHolder\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_newHolder\",\"type\":\"address\"}],\"name\":\"updateHolder\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[],\"name\":\"renounceOwnership\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_newFee\",\"type\":\"uint256\"}],\"name\":\"updateFee\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"floatLocked\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"DAO\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"cryptoFloat\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"MAX_FEE_FACTOR\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_account\",\"type\":\"address\"},{\"name\":\"_transferable\",\"type\":\"bool\"}],\"name\":\"transferOwnership\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_newDAO\",\"type\":\"address\"}],\"name\":\"updateDAO\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[],\"name\":\"lockFloat\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_newFloat\",\"type\":\"address\"}],\"name\":\"updateFloat\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[],\"name\":\"lockHolder\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"holderLocked\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"feeFactor\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"name\":\"_owner\",\"type\":\"address\"},{\"name\":\"_transferable\",\"type\":\"bool\"},{\"name\":\"_fee\",\"type\":\"uint256\"},{\"name\":\"_float\",\"type\":\"address\"},{\"name\":\"_holder\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"payable\":true,\"stateMutability\":\"payable\",\"type\":\"fallback\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_from\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"Received\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_sender\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_newDAO\",\"type\":\"address\"}],\"name\":\"UpdatedDAO\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_sender\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_newFloat\",\"type\":\"address\"}],\"name\":\"UpdatedCryptoFloat\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_sender\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_newHolder\",\"type\":\"address\"}],\"name\":\"UpdatedTokenHolder\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_sender\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_newFee\",\"type\":\"uint256\"}],\"name\":\"UpdatedFee\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_from\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_to\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_asset\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"TransferredToTokenHolder\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_from\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_to\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_asset\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"TransferredToCryptoFloat\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_from\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_to\",\"type\":\"address\"}],\"name\":\"TransferredOwnership\",\"type\":\"event\"}]"
 
 // LicenceBin is the compiled bytecode used for deploying new contracts.
-const LicenceBin = `608060405234801561001057600080fd5b5060405160a080610e78833981016040818152825160208085015183860151606087015160809097015160008054600160a060020a031916600160a060020a03871690811760a060020a60ff02191674010000000000000000000000000000000000000000861515021782559088529387019390935284519396919590949193879287927f850b3df64837d7d518b45f5aa64d104652c3b80eb5b34a8e3d9eb666cb7cdea5929081900390910190a1505060039290925560018054600160a060020a03928316600160a060020a0319918216179091556002805492909316911617905550610d739050806101056000396000f3006080604052600436106100b95763ffffffff7c01000000000000000000000000000000000000000000000000000000006000350416631b3c96b481146101005780632121dc7514610119578063420a83e714610142578063715018a6146101735780638da5cb5b146101885780639012c4a81461019d57806398fabd3a146101b5578063a036ba60146101ca578063af4937fc146101df578063b242e53414610206578063bcb6c0b51461022c578063f91d27c11461024d575b36156100c457600080fd5b6040805133815234602082015281517f88a5966d370b9919b20f3e2c13ff65706f196a4e32cc2c12bf57088f88525874929181900390910190a1005b610117600160a060020a0360043516602435610262565b005b34801561012557600080fd5b5061012e610692565b604080519115158252519081900360200190f35b34801561014e57600080fd5b506101576106b3565b60408051600160a060020a039092168252519081900360200190f35b34801561017f57600080fd5b506101176106c2565b34801561019457600080fd5b506101576107fd565b3480156101a957600080fd5b5061011760043561080c565b3480156101c157600080fd5b506101576108db565b3480156101d657600080fd5b506101576108ea565b3480156101eb57600080fd5b506101f46108f9565b60408051918252519081900360200190f35b34801561021257600080fd5b50610117600160a060020a036004351660243515156108ff565b34801561023857600080fd5b50610117600160a060020a0360043516610b07565b34801561025957600080fd5b506101f4610cbd565b6000806102906103e8600354016102846103e886610cc390919063ffffffff16565b9063ffffffff610cfc16565b91506102a2838363ffffffff610d1f16565b9050600160a060020a038416156104f257600254604080517f23b872dd000000000000000000000000000000000000000000000000000000008152336004820152600160a060020a039283166024820152604481018490529051918616916323b872dd916064808201926020929091908290030181600087803b15801561032857600080fd5b505af115801561033c573d6000803e3d6000fd5b505050506040513d602081101561035257600080fd5b505115156103d0576040805160e560020a62461bcd02815260206004820152603960248201527f455243323020666565207472616e736665722066726f6d2065787465726e616c60448201527f206163636f756e742077617320756e7375636365737366756c00000000000000606482015290519081900360840190fd5b600154604080517f23b872dd000000000000000000000000000000000000000000000000000000008152336004820152600160a060020a039283166024820152604481018590529051918616916323b872dd916064808201926020929091908290030181600087803b15801561044557600080fd5b505af1158015610459573d6000803e3d6000fd5b505050506040513d602081101561046f57600080fd5b505115156104ed576040805160e560020a62461bcd02815260206004820152603b60248201527f455243323020746f6b656e207472616e736665722066726f6d2065787465726e60448201527f616c206163636f756e742077617320756e7375636365737366756c0000000000606482015290519081900360840190fd5b6105e6565b34831461056f576040805160e560020a62461bcd02815260206004820152602160248201527f65746865722073656e74206973206e6f7420657175616c20746f20616d6f756e60448201527f7400000000000000000000000000000000000000000000000000000000000000606482015290519081900360840190fd5b600254604051600160a060020a039091169082156108fc029083906000818181858888f193505050501580156105a9573d6000803e3d6000fd5b50600154604051600160a060020a039091169083156108fc029084906000818181858888f193505050501580156105e4573d6000803e3d6000fd5b505b60025460408051338152600160a060020a0392831660208201529186168282015260608201839052517fdd9dfad7b30d6b224e235f89565871419d3dec3b563a4e231f12d2cc97f9acfc9181900360800190a160015460408051338152600160a060020a0392831660208201529186168282015260608201849052517fc8a7b0bd71097b47b2cad75e4e939d2aeb7fae88110e68f93b83fed08e9d3c389181900360800190a150505050565b60005474010000000000000000000000000000000000000000900460ff1690565b600254600160a060020a031690565b6106ca610d36565b1515610720576040805160e560020a62461bcd02815260206004820152601660248201527f73656e646572206973206e6f7420616e206f776e657200000000000000000000604482015290519081900360640190fd5b60005474010000000000000000000000000000000000000000900460ff161515610794576040805160e560020a62461bcd02815260206004820152601d60248201527f6f776e657273686970206973206e6f74207472616e7366657261626c65000000604482015290519081900360640190fd5b6000805460408051600160a060020a039092168252602082019290925281517f850b3df64837d7d518b45f5aa64d104652c3b80eb5b34a8e3d9eb666cb7cdea5929181900390910190a16000805473ffffffffffffffffffffffffffffffffffffffff19169055565b600054600160a060020a031690565b600454600160a060020a0316331461082357600080fd5b8060011115801561083657506103e88111155b151561088c576040805160e560020a62461bcd02815260206004820152601060248201527f666565206f7574206f662072616e676500000000000000000000000000000000604482015290519081900360640190fd5b600381905560045460408051600160a060020a0390921682526020820183905280517f6436bbb77997513c673b4327714d5ca63221edd8065af94ef7b7bbb4f2819b6c9281900390910190a150565b600454600160a060020a031690565b600154600160a060020a031690565b6103e881565b610907610d36565b151561095d576040805160e560020a62461bcd02815260206004820152601660248201527f73656e646572206973206e6f7420616e206f776e657200000000000000000000604482015290519081900360640190fd5b60005474010000000000000000000000000000000000000000900460ff1615156109d1576040805160e560020a62461bcd02815260206004820152601d60248201527f6f776e657273686970206973206e6f74207472616e7366657261626c65000000604482015290519081900360640190fd5b600160a060020a0382161515610a57576040805160e560020a62461bcd02815260206004820152602360248201527f6f776e65722063616e6e6f742062652073657420746f207a65726f206164647260448201527f6573730000000000000000000000000000000000000000000000000000000000606482015290519081900360840190fd5b6000805474ff000000000000000000000000000000000000000019167401000000000000000000000000000000000000000083151502179081905560408051600160a060020a039283168152918416602083015280517f850b3df64837d7d518b45f5aa64d104652c3b80eb5b34a8e3d9eb666cb7cdea59281900390910190a1506000805473ffffffffffffffffffffffffffffffffffffffff1916600160a060020a0392909216919091179055565b610b0f610d36565b1515610b65576040805160e560020a62461bcd02815260206004820152601660248201527f73656e646572206973206e6f7420616e206f776e657200000000000000000000604482015290519081900360640190fd5b600454600160a060020a031615610c545760048054604080517fa4e2d6340000000000000000000000000000000000000000000000000000000081529051600160a060020a039092169263a4e2d6349282820192602092908290030181600087803b158015610bd357600080fd5b505af1158015610be7573d6000803e3d6000fd5b505050506040513d6020811015610bfd57600080fd5b505115610c54576040805160e560020a62461bcd02815260206004820152600d60248201527f44414f206973206c6f636b656400000000000000000000000000000000000000604482015290519081900360640190fd5b6004805473ffffffffffffffffffffffffffffffffffffffff1916600160a060020a03831690811790915560408051338152602081019290925280517f97ad44d5f57e52b66c8d238e30b7cccdc1e11ca21e52f3838a6d1d4fccc41ec39281900390910190a150565b60035490565b600080831515610cd65760009150610cf5565b50828202828482811515610ce657fe5b0414610cf157600080fd5b8091505b5092915050565b600080808311610d0b57600080fd5b8284811515610d1657fe5b04949350505050565b60008083831115610d2f57600080fd5b5050900390565b600054600160a060020a03163314905600a165627a7a7230582069cada702d8d126dfea16826fc9ff9307772ed6931494dc891a648b47efedbe90029`
+const LicenceBin = `608060405234801561001057600080fd5b5060405160a080611243833981016040818152825160208085015183860151606087015160809097015160008054600160a060020a031916600160a060020a03871690811760a060020a60ff02191674010000000000000000000000000000000000000000861515021782559088529387019390935284519396919590949193879287927f850b3df64837d7d518b45f5aa64d104652c3b80eb5b34a8e3d9eb666cb7cdea5929081900390910190a1505060039290925560018054600160a060020a03928316600160a060020a031991821617909155600280549290931691161790555061113e9050806101056000396000f3006080604052600436106100fb5763ffffffff7c01000000000000000000000000000000000000000000000000000000006000350416631b3c96b481146101425780632121dc751461015b578063420a83e71461018457806342719faa146101b5578063715018a6146101d65780638da5cb5b146101eb5780639012c4a814610200578063940b9c3b1461021857806398fabd3a1461022d578063a036ba6014610242578063af4937fc14610257578063b242e5341461027e578063bcb6c0b5146102a4578063d08b4ecc146102c5578063d0cddd67146102da578063d1696b16146102fb578063f15ff45514610310578063f91d27c114610325575b361561010657600080fd5b6040805133815234602082015281517f88a5966d370b9919b20f3e2c13ff65706f196a4e32cc2c12bf57088f88525874929181900390910190a1005b610159600160a060020a036004351660243561033a565b005b34801561016757600080fd5b5061017061076a565b604080519115158252519081900360200190f35b34801561019057600080fd5b5061019961077a565b60408051600160a060020a039092168252519081900360200190f35b3480156101c157600080fd5b50610159600160a060020a0360043516610789565b3480156101e257600080fd5b5061015961089b565b3480156101f757600080fd5b506101996109b3565b34801561020c57600080fd5b506101596004356109c2565b34801561022457600080fd5b50610170610a91565b34801561023957600080fd5b50610199610aa1565b34801561024e57600080fd5b50610199610ab0565b34801561026357600080fd5b5061026c610abf565b60408051918252519081900360200190f35b34801561028a57600080fd5b50610159600160a060020a03600435166024351515610ac5565b3480156102b057600080fd5b50610159600160a060020a0360043516610c99565b3480156102d157600080fd5b50610159610e3d565b3480156102e657600080fd5b50610159600160a060020a0360043516610eaf565b34801561030757600080fd5b50610159610fc1565b34801561031c57600080fd5b50610170611046565b34801561033157600080fd5b5061026c611068565b6000806103686103e86003540161035c6103e88661106e90919063ffffffff16565b9063ffffffff6110a716565b915061037a838363ffffffff6110ca16565b9050600160a060020a038416156105ca57600254604080517f23b872dd000000000000000000000000000000000000000000000000000000008152336004820152600160a060020a039283166024820152604481018490529051918616916323b872dd916064808201926020929091908290030181600087803b15801561040057600080fd5b505af1158015610414573d6000803e3d6000fd5b505050506040513d602081101561042a57600080fd5b505115156104a8576040805160e560020a62461bcd02815260206004820152603960248201527f455243323020666565207472616e736665722066726f6d2065787465726e616c60448201527f206163636f756e742077617320756e7375636365737366756c00000000000000606482015290519081900360840190fd5b600154604080517f23b872dd000000000000000000000000000000000000000000000000000000008152336004820152600160a060020a039283166024820152604481018590529051918616916323b872dd916064808201926020929091908290030181600087803b15801561051d57600080fd5b505af1158015610531573d6000803e3d6000fd5b505050506040513d602081101561054757600080fd5b505115156105c5576040805160e560020a62461bcd02815260206004820152603b60248201527f455243323020746f6b656e207472616e736665722066726f6d2065787465726e60448201527f616c206163636f756e742077617320756e7375636365737366756c0000000000606482015290519081900360840190fd5b6106be565b348314610647576040805160e560020a62461bcd02815260206004820152602160248201527f65746865722073656e74206973206e6f7420657175616c20746f20616d6f756e60448201527f7400000000000000000000000000000000000000000000000000000000000000606482015290519081900360840190fd5b600254604051600160a060020a039091169082156108fc029083906000818181858888f19350505050158015610681573d6000803e3d6000fd5b50600154604051600160a060020a039091169083156108fc029084906000818181858888f193505050501580156106bc573d6000803e3d6000fd5b505b60025460408051338152600160a060020a0392831660208201529186168282015260608201839052517fdd9dfad7b30d6b224e235f89565871419d3dec3b563a4e231f12d2cc97f9acfc9181900360800190a160015460408051338152600160a060020a0392831660208201529186168282015260608201849052517fc8a7b0bd71097b47b2cad75e4e939d2aeb7fae88110e68f93b83fed08e9d3c389181900360800190a150505050565b60005460a060020a900460ff1690565b600254600160a060020a031690565b6107916110e1565b15156107d5576040805160e560020a62461bcd02815260206004820152601660248201526000805160206110f3833981519152604482015290519081900360640190fd5b6107dd611046565b15610832576040805160e560020a62461bcd02815260206004820152601960248201527f686f6c64657220636f6e7472616374206973206c6f636b656400000000000000604482015290519081900360640190fd5b6002805473ffffffffffffffffffffffffffffffffffffffff1916600160a060020a03831690811790915560408051338152602081019290925280517f4300dd20d76c61b98fc9a506895e4e17bba1c0013b077f61a1ab08df15a8b43d9281900390910190a150565b6108a36110e1565b15156108e7576040805160e560020a62461bcd02815260206004820152601660248201526000805160206110f3833981519152604482015290519081900360640190fd5b60005460a060020a900460ff16151561094a576040805160e560020a62461bcd02815260206004820152601d60248201527f6f776e657273686970206973206e6f74207472616e7366657261626c65000000604482015290519081900360640190fd5b6000805460408051600160a060020a039092168252602082019290925281517f850b3df64837d7d518b45f5aa64d104652c3b80eb5b34a8e3d9eb666cb7cdea5929181900390910190a16000805473ffffffffffffffffffffffffffffffffffffffff19169055565b600054600160a060020a031690565b600454600160a060020a031633146109d957600080fd5b806001111580156109ec57506103e88111155b1515610a42576040805160e560020a62461bcd02815260206004820152601060248201527f666565206f7574206f662072616e676500000000000000000000000000000000604482015290519081900360640190fd5b600381905560045460408051600160a060020a0390921682526020820183905280517f6436bbb77997513c673b4327714d5ca63221edd8065af94ef7b7bbb4f2819b6c9281900390910190a150565b60025460a060020a900460ff1690565b600454600160a060020a031681565b600154600160a060020a031690565b6103e881565b610acd6110e1565b1515610b11576040805160e560020a62461bcd02815260206004820152601660248201526000805160206110f3833981519152604482015290519081900360640190fd5b60005460a060020a900460ff161515610b74576040805160e560020a62461bcd02815260206004820152601d60248201527f6f776e657273686970206973206e6f74207472616e7366657261626c65000000604482015290519081900360640190fd5b600160a060020a0382161515610bfa576040805160e560020a62461bcd02815260206004820152602360248201527f6f776e65722063616e6e6f742062652073657420746f207a65726f206164647260448201527f6573730000000000000000000000000000000000000000000000000000000000606482015290519081900360840190fd5b6000805474ff0000000000000000000000000000000000000000191660a060020a83151502179081905560408051600160a060020a039283168152918416602083015280517f850b3df64837d7d518b45f5aa64d104652c3b80eb5b34a8e3d9eb666cb7cdea59281900390910190a1506000805473ffffffffffffffffffffffffffffffffffffffff1916600160a060020a0392909216919091179055565b610ca16110e1565b1515610ce5576040805160e560020a62461bcd02815260206004820152601660248201526000805160206110f3833981519152604482015290519081900360640190fd5b600454600160a060020a031615610dd45760048054604080517fa4e2d6340000000000000000000000000000000000000000000000000000000081529051600160a060020a039092169263a4e2d6349282820192602092908290030181600087803b158015610d5357600080fd5b505af1158015610d67573d6000803e3d6000fd5b505050506040513d6020811015610d7d57600080fd5b505115610dd4576040805160e560020a62461bcd02815260206004820152600d60248201527f44414f206973206c6f636b656400000000000000000000000000000000000000604482015290519081900360640190fd5b6004805473ffffffffffffffffffffffffffffffffffffffff1916600160a060020a03831690811790915560408051338152602081019290925280517f97ad44d5f57e52b66c8d238e30b7cccdc1e11ca21e52f3838a6d1d4fccc41ec39281900390910190a150565b610e456110e1565b1515610e89576040805160e560020a62461bcd02815260206004820152601660248201526000805160206110f3833981519152604482015290519081900360640190fd5b6002805474ff0000000000000000000000000000000000000000191660a060020a179055565b610eb76110e1565b1515610efb576040805160e560020a62461bcd02815260206004820152601660248201526000805160206110f3833981519152604482015290519081900360640190fd5b610f03610a91565b15610f58576040805160e560020a62461bcd02815260206004820152600f60248201527f666c6f6174206973206c6f636b65640000000000000000000000000000000000604482015290519081900360640190fd5b6001805473ffffffffffffffffffffffffffffffffffffffff1916600160a060020a03831690811790915560408051338152602081019290925280517f75edfe66c080c8ba80545ff54ae0bd0d330150496e02bd7ff75726bd74df64ec9281900390910190a150565b610fc96110e1565b151561100d576040805160e560020a62461bcd02815260206004820152601660248201526000805160206110f3833981519152604482015290519081900360640190fd5b6002805475ff00000000000000000000000000000000000000000019167501000000000000000000000000000000000000000000179055565b6002547501000000000000000000000000000000000000000000900460ff1690565b60035490565b60008083151561108157600091506110a0565b5082820282848281151561109157fe5b041461109c57600080fd5b8091505b5092915050565b6000808083116110b657600080fd5b82848115156110c157fe5b04949350505050565b600080838311156110da57600080fd5b5050900390565b600054600160a060020a0316331490560073656e646572206973206e6f7420616e206f776e657200000000000000000000a165627a7a7230582011dbd34c93285296ffceacde4d5de1693cd6a989b61d4b17a6779da4eeff44b90029`
 
 // DeployLicence deploys a new Ethereum contract, binding an instance of Licence to it.
 func DeployLicence(auth *bind.TransactOpts, backend bind.ContractBackend, _owner common.Address, _transferable bool, _fee *big.Int, _float common.Address, _holder common.Address) (common.Address, *types.Transaction, *Licence, error) {
@@ -292,6 +292,58 @@ func (_Licence *LicenceCallerSession) FeeFactor() (*big.Int, error) {
 	return _Licence.Contract.FeeFactor(&_Licence.CallOpts)
 }
 
+// FloatLocked is a free data retrieval call binding the contract method 0x940b9c3b.
+//
+// Solidity: function floatLocked() constant returns(bool)
+func (_Licence *LicenceCaller) FloatLocked(opts *bind.CallOpts) (bool, error) {
+	var (
+		ret0 = new(bool)
+	)
+	out := ret0
+	err := _Licence.contract.Call(opts, out, "floatLocked")
+	return *ret0, err
+}
+
+// FloatLocked is a free data retrieval call binding the contract method 0x940b9c3b.
+//
+// Solidity: function floatLocked() constant returns(bool)
+func (_Licence *LicenceSession) FloatLocked() (bool, error) {
+	return _Licence.Contract.FloatLocked(&_Licence.CallOpts)
+}
+
+// FloatLocked is a free data retrieval call binding the contract method 0x940b9c3b.
+//
+// Solidity: function floatLocked() constant returns(bool)
+func (_Licence *LicenceCallerSession) FloatLocked() (bool, error) {
+	return _Licence.Contract.FloatLocked(&_Licence.CallOpts)
+}
+
+// HolderLocked is a free data retrieval call binding the contract method 0xf15ff455.
+//
+// Solidity: function holderLocked() constant returns(bool)
+func (_Licence *LicenceCaller) HolderLocked(opts *bind.CallOpts) (bool, error) {
+	var (
+		ret0 = new(bool)
+	)
+	out := ret0
+	err := _Licence.contract.Call(opts, out, "holderLocked")
+	return *ret0, err
+}
+
+// HolderLocked is a free data retrieval call binding the contract method 0xf15ff455.
+//
+// Solidity: function holderLocked() constant returns(bool)
+func (_Licence *LicenceSession) HolderLocked() (bool, error) {
+	return _Licence.Contract.HolderLocked(&_Licence.CallOpts)
+}
+
+// HolderLocked is a free data retrieval call binding the contract method 0xf15ff455.
+//
+// Solidity: function holderLocked() constant returns(bool)
+func (_Licence *LicenceCallerSession) HolderLocked() (bool, error) {
+	return _Licence.Contract.HolderLocked(&_Licence.CallOpts)
+}
+
 // IsTransferable is a free data retrieval call binding the contract method 0x2121dc75.
 //
 // Solidity: function isTransferable() constant returns(bool)
@@ -391,6 +443,48 @@ func (_Licence *LicenceTransactorSession) Load(_asset common.Address, _amount *b
 	return _Licence.Contract.Load(&_Licence.TransactOpts, _asset, _amount)
 }
 
+// LockFloat is a paid mutator transaction binding the contract method 0xd08b4ecc.
+//
+// Solidity: function lockFloat() returns()
+func (_Licence *LicenceTransactor) LockFloat(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _Licence.contract.Transact(opts, "lockFloat")
+}
+
+// LockFloat is a paid mutator transaction binding the contract method 0xd08b4ecc.
+//
+// Solidity: function lockFloat() returns()
+func (_Licence *LicenceSession) LockFloat() (*types.Transaction, error) {
+	return _Licence.Contract.LockFloat(&_Licence.TransactOpts)
+}
+
+// LockFloat is a paid mutator transaction binding the contract method 0xd08b4ecc.
+//
+// Solidity: function lockFloat() returns()
+func (_Licence *LicenceTransactorSession) LockFloat() (*types.Transaction, error) {
+	return _Licence.Contract.LockFloat(&_Licence.TransactOpts)
+}
+
+// LockHolder is a paid mutator transaction binding the contract method 0xd1696b16.
+//
+// Solidity: function lockHolder() returns()
+func (_Licence *LicenceTransactor) LockHolder(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _Licence.contract.Transact(opts, "lockHolder")
+}
+
+// LockHolder is a paid mutator transaction binding the contract method 0xd1696b16.
+//
+// Solidity: function lockHolder() returns()
+func (_Licence *LicenceSession) LockHolder() (*types.Transaction, error) {
+	return _Licence.Contract.LockHolder(&_Licence.TransactOpts)
+}
+
+// LockHolder is a paid mutator transaction binding the contract method 0xd1696b16.
+//
+// Solidity: function lockHolder() returns()
+func (_Licence *LicenceTransactorSession) LockHolder() (*types.Transaction, error) {
+	return _Licence.Contract.LockHolder(&_Licence.TransactOpts)
+}
+
 // RenounceOwnership is a paid mutator transaction binding the contract method 0x715018a6.
 //
 // Solidity: function renounceOwnership() returns()
@@ -473,6 +567,48 @@ func (_Licence *LicenceSession) UpdateFee(_newFee *big.Int) (*types.Transaction,
 // Solidity: function updateFee(uint256 _newFee) returns()
 func (_Licence *LicenceTransactorSession) UpdateFee(_newFee *big.Int) (*types.Transaction, error) {
 	return _Licence.Contract.UpdateFee(&_Licence.TransactOpts, _newFee)
+}
+
+// UpdateFloat is a paid mutator transaction binding the contract method 0xd0cddd67.
+//
+// Solidity: function updateFloat(address _newFloat) returns()
+func (_Licence *LicenceTransactor) UpdateFloat(opts *bind.TransactOpts, _newFloat common.Address) (*types.Transaction, error) {
+	return _Licence.contract.Transact(opts, "updateFloat", _newFloat)
+}
+
+// UpdateFloat is a paid mutator transaction binding the contract method 0xd0cddd67.
+//
+// Solidity: function updateFloat(address _newFloat) returns()
+func (_Licence *LicenceSession) UpdateFloat(_newFloat common.Address) (*types.Transaction, error) {
+	return _Licence.Contract.UpdateFloat(&_Licence.TransactOpts, _newFloat)
+}
+
+// UpdateFloat is a paid mutator transaction binding the contract method 0xd0cddd67.
+//
+// Solidity: function updateFloat(address _newFloat) returns()
+func (_Licence *LicenceTransactorSession) UpdateFloat(_newFloat common.Address) (*types.Transaction, error) {
+	return _Licence.Contract.UpdateFloat(&_Licence.TransactOpts, _newFloat)
+}
+
+// UpdateHolder is a paid mutator transaction binding the contract method 0x42719faa.
+//
+// Solidity: function updateHolder(address _newHolder) returns()
+func (_Licence *LicenceTransactor) UpdateHolder(opts *bind.TransactOpts, _newHolder common.Address) (*types.Transaction, error) {
+	return _Licence.contract.Transact(opts, "updateHolder", _newHolder)
+}
+
+// UpdateHolder is a paid mutator transaction binding the contract method 0x42719faa.
+//
+// Solidity: function updateHolder(address _newHolder) returns()
+func (_Licence *LicenceSession) UpdateHolder(_newHolder common.Address) (*types.Transaction, error) {
+	return _Licence.Contract.UpdateHolder(&_Licence.TransactOpts, _newHolder)
+}
+
+// UpdateHolder is a paid mutator transaction binding the contract method 0x42719faa.
+//
+// Solidity: function updateHolder(address _newHolder) returns()
+func (_Licence *LicenceTransactorSession) UpdateHolder(_newHolder common.Address) (*types.Transaction, error) {
+	return _Licence.Contract.UpdateHolder(&_Licence.TransactOpts, _newHolder)
 }
 
 // LicenceReceivedIterator is returned from FilterReceived and is used to iterate over the raw logs and unpacked data for Received events raised by the Licence contract.
@@ -971,6 +1107,129 @@ func (_Licence *LicenceFilterer) WatchTransferredToTokenHolder(opts *bind.WatchO
 	}), nil
 }
 
+// LicenceUpdatedCryptoFloatIterator is returned from FilterUpdatedCryptoFloat and is used to iterate over the raw logs and unpacked data for UpdatedCryptoFloat events raised by the Licence contract.
+type LicenceUpdatedCryptoFloatIterator struct {
+	Event *LicenceUpdatedCryptoFloat // Event containing the contract specifics and raw log
+
+	contract *bind.BoundContract // Generic contract to use for unpacking event data
+	event    string              // Event name to use for unpacking event data
+
+	logs chan types.Log        // Log channel receiving the found contract events
+	sub  ethereum.Subscription // Subscription for errors, completion and termination
+	done bool                  // Whether the subscription completed delivering logs
+	fail error                 // Occurred error to stop iteration
+}
+
+// Next advances the iterator to the subsequent event, returning whether there
+// are any more events found. In case of a retrieval or parsing error, false is
+// returned and Error() can be queried for the exact failure.
+func (it *LicenceUpdatedCryptoFloatIterator) Next() bool {
+	// If the iterator failed, stop iterating
+	if it.fail != nil {
+		return false
+	}
+	// If the iterator completed, deliver directly whatever's available
+	if it.done {
+		select {
+		case log := <-it.logs:
+			it.Event = new(LicenceUpdatedCryptoFloat)
+			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+				it.fail = err
+				return false
+			}
+			it.Event.Raw = log
+			return true
+
+		default:
+			return false
+		}
+	}
+	// Iterator still in progress, wait for either a data or an error event
+	select {
+	case log := <-it.logs:
+		it.Event = new(LicenceUpdatedCryptoFloat)
+		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+			it.fail = err
+			return false
+		}
+		it.Event.Raw = log
+		return true
+
+	case err := <-it.sub.Err():
+		it.done = true
+		it.fail = err
+		return it.Next()
+	}
+}
+
+// Error returns any retrieval or parsing error occurred during filtering.
+func (it *LicenceUpdatedCryptoFloatIterator) Error() error {
+	return it.fail
+}
+
+// Close terminates the iteration process, releasing any pending underlying
+// resources.
+func (it *LicenceUpdatedCryptoFloatIterator) Close() error {
+	it.sub.Unsubscribe()
+	return nil
+}
+
+// LicenceUpdatedCryptoFloat represents a UpdatedCryptoFloat event raised by the Licence contract.
+type LicenceUpdatedCryptoFloat struct {
+	Sender   common.Address
+	NewFloat common.Address
+	Raw      types.Log // Blockchain specific contextual infos
+}
+
+// FilterUpdatedCryptoFloat is a free log retrieval operation binding the contract event 0x75edfe66c080c8ba80545ff54ae0bd0d330150496e02bd7ff75726bd74df64ec.
+//
+// Solidity: event UpdatedCryptoFloat(address _sender, address _newFloat)
+func (_Licence *LicenceFilterer) FilterUpdatedCryptoFloat(opts *bind.FilterOpts) (*LicenceUpdatedCryptoFloatIterator, error) {
+
+	logs, sub, err := _Licence.contract.FilterLogs(opts, "UpdatedCryptoFloat")
+	if err != nil {
+		return nil, err
+	}
+	return &LicenceUpdatedCryptoFloatIterator{contract: _Licence.contract, event: "UpdatedCryptoFloat", logs: logs, sub: sub}, nil
+}
+
+// WatchUpdatedCryptoFloat is a free log subscription operation binding the contract event 0x75edfe66c080c8ba80545ff54ae0bd0d330150496e02bd7ff75726bd74df64ec.
+//
+// Solidity: event UpdatedCryptoFloat(address _sender, address _newFloat)
+func (_Licence *LicenceFilterer) WatchUpdatedCryptoFloat(opts *bind.WatchOpts, sink chan<- *LicenceUpdatedCryptoFloat) (event.Subscription, error) {
+
+	logs, sub, err := _Licence.contract.WatchLogs(opts, "UpdatedCryptoFloat")
+	if err != nil {
+		return nil, err
+	}
+	return event.NewSubscription(func(quit <-chan struct{}) error {
+		defer sub.Unsubscribe()
+		for {
+			select {
+			case log := <-logs:
+				// New log arrived, parse the event and forward to the user
+				event := new(LicenceUpdatedCryptoFloat)
+				if err := _Licence.contract.UnpackLog(event, "UpdatedCryptoFloat", log); err != nil {
+					return err
+				}
+				event.Raw = log
+
+				select {
+				case sink <- event:
+				case err := <-sub.Err():
+					return err
+				case <-quit:
+					return nil
+				}
+			case err := <-sub.Err():
+				return err
+			case <-quit:
+				return nil
+			}
+		}
+	}), nil
+}
+
 // LicenceUpdatedDAOIterator is returned from FilterUpdatedDAO and is used to iterate over the raw logs and unpacked data for UpdatedDAO events raised by the Licence contract.
 type LicenceUpdatedDAOIterator struct {
 	Event *LicenceUpdatedDAO // Event containing the contract specifics and raw log
@@ -1197,6 +1456,129 @@ func (_Licence *LicenceFilterer) WatchUpdatedFee(opts *bind.WatchOpts, sink chan
 				// New log arrived, parse the event and forward to the user
 				event := new(LicenceUpdatedFee)
 				if err := _Licence.contract.UnpackLog(event, "UpdatedFee", log); err != nil {
+					return err
+				}
+				event.Raw = log
+
+				select {
+				case sink <- event:
+				case err := <-sub.Err():
+					return err
+				case <-quit:
+					return nil
+				}
+			case err := <-sub.Err():
+				return err
+			case <-quit:
+				return nil
+			}
+		}
+	}), nil
+}
+
+// LicenceUpdatedTokenHolderIterator is returned from FilterUpdatedTokenHolder and is used to iterate over the raw logs and unpacked data for UpdatedTokenHolder events raised by the Licence contract.
+type LicenceUpdatedTokenHolderIterator struct {
+	Event *LicenceUpdatedTokenHolder // Event containing the contract specifics and raw log
+
+	contract *bind.BoundContract // Generic contract to use for unpacking event data
+	event    string              // Event name to use for unpacking event data
+
+	logs chan types.Log        // Log channel receiving the found contract events
+	sub  ethereum.Subscription // Subscription for errors, completion and termination
+	done bool                  // Whether the subscription completed delivering logs
+	fail error                 // Occurred error to stop iteration
+}
+
+// Next advances the iterator to the subsequent event, returning whether there
+// are any more events found. In case of a retrieval or parsing error, false is
+// returned and Error() can be queried for the exact failure.
+func (it *LicenceUpdatedTokenHolderIterator) Next() bool {
+	// If the iterator failed, stop iterating
+	if it.fail != nil {
+		return false
+	}
+	// If the iterator completed, deliver directly whatever's available
+	if it.done {
+		select {
+		case log := <-it.logs:
+			it.Event = new(LicenceUpdatedTokenHolder)
+			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+				it.fail = err
+				return false
+			}
+			it.Event.Raw = log
+			return true
+
+		default:
+			return false
+		}
+	}
+	// Iterator still in progress, wait for either a data or an error event
+	select {
+	case log := <-it.logs:
+		it.Event = new(LicenceUpdatedTokenHolder)
+		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+			it.fail = err
+			return false
+		}
+		it.Event.Raw = log
+		return true
+
+	case err := <-it.sub.Err():
+		it.done = true
+		it.fail = err
+		return it.Next()
+	}
+}
+
+// Error returns any retrieval or parsing error occurred during filtering.
+func (it *LicenceUpdatedTokenHolderIterator) Error() error {
+	return it.fail
+}
+
+// Close terminates the iteration process, releasing any pending underlying
+// resources.
+func (it *LicenceUpdatedTokenHolderIterator) Close() error {
+	it.sub.Unsubscribe()
+	return nil
+}
+
+// LicenceUpdatedTokenHolder represents a UpdatedTokenHolder event raised by the Licence contract.
+type LicenceUpdatedTokenHolder struct {
+	Sender    common.Address
+	NewHolder common.Address
+	Raw       types.Log // Blockchain specific contextual infos
+}
+
+// FilterUpdatedTokenHolder is a free log retrieval operation binding the contract event 0x4300dd20d76c61b98fc9a506895e4e17bba1c0013b077f61a1ab08df15a8b43d.
+//
+// Solidity: event UpdatedTokenHolder(address _sender, address _newHolder)
+func (_Licence *LicenceFilterer) FilterUpdatedTokenHolder(opts *bind.FilterOpts) (*LicenceUpdatedTokenHolderIterator, error) {
+
+	logs, sub, err := _Licence.contract.FilterLogs(opts, "UpdatedTokenHolder")
+	if err != nil {
+		return nil, err
+	}
+	return &LicenceUpdatedTokenHolderIterator{contract: _Licence.contract, event: "UpdatedTokenHolder", logs: logs, sub: sub}, nil
+}
+
+// WatchUpdatedTokenHolder is a free log subscription operation binding the contract event 0x4300dd20d76c61b98fc9a506895e4e17bba1c0013b077f61a1ab08df15a8b43d.
+//
+// Solidity: event UpdatedTokenHolder(address _sender, address _newHolder)
+func (_Licence *LicenceFilterer) WatchUpdatedTokenHolder(opts *bind.WatchOpts, sink chan<- *LicenceUpdatedTokenHolder) (event.Subscription, error) {
+
+	logs, sub, err := _Licence.contract.WatchLogs(opts, "UpdatedTokenHolder")
+	if err != nil {
+		return nil, err
+	}
+	return event.NewSubscription(func(quit <-chan struct{}) error {
+		defer sub.Unsubscribe()
+		for {
+			select {
+			case log := <-logs:
+				// New log arrived, parse the event and forward to the user
+				event := new(LicenceUpdatedTokenHolder)
+				if err := _Licence.contract.UnpackLog(event, "UpdatedTokenHolder", log); err != nil {
 					return err
 				}
 				event.Raw = log
