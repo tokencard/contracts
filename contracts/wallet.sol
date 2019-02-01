@@ -406,7 +406,6 @@ contract Wallet is Vault {
 
     using SafeMath for uint256;
 
-    address constant private TKN = 0xaaaf91d9b90df800df4f55c205fd6989c977e73a; // solium-disable-line uppercase
 
     uint constant private MINIMUM_TOPUP_LIMIT = 1 finney; // solium-disable-line uppercase
     uint constant private MAXIMUM_TOPUP_LIMIT = 500 finney; // solium-disable-line uppercase
@@ -532,7 +531,6 @@ contract Wallet is Vault {
     /// @param _asset is the address of an ERC20 token or 0x0 for ether.
     /// @param _amount is the amount of assets to be transferred in base units.
     function loadTokenCard(address _asset, uint _amount) external onlyOwner {
-        require(_asset != TKN, "TKN isn't meant to be used with this method");
         if (_asset != address(0)) {
             require(ERC20(_asset).approve(address(_licence), _amount), "ERC20 token approval was unsuccessful");
             _licence.load(_asset, _amount);
