@@ -21,7 +21,7 @@ pragma solidity ^0.4.25;
 import "../externals/strings.sol";
 import "../externals/oraclizeAPI_0.4.25.sol";
 /// @title JSON provides JSON parsing functionality.
-contract JSON is usingOraclize{
+contract JSON is usingOraclize {
     using strings for *;
 
     bytes32 constant private prefixHash = keccak256("{\"ETH\":");
@@ -39,10 +39,12 @@ contract JSON is usingOraclize{
         require(keccak256(jsonPrefix) == prefixHash, "prefix mismatch");
 
         strings.slice memory body = _json.toSlice();
-        body.split(":".toSlice()); //we are sure that ':' is included in the string, body now contains the rate+'}'
+        body.split(":".toSlice());
+        //we are sure that ':' is included in the string, body now contains the rate+'}'
         json_len = body._len;
         body.until("}".toSlice());
-        require(body._len == json_len-1,"not json format"); //ensure that the json is properly terminated with a '}'
+        require(body._len == json_len - 1, "not json format");
+        //ensure that the json is properly terminated with a '}'
         return body.toString();
 
     }

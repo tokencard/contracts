@@ -14,7 +14,7 @@ contract Token {
 
     /// @dev Balances for each account.
     mapping(address => uint) public balanceOf;
-    mapping(address => mapping (address => uint)) public allowance;
+    mapping(address => mapping(address => uint)) public allowance;
 
     /// @dev Transfer a token. This throws on insufficient balance.
     function transfer(address to, uint amount) public returns (bool) {
