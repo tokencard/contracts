@@ -33,10 +33,10 @@ jobs:
     working_directory: /src
     steps:
       - checkout
-      - run: myth --max-depth=12 -x ./contracts/wallet.sol
-      - run: myth --max-depth=36 -x ./contracts/oracle.sol
-      - run: myth --max-depth=12 -x ./contracts/licence.sol
-      - run: myth --max-depth=12 -x ./contracts/holder.sol
+      - run: myth --max-depth=22 -x ./contracts/wallet.sol
+      - run: myth --max-depth=26 -x ./contracts/oracle.sol
+      - run: myth --max-depth=22 -x ./contracts/licence.sol
+      - run: myth --max-depth=22 -x ./contracts/holder.sol
 
   snyk_check:
     docker:
