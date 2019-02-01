@@ -13,7 +13,7 @@ contract_sources=(
   'wallet'
   'oracle'
   'holder'
-  'TKN'
+  'tkn'
   'licence'
   'mocks/token'
   'mocks/oraclize-connector'
@@ -49,7 +49,7 @@ contracts=(
   "wallet/Wallet wallet.go Wallet bindings"
   "oracle/Oracle oracle.go Oracle bindings"
   "holder/Holder holder.go Holder bindings"
-  "TKN/Token token.go Token bindings"
+  "tkn/Token token.go Token bindings"
   "licence/Licence licence.go Licence bindings"
   "mocks/token/Token mocks/token.go Token mocks"
   "mocks/oraclize-connector/Oraclize mocks/oraclize-connector.go Oraclize mocks"

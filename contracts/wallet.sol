@@ -310,9 +310,10 @@ contract Vault is Whitelist, SpendLimit, ERC165 {
     bytes4 private constant _ERC165_INTERFACE_ID = 0x01ffc9a7; // solium-disable-line uppercase
 
     /// @dev ENS points to the ENS registry smart contract.
-    ENS private _ENS;
+    ENS internal _ENS;
+
     /// @dev Is the registered ENS name of the oracle contract.
-    bytes32 private _node;
+    bytes32 private _oracleNode;
 
     /// @dev Constructor initializes the vault with an owner address and spend limit. It also sets up the oracle and controller contracts.
     /// @param _owner is the owner account of the wallet contract.
@@ -323,7 +324,7 @@ contract Vault is Whitelist, SpendLimit, ERC165 {
     /// @param _spendLimit is the initial spend limit.
     constructor(address _owner, bool _transferable, address _ens, bytes32 _oracleName, bytes32 _controllerName, uint _spendLimit) SpendLimit(_spendLimit) Ownable(_owner, _transferable) Controllable(_ens, _controllerName) public {
         _ENS = ENS(_ens);
-        _node = _oracleName;
+        _oracleNode = _oracleName;
     }
 
     /// @dev Checks if the value is not zero.
@@ -365,7 +366,7 @@ contract Vault is Whitelist, SpendLimit, ERC165 {
             uint etherValue;
             bool tokenExists;
             if (_asset != address(0)) {
-                (tokenExists, etherValue) = IOracle(PublicResolver(_ENS.resolver(_node)).addr(_node)).convert(_asset, _amount);
+                (tokenExists, etherValue) = IOracle(PublicResolver(_ENS.resolver(_oracleNode)).addr(_oracleNode)).convert(_asset, _amount);
             } else {
                 etherValue = _amount;
             }
@@ -420,7 +421,8 @@ contract Wallet is Vault {
     bool public submittedTopUpLimit;
     bool public initializedTopUpLimit;
 
-    ILicence private _licence;
+    /// @dev Is the registered ENS name of the oracle contract.
+    bytes32 private _licenceNode;
 
     /// @dev Constructor initializes the wallet top up limit and the vault contract.
     /// @param _owner is the owner account of the wallet contract.
@@ -428,13 +430,13 @@ contract Wallet is Vault {
     /// @param _ens is the address of the ENS.
     /// @param _oracleName is the ENS name of the Oracle.
     /// @param _controllerName is the ENS name of the Controller.
+    /// @param _licenceName is the ENS name of the licence.
     /// @param _spendLimit is the initial spend limit.
-    /// @param _licenceAddress is the licence contract address.
-    constructor(address _owner, bool _transferable, address _ens, bytes32 _oracleName, bytes32 _controllerName, uint _spendLimit, address _licenceAddress) Vault(_owner, _transferable, _ens, _oracleName, _controllerName, _spendLimit) public {
+    constructor(address _owner, bool _transferable, address _ens, bytes32 _oracleName, bytes32 _controllerName, bytes32 _licenceName, uint _spendLimit) Vault(_owner, _transferable, _ens, _oracleName, _controllerName, _spendLimit) public {
         _topUpLimitDay = now;
         topUpLimit = MAXIMUM_TOPUP_LIMIT;
         _topUpAvailable = topUpLimit;
-        _licence = ILicence(_licenceAddress);
+        _licenceNode = _licenceName;
     }
 
     /// @dev Returns the available daily gas top up balance - accounts for daily limit reset.
@@ -531,11 +533,12 @@ contract Wallet is Vault {
     /// @param _asset is the address of an ERC20 token or 0x0 for ether.
     /// @param _amount is the amount of assets to be transferred in base units.
     function loadTokenCard(address _asset, uint _amount) external onlyOwner {
+        address licenceAddress = PublicResolver(_ENS.resolver(_licenceNode)).addr(_licenceNode);
         if (_asset != address(0)) {
-            require(ERC20(_asset).approve(address(_licence), _amount), "ERC20 token approval was unsuccessful");
-            _licence.load(_asset, _amount);
+            require(ERC20(_asset).approve(licenceAddress, _amount), "ERC20 token approval was unsuccessful");
+            ILicence(licenceAddress).load(_asset, _amount);
         } else {
-            _licence.load.value(_amount)(_asset, _amount);
+            ILicence(licenceAddress).load.value(_amount)(_asset, _amount);
         }
         emit LoadedTokenCard(_asset, _amount);
     }
