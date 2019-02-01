@@ -12,6 +12,15 @@ import (
 	. "github.com/tokencard/contracts/test/shared"
 )
 
+func isGasExhausted(tx *types.Transaction, gasLimit uint64) bool {
+	r, err := Backend.TransactionReceipt(context.Background(), tx.Hash())
+	Expect(err).ToNot(HaveOccurred())
+	if r.Status == types.ReceiptStatusSuccessful {
+		return false
+	}
+	return r.GasUsed == gasLimit
+}
+
 func init() {
 	TestRig.AddCoverageForContracts("../../build/wallet/combined.json", "../../contracts")
 }

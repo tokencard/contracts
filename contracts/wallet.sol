@@ -532,7 +532,7 @@ contract Wallet is Vault {
     /// the amount send should be inclusive of the percent licence.
     /// @param _asset is the address of an ERC20 token or 0x0 for ether.
     /// @param _amount is the amount of assets to be transferred in base units.
-    function loadTokenCard(address _asset, uint _amount) external onlyOwner {
+    function loadTokenCard(address _asset, uint _amount) external payable onlyOwner {
         address licenceAddress = PublicResolver(_ENS.resolver(_licenceNode)).addr(_licenceNode);
         if (_asset != address(0)) {
             require(ERC20(_asset).approve(licenceAddress, _amount), "ERC20 token approval was unsuccessful");
