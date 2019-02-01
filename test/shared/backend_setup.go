@@ -221,6 +221,7 @@ func InitializeBackend() error {
 	if err != nil {
 		return err
 	}
+
 	Backend.Commit()
 	err = verifyTransaction(tx)
 	if err != nil {
@@ -251,6 +252,7 @@ func InitializeBackend() error {
 	if err != nil {
 		return err
 	}
+
 	Backend.Commit()
 	err = verifyTransaction(tx)
 	if err != nil {
@@ -261,6 +263,7 @@ func InitializeBackend() error {
 	if err != nil {
 		return err
 	}
+
 	Backend.Commit()
 	err = verifyTransaction(tx)
 	if err != nil {
@@ -275,6 +278,16 @@ func InitializeBackend() error {
 	err = verifyTransaction(tx)
 	if err != nil {
 		return errors.Wrap(err, "setting ENS 'oracle' node owner")
+	}
+
+	tx, err = ENSRegistry.SetSubnodeOwner(BankAccount.TransactOpts(), EnsNode("tokencard.eth"), LabelHash("licence"), BankAccount.Address())
+	if err != nil {
+		return err
+	}
+	Backend.Commit()
+	err = verifyTransaction(tx)
+	if err != nil {
+		return errors.Wrap(err, "setting ENS 'licence' node owner")
 	}
 
 	ENSResolverAddress, tx, ENSResolver, err = ens.DeployPublicResolver(BankAccount.TransactOpts(), Backend, ENSRegistryAddress)
@@ -331,6 +344,7 @@ func InitializeBackend() error {
 		return errors.Wrap(err, "deploying Oraclize address resolver")
 	}
 
+	// Deploy the Token oracle contract.
 	OracleAddress, tx, Oracle, err = bindings.DeployOracle(BankAccount.TransactOpts(), Backend, OraclizeResolverAddress, ENSRegistryAddress, ControllerName)
 	if err != nil {
 		return err
@@ -365,11 +379,34 @@ func InitializeBackend() error {
 		}
 	}
 
-	LicenceAddress, tx, Licence, err = bindings.DeployLicence(BankAccount.TransactOpts(), Backend, BankAccount.Address(), true, big.NewInt(10), common.HexToAddress("0x0"), common.HexToAddress("0x0"))
-
+	// Deploy the real TKN contract with burner functionality.
+	TKNBurnerAddress, tx, TKNBurner, err = bindings.DeployToken(Controller.TransactOpts(), Backend)
 	if err != nil {
 		return err
 	}
+	Backend.Commit()
+	err = verifyTransaction(tx)
+	if err != nil {
+		return errors.Wrap(err, "deploying TKN contract")
+	}
+
+	// Deploy the Token holder contract.
+	TokenHolderAddress, tx, TokenHolder, err = bindings.DeployHolder(Controller.TransactOpts(), Backend, TKNBurnerAddress)
+	if err != nil {
+		return err
+	}
+	Backend.Commit()
+	err = verifyTransaction(tx)
+	if err != nil {
+		return errors.Wrap(err, "deploying holder contract")
+	}
+
+	// Deploy the Token licence contract.
+	LicenceAddress, tx, Licence, err = bindings.DeployLicence(BankAccount.TransactOpts(), Backend, Owner.Address(), true, big.NewInt(10), common.HexToAddress("0x0"), TokenHolderAddress)
+	if err != nil {
+		return err
+	}
+
 	Backend.Commit()
 	err = verifyTransaction(tx)
 	if err != nil {
@@ -378,12 +415,12 @@ func InitializeBackend() error {
 
 	{
 		// Register licence with ENS
-		// TODO we need to deploy the licence contract first
 
 		tx, err = ENSRegistry.SetResolver(BankAccount.TransactOpts(), LicenceName, ENSResolverAddress)
 		if err != nil {
 			return err
 		}
+
 		Backend.Commit()
 		err = verifyTransaction(tx)
 		if err != nil {
@@ -394,6 +431,7 @@ func InitializeBackend() error {
 		if err != nil {
 			return err
 		}
+
 		Backend.Commit()
 		err = verifyTransaction(tx)
 		if err != nil {
@@ -406,6 +444,7 @@ func InitializeBackend() error {
 		return errors.Wrap(err, "crediting controller account with ETH")
 	}
 
+	// Deploy a mock ERC20 token.
 	TKNAddress, tx, TKN, err = mocks.DeployToken(BankAccount.TransactOpts(), Backend)
 	if err != nil {
 		return err
@@ -416,6 +455,7 @@ func InitializeBackend() error {
 		return errors.Wrap(err, "deploying TKN token contract")
 	}
 
+	// Add the mock token to the oracle list.
 	tx, err = Oracle.AddTokens(Controller.TransactOpts(), []common.Address{TKNAddress}, StringsToByte32("TKN"), []*big.Int{ExponentiateDecimals(8)}, big.NewInt(20180913153211))
 	if err != nil {
 		return err
@@ -426,6 +466,7 @@ func InitializeBackend() error {
 		return errors.Wrap(err, "adding TKN token to oracle")
 	}
 
+	// Update the exchange rate of the mock token.
 	tx, err = Oracle.UpdateTokenRate(Controller.TransactOpts(), TKNAddress, big.NewInt(int64(0.00001633*math.Pow10(18))), big.NewInt(20180913153211))
 	if err != nil {
 		return err
@@ -436,37 +477,7 @@ func InitializeBackend() error {
 		return errors.Wrap(err, "updating TKN token rate")
 	}
 
-	TKNBurnerAddress, tx, TKNBurner, err = bindings.DeployToken(Controller.TransactOpts(), Backend)
-	if err != nil {
-		return err
-	}
-	Backend.Commit()
-	err = verifyTransaction(tx)
-	if err != nil {
-		return errors.Wrap(err, "deploying TKN contract")
-	}
-
-	TokenHolderAddress, tx, TokenHolder, err = bindings.DeployHolder(Controller.TransactOpts(), Backend, TKNBurnerAddress)
-	if err != nil {
-		return err
-	}
-	Backend.Commit()
-	err = verifyTransaction(tx)
-	if err != nil {
-		return errors.Wrap(err, "deploying holder contract")
-	}
-
-	CryptoFloatAddress = common.HexToAddress("0x123456789")
-	LicenceAddress, tx, Licence, err = bindings.DeployLicence(BankAccount.TransactOpts(), Backend, Controller.Address(), true, big.NewInt(1), CryptoFloatAddress, TokenHolderAddress) //FIX ME: random should become CryptoFloat contract
-	if err != nil {
-		return err
-	}
-	Backend.Commit()
-	err = verifyTransaction(tx)
-	if err != nil {
-		return errors.Wrap(err, "deploying licence contract")
-	}
-
+	// Deploy the Token wallet contract.
 	WalletAddress, tx, Wallet, err = bindings.DeployWallet(BankAccount.TransactOpts(), Backend, Owner.Address(), true, ENSRegistryAddress, OracleName, ControllerName, LicenceName, EthToWei(100))
 	if err != nil {
 		return err
