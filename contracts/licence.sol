@@ -41,11 +41,11 @@ contract Licence is Ownable {
   uint private _feeFactor;
 
   /// @dev IDAO is an interface to a DAO contract that can update the licence contract.
-  IDAO private _DAO;
+  IDAO public DAO;
 
   /// @dev Reverts if called by any address other than the DAO contract.
   modifier onlyDAO() {
-      require(msg.sender == address(_DAO));
+      require(msg.sender == address(DAO));
       _;
   }
 
@@ -82,11 +82,6 @@ contract Licence is Ownable {
     return _feeFactor;
   }
 
-  /// @return the address of the DAO contract.
-  function DAO() external view returns (address) {
-      return address(_DAO);
-  }
-
   function lockFloat() external onlyOwner{
     _lockedCryptoFloat = true;
   }
@@ -105,9 +100,9 @@ contract Licence is Ownable {
 
   /// @dev Updates the address of the DAO contract.
   function updateDAO(address _newDAO) external onlyOwner {
-      if (address(_DAO) != address(0))
-        require(!_DAO.isLocked(), "DAO is locked");
-      _DAO = IDAO(_newDAO);
+      if (address(DAO) != address(0))
+        require(!DAO.isLocked(), "DAO is locked");
+      DAO = IDAO(_newDAO);
       emit UpdatedDAO(msg.sender, _newDAO);
   }
 
@@ -127,9 +122,9 @@ contract Licence is Ownable {
 
   /// @dev Updates the card licence fee.
   function updateFee(uint _newFee) external onlyDAO {
-      require(1 <= _newFee && _newFee <= MAX_FEE_FACTOR, "fee out of range");
+      require(1 <= _newFee && _newFee <= MAX_FEE_FACTOR, "fee out of range"); // TODO(daniel): same as below, not sure if using percentages inside solidity is the optimal solution.
       _feeFactor = _newFee;
-      emit UpdatedFee(address(_DAO), _newFee);
+      emit UpdatedFee(address(DAO), _newFee);
   }
 
   /// @dev Load the holder and float contracts based on the licence fee and asset amount.
@@ -137,19 +132,20 @@ contract Licence is Ownable {
   /// @param _amount is the amount of assets to be transferred including the fee.
   function load(address _asset, uint _amount) external payable {
 
-      uint loadAmount = _amount.mul(MAX_FEE_FACTOR).div(_feeFactor + MAX_FEE_FACTOR);
-      uint fee = _amount.sub(loadAmount);
+      uint transferAmount = _amount.mul(MAX_FEE_FACTOR).div(_feeFactor + MAX_FEE_FACTOR);
+      uint fee = _amount.sub(transferAmount); //transferAmount is always <= amount
 
+    //  assert(_amount == transferAmount + fee);
       if (_asset != address(0)) {
           require(ERC20(_asset).transferFrom(msg.sender, _tokenHolder, fee), "ERC20 fee transfer from external account was unsuccessful");
-          require(ERC20(_asset).transferFrom(msg.sender, _cryptoFloat, loadAmount), "ERC20 token transfer from external account was unsuccessful");
+          require(ERC20(_asset).transferFrom(msg.sender, _cryptoFloat, transferAmount), "ERC20 token transfer from external account was unsuccessful");
       } else {
           require(msg.value == _amount, "ether sent is not equal to amount");
           _tokenHolder.transfer(fee);
-          _cryptoFloat.transfer(loadAmount);
+          _cryptoFloat.transfer(transferAmount);
       }
       emit TransferredToTokenHolder(msg.sender, _tokenHolder, _asset, fee);
-      emit TransferredToCryptoFloat(msg.sender, _cryptoFloat, _asset, loadAmount);
+      emit TransferredToCryptoFloat(msg.sender, _cryptoFloat, _asset, transferAmount);
 
   }
 }
