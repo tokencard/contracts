@@ -12,7 +12,7 @@ import (
 	"github.com/tokencard/ethertest"
 )
 
-var _ = Describe("load", func() {
+var _ = Describe("load ERC20", func() {
 
 
     It("the initial balance of the Holder contract should be zero", func() {
