@@ -25,7 +25,7 @@ contract Licence is Ownable {
     event UpdatedLicenceDAO(address _sender, address _newDAO);
     event UpdatedCryptoFloat(address _sender, address _newFloat);
     event UpdatedTokenHolder(address _sender, address _newHolder);
-    event UpdatedLicenceAmount(address _sender, uint _newFee);
+    event UpdatedLicenceAmount(address _sender, uint _newAmount);
 
     event TransferredToTokenHolder(address _from, address _to, address _asset, uint _amount);
     event TransferredToCryptoFloat(address _from, address _to, address _asset, uint _amount);

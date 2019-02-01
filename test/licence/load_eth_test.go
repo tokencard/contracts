@@ -19,11 +19,11 @@ var _ = Describe("load", func() {
     When("no value is sent 0", func() {
 
       It("Should revert", func() {
-  			tx, err := Licence.Load(RandomAccount.TransactOpts(ethertest.WithGasLimit(100000)), common.HexToAddress("0x0"), big.NewInt(1000))
+		tx, err := Licence.Load(RandomAccount.TransactOpts(ethertest.WithGasLimit(100000)), common.HexToAddress("0x0"), big.NewInt(1000))
         Expect(err).ToNot(HaveOccurred())
-  			Backend.Commit()
-  			Expect(isGasExhausted(tx, 100000)).To(BeFalse())
-  			Expect(isSuccessful(tx)).To(BeFalse())
+		Backend.Commit()
+		Expect(isGasExhausted(tx, 100000)).To(BeFalse())
+		Expect(isSuccessful(tx)).To(BeFalse())
   		})
     })
 
@@ -42,33 +42,33 @@ var _ = Describe("load", func() {
     When("the amount sent is 101 ETH", func() {
 
       BeforeEach(func() {
-  			tx, err := Licence.Load(RandomAccount.TransactOpts(ethertest.WithValue(EthToWei(101))), common.HexToAddress("0x0"), EthToWei(101))
+		tx, err := Licence.Load(RandomAccount.TransactOpts(ethertest.WithValue(EthToWei(101))), common.HexToAddress("0x0"), EthToWei(101))
         Expect(err).ToNot(HaveOccurred())
-  			Backend.Commit()
-  			Expect(isGasExhausted(tx, 100000)).To(BeFalse())
-  			Expect(isSuccessful(tx)).To(BeTrue())
+		Backend.Commit()
+		Expect(isGasExhausted(tx, 100000)).To(BeFalse())
+		Expect(isSuccessful(tx)).To(BeTrue())
   		})
 
       It("Should emit a TransferredToTokenHolder event", func() {
-  			it, err := Licence.FilterTransferredToTokenHolder(nil)
-  			Expect(err).ToNot(HaveOccurred())
-  			Expect(it.Next()).To(BeTrue())
-  			evt := it.Event
-  			Expect(it.Next()).To(BeFalse())
+		it, err := Licence.FilterTransferredToTokenHolder(nil)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(it.Next()).To(BeTrue())
+		evt := it.Event
+		Expect(it.Next()).To(BeFalse())
         Expect(evt.From).To(Equal(RandomAccount.Address()))
-  			Expect(evt.To).To(Equal(TokenHolderAddress))
+		Expect(evt.To).To(Equal(TokenHolderAddress))
         Expect(evt.Asset).To(Equal(common.HexToAddress("0x0"))) //represents ETH
         Expect(evt.Amount.String()).To(Equal(EthToWei(1).String()))
   		})
 
       It("Should emit a TransferredToCryptoFloat event", func() {
-  			it, err := Licence.FilterTransferredToCryptoFloat(nil)
-  			Expect(err).ToNot(HaveOccurred())
-  			Expect(it.Next()).To(BeTrue())
-  			evt := it.Event
-  			Expect(it.Next()).To(BeFalse())
+		it, err := Licence.FilterTransferredToCryptoFloat(nil)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(it.Next()).To(BeTrue())
+		evt := it.Event
+		Expect(it.Next()).To(BeFalse())
         Expect(evt.From).To(Equal(RandomAccount.Address()))
-  			Expect(evt.To).To(Equal(CryptoFloatAddress))
+		Expect(evt.To).To(Equal(CryptoFloatAddress))
         Expect(evt.Asset).To(Equal(common.HexToAddress("0x0"))) //represents ETH
         Expect(evt.Amount.String()).To(Equal(EthToWei(100).String()))
   		})
@@ -89,40 +89,40 @@ var _ = Describe("load", func() {
 
     When("the amount sent is 101 ETH + 1 wei", func() {
 
-      var fee *big.Int
+      var amount *big.Int
 
       BeforeEach(func() {
         v := big.NewInt(1) //value
         a := big.NewInt(1) //amount
-  			tx, err := Licence.Load(RandomAccount.TransactOpts(ethertest.WithValue(v.Add(v,EthToWei(101)))), common.HexToAddress("0x0"), a.Add(a,EthToWei(101)))
+		tx, err := Licence.Load(RandomAccount.TransactOpts(ethertest.WithValue(v.Add(v,EthToWei(101)))), common.HexToAddress("0x0"), a.Add(a,EthToWei(101)))
         Expect(err).ToNot(HaveOccurred())
-  			Backend.Commit()
-  			Expect(isGasExhausted(tx, 100000)).To(BeFalse())
-  			Expect(isSuccessful(tx)).To(BeTrue())
+		Backend.Commit()
+		Expect(isGasExhausted(tx, 100000)).To(BeFalse())
+		Expect(isSuccessful(tx)).To(BeTrue())
   		})
 
       It("Should emit a TransferredToTokenHolder event", func() {
-  			it, err := Licence.FilterTransferredToTokenHolder(nil)
-  			Expect(err).ToNot(HaveOccurred())
-  			Expect(it.Next()).To(BeTrue())
-  			evt := it.Event
-  			Expect(it.Next()).To(BeFalse())
+		it, err := Licence.FilterTransferredToTokenHolder(nil)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(it.Next()).To(BeTrue())
+		evt := it.Event
+		Expect(it.Next()).To(BeFalse())
         Expect(evt.From).To(Equal(RandomAccount.Address()))
-  			Expect(evt.To).To(Equal(TokenHolderAddress))
+		Expect(evt.To).To(Equal(TokenHolderAddress))
         Expect(evt.Asset).To(Equal(common.HexToAddress("0x0"))) //represents ETH
-        fee = EthToWei(1)
-        fee.Add(fee,big.NewInt(1))
-        Expect(evt.Amount.String()).To(Equal(fee.String()))
+        amount = EthToWei(1)
+        amount.Add(amount,big.NewInt(1))
+        Expect(evt.Amount.String()).To(Equal(amount.String()))
   		})
 
       It("Should emit a TransferredToCryptoFloat event", func() {
-  			it, err := Licence.FilterTransferredToCryptoFloat(nil)
-  			Expect(err).ToNot(HaveOccurred())
-  			Expect(it.Next()).To(BeTrue())
-  			evt := it.Event
-  			Expect(it.Next()).To(BeFalse())
+		it, err := Licence.FilterTransferredToCryptoFloat(nil)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(it.Next()).To(BeTrue())
+		evt := it.Event
+		Expect(it.Next()).To(BeFalse())
         Expect(evt.From).To(Equal(RandomAccount.Address()))
-  			Expect(evt.To).To(Equal(CryptoFloatAddress))
+		Expect(evt.To).To(Equal(CryptoFloatAddress))
         Expect(evt.Asset).To(Equal(common.HexToAddress("0x0"))) //represents ETH
         Expect(evt.Amount.String()).To(Equal(EthToWei(100).String()))
   		})
@@ -130,7 +130,7 @@ var _ = Describe("load", func() {
       It("should increase the ETH balance of the holder contract address by 1 ETH + 1 wei", func() {
         b, e := Backend.BalanceAt(context.Background(), TokenHolderAddress, nil)
         Expect(e).ToNot(HaveOccurred())
-        Expect(b.String()).To(Equal(fee.String()))
+        Expect(b.String()).To(Equal(amount.String()))
       })
 
       It("should increase the ETH balance of the holder contract address by 100 ETH", func() {
@@ -144,33 +144,33 @@ var _ = Describe("load", func() {
     When("the amount sent is 2 wei", func() {
 
       BeforeEach(func() {
-  			tx, err := Licence.Load(RandomAccount.TransactOpts(ethertest.WithValue(big.NewInt(2))), common.HexToAddress("0x0"), big.NewInt(2))
+		tx, err := Licence.Load(RandomAccount.TransactOpts(ethertest.WithValue(big.NewInt(2))), common.HexToAddress("0x0"), big.NewInt(2))
         Expect(err).ToNot(HaveOccurred())
-  			Backend.Commit()
-  			Expect(isGasExhausted(tx, 100000)).To(BeFalse())
-  			Expect(isSuccessful(tx)).To(BeTrue())
+		Backend.Commit()
+		Expect(isGasExhausted(tx, 100000)).To(BeFalse())
+		Expect(isSuccessful(tx)).To(BeTrue())
   		})
 
       It("Should emit a TransferredToTokenHolder event", func() {
-  			it, err := Licence.FilterTransferredToTokenHolder(nil)
-  			Expect(err).ToNot(HaveOccurred())
-  			Expect(it.Next()).To(BeTrue())
-  			evt := it.Event
-  			Expect(it.Next()).To(BeFalse())
+		it, err := Licence.FilterTransferredToTokenHolder(nil)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(it.Next()).To(BeTrue())
+		evt := it.Event
+		Expect(it.Next()).To(BeFalse())
         Expect(evt.From).To(Equal(RandomAccount.Address()))
-  			Expect(evt.To).To(Equal(TokenHolderAddress))
+		Expect(evt.To).To(Equal(TokenHolderAddress))
         Expect(evt.Asset).To(Equal(common.HexToAddress("0x0"))) //represents ETH
         Expect(evt.Amount.String()).To(Equal(big.NewInt(1).String()))
   		})
 
       It("Should emit a TransferredToCryptoFloat event", func() {
-  			it, err := Licence.FilterTransferredToCryptoFloat(nil)
-  			Expect(err).ToNot(HaveOccurred())
-  			Expect(it.Next()).To(BeTrue())
-  			evt := it.Event
-  			Expect(it.Next()).To(BeFalse())
+		it, err := Licence.FilterTransferredToCryptoFloat(nil)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(it.Next()).To(BeTrue())
+		evt := it.Event
+		Expect(it.Next()).To(BeFalse())
         Expect(evt.From).To(Equal(RandomAccount.Address()))
-  			Expect(evt.To).To(Equal(CryptoFloatAddress))
+		Expect(evt.To).To(Equal(CryptoFloatAddress))
         Expect(evt.Asset).To(Equal(common.HexToAddress("0x0"))) //represents ETH
         Expect(evt.Amount.String()).To(Equal(big.NewInt(1).String()))
   		})
@@ -190,40 +190,40 @@ var _ = Describe("load", func() {
 
     When("the amount sent is 101 ETH + 9 wei", func() {
 
-      var fee, transferAmount *big.Int
+      var amount, transferAmount *big.Int
 
       BeforeEach(func() {
         v := big.NewInt(9) //value
         a := big.NewInt(9) //amount
   			tx, err := Licence.Load(RandomAccount.TransactOpts(ethertest.WithValue(v.Add(v,EthToWei(101)))), common.HexToAddress("0x0"), a.Add(a,EthToWei(101)))
         Expect(err).ToNot(HaveOccurred())
-  			Backend.Commit()
-  			Expect(isGasExhausted(tx, 100000)).To(BeFalse())
-  			Expect(isSuccessful(tx)).To(BeTrue())
-  		})
+		Backend.Commit()
+		Expect(isGasExhausted(tx, 100000)).To(BeFalse())
+		Expect(isSuccessful(tx)).To(BeTrue())
+    })
 
       It("Should emit a TransferredToTokenHolder event", func() {
-  			it, err := Licence.FilterTransferredToTokenHolder(nil)
-  			Expect(err).ToNot(HaveOccurred())
-  			Expect(it.Next()).To(BeTrue())
-  			evt := it.Event
-  			Expect(it.Next()).To(BeFalse())
+    	it, err := Licence.FilterTransferredToTokenHolder(nil)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(it.Next()).To(BeTrue())
+		evt := it.Event
+		Expect(it.Next()).To(BeFalse())
         Expect(evt.From).To(Equal(RandomAccount.Address()))
-  			Expect(evt.To).To(Equal(TokenHolderAddress))
+		Expect(evt.To).To(Equal(TokenHolderAddress))
         Expect(evt.Asset).To(Equal(common.HexToAddress("0x0"))) //represents ETH
-        fee = EthToWei(1)
-        fee.Add(fee,big.NewInt(1))
-        Expect(evt.Amount.String()).To(Equal(fee.String()))
+        amount = EthToWei(1)
+        amount.Add(amount,big.NewInt(1))
+        Expect(evt.Amount.String()).To(Equal(amount.String()))
   		})
 
       It("Should emit a TransferredToCryptoFloat event", func() {
-  			it, err := Licence.FilterTransferredToCryptoFloat(nil)
-  			Expect(err).ToNot(HaveOccurred())
-  			Expect(it.Next()).To(BeTrue())
-  			evt := it.Event
-  			Expect(it.Next()).To(BeFalse())
+  		it, err := Licence.FilterTransferredToCryptoFloat(nil)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(it.Next()).To(BeTrue())
+		evt := it.Event
+		Expect(it.Next()).To(BeFalse())
         Expect(evt.From).To(Equal(RandomAccount.Address()))
-  			Expect(evt.To).To(Equal(CryptoFloatAddress))
+		Expect(evt.To).To(Equal(CryptoFloatAddress))
         Expect(evt.Asset).To(Equal(common.HexToAddress("0x0"))) //represents ETH
         transferAmount = EthToWei(100)
         transferAmount.Add(transferAmount,big.NewInt(8))
@@ -233,7 +233,7 @@ var _ = Describe("load", func() {
       It("should increase the ETH balance of the holder contract address by 1 ETH + 1 wei", func() {
         b, e := Backend.BalanceAt(context.Background(), TokenHolderAddress, nil)
         Expect(e).ToNot(HaveOccurred())
-        Expect(b.String()).To(Equal(fee.String()))
+        Expect(b.String()).To(Equal(amount.String()))
       })
 
       It("should increase the ETH balance of the holder contract address by 100 ETH + 8 wei", func() {

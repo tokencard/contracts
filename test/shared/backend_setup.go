@@ -8,6 +8,9 @@ import (
 	"strings"
 	"time"
 
+	"golang.org/x/crypto/sha3"
+	. "github.com/onsi/gomega"
+	"encoding/hex"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/crypto"
@@ -58,6 +61,18 @@ func EnsNode(name string) common.Hash {
 	}
 	parentNode, parentLabel := EnsParentNode(name)
 	return crypto.Keccak256Hash(parentNode[:], parentLabel[:])
+}
+
+func stringToHashString(url string) string {
+	sha := sha3.NewLegacyKeccak256()
+	_, err := sha.Write([]byte(url))
+	Expect(err).ToNot(HaveOccurred())
+
+	idSlice := sha.Sum(nil)
+	Expect(len(idSlice)).To(Equal(32))
+
+	return hex.EncodeToString(idSlice)
+
 }
 
 var ENSResolver *ens.PublicResolver
@@ -402,7 +417,8 @@ func InitializeBackend() error {
 	}
 
 	// Deploy the Token licence contract.
-	LicenceAddress, tx, Licence, err = bindings.DeployLicence(BankAccount.TransactOpts(), Backend, Owner.Address(), true, big.NewInt(10), common.HexToAddress("0x0"), TokenHolderAddress)
+	CryptoFloatAddress = common.HexToAddress(stringToHashString("CryptoFloatAddress"))
+	LicenceAddress, tx, Licence, err = bindings.DeployLicence(BankAccount.TransactOpts(), Backend, Owner.Address(), true, big.NewInt(10), CryptoFloatAddress, TokenHolderAddress)
 	if err != nil {
 		return err
 	}
