@@ -98,6 +98,7 @@ var TKNAddress common.Address
 
 var OracleName = EnsNode("oracle.tokencard.eth")
 var ControllerName = EnsNode("controller.tokencard.eth")
+var LicenceName = EnsNode("licence.tokencard.eth")
 
 var Owner *ethertest.Account
 var Controller *ethertest.Account
@@ -364,6 +365,42 @@ func InitializeBackend() error {
 		}
 	}
 
+	LicenceAddress, tx, Licence, err = bindings.DeployLicence(BankAccount.TransactOpts(), Backend, BankAccount.Address(), true, big.NewInt(10), common.HexToAddress("0x0"), common.HexToAddress("0x0"))
+
+	if err != nil {
+		return err
+	}
+	Backend.Commit()
+	err = verifyTransaction(tx)
+	if err != nil {
+		return errors.Wrap(err, "deploying licence contract")
+	}
+
+	{
+		// Register licence with ENS
+		// TODO we need to deploy the licence contract first
+
+		tx, err = ENSRegistry.SetResolver(BankAccount.TransactOpts(), LicenceName, ENSResolverAddress)
+		if err != nil {
+			return err
+		}
+		Backend.Commit()
+		err = verifyTransaction(tx)
+		if err != nil {
+			return errors.Wrap(err, "setting licence ENS node resolver")
+		}
+
+		tx, err = ENSResolver.SetAddr(BankAccount.TransactOpts(), LicenceName, LicenceAddress)
+		if err != nil {
+			return err
+		}
+		Backend.Commit()
+		err = verifyTransaction(tx)
+		if err != nil {
+			return errors.Wrap(err, "setting licence ENS node resolver's target address")
+		}
+	}
+
 	err = BankAccount.Transfer(Backend, Controller.Address(), EthToWei(1))
 	if err != nil {
 		return errors.Wrap(err, "crediting controller account with ETH")
@@ -399,7 +436,6 @@ func InitializeBackend() error {
 		return errors.Wrap(err, "updating TKN token rate")
 	}
 
-
 	TKNBurnerAddress, tx, TKNBurner, err = bindings.DeployToken(Controller.TransactOpts(), Backend)
 	if err != nil {
 		return err
@@ -421,7 +457,7 @@ func InitializeBackend() error {
 	}
 
 	CryptoFloatAddress = common.HexToAddress("0x123456789")
-	LicenceAddress, tx, Licence, err = bindings.DeployLicence(BankAccount.TransactOpts(), Backend, Controller.Address(), true, big.NewInt(1), CryptoFloatAddress, TokenHolderAddress)//FIX ME: random should become CryptoFloat contract
+	LicenceAddress, tx, Licence, err = bindings.DeployLicence(BankAccount.TransactOpts(), Backend, Controller.Address(), true, big.NewInt(1), CryptoFloatAddress, TokenHolderAddress) //FIX ME: random should become CryptoFloat contract
 	if err != nil {
 		return err
 	}
@@ -431,7 +467,7 @@ func InitializeBackend() error {
 		return errors.Wrap(err, "deploying licence contract")
 	}
 
-	WalletAddress, tx, Wallet, err = bindings.DeployWallet(BankAccount.TransactOpts(), Backend, Owner.Address(), true, ENSRegistryAddress, OracleName, ControllerName, EthToWei(100), LicenceAddress)
+	WalletAddress, tx, Wallet, err = bindings.DeployWallet(BankAccount.TransactOpts(), Backend, Owner.Address(), true, ENSRegistryAddress, OracleName, ControllerName, LicenceName, EthToWei(100))
 	if err != nil {
 		return err
 	}
