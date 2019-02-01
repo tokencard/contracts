@@ -7,7 +7,6 @@ import "./internals/ownable.sol";
 /// @title ILicence interface describes methods for loading a TokenCard and updating licence amount.
 interface ILicence {
     function load(address, uint) external payable returns (bool);
-
     function updateLicenceAmount(uint) external;
 }
 
@@ -25,7 +24,7 @@ contract Licence is Ownable {
     event UpdatedLicenceDAO(address _sender, address _newDAO);
     event UpdatedCryptoFloat(address _sender, address _newFloat);
     event UpdatedTokenHolder(address _sender, address _newHolder);
-    event UpdatedLicenceAmount(address _sender, uint _newFee);
+    event UpdatedLicenceAmount(address _sender, uint _newAmount);
 
     event TransferredToTokenHolder(address _from, address _to, address _asset, uint _amount);
     event TransferredToCryptoFloat(address _from, address _to, address _asset, uint _amount);

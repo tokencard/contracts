@@ -27,7 +27,7 @@ func init() {
 		 "../../contracts")
 
 	 TestRig.AddCoverageForContracts(
- 		"../../build/TKN/combined.json",
+ 		"../../build/tkn/combined.json",
  		 "../../contracts")
 }
 
@@ -65,7 +65,7 @@ var _ = BeforeEach(func() {
 
 var _ = AfterSuite(func() {
 	TestRig.ExpectMinimumCoverage("holder.sol", 0.00)
-	TestRig.ExpectMinimumCoverage("TKN.sol", 10.00)
+	TestRig.ExpectMinimumCoverage("tkn.sol", 10.00)
 	TestRig.PrintGasUsage(os.Stdout)
 })
 
