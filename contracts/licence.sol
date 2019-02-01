@@ -30,7 +30,8 @@ contract Licence is Ownable {
   event TransferredToTokenHolder(address _from, address _to, address _asset, uint _amount);
   event TransferredToCryptoFloat(address _from, address _to, address _asset, uint _amount);
 
-  uint constant public MAX_FEE_FACTOR = 1000;
+  /// @dev This is 100% scaled up by a factor of 10 to give us 1 decimal place of precision
+  uint constant public MAX_AMOUNT_SCALED = 1000;
 
   address constant private TKN = 0xaaaf91d9b90df800df4f55c205fd6989c977e73a; // solium-disable-line uppercase
 
@@ -40,7 +41,9 @@ contract Licence is Ownable {
   bool private _lockedCryptoFloat;
   bool private _lockedTokenHolder;
 
-  uint private _feeFactor;
+  /// @dev This is the _licenceAmountScaled by a factor of 10
+  /// i.e. 1% is 10 _licenceAmountScaled, 0.1% is 1 _licenceAmountScaled
+  uint private _licenceAmountScaled;
 
   /// @dev IDAO is an interface to a DAO contract that can update the licence contract.
   IDAO public DAO;
@@ -58,7 +61,7 @@ contract Licence is Ownable {
   /// @param _float is the address of the multi-sig cryptocurrency float contract.
   /// @param _holder is the address of the token holder contract
   constructor(address _owner, bool _transferable, uint _fee, address _float, address _holder) Ownable(_owner, _transferable) public {
-      _feeFactor = _fee;
+      _licenceAmountScaled = _fee;
       _cryptoFloat = _float;
       _tokenHolder = _holder;
   }
@@ -69,9 +72,9 @@ contract Licence is Ownable {
       emit Received(msg.sender, msg.value);
   }
 
-  /// @return the fee factor used to calculate how to split the amount sent to load() function.
-  function feeFactor() external view returns (uint) {
-    return _feeFactor;
+  /// @return the scaled licence amount, used to calculate the split when loading.
+  function licenceAmountScaled() external view returns (uint) {
+    return _licenceAmountScaled;
   }
 
   /// @return the address of the multi-sig cryptocurrency float contract.
@@ -129,8 +132,8 @@ contract Licence is Ownable {
 
   /// @dev Updates the card licence fee.
   function updateFee(uint _newFee) external onlyDAO {
-      require(1 <= _newFee && _newFee <= MAX_FEE_FACTOR, "fee out of range"); // TODO(daniel): same as below, not sure if using percentages inside solidity is the optimal solution.
-      _feeFactor = _newFee;
+      require(1 <= _newFee && _newFee <= MAX_AMOUNT_SCALED, "fee out of range"); // TODO(daniel): same as below, not sure if using percentages inside solidity is the optimal solution.
+      _licenceAmountScaled = _newFee;
       emit UpdatedFee(address(DAO), _newFee);
   }
 
@@ -142,9 +145,8 @@ contract Licence is Ownable {
       // If TKN then no licence to be paid
       if (_asset == TKN) {
           require(ERC20(_asset).transferFrom(msg.sender, _cryptoFloat, _amount), "TKN transfer from external account was unsuccessful");
-
       } else {
-          loadAmount = _amount.mul(MAX_FEE_FACTOR).div(_feeFactor + MAX_FEE_FACTOR);
+          loadAmount = _amount.mul(MAX_AMOUNT_SCALED).div(_licenceAmountScaled + MAX_AMOUNT_SCALED);
           uint fee = _amount.sub(loadAmount);
     
           if (_asset != address(0)) {
