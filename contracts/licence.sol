@@ -96,6 +96,7 @@ contract Licence is Ownable {
 
   function holderLocked() public view returns (bool){
     return _lockedTokenHolder;
+  }
 
   /// @return the address of the DAO contract.
   function DAO() external view returns (address) {
