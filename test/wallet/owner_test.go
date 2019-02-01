@@ -48,8 +48,8 @@ var _ = Describe("ownable", func() {
 				ENSRegistryAddress,
 				OracleName,
 				ControllerName,
+				LicenceName,
 				EthToWei(100),
-				LicenceAddress,
 			)
 			Expect(err).ToNot(HaveOccurred())
 			Backend.Commit()
