@@ -146,6 +146,7 @@ contract Licence is Ownable {
     /// @dev Load the holder and float contracts based on the licence amount and asset amount.
     /// @param _asset is the address of an ERC20 token or 0x0 for ether.
     /// @param _amount is the amount of assets to be transferred including the licence amount.
+    // TODO(mythril) Is this an issue?: Warning: This contract executes a message call to an address provided as a function argument. Generally, it is not recommended to call user-supplied addresses using Solidity's call() construct. Note that attackers might leverage reentrancy attacks to exploit race conditions or manipulate this contract's state.
     function load(address _asset, uint _amount) external payable {
         uint loadAmount = _amount;
         // If TKN then no licence to be paid
