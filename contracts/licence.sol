@@ -137,7 +137,7 @@ contract Licence is Ownable {
     }
 
     /// @dev Updates the address of the DAO contract.
-    /// @param _newHolder This is the new address for the Licence DAO
+    /// @param _newDAO This is the new address for the Licence DAO
     function updateLicenceDAO(address _newDAO) external onlyOwner {
         require(!licenceDAOLocked(), "DAO is locked");
         _licenceDAO = _newDAO;
