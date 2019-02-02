@@ -1,4 +1,4 @@
-package externals_test
+package internals_test
 
 import (
 	"errors"
