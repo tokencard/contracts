@@ -25,6 +25,7 @@ pragma solidity ^0.4.25;
 /// https://github.com/OpenZeppelin/openzeppelin-solidity/blob/master/contracts/ownership/Ownable.sol
 contract Ownable {
     event TransferredOwnership(address _from, address _to);
+    event LockedOwnership(address _locked);
 
     address private _owner;
     bool private _isTransferable;
@@ -33,6 +34,10 @@ contract Ownable {
     constructor(address _account, bool _transferable) internal {
         _owner = _account;
         _isTransferable = _transferable;
+        // Emit the LockedOwnership event if no longer transferable.
+        if (!_transferable) {
+            emit LockedOwnership(_account);
+        }
         emit TransferredOwnership(address(0), _account);
     }
 
@@ -50,8 +55,12 @@ contract Ownable {
         require(_isTransferable, "ownership is not transferable");
         // Require that the new owner is not the zero address.
         require(_account != address(0), "owner cannot be set to zero address");
-        // Set the transferable flag.
+        // Set the transferable flag to the value _transferable passed in.
         _isTransferable = _transferable;
+        // Emit the LockedOwnership event if no longer transferable.
+        if (!_transferable) {
+            emit LockedOwnership(_account);
+        }
         // Emit the ownership transfer event.
         emit TransferredOwnership(_owner, _account);
         // Set the owner to the provided address.
