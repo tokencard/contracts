@@ -6,29 +6,22 @@ import (
 	"os"
 	"testing"
 
+	"github.com/ethereum/go-ethereum/core/types"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	"github.com/tokencard/contracts/pkg/bindings/mocks"
-	"github.com/ethereum/go-ethereum/common"
 	"github.com/tokencard/contracts/pkg/bindings"
-	"github.com/ethereum/go-ethereum/core/types"
+	"github.com/tokencard/contracts/pkg/bindings/mocks"
 	. "github.com/tokencard/contracts/test/shared"
 )
-
-var ERC20Contract1 *mocks.Token
-var ERC20Contract1Address common.Address
-
-var ERC20Contract2 *mocks.Token
-var ERC20Contract2Address common.Address
 
 func init() {
 	TestRig.AddCoverageForContracts(
 		"../../build/holder/combined.json",
-		 "../../contracts")
+		"../../contracts")
 
-	 TestRig.AddCoverageForContracts(
- 		"../../build/tkn/combined.json",
- 		 "../../contracts")
+	TestRig.AddCoverageForContracts(
+		"../../build/tkn/combined.json",
+		"../../contracts")
 }
 
 func TestHolderSuite(t *testing.T) {
