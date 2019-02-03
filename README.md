@@ -40,7 +40,7 @@ Each user deploys their own instance of the *Consumer Contract Wallet* ([wallet.
 ## Requirements
 
 - This `Address` will own all of the user’s Smart Contracts and will be referred to as the *Owner*, this is sometime referred to as an Externally Owned Address
-- The `Controller` - Is a set of Addresses, owned and operated by Token Group, used to provide services to the end user
+- The `Controller` - Is a set of Addresses, owned and operated by Token Group Ltd, used to provide services to the end user
 - The *Consumer Contract Wallet* needs to allow its *Owner* to configure how they wish to secure their tokens in their wallet.
 - There needs to be a convenient way to "top-up" the amount of ETH that lives on our user’s `Address` aka *Gas Tank* via the Smart Contracts
 - The design of the Wallet needs to be as decentralised as possible. This will be achieved by eliminating access to user assets by third-parties and minimising reliance of third-party infrastructure in running the *Consumer Contract Wallet*.
