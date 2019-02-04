@@ -29,6 +29,8 @@ contract Licence is Ownable {
     event TransferredToTokenHolder(address _from, address _to, address _asset, uint _amount);
     event TransferredToCryptoFloat(address _from, address _to, address _asset, uint _amount);
 
+    event LogTokenTransfer(address _asset, address _to, uint _amount);
+
     /// @dev This is 100% scaled up by a factor of 10 to give us an extra 1 decimal place of precision
     uint constant public MAX_AMOUNT_SCALE = 1000;
 
@@ -178,5 +180,20 @@ contract Licence is Ownable {
         }
 
         emit TransferredToCryptoFloat(msg.sender, _cryptoFloat, _asset, loadAmount);
+    }
+
+    /// @dev This fucntion is used to reclaim tokens send to the catchall public method.
+    /// @dev The method scoops up all of the said tokens and sends them to the ownerAddress
+    /// @param _asset is the address of an ERC20 token or 0x0 for ether.
+    function claimTokens(address _asset) onlyOwner {
+        address ownerAddress = owner();
+        if (_asset == 0x0) {
+            ownerAddress.transfer(this.balance);
+        } else {
+            ERC20 erc20 = ERC20(_asset);
+            uint balance = erc20.balanceOf(this);
+            erc20.transfer(ownerAddress, balance);
+        }
+        LogTokenTransfer(_asset, ownerAddress, balance);
     }
 }
