@@ -23,9 +23,9 @@ import "./internals/claimable.sol";
 import "./internals/date.sol";
 import "./internals/json.sol";
 import "./internals/parseIntScientific.sol";
-import "./externals/strings.sol";
 import "./externals/SafeMath.sol";
 import "./externals/base64.sol";
+import "./token-whitelist.sol";
 
 
 /// @title Oracle converts ERC20 token amounts into equivalent ether amounts based on cryptocurrency exchange rates.
@@ -44,8 +44,6 @@ contract Oracle is usingOraclize, Claimable, Base64, Date, JSON, Controllable, P
     /*     Events     */
     /*****************/
 
-    event AddedToken(address _sender, address _token, string _symbol, uint _magnitude);
-    event RemovedToken(address _sender, address _token);
     event UpdatedTokenRate(address _sender, address _token, uint _rate);
 
     event SetGasPrice(address _sender, uint _gasPrice);
@@ -70,17 +68,6 @@ contract Oracle is usingOraclize, Claimable, Base64, Date, JSON, Controllable, P
     uint constant private DIGEST_OFFSET = HEADERS_LEN - DIGEST_BASE64_LEN; // the starting position of the result hash in the headers string.
 
     uint constant private MAX_BYTE_SIZE = 256; //for calculating length encoding
-
-    struct Token {
-        string symbol;    // Token symbol
-        uint magnitude;   // 10^decimals
-        uint rate;        // Token exchange rate in wei
-        uint lastUpdate;  // Time of the last rate update
-        bool exists;      // Flags if the struct is empty or not
-    }
-
-    mapping(address => Token) public tokens;
-    address[] private _tokenAddresses;
 
     bytes public APIPublicKey;
     mapping(bytes32 => address) private _queryToToken;
@@ -126,60 +113,7 @@ contract Oracle is usingOraclize, Claimable, Base64, Date, JSON, Controllable, P
 
     }
 
-    /// @dev Add ERC20 tokens to the list of supported tokens.
-    /// @param _tokens ERC20 token contract addresses.
-    /// @param _symbols ERC20 token names.
-    /// @param _magnitude 10 to the power of number of decimal places used by each ERC20 token.
-    /// @param _updateDate date for the token updates. This will be compared to when oracle updates are received.
-    function addTokens(address[] _tokens, bytes32[] _symbols, uint[] _magnitude, uint _updateDate) external onlyController {
-        // Require that all parameters have the same length.
-        require(_tokens.length == _symbols.length && _tokens.length == _magnitude.length, "parameter lengths do not match");
-        // Add each token to the list of supported tokens.
-        for (uint i = 0; i < _tokens.length; i++) {
-            // Require that the token doesn't already exist.
-            address token = _tokens[i];
-            require(!tokens[token].exists, "token already exists");
-            // Store the intermediate values.
-            string memory symbol = _symbols[i].toSliceB32().toString();
-            uint magnitude = _magnitude[i];
-            // Add the token to the token list.
-            tokens[token] = Token({
-                symbol : symbol,
-                magnitude : magnitude,
-                rate : 0,
-                exists : true,
-                lastUpdate : _updateDate
-                });
-            // Add the token address to the address list.
-            _tokenAddresses.push(token);
-            // Emit token addition event.
-            emit AddedToken(msg.sender, token, symbol, magnitude);
-        }
-    }
 
-    /// @dev Remove ERC20 tokens from the list of supported tokens.
-    /// @param _tokens ERC20 token contract addresses.
-    function removeTokens(address[] _tokens) external onlyController {
-        // Delete each token object from the list of supported tokens based on the addresses provided.
-        for (uint i = 0; i < _tokens.length; i++) {
-            //token must exist, reverts on duplicates as well
-            require(tokens[_tokens[i]].exists, "token does not exist");
-            // Store the token address.
-            address token = _tokens[i];
-            // Delete the token object.
-            delete tokens[token];
-            // Remove the token address from the address list.
-            for (uint j = 0; j < _tokenAddresses.length.sub(1); j++) {
-                if (_tokenAddresses[j] == token) {
-                    _tokenAddresses[j] = _tokenAddresses[_tokenAddresses.length.sub(1)];
-                    break;
-                }
-            }
-            _tokenAddresses.length--;
-            // Emit token removal event.
-            emit RemovedToken(msg.sender, token);
-        }
-    }
 
     /// @dev Update ERC20 token exchange rate manually.
     /// @param _token ERC20 token contract address.
