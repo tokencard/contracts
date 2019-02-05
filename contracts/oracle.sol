@@ -106,7 +106,7 @@ contract Oracle is usingOraclize, Claimable, Base64, Date, JSON, Controllable, P
             // return the value and a 'true' implying that the token is protected
             return (true, _amount.mul(rate).div(magnitude));
         }
-        // this returns a 'false' to imply that a card is not protected 
+        // this returns a 'false' to imply that a card is not protected
         return (false, 0);
 
     }
