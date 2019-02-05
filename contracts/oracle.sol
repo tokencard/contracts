@@ -173,7 +173,7 @@ contract Oracle is usingOraclize, Claimable, Base64, Date, JSON, Controllable, P
             // Create a new oraclize query for each supported token.
             for (uint i = 0; i < tokenAddresses.length; i++) {
                 // Store the token symbol used in the query.
-                (string memory symbol, uint256 magnitude, uint256 rate, bool available, bool loadable, uint256 lastUpdate) = _getTokenInfo(tokenAddresses[i]);
+                (string memory symbol, , , , , ) = _getTokenInfo(tokenAddresses[i]);
 
                 strings.slice memory sym = symbol.toSlice();
                 // Create a new oraclize query from the component strings.
