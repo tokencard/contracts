@@ -19,6 +19,7 @@
 pragma solidity ^0.4.25;
 
 import "./internals/controllable.sol";
+import "./internals/claimable.sol";
 import "./internals/date.sol";
 import "./internals/json.sol";
 import "./internals/parseIntScientific.sol";
@@ -34,7 +35,7 @@ interface IOracle {
 
 
 /// @title Oracle provides asset exchange rates and conversion functionality.
-contract Oracle is usingOraclize, Base64, Date, JSON, Controllable, ParseIntScientific, IOracle {
+contract Oracle is usingOraclize, Claimable, Base64, Date, JSON, Controllable, ParseIntScientific, IOracle {
     using strings for *;
     using SafeMath for uint256;
 
@@ -201,9 +202,9 @@ contract Oracle is usingOraclize, Base64, Date, JSON, Controllable, ParseIntScie
         _updateTokenRates(_gasLimit);
     }
 
-    //// @dev Withdraw ether from the smart contract to the specified account.
-    function withdraw(address _to, uint _amount) external onlyController {
-        _to.transfer(_amount);
+    //// @dev Withdraw tokens from the smart contract to the specified account.
+    function claim(address _to, address _asset, uint _amount) external onlyController {
+        _claim(_to, _asset, _amount);
     }
 
     //// @dev Handle Oraclize query callback and verifiy the provided origin proof.

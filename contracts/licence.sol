@@ -3,6 +3,7 @@ pragma solidity ^0.4.25;
 import "./externals/SafeMath.sol";
 import "./externals/ERC20.sol";
 import "./internals/ownable.sol";
+import "./internals/claimable.sol";
 
 /// @title ILicence interface describes methods for loading a TokenCard and updating licence amount.
 interface ILicence {
@@ -11,7 +12,7 @@ interface ILicence {
 }
 
 /// @title Licence loads the TokenCard and transfers the licence amout to the token holder contract.
-contract Licence is Ownable {
+contract Licence is Claimable, Ownable {
 
     using SafeMath for uint256;
 
@@ -28,6 +29,8 @@ contract Licence is Ownable {
 
     event TransferredToTokenHolder(address _from, address _to, address _asset, uint _amount);
     event TransferredToCryptoFloat(address _from, address _to, address _asset, uint _amount);
+
+    event LogTokenTransfer(address _asset, address _to, uint _amount);
 
     /// @dev This is 100% scaled up by a factor of 10 to give us an extra 1 decimal place of precision
     uint constant public MAX_AMOUNT_SCALE = 1000;
@@ -178,5 +181,10 @@ contract Licence is Ownable {
         }
 
         emit TransferredToCryptoFloat(msg.sender, _cryptoFloat, _asset, loadAmount);
+    }
+
+    //// @dev Withdraw tokens from the smart contract to the specified account.
+    function claim(address _to, address _asset, uint _amount) external onlyOwner {
+        _claim(_to, _asset, _amount);
     }
 }
