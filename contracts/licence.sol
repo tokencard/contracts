@@ -3,6 +3,7 @@ pragma solidity ^0.4.25;
 import "./externals/SafeMath.sol";
 import "./externals/ERC20.sol";
 import "./internals/ownable.sol";
+import "./internals/claimable.sol";
 
 /// @title ILicence interface describes methods for loading a TokenCard and updating licence amount.
 interface ILicence {
@@ -11,7 +12,7 @@ interface ILicence {
 }
 
 /// @title Licence loads the TokenCard and transfers the licence amout to the token holder contract.
-contract Licence is Ownable {
+contract Licence is Claimable, Ownable {
 
     using SafeMath for uint256;
 
@@ -26,7 +27,6 @@ contract Licence is Ownable {
     event UpdatedTokenHolder(address _sender, address _newHolder);
     event UpdatedLicenceAmount(address _sender, uint _newAmount);
 
-    event Transferred(address _to, address _token, uint _amount);
     event TransferredToTokenHolder(address _from, address _to, address _asset, uint _amount);
     event TransferredToCryptoFloat(address _from, address _to, address _asset, uint _amount);
 
@@ -183,17 +183,8 @@ contract Licence is Ownable {
         emit TransferredToCryptoFloat(msg.sender, _cryptoFloat, _asset, loadAmount);
     }
 
-    /// @dev This fucntion is used to move tokens sent accidentally to this contract method.
-    /// @dev The owner can chose the new destination address
-    /// @param _to is the recipient's address.
-    /// @param _token is the address of an ERC20 token or 0x0 for ether.
-    /// @param _amount is the amount to be transferred in base units.
-    function withdrawTokens(address _to, address _token, uint _amount) onlyOwner {
-        if (_token == address(0)) {
-          _to.transfer(_amount);
-        } else {
-          require(ERC20(_token).transfer(_to, _amount), "ERC20 token transfer was unsuccessful");
-        }
-        emit Transferred(_to, _token, _amount);
+    //// @dev Withdraw tokens from the smart contract to the specified account.
+    function claim(address _to, address _asset, uint _amount) external onlyOwner {
+        _claim(_to, _asset, _amount);
     }
 }

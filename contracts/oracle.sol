@@ -19,6 +19,7 @@
 pragma solidity ^0.4.25;
 
 import "./internals/controllable.sol";
+import "./internals/claimable.sol";
 import "./internals/date.sol";
 import "./internals/json.sol";
 import "./internals/parseIntScientific.sol";
@@ -34,7 +35,7 @@ interface IOracle {
 
 
 /// @title Oracle provides asset exchange rates and conversion functionality.
-contract Oracle is usingOraclize, Base64, Date, JSON, Controllable, ParseIntScientific, IOracle {
+contract Oracle is usingOraclize, Claimable, Base64, Date, JSON, Controllable, ParseIntScientific, IOracle {
     using strings for *;
     using SafeMath for uint256;
 
