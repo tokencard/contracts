@@ -25,7 +25,7 @@ import "./internals/json.sol";
 import "./internals/parseIntScientific.sol";
 import "./externals/SafeMath.sol";
 import "./externals/base64.sol";
-import "./token-whitelist.sol";
+import "./token-whitelistable.sol";
 
 
 /// @title Oracle converts ERC20 token amounts into equivalent ether amounts based on cryptocurrency exchange rates.
@@ -35,7 +35,7 @@ interface IOracle {
 
 
 /// @title Oracle provides asset exchange rates and conversion functionality.
-contract Oracle is usingOraclize, Claimable, Base64, Date, JSON, Controllable, ParseIntScientific, IOracle {
+contract Oracle is usingOraclize, Claimable, Base64, Date, JSON, Controllable, ParseIntScientific, TokenWhitelistable, IOracle {
     using strings for *;
     using SafeMath for uint256;
 
@@ -43,8 +43,6 @@ contract Oracle is usingOraclize, Claimable, Base64, Date, JSON, Controllable, P
     /*******************/
     /*     Events     */
     /*****************/
-
-    event UpdatedTokenRate(address _sender, address _token, uint _rate);
 
     event SetGasPrice(address _sender, uint _gasPrice);
     event Converted(address _sender, address _token, uint _amount, uint _ether);
@@ -100,34 +98,17 @@ contract Oracle is usingOraclize, Claimable, Base64, Date, JSON, Controllable, P
     /// @param _amount amount of token in base units.
     function convert(address _token, uint _amount) external view returns (bool, uint) {
         // Store the token in memory to save map entry lookup gas.
-        Token storage token = tokens[_token];
+        (string memory symbol, uint256 magnitude, uint256 rate, bool available, bool loadable, uint256 lastUpdate) = _getTokenInfo(_token);
         // If the token exists require that its rate is not zero
-        if (token.exists) {
-            require(token.rate != 0, "token rate is 0");
+        if (available) {
+            require(rate != 0, "token rate is 0");
             // Safely convert the token amount to ether based on the exchange rate.
             // return the value and a 'true' implying that the token is protected
-            return (true, _amount.mul(token.rate).div(token.magnitude));
+            return (true, _amount.mul(rate).div(magnitude));
         }
         // this returns a 'false' to imply that a card is not protected
         return (false, 0);
 
-    }
-
-
-
-    /// @dev Update ERC20 token exchange rate manually.
-    /// @param _token ERC20 token contract address.
-    /// @param _rate ERC20 token exchange rate in wei.
-    /// @param _updateDate date for the token updates. This will be compared to when oracle updates are received.
-    function updateTokenRate(address _token, uint _rate, uint _updateDate) external onlyController {
-        // Require that the token exists.
-        require(tokens[_token].exists, "token does not exist");
-        // Update the token's rate.
-        tokens[_token].rate = _rate;
-        // Update the token's last update timestamp.
-        tokens[_token].lastUpdate = _updateDate;
-        // Emit the rate update event.
-        emit UpdatedTokenRate(msg.sender, _token, _rate);
     }
 
     /// @dev Update ERC20 token exchange rates for all supported tokens.
@@ -160,34 +141,35 @@ contract Oracle is usingOraclize, Claimable, Base64, Date, JSON, Controllable, P
         address _token = _queryToToken[_queryID];
         require(_token != address(0), "queryID matches to address 0");
         // Get the corresponding token object.
-        Token storage token = tokens[_token];
+        (string memory symbol, uint256 magnitude, uint256 rate, bool available, bool loadable, uint256 lastUpdate) = _getTokenInfo(_token);
 
         bool valid;
         uint timestamp;
-        (valid, timestamp) = _verifyProof(_result, _proof, APIPublicKey, token.lastUpdate);
+        (valid, timestamp) = _verifyProof(_result, _proof, APIPublicKey, lastUpdate);
 
         // Require that the proof is valid.
         if (valid) {
             // Parse the JSON result to get the rate in wei.
-            token.rate = _parseIntScientificWei(parseRate(_result));
+            uint256 parsedRate = _parseIntScientificWei(parseRate(_result));
             // Set the update time of the token rate.
-            token.lastUpdate = timestamp;
+            uint256 parsedLastUpdate = timestamp;
             // Remove query from the list.
             delete _queryToToken[_queryID];
-            // Emit the rate update event.
-            emit UpdatedTokenRate(msg.sender, _token, token.rate);
+
+            _updateTokenRate(_token, parsedRate, parsedLastUpdate);
         }
     }
 
     /// @dev Re-usable helper function that performs the Oraclize Query.
     //// @param _gasLimit the gas limit is passed, this is used for the Oraclize callback
     function _updateTokenRates(uint _gasLimit) private {
+        address[] memory tokenAddresses = _getTokenAddressArray();
         // Check if there are any existing tokens.
-        if (_tokenAddresses.length == 0) {
+        if (tokenAddresses.length == 0) {
             // Emit a query failure event.
             emit FailedUpdateRequest("no tokens");
             // Check if the contract has enough Ether to pay for the query.
-        } else if (oraclize_getPrice("URL") * _tokenAddresses.length > address(this).balance) {
+        } else if (oraclize_getPrice("URL") * tokenAddresses.length > address(this).balance) {
             // Emit a query failure event.
             emit FailedUpdateRequest("insufficient balance");
         } else {
@@ -196,15 +178,17 @@ contract Oracle is usingOraclize, Claimable, Base64, Date, JSON, Controllable, P
             strings.slice memory apiSuffix = "&tsyms=ETH&sign=true".toSlice();
 
             // Create a new oraclize query for each supported token.
-            for (uint i = 0; i < _tokenAddresses.length; i++) {
+            for (uint i = 0; i < tokenAddresses.length; i++) {
                 // Store the token symbol used in the query.
-                strings.slice memory symbol = tokens[_tokenAddresses[i]].symbol.toSlice();
+                (string memory symbol, uint256 magnitude, uint256 rate, bool available, bool loadable, uint256 lastUpdate) = _getTokenInfo(tokenAddresses[i]);
+
+                strings.slice memory sym = symbol.toSlice();
                 // Create a new oraclize query from the component strings.
-                bytes32 queryID = oraclize_query("URL", apiPrefix.concat(symbol).toSlice().concat(apiSuffix), _gasLimit);
+                bytes32 queryID = oraclize_query("URL", apiPrefix.concat(sym).toSlice().concat(apiSuffix), _gasLimit);
                 // Store the query ID together with the associated token address.
-                _queryToToken[queryID] = _tokenAddresses[i];
+                _queryToToken[queryID] = tokenAddresses[i];
                 // Emit the query success event.
-                emit RequestedUpdate(symbol.toString());
+                emit RequestedUpdate(sym.toString());
             }
         }
     }
@@ -229,9 +213,10 @@ contract Oracle is usingOraclize, Claimable, Base64, Date, JSON, Controllable, P
             // Create a new oraclize query for each supported token.
             for (uint i = 0; i < _tokenList.length; i++) {
                 //token must exist, revert if it doesn't
-                require(tokens[_tokenList[i]].exists, "token does not exist");
+                (string memory tokenSymbol, , , bool available , , ) = _getTokenInfo(_tokenList[i]);
+                require(available, "token must be available");
                 // Store the token symbol used in the query.
-                strings.slice memory symbol = tokens[_tokenList[i]].symbol.toSlice();
+                strings.slice memory symbol = tokenSymbol.toSlice();
                 // Create a new oraclize query from the component strings.
                 bytes32 queryID = oraclize_query("URL", apiPrefix.concat(symbol).toSlice().concat(apiSuffix), _gasLimit);
                 // Store the query ID together with the associated token address.
@@ -250,20 +235,23 @@ contract Oracle is usingOraclize, Claimable, Base64, Date, JSON, Controllable, P
     function _verifyProof(string _result, bytes _proof, bytes _publicKey, uint _lastUpdate) private returns (bool, uint) {
 
         //expecting fixed length proofs
-        if (_proof.length != PROOF_LEN)
+        if (_proof.length != PROOF_LEN) {
             revert("invalid proof length");
+        }
 
         //proof should be 65 bytes long: R (32 bytes) + S (32 bytes) + v (1 byte)
-        if (uint(_proof[1]) != ECDSA_SIG_LEN)
+        if (uint(_proof[1]) != ECDSA_SIG_LEN) {
             revert("invalid signature length");
+        }
 
         bytes memory signature = new bytes(ECDSA_SIG_LEN);
 
         signature = copyBytes(_proof, 2, ECDSA_SIG_LEN, signature, 0);
 
         // Extract the headers, big endian encoding of headers length
-        if (uint(_proof[ENCODING_BYTES + ECDSA_SIG_LEN]) * MAX_BYTE_SIZE + uint(_proof[ENCODING_BYTES + ECDSA_SIG_LEN + 1]) != HEADERS_LEN)
+        if (uint(_proof[ENCODING_BYTES + ECDSA_SIG_LEN]) * MAX_BYTE_SIZE + uint(_proof[ENCODING_BYTES + ECDSA_SIG_LEN + 1]) != HEADERS_LEN) {
             revert("invalid headers length");
+        }
 
         bytes memory headers = new bytes(HEADERS_LEN);
         headers = copyBytes(_proof, 2 * ENCODING_BYTES + ECDSA_SIG_LEN, HEADERS_LEN, headers, 0);
@@ -283,15 +271,17 @@ contract Oracle is usingOraclize, Claimable, Base64, Date, JSON, Controllable, P
         (dateValid, timestamp) = _verifyDate(string(dateHeader), _lastUpdate);
 
         // Check whether the date returned is valid or not
-        if (!dateValid)
+        if (!dateValid) {
             revert("invalid date");
+        }
 
         // Check if the signed digest hash matches the result hash.
         bytes memory digest = new bytes(DIGEST_BASE64_LEN);
         digest = copyBytes(headers, DIGEST_OFFSET, DIGEST_BASE64_LEN, digest, 0);
 
-        if (keccak256(abi.encodePacked(sha256(abi.encodePacked(_result)))) != keccak256(_base64decode(digest)))
+        if (keccak256(abi.encodePacked(sha256(abi.encodePacked(_result)))) != keccak256(_base64decode(digest))) {
             revert("result hash not matching");
+        }
 
         emit VerifiedProof(_publicKey, _result);
         return (true, timestamp);

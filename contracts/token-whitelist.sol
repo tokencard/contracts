@@ -19,16 +19,24 @@
 pragma solidity ^0.4.25;
 
 import "./internals/ownable.sol";
-import "./internals/controller.sol";
+import "./internals/controllable.sol";
 import "./externals/strings.sol";
+import "./externals/ens/PublicResolver.sol";
+import "./externals/SafeMath.sol";
 
-/// @title The Token Whitelist interface provides access to an external list of tokens.
+/// @title The TokenWhitelist interface provides access to an external list of tokens.
 interface ITokenWhitelist {
-    function isController(address) external view returns (bool);
+    function getTokenInfo(address _a) external view returns (string symbol, uint256 magnitude, uint256 rate, bool available, bool loadable, uint256 lastUpdate);
+    function getTokenAddressArray() external view returns (address[]);
+    function updateTokenRate(address _token, uint _rate, uint _updateDate) external;
 }
 
-/// @title TokenWhiteli stores a list of tokens used by the Consumer Contract Wallet, the Oracle, and the TKN Licence Contract
-contract TokenWhitelist is ITokenWhitelist, Controller , Ownable {
+/// @title TokenWhitelist stores a list of tokens used by the Consumer Contract Wallet, the Oracle, and the TKN Licence Contract
+contract TokenWhitelist is ITokenWhitelist, Controllable, Ownable {
+    using strings for *;
+    using SafeMath for uint256;
+
+    event UpdatedTokenRate(address _sender, address _token, uint _rate);
 
     event AddedToken(address _sender, address _token, string _symbol, uint _magnitude, bool _loadable);
     event RemovedToken(address _sender, address _token);
@@ -37,13 +45,33 @@ contract TokenWhitelist is ITokenWhitelist, Controller , Ownable {
         string symbol;    // Token symbol
         uint magnitude;   // 10^decimals
         uint rate;        // Token exchange rate in wei
-        bool exists;      // Flags if the struct is empty or not
+        bool available;   // Flags if the token is available or not
         bool loadable;    // Flags if token is loadable to the TokenCard
         uint lastUpdate;  // Time of the last rate update
     }
 
-    mapping(address => Token) public tokens;
-    address[] private _tokenAddresses;
+    mapping(address => Token) private _tokenInfoMap;
+    address[] private _tokenAddressArray;
+
+    modifier onlyControllerOrOracle() {
+        address oracleAddress = PublicResolver(_ENS.resolver(_oracleNode)).addr(_oracleNode);
+        require (_isController(msg.sender) || msg.sender == oracleAddress);
+        _;
+    }
+
+    /// @dev ENS points to the ENS registry smart contract.
+    ENS internal _ENS;
+
+    /// @dev Is the registered ENS name of the oracle contract.
+    bytes32 private _oracleNode;
+
+    /// @dev Constructor initializes ens and the oracle.
+    /// @param _ens is the ENS public registry contract address.
+    /// @param _oracleName is the ENS name of the Oracle.
+    constructor(address _ens, bytes32 _oracleName) public {
+        _ENS = ENS(_ens);
+        _oracleNode = _oracleName;
+    }
 
     /// @dev Add ERC20 tokens to the list of supported tokens.
     /// @param _tokens ERC20 token contract addresses.
@@ -56,24 +84,24 @@ contract TokenWhitelist is ITokenWhitelist, Controller , Ownable {
         require(_tokens.length == _symbols.length && _tokens.length == _magnitude.length && _tokens.length == _loadable.length, "parameter lengths do not match");
         // Add each token to the list of supported tokens.
         for (uint i = 0; i < _tokens.length; i++) {
-            // Require that the token doesn't already exist.
+            // Require that the token isn't already available.
             address token = _tokens[i];
-            require(!tokens[token].exists, "token already exists");
+            require(!_tokenInfoMap[token].available, "token already available");
             // Store the intermediate values.
             string memory symbol = _symbols[i].toSliceB32().toString();
             uint magnitude = _magnitude[i];
             bool loadable = _loadable[i];
             // Add the token to the token list.
-            tokens[token] = Token({
+            _tokenInfoMap[token] = Token({
                 symbol : symbol,
                 magnitude : magnitude,
                 rate : 0,
-                exists : true,
+                available : true,
                 loadable : loadable,
                 lastUpdate : _updateDate
                 });
             // Add the token address to the address list.
-            _tokenAddresses.push(token);
+            _tokenAddressArray.push(token);
             // Emit token addition event.
             emit AddedToken(msg.sender, token, symbol, magnitude, loadable);
         }
@@ -84,82 +112,45 @@ contract TokenWhitelist is ITokenWhitelist, Controller , Ownable {
     function removeTokens(address[] _tokens) external onlyController {
         // Delete each token object from the list of supported tokens based on the addresses provided.
         for (uint i = 0; i < _tokens.length; i++) {
-            //token must exist, reverts on duplicates as well
-            require(tokens[_tokens[i]].exists, "token does not exist");
+            //token must be available, reverts on duplicates as well
+            require(_tokenInfoMap[_tokens[i]].available, "token is not available");
             // Store the token address.
             address token = _tokens[i];
             // Delete the token object.
-            delete tokens[token];
+            delete _tokenInfoMap[token];
             // Remove the token address from the address list.
-            for (uint j = 0; j < _tokenAddresses.length.sub(1); j++) {
-                if (_tokenAddresses[j] == token) {
-                    _tokenAddresses[j] = _tokenAddresses[_tokenAddresses.length.sub(1)];
+            for (uint j = 0; j < _tokenAddressArray.length.sub(1); j++) {
+                if (_tokenAddressArray[j] == token) {
+                    _tokenAddressArray[j] = _tokenAddressArray[_tokenAddressArray.length.sub(1)];
                     break;
                 }
             }
-            _tokenAddresses.length--;
+            _tokenAddressArray.length--;
             // Emit token removal event.
             emit RemovedToken(msg.sender, token);
         }
     }
 
+    /// @dev Update ERC20 token exchange rate manually.
+    /// @param _token ERC20 token contract address.
+    /// @param _rate ERC20 token exchange rate in wei.
+    /// @param _updateDate date for the token updates. This will be compared to when oracle updates are received.
+    function updateTokenRate(address _token, uint _rate, uint _updateDate) external onlyControllerOrOracle {
+        // Require that the token exists.
+        require(_tokenInfoMap[_token].available, "token is not available");
+        // Update the token's rate.
+        _tokenInfoMap[_token].rate = _rate;
+        // Update the token's last update timestamp.
+        _tokenInfoMap[_token].lastUpdate = _updateDate;
+        // Emit the rate update event.
+        emit UpdatedTokenRate(msg.sender, _token, _rate);
+    }
 
-/*
- *    event AddedController(address _sender, address _controller);
- *    event RemovedController(address _sender, address _controller);
- *
- *    mapping(address => bool) private _isController;
- *    uint private _controllerCount;
- *
- *    /// @dev Constructor initializes the list of controllers with the provided address.
- *    /// @param _account address to add to the list of controllers.
- *    constructor(address _account) public {
- *        _addController(_account);
- *    }
- *
- *    /// @dev Checks if message sender is a controller.
- *    modifier onlyController() {
- *        require(isController(msg.sender), "sender is not a controller");
- *        _;
- *    }
- *
- *    /// @dev Add a new controller to the list of controllers.
- *    /// @param _account address to add to the list of controllers.
- *    function addController(address _account) external onlyController {
- *        _addController(_account);
- *    }
- *
- *    /// @dev Remove a controller from the list of controllers.
- *    /// @param _account address to remove from the list of controllers.
- *    function removeController(address _account) external onlyController {
- *        _removeController(_account);
- *    }
- *
- *    /// @return true if the provided account is a controller.
- *    function isController(address _account) public view returns (bool) {
- *        return _isController[_account];
- *    }
- *
- *    /// @return the current number of controllers.
- *    function controllerCount() public view returns (uint) {
- *        return _controllerCount;
- *    }
- *
- *    /// @dev Internal-only function that adds a new controller.
- *    function _addController(address _account) internal {
- *        require(!_isController[_account], "provided account is already a controller");
- *        _isController[_account] = true;
- *        _controllerCount++;
- *        emit AddedController(msg.sender, _account);
- *    }
- *
- *    /// @dev Internal-only function that removes an existing controller.
- *    function _removeController(address _account) internal {
- *        require(_isController[_account], "provided account is not a controller");
- *        require(_controllerCount > 1, "cannot remove the last controller");
- *        _isController[_account] = false;
- *        _controllerCount--;
- *        emit RemovedController(msg.sender, _account);
- *    }
- */
+    function getTokenInfo(address _a) external view returns (string, uint256, uint256, bool, bool, uint256) {
+        return (_tokenInfoMap[_a].symbol, _tokenInfoMap[_a].magnitude, _tokenInfoMap[_a].rate, _tokenInfoMap[_a].available, _tokenInfoMap[_a].loadable, _tokenInfoMap[_a].lastUpdate);
+    }
+    
+    function getTokenAddressArray() external view returns (address[]) {
+        return _tokenAddressArray;
+    }
 }

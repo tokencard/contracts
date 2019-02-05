@@ -19,12 +19,9 @@
 pragma solidity ^0.4.25;
 
 import "./controller.sol";
+import "./resolver.sol";
 import "../externals/ens/ENS.sol";
 
-/// @title Resolver returns the controller contract address.
-interface IResolver {
-    function addr(bytes32) external view returns (address);
-}
 
 /// @title Controllable implements access control functionality based on a controller set in ENS.
 contract Controllable {
