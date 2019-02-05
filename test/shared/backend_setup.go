@@ -477,7 +477,7 @@ func InitializeBackend() error {
 		return errors.Wrap(err, "deploying TKN token contract")
 	}
 
-	ERC20Contract1Address, tx, ERC20Contract1, err = mocks.DeployToken(RandomAccount.TransactOpts(), Backend)
+	ERC20Contract1Address, tx, ERC20Contract1, err = mocks.DeployToken(BankAccount.TransactOpts(), Backend)
 	if err != nil {
 		return err
 	}
@@ -488,7 +488,7 @@ func InitializeBackend() error {
 	}
 
 
-	ERC20Contract2Address, tx, ERC20Contract2, err = mocks.DeployToken(RandomAccount.TransactOpts(), Backend)
+	ERC20Contract2Address, tx, ERC20Contract2, err = mocks.DeployToken(BankAccount.TransactOpts(), Backend)
 	if err != nil {
 		return err
 	}

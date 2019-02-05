@@ -42,7 +42,7 @@ var _ = BeforeEach(func() {
 
 	Expect(err).ToNot(HaveOccurred())
 
-	LicenceAddress, tx, Licence, err = bindings.DeployLicence(BankAccount.TransactOpts(), Backend, Owner.Address(), true, big.NewInt(10), CryptoFloatAddress, TokenHolderAddress)//FIX ME: random should become CryptoFloat contract
+	LicenceAddress, tx, Licence, err = bindings.DeployLicence(BankAccount.TransactOpts(), Backend, Owner.Address(), true, big.NewInt(10), CryptoFloatAddress, TokenHolderAddress)
 	Expect(err).ToNot(HaveOccurred())
 	Backend.Commit()
 	Expect(isSuccessful(tx)).To(BeTrue())
@@ -50,7 +50,7 @@ var _ = BeforeEach(func() {
 })
 
 var _ = AfterSuite(func() {
-	TestRig.ExpectMinimumCoverage("licence.sol", 0.00)
+	TestRig.ExpectMinimumCoverage("licence.sol", 100.00)
 	TestRig.PrintGasUsage(os.Stdout)
 })
 
