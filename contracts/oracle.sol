@@ -98,7 +98,7 @@ contract Oracle is usingOraclize, Claimable, Base64, Date, JSON, Controllable, P
     /// @param _amount amount of token in base units.
     function convert(address _token, uint _amount) external view returns (bool, uint) {
         // Store the token in memory to save map entry lookup gas.
-        (string memory symbol, uint256 magnitude, uint256 rate, bool available, bool loadable, uint256 lastUpdate) = _getTokenInfo(_token);
+        ( , uint256 magnitude, uint256 rate, bool available, , ) = _getTokenInfo(_token);
         // If the token exists require that its rate is not zero
         if (available) {
             require(rate != 0, "token rate is 0");
@@ -134,7 +134,7 @@ contract Oracle is usingOraclize, Claimable, Base64, Date, JSON, Controllable, P
         address _token = _queryToToken[_queryID];
         require(_token != address(0), "queryID matches to address 0");
         // Get the corresponding token object.
-        (string memory symbol, uint256 magnitude, uint256 rate, bool available, bool loadable, uint256 lastUpdate) = _getTokenInfo(_token);
+        ( , , , , , uint256 lastUpdate) = _getTokenInfo(_token);
 
         bool valid;
         uint timestamp;

@@ -51,12 +51,12 @@ contract TokenWhitelistable {
     }
 
     function _isTokenLoadable(address _a) internal view returns (bool _loadable) {
-        (string memory symbol, uint256 magnitude, uint256 rate, bool available, bool loadable, uint256 lastUpdate) = _getTokenInfo(_a);
+        ( , , , , bool loadable, ) = _getTokenInfo(_a);
         return loadable;
     }
 
     function _isTokenAvailable(address _a) internal view returns (bool _exists) {
-        (string memory symbol, uint256 magnitude, uint256 rate, bool available, bool loadable, uint256 lastUpdate) = _getTokenInfo(_a);
+        ( , , , bool available, , ) = _getTokenInfo(_a);
         return available;
     }
 }
