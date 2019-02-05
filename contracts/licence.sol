@@ -26,6 +26,7 @@ contract Licence is Ownable {
     event UpdatedTokenHolder(address _sender, address _newHolder);
     event UpdatedLicenceAmount(address _sender, uint _newAmount);
 
+    event Transferred(address _to, address _token, uint _amount);
     event TransferredToTokenHolder(address _from, address _to, address _asset, uint _amount);
     event TransferredToCryptoFloat(address _from, address _to, address _asset, uint _amount);
 
@@ -182,18 +183,17 @@ contract Licence is Ownable {
         emit TransferredToCryptoFloat(msg.sender, _cryptoFloat, _asset, loadAmount);
     }
 
-    /// @dev This fucntion is used to reclaim tokens send to the catchall public method.
-    /// @dev The method scoops up all of the said tokens and sends them to the ownerAddress
-    /// @param _asset is the address of an ERC20 token or 0x0 for ether.
-    function claimTokens(address _asset) onlyOwner {
-        address ownerAddress = owner();
-        if (_asset == 0x0) {
-            ownerAddress.transfer(this.balance);
+    /// @dev This fucntion is used to move tokens sent accidentally to this contract method.
+    /// @dev The owner can chose the new destination address
+    /// @param _to is the recipient's address.
+    /// @param _token is the address of an ERC20 token or 0x0 for ether.
+    /// @param _amount is the amount to be transferred in base units.
+    function withdrawTokens(address _to, address _token, uint _amount) onlyOwner {
+        if (_token == address(0)) {
+          _to.transfer(_amount);
         } else {
-            ERC20 erc20 = ERC20(_asset);
-            uint balance = erc20.balanceOf(this);
-            erc20.transfer(ownerAddress, balance);
+          require(ERC20(_token).transfer(_to, _amount), "ERC20 token transfer was unsuccessful");
         }
-        LogTokenTransfer(_asset, ownerAddress, balance);
+        emit Transferred(_to, _token, _amount);
     }
 }
