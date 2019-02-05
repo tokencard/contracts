@@ -32,7 +32,7 @@ interface ITokenWhitelist {
 }
 
 /// @title TokenWhitelist stores a list of tokens used by the Consumer Contract Wallet, the Oracle, and the TKN Licence Contract
-contract TokenWhitelist is ITokenWhitelist, Controllable, Ownable {
+contract TokenWhitelist is Controllable, Ownable {
     using strings for *;
     using SafeMath for uint256;
 
@@ -149,7 +149,7 @@ contract TokenWhitelist is ITokenWhitelist, Controllable, Ownable {
     function getTokenInfo(address _a) external view returns (string, uint256, uint256, bool, bool, uint256) {
         return (_tokenInfoMap[_a].symbol, _tokenInfoMap[_a].magnitude, _tokenInfoMap[_a].rate, _tokenInfoMap[_a].available, _tokenInfoMap[_a].loadable, _tokenInfoMap[_a].lastUpdate);
     }
-    
+
     function getTokenAddressArray() external view returns (address[]) {
         return _tokenAddressArray;
     }

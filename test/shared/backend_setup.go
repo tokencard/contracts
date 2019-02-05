@@ -84,6 +84,9 @@ var ENSRegistry *ens.ENSRegistry
 var ControllerContract *internals.Controller
 var ControllerContractAddress common.Address
 
+var TokenWhitelist *internals.TokenWhitelist
+var TokenWhitelistAddress common.Address
+
 var OraclizeResolver *mocks.OraclizeAddrResolver
 var OraclizeResolverAddress common.Address
 
@@ -120,6 +123,7 @@ var ERC20Contract2Address common.Address
 var OracleName = EnsNode("oracle.tokencard.eth")
 var ControllerName = EnsNode("controller.tokencard.eth")
 var LicenceName = EnsNode("licence.tokencard.eth")
+var TokenWhitelistName = EnsNode("tokenWhitelist.tokencard.eth")
 
 var Owner *ethertest.Account
 var Controller *ethertest.Account
@@ -311,6 +315,16 @@ func InitializeBackend() error {
 		return errors.Wrap(err, "setting ENS 'licence' node owner")
 	}
 
+	tx, err = ENSRegistry.SetSubnodeOwner(BankAccount.TransactOpts(), EnsNode("tokencard.eth"), LabelHash("tokenWhitelist"), BankAccount.Address())
+	if err != nil {
+		return err
+	}
+	Backend.Commit()
+	err = verifyTransaction(tx)
+	if err != nil {
+		return errors.Wrap(err, "setting ENS 'tokenWhitelist' node owner")
+	}
+
 	ENSResolverAddress, tx, ENSResolver, err = ens.DeployPublicResolver(BankAccount.TransactOpts(), Backend, ENSRegistryAddress)
 	if err != nil {
 		return err
@@ -363,6 +377,40 @@ func InitializeBackend() error {
 	err = verifyTransaction(tx)
 	if err != nil {
 		return errors.Wrap(err, "deploying Oraclize address resolver")
+	}
+
+	{
+		// Register tokenWhitelist with ENS
+
+		tx, err = ENSRegistry.SetResolver(BankAccount.TransactOpts(), TokenWhitelistName, ENSResolverAddress)
+		if err != nil {
+			return err
+		}
+		Backend.Commit()
+		err = verifyTransaction(tx)
+		if err != nil {
+			return errors.Wrap(err, "setting tokenWhitelist ENS node resolver")
+		}
+
+		tx, err = ENSResolver.SetAddr(BankAccount.TransactOpts(), TokenWhitelistName, TokenWhitelistAddress)
+		if err != nil {
+			return err
+		}
+		Backend.Commit()
+		err = verifyTransaction(tx)
+		if err != nil {
+			return errors.Wrap(err, "setting tokenWhitelist ENS node resolver's target address")
+		}
+	}
+
+	TokenWhitelistAddress, tx, TokenWhitelist, err = internals.DeployTokenWhitelist(BankAccount.TransactOpts(), Backend, ENSRegistryAddress, OracleName)
+	if err != nil {
+		return err
+	}
+	Backend.Commit()
+	err = verifyTransaction(tx)
+	if err != nil {
+		return errors.Wrap(err, "deploying oracle contract")
 	}
 
 	// Deploy the Token oracle contract.
@@ -500,7 +548,7 @@ func InitializeBackend() error {
 
 
 	// Add the mock token to the oracle list.
-	tx, err = Oracle.AddTokens(Controller.TransactOpts(), []common.Address{TKNAddress}, StringsToByte32("TKN"), []*big.Int{ExponentiateDecimals(8)}, big.NewInt(20180913153211))
+	tx, err = TokenWhitelist.AddTokens(Controller.TransactOpts(), []common.Address{TKNAddress}, StringsToByte32("TKN"), []*big.Int{ExponentiateDecimals(8)}, big.NewInt(20180913153211))
 	if err != nil {
 		return err
 	}
@@ -511,7 +559,7 @@ func InitializeBackend() error {
 	}
 
 	// Update the exchange rate of the mock token.
-	tx, err = Oracle.UpdateTokenRate(Controller.TransactOpts(), TKNAddress, big.NewInt(int64(0.00001633*math.Pow10(18))), big.NewInt(20180913153211))
+	tx, err = TokenWhitelist.UpdateTokenRate(Controller.TransactOpts(), TKNAddress, big.NewInt(int64(0.00001633*math.Pow10(18))), big.NewInt(20180913153211))
 	if err != nil {
 		return err
 	}
