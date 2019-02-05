@@ -71,7 +71,7 @@ var _ = Describe("ParseIntScientific", func() {
 
 		When("'123.0123' is passed", func() {
 			It("Should return 123", func() {
-				res, err := ParseIntScientificExporter.ParseIntScientific(nil, "123")
+				res, err := ParseIntScientificExporter.ParseIntScientific(nil, "123.0123")
 				Expect(err).ToNot(HaveOccurred())
 				Expect(res.String()).To(Equal("123"))
 			})
@@ -269,7 +269,6 @@ var _ = Describe("ParseIntScientific", func() {
 			})
 		})
 
-
 		When("('0.000001', 6) is passed", func() {
 			It("Should return 1", func() {
 				res, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "0.000001", big.NewInt(6))
@@ -427,7 +426,6 @@ var _ = Describe("ParseIntScientific", func() {
 				Expect(err).To(MatchError(errors.New("abi: improperly formatted output")))
 			})
 		})
-
 
 		When("there is an extra 'e' after 'e'", func() {
 			It("Should revert", func() {
