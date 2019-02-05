@@ -74,7 +74,7 @@ contract Oracle is usingOraclize, Claimable, Base64, Date, JSON, Controllable, P
     /// @dev _resolver is the oraclize address resolver contract address.
     /// @param _ens is the address of the ENS.
     /// @param _controllerName is the ENS name of the Controller.
-    constructor(address _resolver, address _ens, bytes32 _controllerName) Controllable(_ens, _controllerName) public {
+    constructor(address _resolver, address _ens, bytes32 _controllerName, bytes32 _tokenWhitelistName) Controllable(_ens, _controllerName) TokenWhitelistable(_ens, _tokenWhitelistName) public {
         APIPublicKey = hex"a0f4f688350018ad1b9785991c0bde5f704b005dc79972b114dbed4a615a983710bfc647ebe5a320daa28771dce6a2d104f5efa2e4a85ba3760b76d46f8571ca";
         OAR = OraclizeAddrResolverI(_resolver);
         oraclize_setCustomGasPrice(10000000000);

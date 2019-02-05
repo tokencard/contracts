@@ -22,7 +22,6 @@ contract_sources=(
   'mocks/parseIntScientific-exporter'
   'internals/controller'
   'internals/token-whitelist'
-  'internals/token-whitelistable'
   'internals/parseIntScientific'
   'externals/ens/PublicResolver'
   'externals/ens/ENSRegistry'
@@ -59,7 +58,6 @@ contracts=(
   "mocks/base64-exporter/Base64Exporter mocks/base64-exporter.go Base64Exporter mocks"
   "mocks/parseIntScientific-exporter/ParseIntScientificExporter mocks/parseIntScientific-exporter.go ParseIntScientificExporter mocks"
   "internals/controller/Controller internals/controller.go Controller internals"
-  "internals/token-whitelistable/TokenWhitelistable internals/token-whitelistable.go TokenWhitelistable internals"
   "internals/token-whitelist/TokenWhitelist internals/token-whitelist.go TokenWhitelist internals"
   "internals/parseIntScientific/ParseIntScientific internals/parseIntScientific.go ParseIntScientific internals"
   "externals/ens/ENSRegistry/ENSRegistry externals/ens/ens-registry.go ENSRegistry ens"
