@@ -18,11 +18,11 @@
 
 pragma solidity ^0.4.25;
 
-import "./internals/ownable.sol";
-import "./internals/controllable.sol";
-import "./externals/strings.sol";
-import "./externals/ens/PublicResolver.sol";
-import "./externals/SafeMath.sol";
+import "./ownable.sol";
+import "./controllable.sol";
+import "../externals/strings.sol";
+import "../externals/ens/PublicResolver.sol";
+import "../externals/SafeMath.sol";
 
 /// @title The TokenWhitelist interface provides access to an external list of tokens.
 interface ITokenWhitelist {

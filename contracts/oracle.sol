@@ -23,9 +23,9 @@ import "./internals/claimable.sol";
 import "./internals/date.sol";
 import "./internals/json.sol";
 import "./internals/parseIntScientific.sol";
+import "./internals/token-whitelistable.sol";
 import "./externals/SafeMath.sol";
 import "./externals/base64.sol";
-import "./token-whitelistable.sol";
 
 
 /// @title Oracle converts ERC20 token amounts into equivalent ether amounts based on cryptocurrency exchange rates.
