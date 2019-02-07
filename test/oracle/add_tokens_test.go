@@ -38,33 +38,26 @@ var _ = Describe("addTokens", func() {
 				Backend.Commit()
 			})
 
-			FIt("Should succeed", func() {
+			It("Should succeed", func() {
 				Expect(isSuccessful(tx)).To(BeTrue())
 			})
 
-			FIt("Should update the tokens map", func() {
-				println("0")
+			It("Should update the tokens map", func() {
 				symbol, magnitude, _, available, loadable, lastUpdate, err := TokenWhitelist.GetTokenInfo(nil, common.HexToAddress("0x0"))
-				println("1")
 				Expect(err).ToNot(HaveOccurred())
-				println("2")
 				Expect(symbol).To(Equal("BNT"))
-				println("3")
 				Expect(magnitude).To(Equal(DecimalsToMagnitude(big.NewInt(18))))
-				println("4")
 				Expect(available).To(BeTrue())
-				println("5")
 				Expect(loadable).To(BeFalse())
-				println("6")
-				Expect(lastUpdate).To(Equal(DecimalsToMagnitude(big.NewInt(20180913153211))))
+				Expect(lastUpdate.String()).To(Equal("20180913153211"))
 
-				symbol, magnitude, _, available, loadable, lastUpdate, err = TokenWhitelist.GetTokenInfo(nil, common.HexToAddress("0x0"))
+				symbol, magnitude, _, available, loadable, lastUpdate, err = TokenWhitelist.GetTokenInfo(nil, common.HexToAddress("0x1"))
 				Expect(err).ToNot(HaveOccurred())
-				Expect(symbol).To(Equal("BNT"))
+				Expect(symbol).To(Equal("TKN"))
 				Expect(magnitude.String()).To(Equal("100000000"))
 				Expect(available).To(BeTrue())
 				Expect(loadable).To(BeTrue())
-				Expect(lastUpdate).To(Equal(DecimalsToMagnitude(big.NewInt(20180913153211))))
+				Expect(lastUpdate.String()).To(Equal("20180913153211"))
 			})
 
 			It("Should emit 2 AddedToken events", func() {
@@ -164,7 +157,7 @@ var _ = Describe("addTokens", func() {
 			var tx *types.Transaction
 			BeforeEach(func() {
 				var err error
-				tx, err = TokenWhitelist.AddTokens(Controller.TransactOpts(), nil, nil, nil, []bool{true,true}, big.NewInt(20180913153211))
+				tx, err = TokenWhitelist.AddTokens(Controller.TransactOpts(), nil, nil, nil, nil, big.NewInt(20180913153211))
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 			})
