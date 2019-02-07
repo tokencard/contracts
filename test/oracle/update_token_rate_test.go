@@ -15,11 +15,12 @@ var _ = Describe("updateTokenRate", func() {
 
 	Context("When the token is already supported", func() {
 		BeforeEach(func() {
-			tx, err := Oracle.AddTokens(
+			tx, err := TokenWhitelist.AddTokens(
 				Controller.TransactOpts(),
 				[]common.Address{common.HexToAddress("0x1")},
 				StringsToByte32("ETH"),
 				[]*big.Int{DecimalsToMagnitude(big.NewInt(18))},
+				[]bool{true},
 				big.NewInt(20180913153211),
 			)
 			Expect(err).ToNot(HaveOccurred())
@@ -31,7 +32,7 @@ var _ = Describe("updateTokenRate", func() {
 
 			BeforeEach(func() {
 				var err error
-				tx, err = Oracle.UpdateTokenRate(
+				tx, err = TokenWhitelist.UpdateTokenRate(
 					Controller.TransactOpts(),
 					common.HexToAddress("0x1"),
 					big.NewInt(555),
@@ -45,25 +46,29 @@ var _ = Describe("updateTokenRate", func() {
 				Expect(isSuccessful(tx)).To(BeTrue())
 			})
 			It("Should update the token rate", func() {
-				token, err := Oracle.Tokens(nil, common.HexToAddress("0x1"))
+				symbol, magnitude, rate, available, loadable, lastUpdate, err := TokenWhitelist.GetTokenInfo(nil, common.HexToAddress("0x1"))
 				Expect(err).ToNot(HaveOccurred())
-				Expect(token.Exists).To(BeTrue())
-				Expect(token.Rate).To(Equal(big.NewInt(555)))
+				Expect(symbol).To(Equal("ETH"))
+				Expect(magnitude.String()).To(Equal(DecimalsToMagnitude(big.NewInt(18)).String()))
+				Expect(rate.String()).To(Equal(big.NewInt(555).String()))
+				Expect(available).To(BeTrue())
+				Expect(loadable).To(BeTrue())
+				Expect(lastUpdate.String()).To(Equal(big.NewInt(20180913153211).String()))
 			})
 			It("Should emit a TokenRateUpdate event", func() {
-				it, err := Oracle.FilterUpdatedTokenRate(nil)
+				it, err := TokenWhitelist.FilterUpdatedTokenRate(nil)
 				Expect(err).ToNot(HaveOccurred())
 				Expect(it.Next()).To(BeTrue())
 				evt := it.Event
 				Expect(it.Next()).To(BeFalse())
+				Expect(evt.Sender).To(Equal(Controller.Address()))
 				Expect(evt.Token).To(Equal(common.HexToAddress("0x1")))
-				// Expect(evt.Rate).To(Equal(big.NewInt(666)))
 				Expect(evt.Rate.String()).To(Equal(big.NewInt(555).String()))
 			})
 		})
 		Context("When not called by the controller", func() {
 			It("Should fail", func() {
-				tx, err := Oracle.UpdateTokenRate(
+				tx, err := TokenWhitelist.UpdateTokenRate(
 					RandomAccount.TransactOpts(ethertest.WithGasLimit(100000)),
 					common.HexToAddress("0x1"),
 					big.NewInt(666),
@@ -80,7 +85,7 @@ var _ = Describe("updateTokenRate", func() {
 	Context("When the token is not supported", func() {
 		Context("When called by the controller", func() {
 			It("Should fail", func() {
-				tx, err := Oracle.UpdateTokenRate(
+				tx, err := TokenWhitelist.UpdateTokenRate(
 					Controller.TransactOpts(ethertest.WithGasLimit(100000)),
 					common.HexToAddress("0x1"),
 					big.NewInt(666),
@@ -94,7 +99,7 @@ var _ = Describe("updateTokenRate", func() {
 		})
 		Context("When not called by the controller", func() {
 			It("Should fail", func() {
-				tx, err := Oracle.UpdateTokenRate(
+				tx, err := TokenWhitelist.UpdateTokenRate(
 					RandomAccount.TransactOpts(ethertest.WithGasLimit(100000)),
 					common.HexToAddress("0x1"),
 					big.NewInt(666),

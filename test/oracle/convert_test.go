@@ -14,11 +14,12 @@ import (
 var _ = Describe("convert", func() {
 	Context("When the token is already supported", func() {
 		BeforeEach(func() {
-			tx, err := Oracle.AddTokens(
+			tx, err := TokenWhitelist.AddTokens(
 				Controller.TransactOpts(),
 				[]common.Address{common.HexToAddress("0xfe209bdE5CA32fa20E6728A005F26D651FFF5982")},
 				StringsToByte32("TKN"),
 				[]*big.Int{DecimalsToMagnitude(big.NewInt(8))},
+				[]bool{true},
 				big.NewInt(20180913153211),
 			)
 			Expect(err).ToNot(HaveOccurred())
@@ -33,7 +34,7 @@ var _ = Describe("convert", func() {
 		})
 		Context("When exchange rate is NOT 0", func() {
 			BeforeEach(func() {
-				tx, err := Oracle.UpdateTokenRate(
+				tx, err := TokenWhitelist.UpdateTokenRate(
 					Controller.TransactOpts(),
 					common.HexToAddress("0xfe209bdE5CA32fa20E6728A005F26D651FFF5982"),
 					big.NewInt(int64(0.001633*math.Pow10(18))),
@@ -62,11 +63,12 @@ var _ = Describe("convert", func() {
 	Context("When the token is not supported", func() {
 		//the subsequent BeforeEach ensure that the the token fields are initialized but it is not supported longer
 		BeforeEach(func() {
-			tx, err := Oracle.AddTokens(
+			tx, err := TokenWhitelist.AddTokens(
 				Controller.TransactOpts(),
 				[]common.Address{common.HexToAddress("0x1")},
 				StringsToByte32("ETH"),
 				[]*big.Int{DecimalsToMagnitude(big.NewInt(18))},
+				[]bool{true},
 				big.NewInt(20180913153211),
 			)
 			Expect(err).ToNot(HaveOccurred())
@@ -74,7 +76,7 @@ var _ = Describe("convert", func() {
 			Expect(isSuccessful(tx)).To(BeTrue())
 		})
 		BeforeEach(func() {
-			tx, err := Oracle.UpdateTokenRate(
+			tx, err := TokenWhitelist.UpdateTokenRate(
 				Controller.TransactOpts(),
 				common.HexToAddress("0x1"),
 				big.NewInt(100),
@@ -85,7 +87,7 @@ var _ = Describe("convert", func() {
 			Expect(isSuccessful(tx)).To(BeTrue())
 		})
 		BeforeEach(func() {
-			tx, err := Oracle.RemoveTokens(Controller.TransactOpts(), []common.Address{common.HexToAddress("0x1")})
+			tx, err := TokenWhitelist.RemoveTokens(Controller.TransactOpts(), []common.Address{common.HexToAddress("0x1")})
 			Expect(err).ToNot(HaveOccurred())
 			Backend.Commit()
 			Expect(isSuccessful(tx)).To(BeTrue())

@@ -105,7 +105,7 @@ var _ = Describe("holder addTokens", func() {
 	Context("When called by a random address", func() {
 		It("Should fail", func() {
 			tokens := []common.Address{common.HexToAddress("0x0"), common.HexToAddress("0x1")}
-			tx, err := Oracle.AddTokens(
+			tx, err := TokenWhitelist.AddTokens(
 				RandomAccount.TransactOpts(ethertest.WithGasLimit(300000)),
 				tokens,
 				StringsToByte32(
@@ -116,6 +116,7 @@ var _ = Describe("holder addTokens", func() {
 					DecimalsToMagnitude(big.NewInt(18)),
 					DecimalsToMagnitude(big.NewInt(8)),
 				},
+				[]bool{true},
 				big.NewInt(20180913153211),
 			)
 			Expect(err).ToNot(HaveOccurred())
