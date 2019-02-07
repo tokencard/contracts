@@ -362,9 +362,18 @@ func InitializeBackend() error {
 		return errors.Wrap(err, "deploying Oraclize address resolver")
 	}
 
+	TokenWhitelistAddress, tx, TokenWhitelist, err = internals.DeployTokenWhitelist(BankAccount.TransactOpts(), Backend, ENSRegistryAddress, OracleName, ControllerName, Owner.Address(), true)
+	if err != nil {
+		return err
+	}
+	Backend.Commit()
+	err = verifyTransaction(tx)
+	if err != nil {
+		return errors.Wrap(err, "deploying oracle contract")
+	}
+
 	{
 		// Register tokenWhitelist with ENS
-
 		tx, err = ENSRegistry.SetResolver(BankAccount.TransactOpts(), TokenWhitelistName, ENSResolverAddress)
 		if err != nil {
 			return err
@@ -384,16 +393,6 @@ func InitializeBackend() error {
 		if err != nil {
 			return errors.Wrap(err, "setting tokenWhitelist ENS node resolver's target address")
 		}
-	}
-
-	TokenWhitelistAddress, tx, TokenWhitelist, err = internals.DeployTokenWhitelist(BankAccount.TransactOpts(), Backend, ENSRegistryAddress, OracleName, ControllerName, Owner.Address(), true)
-	if err != nil {
-		return err
-	}
-	Backend.Commit()
-	err = verifyTransaction(tx)
-	if err != nil {
-		return errors.Wrap(err, "deploying oracle contract")
 	}
 
 	// Deploy the Token oracle contract.

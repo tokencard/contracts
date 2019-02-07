@@ -17,11 +17,12 @@ var _ = Describe("updateRates", func() {
 	Context("When tokens are already supported", func() {
 		BeforeEach(func() {
 			tokens := []common.Address{common.HexToAddress("0x0"), common.HexToAddress("0x1")}
-			tx, err := Oracle.AddTokens(
+			tx, err := TokenWhitelist.AddTokens(
 				Controller.TransactOpts(),
 				tokens,
 				StringsToByte32("BNT", "TKN"),
 				[]*big.Int{DecimalsToMagnitude(big.NewInt(18)), DecimalsToMagnitude(big.NewInt(8))},
+				[]bool{false, true},
 				big.NewInt(20180913153211),
 			)
 			Expect(err).ToNot(HaveOccurred())

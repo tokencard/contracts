@@ -20,7 +20,7 @@ var _ = Describe("addTokens", func() {
 			BeforeEach(func() {
 				var err error
 				tokens := []common.Address{common.HexToAddress("0x0"), common.HexToAddress("0x1")}
-				tx, err = Oracle.AddTokens(
+				tx, err = TokenWhitelist.AddTokens(
 					Controller.TransactOpts(),
 					tokens,
 					StringsToByte32(
@@ -31,30 +31,44 @@ var _ = Describe("addTokens", func() {
 						DecimalsToMagnitude(big.NewInt(18)),
 						DecimalsToMagnitude(big.NewInt(8)),
 					},
+					[]bool{false, true},
 					big.NewInt(20180913153211),
 				)
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 			})
 
-			It("Should succeed", func() {
+			FIt("Should succeed", func() {
 				Expect(isSuccessful(tx)).To(BeTrue())
 			})
 
-			It("Should update the tokens map", func() {
-				token, err := Oracle.Tokens(nil, common.HexToAddress("0x0"))
+			FIt("Should update the tokens map", func() {
+				println("0")
+				symbol, magnitude, _, available, loadable, lastUpdate, err := TokenWhitelist.GetTokenInfo(nil, common.HexToAddress("0x0"))
+				println("1")
 				Expect(err).ToNot(HaveOccurred())
-				Expect(token.Exists).To(BeTrue())
-				Expect(token.Magnitude).To(Equal(DecimalsToMagnitude(big.NewInt(18))))
+				println("2")
+				Expect(symbol).To(Equal("BNT"))
+				println("3")
+				Expect(magnitude).To(Equal(DecimalsToMagnitude(big.NewInt(18))))
+				println("4")
+				Expect(available).To(BeTrue())
+				println("5")
+				Expect(loadable).To(BeFalse())
+				println("6")
+				Expect(lastUpdate).To(Equal(DecimalsToMagnitude(big.NewInt(20180913153211))))
 
-				token, err = Oracle.Tokens(nil, common.HexToAddress("0x1"))
+				symbol, magnitude, _, available, loadable, lastUpdate, err = TokenWhitelist.GetTokenInfo(nil, common.HexToAddress("0x0"))
 				Expect(err).ToNot(HaveOccurred())
-				Expect(token.Exists).To(BeTrue())
-				Expect(token.Magnitude.String()).To(Equal("100000000"))
+				Expect(symbol).To(Equal("BNT"))
+				Expect(magnitude.String()).To(Equal("100000000"))
+				Expect(available).To(BeTrue())
+				Expect(loadable).To(BeTrue())
+				Expect(lastUpdate).To(Equal(DecimalsToMagnitude(big.NewInt(20180913153211))))
 			})
 
 			It("Should emit 2 AddedToken events", func() {
-				it, err := Oracle.FilterAddedToken(nil)
+				it, err := TokenWhitelist.FilterAddedToken(nil)
 				Expect(err).ToNot(HaveOccurred())
 				Expect(it.Next()).To(BeTrue())
 				evt := it.Event
@@ -73,7 +87,7 @@ var _ = Describe("addTokens", func() {
 				It("Should fail", func() {
 					var err error
 					tokens := []common.Address{common.HexToAddress("0x0"), common.HexToAddress("0x2")}
-					tx, err = Oracle.AddTokens(
+					tx, err = TokenWhitelist.AddTokens(
 						Controller.TransactOpts(ethertest.WithGasLimit(200000)),
 						tokens, StringsToByte32(
 							"BNT",
@@ -83,6 +97,7 @@ var _ = Describe("addTokens", func() {
 							DecimalsToMagnitude(big.NewInt(18)),
 							DecimalsToMagnitude(big.NewInt(18)),
 						},
+						[]bool{true,true},
 						big.NewInt(20180913153211),
 					)
 					Expect(err).ToNot(HaveOccurred())
@@ -96,7 +111,7 @@ var _ = Describe("addTokens", func() {
 				It("Should pass", func() {
 					var err error
 					tokens := []common.Address{common.HexToAddress("0x4"), common.HexToAddress("0x5")}
-					tx, err = Oracle.AddTokens(
+					tx, err = TokenWhitelist.AddTokens(
 						Controller.TransactOpts(ethertest.WithGasLimit(300000)),
 						tokens,
 						StringsToByte32(
@@ -107,6 +122,7 @@ var _ = Describe("addTokens", func() {
 							DecimalsToMagnitude(big.NewInt(18)),
 							DecimalsToMagnitude(big.NewInt(8)),
 						},
+						[]bool{true,true},
 						big.NewInt(20180913153211),
 					)
 					Expect(err).ToNot(HaveOccurred())
@@ -121,7 +137,7 @@ var _ = Describe("addTokens", func() {
 		Context("When the parameters have different lengths", func() {
 			It("Should fail", func() {
 				tokens := []common.Address{common.HexToAddress("0x4"), common.HexToAddress("0x5")}
-				tx, err := Oracle.AddTokens(
+				tx, err := TokenWhitelist.AddTokens(
 					Controller.TransactOpts(ethertest.WithGasLimit(300000)),
 					tokens,
 					StringsToByte32(
@@ -133,6 +149,7 @@ var _ = Describe("addTokens", func() {
 						DecimalsToMagnitude(big.NewInt(18)),
 						DecimalsToMagnitude(big.NewInt(8)),
 					},
+					[]bool{true,true},
 					big.NewInt(20180913153211),
 				)
 				Expect(err).ToNot(HaveOccurred())
@@ -147,7 +164,7 @@ var _ = Describe("addTokens", func() {
 			var tx *types.Transaction
 			BeforeEach(func() {
 				var err error
-				tx, err = Oracle.AddTokens(Controller.TransactOpts(), nil, nil, nil, big.NewInt(20180913153211))
+				tx, err = TokenWhitelist.AddTokens(Controller.TransactOpts(), nil, nil, nil, []bool{true,true}, big.NewInt(20180913153211))
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 			})
@@ -157,7 +174,7 @@ var _ = Describe("addTokens", func() {
 			})
 
 			It("Should emit no AddedToken event", func() {
-				it, err := Oracle.FilterAddedToken(nil)
+				it, err := TokenWhitelist.FilterAddedToken(nil)
 				Expect(err).ToNot(HaveOccurred())
 				Expect(it.Next()).To(BeFalse())
 			})
@@ -168,7 +185,7 @@ var _ = Describe("addTokens", func() {
 	Context("When called by a random address", func() {
 		It("Should fail", func() {
 			tokens := []common.Address{common.HexToAddress("0x0"), common.HexToAddress("0x1")}
-			tx, err := Oracle.AddTokens(
+			tx, err := TokenWhitelist.AddTokens(
 				RandomAccount.TransactOpts(ethertest.WithGasLimit(300000)),
 				tokens,
 				StringsToByte32(
@@ -179,6 +196,7 @@ var _ = Describe("addTokens", func() {
 					DecimalsToMagnitude(big.NewInt(18)),
 					DecimalsToMagnitude(big.NewInt(8)),
 				},
+				[]bool{true,true},
 				big.NewInt(20180913153211),
 			)
 			Expect(err).ToNot(HaveOccurred())
