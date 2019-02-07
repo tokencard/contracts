@@ -25,7 +25,7 @@ func init() {
 
 func TestOracleSuite(t *testing.T) {
 	RegisterFailHandler(Fail)
-	RunSpecs(t, "Orace Suite")
+	RunSpecs(t, "Oracle Suite")
 }
 
 var _ = BeforeEach(func() {
