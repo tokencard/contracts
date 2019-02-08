@@ -23,7 +23,7 @@ import "./internals/claimable.sol";
 import "./internals/date.sol";
 import "./internals/json.sol";
 import "./internals/parseIntScientific.sol";
-import "./internals/token-whitelistable.sol";
+import "./internals/tokenWhitelistable.sol";
 import "./externals/SafeMath.sol";
 import "./externals/base64.sol";
 
