@@ -1,4 +1,4 @@
-package oracle_test
+package tokenWhitelist_test
 
 import (
 	"math/big"

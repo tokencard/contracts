@@ -18,7 +18,7 @@
 
 pragma solidity ^0.4.25;
 
-import "./token-whitelist.sol";
+import "./tokenWhitelist.sol";
 import "../externals/ens/ENS.sol";
 import "./resolver.sol";
 
