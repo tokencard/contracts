@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/core/types"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	. "github.com/tokencard/contracts/test/shared"
@@ -235,8 +236,10 @@ var _ = Describe("topupLimit", func() {
 
 			When("the controller cancels the limit change with wrong amount", func() {
 				var txSuccessful bool
+				var tx *types.Transaction
+				var err error
 				BeforeEach(func() {
-					tx, err := Wallet.CancelTopUpLimit(Controller.TransactOpts(), FinneyToWei(2))
+					tx, err = Wallet.CancelTopUpLimit(Controller.TransactOpts(ethertest.WithGasLimit(100000)), FinneyToWei(2))
 					Expect(err).ToNot(HaveOccurred())
 					Backend.Commit()
 					txSuccessful = isSuccessful(tx)
@@ -244,7 +247,8 @@ var _ = Describe("topupLimit", func() {
 				})
 
 				It("should fail", func() {
-					Expect(txSuccessful).To(BeTrue())
+					Expect(isGasExhausted(tx, 100000)).To(BeFalse())
+					Expect(txSuccessful).To(BeFalse())
 				})
 			})
 
