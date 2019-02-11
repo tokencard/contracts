@@ -20,6 +20,7 @@ contract_sources=(
   'mocks/oraclize-resolver'
   'mocks/base64-exporter'
   'mocks/parseIntScientific-exporter'
+  'mocks/tokenWhitelistableExporter'
   'internals/controller'
   'internals/tokenWhitelist'
   'internals/parseIntScientific'
@@ -57,6 +58,7 @@ contracts=(
   "mocks/oraclize-resolver/OraclizeAddrResolver mocks/oraclize-resolver.go OraclizeAddrResolver mocks"
   "mocks/base64-exporter/Base64Exporter mocks/base64-exporter.go Base64Exporter mocks"
   "mocks/parseIntScientific-exporter/ParseIntScientificExporter mocks/parseIntScientific-exporter.go ParseIntScientificExporter mocks"
+  "mocks/tokenWhitelistableExporter/TokenWhitelistableExporter mocks/tokenWhitelistableExporter.go TokenWhitelistableExporter mocks"
   "internals/controller/Controller internals/controller.go Controller internals"
   "internals/tokenWhitelist/TokenWhitelist internals/tokenWhitelist.go TokenWhitelist internals"
   "internals/parseIntScientific/ParseIntScientific internals/parseIntScientific.go ParseIntScientific internals"

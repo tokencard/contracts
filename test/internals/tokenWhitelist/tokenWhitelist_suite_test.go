@@ -10,18 +10,28 @@ import (
 	. "github.com/tokencard/contracts/test/shared"
 	"os"
 	"testing"
+  "github.com/tokencard/contracts/pkg/bindings/mocks"
+  "github.com/ethereum/go-ethereum/common"
 )
+
+var TokenWhitelistableExporter *mocks.TokenWhitelistableExporter
+var TokenWhitelistableExporterAddress common.Address
 
 func init() {
 	TestRig.AddCoverageForContracts(
 		"../../../build/internals/tokenWhitelist/combined.json",
 		"../../../contracts",
 	)
+
+  TestRig.AddCoverageForContracts(
+		"../../../build/mocks/tokenWhitelistableExporter/combined.json",
+		"../../../contracts",
+	)
 }
 
-func TestParseIntScientificSuite(t *testing.T) {
+func TestTokenWhitelistSuite(t *testing.T) {
 	RegisterFailHandler(Fail)
-	RunSpecs(t, "Contract Suite")
+	RunSpecs(t, "TokenWhitelist Suite")
 }
 
 var _ = BeforeEach(func() {
@@ -65,6 +75,12 @@ var _ = BeforeEach(func() {
 		Expect(isSuccessful(tx)).To(BeTrue())
 	}
 
+  TokenWhitelistableExporterAddress, tx, TokenWhitelistableExporter, err = mocks.DeployTokenWhitelistableExporter(BankAccount.TransactOpts(), Backend, ENSRegistryAddress, TokenWhitelistName)
+	Expect(err).ToNot(HaveOccurred())
+	Backend.Commit()
+	Expect(isSuccessful(tx)).To(BeTrue())
+
+
 })
 
 var _ = AfterEach(func() {
@@ -72,6 +88,7 @@ var _ = AfterEach(func() {
 	Expect(err).ToNot(HaveOccurred())
 
 })
+
 
 var _ = AfterSuite(func() {
 	TestRig.ExpectMinimumCoverage("internals/tokenWhitelist.sol", 98.0)
