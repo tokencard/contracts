@@ -38,11 +38,11 @@ contract TokenWhitelistable {
         _node = _tokenWhitelistName;
     }
 
-    function _getTokenInfo(address _a) internal view returns (string _symbol, uint256 _magnitude, uint256 _rate, bool _available, bool _loadable, uint256 _lastUpdate) {
+    function _getTokenInfo(address _a) internal view returns (string, uint256, uint256, bool, bool, uint256) {
         return ITokenWhitelist(IResolver(_ENS.resolver(_node)).addr(_node)).getTokenInfo(_a);
     }
 
-    function _getTokenAddressArray() internal view returns (address[] _tokenAddresses) {
+    function _getTokenAddressArray() internal view returns (address[]) {
         return ITokenWhitelist(IResolver(_ENS.resolver(_node)).addr(_node)).getTokenAddressArray();
     }
 
@@ -50,13 +50,14 @@ contract TokenWhitelistable {
         ITokenWhitelist(IResolver(_ENS.resolver(_node)).addr(_node)).updateTokenRate(_token, _rate, _updateDate);
     }
 
-    function _isTokenLoadable(address _a) internal view returns (bool _loadable) {
+    function _isTokenLoadable(address _a) internal view returns (bool) {
         ( , , , , bool loadable, ) = _getTokenInfo(_a);
         return loadable;
     }
 
-    function _isTokenAvailable(address _a) internal view returns (bool _exists) {
+    function _isTokenAvailable(address _a) internal view returns (bool) {
         ( , , , bool available, , ) = _getTokenInfo(_a);
         return available;
     }
+
 }

@@ -26,9 +26,9 @@ import "../externals/SafeMath.sol";
 
 /// @title The TokenWhitelist interface provides access to an external list of tokens.
 interface ITokenWhitelist {
-    function getTokenInfo(address _a) external view returns (string symbol, uint256 magnitude, uint256 rate, bool available, bool loadable, uint256 lastUpdate);
+    function getTokenInfo(address) external view returns (string, uint256, uint256, bool, bool, uint256);
     function getTokenAddressArray() external view returns (address[]);
-    function updateTokenRate(address _token, uint _rate, uint _updateDate) external;
+    function updateTokenRate(address, uint, uint) external;
 }
 
 /// @title TokenWhitelist stores a list of tokens used by the Consumer Contract Wallet, the Oracle, and the TKN Licence Contract
