@@ -2,14 +2,14 @@ package tokenWhitelist_test
 
 import (
 	"context"
-	"testing"
-	"os"
 	"github.com/ethereum/go-ethereum/core/types"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	. "github.com/tokencard/contracts/test/shared"
-  "github.com/tokencard/contracts/pkg/bindings"
+	"github.com/tokencard/contracts/pkg/bindings"
 	"github.com/tokencard/contracts/pkg/bindings/internals"
+	. "github.com/tokencard/contracts/test/shared"
+	"os"
+	"testing"
 )
 
 func init() {
@@ -28,9 +28,9 @@ var _ = BeforeEach(func() {
 	err := InitializeBackend()
 	Expect(err).ToNot(HaveOccurred())
 
-  var tx *types.Transaction
+	var tx *types.Transaction
 
-  OracleAddress, tx, Oracle, err = bindings.DeployOracle(BankAccount.TransactOpts(), Backend, OraclizeResolverAddress, ENSRegistryAddress, ControllerName, TokenWhitelistName)
+	OracleAddress, tx, Oracle, err = bindings.DeployOracle(BankAccount.TransactOpts(), Backend, OraclizeResolverAddress, ENSRegistryAddress, ControllerName, TokenWhitelistName)
 	Expect(err).ToNot(HaveOccurred())
 	Backend.Commit()
 	Expect(isSuccessful(tx)).To(BeTrue())
@@ -75,7 +75,7 @@ var _ = AfterEach(func() {
 
 var _ = AfterSuite(func() {
 	TestRig.ExpectMinimumCoverage("internals/tokenWhitelist.sol", 98.0)
-	// TestRig.ExpectMinimumCoverage("internals/tokenWhitelistable.sol", 100.0)
+	TestRig.ExpectMinimumCoverage("internals/tokenWhitelistable.sol", 100.0)
 	TestRig.PrintGasUsage(os.Stdout)
 })
 
