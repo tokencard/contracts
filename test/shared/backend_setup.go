@@ -471,7 +471,7 @@ func InitializeBackend() error {
 
 	// Deploy the Token licence contract.
 	CryptoFloatAddress = common.HexToAddress(stringToHashString("CryptoFloatAddress"))
-	LicenceAddress, tx, Licence, err = bindings.DeployLicence(BankAccount.TransactOpts(), Backend, Owner.Address(), true, big.NewInt(10), CryptoFloatAddress, TokenHolderAddress)
+	LicenceAddress, tx, Licence, err = bindings.DeployLicence(BankAccount.TransactOpts(), Backend, Owner.Address(), true, big.NewInt(10), CryptoFloatAddress, TokenHolderAddress, common.HexToAddress("0x0"))
 	if err != nil {
 		return err
 	}

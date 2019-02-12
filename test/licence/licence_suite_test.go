@@ -13,6 +13,7 @@ import (
 	"github.com/tokencard/contracts/pkg/bindings"
 	. "github.com/tokencard/contracts/test/shared"
 	"github.com/tokencard/ethertest"
+	"github.com/ethereum/go-ethereum/common"
 )
 
 // var DAO *bindings.Dao
@@ -42,7 +43,7 @@ var _ = BeforeEach(func() {
 
 	Expect(err).ToNot(HaveOccurred())
 
-	LicenceAddress, tx, Licence, err = bindings.DeployLicence(BankAccount.TransactOpts(), Backend, Owner.Address(), true, big.NewInt(10), CryptoFloatAddress, TokenHolderAddress)
+	LicenceAddress, tx, Licence, err = bindings.DeployLicence(BankAccount.TransactOpts(), Backend, Owner.Address(), true, big.NewInt(10), CryptoFloatAddress, TokenHolderAddress, common.HexToAddress("0x0"))
 	Expect(err).ToNot(HaveOccurred())
 	Backend.Commit()
 	Expect(isSuccessful(tx)).To(BeTrue())

@@ -52,7 +52,7 @@ var _ = Describe("updateHolder", func() {
 			Expect(evt.NewHolder).To(Equal(CryptoFloatAddress))
 		})
 
-    Context("If tokenHolder is not locked after the update", func(){
+    Context("TokenHolder is not locked after the update", func(){
 
       BeforeEach(func() {
   			var err error
@@ -81,7 +81,7 @@ var _ = Describe("updateHolder", func() {
 
   	}) //not locked
 
-    Context("tokenHolder is locked after the update", func(){
+    Context("TokenHolder is locked after the update", func(){
 
       BeforeEach(func() {
   			tx, err := Licence.LockHolder(Owner.TransactOpts())
@@ -90,13 +90,18 @@ var _ = Describe("updateHolder", func() {
         Expect(isSuccessful(tx)).To(BeTrue())
   		})
 
-      It("Should not be possible to update again", func() {
-        tx, err := Licence.UpdateHolder(Owner.TransactOpts(ethertest.WithGasLimit(100000)), TokenHolderAddress)
+      BeforeEach(func() {
+				var err error
+        tx, err = Licence.UpdateHolder(Owner.TransactOpts(ethertest.WithGasLimit(100000)), TokenHolderAddress)
   			Expect(err).ToNot(HaveOccurred())
   			Backend.Commit()
         Expect(isGasExhausted(tx, 100000)).To(BeFalse())
   			Expect(isSuccessful(tx)).To(BeFalse())
   		})
+
+			It("Should not be possible to update again", func() {
+				Expect(isSuccessful(tx)).To(BeFalse())
+			})
 
   		It("Should NOT emit a 2nd UpdateHolder event", func() {
   			it, err := Licence.FilterUpdatedTokenHolder(nil)
