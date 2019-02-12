@@ -267,6 +267,7 @@ var _ = Describe("spendAvailable", func() {
 					evt := it.Event
 					Expect(it.Next()).To(BeFalse())
 					Expect(evt.Sender).To(Equal(Controller.Address()))
+					Expect(evt.Amount).To(Equal(EthToWei(1)))
 				})
 
 				It("should set pending spend limit to 0", func() {
