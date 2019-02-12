@@ -39,19 +39,19 @@ var _ = FDescribe("tokenWhitelistable", func() {
     })
 
 
-    FIt("Should update the TokenAddressArray", func() {
+    It("Should update the TokenAddressArray", func() {
       arr, err := TokenWhitelistableExporter.GetTokenAddressArray(nil)
       Expect(err).ToNot(HaveOccurred())
       Expect(arr).To(Equal([]common.Address{common.HexToAddress("0x1")}))
     })
 
-    FIt("Should return true", func() {
+    It("Should return true", func() {
       av, err := TokenWhitelistableExporter.IsTokenAvailable(nil, common.HexToAddress("0x1"))
       Expect(err).ToNot(HaveOccurred())
       Expect(av).To(BeTrue())
     })
 
-    FIt("Should return true", func() {
+    It("Should return true", func() {
       ld, err := TokenWhitelistableExporter.IsTokenLoadable(nil, common.HexToAddress("0x1"))
       Expect(err).ToNot(HaveOccurred())
       Expect(ld).To(BeTrue())

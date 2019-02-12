@@ -23,7 +23,7 @@ contract TokenWhitelistableExporter is TokenWhitelistable {
   }
 
   function isTokenAvailable(address _a) external view returns (bool) {
-      _isTokenAvailable(_a);
+      return _isTokenAvailable(_a);
   }
 
 }
