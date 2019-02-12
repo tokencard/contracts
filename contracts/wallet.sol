@@ -41,11 +41,11 @@ interface ERC165 {
 contract Whitelist is Controllable, Ownable {
     event AddedToWhitelist(address _sender, address[] _addresses);
     event SubmittedWhitelistAddition(address[] _addresses, bytes32 _hash);
-    event CancelledWhitelistAddition(address _sender);
+    event CancelledWhitelistAddition(address _sender, bytes32 _hash);
 
     event RemovedFromWhitelist(address _sender, address[] _addresses);
     event SubmittedWhitelistRemoval(address[] _addresses, bytes32 _hash);
-    event CancelledWhitelistRemoval(address _sender);
+    event CancelledWhitelistRemoval(address _sender, bytes32 _hash);
 
     mapping(address => bool) public isWhitelisted;
     address[] private _pendingWhitelistAddition;
@@ -117,7 +117,7 @@ contract Whitelist is Controllable, Ownable {
         require(submittedWhitelistAddition, "whitelist addition has not been submitted");
 
         // Require that confirmation hash and the hash of the pending whitelist addition match
-        require(_hash == pendingWhitelistHash(_pendingWhitelistAddition), "hash of the pending white list addition do not match");
+        require(_hash == pendingWhitelistHash(_pendingWhitelistAddition), "hash of the pending whitelist addition do not match");
 
         // Whitelist pending addresses.
         for (uint i = 0; i < _pendingWhitelistAddition.length; i++) {
@@ -134,13 +134,13 @@ contract Whitelist is Controllable, Ownable {
     /// @dev Cancel pending whitelist addition.
     function cancelWhitelistAddition(bytes32 _hash) external onlyController {
         // Require that confirmation hash and the hash of the pending whitelist addition match
-        require(_hash == pendingWhitelistHash(_pendingWhitelistAddition), "hash of the pending white list addition does not match");
+        require(_hash == pendingWhitelistHash(_pendingWhitelistAddition), "hash of the pending whitelist addition does not match");
         // Reset pending addresses.
         delete _pendingWhitelistAddition;
         // Reset the submitted operation flag.
         submittedWhitelistAddition = false;
         // Emit the cancellation event.
-        emit CancelledWhitelistAddition(msg.sender);
+        emit CancelledWhitelistAddition(msg.sender, _hash);
     }
 
     /// @dev Remove addresses from the whitelist.
@@ -160,7 +160,7 @@ contract Whitelist is Controllable, Ownable {
         require(submittedWhitelistRemoval, "whitelist removal has not been submitted");
         require(_pendingWhitelistRemoval.length > 0, "pending whitelist removal is empty");
         // Require that confirmation hash and the hash of the pending whitelist removal match
-        require(_hash == pendingWhitelistHash(_pendingWhitelistRemoval), "hash of the pending white list removal does not match the confirmed hash");
+        require(_hash == pendingWhitelistHash(_pendingWhitelistRemoval), "hash of the pending whitelist removal does not match the confirmed hash");
         // Remove pending addresses.
         for (uint i = 0; i < _pendingWhitelistRemoval.length; i++) {
             isWhitelisted[_pendingWhitelistRemoval[i]] = false;
@@ -175,16 +175,14 @@ contract Whitelist is Controllable, Ownable {
 
     /// @dev Cancel pending removal of whitelisted addresses.
     function cancelWhitelistRemoval(bytes32 _hash) external onlyController {
-
         // Require that confirmation hash and the hash of the pending whitelist removal match
-        require(_hash == pendingWhitelistHash(_pendingWhitelistRemoval), "hash of the pending white list removal do not match");
-
+        require(_hash == pendingWhitelistHash(_pendingWhitelistRemoval), "hash of the pending whitelist removal does not match");
         // Reset pending addresses.
         delete _pendingWhitelistRemoval;
         // Reset the submitted operation flag.
         submittedWhitelistRemoval = false;
         // Emit the cancellation event.
-        emit CancelledWhitelistRemoval(msg.sender);
+        emit CancelledWhitelistRemoval(msg.sender, _hash);
     }
 }
 
@@ -193,7 +191,7 @@ contract Whitelist is Controllable, Ownable {
 contract SpendLimit is Controllable, Ownable {
     event SetSpendLimit(address _sender, uint _amount);
     event SubmittedSpendLimitChange(uint _amount);
-    event CancelledSpendLimitChange(address _sender);
+    event CancelledSpendLimitChange(address _sender, uint _amount);
 
     using SafeMath for uint256;
 
@@ -269,13 +267,13 @@ contract SpendLimit is Controllable, Ownable {
     /// @dev Cancel pending set daily limit operation.
     function cancelSpendLimit(uint _amount) external onlyController {
         // Require that pending and confirmed spend limit are the same
-        require(pendingSpendLimit == _amount, "confirmed and cancelled spend limits dont match");
+        require(pendingSpendLimit == _amount, "pending and cancelled spend limits dont match");
         // Reset pending daily limit.
         pendingSpendLimit = 0;
         // Reset the submitted operation flag.
         submittedSpendLimit = false;
         // Emit the cancellation event.
-        emit CancelledSpendLimitChange(msg.sender);
+        emit CancelledSpendLimitChange(msg.sender, _amount);
     }
 
     // @dev Setter method for the available daily spend limit.
@@ -503,6 +501,8 @@ contract Wallet is Vault {
 
     /// @dev Cancel pending set top up limit operation.
     function cancelTopUpLimit(uint _amount) external onlyController {
+        // Require that pending and confirmed spend limit are the same
+        require(pendingTopUpLimit == _amount, "pending and cancelled top up limits dont match");
         // Reset pending daily limit.
         pendingTopUpLimit = 0;
         // Reset the submitted operation flag.
