@@ -52,7 +52,7 @@ var _ = Describe("updateFloat", func() {
 			Expect(evt.NewFloat).To(Equal(TokenHolderAddress))
 		})
 
-    Context("If cryptoFloat is not locked after the update", func(){
+    Context("CryptoFloat is not locked after the update", func(){
 
       BeforeEach(func() {
   			var err error
@@ -81,22 +81,26 @@ var _ = Describe("updateFloat", func() {
 
   	}) //not locked
 
-    Context("cryptoFloat is locked after the update", func(){
+    Context("CryptoFloat is locked after the update", func(){
 
       BeforeEach(func() {
-		tx, err := Licence.LockFloat(Owner.TransactOpts())
-		Expect(err).ToNot(HaveOccurred())
-		Backend.Commit()
+				tx, err := Licence.LockFloat(Owner.TransactOpts())
+				Expect(err).ToNot(HaveOccurred())
+				Backend.Commit()
         Expect(isSuccessful(tx)).To(BeTrue())
   		})
 
-      It("Should not be possible to update again", func() {
-        tx, err := Licence.UpdateFloat(Owner.TransactOpts(ethertest.WithGasLimit(100000)), CryptoFloatAddress)
-		Expect(err).ToNot(HaveOccurred())
-		Backend.Commit()
+			BeforeEach(func() {
+				var err error
+        tx, err = Licence.UpdateFloat(Owner.TransactOpts(ethertest.WithGasLimit(100000)), CryptoFloatAddress)
+				Expect(err).ToNot(HaveOccurred())
+				Backend.Commit()
         Expect(isGasExhausted(tx, 100000)).To(BeFalse())
-		Expect(isSuccessful(tx)).To(BeFalse())
   		})
+
+			It("Should not be possible to update again", func() {
+				Expect(isSuccessful(tx)).To(BeFalse())
+			})
 
   		It("Should NOT emit a 2nd UpdateFloat event", func() {
   			it, err := Licence.FilterUpdatedCryptoFloat(nil)
@@ -104,7 +108,7 @@ var _ = Describe("updateFloat", func() {
   			Expect(it.Next()).To(BeTrue())
   			evt := it.Event
   			Expect(it.Next()).To(BeFalse())
-        	Expect(evt.Sender).To(Equal(Owner.Address()))
+      	Expect(evt.Sender).To(Equal(Owner.Address()))
   			Expect(evt.NewFloat).To(Equal(TokenHolderAddress))
   		})
 

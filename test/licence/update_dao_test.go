@@ -53,7 +53,7 @@ var _ = Describe("updateDao", func() {
 			Expect(evt.NewDAO).To(Equal(DAO.Address()))
 		})
 
-    Context("It DAO is not locked after the update", func(){
+    Context("The DAO is not locked after the update", func(){
 
       BeforeEach(func() {
   			var err error
@@ -91,21 +91,25 @@ var _ = Describe("updateDao", func() {
         Expect(isSuccessful(tx)).To(BeTrue())
   		})
 
-      It("Should not be possible to update again", func() {
-          tx, err := Licence.UpdateLicenceDAO(Owner.TransactOpts(ethertest.WithGasLimit(100000)), DAO.Address())
+      BeforeEach(func() {
+				var err error
+        tx, err = Licence.UpdateLicenceDAO(Owner.TransactOpts(ethertest.WithGasLimit(100000)), common.HexToAddress("0x1"))
   		  Expect(err).ToNot(HaveOccurred())
-          Backend.Commit()
-          Expect(isGasExhausted(tx, 100000)).To(BeFalse())
-          Expect(isSuccessful(tx)).To(BeFalse())
+        Backend.Commit()
+        Expect(isGasExhausted(tx, 100000)).To(BeFalse())
   		})
 
-  		It("Should emit a UpdatedLicenceDAO event", func() {
+      It("Should not be possible to update again", func() {
+				Expect(isSuccessful(tx)).To(BeFalse())
+			})
+
+  		It("Should NOT emit a 2nd UpdatedLicenceDAO event", func() {
   			it, err := Licence.FilterUpdatedLicenceDAO(nil)
   			Expect(err).ToNot(HaveOccurred())
   			Expect(it.Next()).To(BeTrue())
   			evt := it.Event
   			Expect(it.Next()).To(BeFalse())
-            Expect(evt.Sender).To(Equal(Owner.Address()))
+        Expect(evt.Sender).To(Equal(Owner.Address()))
   			Expect(evt.NewDAO).To(Equal(DAO.Address()))
   		})
 
