@@ -431,7 +431,7 @@ func InitializeBackend() error {
 	}
 
 	// Deploy the real TKN contract with burner functionality.
-	TKNBurnerAddress, tx, TKNBurner, err = bindings.DeployToken(Controller.TransactOpts(), Backend)
+	TKNBurnerAddress, tx, TKNBurner, err = bindings.DeployToken(Owner.TransactOpts(), Backend)
 	if err != nil {
 		return err
 	}
