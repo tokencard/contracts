@@ -61,7 +61,7 @@ var _ = Describe("load ERC20", func() {
     		})
       })
 
-      When("approval to Licence contract to transfer 100 and 50 tokens respectively is given", func() {
+      When("approval to Licence contract to transfer 101 and 2 tokens respectively is given", func() {
 
         BeforeEach(func() {
           tx, err := ERC20Contract1.Approve(RandomAccount.TransactOpts(), LicenceAddress, big.NewInt(101))
@@ -127,13 +127,13 @@ var _ = Describe("load ERC20", func() {
   			Expect(it.Next()).To(BeTrue())
             Expect(evt.From).To(Equal(RandomAccount.Address()))
   			Expect(evt.To).To(Equal(TokenHolderAddress))
-            Expect(evt.Asset).To(Equal(ERC20Contract1Address)) //represents ETH
+            Expect(evt.Asset).To(Equal(ERC20Contract1Address))
             Expect(evt.Amount.String()).To(Equal("1"))
             evt = it.Event
 			Expect(it.Next()).To(BeFalse())
             Expect(evt.From).To(Equal(RandomAccount.Address()))
   			Expect(evt.To).To(Equal(TokenHolderAddress))
-            Expect(evt.Asset).To(Equal(ERC20Contract2Address)) //represents ETH
+            Expect(evt.Asset).To(Equal(ERC20Contract2Address))
             Expect(evt.Amount.String()).To(Equal("1"))
       		})
 
@@ -145,13 +145,13 @@ var _ = Describe("load ERC20", func() {
   			Expect(it.Next()).To(BeTrue())
             Expect(evt.From).To(Equal(RandomAccount.Address()))
   			Expect(evt.To).To(Equal(CryptoFloatAddress))
-            Expect(evt.Asset).To(Equal(ERC20Contract1Address)) //represents ETH
+            Expect(evt.Asset).To(Equal(ERC20Contract1Address))
             Expect(evt.Amount.String()).To(Equal("100"))
             evt = it.Event
   			Expect(it.Next()).To(BeFalse())
             Expect(evt.From).To(Equal(RandomAccount.Address()))
   			Expect(evt.To).To(Equal(CryptoFloatAddress))
-            Expect(evt.Asset).To(Equal(ERC20Contract2Address)) //represents ETH
+            Expect(evt.Asset).To(Equal(ERC20Contract2Address))
             Expect(evt.Amount.String()).To(Equal("1"))
       		})
 

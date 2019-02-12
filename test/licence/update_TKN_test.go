@@ -10,7 +10,7 @@ import (
 
 )
 
-var _ = FDescribe("updateTKN", func() {
+var _ = Describe("updateTKN", func() {
 
 
   Context("Before updating the TKN contract address", func() {
