@@ -3,7 +3,6 @@ package licence_test
 import (
 
   "github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/core/types"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	. "github.com/tokencard/contracts/test/shared"
@@ -11,7 +10,7 @@ import (
 
 )
 
-var _ = Describe("updateTKN", func() {
+var _ = FDescribe("updateTKN", func() {
 
 
   Context("Before updating the TKN contract address", func() {
@@ -31,11 +30,9 @@ var _ = Describe("updateTKN", func() {
 
 	When("called by the owner", func() {
 
-		var tx *types.Transaction
-
 		BeforeEach(func() {
 			var err error
-			tx, err = Licence.UpdateTKNContractAddress(Owner.TransactOpts(), TKNBurnerAddress)
+			tx, err := Licence.UpdateTKNContractAddress(Owner.TransactOpts(), TKNBurnerAddress)
 			Expect(err).ToNot(HaveOccurred())
 			Backend.Commit()
       Expect(isSuccessful(tx)).To(BeTrue())
@@ -54,12 +51,17 @@ var _ = Describe("updateTKN", func() {
     Context("TKN is not locked after the update", func(){
 
       BeforeEach(func() {
-  			var err error
-  			tx, err = Licence.UpdateTKNContractAddress(Owner.TransactOpts(), common.HexToAddress("0x1"))
+  			tx, err := Licence.UpdateTKNContractAddress(Owner.TransactOpts(), common.HexToAddress("0x1"))
   			Expect(err).ToNot(HaveOccurred())
   			Backend.Commit()
         Expect(isSuccessful(tx)).To(BeTrue())
   		})
+
+      It("should be pointing to 0x1 address", func() {
+        addr, err := Licence.TKNContractAddress(nil)
+        Expect(err).ToNot(HaveOccurred())
+        Expect(addr).To(Equal(common.HexToAddress("0x1")))
+      })
 
   		It("Should emit a new UpdatedTKNContractAddress event", func() {
   			it, err := Licence.FilterUpdatedTKNContractAddress(nil)
@@ -94,6 +96,18 @@ var _ = Describe("updateTKN", func() {
         Expect(isSuccessful(tx)).To(BeFalse())
   		})
 
+      It("Should be locked", func() {
+        lock, err := Licence.TKNContractAddressLocked(nil)
+        Expect(err).ToNot(HaveOccurred())
+        Expect(lock).To(BeTrue())
+      })
+
+      It("should be still pointing to TKNBurnerAddress", func() {
+        addr, err := Licence.TKNContractAddress(nil)
+        Expect(err).ToNot(HaveOccurred())
+        Expect(addr).To(Equal(TKNBurnerAddress))
+      })
+
   		It("Should not emit a new UpdatedTKNContractAddress event", func() {
   			it, err := Licence.FilterUpdatedTKNContractAddress(nil)
   			Expect(err).ToNot(HaveOccurred())
@@ -117,5 +131,13 @@ var _ = Describe("updateTKN", func() {
 			Expect(isSuccessful(tx)).To(BeFalse())
 		})
 	})
+
+    It("Should fail", func() {
+      tx, err := Licence.LockTKNContractAddress(BankAccount.TransactOpts(ethertest.WithGasLimit(100000)))
+      Expect(err).ToNot(HaveOccurred())
+      Backend.Commit()
+      Expect(isGasExhausted(tx, 100000)).To(BeFalse())
+      Expect(isSuccessful(tx)).To(BeFalse())
+    })
 
 })
