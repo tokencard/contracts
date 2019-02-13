@@ -134,7 +134,8 @@ contract Oracle is usingOraclize, Claimable, Base64, Date, JSON, Controllable, P
         address _token = _queryToToken[_queryID];
         require(_token != address(0), "queryID matches to address 0");
         // Get the corresponding token object.
-        ( , , , , , uint256 lastUpdate) = _getTokenInfo(_token);
+        ( , , , bool available, , uint256 lastUpdate) = _getTokenInfo(_token);
+        require(available, "token must be available");
 
         bool valid;
         uint timestamp;
