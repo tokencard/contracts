@@ -293,6 +293,8 @@ contract Oracle is usingOraclize, Base64, Date, JSON, Controllable, ParseIntScie
 
             // Create a new oraclize query for each supported token.
             for (uint i = 0; i < _tokenList.length; i++) {
+                //token must exist, revert if it doesn't
+                require(tokens[_tokenList[i]].exists, "token does not exist");
                 // Store the token symbol used in the query.
                 strings.slice memory symbol = tokens[_tokenList[i]].symbol.toSlice();
                 // Create a new oraclize query from the component strings.
