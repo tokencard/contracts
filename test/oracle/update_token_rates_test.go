@@ -78,7 +78,7 @@ var _ = Describe("updateRates", func() {
 				Expect(it.Next()).To(BeFalse())
 				Expect(evt.Reason).To(Equal("insufficient balance"))
 			})
-			It("Oracle contract balance should Backend 0", func() {
+			It("Oracle contract balance should be 0", func() {
 				b, err := Backend.BalanceAt(context.Background(), OracleAddress, nil)
 				Expect(err).ToNot(HaveOccurred())
 				Expect(b.String()).To(Equal("0"))
