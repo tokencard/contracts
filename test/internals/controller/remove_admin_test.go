@@ -10,7 +10,7 @@ import (
 
 var _ = Describe("removeAdmin", func() {
 
-	When("controller owner calls RemoveAdmin with a controlle admin address", func() {
+	When("controller owner calls RemoveAdmin with a controller admin address", func() {
 		var err error
 		var tx *types.Transaction
 		BeforeEach(func() {

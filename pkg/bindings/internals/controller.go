@@ -28,18 +28,18 @@ var (
 )
 
 // ControllerABI is the input ABI used to generate the binding from.
-const ControllerABI = "[{\"constant\":true,\"inputs\":[],\"name\":\"controllerCount\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_account\",\"type\":\"address\"}],\"name\":\"removeAdmin\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_account\",\"type\":\"address\"}],\"name\":\"isAdmin\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"adminCount\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_account\",\"type\":\"address\"}],\"name\":\"addAdmin\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_account\",\"type\":\"address\"}],\"name\":\"addController\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_account\",\"type\":\"address\"}],\"name\":\"isController\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_account\",\"type\":\"address\"}],\"name\":\"removeController\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"name\":\"_account\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_sender\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_controller\",\"type\":\"address\"}],\"name\":\"AddedController\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_sender\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_controller\",\"type\":\"address\"}],\"name\":\"RemovedController\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_sender\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_admin\",\"type\":\"address\"}],\"name\":\"AddedAdmin\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_sender\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_admin\",\"type\":\"address\"}],\"name\":\"RemovedAdmin\",\"type\":\"event\"}]"
+const ControllerABI = "[{\"constant\":true,\"inputs\":[],\"name\":\"controllerCount\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_account\",\"type\":\"address\"}],\"name\":\"removeAdmin\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"isTransferable\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_account\",\"type\":\"address\"}],\"name\":\"isAdmin\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"adminCount\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_account\",\"type\":\"address\"}],\"name\":\"addAdmin\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[],\"name\":\"renounceOwnership\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_account\",\"type\":\"address\"}],\"name\":\"addController\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_account\",\"type\":\"address\"}],\"name\":\"isController\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_account\",\"type\":\"address\"}],\"name\":\"transferOwnership\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_account\",\"type\":\"address\"}],\"name\":\"removeController\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"name\":\"_ownerAddress\",\"type\":\"address\"},{\"name\":\"_transferable\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_sender\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_controller\",\"type\":\"address\"}],\"name\":\"AddedController\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_sender\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_controller\",\"type\":\"address\"}],\"name\":\"RemovedController\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_sender\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_admin\",\"type\":\"address\"}],\"name\":\"AddedAdmin\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_sender\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_admin\",\"type\":\"address\"}],\"name\":\"RemovedAdmin\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_from\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_to\",\"type\":\"address\"}],\"name\":\"TransferredOwnership\",\"type\":\"event\"}]"
 
 // ControllerBin is the compiled bytecode used for deploying new contracts.
-const ControllerBin = `608060405234801561001057600080fd5b50604051602080610a8f833981016040525160008054600160a060020a03909216600160a060020a0319909216919091179055610a3d806100526000396000f3006080604052600436106100985763ffffffff7c010000000000000000000000000000000000000000000000000000000060003504166315b9a8b8811461009d5780631785f53c146100c457806324d7806c146100e75780632b7832b31461011c57806370480275146101315780638da5cb5b14610152578063a7fc7a0714610183578063b429afeb146101a4578063f6a74ed7146101c5575b600080fd5b3480156100a957600080fd5b506100b26101e6565b60408051918252519081900360200190f35b3480156100d057600080fd5b506100e5600160a060020a03600435166101ec565b005b3480156100f357600080fd5b50610108600160a060020a036004351661025a565b604080519115158252519081900360200190f35b34801561012857600080fd5b506100b2610278565b34801561013d57600080fd5b506100e5600160a060020a036004351661027e565b34801561015e57600080fd5b506101676102e9565b60408051600160a060020a039092168252519081900360200190f35b34801561018f57600080fd5b506100e5600160a060020a03600435166102f8565b3480156101b057600080fd5b50610108600160a060020a0360043516610360565b3480156101d157600080fd5b506100e5600160a060020a036004351661037e565b60045490565b600054600160a060020a0316331461024e576040805160e560020a62461bcd02815260206004820152601660248201527f73656e646572206973206e6f7420616e206f776e657200000000000000000000604482015290519081900360640190fd5b610257816103e6565b50565b600160a060020a031660009081526001602052604090205460ff1690565b60025490565b600054600160a060020a031633146102e0576040805160e560020a62461bcd02815260206004820152601660248201527f73656e646572206973206e6f7420616e206f776e657200000000000000000000604482015290519081900360640190fd5b610257816104c1565b600054600160a060020a031690565b6103013361025a565b1515610357576040805160e560020a62461bcd02815260206004820152601660248201527f73656e646572206973206e6f7420616e2061646d696e00000000000000000000604482015290519081900360640190fd5b610257816106e5565b600160a060020a031660009081526003602052604090205460ff1690565b6103873361025a565b15156103dd576040805160e560020a62461bcd02815260206004820152601660248201527f73656e646572206973206e6f7420616e2061646d696e00000000000000000000604482015290519081900360640190fd5b61025781610911565b600160a060020a03811660009081526001602052604090205460ff161515610458576040805160e560020a62461bcd02815260206004820181905260248201527f70726f7669646564206163636f756e74206973206e6f7420616e2061646d696e604482015290519081900360640190fd5b600160a060020a038116600081815260016020908152604091829020805460ff191690556002805460001901905581513381529081019290925280517f787a2e12f4a55b658b8f573c32432ee11a5e8b51677d1e1e937aaf6a0bb5776e9281900390910190a150565b600160a060020a03811660009081526001602052604090205460ff1615610557576040805160e560020a62461bcd028152602060048201526024808201527f70726f7669646564206163636f756e7420697320616c726561647920616e206160448201527f646d696e00000000000000000000000000000000000000000000000000000000606482015290519081900360840190fd5b600160a060020a03811660009081526003602052604090205460ff16156105ee576040805160e560020a62461bcd02815260206004820152602860248201527f70726f7669646564206163636f756e7420697320616c7265616479206120636f60448201527f6e74726f6c6c6572000000000000000000000000000000000000000000000000606482015290519081900360840190fd5b600054600160a060020a038281169116141561067a576040805160e560020a62461bcd02815260206004820152602560248201527f70726f7669646564206163636f756e7420697320616c7265616479207468652060448201527f6f776e6572000000000000000000000000000000000000000000000000000000606482015290519081900360840190fd5b600160a060020a038116600081815260016020818152604092839020805460ff1916831790556002805490920190915581513381529081019290925280517fc58b647b8ba5a8cab2f11f32673636cc1061324240972ed05e8cc005b81a4b7a9281900390910190a150565b600160a060020a03811660009081526003602052604090205460ff161561077c576040805160e560020a62461bcd02815260206004820152602860248201527f70726f7669646564206163636f756e7420697320616c7265616479206120636f60448201527f6e74726f6c6c6572000000000000000000000000000000000000000000000000606482015290519081900360840190fd5b600160a060020a03811660009081526001602052604090205460ff1615610812576040805160e560020a62461bcd028152602060048201526024808201527f70726f7669646564206163636f756e7420697320616c726561647920616e206160448201527f646d696e00000000000000000000000000000000000000000000000000000000606482015290519081900360840190fd5b61081a6102e9565b600160a060020a03828116911614156108a3576040805160e560020a62461bcd02815260206004820152602560248201527f70726f7669646564206163636f756e7420697320616c7265616479207468652060448201527f6f776e6572000000000000000000000000000000000000000000000000000000606482015290519081900360840190fd5b600160a060020a038116600081815260036020908152604091829020805460ff1916600190811790915560048054909101905581513381529081019290925280517fb890d5abdcd5c2b61ce8bbc2cf6af9b6d7f7451830cbc85037cbdd182c86fe1d9281900390910190a150565b600160a060020a03811660009081526003602052604090205460ff1615156109a8576040805160e560020a62461bcd028152602060048201526024808201527f70726f7669646564206163636f756e74206973206e6f74206120636f6e74726f60448201527f6c6c657200000000000000000000000000000000000000000000000000000000606482015290519081900360840190fd5b600160a060020a038116600081815260036020908152604091829020805460ff191690556004805460001901905581513381529081019290925280517fb6a283aaede08e15ef55c74e3014e30eb0c0040d4b156cccb77391268ea373949281900390910190a1505600a165627a7a72305820039f07c0899e8940f21971b3add3de494c130ee0d7a640cee27dc4055c93ab9b0029`
+const ControllerBin = `608060405234801561001057600080fd5b50604051604080610e94833981016040818152825160209384015160008054600160a060020a031916600160a060020a03841690811760a060020a60ff0219167401000000000000000000000000000000000000000084151502178255908552948401949094528151909392849284927f850b3df64837d7d518b45f5aa64d104652c3b80eb5b34a8e3d9eb666cb7cdea59281900390910190a150505050610dd7806100bd6000396000f3006080604052600436106100b95763ffffffff7c010000000000000000000000000000000000000000000000000000000060003504166315b9a8b881146100be5780631785f53c146100e55780632121dc751461010857806324d7806c146101315780632b7832b3146101525780637048027514610167578063715018a6146101885780638da5cb5b1461019d578063a7fc7a07146101ce578063b429afeb146101ef578063f2fde38b14610210578063f6a74ed714610231575b600080fd5b3480156100ca57600080fd5b506100d3610252565b60408051918252519081900360200190f35b3480156100f157600080fd5b50610106600160a060020a0360043516610258565b005b34801561011457600080fd5b5061011d6102b0565b604080519115158252519081900360200190f35b34801561013d57600080fd5b5061011d600160a060020a03600435166102d1565b34801561015e57600080fd5b506100d36102ef565b34801561017357600080fd5b50610106600160a060020a03600435166102f5565b34801561019457600080fd5b5061010661034a565b3480156101a957600080fd5b506101b2610473565b60408051600160a060020a039092168252519081900360200190f35b3480156101da57600080fd5b50610106600160a060020a0360043516610482565b3480156101fb57600080fd5b5061011d600160a060020a03600435166104ea565b34801561021c57600080fd5b50610106600160a060020a0360043516610508565b34801561023d57600080fd5b50610106600160a060020a03600435166106e2565b60045490565b61026061074a565b15156102a4576040805160e560020a62461bcd0281526020600482015260166024820152600080516020610d8c833981519152604482015290519081900360640190fd5b6102ad8161075b565b50565b60005474010000000000000000000000000000000000000000900460ff1690565b600160a060020a031660009081526001602052604090205460ff1690565b60025490565b6102fd61074a565b1515610341576040805160e560020a62461bcd0281526020600482015260166024820152600080516020610d8c833981519152604482015290519081900360640190fd5b6102ad81610836565b61035261074a565b1515610396576040805160e560020a62461bcd0281526020600482015260166024820152600080516020610d8c833981519152604482015290519081900360640190fd5b60005474010000000000000000000000000000000000000000900460ff16151561040a576040805160e560020a62461bcd02815260206004820152601d60248201527f6f776e657273686970206973206e6f74207472616e7366657261626c65000000604482015290519081900360640190fd5b6000805460408051600160a060020a039092168252602082019290925281517f850b3df64837d7d518b45f5aa64d104652c3b80eb5b34a8e3d9eb666cb7cdea5929181900390910190a16000805473ffffffffffffffffffffffffffffffffffffffff19169055565b600054600160a060020a031690565b61048b336102d1565b15156104e1576040805160e560020a62461bcd02815260206004820152601660248201527f73656e646572206973206e6f7420616e2061646d696e00000000000000000000604482015290519081900360640190fd5b6102ad81610a5f565b600160a060020a031660009081526003602052604090205460ff1690565b61051061074a565b1515610554576040805160e560020a62461bcd0281526020600482015260166024820152600080516020610d8c833981519152604482015290519081900360640190fd5b60005474010000000000000000000000000000000000000000900460ff1615156105c8576040805160e560020a62461bcd02815260206004820152601d60248201527f6f776e657273686970206973206e6f74207472616e7366657261626c65000000604482015290519081900360640190fd5b600160a060020a038116151561064e576040805160e560020a62461bcd02815260206004820152602360248201527f6f776e65722063616e6e6f742062652073657420746f207a65726f206164647260448201527f6573730000000000000000000000000000000000000000000000000000000000606482015290519081900360840190fd5b6000805474ff000000000000000000000000000000000000000019811690915560408051600160a060020a039283168152918316602083015280517f850b3df64837d7d518b45f5aa64d104652c3b80eb5b34a8e3d9eb666cb7cdea59281900390910190a16000805473ffffffffffffffffffffffffffffffffffffffff1916600160a060020a0392909216919091179055565b6106eb336102d1565b1515610741576040805160e560020a62461bcd02815260206004820152601660248201527f73656e646572206973206e6f7420616e2061646d696e00000000000000000000604482015290519081900360640190fd5b6102ad81610c8b565b600054600160a060020a0316331490565b600160a060020a03811660009081526001602052604090205460ff1615156107cd576040805160e560020a62461bcd02815260206004820181905260248201527f70726f7669646564206163636f756e74206973206e6f7420616e2061646d696e604482015290519081900360640190fd5b600160a060020a038116600081815260016020908152604091829020805460ff191690556002805460001901905581513381529081019290925280517f787a2e12f4a55b658b8f573c32432ee11a5e8b51677d1e1e937aaf6a0bb5776e9281900390910190a150565b600160a060020a03811660009081526001602052604090205460ff16156108cc576040805160e560020a62461bcd028152602060048201526024808201527f70726f7669646564206163636f756e7420697320616c726561647920616e206160448201527f646d696e00000000000000000000000000000000000000000000000000000000606482015290519081900360840190fd5b600160a060020a03811660009081526003602052604090205460ff1615610963576040805160e560020a62461bcd02815260206004820152602860248201527f70726f7669646564206163636f756e7420697320616c7265616479206120636f60448201527f6e74726f6c6c6572000000000000000000000000000000000000000000000000606482015290519081900360840190fd5b61096b610473565b600160a060020a03828116911614156109f4576040805160e560020a62461bcd02815260206004820152602560248201527f70726f7669646564206163636f756e7420697320616c7265616479207468652060448201527f6f776e6572000000000000000000000000000000000000000000000000000000606482015290519081900360840190fd5b600160a060020a038116600081815260016020818152604092839020805460ff1916831790556002805490920190915581513381529081019290925280517fc58b647b8ba5a8cab2f11f32673636cc1061324240972ed05e8cc005b81a4b7a9281900390910190a150565b600160a060020a03811660009081526003602052604090205460ff1615610af6576040805160e560020a62461bcd02815260206004820152602860248201527f70726f7669646564206163636f756e7420697320616c7265616479206120636f60448201527f6e74726f6c6c6572000000000000000000000000000000000000000000000000606482015290519081900360840190fd5b600160a060020a03811660009081526001602052604090205460ff1615610b8c576040805160e560020a62461bcd028152602060048201526024808201527f70726f7669646564206163636f756e7420697320616c726561647920616e206160448201527f646d696e00000000000000000000000000000000000000000000000000000000606482015290519081900360840190fd5b610b94610473565b600160a060020a0382811691161415610c1d576040805160e560020a62461bcd02815260206004820152602560248201527f70726f7669646564206163636f756e7420697320616c7265616479207468652060448201527f6f776e6572000000000000000000000000000000000000000000000000000000606482015290519081900360840190fd5b600160a060020a038116600081815260036020908152604091829020805460ff1916600190811790915560048054909101905581513381529081019290925280517fb890d5abdcd5c2b61ce8bbc2cf6af9b6d7f7451830cbc85037cbdd182c86fe1d9281900390910190a150565b600160a060020a03811660009081526003602052604090205460ff161515610d22576040805160e560020a62461bcd028152602060048201526024808201527f70726f7669646564206163636f756e74206973206e6f74206120636f6e74726f60448201527f6c6c657200000000000000000000000000000000000000000000000000000000606482015290519081900360840190fd5b600160a060020a038116600081815260036020908152604091829020805460ff191690556004805460001901905581513381529081019290925280517fb6a283aaede08e15ef55c74e3014e30eb0c0040d4b156cccb77391268ea373949281900390910190a150560073656e646572206973206e6f7420616e206f776e657200000000000000000000a165627a7a723058209e4ebb3ce71d9315712a796bf8081ee313c7f48f9306118bf4083fa618bfdcf50029`
 
 // DeployController deploys a new Ethereum contract, binding an instance of Controller to it.
-func DeployController(auth *bind.TransactOpts, backend bind.ContractBackend, _account common.Address) (common.Address, *types.Transaction, *Controller, error) {
+func DeployController(auth *bind.TransactOpts, backend bind.ContractBackend, _ownerAddress common.Address, _transferable bool) (common.Address, *types.Transaction, *Controller, error) {
 	parsed, err := abi.JSON(strings.NewReader(ControllerABI))
 	if err != nil {
 		return common.Address{}, nil, nil, err
 	}
-	address, tx, contract, err := bind.DeployContract(auth, parsed, common.FromHex(ControllerBin), backend, _account)
+	address, tx, contract, err := bind.DeployContract(auth, parsed, common.FromHex(ControllerBin), backend, _ownerAddress, _transferable)
 	if err != nil {
 		return common.Address{}, nil, nil, err
 	}
@@ -292,6 +292,32 @@ func (_Controller *ControllerCallerSession) IsController(_account common.Address
 	return _Controller.Contract.IsController(&_Controller.CallOpts, _account)
 }
 
+// IsTransferable is a free data retrieval call binding the contract method 0x2121dc75.
+//
+// Solidity: function isTransferable() constant returns(bool)
+func (_Controller *ControllerCaller) IsTransferable(opts *bind.CallOpts) (bool, error) {
+	var (
+		ret0 = new(bool)
+	)
+	out := ret0
+	err := _Controller.contract.Call(opts, out, "isTransferable")
+	return *ret0, err
+}
+
+// IsTransferable is a free data retrieval call binding the contract method 0x2121dc75.
+//
+// Solidity: function isTransferable() constant returns(bool)
+func (_Controller *ControllerSession) IsTransferable() (bool, error) {
+	return _Controller.Contract.IsTransferable(&_Controller.CallOpts)
+}
+
+// IsTransferable is a free data retrieval call binding the contract method 0x2121dc75.
+//
+// Solidity: function isTransferable() constant returns(bool)
+func (_Controller *ControllerCallerSession) IsTransferable() (bool, error) {
+	return _Controller.Contract.IsTransferable(&_Controller.CallOpts)
+}
+
 // Owner is a free data retrieval call binding the contract method 0x8da5cb5b.
 //
 // Solidity: function owner() constant returns(address)
@@ -400,6 +426,48 @@ func (_Controller *ControllerSession) RemoveController(_account common.Address) 
 // Solidity: function removeController(_account address) returns()
 func (_Controller *ControllerTransactorSession) RemoveController(_account common.Address) (*types.Transaction, error) {
 	return _Controller.Contract.RemoveController(&_Controller.TransactOpts, _account)
+}
+
+// RenounceOwnership is a paid mutator transaction binding the contract method 0x715018a6.
+//
+// Solidity: function renounceOwnership() returns()
+func (_Controller *ControllerTransactor) RenounceOwnership(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _Controller.contract.Transact(opts, "renounceOwnership")
+}
+
+// RenounceOwnership is a paid mutator transaction binding the contract method 0x715018a6.
+//
+// Solidity: function renounceOwnership() returns()
+func (_Controller *ControllerSession) RenounceOwnership() (*types.Transaction, error) {
+	return _Controller.Contract.RenounceOwnership(&_Controller.TransactOpts)
+}
+
+// RenounceOwnership is a paid mutator transaction binding the contract method 0x715018a6.
+//
+// Solidity: function renounceOwnership() returns()
+func (_Controller *ControllerTransactorSession) RenounceOwnership() (*types.Transaction, error) {
+	return _Controller.Contract.RenounceOwnership(&_Controller.TransactOpts)
+}
+
+// TransferOwnership is a paid mutator transaction binding the contract method 0xf2fde38b.
+//
+// Solidity: function transferOwnership(_account address) returns()
+func (_Controller *ControllerTransactor) TransferOwnership(opts *bind.TransactOpts, _account common.Address) (*types.Transaction, error) {
+	return _Controller.contract.Transact(opts, "transferOwnership", _account)
+}
+
+// TransferOwnership is a paid mutator transaction binding the contract method 0xf2fde38b.
+//
+// Solidity: function transferOwnership(_account address) returns()
+func (_Controller *ControllerSession) TransferOwnership(_account common.Address) (*types.Transaction, error) {
+	return _Controller.Contract.TransferOwnership(&_Controller.TransactOpts, _account)
+}
+
+// TransferOwnership is a paid mutator transaction binding the contract method 0xf2fde38b.
+//
+// Solidity: function transferOwnership(_account address) returns()
+func (_Controller *ControllerTransactorSession) TransferOwnership(_account common.Address) (*types.Transaction, error) {
+	return _Controller.Contract.TransferOwnership(&_Controller.TransactOpts, _account)
 }
 
 // ControllerAddedAdminIterator is returned from FilterAddedAdmin and is used to iterate over the raw logs and unpacked data for AddedAdmin events raised by the Controller contract.
@@ -874,6 +942,129 @@ func (_Controller *ControllerFilterer) WatchRemovedController(opts *bind.WatchOp
 				// New log arrived, parse the event and forward to the user
 				event := new(ControllerRemovedController)
 				if err := _Controller.contract.UnpackLog(event, "RemovedController", log); err != nil {
+					return err
+				}
+				event.Raw = log
+
+				select {
+				case sink <- event:
+				case err := <-sub.Err():
+					return err
+				case <-quit:
+					return nil
+				}
+			case err := <-sub.Err():
+				return err
+			case <-quit:
+				return nil
+			}
+		}
+	}), nil
+}
+
+// ControllerTransferredOwnershipIterator is returned from FilterTransferredOwnership and is used to iterate over the raw logs and unpacked data for TransferredOwnership events raised by the Controller contract.
+type ControllerTransferredOwnershipIterator struct {
+	Event *ControllerTransferredOwnership // Event containing the contract specifics and raw log
+
+	contract *bind.BoundContract // Generic contract to use for unpacking event data
+	event    string              // Event name to use for unpacking event data
+
+	logs chan types.Log        // Log channel receiving the found contract events
+	sub  ethereum.Subscription // Subscription for errors, completion and termination
+	done bool                  // Whether the subscription completed delivering logs
+	fail error                 // Occurred error to stop iteration
+}
+
+// Next advances the iterator to the subsequent event, returning whether there
+// are any more events found. In case of a retrieval or parsing error, false is
+// returned and Error() can be queried for the exact failure.
+func (it *ControllerTransferredOwnershipIterator) Next() bool {
+	// If the iterator failed, stop iterating
+	if it.fail != nil {
+		return false
+	}
+	// If the iterator completed, deliver directly whatever's available
+	if it.done {
+		select {
+		case log := <-it.logs:
+			it.Event = new(ControllerTransferredOwnership)
+			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+				it.fail = err
+				return false
+			}
+			it.Event.Raw = log
+			return true
+
+		default:
+			return false
+		}
+	}
+	// Iterator still in progress, wait for either a data or an error event
+	select {
+	case log := <-it.logs:
+		it.Event = new(ControllerTransferredOwnership)
+		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+			it.fail = err
+			return false
+		}
+		it.Event.Raw = log
+		return true
+
+	case err := <-it.sub.Err():
+		it.done = true
+		it.fail = err
+		return it.Next()
+	}
+}
+
+// Error returns any retrieval or parsing error occurred during filtering.
+func (it *ControllerTransferredOwnershipIterator) Error() error {
+	return it.fail
+}
+
+// Close terminates the iteration process, releasing any pending underlying
+// resources.
+func (it *ControllerTransferredOwnershipIterator) Close() error {
+	it.sub.Unsubscribe()
+	return nil
+}
+
+// ControllerTransferredOwnership represents a TransferredOwnership event raised by the Controller contract.
+type ControllerTransferredOwnership struct {
+	From common.Address
+	To   common.Address
+	Raw  types.Log // Blockchain specific contextual infos
+}
+
+// FilterTransferredOwnership is a free log retrieval operation binding the contract event 0x850b3df64837d7d518b45f5aa64d104652c3b80eb5b34a8e3d9eb666cb7cdea5.
+//
+// Solidity: e TransferredOwnership(_from address, _to address)
+func (_Controller *ControllerFilterer) FilterTransferredOwnership(opts *bind.FilterOpts) (*ControllerTransferredOwnershipIterator, error) {
+
+	logs, sub, err := _Controller.contract.FilterLogs(opts, "TransferredOwnership")
+	if err != nil {
+		return nil, err
+	}
+	return &ControllerTransferredOwnershipIterator{contract: _Controller.contract, event: "TransferredOwnership", logs: logs, sub: sub}, nil
+}
+
+// WatchTransferredOwnership is a free log subscription operation binding the contract event 0x850b3df64837d7d518b45f5aa64d104652c3b80eb5b34a8e3d9eb666cb7cdea5.
+//
+// Solidity: e TransferredOwnership(_from address, _to address)
+func (_Controller *ControllerFilterer) WatchTransferredOwnership(opts *bind.WatchOpts, sink chan<- *ControllerTransferredOwnership) (event.Subscription, error) {
+
+	logs, sub, err := _Controller.contract.WatchLogs(opts, "TransferredOwnership")
+	if err != nil {
+		return nil, err
+	}
+	return event.NewSubscription(func(quit <-chan struct{}) error {
+		defer sub.Unsubscribe()
+		for {
+			select {
+			case log := <-logs:
+				// New log arrived, parse the event and forward to the user
+				event := new(ControllerTransferredOwnership)
+				if err := _Controller.contract.UnpackLog(event, "TransferredOwnership", log); err != nil {
 					return err
 				}
 				event.Raw = log

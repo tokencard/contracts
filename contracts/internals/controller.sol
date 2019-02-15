@@ -18,20 +18,20 @@
 
 pragma solidity ^0.4.25;
 
+import "./ownable.sol";
+
 /// @title The Controller interface provides access to an external list of controllers.
 interface IController {
     function isController(address) external view returns (bool);
 }
 
 /// @title Controller stores a list of controller addresses that can be used for authentication in other contracts.
-contract Controller is IController {
+contract Controller is IController, Ownable{
     event AddedController(address _sender, address _controller);
     event RemovedController(address _sender, address _controller);
 
     event AddedAdmin(address _sender, address _admin);
     event RemovedAdmin(address _sender, address _admin);
-
-    address private _owner;
 
     mapping (address => bool) private _isAdmin;
     uint private _adminCount;
@@ -40,20 +40,9 @@ contract Controller is IController {
     uint private _controllerCount;
 
     /// @dev Constructor initializes the owner with the provided address.
-    /// @param _account address of the owner.
-    constructor(address _account) public {
-        _owner = _account;
-    }
-
-    /// @dev Reverts if called by any account other than the owner.
-    modifier onlyOwner() {
-        require(msg.sender == _owner, "sender is not an owner");
-        _;
-    }
-
-    /// @return the address of the owner.
-    function owner() public view returns (address) {
-        return _owner;
+    /// @param _ownerAddress address of the owner.
+    /// @param _transferable indicates whether the contract ownership can be transferred.
+    constructor(address _ownerAddress, bool _transferable) Ownable(_ownerAddress, _transferable) public {
     }
 
     /// @dev Checks if message sender is an admin.
@@ -88,7 +77,7 @@ contract Controller is IController {
     function _addAdmin(address _account) internal {
         require(!_isAdmin[_account], "provided account is already an admin");
         require(!_isController[_account], "provided account is already a controller");
-        require(_account != _owner, "provided account is already the owner");
+        require(_account != owner(), "provided account is already the owner");
         _isAdmin[_account] = true;
         _adminCount++;
         emit AddedAdmin(msg.sender, _account);

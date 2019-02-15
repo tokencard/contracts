@@ -184,7 +184,7 @@ func InitializeBackend() error {
 	var err error
 	var tx *types.Transaction
 
-	ControllerContractAddress, tx, ControllerContract, err = internals.DeployController(ControllerOwner.TransactOpts(), Backend, ControllerOwner.Address())
+	ControllerContractAddress, tx, ControllerContract, err = internals.DeployController(ControllerOwner.TransactOpts(), Backend, ControllerOwner.Address(), true)
 	if err != nil {
 		return err
 	}
