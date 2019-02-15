@@ -78,6 +78,7 @@ contract Controller is IController, Ownable{
         require(!_isAdmin[_account], "provided account is already an admin");
         require(!_isController[_account], "provided account is already a controller");
         require(_account != owner(), "provided account is already the owner");
+        require(_account != address(0), "provided account is the zero address");
         _isAdmin[_account] = true;
         _adminCount++;
         emit AddedAdmin(msg.sender, _account);
@@ -124,6 +125,7 @@ contract Controller is IController, Ownable{
         require(!_isController[_account], "provided account is already a controller");
         require(!_isAdmin[_account], "provided account is already an admin");
         require(_account != owner(), "provided account is already the owner");
+        require(_account != address(0), "provided account is the zero address");
         _isController[_account] = true;
         _controllerCount++;
         emit AddedController(msg.sender, _account);

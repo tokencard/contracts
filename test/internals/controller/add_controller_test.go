@@ -9,13 +9,13 @@ import (
 	"github.com/tokencard/ethertest"
 )
 
-var _ = Describe("addAdmin", func() {
+var _ = Describe("AddController", func() {
 
-	When("controller owner calls AddAdmin with a random address", func() {
+	When("controller Admin calls AddController with a random address", func() {
 		var err error
 		var tx *types.Transaction
 		BeforeEach(func() {
-			tx, err = ControllerContract.AddAdmin(ControllerOwner.TransactOpts(), RandomAccount.Address())
+			tx, err = ControllerContract.AddController(ControllerAdmin.TransactOpts(), RandomAccount.Address())
 			Expect(err).ToNot(HaveOccurred())
 			Backend.Commit()
 		})
@@ -24,30 +24,30 @@ var _ = Describe("addAdmin", func() {
 			Expect(isSuccessful(tx)).To(BeTrue())
 		})
 
-		It("should increase number of admins", func() {
-			count, err := ControllerContract.AdminCount(nil)
+		It("should increase number of controllers", func() {
+			count, err := ControllerContract.ControllerCount(nil)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(count.String()).To(Equal("2"))
 		})
 
-		It("should emit AddedAdmin event", func() {
-			it, err := ControllerContract.FilterAddedAdmin(nil)
+		It("should emit AddController event", func() {
+			it, err := ControllerContract.FilterAddedController(nil)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(it.Next()).To(BeTrue())
 			Expect(it.Next()).To(BeTrue())
 			evt := it.Event
 			Expect(it.Next()).To(BeFalse())
-			Expect(evt.Sender).To(Equal(ControllerOwner.Address()))
-			Expect(evt.Admin).To(Equal(RandomAccount.Address()))
+			Expect(evt.Sender).To(Equal(ControllerAdmin.Address()))
+			Expect(evt.Controller).To(Equal(RandomAccount.Address()))
 		})
 
 	})
 
-	When("controller owner calls AddAdmin with it's own address", func() {
+	When("controller Admin calls AddController with it's own address", func() {
 		var err error
 		var tx *types.Transaction
 		BeforeEach(func() {
-			tx, err = ControllerContract.AddAdmin(ControllerOwner.TransactOpts(ethertest.WithGasLimit(100000)), ControllerOwner.Address())
+			tx, err = ControllerContract.AddController(ControllerAdmin.TransactOpts(ethertest.WithGasLimit(100000)), ControllerAdmin.Address())
 			Expect(err).ToNot(HaveOccurred())
 			Backend.Commit()
 			Expect(isGasExhausted(tx, 100000)).To(BeFalse())
@@ -58,15 +58,34 @@ var _ = Describe("addAdmin", func() {
 		})
 
 		It("should fail at the already owner requirenment", func() {
+			Expect(TestRig.LastExecuted()).To(MatchRegexp(`require\(!_isAdmin\[_account\], "provided account is already an admin"\);`))
+		})
+	})
+
+	When("controller Admin calls AddController with Owner's address", func() {
+		var err error
+		var tx *types.Transaction
+		BeforeEach(func() {
+			tx, err = ControllerContract.AddController(ControllerAdmin.TransactOpts(ethertest.WithGasLimit(100000)), ControllerOwner.Address())
+			Expect(err).ToNot(HaveOccurred())
+			Backend.Commit()
+			Expect(isGasExhausted(tx, 100000)).To(BeFalse())
+		})
+
+		It("should not succeed", func() {
+			Expect(isSuccessful(tx)).To(BeFalse())
+		})
+
+		It("should fail at already controller requirenment", func() {
 			Expect(TestRig.LastExecuted()).To(MatchRegexp(`require\(_account != owner\(\), "provided account is already the owner"\);`))
 		})
 	})
 
-	When("controller owner calls AddAdmin with controller's address", func() {
+  When("controller Admin calls AddController with controller's address", func() {
 		var err error
 		var tx *types.Transaction
 		BeforeEach(func() {
-			tx, err = ControllerContract.AddAdmin(ControllerOwner.TransactOpts(ethertest.WithGasLimit(100000)), Controller.Address())
+			tx, err = ControllerContract.AddController(ControllerAdmin.TransactOpts(ethertest.WithGasLimit(100000)), Controller.Address())
 			Expect(err).ToNot(HaveOccurred())
 			Backend.Commit()
 			Expect(isGasExhausted(tx, 100000)).To(BeFalse())
@@ -81,30 +100,11 @@ var _ = Describe("addAdmin", func() {
 		})
 	})
 
-	When("controller owner calls AddAdmin with admin's address", func() {
+	When("controller Admin calls AddController with 0 address", func() {
 		var err error
 		var tx *types.Transaction
 		BeforeEach(func() {
-			tx, err = ControllerContract.AddAdmin(ControllerOwner.TransactOpts(ethertest.WithGasLimit(100000)), ControllerAdmin.Address())
-			Expect(err).ToNot(HaveOccurred())
-			Backend.Commit()
-			Expect(isGasExhausted(tx, 100000)).To(BeFalse())
-		})
-
-		It("should not succeed", func() {
-			Expect(isSuccessful(tx)).To(BeFalse())
-		})
-
-		It("should fail at already controller requirenment", func() {
-			Expect(TestRig.LastExecuted()).To(MatchRegexp(`require\(!_isAdmin\[_account\], "provided account is already an admin"\);`))
-		})
-	})
-
-	When("controller owner calls AddAdmin with 0 address", func() {
-		var err error
-		var tx *types.Transaction
-		BeforeEach(func() {
-			tx, err = ControllerContract.AddAdmin(ControllerOwner.TransactOpts(ethertest.WithGasLimit(100000)), common.HexToAddress("0x0"))
+			tx, err = ControllerContract.AddController(ControllerAdmin.TransactOpts(ethertest.WithGasLimit(100000)), common.HexToAddress("0x0"))
 			Expect(err).ToNot(HaveOccurred())
 			Backend.Commit()
 			Expect(isGasExhausted(tx, 100000)).To(BeFalse())
@@ -119,11 +119,11 @@ var _ = Describe("addAdmin", func() {
 		})
 	})
 
-  When("admin calls AddAdmin with a random address", func() {
+  When("Owner calls AddController with a random address", func() {
 		var err error
 		var tx *types.Transaction
 		BeforeEach(func() {
-			tx, err = ControllerContract.AddAdmin(ControllerAdmin.TransactOpts(ethertest.WithGasLimit(100000)), RandomAccount.Address())
+			tx, err = ControllerContract.AddController(ControllerOwner.TransactOpts(ethertest.WithGasLimit(100000)), RandomAccount.Address())
 			Expect(err).ToNot(HaveOccurred())
 			Backend.Commit()
 		})
@@ -133,15 +133,15 @@ var _ = Describe("addAdmin", func() {
 		})
 
 		It("should fail at the not owner requirenment", func() {
-			Expect(TestRig.LastExecuted()).To(MatchRegexp(`require\(_isOwner\(\), "sender is not an owner"\);`))
+			Expect(TestRig.LastExecuted()).To(MatchRegexp(`require\(isAdmin\(msg.sender\), "sender is not an admin"\);`))
 		})
 	})
 
-  When("controller calls AddAdmin with a random address", func() {
+  When("controller calls AddController with a random address", func() {
 		var err error
 		var tx *types.Transaction
 		BeforeEach(func() {
-			tx, err = ControllerContract.AddAdmin(Controller.TransactOpts(ethertest.WithGasLimit(100000)), RandomAccount.Address())
+			tx, err = ControllerContract.AddController(Controller.TransactOpts(ethertest.WithGasLimit(100000)), RandomAccount.Address())
 			Expect(err).ToNot(HaveOccurred())
 			Backend.Commit()
 			Expect(isGasExhausted(tx, 100000)).To(BeFalse())
@@ -151,8 +151,8 @@ var _ = Describe("addAdmin", func() {
 			Expect(isSuccessful(tx)).To(BeFalse())
 		})
 
-		It("should fail at the not owner requirenment", func() {
-			Expect(TestRig.LastExecuted()).To(MatchRegexp(`require\(_isOwner\(\), "sender is not an owner"\);`))
+		It("should fail at the notAdmin requirenment", func() {
+			Expect(TestRig.LastExecuted()).To(MatchRegexp(`require\(isAdmin\(msg.sender\), "sender is not an admin"\);`))
 		})
 	})
 

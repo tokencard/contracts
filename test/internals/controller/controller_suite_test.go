@@ -55,11 +55,11 @@ var _ = AfterEach(func() {
 	}
 })
 
-// func isGasExhausted(tx *types.Transaction, gasLimit uint64) bool {
-// 	r, err := Backend.TransactionReceipt(context.Background(), tx.Hash())
-// 	Expect(err).ToNot(HaveOccurred())
-// 	if r.Status == types.ReceiptStatusSuccessful {
-// 		return false
-// 	}
-// 	return r.GasUsed == gasLimit
-// }
+func isGasExhausted(tx *types.Transaction, gasLimit uint64) bool {
+	r, err := Backend.TransactionReceipt(context.Background(), tx.Hash())
+	Expect(err).ToNot(HaveOccurred())
+	if r.Status == types.ReceiptStatusSuccessful {
+		return false
+	}
+	return r.GasUsed == gasLimit
+}
