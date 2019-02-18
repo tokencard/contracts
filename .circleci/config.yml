@@ -34,13 +34,10 @@ jobs:
     steps:
       - checkout
       - run:
-          command: myth -x ./contracts/oracle.sol
+          command: myth -x ./contracts/*.sol
           no_output_timeout: 30m
       - run:
-          command: myth -x ./contracts/wallet.sol
-          no_output_timeout: 30m
-      - run:
-          command: myth -x ./contracts/internal/controller.sol
+          command: myth -x ./contracts/internals/*.sol
           no_output_timeout: 30m
 
   snyk_check:
