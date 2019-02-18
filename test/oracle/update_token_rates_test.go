@@ -12,13 +12,7 @@ import (
 	"github.com/tokencard/ethertest"
 )
 
-<<<<<<< HEAD:test/oracle/update_token_rates_test.go
 var _ = Describe("updateRates", func() {
-||||||| merged common ancestors
-var _ = FDescribe("updateRatesList", func() {
-=======
-var _ = Describe("updateRatesList", func() {
->>>>>>> Require that the tokens in the list exist:test/oracle/update_token_rates_list_test.go
 
 	Context("When tokens are already supported", func() {
 		BeforeEach(func() {
@@ -61,17 +55,9 @@ var _ = Describe("updateRatesList", func() {
 				b, err := Backend.BalanceAt(context.Background(), OracleAddress, nil)
 				Expect(err).ToNot(HaveOccurred())
 				Expect(b.String()).NotTo(Equal("0"))
-<<<<<<< HEAD:test/oracle/update_token_rates_test.go
 				Expect(b.String()).NotTo(Equal("100000000"))
-||||||| merged common ancestors
 				newbalance := new(big.Int).Sub(big.NewInt(100000000), big.NewInt(2000000)) //10^6 is the mock price of the Oraclize query (x2 queries)
     		Expect(b.String()).To(Equal(newbalance.String()))
-
-				Expect(b.String()).To(Equal(newbalance.String()))
-=======
-				newbalance := new(big.Int).Sub(big.NewInt(100000000), big.NewInt(2000000)) //10^6 is the mock price of the Oraclize query (x2 queries)
-    		Expect(b.String()).To(Equal(newbalance.String()))
->>>>>>> Require that the tokens in the list exist:test/oracle/update_token_rates_list_test.go
 			})
 		}) // called by the controller with value
 

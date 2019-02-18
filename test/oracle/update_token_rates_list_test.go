@@ -12,7 +12,7 @@ import (
 	"github.com/tokencard/ethertest"
 )
 
-var _ = FDescribe("updateRatesList", func() {
+var _ = Describe("updateRatesList", func() {
 
 	Context("When tokens are already supported", func() {
 		BeforeEach(func() {
