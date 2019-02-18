@@ -120,9 +120,9 @@ contract Oracle is usingOraclize, Base64, Date, JSON, Controllable, ParseIntScie
             // return the value and a 'true' implying that the token is protected
             return (true, _amount.mul(token.rate).div(token.magnitude));
         }
-        // this returns a 'false' to imply that a card is not protected 
+        // this returns a 'false' to imply that a card is not protected
         return (false, 0);
-        
+
     }
 
     /// @dev Add ERC20 tokens to the list of supported tokens.
@@ -201,6 +201,13 @@ contract Oracle is usingOraclize, Base64, Date, JSON, Controllable, ParseIntScie
         _updateTokenRates(_gasLimit);
     }
 
+    /// @dev Update ERC20 token exchange rates for the list of tokens provided.
+    //// @param _gasLimit the gas limit is passed, this is used for the Oraclize callback
+    //// @param _tokenList the list of tokens that need to be updated
+    function updateTokenRatesList(uint _gasLimit, address[] _tokenList) external payable onlyController {
+        _updateTokenRatesList(_gasLimit, _tokenList);
+    }
+
     //// @dev Withdraw ether from the smart contract to the specified account.
     function withdraw(address _to, uint _amount) external onlyController {
         _to.transfer(_amount);
@@ -261,6 +268,39 @@ contract Oracle is usingOraclize, Base64, Date, JSON, Controllable, ParseIntScie
                 bytes32 queryID = oraclize_query("URL", apiPrefix.concat(symbol).toSlice().concat(apiSuffix), _gasLimit);
                 // Store the query ID together with the associated token address.
                 _queryToToken[queryID] = _tokenAddresses[i];
+                // Emit the query success event.
+                emit RequestedUpdate(symbol.toString());
+            }
+        }
+    }
+
+    /// @dev Re-usable helper function that performs the Oraclize Query for a specific list of tokens.
+    //// @param _gasLimit the gas limit is passed, this is used for the Oraclize callback.
+    //// @param _tokenList the list of tokens that need to be updated.
+    function _updateTokenRatesList(uint _gasLimit, address[] _tokenList) private {
+        // Check if there are any existing tokens.
+        if (_tokenList.length == 0) {
+            // Emit a query failure event.
+            emit FailedUpdateRequest("empty token list");
+        // Check if the contract has enough Ether to pay for the query.
+        } else if (oraclize_getPrice("URL") * _tokenList.length > address(this).balance) {
+            // Emit a query failure event.
+            emit FailedUpdateRequest("insufficient balance");
+        } else {
+            // Set up the cryptocompare API query strings.
+            strings.slice memory apiPrefix = "https://min-api.cryptocompare.com/data/price?fsym=".toSlice();
+            strings.slice memory apiSuffix = "&tsyms=ETH&sign=true".toSlice();
+
+            // Create a new oraclize query for each supported token.
+            for (uint i = 0; i < _tokenList.length; i++) {
+                //token must exist, revert if it doesn't
+                require(tokens[_tokenList[i]].exists, "token does not exist");
+                // Store the token symbol used in the query.
+                strings.slice memory symbol = tokens[_tokenList[i]].symbol.toSlice();
+                // Create a new oraclize query from the component strings.
+                bytes32 queryID = oraclize_query("URL", apiPrefix.concat(symbol).toSlice().concat(apiSuffix), _gasLimit);
+                // Store the query ID together with the associated token address.
+                _queryToToken[queryID] = _tokenList[i];
                 // Emit the query success event.
                 emit RequestedUpdate(symbol.toString());
             }
