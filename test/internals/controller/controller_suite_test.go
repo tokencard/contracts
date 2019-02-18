@@ -1,4 +1,4 @@
-package wallet_test
+package controller_test
 
 import (
 	"context"
@@ -13,12 +13,12 @@ import (
 )
 
 func init() {
-	TestRig.AddCoverageForContracts("../../build/wallet/combined.json", "../../contracts")
+	TestRig.AddCoverageForContracts("../../../build/internals/controller/combined.json", "../../../contracts")
 }
 
 func TestWalletSuite(t *testing.T) {
 	RegisterFailHandler(Fail)
-	RunSpecs(t, "Contract Suite")
+	RunSpecs(t, "Controller Suite")
 }
 
 var _ = BeforeEach(func() {
@@ -26,9 +26,19 @@ var _ = BeforeEach(func() {
 	Expect(err).ToNot(HaveOccurred())
 })
 
+var someFailed bool
+
+var _ = AfterEach(func() {
+	if CurrentGinkgoTestDescription().Failed {
+		someFailed = true
+	}
+})
+
 var _ = AfterSuite(func() {
-	// TestRig.ExpectMinimumCoverage("wallet.sol", 100.00)
-	TestRig.PrintGasUsage(os.Stdout)
+	if !someFailed {
+		TestRig.ExpectMinimumCoverage("internals/controller.sol", 100.00)
+		TestRig.PrintGasUsage(os.Stdout)
+	}
 })
 
 func isSuccessful(tx *types.Transaction) bool {

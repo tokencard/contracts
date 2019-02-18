@@ -29,11 +29,19 @@ jobs:
 
   mythril:
     docker:
-      - image: quay.io/token/mythril:2018-10-02
+      - image: mythril/myth:0.19.3
     working_directory: /src
     steps:
       - checkout
-      - run: myth -x ./contracts/*.sol
+      - run:
+          command: myth -x ./contracts/oracle.sol
+          no_output_timeout: 30m
+      - run:
+          command: myth -x ./contracts/wallet.sol
+          no_output_timeout: 30m
+      - run:
+          command: myth -x ./contracts/internals/controller.sol
+          no_output_timeout: 30m
 
   snyk_check:
     docker:

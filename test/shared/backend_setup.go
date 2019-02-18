@@ -89,6 +89,8 @@ var ControllerName = EnsNode("controller.tokencard.eth")
 
 var Owner *ethertest.Account
 var Controller *ethertest.Account
+var ControllerOwner *ethertest.Account
+var ControllerAdmin *ethertest.Account
 var RandomAccount *ethertest.Account
 var BankAccount *ethertest.Account
 var OraclizeConnectorOwner *ethertest.Account
@@ -162,11 +164,15 @@ func DecimalsToMagnitude(decimals *big.Int) *big.Int {
 func InitializeBackend() error {
 
 	Owner = ethertest.NewAccount()
+	ControllerOwner = ethertest.NewAccount()
+	ControllerAdmin = ethertest.NewAccount()
 	Controller = ethertest.NewAccount()
 	RandomAccount = ethertest.NewAccount()
 	BankAccount = ethertest.NewAccount()
 	OraclizeConnectorOwner = ethertest.NewAccount()
 
+	TestRig.AddGenesisAccountAllocation(ControllerOwner.Address(), EthToWei(1))
+	TestRig.AddGenesisAccountAllocation(ControllerAdmin.Address(), EthToWei(1))
 	TestRig.AddGenesisAccountAllocation(Controller.Address(), EthToWei(1000))
 	TestRig.AddGenesisAccountAllocation(RandomAccount.Address(), EthToWei(1000))
 	TestRig.AddGenesisAccountAllocation(OraclizeConnectorOwner.Address(), EthToWei(1000))
@@ -178,7 +184,7 @@ func InitializeBackend() error {
 	var err error
 	var tx *types.Transaction
 
-	ControllerContractAddress, tx, ControllerContract, err = internals.DeployController(BankAccount.TransactOpts(), Backend, BankAccount.Address())
+	ControllerContractAddress, tx, ControllerContract, err = internals.DeployController(ControllerOwner.TransactOpts(), Backend, ControllerOwner.Address(), true)
 	if err != nil {
 		return err
 	}
@@ -188,7 +194,17 @@ func InitializeBackend() error {
 		return errors.Wrap(err, "deploying controller contract")
 	}
 
-	tx, err = ControllerContract.AddController(BankAccount.TransactOpts(), Controller.Address())
+	ControllerContract.AddAdmin(ControllerOwner.TransactOpts(), ControllerAdmin.Address())
+	if err != nil {
+		return err
+	}
+	Backend.Commit()
+	err = verifyTransaction(tx)
+	if err != nil {
+		return errors.Wrap(err, "adding controller admin address")
+	}
+
+	tx, err = ControllerContract.AddController(ControllerAdmin.TransactOpts(), Controller.Address())
 	if err != nil {
 		return err
 	}

@@ -18,23 +18,78 @@
 
 pragma solidity ^0.4.25;
 
+import "./ownable.sol";
+
 /// @title The Controller interface provides access to an external list of controllers.
 interface IController {
     function isController(address) external view returns (bool);
 }
 
 /// @title Controller stores a list of controller addresses that can be used for authentication in other contracts.
-contract Controller is IController {
+contract Controller is IController, Ownable {
     event AddedController(address _sender, address _controller);
     event RemovedController(address _sender, address _controller);
+
+    event AddedAdmin(address _sender, address _admin);
+    event RemovedAdmin(address _sender, address _admin);
+
+    mapping (address => bool) private _isAdmin;
+    uint private _adminCount;
 
     mapping (address => bool) private _isController;
     uint private _controllerCount;
 
-    /// @dev Constructor initializes the list of controllers with the provided address.
-    /// @param _account address to add to the list of controllers.
-    constructor(address _account) public {
-        _addController(_account);
+    /// @dev Constructor initializes the owner with the provided address.
+    /// @param _ownerAddress address of the owner.
+    /// @param _transferable indicates whether the contract ownership can be transferred.
+    constructor(address _ownerAddress, bool _transferable) Ownable(_ownerAddress, _transferable) public {
+    }
+
+    /// @dev Checks if message sender is an admin.
+    modifier onlyAdmin() {
+        require(isAdmin(msg.sender), "sender is not an admin");
+        _;
+    }
+
+    /// @dev Add a new admin to the list of admins.
+    /// @param _account address to add to the list of admins.
+    function addAdmin(address _account) external onlyOwner {
+        _addAdmin(_account);
+    }
+
+    /// @dev Remove a admin from the list of admins.
+    /// @param _account address to remove from the list of admins.
+    function removeAdmin(address _account) external onlyOwner {
+        _removeAdmin(_account);
+    }
+
+    /// @return true if the provided account is an admin.
+    function isAdmin(address _account) public view returns (bool) {
+        return _isAdmin[_account];
+    }
+
+    /// @return the current number of admins.
+    function adminCount() public view returns (uint) {
+        return _adminCount;
+    }
+
+    /// @dev Internal-only function that adds a new admin.
+    function _addAdmin(address _account) private {
+        require(!_isAdmin[_account], "provided account is already an admin");
+        require(!_isController[_account], "provided account is already a controller");
+        require(_account != owner(), "provided account is already the owner");
+        require(_account != address(0), "provided account is the zero address");
+        _isAdmin[_account] = true;
+        _adminCount++;
+        emit AddedAdmin(msg.sender, _account);
+    }
+
+    /// @dev Internal-only function that removes an existing admin.
+    function _removeAdmin(address _account) private {
+        require(_isAdmin[_account], "provided account is not an admin");
+        _isAdmin[_account] = false;
+        _adminCount--;
+        emit RemovedAdmin(msg.sender, _account);
     }
 
     /// @dev Checks if message sender is a controller.
@@ -45,13 +100,13 @@ contract Controller is IController {
 
     /// @dev Add a new controller to the list of controllers.
     /// @param _account address to add to the list of controllers.
-    function addController(address _account) external onlyController {
+    function addController(address _account) external onlyAdmin {
         _addController(_account);
     }
 
     /// @dev Remove a controller from the list of controllers.
     /// @param _account address to remove from the list of controllers.
-    function removeController(address _account) external onlyController {
+    function removeController(address _account) external onlyAdmin {
         _removeController(_account);
     }
 
@@ -66,17 +121,19 @@ contract Controller is IController {
     }
 
     /// @dev Internal-only function that adds a new controller.
-    function _addController(address _account) internal {
+    function _addController(address _account) private {
         require(!_isController[_account], "provided account is already a controller");
+        require(!_isAdmin[_account], "provided account is already an admin");
+        require(_account != owner(), "provided account is already the owner");
+        require(_account != address(0), "provided account is the zero address");
         _isController[_account] = true;
         _controllerCount++;
         emit AddedController(msg.sender, _account);
     }
 
     /// @dev Internal-only function that removes an existing controller.
-    function _removeController(address _account) internal {
+    function _removeController(address _account) private {
         require(_isController[_account], "provided account is not a controller");
-        require(_controllerCount > 1, "cannot remove the last controller");
         _isController[_account] = false;
         _controllerCount--;
         emit RemovedController(msg.sender, _account);
