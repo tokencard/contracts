@@ -29,12 +29,12 @@ jobs:
 
   mythril:
     docker:
-      - image: mythril/myth:0.19.3
+      - image: mythril/myth:0.19.8
     working_directory: /src
     steps:
       - checkout
-      - run: myth -x ./contracts/*.sol
-      - run: myth -x ./contracts/internal/*.sol
+      - run: myth --max-depth 500 -x ./contracts/*.sol
+      - run: myth --max-depth 500 -x ./contracts/internal/*.sol
 
   snyk_check:
     docker:
