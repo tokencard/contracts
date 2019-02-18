@@ -26,7 +26,7 @@ interface IController {
 }
 
 /// @title Controller stores a list of controller addresses that can be used for authentication in other contracts.
-contract Controller is IController, Ownable{
+contract Controller is IController, Ownable {
     event AddedController(address _sender, address _controller);
     event RemovedController(address _sender, address _controller);
 
@@ -74,7 +74,7 @@ contract Controller is IController, Ownable{
     }
 
     /// @dev Internal-only function that adds a new admin.
-    function _addAdmin(address _account) internal {
+    function _addAdmin(address _account) private {
         require(!_isAdmin[_account], "provided account is already an admin");
         require(!_isController[_account], "provided account is already a controller");
         require(_account != owner(), "provided account is already the owner");
@@ -85,7 +85,7 @@ contract Controller is IController, Ownable{
     }
 
     /// @dev Internal-only function that removes an existing admin.
-    function _removeAdmin(address _account) internal {
+    function _removeAdmin(address _account) private {
         require(_isAdmin[_account], "provided account is not an admin");
         _isAdmin[_account] = false;
         _adminCount--;
@@ -121,7 +121,7 @@ contract Controller is IController, Ownable{
     }
 
     /// @dev Internal-only function that adds a new controller.
-    function _addController(address _account) internal {
+    function _addController(address _account) private {
         require(!_isController[_account], "provided account is already a controller");
         require(!_isAdmin[_account], "provided account is already an admin");
         require(_account != owner(), "provided account is already the owner");
@@ -132,7 +132,7 @@ contract Controller is IController, Ownable{
     }
 
     /// @dev Internal-only function that removes an existing controller.
-    function _removeController(address _account) internal {
+    function _removeController(address _account) private {
         require(_isController[_account], "provided account is not a controller");
         _isController[_account] = false;
         _controllerCount--;
