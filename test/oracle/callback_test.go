@@ -33,11 +33,12 @@ var _ = Describe("callback", func() {
 
 		Context("When a token exists and rates update has been requested", func() {
 			BeforeEach(func() {
-				tx, err := Oracle.AddTokens(
+				tx, err := TokenWhitelist.AddTokens(
 					Controller.TransactOpts(),
 					[]common.Address{common.HexToAddress("0xfe209bdE5CA32fa20E6728A005F26D651FFF5982")},
 					StringsToByte32("TKN"),
 					[]*big.Int{DecimalsToMagnitude(big.NewInt(18))},
+					[]bool{true},
 					big.NewInt(20180913153211),
 				)
 				Expect(err).ToNot(HaveOccurred())
@@ -61,13 +62,15 @@ var _ = Describe("callback", func() {
 					})
 
 					Context("When the proof is valid", func() {
+
 						var tx *types.Transaction
 						var err error
+
 						Context("When the result has the expected format", func() {
 							BeforeEach(func() {
 								proof := common.Hex2Bytes("0041ed930d0cf64c73b82c3a04b958f2d27572c09ef7faacb14f062b2ce63eb78331a885fda74e113383ead579337b7e02cc414a214c3bd210142628087dcf5ded781c0060646174653a205765642c203033204f637420323031382031373a30303a323220474d540a6469676573743a205348412d3235363d36514d48744c664e677576362b63795a6133376d68513962776f394449482f6451672f54715a34467453383d")
 								tx, err = Oracle.Callback(OraclizeConnectorOwner.TransactOpts(), id, "{\"ETH\":0.001702}", proof)
-								Expect(err).ToNot(HaveOccurred())
+ 								Expect(err).ToNot(HaveOccurred())
 								Backend.Commit()
 							})
 							It("Should succeed", func() {
@@ -83,7 +86,7 @@ var _ = Describe("callback", func() {
 								Expect(evt.Result).To(Equal("{\"ETH\":0.001702}"))
 							})
 							It("Should emit a TokenRateUpdate event", func() {
-								it, err := Oracle.FilterUpdatedTokenRate(nil)
+								it, err := TokenWhitelist.FilterUpdatedTokenRate(nil)
 								Expect(err).ToNot(HaveOccurred())
 								Expect(it.Next()).To(BeTrue())
 								evt := it.Event
@@ -92,10 +95,14 @@ var _ = Describe("callback", func() {
 								Expect(evt.Rate.String()).To(Equal(big.NewInt(int64(0.001702 * math.Pow10(18))).String()))
 							})
 							It("Should update the token's rate and timestamp ", func() {
-								token, err := Oracle.Tokens(nil, common.HexToAddress("0xfe209bdE5CA32fa20E6728A005F26D651FFF5982"))
+								symbol, magnitude, rate, available, loadable, lastUpdate, err := TokenWhitelist.GetTokenInfo(nil, common.HexToAddress("0xfe209bdE5CA32fa20E6728A005F26D651FFF5982"))
 								Expect(err).ToNot(HaveOccurred())
-								Expect(token.Rate.String()).To(Equal(big.NewInt(int64(0.001702 * math.Pow10(18))).String()))
-								Expect(token.LastUpdate).NotTo(Equal(big.NewInt(0)))
+								Expect(symbol).To(Equal("TKN"))
+								Expect(magnitude.String()).To(Equal(DecimalsToMagnitude(big.NewInt(18)).String()))
+								Expect(rate.String()).To(Equal(big.NewInt(int64(0.001702 * math.Pow10(18))).String()))
+								Expect(available).To(BeTrue())
+								Expect(loadable).To(BeTrue())
+								Expect(lastUpdate.String()).NotTo(Equal("20180913153211"))
 							})
 							It("Should fail when called again with the same (deleted, not valid) queryID", func() {
 								proof := common.Hex2Bytes("0041ed930d0cf64c73b82c3a04b958f2d27572c09ef7faacb14f062b2ce63eb78331a885fda74e113383ead579337b7e02cc414a214c3bd210142628087dcf5ded781c0060646174653a205765642c203033204f637420323031382031373a30303a323220474d540a6469676573743a205348412d3235363d36514d48744c664e677576362b63795a6133376d68513962776f394449482f6451672f54715a34467453383d")
@@ -106,6 +113,51 @@ var _ = Describe("callback", func() {
 								Expect(isSuccessful(tx)).To(BeFalse())
 							})
 						})
+
+						When("the token is removed before the callback!!!", func() {
+
+							BeforeEach(func() {
+								var err error
+								tx, err = TokenWhitelist.RemoveTokens(Controller.TransactOpts(), []common.Address{common.HexToAddress("0xfe209bdE5CA32fa20E6728A005F26D651FFF5982")})
+								Expect(err).ToNot(HaveOccurred())
+								Backend.Commit()
+								Expect(isSuccessful(tx)).To(BeTrue())
+							})
+
+							BeforeEach(func() {
+								proof := common.Hex2Bytes("0041ed930d0cf64c73b82c3a04b958f2d27572c09ef7faacb14f062b2ce63eb78331a885fda74e113383ead579337b7e02cc414a214c3bd210142628087dcf5ded781c0060646174653a205765642c203033204f637420323031382031373a30303a323220474d540a6469676573743a205348412d3235363d36514d48744c664e677576362b63795a6133376d68513962776f394449482f6451672f54715a34467453383d")
+								tx, err = Oracle.Callback(OraclizeConnectorOwner.TransactOpts(ethertest.WithGasLimit(100000)), id, "{\"ETH\":0.001702}", proof)
+ 								Expect(err).ToNot(HaveOccurred())
+								Backend.Commit()
+								Expect(isGasExhausted(tx, 100000)).To(BeFalse())
+								Expect(isSuccessful(tx)).To(BeFalse())
+								Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*require\(available, "token must be available"\);`))
+							})
+
+							It("Should NOT emit a Verified Proof event", func() {
+								it, err := Oracle.FilterVerifiedProof(nil)
+								Expect(err).ToNot(HaveOccurred())
+								Expect(it.Next()).To(BeFalse())
+							})
+
+							It("Should NOT emit a TokenRateUpdate event", func() {
+								it, err := TokenWhitelist.FilterUpdatedTokenRate(nil)
+								Expect(err).ToNot(HaveOccurred())
+								Expect(it.Next()).To(BeFalse())
+							})
+
+							It("Should NOT update the token's rate and timestamp ", func() {
+								symbol, magnitude, rate, available, loadable, lastUpdate, err := TokenWhitelist.GetTokenInfo(nil, common.HexToAddress("0xfe209bdE5CA32fa20E6728A005F26D651FFF5982"))
+								Expect(err).ToNot(HaveOccurred())
+								Expect(symbol).To(Equal(""))
+								Expect(magnitude.String()).To(Equal("0"))
+								Expect(rate.String()).To(Equal(big.NewInt(0).String()))
+								Expect(available).To(BeFalse())
+								Expect(loadable).To(BeFalse())
+								Expect(lastUpdate.String()).To(Equal("0"))
+							})
+						})
+
 
 						Context("When the result is is misformated", func() {
 
@@ -312,11 +364,15 @@ var _ = Describe("callback", func() {
 						Context("When the date is invalid", func() {
 							var timestamp *big.Int
 							BeforeEach(func() {
-								token, err := Oracle.Tokens(nil, common.HexToAddress("0xfe209bdE5CA32fa20E6728A005F26D651FFF5982"))
-								timestamp = token.LastUpdate
+								symbol, magnitude, rate, available, loadable, lastUpdate, err := TokenWhitelist.GetTokenInfo(nil, common.HexToAddress("0xfe209bdE5CA32fa20E6728A005F26D651FFF5982"))
 								Expect(err).ToNot(HaveOccurred())
-								Expect(token.Rate.String()).To(Equal(big.NewInt(0).String()))
-								Expect(token.LastUpdate).NotTo(Equal(big.NewInt(0)))
+								Expect(symbol).To(Equal("TKN"))
+								Expect(magnitude.String()).To(Equal(DecimalsToMagnitude(big.NewInt(18)).String()))
+								Expect(rate.String()).To(Equal(big.NewInt(0).String()))
+								Expect(available).To(BeTrue())
+								Expect(loadable).To(BeTrue())
+								Expect(lastUpdate.String()).To(Equal("20180913153211"))
+								timestamp = lastUpdate
 							})
 							BeforeEach(func() {
 								//year set to Dec,2000 (could be set by oraclize), the date in the proof is different
@@ -329,10 +385,14 @@ var _ = Describe("callback", func() {
 								Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*revert\("invalid signature"\);`))
 							})
 							It("Should NOT update the token's rate and timestamp ", func() {
-								token, err := Oracle.Tokens(nil, common.HexToAddress("0xfe209bdE5CA32fa20E6728A005F26D651FFF5982"))
+								symbol, magnitude, rate, available, loadable, lastUpdate, err := TokenWhitelist.GetTokenInfo(nil, common.HexToAddress("0xfe209bdE5CA32fa20E6728A005F26D651FFF5982"))
 								Expect(err).ToNot(HaveOccurred())
-								Expect(token.Rate.String()).To(Equal(big.NewInt(0).String()))
-								Expect(token.LastUpdate.String()).To(Equal(timestamp.String()))
+								Expect(symbol).To(Equal("TKN"))
+								Expect(magnitude).To(Equal(DecimalsToMagnitude(big.NewInt(18))))
+								Expect(rate.String()).To(Equal(big.NewInt(0).String()))
+								Expect(available).To(BeTrue())
+								Expect(loadable).To(BeTrue())
+								Expect(lastUpdate.String()).To(Equal(timestamp.String()))
 							})
 						})
 
@@ -545,11 +605,12 @@ var _ = Describe("callback", func() {
 		Context("When a token exists but rates update has NOT been requested", func() {
 
 			BeforeEach(func() {
-				tx, err := Oracle.AddTokens(
+				tx, err := TokenWhitelist.AddTokens(
 					Controller.TransactOpts(),
 					[]common.Address{common.HexToAddress("0xfe209bdE5CA32fa20E6728A005F26D651FFF5982")},
 					StringsToByte32("TKN"),
 					[]*big.Int{DecimalsToMagnitude(big.NewInt(18))},
+					[]bool{true},
 					big.NewInt(20180913153211),
 				)
 				Expect(err).ToNot(HaveOccurred())
@@ -584,11 +645,12 @@ var _ = Describe("callback", func() {
 
 		Context("When a token exists and rates update has been requested", func() {
 			BeforeEach(func() {
-				tx, err := Oracle.AddTokens(
+				tx, err := TokenWhitelist.AddTokens(
 					Controller.TransactOpts(),
 					[]common.Address{common.HexToAddress("0xfe209bdE5CA32fa20E6728A005F26D651FFF5982")},
 					StringsToByte32("TKN"),
 					[]*big.Int{DecimalsToMagnitude(big.NewInt(8))},
+					[]bool{true},
 					big.NewInt(20180913153211),
 				)
 				Expect(err).ToNot(HaveOccurred())

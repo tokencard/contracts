@@ -27,13 +27,13 @@ var _ = Describe("load ETH", func() {
   		})
     })
 
-    It("the initial balance of the Holder contract should be zero", func() {
+    It("the initial balance of the Float contract should be zero", func() {
       b, e := Backend.BalanceAt(context.Background(), CryptoFloatAddress, nil)
       Expect(e).ToNot(HaveOccurred())
       Expect(b.String()).To(Equal("0"))
     })
 
-    It("the initial balance of CryptoFloatAddress address should be zero", func() {
+    It("the initial balance of Holder address should be zero", func() {
       b, e := Backend.BalanceAt(context.Background(), TokenHolderAddress, nil)
       Expect(e).ToNot(HaveOccurred())
       Expect(b.String()).To(Equal("0"))
@@ -79,7 +79,7 @@ var _ = Describe("load ETH", func() {
         Expect(b.String()).To(Equal(EthToWei(1).String()))
       })
 
-      It("should increase the ETH balance of the holder contract address by 100 ETH", func() {
+      It("should increase the ETH balance of the Float contract address by 100 ETH", func() {
         b, e := Backend.BalanceAt(context.Background(), CryptoFloatAddress, nil)
         Expect(e).ToNot(HaveOccurred())
         Expect(b.String()).To(Equal(EthToWei(100).String()))
