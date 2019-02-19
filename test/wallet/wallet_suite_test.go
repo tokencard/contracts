@@ -35,9 +35,21 @@ var _ = BeforeEach(func() {
 	Expect(err).ToNot(HaveOccurred())
 })
 
+var allPassed = true
+
+var _ = AfterEach(func() {
+	td := CurrentGinkgoTestDescription()
+	if td.Failed {
+		allPassed = false
+	}
+
+})
+
 var _ = AfterSuite(func() {
-	TestRig.ExpectMinimumCoverage("wallet.sol", 100.00)
-	TestRig.PrintGasUsage(os.Stdout)
+	if allPassed {
+		TestRig.ExpectMinimumCoverage("wallet.sol", 100.00)
+		TestRig.PrintGasUsage(os.Stdout)
+	}
 })
 
 func isSuccessful(tx *types.Transaction) bool {

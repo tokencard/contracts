@@ -13,7 +13,7 @@
  *  GNU General Public License for more details.
 
  *  You should have received a copy of the GNU General Public License
- *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ *  along with this program.  If not, see <https://www.gnu.or/licenses/>.
  */
 
 pragma solidity ^0.4.25;
@@ -176,6 +176,67 @@ contract Whitelist is Controllable, Ownable {
     }
 }
 
+contract DailyLimit {
+    using SafeMath for uint256;
+
+    uint private _spendLimitDay;
+    uint private _limit;
+    uint private _available;
+
+    /// @dev Constructor initializes the daily spend limit in wei.
+    constructor(uint _spendLimit) public {
+        _limit = _spendLimit;
+        _available = _spendLimit;
+        _spendLimitDay = now;
+    }
+
+    /// @dev Returns the available daily balance - accounts for daily limit reset.
+    /// @return amount of ether in wei.
+    function available() public view returns (uint) {
+        if (now > _spendLimitDay + 24 hours) {
+            return _limit;
+        } else {
+            return _available;
+        }
+    }
+
+    // @dev Setter method for the available daily spend limit.
+    function setAvailable(uint _amount) public {
+        _available = _amount;
+    }
+
+    /// @dev Update available spend limit based on the daily reset.
+    function updateAvailable() public {
+        if (now > _spendLimitDay.add(24 hours)) {
+            // Advance the current day by how many days have passed.
+            uint extraDays = now.sub(_spendLimitDay).div(24 hours);
+            _spendLimitDay = _spendLimitDay.add(extraDays.mul(24 hours));
+            // Set the available limit to the current spend limit.
+            _available = _limit;
+            //TODO i guess we need to do this twice
+        }
+    }
+
+    /// @dev Modify the spend limit and spend available based on the provided value.
+    /// @dev _amount is the daily limit amount in wei.
+    function modifyLimit(uint _amount) public {
+        // Account for the spend limit daily reset.
+        updateAvailable();
+        // Set the daily limit to the provided amount.
+        _limit = _amount;
+        // Lower the available limit if it's higher than the new daily limit.
+        if (_available > _limit) {
+            _available = _limit;
+        }
+    }
+
+
+    function limit() public view returns (uint) {
+        return _limit;
+    }
+
+}
+
 
 //// @title SpendLimit provides daily spend limit functionality.
 contract SpendLimit is Controllable, Ownable {
@@ -185,29 +246,20 @@ contract SpendLimit is Controllable, Ownable {
 
     using SafeMath for uint256;
 
-    uint public spendLimit;
+    /* enum SpendLimitChoices { Spend, Load } */
+
     uint private _spendLimitDay;
-    uint private _spendAvailable;
 
     uint public pendingSpendLimit;
     bool public submittedSpendLimit;
     bool public initializedSpendLimit;
 
-    /// @dev Constructor initializes the daily spend limit in wei.
-    constructor(uint _spendLimit) internal {
-        spendLimit = _spendLimit;
-        _spendLimitDay = now;
-        _spendAvailable = spendLimit;
-    }
+    DailyLimit internal _spendLimit;
 
-    /// @dev Returns the available daily balance - accounts for daily limit reset.
-    /// @return amount of ether in wei.
-    function spendAvailable() public view returns (uint) {
-        if (now > _spendLimitDay + 24 hours) {
-            return spendLimit;
-        } else {
-            return _spendAvailable;
-        }
+    /// @dev Constructor initializes the daily spend limit in wei.
+    constructor(uint spendLimit) internal {
+        _spendLimit = new DailyLimit(spendLimit);
+        /* _topupLimit = new DailyLimit(loadLimit); */
     }
 
     /// @dev Initialize a daily spend (aka transfer) limit for non-whitelisted addresses.
@@ -216,7 +268,7 @@ contract SpendLimit is Controllable, Ownable {
         // Require that the spend limit has not been initialized.
         require(!initializedSpendLimit, "spend limit has already been initialized");
         // Modify spend limit based on the provided value.
-        _modifySpendLimit(_amount);
+        _spendLimit.modifyLimit(_amount);
         // Flag the operation as initialized.
         initializedSpendLimit = true;
         // Emit the set limit event.
@@ -245,7 +297,7 @@ contract SpendLimit is Controllable, Ownable {
         // Require that pending and confirmed spend limit are the same
         require(pendingSpendLimit == _amount, "confirmed and submitted spend limits dont match");
         // Modify spend limit based on the pending value.
-        _modifySpendLimit(pendingSpendLimit);
+        _spendLimit.modifyLimit(pendingSpendLimit);
         // Emit the set limit event.
         emit SetSpendLimit(msg.sender, pendingSpendLimit);
         // Reset the submission flag.
@@ -266,34 +318,14 @@ contract SpendLimit is Controllable, Ownable {
         emit CancelledSpendLimitChange(msg.sender, _amount);
     }
 
-    // @dev Setter method for the available daily spend limit.
-    function _setSpendAvailable(uint _amount) internal {
-        _spendAvailable = _amount;
+    function spendAvailable() public view returns (uint) {
+        return _spendLimit.available();
     }
 
-    /// @dev Update available spend limit based on the daily reset.
-    function _updateSpendAvailable() internal {
-        if (now > _spendLimitDay.add(24 hours)) {
-            // Advance the current day by how many days have passed.
-            uint extraDays = now.sub(_spendLimitDay).div(24 hours);
-            _spendLimitDay = _spendLimitDay.add(extraDays.mul(24 hours));
-            // Set the available limit to the current spend limit.
-            _spendAvailable = spendLimit;
-        }
+    function spendLimit() public view returns (uint) {
+        return _spendLimit.limit();
     }
 
-    /// @dev Modify the spend limit and spend available based on the provided value.
-    /// @dev _amount is the daily limit amount in wei.
-    function _modifySpendLimit(uint _amount) private {
-        // Account for the spend limit daily reset.
-        _updateSpendAvailable();
-        // Set the daily limit to the provided amount.
-        spendLimit = _amount;
-        // Lower the available limit if it's higher than the new daily limit.
-        if (_spendAvailable > spendLimit) {
-            _spendAvailable = spendLimit;
-        }
-    }
 }
 
 
@@ -369,7 +401,7 @@ contract Vault is Whitelist, SpendLimit, ERC165, TokenWhitelistable {
         // If address is not whitelisted, take daily limit into account.
         if (!isWhitelisted[_to]) {
             // Update the available spend limit.
-            _updateSpendAvailable();
+            // _updateSpendAvailable();
 
             //initialize ether value in case the asset is ETH
             uint etherValue = _amount;
@@ -382,7 +414,7 @@ contract Vault is Whitelist, SpendLimit, ERC165, TokenWhitelistable {
             // Require that the value is under remaining limit.
             require(etherValue <= spendAvailable(), "transfer amount exceeded available spend limit");
             // Update the available limit.
-            _setSpendAvailable(spendAvailable().sub(etherValue));
+            // _setSpendAvailable(spendAvailable().sub(etherValue));
         }
         // Transfer token or ether based on the provided address.
         if (_asset != address(0)) {
@@ -417,10 +449,6 @@ contract Wallet is Vault {
     uint constant private MINIMUM_TOPUP_LIMIT = 1 finney; // solium-disable-line uppercase
     uint constant private MAXIMUM_TOPUP_LIMIT = 500 finney; // solium-disable-line uppercase
 
-    uint public topUpLimit;
-    uint private _topUpLimitDay;
-    uint private _topUpAvailable;
-
     uint public pendingTopUpLimit;
     bool public submittedTopUpLimit;
     bool public initializedTopUpLimit;
@@ -428,6 +456,7 @@ contract Wallet is Vault {
     /// @dev Is the registered ENS name of the oracle contract.
     bytes32 private _licenceNode;
 
+    DailyLimit internal _topupLimit;
     /// @dev ENS points to the ENS registry smart contract.
     ENS internal _ENS;
 
@@ -441,9 +470,7 @@ contract Wallet is Vault {
     /// @param _licenceName is the ENS name of the licence.
     /// @param _spendLimit is the initial spend limit.
     constructor(address _owner, bool _transferable, address _ens, bytes32 _oracleName, bytes32 _controllerName, bytes32 _licenceName, uint _spendLimit) Vault(_owner, _transferable, _ens, _oracleName, _controllerName, _spendLimit) public {
-        _topUpLimitDay = now;
-        topUpLimit = MAXIMUM_TOPUP_LIMIT;
-        _topUpAvailable = topUpLimit;
+        _topupLimit = new DailyLimit(MAXIMUM_TOPUP_LIMIT);
         _licenceNode = _licenceName;
         _ENS = ENS(_ens);
     }
@@ -451,11 +478,7 @@ contract Wallet is Vault {
     /// @dev Returns the available daily gas top up balance - accounts for daily limit reset.
     /// @return amount of gas in wei.
     function topUpAvailable() external view returns (uint) {
-        if (now > _topUpLimitDay + 24 hours) {
-            return topUpLimit;
-        } else {
-            return _topUpAvailable;
-        }
+        return _topupLimit.available();
     }
 
     /// @dev Initialize a daily gas top up limit.
@@ -466,7 +489,7 @@ contract Wallet is Vault {
         // Require that the limit amount is within the acceptable range.
         require(MINIMUM_TOPUP_LIMIT <= _amount && _amount <= MAXIMUM_TOPUP_LIMIT, "top up amount is outside of the min/max range");
         // Modify spend limit based on the provided value.
-        _modifyTopUpLimit(_amount);
+        _topupLimit.modifyLimit(_amount);
         // Flag operation as initialized.
         initializedTopUpLimit = true;
         // Emit the set limit event.
@@ -499,7 +522,7 @@ contract Wallet is Vault {
         // Assert that confirmed and pending topup limit are the same.
         require(_amount == pendingTopUpLimit, "confirmed and pending topup limit are not same");
         // Modify top up limit based on the pending value.
-        _modifyTopUpLimit(pendingTopUpLimit);
+        _topupLimit.modifyLimit(pendingTopUpLimit);
         // Emit the set limit event.
         emit SetTopUpLimit(msg.sender, pendingTopUpLimit);
         // Reset pending daily limit.
@@ -526,17 +549,22 @@ contract Wallet is Vault {
         // Require that the sender is either the owner or a controller.
         require(_isOwner() || _isController(msg.sender), "sender is neither an owner nor a controller");
         // Account for the top up limit daily reset.
-        _updateTopUpAvailable();
+        _topupLimit.updateAvailable();
         // Make sure the available top up amount is not zero.
-        require(_topUpAvailable != 0, "available top up limit cannot be zero");
+        require(_topupLimit.available() != 0, "available top up limit cannot be zero");
         // Fail if there isn't enough in the daily top up limit to perform topUp
-        require(_amount <= _topUpAvailable, "available top up limit less than amount passed in");
-        // Reduce the top up amount from available balance and transfer corresponding
-        // ether to the owner's account.
-        _topUpAvailable = _topUpAvailable.sub(_amount);
+        require(_amount <= _topupLimit.available(), "available top up limit less than amount passed in");
+
+        _topupLimit.setAvailable(_topupLimit.available().sub(_amount));
+
         owner().transfer(_amount);
+
         // Emit the gas top up event.
         emit ToppedUpGas(tx.origin, owner(), _amount);
+    }
+
+    function topUpLimit() public view returns (uint) {
+        return _topupLimit.limit();
     }
 
     /// @dev Load a token card with the specified asset amount.
@@ -554,27 +582,4 @@ contract Wallet is Vault {
         emit LoadedTokenCard(_asset, _amount);
     }
 
-    /// @dev Modify the top up limit and top up available based on the provided value.
-    /// @dev _amount is the daily limit amount in wei.
-    function _modifyTopUpLimit(uint _amount) private {
-        // Account for the top up limit daily reset.
-        _updateTopUpAvailable();
-        // Set the daily limit to the provided amount.
-        topUpLimit = _amount;
-        // Lower the available limit if it's higher than the new daily limit.
-        if (_topUpAvailable > topUpLimit) {
-            _topUpAvailable = topUpLimit;
-        }
-    }
-
-    /// @dev Update available top up limit based on the daily reset.
-    function _updateTopUpAvailable() private {
-        if (now > _topUpLimitDay.add(24 hours)) {
-            // Advance the current day by how many days have passed.
-            uint extraDays = now.sub(_topUpLimitDay).div(24 hours);
-            _topUpLimitDay = _topUpLimitDay.add(extraDays.mul(24 hours));
-            // Set the available limit to the current top up limit.
-            _topUpAvailable = topUpLimit;
-        }
-    }
 }
