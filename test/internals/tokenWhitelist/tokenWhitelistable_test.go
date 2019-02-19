@@ -10,7 +10,7 @@ import (
   "github.com/tokencard/ethertest"
 )
 
-var _ = FDescribe("tokenWhitelistable", func() {
+var _ = Describe("tokenWhitelistable", func() {
 
   Context("When a token is added", func() {
 		BeforeEach(func() {
