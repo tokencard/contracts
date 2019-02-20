@@ -236,7 +236,7 @@ var _ = Describe("topupLimit", func() {
 			When("the controller cancels the limit change with wrong amount", func() {
 				var txSuccessful bool
 				BeforeEach(func() {
-					tx, err := Wallet.CancelTopUpLimit(Controller.TransactOpts(), FinneyToWei(2))
+					tx, err := Wallet.CancelTopUpLimit(Controller.TransactOpts(ethertest.WithGasLimit(100000)), FinneyToWei(2))
 					Expect(err).ToNot(HaveOccurred())
 					Backend.Commit()
 					txSuccessful = isSuccessful(tx)
@@ -244,7 +244,7 @@ var _ = Describe("topupLimit", func() {
 				})
 
 				It("should fail", func() {
-					Expect(txSuccessful).To(BeTrue())
+					Expect(txSuccessful).To(BeFalse())
 				})
 			})
 
