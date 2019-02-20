@@ -200,10 +200,13 @@ contract DailyLimit {
         }
     }
 
-    // @dev Setter method for the available daily spend limit.
-    function setAvailable(uint _amount) public {
-        _available = _amount;
+    // @dev Use up amount within the daily limit. Will fail if amount is larger than daily limit.
+    function useAmount(uint _amount) public {
+        updateAvailable();
+        require(_available >= _amount, "available has to be greater or equal to use amount");
+        _available = _available.sub(_amount);
     }
+
 
     /// @dev Update available spend limit based on the daily reset.
     function updateAvailable() public {
@@ -549,13 +552,7 @@ contract Wallet is Vault {
         // Require that the sender is either the owner or a controller.
         require(_isOwner() || _isController(msg.sender), "sender is neither an owner nor a controller");
         // Account for the top up limit daily reset.
-        _topupLimit.updateAvailable();
-        // Make sure the available top up amount is not zero.
-        require(_topupLimit.available() != 0, "available top up limit cannot be zero");
-        // Fail if there isn't enough in the daily top up limit to perform topUp
-        require(_amount <= _topupLimit.available(), "available top up limit less than amount passed in");
-
-        _topupLimit.setAvailable(_topupLimit.available().sub(_amount));
+        _topupLimit.useAmount(_amount);
 
         owner().transfer(_amount);
 
