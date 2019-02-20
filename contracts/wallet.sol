@@ -13,7 +13,7 @@
  *  GNU General Public License for more details.
 
  *  You should have received a copy of the GNU General Public License
- *  along with this program.  If not, see <https://www.gnu.or/licenses/>.
+ *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 pragma solidity ^0.4.25;
@@ -208,14 +208,14 @@ contract DailyLimit {
 
     // @dev Use up amount within the daily limit. Will fail if amount is larger than daily limit.
     function useAmount(uint _amount) public {
-        updateAvailable();
+        _updateAvailable();
         require(_available >= _amount, "available has to be greater or equal to use amount");
         _available = _available.sub(_amount);
     }
 
 
     /// @dev Update available spend limit based on the daily reset.
-    function updateAvailable() public {
+    function _updateAvailable() private {
         if (now > _limitDay.add(24 hours)) {
             // Advance the current day by how many days have passed.
             uint extraDays = now.sub(_limitDay).div(24 hours);
@@ -230,7 +230,7 @@ contract DailyLimit {
     /// @dev _amount is the daily limit amount in wei.
     function modifyLimit(uint _amount) public {
         // Account for the spend limit daily reset.
-        updateAvailable();
+        _updateAvailable();
         // Set the daily limit to the provided amount.
         limit = _amount;
         // Lower the available limit if it's higher than the new daily limit.
