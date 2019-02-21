@@ -8,12 +8,12 @@ import (
 	"strings"
 	"time"
 
-	"golang.org/x/crypto/sha3"
-	. "github.com/onsi/gomega"
 	"encoding/hex"
+
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/crypto"
+	. "github.com/onsi/gomega"
 	gtypes "github.com/onsi/gomega/types"
 	"github.com/pkg/errors"
 	"github.com/tokencard/contracts/pkg/bindings"
@@ -21,6 +21,7 @@ import (
 	"github.com/tokencard/contracts/pkg/bindings/internals"
 	"github.com/tokencard/contracts/pkg/bindings/mocks"
 	"github.com/tokencard/ethertest"
+	"golang.org/x/crypto/sha3"
 )
 
 var ErrFailedTransaction = errors.New("transaction failed")
@@ -113,6 +114,9 @@ var WalletAddress common.Address
 
 var TKN *mocks.Token
 var TKNAddress common.Address
+
+var RandomToken *mocks.Token
+var RandomTokenAddress common.Address
 
 var ERC20Contract1 *mocks.Token
 var ERC20Contract1Address common.Address
@@ -517,7 +521,6 @@ func InitializeBackend() error {
 		return errors.Wrap(err, "deploying ERC20-1 token contract")
 	}
 
-
 	ERC20Contract2Address, tx, ERC20Contract2, err = mocks.DeployToken(BankAccount.TransactOpts(), Backend)
 	if err != nil {
 		return err
@@ -527,7 +530,6 @@ func InitializeBackend() error {
 	if err != nil {
 		return errors.Wrap(err, "deploying ERC20-2 token contract")
 	}
-
 
 	// Add the mock token to the oracle list.
 	tx, err = TokenWhitelist.AddTokens(Controller.TransactOpts(), []common.Address{TKNAddress}, StringsToByte32("TKN"), []*big.Int{ExponentiateDecimals(8)}, []bool{true}, big.NewInt(20180913153211))
@@ -552,7 +554,7 @@ func InitializeBackend() error {
 	}
 
 	// Deploy the Token wallet contract.
-	WalletAddress, tx, Wallet, err = bindings.DeployWallet(BankAccount.TransactOpts(), Backend, Owner.Address(), true, ENSRegistryAddress, OracleName, ControllerName, LicenceName, EthToWei(100))
+	WalletAddress, tx, Wallet, err = bindings.DeployWallet(BankAccount.TransactOpts(), Backend, Owner.Address(), true, ENSRegistryAddress, TokenWhitelistName, ControllerName, LicenceName, EthToWei(100))
 	if err != nil {
 		return err
 	}

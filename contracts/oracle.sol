@@ -28,14 +28,8 @@ import "./externals/SafeMath.sol";
 import "./externals/base64.sol";
 
 
-/// @title Oracle converts ERC20 token amounts into equivalent ether amounts based on cryptocurrency exchange rates.
-interface IOracle {
-    function convert(address, uint) external view returns (bool, uint);
-}
-
-
 /// @title Oracle provides asset exchange rates and conversion functionality.
-contract Oracle is usingOraclize, Claimable, Base64, Date, JSON, Controllable, ParseIntScientific, TokenWhitelistable, IOracle {
+contract Oracle is usingOraclize, Claimable, Base64, Date, JSON, Controllable, ParseIntScientific, TokenWhitelistable {
     using strings for *;
     using SafeMath for uint256;
 
@@ -45,7 +39,6 @@ contract Oracle is usingOraclize, Claimable, Base64, Date, JSON, Controllable, P
     /*****************/
 
     event SetGasPrice(address _sender, uint _gasPrice);
-    event Converted(address _sender, address _token, uint _amount, uint _ether);
 
     event RequestedUpdate(string _symbol);
     event FailedUpdateRequest(string _reason);
@@ -91,24 +84,6 @@ contract Oracle is usingOraclize, Claimable, Base64, Date, JSON, Controllable, P
     function setCustomGasPrice(uint _gasPrice) external onlyController {
         oraclize_setCustomGasPrice(_gasPrice);
         emit SetGasPrice(msg.sender, _gasPrice);
-    }
-
-    /// @dev Convert ERC20 token amount to the corresponding ether amount (used by the wallet contract).
-    /// @param _token ERC20 token contract address.
-    /// @param _amount amount of token in base units.
-    function convert(address _token, uint _amount) external view returns (bool, uint) {
-        // Store the token in memory to save map entry lookup gas.
-        ( , uint256 magnitude, uint256 rate, bool available, , ) = _getTokenInfo(_token);
-        // If the token exists require that its rate is not zero
-        if (available) {
-            require(rate != 0, "token rate is 0");
-            // Safely convert the token amount to ether based on the exchange rate.
-            // return the value and a 'true' implying that the token is protected
-            return (true, _amount.mul(rate).div(magnitude));
-        }
-        // this returns a 'false' to imply that a card is not protected
-        return (false, 0);
-
     }
 
     /// @dev Update ERC20 token exchange rates for all supported tokens.
