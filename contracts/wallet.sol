@@ -181,7 +181,7 @@ contract Whitelist is Controllable, Ownable {
 contract DailyLimit {
     using SafeMath for uint256;
 
-    uint public limit;
+    uint public dailyLimit;
     uint private _limitDay;
     uint private _available;
 
@@ -190,9 +190,9 @@ contract DailyLimit {
     bool public initialized;
 
     /// @dev Constructor initializes the daily spend limit in wei.
-    constructor(uint _spendLimit) public {
-        limit = _spendLimit;
-        _available = _spendLimit;
+    constructor(uint _limit) public {
+        dailyLimit = _limit;
+        _available = _limit;
         _limitDay = now;
     }
 
@@ -200,7 +200,7 @@ contract DailyLimit {
     /// @return amount of ether in wei.
     function available() public view returns (uint) {
         if (now > _limitDay + 24 hours) {
-            return limit;
+            return dailyLimit;
         } else {
             return _available;
         }
@@ -221,7 +221,7 @@ contract DailyLimit {
             uint extraDays = now.sub(_limitDay).div(24 hours);
             _limitDay = _limitDay.add(extraDays.mul(24 hours));
             // Set the available limit to the current spend limit.
-            _available = limit;
+            _available = dailyLimit;
             //TODO i guess we need to do this twice
         }
     }
@@ -232,14 +232,14 @@ contract DailyLimit {
         // Account for the spend limit daily reset.
         _updateAvailable();
         // Set the daily limit to the provided amount.
-        limit = _amount;
+        dailyLimit = _amount;
         // Lower the available limit if it's higher than the new daily limit.
-        if (_available > limit) {
-            _available = limit;
+        if (_available > dailyLimit) {
+            _available = dailyLimit;
         }
     }
 
-    /// @dev Initialize a daily spend (aka transfer) limit for non-whitelisted addresses.
+    /// @dev Initialize a daily limit.
     /// @param _amount is the daily limit amount in wei.
     function initialize(uint _amount) public {
         // Require that the spend limit has not been initialized.
@@ -251,7 +251,7 @@ contract DailyLimit {
     }
 
 
-    /// @dev Set a daily transfer limit for non-whitelisted addresses.
+    /// @dev Submit a daily limit change, needs to be confirmed.
     /// @param _amount is the daily limit amount in wei.
     function submit(uint _amount) public {
         // Require that the spend limit has been initialized.
@@ -335,7 +335,7 @@ contract SpendLimit is Controllable, Ownable {
     }
 
     function spendLimit() public view returns (uint) {
-        return _spendLimit.limit();
+        return _spendLimit.dailyLimit();
     }
 
     function initializedSpendLimit() public view returns (bool) {
@@ -550,7 +550,7 @@ contract Wallet is Vault {
     }
 
     function topUpLimit() public view returns (uint) {
-        return _topUpLimit.limit();
+        return _topUpLimit.dailyLimit();
     }
 
     function topUpAvailable() public view returns (uint) {
