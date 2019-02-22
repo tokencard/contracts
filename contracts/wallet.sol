@@ -353,11 +353,12 @@ contract SpendLimit is Controllable, Ownable {
 
 //// @title Asset store with extra security features.
 contract Vault is Whitelist, SpendLimit, ERC165, TokenWhitelistable {
+
+    using SafeMath for uint256;
+
     event Received(address _from, uint _amount);
     event Transferred(address _to, address _asset, uint _amount);
 
-    using SafeMath for uint256;
-    
     /// @dev Supported ERC165 interface ID.
     bytes4 private constant _ERC165_INTERFACE_ID = 0x01ffc9a7; // solium-disable-line uppercase
 
@@ -422,21 +423,15 @@ contract Vault is Whitelist, SpendLimit, ERC165, TokenWhitelistable {
 
         // If address is not whitelisted, take daily limit into account.
         if (!isWhitelisted[_to]) {
-            // Update the available spend limit.
-            // _updateSpendAvailable();
-
             //initialize ether value in case the asset is ETH
             uint etherValue = _amount;
             // Convert token amount to ether value if asset is an ERC20 token.
             if (_asset != address(0)) {
                 etherValue = convert(_asset, _amount);
             }
-
             // Check against the daily spent limit and update accordingly
             // Require that the value is under remaining limit.
-            require(etherValue <= spendAvailable(), "transfer amount exceeded available spend limit");
-            // Update the available limit.
-            // _setSpendAvailable(spendAvailable().sub(etherValue));
+            _spendLimit.useAmount(etherValue);
         }
         // Transfer token or ether based on the provided address.
         if (_asset != address(0)) {
@@ -463,18 +458,26 @@ contract Wallet is Vault {
 
     event ToppedUpGas(address _sender, address _owner, uint _amount);
 
+    event SetLoadLimit(address _sender, uint _amount);
+    event SubmittedLoadLimitChange(uint _amount);
+    event CancelledLoadLimitChange(address _sender, uint _amount);
+
     event LoadedTokenCard(address _asset, uint _amount);
 
     uint constant private MINIMUM_TOPUP_LIMIT = 1 finney; // solium-disable-line uppercase
     uint constant private MAXIMUM_TOPUP_LIMIT = 500 finney; // solium-disable-line uppercase
 
+    uint constant private MINIMUM_LOAD_LIMIT = 1 finney;
+    uint constant private MAXIMUM_LOAD_LIMIT = 10 ether;
+
     /// @dev Is the registered ENS name of the oracle contract.
     bytes32 private _licenceNode;
 
-    DailyLimit internal _topUpLimit;
     /// @dev ENS points to the ENS registry smart contract.
     ENS internal _ENS;
 
+    DailyLimit internal _topUpLimit;
+    DailyLimit internal _loadLimit;
 
     /// @dev Constructor initializes the wallet top up limit and the vault contract.
     /// @param _owner is the owner account of the wallet contract.
@@ -486,6 +489,7 @@ contract Wallet is Vault {
     /// @param _spendLimit is the initial spend limit.
     constructor(address _owner, bool _transferable, address _ens, bytes32 _oracleName, bytes32 _controllerName, bytes32 _licenceName, uint _spendLimit) Vault(_owner, _transferable, _ens, _oracleName, _controllerName, _spendLimit) public {
         _topUpLimit = new DailyLimit(MAXIMUM_TOPUP_LIMIT);
+        _loadLimit = new DailyLimit(MAXIMUM_LOAD_LIMIT);
         _licenceNode = _licenceName;
         _ENS = ENS(_ens);
     }
@@ -493,17 +497,33 @@ contract Wallet is Vault {
     /// @dev Initialize a daily gas top up limit.
     /// @param _amount is the gas top up amount in wei.
     function initializeTopUpLimit(uint _amount) external onlyOwner {
-        require(MINIMUM_TOPUP_LIMIT <= _amount && _amount <= MAXIMUM_TOPUP_LIMIT, "top up amount is outside the min/max range");
+        require(MINIMUM_TOPUP_LIMIT <= _amount && _amount <= MAXIMUM_TOPUP_LIMIT, "gas top up amount is outside the min/max range");
         _topUpLimit.initialize(_amount);
         emit SetTopUpLimit(msg.sender, _amount);
     }
 
-    /// @dev Set a daily top up top up limit.
+    /// @dev Initialize a daily card load limit.
+    /// @param _amount is the card load amount in wei.
+    function initializeLoadLimit(uint _amount) external onlyOwner {
+        require(MINIMUM_LOAD_LIMIT <= _amount && _amount <= MAXIMUM_LOAD_LIMIT, "card load amount is outside the min/max range");
+        _loadLimit.initialize(_amount);
+        emit SetLoadLimit(msg.sender, _amount);
+    }
+
+    /// @dev Set a daily top up limit.
     /// @param _amount is the daily top up limit amount in wei.
     function submitTopUpLimit(uint _amount) external onlyOwner {
-        require(MINIMUM_TOPUP_LIMIT <= _amount && _amount <= MAXIMUM_TOPUP_LIMIT, "top up amount is outside the min/max range");
+        require(MINIMUM_TOPUP_LIMIT <= _amount && _amount <= MAXIMUM_TOPUP_LIMIT, "gas top up amount is outside the min/max range");
         _topUpLimit.submit(_amount);
         emit SubmittedTopUpLimitChange(_amount);
+    }
+
+    /// @dev Set a daily load limit.
+    /// @param _amount is the daily load limit amount in wei.
+    function submitLoadLimit(uint _amount) external onlyOwner {
+        require(MINIMUM_LOAD_LIMIT <= _amount && _amount <= MAXIMUM_LOAD_LIMIT, "card load amount is outside the min/max range");
+        _loadLimit.submit(_amount);
+        emit SubmittedLoadLimitChange(_amount);
     }
 
     /// @dev Confirm pending set top up limit operation.
@@ -512,10 +532,22 @@ contract Wallet is Vault {
         emit SetTopUpLimit(msg.sender, _amount);
     }
 
+    /// @dev Confirm pending set load limit operation.
+    function confirmLoadLimit(uint _amount) external onlyController {
+        _loadLimit.confirm(_amount);
+        emit SetLoadLimit(msg.sender, _amount);
+    }
+
     /// @dev Cancel pending set top up limit operation.
     function cancelTopUpLimit(uint _amount) external onlyController {
         _topUpLimit.cancel(_amount);
         emit CancelledTopUpLimitChange(msg.sender, _amount);
+    }
+
+    /// @dev Cancel pending set load limit operation.
+    function cancelLoadLimit(uint _amount) external onlyController {
+        _loadLimit.cancel(_amount);
+        emit CancelledLoadLimitChange(msg.sender, _amount);
     }
 
     /// @dev Refill owner's gas balance, revert if the transaction amount is too large
@@ -537,13 +569,24 @@ contract Wallet is Vault {
     /// @param _asset is the address of an ERC20 token or 0x0 for ether.
     /// @param _amount is the amount of assets to be transferred in base units.
     function loadTokenCard(address _asset, uint _amount) external payable onlyOwner {
-        address licenceAddress = PublicResolver(_ENS.resolver(_licenceNode)).addr(_licenceNode);
-        if (_asset != address(0)) {
-            require(ERC20(_asset).approve(licenceAddress, _amount), "ERC20 token approval was unsuccessful");
-            ILicence(licenceAddress).load(_asset, _amount);
-        } else {
-            ILicence(licenceAddress).load.value(_amount)(_asset, _amount);
-        }
+
+      address licenceAddress = PublicResolver(_ENS.resolver(_licenceNode)).addr(_licenceNode);
+
+      if (_asset != address(0)) {
+          //check if token is allowed to be used for loading the card
+          /* require(_isTokenLoadable(_asset, "token not laodable"); */
+          // Convert token amount to ether value.
+          // uint etherValue = convert(_asset, _amount);
+          // Check against the daily spent limit and update accordingly, require that the value is under remaining limit.
+          //_loadLimit.useAmount(etherValue);
+          require(ERC20(_asset).approve(licenceAddress, _amount), "ERC20 token approval was unsuccessful");
+          ILicence(licenceAddress).load(_asset, _amount);
+      } else {
+          //_amount is in wei, require that the value is under remaining limit.
+          _loadLimit.useAmount(_amount);
+          ILicence(licenceAddress).load.value(_amount)(_asset, _amount);
+      }
+
         emit LoadedTokenCard(_asset, _amount);
     }
 
@@ -565,6 +608,27 @@ contract Wallet is Vault {
 
     function pendingTopUpLimit() public view returns (uint) {
       return _topUpLimit.pending();
+    }
+
+
+    function loadLimit() public view returns (uint) {
+        return _loadLimit.dailyLimit();
+    }
+
+    function loadAvailable() public view returns (uint) {
+        return _loadLimit.available();
+    }
+
+    function initializedLoadLimit() public view returns (bool) {
+        return _loadLimit.initialized();
+    }
+
+    function submittedLoadLimit() public view returns (bool) {
+      return _loadLimit.submitted();
+    }
+
+    function pendingLoadLimit() public view returns (uint) {
+      return _loadLimit.pending();
     }
 
 }
