@@ -345,7 +345,7 @@ contract Vault is Whitelist, SpendLimit, ERC165, TokenWhitelistable {
     /// @dev Convert ERC20 token amount to the corresponding ether amount (used by the wallet contract).
     /// @param _token ERC20 token contract address.
     /// @param _amount amount of token in base units.
-    function convert(address _token, uint _amount) private view returns (uint) {
+    function convert(address _token, uint _amount) public view returns (uint) {
         // Store the token in memory to save map entry lookup gas.
         ( , uint256 magnitude, uint256 rate, bool available, , ) = _getTokenInfo(_token);
         // If the token exists require that its rate is not zero
