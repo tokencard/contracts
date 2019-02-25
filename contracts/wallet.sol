@@ -18,10 +18,10 @@
 
 pragma solidity ^0.4.25;
 
-import "./oracle.sol";
 import "./licence.sol";
 import "./internals/ownable.sol";
 import "./internals/controllable.sol";
+import "./internals/tokenWhitelistable.sol";
 import "./externals/ens/PublicResolver.sol";
 import "./externals/SafeMath.sol";
 import "./externals/ERC20.sol";
@@ -300,7 +300,7 @@ contract SpendLimit is Controllable, Ownable {
 
 
 //// @title Asset store with extra security features.
-contract Vault is Whitelist, SpendLimit, ERC165 {
+contract Vault is Whitelist, SpendLimit, ERC165, TokenWhitelistable {
     event Received(address _from, uint _amount);
     event Transferred(address _to, address _asset, uint _amount);
 
@@ -309,22 +309,14 @@ contract Vault is Whitelist, SpendLimit, ERC165 {
     /// @dev Supported ERC165 interface ID.
     bytes4 private constant _ERC165_INTERFACE_ID = 0x01ffc9a7; // solium-disable-line uppercase
 
-    /// @dev ENS points to the ENS registry smart contract.
-    ENS internal _ENS;
-
-    /// @dev Is the registered ENS name of the oracle contract.
-    bytes32 private _oracleNode;
-
     /// @dev Constructor initializes the vault with an owner address and spend limit. It also sets up the oracle and controller contracts.
     /// @param _owner is the owner account of the wallet contract.
     /// @param _transferable indicates whether the contract ownership can be transferred.
     /// @param _ens is the ENS public registry contract address.
-    /// @param _oracleName is the ENS name of the Oracle.
+    /// @param _tokenWhitelistName is the ENS name of the Token whitelist.
     /// @param _controllerName is the ENS name of the controller.
     /// @param _spendLimit is the initial spend limit.
-    constructor(address _owner, bool _transferable, address _ens, bytes32 _oracleName, bytes32 _controllerName, uint _spendLimit) SpendLimit(_spendLimit) Ownable(_owner, _transferable) Controllable(_ens, _controllerName) public {
-        _ENS = ENS(_ens);
-        _oracleNode = _oracleName;
+    constructor(address _owner, bool _transferable, address _ens, bytes32 _tokenWhitelistName, bytes32 _controllerName, uint _spendLimit) SpendLimit(_spendLimit) Ownable(_owner, _transferable) Controllable(_ens, _controllerName) TokenWhitelistable(_ens, _tokenWhitelistName) public {
     }
 
     /// @dev Checks if the value is not zero.
@@ -350,6 +342,24 @@ contract Vault is Whitelist, SpendLimit, ERC165 {
         }
     }
 
+    /// @dev Convert ERC20 token amount to the corresponding ether amount (used by the wallet contract).
+    /// @param _token ERC20 token contract address.
+    /// @param _amount amount of token in base units.
+    function convert(address _token, uint _amount) public view returns (uint) {
+        // Store the token in memory to save map entry lookup gas.
+        ( , uint256 magnitude, uint256 rate, bool available, , ) = _getTokenInfo(_token);
+        // If the token exists require that its rate is not zero
+        if (available) {
+            require(rate != 0, "token rate is 0");
+            // Safely convert the token amount to ether based on the exchange rate.
+            // return the value, the token is, AT LEAST, protected
+            return _amount.mul(rate).div(magnitude);
+        }
+        // this returns a 0/'false' to imply that the token is not protected
+        return 0;
+    }
+
+
     /// @dev Transfers the specified asset to the recipient's address.
     /// @param _to is the recipient's address.
     /// @param _asset is the address of an ERC20 token or 0x0 for ether.
@@ -362,23 +372,19 @@ contract Vault is Whitelist, SpendLimit, ERC165 {
         if (!isWhitelisted[_to]) {
             // Update the available spend limit.
             _updateSpendAvailable();
-            // Convert token amount to ether value.
-            uint etherValue;
-            bool tokenExists;
+
+            //initialize ether value in case the asset is ETH
+            uint etherValue = _amount;
+            // Convert token amount to ether value if asset is an ERC20 token.
             if (_asset != address(0)) {
-                (tokenExists, etherValue) = IOracle(PublicResolver(_ENS.resolver(_oracleNode)).addr(_oracleNode)).convert(_asset, _amount);
-            } else {
-                etherValue = _amount;
+                etherValue = convert(_asset, _amount);
             }
 
-            // If token is supported by our oracle or is ether
             // Check against the daily spent limit and update accordingly
-            if (tokenExists || _asset == address(0)) {
-                // Require that the value is under remaining limit.
-                require(etherValue <= spendAvailable(), "transfer amount exceeded available spend limit");
-                // Update the available limit.
-                _setSpendAvailable(spendAvailable().sub(etherValue));
-            }
+            // Require that the value is under remaining limit.
+            require(etherValue <= spendAvailable(), "transfer amount exceeded available spend limit");
+            // Update the available limit.
+            _setSpendAvailable(spendAvailable().sub(etherValue));
         }
         // Transfer token or ether based on the provided address.
         if (_asset != address(0)) {
@@ -424,6 +430,10 @@ contract Wallet is Vault {
     /// @dev Is the registered ENS name of the oracle contract.
     bytes32 private _licenceNode;
 
+    /// @dev ENS points to the ENS registry smart contract.
+    ENS internal _ENS;
+
+
     /// @dev Constructor initializes the wallet top up limit and the vault contract.
     /// @param _owner is the owner account of the wallet contract.
     /// @param _transferable indicates whether the contract ownership can be transferred.
@@ -437,6 +447,7 @@ contract Wallet is Vault {
         topUpLimit = MAXIMUM_TOPUP_LIMIT;
         _topUpAvailable = topUpLimit;
         _licenceNode = _licenceName;
+        _ENS = ENS(_ens);
     }
 
     /// @dev Returns the available daily gas top up balance - accounts for daily limit reset.

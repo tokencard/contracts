@@ -1,4 +1,4 @@
-package oracle_test
+package wallet_test
 
 import (
 	"errors"
@@ -28,7 +28,7 @@ var _ = Describe("convert", func() {
 		})
 		Context("When exchange rate is 0", func() {
 			It("Should fail", func() {
-				_, _, err := Oracle.Convert(nil, common.HexToAddress("0xfe209bdE5CA32fa20E6728A005F26D651FFF5982"), big.NewInt(100))
+				_, err := Wallet.Convert(nil, common.HexToAddress("0xfe209bdE5CA32fa20E6728A005F26D651FFF5982"), big.NewInt(100))
 				Expect(err).To(HaveOccurred())
 			})
 		})
@@ -46,13 +46,13 @@ var _ = Describe("convert", func() {
 			})
 			Context("When overflow occurs", func() {
 				It("Should trigger assert() (empty output)", func() {
-					_, _, err := Oracle.Convert(nil, common.HexToAddress("0xfe209bdE5CA32fa20E6728A005F26D651FFF5982"), big.NewInt(-1))
+					_, err := Wallet.Convert(nil, common.HexToAddress("0xfe209bdE5CA32fa20E6728A005F26D651FFF5982"), big.NewInt(-1))
 					Expect(err).To(MatchError(errors.New("abi: unmarshalling empty output")))
 				})
 			})
 			Context("When overflow does not occur", func() {
 				It("Should return 0.01(amount)*0.001633(rate)*10^18(in wei)", func() {
-					_, value, err := Oracle.Convert(nil, common.HexToAddress("0xfe209bdE5CA32fa20E6728A005F26D651FFF5982"), big.NewInt(int64(0.01*math.Pow10(8))))
+					value, err := Wallet.Convert(nil, common.HexToAddress("0xfe209bdE5CA32fa20E6728A005F26D651FFF5982"), big.NewInt(int64(0.01*math.Pow10(8))))
 					Expect(err).ToNot(HaveOccurred())
 					Expect(value.String()).To(Equal("16330000000000"))
 				})
@@ -92,10 +92,9 @@ var _ = Describe("convert", func() {
 			Backend.Commit()
 			Expect(isSuccessful(tx)).To(BeTrue())
 		})
-		It("Should return (false, 0)", func() {
-			tokenExists, value, err := Oracle.Convert(nil, common.HexToAddress("0x1"), big.NewInt(100))
+		It("Should return 0", func() {
+			value, err := Wallet.Convert(nil, common.HexToAddress("0x1"), big.NewInt(100))
 			Expect(err).ToNot(HaveOccurred())
-			Expect(tokenExists).ToNot(BeTrue())
 			Expect(value.String()).To(Equal("0"))
 		})
 	})
