@@ -468,7 +468,7 @@ contract Wallet is Vault {
     uint constant private MAXIMUM_TOPUP_LIMIT = 500 finney; // solium-disable-line uppercase
 
     uint constant private MINIMUM_LOAD_LIMIT = 1 finney;
-    uint constant private MAXIMUM_LOAD_LIMIT = 10 ether;
+    uint constant private MAXIMUM_LOAD_LIMIT = 101 ether;
 
     /// @dev Is the registered ENS name of the oracle contract.
     bytes32 private _licenceNode;
@@ -574,11 +574,11 @@ contract Wallet is Vault {
 
       if (_asset != address(0)) {
           //check if token is allowed to be used for loading the card
-          /* require(_isTokenLoadable(_asset, "token not laodable"); */
+          require(_isTokenLoadable(_asset), "token not loadable");
           // Convert token amount to ether value.
-          // uint etherValue = convert(_asset, _amount);
+          uint etherValue = convert(_asset, _amount);
           // Check against the daily spent limit and update accordingly, require that the value is under remaining limit.
-          //_loadLimit.useAmount(etherValue);
+          _loadLimit.useAmount(etherValue);
           require(ERC20(_asset).approve(licenceAddress, _amount), "ERC20 token approval was unsuccessful");
           ILicence(licenceAddress).load(_asset, _amount);
       } else {
