@@ -3,7 +3,6 @@ package wallet_test
 import (
 	"time"
 
-	"github.com/ethereum/go-ethereum/common"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	. "github.com/tokencard/contracts/test/shared"
@@ -22,8 +21,6 @@ var _ = Describe("topupLimit", func() {
 			Expect(err).ToNot(HaveOccurred())
 			Expect(tl.String()).To(Equal(FinneyToWei(500).String()))
 
-			Wallet.Balance(nil, common.HexToAddress("0x0"))
-
 			tl, err = Wallet.TopUpAvailable(nil)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(tl.String()).To(Equal(FinneyToWei(500).String()))
@@ -36,9 +33,10 @@ var _ = Describe("topupLimit", func() {
 
 		When("I try to initialize topup limit to one Gwei (below min topup limit)", func() {
 			BeforeEach(func() {
-				tx, err := Wallet.InitializeTopUpLimit(Owner.TransactOpts(ethertest.WithGasLimit(65000)), GweiToWei(1))
+				tx, err := Wallet.InitializeTopUpLimit(Owner.TransactOpts(ethertest.WithGasLimit(100000)), GweiToWei(1))
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
+				Expect(isGasExhausted(tx, 100000)).To(BeFalse())
 				txSuccessful = isSuccessful(tx)
 			})
 
@@ -50,9 +48,10 @@ var _ = Describe("topupLimit", func() {
 
 		When("I try to initialize topup limit to one ETH (above max topup limit)", func() {
 			BeforeEach(func() {
-				tx, err := Wallet.InitializeTopUpLimit(Owner.TransactOpts(ethertest.WithGasLimit(65000)), EthToWei(1))
+				tx, err := Wallet.InitializeTopUpLimit(Owner.TransactOpts(ethertest.WithGasLimit(100000)), EthToWei(1))
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
+				ethertest.WithGasLimit(100000)
 				txSuccessful = isSuccessful(tx)
 			})
 
