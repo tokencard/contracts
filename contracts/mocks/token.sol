@@ -25,7 +25,7 @@ contract Token {
         return true;
     }
 
-    function transferFrom(address _from, address _to, uint _value) returns (bool) {
+    function transferFrom(address _from, address _to, uint _value) public returns (bool) {
         if (_to == 0x0) return false;
         if (balanceOf[_from] < _value) return false;
 
@@ -39,7 +39,7 @@ contract Token {
         return true;
     }
 
-    function approve(address _spender, uint _value) returns (bool) {
+    function approve(address _spender, uint _value) public returns (bool) {
         //require user to set to zero before resetting to nonzero
         if ((_value != 0) && (allowance[msg.sender][_spender] != 0)) {
             return false;

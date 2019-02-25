@@ -343,19 +343,18 @@ contract Vault is Whitelist, SpendLimit, ERC165, TokenWhitelistable {
     /// @dev Convert ERC20 token amount to the corresponding ether amount (used by the wallet contract).
     /// @param _token ERC20 token contract address.
     /// @param _amount amount of token in base units.
-    function convert(address _token, uint _amount) private view returns (bool, uint) {
+    function convert(address _token, uint _amount) private view returns (uint) {
         // Store the token in memory to save map entry lookup gas.
         ( , uint256 magnitude, uint256 rate, bool available, , ) = _getTokenInfo(_token);
         // If the token exists require that its rate is not zero
         if (available) {
             require(rate != 0, "token rate is 0");
             // Safely convert the token amount to ether based on the exchange rate.
-            // return the value and a 'true' implying that the token is protected
-            return (true, _amount.mul(rate).div(magnitude));
+            // return the value, the token is, AT LEAST, protected
+            return _amount.mul(rate).div(magnitude);
         }
-        // this returns a 'false' to imply that a card is not protected
-        return (false, 0);
-
+        // this returns a 0/'false' to imply that the token is not protected
+        return 0;
     }
 
 
@@ -371,23 +370,19 @@ contract Vault is Whitelist, SpendLimit, ERC165, TokenWhitelistable {
         if (!isWhitelisted[_to]) {
             // Update the available spend limit.
             _updateSpendAvailable();
-            // Convert token amount to ether value.
-            uint etherValue;
-            bool tokenExists;
+
+            //initialize ether value in case the asset is ETH
+            uint etherValue = _amount;
+            // Convert token amount to ether value if asset is an ERC20 token.
             if (_asset != address(0)) {
-                (tokenExists, etherValue) = convert(_asset, _amount);
-            } else {
-                etherValue = _amount;
+                etherValue = convert(_asset, _amount);
             }
 
-            // If token is supported by our oracle or is ether
             // Check against the daily spent limit and update accordingly
-            if (tokenExists || _asset == address(0)) {
-                // Require that the value is under remaining limit.
-                require(etherValue <= spendAvailable(), "transfer amount exceeded available spend limit");
-                // Update the available limit.
-                _setSpendAvailable(spendAvailable().sub(etherValue));
-            }
+            // Require that the value is under remaining limit.
+            require(etherValue <= spendAvailable(), "transfer amount exceeded available spend limit");
+            // Update the available limit.
+            _setSpendAvailable(spendAvailable().sub(etherValue));
         }
         // Transfer token or ether based on the provided address.
         if (_asset != address(0)) {
