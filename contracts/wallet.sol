@@ -226,7 +226,7 @@ contract DailyLimit {
 
     /// @dev Modify the spend limit and spend available based on the provided value.
     /// @dev _amount is the daily limit amount in wei.
-    function modifyLimit(uint _amount) public {
+    function _modifyLimit(uint _amount) private {
         // Account for the spend limit daily reset.
         _updateAvailable();
         // Set the daily limit to the provided amount.
@@ -243,7 +243,7 @@ contract DailyLimit {
         // Require that the spend limit has not been initialized.
         require(!initialized, "limit has already been initialized");
         // Modify spend limit based on the provided value.
-        modifyLimit(_amount);
+        _modifyLimit(_amount);
         // Flag the operation as initialized.
         initialized = true;
     }
@@ -269,7 +269,7 @@ contract DailyLimit {
         // Require that pending and confirmed spend limit are the same
         require(pending == _amount, "confirmed and submitted limits dont match");
         // Modify spend limit based on the pending value.
-        modifyLimit(pending);
+        _modifyLimit(pending);
         // Reset the submission flag.
         submitted = false;
         // Reset pending daily limit.
