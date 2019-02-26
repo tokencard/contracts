@@ -2,8 +2,8 @@ package wallet_test
 
 import (
 	"context"
-	"time"
 	"math/big"
+	"time"
 
 	"github.com/ethereum/go-ethereum/core/types"
 	. "github.com/onsi/ginkgo"
@@ -187,7 +187,7 @@ var _ = Describe("topUpGas", func() {
 					b, e := Backend.BalanceAt(context.Background(), WalletAddress, nil)
 					Expect(e).ToNot(HaveOccurred())
 					Expect(b.String()).To(Equal(EthToWei(10).String())) //Wallet address has initially 10 ETH
-					ownerBalance.Sub(ownerBalance, txCost) //subtract the tx cost
+					ownerBalance.Sub(ownerBalance, txCost)              //subtract the tx cost
 					Expect(Owner.Balance(Backend).String()).To(Equal(ownerBalance.String()))
 				})
 
