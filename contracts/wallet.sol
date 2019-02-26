@@ -454,9 +454,9 @@ contract Vault is Whitelist, SpendLimit, ERC165, TokenWhitelistable {
 
 //// @title Asset wallet with extra security features, gas top up management and card integration.
 contract Wallet is Vault {
-    event SetTopUpGasLimit(address _sender, uint _amount);
-    event SubmittedTopUpGasLimitChange(uint _amount);
-    event CancelledTopUpGasLimitChange(address _sender, uint _amount);
+    event SetGasTopUpLimit(address _sender, uint _amount);
+    event SubmittedGasTopUpLimitChange(uint _amount);
+    event CancelledGasTopUpLimitChange(address _sender, uint _amount);
 
     event ToppedUpGas(address _sender, address _owner, uint _amount);
 
@@ -478,7 +478,7 @@ contract Wallet is Vault {
     /// @dev ENS points to the ENS registry smart contract.
     ENS internal _ENS;
 
-    DailyLimit internal _topUpGasLimit;
+    DailyLimit internal _gasTopUpLimit;
     DailyLimit internal _loadLimit;
 
     /// @dev Constructor initializes the wallet top up limit and the vault contract.
@@ -490,7 +490,7 @@ contract Wallet is Vault {
     /// @param _licenceName is the ENS name of the licence.
     /// @param _spendLimit is the initial spend limit.
     constructor(address _owner, bool _transferable, address _ens, bytes32 _oracleName, bytes32 _controllerName, bytes32 _licenceName, uint _spendLimit) Vault(_owner, _transferable, _ens, _oracleName, _controllerName, _spendLimit) public {
-        _topUpGasLimit = new DailyLimit(MAXIMUM_TOPUP_GAS_LIMIT);
+        _gasTopUpLimit = new DailyLimit(MAXIMUM_TOPUP_GAS_LIMIT);
         _loadLimit = new DailyLimit(MAXIMUM_LOAD_LIMIT);
         _licenceNode = _licenceName;
         _ENS = ENS(_ens);
@@ -498,10 +498,10 @@ contract Wallet is Vault {
 
     /// @dev Initialize a daily gas top up limit.
     /// @param _amount is the top up gas amount in wei.
-    function initializeTopUpGasLimit(uint _amount) external onlyOwner {
+    function initializeGasTopUpLimit(uint _amount) external onlyOwner {
         require(MINIMUM_TOPUP_GAS_LIMIT <= _amount && _amount <= MAXIMUM_TOPUP_GAS_LIMIT, "gas top up amount is outside the min/max range");
-        _topUpGasLimit.initialize(_amount);
-        emit SetTopUpGasLimit(msg.sender, _amount);
+        _gasTopUpLimit.initialize(_amount);
+        emit SetGasTopUpLimit(msg.sender, _amount);
     }
 
     /// @dev Initialize a daily card load limit.
@@ -514,10 +514,10 @@ contract Wallet is Vault {
 
     /// @dev Set a daily top up gas limit.
     /// @param _amount is the daily top up gas limit amount in wei.
-    function submitTopUpGasLimit(uint _amount) external onlyOwner {
+    function submitGasTopUpLimit(uint _amount) external onlyOwner {
         require(MINIMUM_TOPUP_GAS_LIMIT <= _amount && _amount <= MAXIMUM_TOPUP_GAS_LIMIT, "gas top up amount is outside the min/max range");
-        _topUpGasLimit.submit(_amount);
-        emit SubmittedTopUpGasLimitChange(_amount);
+        _gasTopUpLimit.submit(_amount);
+        emit SubmittedGasTopUpLimitChange(_amount);
     }
 
     /// @dev Set a daily load limit.
@@ -529,9 +529,9 @@ contract Wallet is Vault {
     }
 
     /// @dev Confirm pending set top up gas limit operation.
-    function confirmTopUpGasLimit(uint _amount) external onlyController {
-        _topUpGasLimit.confirm(_amount);
-        emit SetTopUpGasLimit(msg.sender, _amount);
+    function confirmGasTopUpLimit(uint _amount) external onlyController {
+        _gasTopUpLimit.confirm(_amount);
+        emit SetGasTopUpLimit(msg.sender, _amount);
     }
 
     /// @dev Confirm pending set load limit operation.
@@ -541,9 +541,9 @@ contract Wallet is Vault {
     }
 
     /// @dev Cancel pending set top up gas limit operation.
-    function cancelTopUpGasLimit(uint _amount) external onlyController {
-        _topUpGasLimit.cancel(_amount);
-        emit CancelledTopUpGasLimitChange(msg.sender, _amount);
+    function cancelGasTopUpLimit(uint _amount) external onlyController {
+        _gasTopUpLimit.cancel(_amount);
+        emit CancelledGasTopUpLimitChange(msg.sender, _amount);
     }
 
     /// @dev Cancel pending set load limit operation.
@@ -558,7 +558,7 @@ contract Wallet is Vault {
         // Require that the sender is either the owner or a controller.
         require(_isOwner() || _isController(msg.sender), "sender is neither an owner nor a controller");
 
-        _topUpGasLimit.useAmount(_amount);
+        _gasTopUpLimit.useAmount(_amount);
 
         owner().transfer(_amount);
 
@@ -593,24 +593,24 @@ contract Wallet is Vault {
     }
 
     //Getter functions
-    function topUpGasLimit() public view returns (uint) {
-        return _topUpGasLimit.dailyLimit();
+    function gasTopUpLimit() public view returns (uint) {
+        return _gasTopUpLimit.dailyLimit();
     }
 
-    function topUpGasAvailable() public view returns (uint) {
-        return _topUpGasLimit.available();
+    function gasTopUpAvailable() public view returns (uint) {
+        return _gasTopUpLimit.available();
     }
 
-    function initializedTopUpGasLimit() public view returns (bool) {
-        return _topUpGasLimit.initialized();
+    function initializedGasTopUpLimit() public view returns (bool) {
+        return _gasTopUpLimit.initialized();
     }
 
-    function submittedTopUpGasLimit() public view returns (bool) {
-      return _topUpGasLimit.submitted();
+    function submittedGasTopUpLimit() public view returns (bool) {
+      return _gasTopUpLimit.submitted();
     }
 
-    function pendingTopUpGasLimit() public view returns (uint) {
-      return _topUpGasLimit.pending();
+    function pendingGasTopUpLimit() public view returns (uint) {
+      return _gasTopUpLimit.pending();
     }
 
 
