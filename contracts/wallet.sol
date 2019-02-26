@@ -454,9 +454,9 @@ contract Vault is Whitelist, SpendLimit, ERC165, TokenWhitelistable {
 
 //// @title Asset wallet with extra security features, gas top up management and card integration.
 contract Wallet is Vault {
-    event SetTopUpLimit(address _sender, uint _amount);
-    event SubmittedTopUpLimitChange(uint _amount);
-    event CancelledTopUpLimitChange(address _sender, uint _amount);
+    event SetTopUpGasLimit(address _sender, uint _amount);
+    event SubmittedTopUpGasLimitChange(uint _amount);
+    event CancelledTopUpGasLimitChange(address _sender, uint _amount);
 
     event ToppedUpGas(address _sender, address _owner, uint _amount);
 
@@ -466,8 +466,8 @@ contract Wallet is Vault {
 
     event LoadedTokenCard(address _asset, uint _amount);
 
-    uint constant private MINIMUM_TOPUP_LIMIT = 1 finney; // solium-disable-line uppercase
-    uint constant private MAXIMUM_TOPUP_LIMIT = 500 finney; // solium-disable-line uppercase
+    uint constant private MINIMUM_TOPUP_GAS_LIMIT = 1 finney;
+    uint constant private MAXIMUM_TOPUP_GAS_LIMIT = 500 finney;
 
     uint constant private MINIMUM_LOAD_LIMIT = 1 finney;
     uint constant private MAXIMUM_LOAD_LIMIT = 101 ether;
@@ -478,7 +478,7 @@ contract Wallet is Vault {
     /// @dev ENS points to the ENS registry smart contract.
     ENS internal _ENS;
 
-    DailyLimit internal _topUpLimit;
+    DailyLimit internal _topUpGasLimit;
     DailyLimit internal _loadLimit;
 
     /// @dev Constructor initializes the wallet top up limit and the vault contract.
@@ -490,18 +490,18 @@ contract Wallet is Vault {
     /// @param _licenceName is the ENS name of the licence.
     /// @param _spendLimit is the initial spend limit.
     constructor(address _owner, bool _transferable, address _ens, bytes32 _oracleName, bytes32 _controllerName, bytes32 _licenceName, uint _spendLimit) Vault(_owner, _transferable, _ens, _oracleName, _controllerName, _spendLimit) public {
-        _topUpLimit = new DailyLimit(MAXIMUM_TOPUP_LIMIT);
+        _topUpGasLimit = new DailyLimit(MAXIMUM_TOPUP_GAS_LIMIT);
         _loadLimit = new DailyLimit(MAXIMUM_LOAD_LIMIT);
         _licenceNode = _licenceName;
         _ENS = ENS(_ens);
     }
 
     /// @dev Initialize a daily gas top up limit.
-    /// @param _amount is the gas top up amount in wei.
-    function initializeTopUpLimit(uint _amount) external onlyOwner {
-        require(MINIMUM_TOPUP_LIMIT <= _amount && _amount <= MAXIMUM_TOPUP_LIMIT, "gas top up amount is outside the min/max range");
-        _topUpLimit.initialize(_amount);
-        emit SetTopUpLimit(msg.sender, _amount);
+    /// @param _amount is the top up gas amount in wei.
+    function initializeTopUpGasLimit(uint _amount) external onlyOwner {
+        require(MINIMUM_TOPUP_GAS_LIMIT <= _amount && _amount <= MAXIMUM_TOPUP_GAS_LIMIT, "gas top up amount is outside the min/max range");
+        _topUpGasLimit.initialize(_amount);
+        emit SetTopUpGasLimit(msg.sender, _amount);
     }
 
     /// @dev Initialize a daily card load limit.
@@ -512,12 +512,12 @@ contract Wallet is Vault {
         emit SetLoadLimit(msg.sender, _amount);
     }
 
-    /// @dev Set a daily top up limit.
-    /// @param _amount is the daily top up limit amount in wei.
-    function submitTopUpLimit(uint _amount) external onlyOwner {
-        require(MINIMUM_TOPUP_LIMIT <= _amount && _amount <= MAXIMUM_TOPUP_LIMIT, "gas top up amount is outside the min/max range");
-        _topUpLimit.submit(_amount);
-        emit SubmittedTopUpLimitChange(_amount);
+    /// @dev Set a daily top up gas limit.
+    /// @param _amount is the daily top up gas limit amount in wei.
+    function submitTopUpGasLimit(uint _amount) external onlyOwner {
+        require(MINIMUM_TOPUP_GAS_LIMIT <= _amount && _amount <= MAXIMUM_TOPUP_GAS_LIMIT, "gas top up amount is outside the min/max range");
+        _topUpGasLimit.submit(_amount);
+        emit SubmittedTopUpGasLimitChange(_amount);
     }
 
     /// @dev Set a daily load limit.
@@ -528,10 +528,10 @@ contract Wallet is Vault {
         emit SubmittedLoadLimitChange(_amount);
     }
 
-    /// @dev Confirm pending set top up limit operation.
-    function confirmTopUpLimit(uint _amount) external onlyController {
-        _topUpLimit.confirm(_amount);
-        emit SetTopUpLimit(msg.sender, _amount);
+    /// @dev Confirm pending set top up gas limit operation.
+    function confirmTopUpGasLimit(uint _amount) external onlyController {
+        _topUpGasLimit.confirm(_amount);
+        emit SetTopUpGasLimit(msg.sender, _amount);
     }
 
     /// @dev Confirm pending set load limit operation.
@@ -540,10 +540,10 @@ contract Wallet is Vault {
         emit SetLoadLimit(msg.sender, _amount);
     }
 
-    /// @dev Cancel pending set top up limit operation.
-    function cancelTopUpLimit(uint _amount) external onlyController {
-        _topUpLimit.cancel(_amount);
-        emit CancelledTopUpLimitChange(msg.sender, _amount);
+    /// @dev Cancel pending set top up gas limit operation.
+    function cancelTopUpGasLimit(uint _amount) external onlyController {
+        _topUpGasLimit.cancel(_amount);
+        emit CancelledTopUpGasLimitChange(msg.sender, _amount);
     }
 
     /// @dev Cancel pending set load limit operation.
@@ -558,7 +558,7 @@ contract Wallet is Vault {
         // Require that the sender is either the owner or a controller.
         require(_isOwner() || _isController(msg.sender), "sender is neither an owner nor a controller");
 
-        _topUpLimit.useAmount(_amount);
+        _topUpGasLimit.useAmount(_amount);
 
         owner().transfer(_amount);
 
@@ -592,24 +592,25 @@ contract Wallet is Vault {
         emit LoadedTokenCard(_asset, _amount);
     }
 
-    function topUpLimit() public view returns (uint) {
-        return _topUpLimit.dailyLimit();
+    //Getter functions
+    function topUpGasLimit() public view returns (uint) {
+        return _topUpGasLimit.dailyLimit();
     }
 
-    function topUpAvailable() public view returns (uint) {
-        return _topUpLimit.available();
+    function topUpGasAvailable() public view returns (uint) {
+        return _topUpGasLimit.available();
     }
 
-    function initializedTopUpLimit() public view returns (bool) {
-        return _topUpLimit.initialized();
+    function initializedTopUpGasLimit() public view returns (bool) {
+        return _topUpGasLimit.initialized();
     }
 
-    function submittedTopUpLimit() public view returns (bool) {
-      return _topUpLimit.submitted();
+    function submittedTopUpGasLimit() public view returns (bool) {
+      return _topUpGasLimit.submitted();
     }
 
-    function pendingTopUpLimit() public view returns (uint) {
-      return _topUpLimit.pending();
+    function pendingTopUpGasLimit() public view returns (uint) {
+      return _topUpGasLimit.pending();
     }
 
 
