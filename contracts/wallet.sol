@@ -563,7 +563,7 @@ contract Wallet is Vault {
         owner().transfer(_amount);
 
         // Emit the gas top up event.
-        emit ToppedUpGas(tx.origin, owner(), _amount);
+        emit ToppedUpGas(msg.sender, owner(), _amount);
     }
 
     /// @dev Load a token card with the specified asset amount.
