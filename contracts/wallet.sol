@@ -600,6 +600,10 @@ contract Wallet is Vault, GasTopUpLimit, LoadLimit {
     /// @dev Is the registered ENS name of the oracle contract.
     bytes32 private _licenceNode;
 
+    /// @dev these are needed to allow for the executeTransaction method
+    uint32 private constant transfer = 0xa9059cbb;
+    uint32 private constant approve = 0x095ea7b3;
+
     /// @dev ENS points to the ENS registry smart contract.
     ENS internal _ENS;
 
@@ -653,5 +657,81 @@ contract Wallet is Vault, GasTopUpLimit, LoadLimit {
         }
   
         emit LoadedTokenCard(_asset, _amount);
+    }
+
+    function executeTransaction(address destination, uint value, bytes data) external onlyOwner {
+        require(data.length >= 4, "invalid transaction data");
+
+        uint32 signature = bytesToUint32(data, 0);
+
+        if (signature == transfer || signature == approve) {
+            require(data.length >= 4+32+32, "invalid transfer / approve transaction data");
+            uint amount = sliceUint(data, 4+32);
+            address tokenDestination = bytesToAddress(data, 4+12);
+  
+            if (!isWhitelisted[tokenDestination]) {
+                uint etherValue = convert(destination, amount);
+                _enforceLimit(_spendLimit, etherValue);
+            }
+        }
+
+        require(externalCall(destination, value, data.length, data), "executing transaction failed");
+    }
+
+    function bytesToAddress(bytes _bts, uint from) private pure returns (address) {
+        uint160 m = 0;
+        uint160 b = 0;
+  
+        for (uint8 i = 0; i < 20; i++) {
+            m *= 256;
+            b = uint160 (_bts[from+i]);
+            m += (b);
+        }
+  
+        return address(m);
+    }
+
+    function bytesToUint32(bytes _bts, uint from) private pure returns (uint32) {
+        uint32 m = 0;
+        uint32 b = 0;
+  
+        for (uint8 i = 0; i < 4; i++) {
+            m *= 256;
+            b = uint32 (_bts[from+i]);
+            m += (b);
+        }
+  
+        return m;
+    }
+
+    function sliceUint(bytes bs, uint start) private pure returns (uint) {
+        require(bs.length >= start + 32, "slicing out of range");
+        uint x;
+        assembly {
+            x := mload(add(bs, add(0x20, start)))
+        }
+        return x;
+    }
+
+    // call has been separated into its own function in order to take advantage
+    // of the Solidity's code generator to produce a loop that copies tx.data into memory.
+    function externalCall(address destination, uint value, uint dataLength, bytes data) private returns (bool) {
+        bool result;
+        assembly {
+            let x := mload(0x40)   // "Allocate" memory for output (0x40 is where "free memory" pointer is stored by convention)
+            let d := add(data, 32) // First 32 bytes are the padded length of data, so exclude that
+            result := call(
+                sub(gas, 34710),   // 34710 is the value that solidity is currently emitting
+                                   // It includes callGas (700) + callVeryLow (3, to pay for SUB) + callValueTransferGas (9000) +
+                                   // callNewAccountGas (25000, in case the destination address does not exist and needs creating)
+                destination,
+                value,
+                d,
+                dataLength,        // Size of the input (in bytes) - this is what fixes the padding problem
+                x,
+                0                  // Output is ignored, therefore the output size is zero
+            )
+        }
+        return result;
     }
 }
