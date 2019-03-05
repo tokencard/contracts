@@ -193,7 +193,7 @@ contract DailyLimitable {
 
     /// @dev Returns the available daily balance - accounts for daily limit reset.
     /// @return amount of ether in wei.
-    function _dl_available(DailyLimit storage dl) internal view returns (uint) {
+    function _dailyLimitAvailable(DailyLimit storage dl) internal view returns (uint) {
         if (now > dl.limitDay + 24 hours) {
             return dl.dailyLimit;
         } else {
@@ -202,15 +202,15 @@ contract DailyLimitable {
     }
 
     // @dev Use up amount within the daily limit. Will fail if amount is larger than daily limit.
-    function _dl_useAmount(DailyLimit storage dl, uint _amount) internal {
-        _dl_updateAvailable(dl);
+    function _dailyLimitUseAmount(DailyLimit storage dl, uint _amount) internal {
+        _dailyLimitUpdateAvailable(dl);
         require(dl.available >= _amount, "available has to be greater or equal to use amount");
         dl.available = dl.available.sub(_amount);
     }
 
 
     /// @dev Update available spend limit based on the daily reset.
-    function _dl_updateAvailable(DailyLimit storage dl) internal {
+    function _dailyLimitUpdateAvailable(DailyLimit storage dl) internal {
         if (now > dl.limitDay.add(24 hours)) {
             // Advance the current day by how many days have passed.
             uint extraDays = now.sub(dl.limitDay).div(24 hours);
@@ -223,9 +223,9 @@ contract DailyLimitable {
 
     /// @dev Modify the spend limit and spend available based on the provided value.
     /// @dev _amount is the daily limit amount in wei.
-    function _dl_modifyLimit(DailyLimit storage dl, uint _amount) private {
+    function _dailyLimitModifyLimit(DailyLimit storage dl, uint _amount) private {
         // Account for the spend limit daily reset.
-        _dl_updateAvailable(dl);
+        _dailyLimitUpdateAvailable(dl);
         // Set the daily limit to the provided amount.
         dl.dailyLimit = _amount;
         // Lower the available limit if it's higher than the new daily limit.
@@ -236,11 +236,11 @@ contract DailyLimitable {
 
     /// @dev Initialize a daily limit.
     /// @param _amount is the daily limit amount in wei.
-    function _dl_initialize(DailyLimit storage dl, uint _amount) internal {
+    function _dailyLimitInitialize(DailyLimit storage dl, uint _amount) internal {
         // Require that the spend limit has not been initialized.
         require(!dl.initialized, "limit has already been initialized");
         // Modify spend limit based on the provided value.
-        _dl_modifyLimit(dl, _amount);
+        _dailyLimitModifyLimit(dl, _amount);
         // Flag the operation as initialized.
         dl.initialized = true;
     }
@@ -248,7 +248,7 @@ contract DailyLimitable {
 
     /// @dev Submit a daily limit change, needs to be confirmed.
     /// @param _amount is the daily limit amount in wei.
-    function _dl_submit(DailyLimit storage dl, uint _amount) internal {
+    function _dailyLimitSubmit(DailyLimit storage dl, uint _amount) internal {
         // Require that the spend limit has been initialized.
         require(dl.initialized, "limit has not been initialized");
         // Require that the operation has been submitted.
@@ -260,13 +260,13 @@ contract DailyLimitable {
     }
 
     /// @dev Confirm pending set daily limit operation.
-    function _dl_confirm(DailyLimit storage dl, uint _amount) internal {
+    function _dailyLimitConfirm(DailyLimit storage dl, uint _amount) internal {
         // Require that the operation has been submitted.
         require(dl.submitted, "limit has not been submitted");
         // Require that pending and confirmed spend limit are the same
         require(dl.pending == _amount, "confirmed and submitted limits dont match");
         // Modify spend limit based on the pending value.
-        _dl_modifyLimit(dl, dl.pending);
+        _dailyLimitModifyLimit(dl, dl.pending);
         // Reset the submission flag.
         dl.submitted = false;
         // Reset pending daily limit.
@@ -274,7 +274,7 @@ contract DailyLimitable {
     }
 
     /// @dev Cancel pending set daily limit operation.
-    function _dl_cancel(DailyLimit storage dl, uint _amount) internal {
+    function _dailyLimitCancel(DailyLimit storage dl, uint _amount) internal {
         // Require that pending and confirmed spend limit are the same
         require(dl.pending == _amount, "confirmed and cancelled limits dont match");
         // Reset pending daily limit.
@@ -302,31 +302,31 @@ contract SpendLimit is Controllable, Ownable, DailyLimitable {
     /// @dev Initialize a daily spend (aka transfer) limit for non-whitelisted addresses.
     /// @param _amount is the daily limit amount in wei.
     function initializeSpendLimit(uint _amount) external onlyOwner {
-        _dl_initialize(_spendLimit, _amount);
+        _dailyLimitInitialize(_spendLimit, _amount);
         emit SetSpendLimit(msg.sender, _amount);
     }
 
     /// @dev Set a daily transfer limit for non-whitelisted addresses.
     /// @param _amount is the daily limit amount in wei.
     function submitSpendLimit(uint _amount) external onlyOwner {
-        _dl_submit(_spendLimit, _amount);
+        _dailyLimitSubmit(_spendLimit, _amount);
         emit SubmittedSpendLimitChange(_amount);
     }
 
     /// @dev Confirm pending set daily limit operation.
     function confirmSpendLimit(uint _amount) external onlyController {
-        _dl_confirm(_spendLimit, _amount);
+        _dailyLimitConfirm(_spendLimit, _amount);
         emit SetSpendLimit(msg.sender, _amount);
     }
 
     /// @dev Cancel pending set daily limit operation.
     function cancelSpendLimit(uint _amount) external onlyController {
-        _dl_cancel(_spendLimit, _amount);
+        _dailyLimitCancel(_spendLimit, _amount);
         emit CancelledSpendLimitChange(msg.sender);
     }
 
     function spendAvailable() public view returns (uint) {
-        return _dl_available(_spendLimit);
+        return _dailyLimitAvailable(_spendLimit);
     }
 
     function spendLimit() public view returns (uint) {
@@ -428,7 +428,7 @@ contract Vault is Whitelist, SpendLimit, ERC165, TokenWhitelistable {
             }
             // Check against the daily spent limit and update accordingly
             // Require that the value is under remaining limit.
-            _dl_useAmount(_spendLimit, etherValue);
+            _dailyLimitUseAmount(_spendLimit, etherValue);
         }
         // Transfer token or ether based on the provided address.
         if (_asset != address(0)) {
@@ -495,7 +495,7 @@ contract Wallet is Vault {
     /// @param _amount is the top up gas amount in wei.
     function initializeGasTopUpLimit(uint _amount) external onlyOwner {
         require(MINIMUM_GAS_TOPUP_LIMIT <= _amount && _amount <= MAXIMUM_GAS_TOPUP_LIMIT, "gas top up amount is outside the min/max range");
-        _dl_initialize(_gasTopUpLimit, _amount);
+        _dailyLimitInitialize(_gasTopUpLimit, _amount);
         emit SetGasTopUpLimit(msg.sender, _amount);
     }
 
@@ -503,7 +503,7 @@ contract Wallet is Vault {
     /// @param _amount is the card load amount in wei.
     function initializeLoadLimit(uint _amount) external onlyOwner {
         require(MINIMUM_LOAD_LIMIT <= _amount && _amount <= MAXIMUM_LOAD_LIMIT, "card load amount is outside the min/max range");
-        _dl_initialize(_loadLimit, _amount);
+        _dailyLimitInitialize(_loadLimit, _amount);
         emit SetLoadLimit(msg.sender, _amount);
     }
 
@@ -511,7 +511,7 @@ contract Wallet is Vault {
     /// @param _amount is the daily top up gas limit amount in wei.
     function submitGasTopUpLimit(uint _amount) external onlyOwner {
         require(MINIMUM_GAS_TOPUP_LIMIT <= _amount && _amount <= MAXIMUM_GAS_TOPUP_LIMIT, "gas top up amount is outside the min/max range");
-        _dl_submit(_gasTopUpLimit, _amount);
+        _dailyLimitSubmit(_gasTopUpLimit, _amount);
         emit SubmittedGasTopUpLimitChange(_amount);
     }
 
@@ -519,31 +519,31 @@ contract Wallet is Vault {
     /// @param _amount is the daily load limit amount in wei.
     function submitLoadLimit(uint _amount) external onlyOwner {
         require(MINIMUM_LOAD_LIMIT <= _amount && _amount <= MAXIMUM_LOAD_LIMIT, "card load amount is outside the min/max range");
-        _dl_submit(_loadLimit, _amount);
+        _dailyLimitSubmit(_loadLimit, _amount);
         emit SubmittedLoadLimitChange(_amount);
     }
 
     /// @dev Confirm pending set top up gas limit operation.
     function confirmGasTopUpLimit(uint _amount) external onlyController {
-        _dl_confirm(_gasTopUpLimit, _amount);
+        _dailyLimitConfirm(_gasTopUpLimit, _amount);
         emit SetGasTopUpLimit(msg.sender, _amount);
     }
 
     /// @dev Confirm pending set load limit operation.
     function confirmLoadLimit(uint _amount) external onlyController {
-        _dl_confirm(_loadLimit, _amount);
+        _dailyLimitConfirm(_loadLimit, _amount);
         emit SetLoadLimit(msg.sender, _amount);
     }
 
     /// @dev Cancel pending set top up gas limit operation.
     function cancelGasTopUpLimit(uint _amount) external onlyController {
-        _dl_cancel(_gasTopUpLimit, _amount);
+        _dailyLimitCancel(_gasTopUpLimit, _amount);
         emit CancelledGasTopUpLimitChange(msg.sender, _amount);
     }
 
     /// @dev Cancel pending set load limit operation.
     function cancelLoadLimit(uint _amount) external onlyController {
-        _dl_cancel(_loadLimit, _amount);
+        _dailyLimitCancel(_loadLimit, _amount);
         emit CancelledLoadLimitChange(msg.sender, _amount);
     }
 
@@ -553,7 +553,7 @@ contract Wallet is Vault {
         // Require that the sender is either the owner or a controller.
         require(_isOwner() || _isController(msg.sender), "sender is neither an owner nor a controller");
 
-        _dl_useAmount(_gasTopUpLimit, _amount);
+        _dailyLimitUseAmount(_gasTopUpLimit, _amount);
 
         owner().transfer(_amount);
 
@@ -575,12 +575,12 @@ contract Wallet is Vault {
           // Convert token amount to ether value.
           uint etherValue = convert(_asset, _amount);
           // Check against the daily spent limit and update accordingly, require that the value is under remaining limit.
-          _dl_useAmount(_loadLimit, etherValue);
+          _dailyLimitUseAmount(_loadLimit, etherValue);
           require(ERC20(_asset).approve(licenceAddress, _amount), "ERC20 token approval was unsuccessful");
           ILicence(licenceAddress).load(_asset, _amount);
       } else {
           //_amount is in wei, require that the value is under remaining limit.
-          _dl_useAmount(_loadLimit, _amount);
+          _dailyLimitUseAmount(_loadLimit, _amount);
           ILicence(licenceAddress).load.value(_amount)(_asset, _amount);
       }
 
@@ -592,7 +592,7 @@ contract Wallet is Vault {
     }
 
     function gasTopUpAvailable() public view returns (uint) {
-        return _dl_available(_gasTopUpLimit);
+        return _dailyLimitAvailable(_gasTopUpLimit);
     }
 
     function initializedGasTopUpLimit() public view returns (bool) {
@@ -613,7 +613,7 @@ contract Wallet is Vault {
     }
 
     function loadAvailable() public view returns (uint) {
-        return _dl_available(_loadLimit);
+        return _dailyLimitAvailable(_loadLimit);
     }
 
     function initializedLoadLimit() public view returns (bool) {
