@@ -28,6 +28,7 @@ var _ = Describe("transfer", func() {
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 			})
+
 			It("should succeed", func() {
 				Expect(isSuccessful(tx)).To(BeTrue())
 			})
