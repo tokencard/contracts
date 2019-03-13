@@ -10,6 +10,7 @@ import (
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	. "github.com/tokencard/contracts/test/shared"
+	"github.com/tokencard/ethertest"
 )
 
 var _ = Describe("executeTransaction", func() {
@@ -22,17 +23,37 @@ var _ = Describe("executeTransaction", func() {
 
 		var tx *types.Transaction
 
-		Context("When I have one thousand tokens", func() {
+		When("I transfer 500 Finney tp a random person using 'executeTransaction'", func() {
+			BeforeEach(func() {
+				tx, err := Wallet.ExecuteTransaction(Owner.TransactOpts(ethertest.WithGasLimit(100000)), RandomAccount.Address(), FinneyToWei(500), nil)
+				Expect(err).ToNot(HaveOccurred())
+				Backend.Commit()
+				Expect(isSuccessful(tx)).To(BeTrue())
+			})
+
+			It("should transfer 5 Finney to random person", func() {
+				bal := RandomAccount.Balance(Backend)
+				Expect(bal.String()).To(Equal("1000500000000000000000"))
+			})
+
+			It("should reduce the available daily spend balance", func() {
+				av, err := Wallet.SpendAvailable(nil)
+				Expect(err).ToNot(HaveOccurred())
+				Expect(av.String()).To(AlmostEqual("99500000000000000000"))
+			})
+
+		})
+
+		When("I have one thousand tokens", func() {
 			BeforeEach(func() {
 				var err error
 				tx, err = TKN.Credit(BankAccount.TransactOpts(), WalletAddress, big.NewInt(1000))
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 				Expect(isSuccessful(tx)).To(BeTrue())
-
 			})
 
-			Context("When I transfer 300 tokens to a random person using 'executeTransaction'", func() {
+			When("I transfer 300 tokens to a random person using 'executeTransaction'", func() {
 				BeforeEach(func() {
 					a, err := abi.JSON(strings.NewReader(ERC20ABI))
 					Expect(err).ToNot(HaveOccurred())
@@ -64,7 +85,7 @@ var _ = Describe("executeTransaction", func() {
 				})
 			})
 
-			Context("When random person is whitelisted", func() {
+			When("random person is whitelisted", func() {
 				BeforeEach(func() {
 					tx, err := Wallet.InitializeWhitelist(Owner.TransactOpts(), []common.Address{RandomAccount.Address()})
 					Expect(err).ToNot(HaveOccurred())
@@ -72,7 +93,7 @@ var _ = Describe("executeTransaction", func() {
 					Expect(isSuccessful(tx)).To(BeTrue())
 				})
 
-				Context("When I transfer 300 tokens to a random person using 'executeTransaction'", func() {
+				When("I transfer 300 tokens to a random person using 'executeTransaction'", func() {
 					BeforeEach(func() {
 
 						a, err := abi.JSON(strings.NewReader(ERC20ABI))
@@ -106,7 +127,7 @@ var _ = Describe("executeTransaction", func() {
 				})
 			})
 
-			Context("When I approve 300 tokens to a random person using 'executeTransaction'", func() {
+			When("I approve 300 tokens to a random person using 'executeTransaction'", func() {
 				BeforeEach(func() {
 					a, err := abi.JSON(strings.NewReader(ERC20ABI))
 					Expect(err).ToNot(HaveOccurred())
@@ -138,7 +159,7 @@ var _ = Describe("executeTransaction", func() {
 				})
 			})
 
-			Context("When random person is whitelisted", func() {
+			When("random person is whitelisted", func() {
 				BeforeEach(func() {
 					tx, err := Wallet.InitializeWhitelist(Owner.TransactOpts(), []common.Address{RandomAccount.Address()})
 					Expect(err).ToNot(HaveOccurred())
@@ -146,7 +167,7 @@ var _ = Describe("executeTransaction", func() {
 					Expect(isSuccessful(tx)).To(BeTrue())
 				})
 
-				Context("When I approve 300 tokens to a random person using 'executeTransaction'", func() {
+				When("I approve 300 tokens to a random person using 'executeTransaction'", func() {
 					BeforeEach(func() {
 						a, err := abi.JSON(strings.NewReader(ERC20ABI))
 						Expect(err).ToNot(HaveOccurred())
