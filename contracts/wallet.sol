@@ -660,22 +660,27 @@ contract Wallet is Vault, GasTopUpLimit, LoadLimit {
     }
 
     function executeTransaction(address destination, uint value, bytes data) external onlyOwner {
-        require(data.length >= 4, "invalid transaction data");
+        if (data.length >= 4) {
+            uint32 signature = bytesToUint32(data, 0);
 
-        uint32 signature = bytesToUint32(data, 0);
+            if (signature == transfer || signature == approve) {
+                require(data.length >= 4+32+32, "invalid transfer / approve transaction data");
+                uint amount = sliceUint(data, 4+32);
+                address tokenDestination = bytesToAddress(data, 4+12);
 
-        if (signature == transfer || signature == approve) {
-            require(data.length >= 4+32+32, "invalid transfer / approve transaction data");
-            uint amount = sliceUint(data, 4+32);
-            address tokenDestination = bytesToAddress(data, 4+12);
-  
-            if (!isWhitelisted[tokenDestination]) {
-                uint etherValue = convert(destination, amount);
-                _enforceLimit(_spendLimit, etherValue);
+                if (!isWhitelisted[tokenDestination]) {
+                    uint etherValue = convert(destination, amount);
+                    _enforceLimit(_spendLimit, etherValue);
+                }
             }
         }
 
+        if (!isWhitelisted[destination]) {
+            _enforceLimit(_spendLimit, value);
+        }
+
         require(externalCall(destination, value, data.length, data), "executing transaction failed");
+
     }
 
     function bytesToAddress(bytes _bts, uint from) private pure returns (address) {
