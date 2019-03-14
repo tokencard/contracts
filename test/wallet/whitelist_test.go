@@ -227,7 +227,7 @@ var _ = Describe("whitelistAddition", func() {
 			BeforeEach(func() {
 				pwl, err := Wallet.PendingWhitelistAddition(nil)
 				Expect(err).ToNot(HaveOccurred())
-				hash, err := Wallet.PendingWhitelistHash(nil, pwl)
+				hash, err := Wallet.CalculateHash(nil, pwl)
 				Expect(err).ToNot(HaveOccurred())
 				tx, err := Wallet.ConfirmWhitelistAddition(Controller.TransactOpts(ethertest.WithGasLimit(500000)), hash)
 				Expect(err).ToNot(HaveOccurred())
@@ -290,7 +290,7 @@ var _ = Describe("whitelistAddition", func() {
 			BeforeEach(func() {
 				pwl, err := Wallet.PendingWhitelistAddition(nil)
 				Expect(err).ToNot(HaveOccurred())
-				hash, err := Wallet.PendingWhitelistHash(nil, pwl)
+				hash, err := Wallet.CalculateHash(nil, pwl)
 				Expect(err).ToNot(HaveOccurred())
 				tx, err := Wallet.CancelWhitelistAddition(Controller.TransactOpts(), hash)
 				Expect(err).ToNot(HaveOccurred())
@@ -434,7 +434,7 @@ var _ = Describe("whitelistRemoval", func() {
 				BeforeEach(func() {
 					pwl, err := Wallet.PendingWhitelistRemoval(nil)
 					Expect(err).ToNot(HaveOccurred())
-					hash, err := Wallet.PendingWhitelistHash(nil, pwl)
+					hash, err := Wallet.CalculateHash(nil, pwl)
 					Expect(err).ToNot(HaveOccurred())
 					tx, err := Wallet.ConfirmWhitelistRemoval(Controller.TransactOpts(), hash)
 					Expect(err).ToNot(HaveOccurred())
@@ -510,7 +510,7 @@ var _ = Describe("whitelistRemoval", func() {
 				BeforeEach(func() {
 					pwl, err := Wallet.PendingWhitelistRemoval(nil)
 					Expect(err).ToNot(HaveOccurred())
-					hash, err := Wallet.PendingWhitelistHash(nil, pwl)
+					hash, err := Wallet.CalculateHash(nil, pwl)
 					Expect(err).ToNot(HaveOccurred())
 					tx, err := Wallet.CancelWhitelistRemoval(Controller.TransactOpts(), hash)
 					Expect(err).ToNot(HaveOccurred())
