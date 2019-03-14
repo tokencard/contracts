@@ -286,7 +286,9 @@ contract DailyLimitTrait {
     }
 
     /// @dev Cancel pending set daily limit operation.
-    function _limitCancel(DailyLimit storage dl, uint _amount) internal {
+    function _cancelLimitUpdate(DailyLimit storage dl, uint _amount) internal {
+        // Check if there has been a limit update submitted
+        require(dl.submitted, "limit update not submitted");
         // Require that pending and confirmed spend limit are the same
         require(dl.pending == _amount, "confirmed and cancelled limits dont match");
         // Reset pending daily limit.
@@ -302,7 +304,7 @@ contract DailyLimitTrait {
 contract SpendLimit is Controllable, Ownable, DailyLimitTrait {
     event SetSpendLimit(address _sender, uint _amount);
     event SubmittedSpendLimitChange(uint _amount);
-    event CancelledSpendLimitChange(address _sender, uint _amount);
+    event CancelledSpendLimitUpdate(address _sender, uint _amount);
 
     DailyLimit internal _spendLimit;
 
@@ -332,9 +334,9 @@ contract SpendLimit is Controllable, Ownable, DailyLimitTrait {
     }
 
     /// @dev Cancel pending set daily limit operation.
-    function cancelSpendLimit(uint _amount) external onlyController {
-        _limitCancel(_spendLimit, _amount);
-        emit CancelledSpendLimitChange(msg.sender, _amount);
+    function cancelSpendLimitUpdate(uint _amount) external onlyController {
+        _cancelLimitUpdate(_spendLimit, _amount);
+        emit CancelledSpendLimitUpdate(msg.sender, _amount);
     }
 
     function spendAvailable() public view returns (uint) {
@@ -364,7 +366,7 @@ contract GasTopUpLimit is Controllable, Ownable, DailyLimitTrait {
 
     event SetGasTopUpLimit(address _sender, uint _amount);
     event SubmittedGasTopUpLimitChange(uint _amount);
-    event CancelledGasTopUpLimitChange(address _sender, uint _amount);
+    event CancelledGasTopUpLimitUpdate(address _sender, uint _amount);
 
     uint constant private _MINIMUM_GAS_TOPUP_LIMIT = 1 finney;
     uint constant private _MAXIMUM_GAS_TOPUP_LIMIT = 500 finney;
@@ -399,9 +401,9 @@ contract GasTopUpLimit is Controllable, Ownable, DailyLimitTrait {
     }
 
     /// @dev Cancel pending set top up gas limit operation.
-    function cancelGasTopUpLimit(uint _amount) external onlyController {
-        _limitCancel(_gasTopUpLimit, _amount);
-        emit CancelledGasTopUpLimitChange(msg.sender, _amount);
+    function cancelGasTopUpLimitUpdate(uint _amount) external onlyController {
+        _cancelLimitUpdate(_gasTopUpLimit, _amount);
+        emit CancelledGasTopUpLimitUpdate(msg.sender, _amount);
     }
 
     function gasTopUpLimit() public view returns (uint) {
@@ -432,7 +434,7 @@ contract LoadLimit is Controllable, Ownable, DailyLimitTrait {
 
     event SetLoadLimit(address _sender, uint _amount);
     event SubmittedLoadLimitChange(uint _amount);
-    event CancelledLoadLimitChange(address _sender, uint _amount);
+    event CancelledLoadLimitUpdate(address _sender, uint _amount);
 
     uint constant private _MINIMUM_LOAD_LIMIT = 1 finney;
     uint constant private _MAXIMUM_LOAD_LIMIT = 101 ether;
@@ -467,9 +469,9 @@ contract LoadLimit is Controllable, Ownable, DailyLimitTrait {
     }
 
     /// @dev Cancel pending set load limit operation.
-    function cancelLoadLimit(uint _amount) external onlyController {
-        _limitCancel(_loadLimit, _amount);
-        emit CancelledLoadLimitChange(msg.sender, _amount);
+    function cancelLoadLimitUpdate(uint _amount) external onlyController {
+        _cancelLimitUpdate(_loadLimit, _amount);
+        emit CancelledLoadLimitUpdate(msg.sender, _amount);
     }
 
     function loadLimit() public view returns (uint) {
