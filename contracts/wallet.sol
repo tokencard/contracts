@@ -366,20 +366,20 @@ contract GasTopUpLimit is Controllable, Ownable, DailyLimitTrait {
     event SubmittedGasTopUpLimitChange(uint _amount);
     event CancelledGasTopUpLimitChange(address _sender, uint _amount);
 
-    uint constant private MINIMUM_GAS_TOPUP_LIMIT = 1 finney;
-    uint constant private MAXIMUM_GAS_TOPUP_LIMIT = 500 finney;
+    uint constant private _MINIMUM_GAS_TOPUP_LIMIT = 1 finney;
+    uint constant private _MAXIMUM_GAS_TOPUP_LIMIT = 500 finney;
 
     DailyLimit internal _gasTopUpLimit;
 
     /// @dev Constructor initializes the daily spend limit in wei.
     constructor() internal {
-        _gasTopUpLimit = DailyLimit(MAXIMUM_GAS_TOPUP_LIMIT, MAXIMUM_GAS_TOPUP_LIMIT, now, 0, false, false);
+        _gasTopUpLimit = DailyLimit(_MAXIMUM_GAS_TOPUP_LIMIT, _MAXIMUM_GAS_TOPUP_LIMIT, now, 0, false, false);
     }
 
     /// @dev Initialize a daily gas top up limit.
     /// @param _amount is the top up gas amount in wei.
     function initializeGasTopUpLimit(uint _amount) external onlyOwner {
-        require(MINIMUM_GAS_TOPUP_LIMIT <= _amount && _amount <= MAXIMUM_GAS_TOPUP_LIMIT, "gas top up amount is outside the min/max range");
+        require(_MINIMUM_GAS_TOPUP_LIMIT <= _amount && _amount <= _MAXIMUM_GAS_TOPUP_LIMIT, "gas top up amount is outside the min/max range");
         _limitInitialize(_gasTopUpLimit, _amount);
         emit SetGasTopUpLimit(msg.sender, _amount);
     }
@@ -387,7 +387,7 @@ contract GasTopUpLimit is Controllable, Ownable, DailyLimitTrait {
     /// @dev Set a daily top up gas limit.
     /// @param _amount is the daily top up gas limit amount in wei.
     function submitGasTopUpLimit(uint _amount) external onlyOwner {
-        require(MINIMUM_GAS_TOPUP_LIMIT <= _amount && _amount <= MAXIMUM_GAS_TOPUP_LIMIT, "gas top up amount is outside the min/max range");
+        require(_MINIMUM_GAS_TOPUP_LIMIT <= _amount && _amount <= _MAXIMUM_GAS_TOPUP_LIMIT, "gas top up amount is outside the min/max range");
         _limitSubmit(_gasTopUpLimit, _amount);
         emit SubmittedGasTopUpLimitChange(_amount);
     }
@@ -434,20 +434,20 @@ contract LoadLimit is Controllable, Ownable, DailyLimitTrait {
     event SubmittedLoadLimitChange(uint _amount);
     event CancelledLoadLimitChange(address _sender, uint _amount);
 
-    uint constant private MINIMUM_LOAD_LIMIT = 1 finney;
-    uint constant private MAXIMUM_LOAD_LIMIT = 101 ether;
+    uint constant private _MINIMUM_LOAD_LIMIT = 1 finney;
+    uint constant private _MAXIMUM_LOAD_LIMIT = 101 ether;
 
     DailyLimit internal _loadLimit;
 
     /// @dev Constructor initializes the daily spend limit in wei.
     constructor() internal {
-        _loadLimit = DailyLimit(MAXIMUM_LOAD_LIMIT, MAXIMUM_LOAD_LIMIT, now, 0, false, false);
+        _loadLimit = DailyLimit(_MAXIMUM_LOAD_LIMIT, _MAXIMUM_LOAD_LIMIT, now, 0, false, false);
     }
 
     /// @dev Initialize a daily card load limit.
     /// @param _amount is the card load amount in wei.
     function initializeLoadLimit(uint _amount) external onlyOwner {
-        require(MINIMUM_LOAD_LIMIT <= _amount && _amount <= MAXIMUM_LOAD_LIMIT, "card load amount is outside the min/max range");
+        require(_MINIMUM_LOAD_LIMIT <= _amount && _amount <= _MAXIMUM_LOAD_LIMIT, "card load amount is outside the min/max range");
         _limitInitialize(_loadLimit, _amount);
         emit SetLoadLimit(msg.sender, _amount);
     }
@@ -455,7 +455,7 @@ contract LoadLimit is Controllable, Ownable, DailyLimitTrait {
     /// @dev Set a daily load limit.
     /// @param _amount is the daily load limit amount in wei.
     function submitLoadLimit(uint _amount) external onlyOwner {
-        require(MINIMUM_LOAD_LIMIT <= _amount && _amount <= MAXIMUM_LOAD_LIMIT, "card load amount is outside the min/max range");
+        require(_MINIMUM_LOAD_LIMIT <= _amount && _amount <= _MAXIMUM_LOAD_LIMIT, "card load amount is outside the min/max range");
         _limitSubmit(_loadLimit, _amount);
         emit SubmittedLoadLimitChange(_amount);
     }
