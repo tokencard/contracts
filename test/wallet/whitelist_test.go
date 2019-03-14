@@ -368,12 +368,12 @@ var _ = Describe("whitelistAddition", func() {
 			Expect(isSuccessful(tx)).To(BeTrue())
 		})
 
-		It("should succeed", func() {
+		It("should fail", func() {
 			addresses := []common.Address{}
-			tx, err := Wallet.SubmitWhitelistAddition(Owner.TransactOpts(), addresses)
+			tx, err := Wallet.SubmitWhitelistAddition(Owner.TransactOpts(ethertest.WithGasLimit(100000)), addresses)
 			Expect(err).ToNot(HaveOccurred())
 			Backend.Commit()
-			Expect(isSuccessful(tx)).To(BeTrue())
+			Expect(isSuccessful(tx)).To(BeFalse())
 		})
 	})
 })
@@ -570,16 +570,36 @@ var _ = Describe("whitelistRemoval", func() {
 	})
 
 	When("I submit 20 addresses for removal from whitelist", func() {
-		It("should succeed", func() {
-			addresses := []common.Address{}
-			for i := 0; i < 20; i++ {
-				addresses = append(addresses, ethertest.NewAccount().Address())
-			}
-			tx, err := Wallet.SubmitWhitelistRemoval(Owner.TransactOpts(), addresses)
-			Expect(err).ToNot(HaveOccurred())
-			Backend.Commit()
-			Expect(isSuccessful(tx)).To(BeTrue())
+		When("The Whitelist has been initialised", func() {
+			BeforeEach(func() {
+				tx, err := Wallet.InitializeWhitelist(Owner.TransactOpts(), []common.Address{RandomAccount.Address()})
+				Expect(err).ToNot(HaveOccurred())
+				Backend.Commit()
+				Expect(isSuccessful(tx)).To(BeTrue())
+			})
+
+			It("should succeed", func() {
+				addresses := []common.Address{}
+				for i := 0; i < 20; i++ {
+					addresses = append(addresses, ethertest.NewAccount().Address())
+				}
+				tx, err := Wallet.SubmitWhitelistRemoval(Owner.TransactOpts(), addresses)
+				Expect(err).ToNot(HaveOccurred())
+				Backend.Commit()
+				Expect(isSuccessful(tx)).To(BeTrue())
+			})
+		})
+		When("The Whitelist has NOT been initialised", func() {
+			It("should succeed", func() {
+				addresses := []common.Address{}
+				for i := 0; i < 20; i++ {
+					addresses = append(addresses, ethertest.NewAccount().Address())
+				}
+				tx, err := Wallet.SubmitWhitelistRemoval(Owner.TransactOpts(ethertest.WithGasLimit(100000)), addresses)
+				Expect(err).ToNot(HaveOccurred())
+				Backend.Commit()
+				Expect(isSuccessful(tx)).To(BeFalse())
+			})
 		})
 	})
-
 })
