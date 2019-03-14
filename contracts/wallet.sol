@@ -73,7 +73,7 @@ contract Whitelist is Controllable, Ownable {
     }
 
     /// @dev Method used to hash our whitelist address arrays.
-    function pendingWhitelistHash(address[] _pendingWhitelist) public pure returns (bytes32) {
+    function calculateHash(address[] _pendingWhitelist) public pure returns (bytes32) {
         return keccak256(abi.encodePacked(_pendingWhitelist));
     }
 
@@ -101,7 +101,7 @@ contract Whitelist is Controllable, Ownable {
         // Flag the operation as submitted.
         submittedWhitelistAddition = true;
         // Emit the submission event.
-        emit SubmittedWhitelistAddition(_addresses, pendingWhitelistHash(_pendingWhitelistAddition));
+        emit SubmittedWhitelistAddition(_addresses, calculateHash(_pendingWhitelistAddition));
     }
 
     /// @dev Confirm pending whitelist addition.
@@ -112,7 +112,7 @@ contract Whitelist is Controllable, Ownable {
         require(submittedWhitelistAddition, "whitelist addition has not been submitted");
 
         // Require that confirmation hash and the hash of the pending whitelist addition match
-        require(_hash == pendingWhitelistHash(_pendingWhitelistAddition), "hash of the pending whitelist addition do not match");
+        require(_hash == calculateHash(_pendingWhitelistAddition), "hash of the pending white list addition do not match");
 
         // Whitelist pending addresses.
         for (uint i = 0; i < _pendingWhitelistAddition.length; i++) {
@@ -129,7 +129,7 @@ contract Whitelist is Controllable, Ownable {
     /// @dev Cancel pending whitelist addition.
     function cancelWhitelistAddition(bytes32 _hash) external onlyController {
         // Require that confirmation hash and the hash of the pending whitelist addition match
-        require(_hash == pendingWhitelistHash(_pendingWhitelistAddition), "hash of the pending whitelist addition does not match");
+        require(_hash == calculateHash(_pendingWhitelistAddition), "hash of the pending white list addition does not match");
         // Reset pending addresses.
         delete _pendingWhitelistAddition;
         // Reset the submitted operation flag.
@@ -146,7 +146,7 @@ contract Whitelist is Controllable, Ownable {
         // Flag the operation as submitted.
         submittedWhitelistRemoval = true;
         // Emit the submission event.
-        emit SubmittedWhitelistRemoval(_addresses, pendingWhitelistHash(_pendingWhitelistRemoval));
+        emit SubmittedWhitelistRemoval(_addresses, calculateHash(_pendingWhitelistRemoval));
     }
 
     /// @dev Confirm pending removal of whitelisted addresses.
@@ -155,7 +155,7 @@ contract Whitelist is Controllable, Ownable {
         require(submittedWhitelistRemoval, "whitelist removal has not been submitted");
         require(_pendingWhitelistRemoval.length > 0, "pending whitelist removal is empty");
         // Require that confirmation hash and the hash of the pending whitelist removal match
-        require(_hash == pendingWhitelistHash(_pendingWhitelistRemoval), "hash of the pending whitelist removal does not match the confirmed hash");
+        require(_hash == calculateHash(_pendingWhitelistRemoval), "hash of the pending white list removal does not match the confirmed hash");
         // Remove pending addresses.
         for (uint i = 0; i < _pendingWhitelistRemoval.length; i++) {
             isWhitelisted[_pendingWhitelistRemoval[i]] = false;
@@ -171,7 +171,8 @@ contract Whitelist is Controllable, Ownable {
     /// @dev Cancel pending removal of whitelisted addresses.
     function cancelWhitelistRemoval(bytes32 _hash) external onlyController {
         // Require that confirmation hash and the hash of the pending whitelist removal match
-        require(_hash == pendingWhitelistHash(_pendingWhitelistRemoval), "hash of the pending whitelist removal does not match");
+        require(_hash == calculateHash(_pendingWhitelistRemoval), "hash of the pending white list removal do not match");
+
         // Reset pending addresses.
         delete _pendingWhitelistRemoval;
         // Reset the submitted operation flag.
