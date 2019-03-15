@@ -240,7 +240,7 @@ var _ = Describe("spendAvailable", func() {
 			When("the controller cancel the spend limit providing the wrong amount", func() {
 				var txSuccessful bool
 				BeforeEach(func() {
-					tx, err := Wallet.CancelSpendLimit(Controller.TransactOpts(ethertest.WithGasLimit(100000)), EthToWei(2))
+					tx, err := Wallet.CancelGasTopUpLimitUpdate(Controller.TransactOpts(ethertest.WithGasLimit(100000)), EthToWei(2))
 					Expect(err).ToNot(HaveOccurred())
 					Backend.Commit()
 					txSuccessful = isSuccessful(tx)
@@ -252,16 +252,16 @@ var _ = Describe("spendAvailable", func() {
 
 			})
 
-			When("the controller cancels the spend limit change", func() {
+			FWhen("the controller cancels the spend limit change", func() {
 				BeforeEach(func() {
-					tx, err := Wallet.CancelSpendLimit(Controller.TransactOpts(), EthToWei(1))
+					tx, err := Wallet.CancelGasTopUpLimitUpdate(Controller.TransactOpts(ethertest.WithGasLimit(100000)), EthToWei(1))
 					Expect(err).ToNot(HaveOccurred())
 					Backend.Commit()
 					Expect(isSuccessful(tx)).To(BeTrue())
 				})
 
 				It("should emit a cancellation event", func() {
-					it, err := Wallet.FilterCancelledSpendLimitChange(nil)
+					it, err := Wallet.FilterCancelledSpendLimitUpdate(nil)
 					Expect(err).ToNot(HaveOccurred())
 					Expect(it.Next()).To(BeTrue())
 					evt := it.Event

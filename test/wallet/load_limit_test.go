@@ -210,14 +210,14 @@ var _ = Describe("loadLimit", func() {
 
 			When("the controller cancels the limit change", func() {
 				BeforeEach(func() {
-					tx, err := Wallet.CancelLoadLimit(Controller.TransactOpts(), FinneyToWei(1))
+					tx, err := Wallet.CancelLoadLimitUpdate(Controller.TransactOpts(), FinneyToWei(1))
 					Expect(err).ToNot(HaveOccurred())
 					Backend.Commit()
 					Expect(isSuccessful(tx)).To(BeTrue())
 				})
 
 				It("should emit a cancellation event", func() {
-					it, err := Wallet.FilterCancelledLoadLimitChange(nil)
+					it, err := Wallet.FilterCancelledLoadLimitUpdate(nil)
 					Expect(err).ToNot(HaveOccurred())
 					Expect(it.Next()).To(BeTrue())
 					evt := it.Event
@@ -234,7 +234,7 @@ var _ = Describe("loadLimit", func() {
 
 			When("the controller cancels the limit change with wrong amount", func() {
 				It("should fail", func() {
-					tx, err := Wallet.CancelLoadLimit(Controller.TransactOpts(ethertest.WithGasLimit(65000)), FinneyToWei(2))
+					tx, err := Wallet.CancelLoadLimitUpdate(Controller.TransactOpts(ethertest.WithGasLimit(65000)), FinneyToWei(2))
 					Expect(err).ToNot(HaveOccurred())
 					Backend.Commit()
 					Expect(isGasExhausted(tx, 65000)).To(BeFalse())
@@ -244,7 +244,7 @@ var _ = Describe("loadLimit", func() {
 
 			When("the Owner tries to cancel the limit change", func() {
 				It("should fail", func() {
-					tx, err := Wallet.CancelLoadLimit(Owner.TransactOpts(ethertest.WithGasLimit(65000)), FinneyToWei(1))
+					tx, err := Wallet.CancelLoadLimitUpdate(Owner.TransactOpts(ethertest.WithGasLimit(65000)), FinneyToWei(1))
 					Expect(err).ToNot(HaveOccurred())
 					Backend.Commit()
 					Expect(isGasExhausted(tx, 65000)).To(BeFalse())
@@ -254,7 +254,7 @@ var _ = Describe("loadLimit", func() {
 
 			When("a random person tries to cancel the limit change", func() {
 				It("should fail", func() {
-					tx, err := Wallet.CancelLoadLimit(RandomAccount.TransactOpts(ethertest.WithGasLimit(65000)), FinneyToWei(1))
+					tx, err := Wallet.CancelLoadLimitUpdate(RandomAccount.TransactOpts(ethertest.WithGasLimit(65000)), FinneyToWei(1))
 					Expect(err).ToNot(HaveOccurred())
 					Backend.Commit()
 					Expect(isGasExhausted(tx, 65000)).To(BeFalse())
