@@ -2,16 +2,16 @@ package tokenWhitelist_test
 
 import (
 	"context"
+	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	"github.com/tokencard/contracts/pkg/bindings"
 	"github.com/tokencard/contracts/pkg/bindings/internals"
+	"github.com/tokencard/contracts/pkg/bindings/mocks"
 	. "github.com/tokencard/contracts/test/shared"
 	"os"
 	"testing"
-  "github.com/tokencard/contracts/pkg/bindings/mocks"
-  "github.com/ethereum/go-ethereum/common"
 )
 
 var TokenWhitelistableExporter *mocks.TokenWhitelistableExporter
@@ -23,7 +23,7 @@ func init() {
 		"../../../contracts",
 	)
 
-  TestRig.AddCoverageForContracts(
+	TestRig.AddCoverageForContracts(
 		"../../../build/mocks/tokenWhitelistableExporter/combined.json",
 		"../../../contracts",
 	)
@@ -58,7 +58,7 @@ var _ = BeforeEach(func() {
 		Expect(isSuccessful(tx)).To(BeTrue())
 	}
 
-	TokenWhitelistAddress, tx, TokenWhitelist, err = internals.DeployTokenWhitelist(BankAccount.TransactOpts(), Backend, ENSRegistryAddress, OracleName, ControllerName, Owner.Address(), true)
+	TokenWhitelistAddress, tx, TokenWhitelist, err = internals.DeployTokenWhitelist(BankAccount.TransactOpts(), Backend, ENSRegistryAddress, OracleName, ControllerName, Owner.Address(), true, DAIAddress)
 	Expect(err).ToNot(HaveOccurred())
 	Backend.Commit()
 	Expect(isSuccessful(tx)).To(BeTrue())
@@ -75,11 +75,10 @@ var _ = BeforeEach(func() {
 		Expect(isSuccessful(tx)).To(BeTrue())
 	}
 
-  TokenWhitelistableExporterAddress, tx, TokenWhitelistableExporter, err = mocks.DeployTokenWhitelistableExporter(BankAccount.TransactOpts(), Backend, ENSRegistryAddress, TokenWhitelistName)
+	TokenWhitelistableExporterAddress, tx, TokenWhitelistableExporter, err = mocks.DeployTokenWhitelistableExporter(BankAccount.TransactOpts(), Backend, ENSRegistryAddress, TokenWhitelistName)
 	Expect(err).ToNot(HaveOccurred())
 	Backend.Commit()
 	Expect(isSuccessful(tx)).To(BeTrue())
-
 
 })
 
@@ -89,9 +88,8 @@ var _ = AfterEach(func() {
 
 })
 
-
 var _ = AfterSuite(func() {
-	TestRig.ExpectMinimumCoverage("internals/tokenWhitelist.sol", 98.0)
+	TestRig.ExpectMinimumCoverage("internals/tokenWhitelist.sol", 94.0)
 	TestRig.ExpectMinimumCoverage("internals/tokenWhitelistable.sol", 100.0)
 	TestRig.PrintGasUsage(os.Stdout)
 })
