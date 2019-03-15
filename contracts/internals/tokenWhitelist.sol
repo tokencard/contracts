@@ -27,6 +27,7 @@ import "../externals/SafeMath.sol";
 /// @title The TokenWhitelist interface provides access to an external list of tokens.
 interface ITokenWhitelist {
     function getTokenInfo(address) external view returns (string, uint256, uint256, bool, bool, uint256);
+    function getDaiInfo() external view returns (string, uint256, uint256, bool, bool, uint256);
     function getTokenAddressArray() external view returns (address[]);
     function updateTokenRate(address, uint, uint) external;
 }
@@ -60,7 +61,10 @@ contract TokenWhitelist is Controllable, Ownable {
     }
 
     /// @dev ENS points to the ENS registry smart contract.
-    ENS internal _ENS;
+    ENS private _ENS;
+
+    /// @dev Address of the DAI token contract.
+    address private _DAI;
 
     /// @dev Is the registered ENS name of the oracle contract.
     bytes32 private _oracleNode;
@@ -68,9 +72,10 @@ contract TokenWhitelist is Controllable, Ownable {
     /// @dev Constructor initializes ens and the oracle.
     /// @param _ens is the ENS public registry contract address.
     /// @param _oracleName is the ENS name of the Oracle.
-    constructor(address _ens, bytes32 _oracleName, bytes32 _controllerName, address _owner, bool _transferable) Controllable(_ens, _controllerName) Ownable(_owner, _transferable) public {
+    constructor(address _ens, bytes32 _oracleName, bytes32 _controllerName, address _owner, bool _transferable, address _dai) Controllable(_ens, _controllerName) Ownable(_owner, _transferable) public {
         _ENS = ENS(_ens);
         _oracleNode = _oracleName;
+        _DAI = _dai;
     }
 
     /// @dev Add ERC20 tokens to the list of supported tokens.
@@ -147,7 +152,13 @@ contract TokenWhitelist is Controllable, Ownable {
     }
 
     function getTokenInfo(address _a) external view returns (string, uint256, uint256, bool, bool, uint256) {
-        return (_tokenInfoMap[_a].symbol, _tokenInfoMap[_a].magnitude, _tokenInfoMap[_a].rate, _tokenInfoMap[_a].available, _tokenInfoMap[_a].loadable, _tokenInfoMap[_a].lastUpdate);
+        Token storage tokenInfo = _tokenInfoMap[_a];
+        return (tokenInfo.symbol, tokenInfo.magnitude, tokenInfo.rate, tokenInfo.available, tokenInfo.loadable, tokenInfo.lastUpdate);
+    }
+
+    function getDaiInfo() external view returns (string, uint256, uint256, bool, bool, uint256) {
+        Token storage daiInfo = _tokenInfoMap[_DAI];
+        return (daiInfo.symbol, daiInfo.magnitude, daiInfo.rate, daiInfo.available, daiInfo.loadable, daiInfo.lastUpdate);
     }
 
     function getTokenAddressArray() external view returns (address[]) {

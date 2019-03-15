@@ -537,6 +537,21 @@ contract Vault is Whitelist, SpendLimit, ERC165, TokenWhitelistable {
         }
     }
 
+    /// @dev Convert ERC20 token amount to the corresponding ether amount.
+    /// @param _token ERC20 token contract address.
+    /// @param _amount amount of token in base units.
+    function convertToEther(address _token, uint _amount) public view returns (uint) {
+        // Store the token in memory to save map entry lookup gas.
+        (,uint256 magnitude, uint256 rate, bool available,,) = _getTokenInfo(_token);
+        // If the token exists require that its rate is not zero.
+        if (available) {
+            require(rate != 0, "token rate is 0");
+            // Safely convert the token amount to ether based on the exchange rate.
+            return _amount.mul(rate).div(magnitude);
+        }
+        return 0;
+    }
+
     /// @dev Transfers the specified asset to the recipient's address.
     /// @param _to is the recipient's address.
     /// @param _asset is the address of an ERC20 token or 0x0 for ether.
@@ -551,7 +566,7 @@ contract Vault is Whitelist, SpendLimit, ERC165, TokenWhitelistable {
             uint etherValue = _amount;
             // Convert token amount to ether value if asset is an ERC20 token.
             if (_asset != address(0)) {
-                etherValue = convert(_asset, _amount);
+                etherValue = convertToEther(_asset, _amount);
             }
             // Check against the daily spent limit and update accordingly
             // Check against the daily spent limit and update accordingly, require that the value is under remaining limit.
@@ -635,6 +650,25 @@ contract Wallet is Vault, GasTopUpLimit, LoadLimit {
         emit ToppedUpGas(msg.sender, owner(), _amount);
     }
 
+    /// @dev Convert ERC20 token amount to the corresponding DAI amount.
+    /// @param _token ERC20 token contract address.
+    /// @param _amount amount of token in base units.
+    function convertToDai(address _token, uint _amount) public view returns (uint) {
+        // Store the token in memory to save map entry lookup gas.
+        (,uint256 magnitude, uint256 rate, bool available,,) = _getTokenInfo(_token);
+        // If the token exists require that its rate is not zero.
+        if (available) {
+            require(rate != 0, "token rate is 0");
+            // Get the current DAI token rate.
+            (,uint256 daiMagnitude, uint256 daiRate,,,) = _getDaiInfo();
+            // Check if the DAI rate is set.
+            require(daiRate != 0, "DAI rate is 0");
+            // Safely convert the token amount to ether based on its exchange rate and the DAI exchange rate.
+            return _amount.mul(rate).div(magnitude).mul(daiMagnitude).div(daiRate);
+        }
+        return 0;
+    }
+
     /// @dev Load a token card with the specified asset amount.
     /// @dev the amount send should be inclusive of the percent licence.
     /// @param _asset is the address of an ERC20 token or 0x0 for ether.
@@ -647,9 +681,9 @@ contract Wallet is Vault, GasTopUpLimit, LoadLimit {
             //check if token is allowed to be used for loading the card
             require(_isTokenLoadable(_asset), "token not loadable");
             // Convert token amount to ether value.
-            uint etherValue = convert(_asset, _amount);
+            uint daiValue = convertToDai(_asset, _amount);
             // Check against the daily spent limit and update accordingly, require that the value is under remaining limit.
-            _enforceLimit(_loadLimit, etherValue);
+            _enforceLimit(_loadLimit, daiValue);
             require(ERC20(_asset).approve(licenceAddress, _amount), "ERC20 token approval was unsuccessful");
             ILicence(licenceAddress).load(_asset, _amount);
         } else {
@@ -658,8 +692,8 @@ contract Wallet is Vault, GasTopUpLimit, LoadLimit {
             ILicence(licenceAddress).load.value(_amount)(_asset, _amount);
         }
 
-        emit LoadedTokenCard(_asset, _amount);
-    }
+          emit LoadedTokenCard(_asset, _amount);
+      }
 
     /// @dev This function allows for the owner to send transaction from the Wallet to arbitrary addresses
     /// @param _destination address of the transaction

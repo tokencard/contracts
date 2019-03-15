@@ -73,7 +73,6 @@ func stringToHashString(url string) string {
 	Expect(len(idSlice)).To(Equal(32))
 
 	return hex.EncodeToString(idSlice)
-
 }
 
 var ENSResolver *ens.PublicResolver
@@ -114,6 +113,9 @@ var WalletAddress common.Address
 
 var TKN *mocks.Token
 var TKNAddress common.Address
+
+var DAI *mocks.Token
+var DAIAddress common.Address
 
 var RandomToken *mocks.Token
 var RandomTokenAddress common.Address
@@ -219,6 +221,17 @@ func InitializeBackend() error {
 
 	var err error
 	var tx *types.Transaction
+
+	// Deploy a DAI mock token.
+	DAIAddress, tx, DAI, err = mocks.DeployToken(BankAccount.TransactOpts(), Backend)
+	if err != nil {
+		return err
+	}
+	Backend.Commit()
+	err = verifyTransaction(tx)
+	if err != nil {
+		return errors.Wrap(err, "deploying DAI token contract")
+	}
 
 	ControllerContractAddress, tx, ControllerContract, err = internals.DeployController(BankAccount.TransactOpts(), Backend, BankAccount.Address())
 	if err != nil {
@@ -366,7 +379,7 @@ func InitializeBackend() error {
 		return errors.Wrap(err, "deploying Oraclize address resolver")
 	}
 
-	TokenWhitelistAddress, tx, TokenWhitelist, err = internals.DeployTokenWhitelist(BankAccount.TransactOpts(), Backend, ENSRegistryAddress, OracleName, ControllerName, Owner.Address(), true)
+	TokenWhitelistAddress, tx, TokenWhitelist, err = internals.DeployTokenWhitelist(BankAccount.TransactOpts(), Backend, ENSRegistryAddress, OracleName, ControllerName, Owner.Address(), true, DAIAddress)
 	if err != nil {
 		return err
 	}
@@ -500,7 +513,7 @@ func InitializeBackend() error {
 		return errors.Wrap(err, "crediting controller account with ETH")
 	}
 
-	// Deploy a mock ERC20 token.
+	// Deploy a TKN mock token.
 	TKNAddress, tx, TKN, err = mocks.DeployToken(BankAccount.TransactOpts(), Backend)
 	if err != nil {
 		return err
@@ -511,6 +524,7 @@ func InitializeBackend() error {
 		return errors.Wrap(err, "deploying TKN token contract")
 	}
 
+	// Deploy additional ERC20 mock tokens.
 	ERC20Contract1Address, tx, ERC20Contract1, err = mocks.DeployToken(BankAccount.TransactOpts(), Backend)
 	if err != nil {
 		return err
@@ -531,7 +545,7 @@ func InitializeBackend() error {
 		return errors.Wrap(err, "deploying ERC20-2 token contract")
 	}
 
-	// Add the mock token to the oracle list.
+	// Add the TKN token to the oracle list.
 	tx, err = TokenWhitelist.AddTokens(Controller.TransactOpts(), []common.Address{TKNAddress}, StringsToByte32("TKN"), []*big.Int{ExponentiateDecimals(8)}, []bool{true}, big.NewInt(20180913153211))
 	if err != nil {
 		return err
@@ -542,7 +556,18 @@ func InitializeBackend() error {
 		return errors.Wrap(err, "adding TKN token to oracle")
 	}
 
-	// Update the exchange rate of the mock token.
+	// Add the DAI token to the oracle list.
+	tx, err = TokenWhitelist.AddTokens(Controller.TransactOpts(), []common.Address{DAIAddress}, StringsToByte32("DAI"), []*big.Int{ExponentiateDecimals(18)}, []bool{true}, big.NewInt(20180913153211))
+	if err != nil {
+		return err
+	}
+	Backend.Commit()
+	err = verifyTransaction(tx)
+	if err != nil {
+		return errors.Wrap(err, "adding DAI token to oracle")
+	}
+
+	// Update the exchange rate of the TKN token.
 	tx, err = TokenWhitelist.UpdateTokenRate(Controller.TransactOpts(), TKNAddress, big.NewInt(int64(0.00001633*math.Pow10(18))), big.NewInt(20180913153211))
 	if err != nil {
 		return err
@@ -551,6 +576,17 @@ func InitializeBackend() error {
 	err = verifyTransaction(tx)
 	if err != nil {
 		return errors.Wrap(err, "updating TKN token rate")
+	}
+
+	// Update the exchange rate of the DAI token.
+	tx, err = TokenWhitelist.UpdateTokenRate(Controller.TransactOpts(), DAIAddress, big.NewInt(int64(0.007462*math.Pow10(18))), big.NewInt(20180913153211))
+	if err != nil {
+		return err
+	}
+	Backend.Commit()
+	err = verifyTransaction(tx)
+	if err != nil {
+		return errors.Wrap(err, "updating DAI token rate")
 	}
 
 	// Deploy the Token wallet contract.
