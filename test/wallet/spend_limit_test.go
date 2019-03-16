@@ -252,9 +252,9 @@ var _ = Describe("spendAvailable", func() {
 
 			})
 
-			FWhen("the controller cancels the spend limit change", func() {
+			When("the controller cancels the spend limit change", func() {
 				BeforeEach(func() {
-					tx, err := Wallet.CancelGasTopUpLimitUpdate(Controller.TransactOpts(ethertest.WithGasLimit(100000)), EthToWei(1))
+					tx, err := Wallet.CancelSpendLimitUpdate(Controller.TransactOpts(ethertest.WithGasLimit(100000)), EthToWei(1))
 					Expect(err).ToNot(HaveOccurred())
 					Backend.Commit()
 					Expect(isSuccessful(tx)).To(BeTrue())
