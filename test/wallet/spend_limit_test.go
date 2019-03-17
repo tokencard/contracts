@@ -136,7 +136,7 @@ var _ = Describe("spendAvailable", func() {
 
 		When("I submit the spend limit of 1 ETH before initialization", func() {
 			It("should fail", func() {
-				tx, err := Wallet.SubmitSpendLimit(Owner.TransactOpts(ethertest.WithGasLimit(100000)), EthToWei(1))
+				tx, err := Wallet.SubmitSpendLimitUpdate(Owner.TransactOpts(ethertest.WithGasLimit(100000)), EthToWei(1))
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 				Expect(isSuccessful(tx)).To(BeFalse())
@@ -154,7 +154,7 @@ var _ = Describe("spendAvailable", func() {
 				Backend.Commit()
 				Expect(isSuccessful(tx)).To(BeTrue())
 
-				tx, err = Wallet.SubmitSpendLimit(Owner.TransactOpts(ethertest.WithGasLimit(100000)), EthToWei(1))
+				tx, err = Wallet.SubmitSpendLimitUpdate(Owner.TransactOpts(ethertest.WithGasLimit(100000)), EthToWei(1))
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 				Expect(isSuccessful(tx)).To(BeTrue())
@@ -190,7 +190,7 @@ var _ = Describe("spendAvailable", func() {
 			When("the controller confirms the spend limit providing the wrong amount", func() {
 				var txSuccessful bool
 				BeforeEach(func() {
-					tx, err := Wallet.ConfirmSpendLimit(Controller.TransactOpts(ethertest.WithGasLimit(100000)), EthToWei(2))
+					tx, err := Wallet.ConfirmSpendLimitUpdate(Controller.TransactOpts(ethertest.WithGasLimit(100000)), EthToWei(2))
 					Expect(err).ToNot(HaveOccurred())
 					Backend.Commit()
 					txSuccessful = isSuccessful(tx)
@@ -204,7 +204,7 @@ var _ = Describe("spendAvailable", func() {
 
 			When("the controller confirms the spend limit", func() {
 				BeforeEach(func() {
-					tx, err := Wallet.ConfirmSpendLimit(Controller.TransactOpts(), EthToWei(1))
+					tx, err := Wallet.ConfirmSpendLimitUpdate(Controller.TransactOpts(), EthToWei(1))
 					Expect(err).ToNot(HaveOccurred())
 					Backend.Commit()
 					Expect(isSuccessful(tx)).To(BeTrue())
@@ -276,7 +276,7 @@ var _ = Describe("spendAvailable", func() {
 				})
 
 				It("should make it possible to set the spending limit again", func() {
-					tx, err := Wallet.SubmitSpendLimit(Owner.TransactOpts(), EthToWei(2))
+					tx, err := Wallet.SubmitSpendLimitUpdate(Owner.TransactOpts(), EthToWei(2))
 					Expect(err).ToNot(HaveOccurred())
 					Backend.Commit()
 					Expect(isSuccessful(tx)).To(BeTrue())
@@ -286,7 +286,7 @@ var _ = Describe("spendAvailable", func() {
 
 			When("I try to set spending limit again", func() {
 				It("should fail", func() {
-					tx, err := Wallet.SubmitSpendLimit(Owner.TransactOpts(ethertest.WithGasLimit(100000)), EthToWei(1))
+					tx, err := Wallet.SubmitSpendLimitUpdate(Owner.TransactOpts(ethertest.WithGasLimit(100000)), EthToWei(1))
 					Expect(err).ToNot(HaveOccurred())
 					Backend.Commit()
 					Expect(isSuccessful(tx)).To(BeFalse())
