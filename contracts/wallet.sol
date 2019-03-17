@@ -206,7 +206,7 @@ contract DailyLimitTrait {
 
     /// @dev Returns the available daily balance - accounts for daily limit reset.
     /// @return amount of available to spend within the current day in wei.
-    function _limitAvailable(DailyLimit storage dl) internal view returns (uint) {
+    function _getAvailableLimit(DailyLimit storage dl) internal view returns (uint) {
         if (now > dl.limitDay + 24 hours) {
             return dl.limit;
         } else {
@@ -248,7 +248,7 @@ contract DailyLimitTrait {
 
     /// @dev Initialize a daily limit.
     /// @param _amount is the daily limit amount in wei.
-    function _limitInitialize(DailyLimit storage dl, uint _amount) internal {
+    function _initializeLimit(DailyLimit storage dl, uint _amount) internal {
         // Require that the spend limit has not been initialized.
         require(!dl.initialized, "limit has already been initialized");
         // Modify spend limit based on the provided value.
@@ -260,7 +260,7 @@ contract DailyLimitTrait {
 
     /// @dev Submit a daily limit change, needs to be confirmed.
     /// @param _amount is the daily limit amount in wei.
-    function _limitSubmit(DailyLimit storage dl, uint _amount) internal {
+    function _submitLimitUpdate(DailyLimit storage dl, uint _amount) internal {
         // Require that the spend limit has been initialized.
         require(dl.initialized, "limit has not been initialized");
         // Require that the operation has been submitted.
@@ -272,7 +272,7 @@ contract DailyLimitTrait {
     }
 
     /// @dev Confirm pending set daily limit operation.
-    function _limitConfirm(DailyLimit storage dl, uint _amount) internal {
+    function _confirmLimitUpdate(DailyLimit storage dl, uint _amount) internal {
         // Require that the operation has been submitted.
         require(dl.submitted, "limit has not been submitted");
         // Require that pending and confirmed spend limit are the same
@@ -316,20 +316,20 @@ contract SpendLimit is Controllable, Ownable, DailyLimitTrait {
     /// @dev Initialize a daily spend (aka transfer) limit for non-whitelisted addresses.
     /// @param _amount is the daily limit amount in wei.
     function initializeSpendLimit(uint _amount) external onlyOwner {
-        _limitInitialize(_spendLimit, _amount);
+        _initializeLimit(_spendLimit, _amount);
         emit SetSpendLimit(msg.sender, _amount);
     }
 
     /// @dev Set a daily transfer limit for non-whitelisted addresses.
     /// @param _amount is the daily limit amount in wei.
-    function submitSpendLimit(uint _amount) external onlyOwner {
-        _limitSubmit(_spendLimit, _amount);
+    function submitSpendLimitUpdate(uint _amount) external onlyOwner {
+        _submitLimitUpdate(_spendLimit, _amount);
         emit SubmittedSpendLimitChange(_amount);
     }
 
     /// @dev Confirm pending set daily limit operation.
-    function confirmSpendLimit(uint _amount) external onlyController {
-        _limitConfirm(_spendLimit, _amount);
+    function confirmSpendLimitUpdate(uint _amount) external onlyController {
+        _confirmLimitUpdate(_spendLimit, _amount);
         emit SetSpendLimit(msg.sender, _amount);
     }
 
@@ -340,7 +340,7 @@ contract SpendLimit is Controllable, Ownable, DailyLimitTrait {
     }
 
     function spendAvailable() public view returns (uint) {
-        return _limitAvailable(_spendLimit);
+        return _getAvailableLimit(_spendLimit);
     }
 
     function spendLimit() public view returns (uint) {
@@ -382,21 +382,21 @@ contract GasTopUpLimit is Controllable, Ownable, DailyLimitTrait {
     /// @param _amount is the top up gas amount in wei.
     function initializeGasTopUpLimit(uint _amount) external onlyOwner {
         require(_MINIMUM_GAS_TOPUP_LIMIT <= _amount && _amount <= _MAXIMUM_GAS_TOPUP_LIMIT, "gas top up amount is outside the min/max range");
-        _limitInitialize(_gasTopUpLimit, _amount);
+        _initializeLimit(_gasTopUpLimit, _amount);
         emit SetGasTopUpLimit(msg.sender, _amount);
     }
 
     /// @dev Set a daily top up gas limit.
     /// @param _amount is the daily top up gas limit amount in wei.
-    function submitGasTopUpLimit(uint _amount) external onlyOwner {
+    function submitGasTopUpLimitUpdate(uint _amount) external onlyOwner {
         require(_MINIMUM_GAS_TOPUP_LIMIT <= _amount && _amount <= _MAXIMUM_GAS_TOPUP_LIMIT, "gas top up amount is outside the min/max range");
-        _limitSubmit(_gasTopUpLimit, _amount);
+        _submitLimitUpdate(_gasTopUpLimit, _amount);
         emit SubmittedGasTopUpLimitChange(_amount);
     }
 
     /// @dev Confirm pending set top up gas limit operation.
-    function confirmGasTopUpLimit(uint _amount) external onlyController {
-        _limitConfirm(_gasTopUpLimit, _amount);
+    function confirmGasTopUpLimitUpdate(uint _amount) external onlyController {
+        _confirmLimitUpdate(_gasTopUpLimit, _amount);
         emit SetGasTopUpLimit(msg.sender, _amount);
     }
 
@@ -411,7 +411,7 @@ contract GasTopUpLimit is Controllable, Ownable, DailyLimitTrait {
     }
 
     function gasTopUpAvailable() public view returns (uint) {
-        return _limitAvailable(_gasTopUpLimit);
+        return _getAvailableLimit(_gasTopUpLimit);
     }
 
     function initializedGasTopUpLimit() public view returns (bool) {
@@ -450,21 +450,21 @@ contract LoadLimit is Controllable, Ownable, DailyLimitTrait {
     /// @param _amount is the card load amount in wei.
     function initializeLoadLimit(uint _amount) external onlyOwner {
         require(_MINIMUM_LOAD_LIMIT <= _amount && _amount <= _MAXIMUM_LOAD_LIMIT, "card load amount is outside the min/max range");
-        _limitInitialize(_loadLimit, _amount);
+        _initializeLimit(_loadLimit, _amount);
         emit SetLoadLimit(msg.sender, _amount);
     }
 
     /// @dev Set a daily load limit.
     /// @param _amount is the daily load limit amount in wei.
-    function submitLoadLimit(uint _amount) external onlyOwner {
+    function submitLoadLimitUpdate(uint _amount) external onlyOwner {
         require(_MINIMUM_LOAD_LIMIT <= _amount && _amount <= _MAXIMUM_LOAD_LIMIT, "card load amount is outside the min/max range");
-        _limitSubmit(_loadLimit, _amount);
+        _submitLimitUpdate(_loadLimit, _amount);
         emit SubmittedLoadLimitChange(_amount);
     }
 
     /// @dev Confirm pending set load limit operation.
-    function confirmLoadLimit(uint _amount) external onlyController {
-        _limitConfirm(_loadLimit, _amount);
+    function confirmLoadLimitUpdate(uint _amount) external onlyController {
+        _confirmLimitUpdate(_loadLimit, _amount);
         emit SetLoadLimit(msg.sender, _amount);
     }
 
@@ -479,7 +479,7 @@ contract LoadLimit is Controllable, Ownable, DailyLimitTrait {
     }
 
     function loadAvailable() public view returns (uint) {
-        return _limitAvailable(_loadLimit);
+        return _getAvailableLimit(_loadLimit);
     }
 
     function initializedLoadLimit() public view returns (bool) {
@@ -487,11 +487,11 @@ contract LoadLimit is Controllable, Ownable, DailyLimitTrait {
     }
 
     function submittedLoadLimit() public view returns (bool) {
-      return _loadLimit.submitted;
+        return _loadLimit.submitted;
     }
 
     function pendingLoadLimit() public view returns (uint) {
-      return _loadLimit.pending;
+        return _loadLimit.pending;
     }
 
 }
