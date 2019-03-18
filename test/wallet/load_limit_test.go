@@ -194,7 +194,7 @@ var _ = Describe("loadLimit", func() {
 			})
 
 			It("should emit a submission event", func() {
-				it, err := Wallet.FilterSubmittedLoadLimitChange(nil)
+				it, err := Wallet.FilterSubmittedLoadLimitUpdate(nil)
 				Expect(err).ToNot(HaveOccurred())
 				Expect(it.Next()).To(BeTrue())
 				evt := it.Event
