@@ -72,11 +72,6 @@ contract Whitelist is Controllable, Ownable {
         return _pendingWhitelistRemoval;
     }
 
-    /// @dev Method used to hash our whitelist address arrays.
-    function calculateHash(address[] _addresses) public pure returns (bytes32) {
-        return keccak256(abi.encodePacked(_addresses));
-    }
-
     /// @dev Add initial addresses to the whitelist.
     /// @param _addresses are the Ethereum addresses to be whitelisted.
     function initializeWhitelist(address[] _addresses) external onlyOwner hasNoOwnerOrZeroAddress(_addresses) {
@@ -112,10 +107,8 @@ contract Whitelist is Controllable, Ownable {
     function confirmWhitelistAddition(bytes32 _hash) external onlyController {
         // Require that the whitelist addition has been submitted.
         require(submittedWhitelistAddition, "whitelist addition has not been submitted");
-
         // Require that confirmation hash and the hash of the pending whitelist addition match
         require(_hash == calculateHash(_pendingWhitelistAddition), "hash of the pending whitelist addition do not match");
-
         // Whitelist pending addresses.
         for (uint i = 0; i < _pendingWhitelistAddition.length; i++) {
             isWhitelisted[_pendingWhitelistAddition[i]] = true;
@@ -187,6 +180,11 @@ contract Whitelist is Controllable, Ownable {
         submittedWhitelistRemoval = false;
         // Emit the cancellation event.
         emit CancelledWhitelistRemoval(msg.sender, _hash);
+    }
+
+    /// @dev Method used to hash our whitelist address arrays.
+    function calculateHash(address[] _addresses) public pure returns (bytes32) {
+        return keccak256(abi.encodePacked(_addresses));
     }
 }
 
