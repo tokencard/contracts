@@ -167,7 +167,7 @@ var _ = Describe("spendAvailable", func() {
 			})
 
 			It("should emit the submission event", func() {
-				it, err := Wallet.FilterSubmittedSpendLimitChange(nil)
+				it, err := Wallet.FilterSubmittedSpendLimitUpdate(nil)
 				Expect(err).ToNot(HaveOccurred())
 				Expect(it.Next()).To(BeTrue())
 				evt := it.Event

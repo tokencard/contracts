@@ -194,7 +194,7 @@ var _ = Describe("GasTopUpLimit", func() {
 			})
 
 			It("should emit a submission event", func() {
-				it, err := Wallet.FilterSubmittedGasTopUpLimitChange(nil)
+				it, err := Wallet.FilterSubmittedGasTopUpLimitUpdate(nil)
 				Expect(err).ToNot(HaveOccurred())
 				Expect(it.Next()).To(BeTrue())
 				evt := it.Event

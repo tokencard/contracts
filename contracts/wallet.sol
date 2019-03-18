@@ -301,7 +301,7 @@ contract DailyLimitTrait {
 //// @title SpendLimit provides daily spend limit functionality.
 contract SpendLimit is Controllable, Ownable, DailyLimitTrait {
     event SetSpendLimit(address _sender, uint _amount);
-    event SubmittedSpendLimitChange(uint _amount);
+    event SubmittedSpendLimitUpdate(uint _amount);
     event CancelledSpendLimitUpdate(address _sender, uint _amount);
 
     DailyLimit internal _spendLimit;
@@ -322,7 +322,7 @@ contract SpendLimit is Controllable, Ownable, DailyLimitTrait {
     /// @param _amount is the daily limit amount in wei.
     function submitSpendLimitUpdate(uint _amount) external onlyOwner {
         _submitLimitUpdate(_spendLimit, _amount);
-        emit SubmittedSpendLimitChange(_amount);
+        emit SubmittedSpendLimitUpdate(_amount);
     }
 
     /// @dev Confirm pending set daily limit operation.
@@ -363,7 +363,7 @@ contract SpendLimit is Controllable, Ownable, DailyLimitTrait {
 contract GasTopUpLimit is Controllable, Ownable, DailyLimitTrait {
 
     event SetGasTopUpLimit(address _sender, uint _amount);
-    event SubmittedGasTopUpLimitChange(uint _amount);
+    event SubmittedGasTopUpLimitUpdate(uint _amount);
     event CancelledGasTopUpLimitUpdate(address _sender, uint _amount);
 
     uint constant private _MINIMUM_GAS_TOPUP_LIMIT = 1 finney;
@@ -389,7 +389,7 @@ contract GasTopUpLimit is Controllable, Ownable, DailyLimitTrait {
     function submitGasTopUpLimitUpdate(uint _amount) external onlyOwner {
         require(_MINIMUM_GAS_TOPUP_LIMIT <= _amount && _amount <= _MAXIMUM_GAS_TOPUP_LIMIT, "gas top up amount is outside the min/max range");
         _submitLimitUpdate(_gasTopUpLimit, _amount);
-        emit SubmittedGasTopUpLimitChange(_amount);
+        emit SubmittedGasTopUpLimitUpdate(_amount);
     }
 
     /// @dev Confirm pending set top up gas limit operation.
@@ -430,7 +430,7 @@ contract GasTopUpLimit is Controllable, Ownable, DailyLimitTrait {
 contract LoadLimit is Controllable, Ownable, DailyLimitTrait {
 
     event SetLoadLimit(address _sender, uint _amount);
-    event SubmittedLoadLimitChange(uint _amount);
+    event SubmittedLoadLimitUpdate(uint _amount);
     event CancelledLoadLimitUpdate(address _sender, uint _amount);
 
     uint constant private _MINIMUM_LOAD_LIMIT = 1 finney;
@@ -456,7 +456,7 @@ contract LoadLimit is Controllable, Ownable, DailyLimitTrait {
     function submitLoadLimitUpdate(uint _amount) external onlyOwner {
         require(_MINIMUM_LOAD_LIMIT <= _amount && _amount <= _MAXIMUM_LOAD_LIMIT, "card load amount is outside the min/max range");
         _submitLimitUpdate(_loadLimit, _amount);
-        emit SubmittedLoadLimitChange(_amount);
+        emit SubmittedLoadLimitUpdate(_amount);
     }
 
     /// @dev Confirm pending set load limit operation.
@@ -511,7 +511,8 @@ contract Vault is Whitelist, SpendLimit, ERC165, TokenWhitelistable {
     /// @param _tokenWhitelistName is the ENS name of the Token whitelist.
     /// @param _controllerName is the ENS name of the controller.
     /// @param _spendLimit is the initial spend limit.
-    constructor(address _owner, bool _transferable, address _ens, bytes32 _tokenWhitelistName, bytes32 _controllerName, uint _spendLimit) SpendLimit(_spendLimit) Ownable(_owner, _transferable) Controllable(_ens, _controllerName) TokenWhitelistable(_ens, _tokenWhitelistName) 
+    constructor(address _owner, bool _transferable, address _ens, bytes32 _tokenWhitelistName, bytes32 _controllerName, uint _spendLimit) SpendLimit(_spendLimit) Ownable(_owner, _transferable) Controllable(_ens, _controllerName) TokenWhitelistable(_ens, _tokenWhitelistName) public {
+    }
 
     /// @dev Checks if the value is not zero.
     modifier isNotZero(uint _value) {
