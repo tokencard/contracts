@@ -42,8 +42,8 @@ contract TokenWhitelistable {
         return ITokenWhitelist(IResolver(_ENS.resolver(_node)).addr(_node)).getTokenInfo(_a);
     }
 
-    function _getDaiInfo() internal view returns (string, uint256, uint256, bool, bool, uint256) {
-        return ITokenWhitelist(IResolver(_ENS.resolver(_node)).addr(_node)).getDaiInfo();
+    function _getStablecoinInfo() internal view returns (string, uint256, uint256, bool, bool, uint256) {
+        return ITokenWhitelist(IResolver(_ENS.resolver(_node)).addr(_node)).getStablecoinInfo();
     }
 
     function _getTokenAddressArray() internal view returns (address[]) {

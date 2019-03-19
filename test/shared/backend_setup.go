@@ -114,8 +114,8 @@ var WalletAddress common.Address
 var TKN *mocks.Token
 var TKNAddress common.Address
 
-var DAI *mocks.Token
-var DAIAddress common.Address
+var Stablecoin *mocks.Token
+var StablecoinAddress common.Address
 
 var RandomToken *mocks.Token
 var RandomTokenAddress common.Address
@@ -228,15 +228,15 @@ func InitializeBackend() error {
 	var err error
 	var tx *types.Transaction
 
-	// Deploy a DAI mock token.
-	DAIAddress, tx, DAI, err = mocks.DeployToken(BankAccount.TransactOpts(), Backend)
+	// Deploy a stablecoin mock token.
+	StablecoinAddress, tx, Stablecoin, err = mocks.DeployToken(BankAccount.TransactOpts(), Backend)
 	if err != nil {
 		return err
 	}
 	Backend.Commit()
 	err = verifyTransaction(tx)
 	if err != nil {
-		return errors.Wrap(err, "deploying DAI token contract")
+		return errors.Wrap(err, "deploying Stablecoin token contract")
 	}
 
 	ControllerContractAddress, tx, ControllerContract, err = internals.DeployController(BankAccount.TransactOpts(), Backend, BankAccount.Address())
@@ -396,7 +396,7 @@ func InitializeBackend() error {
 		return errors.Wrap(err, "deploying Oraclize address resolver")
 	}
 
-	TokenWhitelistAddress, tx, TokenWhitelist, err = internals.DeployTokenWhitelist(BankAccount.TransactOpts(), Backend, ENSRegistryAddress, OracleName, ControllerName, Owner.Address(), true, DAIAddress)
+	TokenWhitelistAddress, tx, TokenWhitelist, err = internals.DeployTokenWhitelist(BankAccount.TransactOpts(), Backend, ENSRegistryAddress, OracleName, ControllerName, Owner.Address(), true, StablecoinAddress)
 	if err != nil {
 		return err
 	}
@@ -573,15 +573,15 @@ func InitializeBackend() error {
 		return errors.Wrap(err, "adding TKN token to oracle")
 	}
 
-	// Add the DAI token to the oracle list.
-	tx, err = TokenWhitelist.AddTokens(Controller.TransactOpts(), []common.Address{DAIAddress}, StringsToByte32("DAI"), []*big.Int{ExponentiateDecimals(18)}, []bool{true}, big.NewInt(20180913153211))
+	// Add the Stablecoin token to the oracle list.
+	tx, err = TokenWhitelist.AddTokens(Controller.TransactOpts(), []common.Address{StablecoinAddress}, StringsToByte32("DAI"), []*big.Int{ExponentiateDecimals(18)}, []bool{true}, big.NewInt(20180913153211))
 	if err != nil {
 		return err
 	}
 	Backend.Commit()
 	err = verifyTransaction(tx)
 	if err != nil {
-		return errors.Wrap(err, "adding DAI token to oracle")
+		return errors.Wrap(err, "adding Stablecoin token to oracle")
 	}
 
 	// Update the exchange rate of the TKN token.
@@ -595,15 +595,15 @@ func InitializeBackend() error {
 		return errors.Wrap(err, "updating TKN token rate")
 	}
 
-	// Update the exchange rate of the DAI token.
-	tx, err = TokenWhitelist.UpdateTokenRate(Controller.TransactOpts(), DAIAddress, big.NewInt(int64(0.007462*math.Pow10(18))), big.NewInt(20180913153211))
+	// Update the exchange rate of the Stablecoin token.
+	tx, err = TokenWhitelist.UpdateTokenRate(Controller.TransactOpts(), StablecoinAddress, big.NewInt(int64(0.007462*math.Pow10(18))), big.NewInt(20180913153211))
 	if err != nil {
 		return err
 	}
 	Backend.Commit()
 	err = verifyTransaction(tx)
 	if err != nil {
-		return errors.Wrap(err, "updating DAI token rate")
+		return errors.Wrap(err, "updating Stablecoin token rate")
 	}
 
 	// Deploy the Token wallet contract.

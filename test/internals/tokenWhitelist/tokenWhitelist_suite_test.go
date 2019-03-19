@@ -58,7 +58,7 @@ var _ = BeforeEach(func() {
 		Expect(isSuccessful(tx)).To(BeTrue())
 	}
 
-	TokenWhitelistAddress, tx, TokenWhitelist, err = internals.DeployTokenWhitelist(BankAccount.TransactOpts(), Backend, ENSRegistryAddress, OracleName, ControllerName, Owner.Address(), true, DAIAddress)
+	TokenWhitelistAddress, tx, TokenWhitelist, err = internals.DeployTokenWhitelist(BankAccount.TransactOpts(), Backend, ENSRegistryAddress, OracleName, ControllerName, Owner.Address(), true, StablecoinAddress)
 	Expect(err).ToNot(HaveOccurred())
 	Backend.Commit()
 	Expect(isSuccessful(tx)).To(BeTrue())
@@ -89,7 +89,7 @@ var _ = AfterEach(func() {
 })
 
 var _ = AfterSuite(func() {
-	TestRig.ExpectMinimumCoverage("internals/tokenWhitelist.sol", 94.0)
+	TestRig.ExpectMinimumCoverage("internals/tokenWhitelist.sol", 100.0)
 	TestRig.ExpectMinimumCoverage("internals/tokenWhitelistable.sol", 100.0)
 	TestRig.PrintGasUsage(os.Stdout)
 })

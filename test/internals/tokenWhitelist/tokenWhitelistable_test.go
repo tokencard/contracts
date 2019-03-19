@@ -2,7 +2,6 @@ package tokenWhitelist_test
 
 import (
 	"math/big"
-
 	"github.com/ethereum/go-ethereum/common"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -11,6 +10,34 @@ import (
 )
 
 var _ = Describe("tokenWhitelistable", func() {
+
+	When("DAI is the stablecoin used", func() {
+
+		BeforeEach(func() {
+			tx, err := TokenWhitelist.AddTokens(
+				Controller.TransactOpts(),
+				[]common.Address{StablecoinAddress},
+				StringsToByte32("DAI"),
+				[]*big.Int{DecimalsToMagnitude(big.NewInt(18))},
+				[]bool{true},
+				big.NewInt(20180913153211),
+			)
+			Expect(err).ToNot(HaveOccurred())
+			Backend.Commit()
+			Expect(isSuccessful(tx)).To(BeTrue())
+		})
+
+		It("Should update the token mapping", func() {
+			symbol, magnitude, rate, available, loadable, lastUpdate, err := TokenWhitelistableExporter.GetStablecoinInfo(nil)
+			Expect(err).ToNot(HaveOccurred())
+			Expect(symbol).To(Equal("DAI"))
+			Expect(magnitude.String()).To(Equal(DecimalsToMagnitude(big.NewInt(18)).String()))
+			Expect(rate.String()).To(Equal("0"))
+			Expect(available).To(BeTrue())
+			Expect(loadable).To(BeTrue())
+			Expect(lastUpdate.String()).To(Equal(big.NewInt(20180913153211).String()))
+		})
+	})
 
   Context("When a token is added", func() {
 		BeforeEach(func() {
@@ -27,7 +54,7 @@ var _ = Describe("tokenWhitelistable", func() {
 			Expect(isSuccessful(tx)).To(BeTrue())
 		})
 
-    It("Should update the token rate", func() {
+    It("Should update the token mapping", func() {
       symbol, magnitude, rate, available, loadable, lastUpdate, err := TokenWhitelistableExporter.GetTokenInfo(nil, common.HexToAddress("0x1"))
       Expect(err).ToNot(HaveOccurred())
       Expect(symbol).To(Equal("ETH"))
