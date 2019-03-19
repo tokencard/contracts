@@ -10,6 +10,10 @@ contract TokenWhitelistableExporter is TokenWhitelistable {
       return _getTokenInfo(_a);
   }
 
+  function getStablecoinInfo() external view returns (string, uint256, uint256, bool, bool, uint256) {
+      return _getStablecoinInfo();
+  }
+
   function getTokenAddressArray() external view returns (address[]) {
       return _getTokenAddressArray();
   }

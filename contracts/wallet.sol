@@ -650,23 +650,29 @@ contract Wallet is Vault, GasTopUpLimit, LoadLimit {
         emit ToppedUpGas(msg.sender, owner(), _amount);
     }
 
-    /// @dev Convert ERC20 token amount to the corresponding DAI amount.
+    /// @dev Convert ether or ERC20 token amount to the corresponding stablecoin amount.
     /// @param _token ERC20 token contract address.
     /// @param _amount amount of token in base units.
-    function convertToDai(address _token, uint _amount) public view returns (uint) {
-        // Store the token in memory to save map entry lookup gas.
-        (,uint256 magnitude, uint256 rate, bool available,,) = _getTokenInfo(_token);
-        // If the token exists require that its rate is not zero.
-        if (available) {
-            require(rate != 0, "token rate is 0");
-            // Get the current DAI token rate.
-            (,uint256 daiMagnitude, uint256 daiRate,,,) = _getDaiInfo();
-            // Check if the DAI rate is set.
-            require(daiRate != 0, "DAI rate is 0");
-            // Safely convert the token amount to ether based on its exchange rate and the DAI exchange rate.
-            return _amount.mul(rate).div(magnitude).mul(daiMagnitude).div(daiRate);
+    function convertToStablecoin(address _token, uint _amount) public view returns (uint) {
+
+        //0x0 represents ether
+        if (_token != address(0)) {
+          //convert to eth first, same as convertToEther()
+          // Store the token in memory to save map entry lookup gas.
+          (,uint256 magnitude, uint256 rate, bool available,,) = _getTokenInfo(_token);
+          // require that token both exists in the whitelist and its rate is not zero.
+          require(available, "token is not available");
+          require(rate != 0, "token rate is 0");
+          // Safely convert the token amount to ether based on the exchange rate.
+          _amount =  _amount.mul(rate).div(magnitude);
         }
-        return 0;
+          //_amount now is in ether
+          // Get the current stablecoin rate.
+          (,uint256 stablecoinMagnitude, uint256 stablecoinRate,,,) = _getStablecoinInfo();
+          // Check if the stablecoin rate is set.
+          require(stablecoinRate != 0, "stablecoin rate is 0");
+          // Safely convert the token amount to ether based on its exchange rate and the stablecoin exchange rate.
+          return _amount.mul(stablecoinMagnitude).div(stablecoinRate);
     }
 
     /// @dev Load a token card with the specified asset amount.
@@ -681,9 +687,9 @@ contract Wallet is Vault, GasTopUpLimit, LoadLimit {
             //check if token is allowed to be used for loading the card
             require(_isTokenLoadable(_asset), "token not loadable");
             // Convert token amount to ether value.
-            uint daiValue = convertToDai(_asset, _amount);
+            uint stablecoinValue = convertToStablecoin(_asset, _amount);
             // Check against the daily spent limit and update accordingly, require that the value is under remaining limit.
-            _enforceLimit(_loadLimit, daiValue);
+            _enforceLimit(_loadLimit, stablecoinValue);
             require(ERC20(_asset).approve(licenceAddress, _amount), "ERC20 token approval was unsuccessful");
             ILicence(licenceAddress).load(_asset, _amount);
         } else {
@@ -691,10 +697,7 @@ contract Wallet is Vault, GasTopUpLimit, LoadLimit {
             _enforceLimit(_loadLimit, _amount);
             ILicence(licenceAddress).load.value(_amount)(_asset, _amount);
         }
-
-          emit LoadedTokenCard(_asset, _amount);
-      }
-
+    }
     /// @dev This function allows for the owner to send transaction from the Wallet to arbitrary addresses
     /// @param _destination address of the transaction
     /// @param _value ETH amount in wei

@@ -11,7 +11,7 @@ import (
 	. "github.com/tokencard/contracts/test/shared"
 )
 
-var _ = Describe("convert", func() {
+var _ = Describe("convertToEther", func() {
 	Context("When the token is already supported", func() {
 		BeforeEach(func() {
 			tx, err := TokenWhitelist.AddTokens(
@@ -61,11 +61,19 @@ var _ = Describe("convert", func() {
 	})
 
 	Context("When the token is not supported", func() {
-		//the subsequent BeforeEach ensure that the the token fields are initialized but it is not supported longer
+		It("Should return 0", func() {
+			value, err := Wallet.ConvertToEther(nil, common.HexToAddress("0x1"), big.NewInt(100))
+			Expect(err).ToNot(HaveOccurred())
+			Expect(value.String()).To(Equal("0"))
+		})
+	})
+
+	When("ether is converted to ether", func() {
+
 		BeforeEach(func() {
 			tx, err := TokenWhitelist.AddTokens(
 				Controller.TransactOpts(),
-				[]common.Address{common.HexToAddress("0x1")},
+				[]common.Address{common.HexToAddress("0x0")},
 				StringsToByte32("ETH"),
 				[]*big.Int{DecimalsToMagnitude(big.NewInt(18))},
 				[]bool{true},
@@ -78,25 +86,22 @@ var _ = Describe("convert", func() {
 		BeforeEach(func() {
 			tx, err := TokenWhitelist.UpdateTokenRate(
 				Controller.TransactOpts(),
-				common.HexToAddress("0x1"),
-				big.NewInt(100),
+				common.HexToAddress("0x0"),
+				EthToWei(1),
 				big.NewInt(20180913153211),
 			)
 			Expect(err).ToNot(HaveOccurred())
 			Backend.Commit()
 			Expect(isSuccessful(tx)).To(BeTrue())
 		})
-		BeforeEach(func() {
-			tx, err := TokenWhitelist.RemoveTokens(Controller.TransactOpts(), []common.Address{common.HexToAddress("0x1")})
+
+		It("Should return the same amount", func() {
+			value, err := Wallet.ConvertToEther(nil, common.HexToAddress("0x0"), big.NewInt(100))
 			Expect(err).ToNot(HaveOccurred())
-			Backend.Commit()
-			Expect(isSuccessful(tx)).To(BeTrue())
+			Expect(value.String()).To(Equal("100"))
 		})
-		It("Should return 0", func() {
-			value, err := Wallet.ConvertToEther(nil, common.HexToAddress("0x1"), big.NewInt(100))
-			Expect(err).ToNot(HaveOccurred())
-			Expect(value.String()).To(Equal("0"))
-		})
+
+
 	})
 
 })
