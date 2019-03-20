@@ -614,7 +614,8 @@ contract Wallet is Vault, GasTopUpLimit, LoadLimit {
     event ExecutedTransaction(address _destination, uint _value, bytes _data);
 
     uint constant private MINIMUM_LOAD_LIMIT = 1 finney;
-    uint private MAXIMUM_LOAD_LIMIT;
+    uint constant private DEFAULT_MAX_STABLECOIN_LOAD_LIMIT = 10000;
+    uint private _maximum_load_limit;
 
     /// @dev Is the registered ENS name of the oracle contract.
     bytes32 private _licenceNode;
@@ -639,7 +640,7 @@ contract Wallet is Vault, GasTopUpLimit, LoadLimit {
         // Get the stablecoin's magnitude.
         (,uint256 stablecoinMagnitude,,,,) = _getStablecoinInfo();
         require(stablecoinMagnitude > 0, "stablecoin not set");
-        MAXIMUM_LOAD_LIMIT = 10000 * stablecoinMagnitude; //10,000 USD * stablecoin magnitude
+        _maximum_load_limit = DEFAULT_MAX_STABLECOIN_LOAD_LIMIT * stablecoinMagnitude; //10,000 USD * stablecoin magnitude
         _licenceNode = _licenceName;
         _ENS = ENS(_ens);
     }
@@ -703,7 +704,7 @@ contract Wallet is Vault, GasTopUpLimit, LoadLimit {
             _enforceLimit(_loadLimit, _amount);
             ILicence(licenceAddress).load.value(_amount)(_asset, _amount);
         }
-        
+
         emit LoadedTokenCard(_asset, _amount);
 
     }
