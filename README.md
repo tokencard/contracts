@@ -101,14 +101,15 @@ There are three ways to configure a Consumer Contract Wallet:
 
 All of the third-party code we rely on can be found in this folder. The below table details the third-party code used and their licenses.
 
-| File          | License       | 
-| ------------- | ------------- |
-| SafeMath.sol  | [MIT](https://github.com/OpenZeppelin/openzeppelin-solidity/blob/master/LICENSE) |
-| base64.sol    | [GPLv3](https://github.com/vcealicu/melonport-price-feed/blob/master/LICENSE) |
-| ENS           | [BSD2](https://github.com/ensdomains/ens/blob/master/LICENSE) |
-| strings.sol   | [Apache v2](https://github.com/Arachnid/solidity-stringutils/blob/master/LICENSE) |
-| oraclizeAPI   | [MIT](https://github.com/oraclize/ethereum-api/blob/master/LICENSE) |
-| cbor          | [MIT](https://github.com/smartcontractkit/solidity-cborutils/blob/master/LICENSE) |
+| File            | License       | 
+| --------------- | ------------- |
+| SafeMath.sol    | [MIT](https://github.com/OpenZeppelin/openzeppelin-solidity/blob/master/LICENSE) |
+| base64.sol      | [GPLv3](https://github.com/vcealicu/melonport-price-feed/blob/master/LICENSE) |
+| ENS             | [BSD2](https://github.com/ensdomains/ens/blob/master/LICENSE) |
+| strings.sol     | [Apache v2](https://github.com/Arachnid/solidity-stringutils/blob/master/LICENSE) |
+| oraclizeAPI     | [MIT](https://github.com/oraclize/ethereum-api/blob/master/LICENSE) |
+| cbor            | [MIT](https://github.com/smartcontractkit/solidity-cborutils/blob/master/LICENSE) |
+| gnosis MulitSig | [GPLv3](https://github.com/gnosis/MultiSigWallet/blob/master/LICENSE) |
 
 
 ## Building contracts
