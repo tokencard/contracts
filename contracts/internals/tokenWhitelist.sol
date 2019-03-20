@@ -73,10 +73,10 @@ contract TokenWhitelist is Controllable, Ownable {
     /// @dev Constructor initializes ens and the oracle.
     /// @param _ens is the ENS public registry contract address.
     /// @param _oracleName is the ENS name of the Oracle.
-    constructor(address _ens, bytes32 _oracleName, bytes32 _controllerName, address _owner, bool _transferable, address _stablecoin) Controllable(_ens, _controllerName) Ownable(_owner, _transferable) public {
+    constructor(address _ens, bytes32 _oracleName, bytes32 _controllerName, address _owner, bool _transferable, address _stabelcoinAddress) Controllable(_ens, _controllerName) Ownable(_owner, _transferable) public {
         _ENS = ENS(_ens);
         _oracleNode = _oracleName;
-        _stablecoin = _stablecoin;
+        _stablecoin = _stabelcoinAddress;
     }
 
     /// @dev Add ERC20 tokens to the list of supported tokens.
