@@ -15,17 +15,43 @@ import (
 var _ = Describe("wallet load eth", func() {
 
 
-	// When("no value is sent", func() {
-	//
-	// 	FIt("Should revert", func() {
-	// 		tx, err := Wallet.LoadTokenCard(Owner.TransactOpts(ethertest.WithGasLimit(100000)), common.HexToAddress("0x0"), big.NewInt(1000))
-	// 		Expect(err).ToNot(HaveOccurred())
-	// 		Backend.Commit()
-	// 		Expect(isGasExhausted(tx, 100000)).To(BeFalse())
-	// 		Expect(isSuccessful(tx)).To(BeFalse())
-	// 		Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*_loadLimit.useAmount\(_amount\);`))
-	// 	})
-	// })
+	When("the contract has no balance", func() {
+
+		BeforeEach(func() {
+			tx, err := TokenWhitelist.AddTokens(
+				Controller.TransactOpts(),
+				[]common.Address{common.HexToAddress("0x0")},
+				StringsToByte32("ETH"),
+				[]*big.Int{DecimalsToMagnitude(big.NewInt(18))},
+				[]bool{true},
+				big.NewInt(20180913153211),
+			)
+			Expect(err).ToNot(HaveOccurred())
+			Backend.Commit()
+			Expect(isSuccessful(tx)).To(BeTrue())
+		})
+
+		When("no value is sent", func() {
+			It("Should revert", func() {
+				tx, err := Wallet.LoadTokenCard(Owner.TransactOpts(ethertest.WithGasLimit(1000000)), common.HexToAddress("0x0"), big.NewInt(1000))
+				Expect(err).ToNot(HaveOccurred())
+				Backend.Commit()
+				Expect(isGasExhausted(tx, 1000000)).To(BeFalse())
+				Expect(isSuccessful(tx)).To(BeFalse())
+				Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*load.value\(_amount\)\(_asset, _amount\);`))
+			})
+		})
+
+		When("the right value is sent along with the transaction", func() {
+			It("Should succeed", func() {
+				tx, err := Wallet.LoadTokenCard(Owner.TransactOpts(ethertest.WithValue(big.NewInt(1000))), common.HexToAddress("0x0"), big.NewInt(1000))
+				Expect(err).ToNot(HaveOccurred())
+				Backend.Commit()
+				Expect(isSuccessful(tx)).To(BeTrue())
+			})
+		})
+
+	})
 
 	When("not called by the owner", func() {
 
