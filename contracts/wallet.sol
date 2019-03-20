@@ -21,6 +21,7 @@ pragma solidity ^0.4.25;
 import "./licence.sol";
 import "./internals/ownable.sol";
 import "./internals/controllable.sol";
+import "./internals/ensable.sol";
 import "./internals/tokenWhitelistable.sol";
 import "./externals/ens/PublicResolver.sol";
 import "./externals/SafeMath.sol";
@@ -140,7 +141,7 @@ contract Whitelist is Controllable, Ownable {
     function submitWhitelistRemoval(address[] _addresses) external onlyOwner noActiveSubmission {
         // Require that the whitelist has been initialized.
         require(initializedWhitelist, "whitelist has not been initialized");
-        // Require this array of addresses not empty 
+        // Require this array of addresses not empty
         require(_addresses.length > 0, "pending whitelist removal is empty");
         // Add the provided addresses to the pending addition list.
         _pendingWhitelistRemoval = _addresses;
@@ -198,7 +199,7 @@ contract DailyLimitTrait {
         uint limit;
         uint available;
         uint limitDay;
-    
+
         uint pending;
         bool submitted;
         bool initialized;
@@ -311,6 +312,10 @@ contract SpendLimit is Controllable, Ownable, DailyLimitTrait {
         _spendLimit = DailyLimit(_limit, _limit, now, 0, false, false);
     }
 
+    function _spendLimitProxyConstructor(uint _limit) {
+        _spendLimit = DailyLimit(_limit, _limit, now, 0, false, false);
+    }
+
     /// @dev Initialize a daily spend (aka transfer) limit for non-whitelisted addresses.
     /// @param _amount is the daily limit amount in wei.
     function initializeSpendLimit(uint _amount) external onlyOwner {
@@ -373,6 +378,10 @@ contract GasTopUpLimit is Controllable, Ownable, DailyLimitTrait {
 
     /// @dev Constructor initializes the daily spend limit in wei.
     constructor() internal {
+        _gasTopUpLimit = DailyLimit(_MAXIMUM_GAS_TOPUP_LIMIT, _MAXIMUM_GAS_TOPUP_LIMIT, now, 0, false, false);
+    }
+
+    function _gasTopupProxyConstructor() internal {
         _gasTopUpLimit = DailyLimit(_MAXIMUM_GAS_TOPUP_LIMIT, _MAXIMUM_GAS_TOPUP_LIMIT, now, 0, false, false);
     }
 
@@ -443,6 +452,12 @@ contract LoadLimit is Controllable, Ownable, DailyLimitTrait {
         _loadLimit = DailyLimit(_MAXIMUM_LOAD_LIMIT, _MAXIMUM_LOAD_LIMIT, now, 0, false, false);
     }
 
+    function _loadLimitProxyConstructor() internal {
+        _loadLimit = DailyLimit(_MAXIMUM_LOAD_LIMIT, _MAXIMUM_LOAD_LIMIT, now, 0, false, false);
+    }
+
+
+
     /// @dev Initialize a daily card load limit.
     /// @param _amount is the card load amount in wei.
     function initializeLoadLimit(uint _amount) external onlyOwner {
@@ -507,11 +522,17 @@ contract Vault is Whitelist, SpendLimit, ERC165, TokenWhitelistable {
     /// @dev Constructor initializes the vault with an owner address and spend limit. It also sets up the oracle and controller contracts.
     /// @param _owner is the owner account of the wallet contract.
     /// @param _transferable indicates whether the contract ownership can be transferred.
-    /// @param _ens is the ENS public registry contract address.
     /// @param _tokenWhitelistName is the ENS name of the Token whitelist.
     /// @param _controllerName is the ENS name of the controller.
     /// @param _spendLimit is the initial spend limit.
-    constructor(address _owner, bool _transferable, address _ens, bytes32 _tokenWhitelistName, bytes32 _controllerName, uint _spendLimit) SpendLimit(_spendLimit) Ownable(_owner, _transferable) Controllable(_ens, _controllerName) TokenWhitelistable(_ens, _tokenWhitelistName) public {
+    constructor(address _owner, bool _transferable, bytes32 _tokenWhitelistName, bytes32 _controllerName, uint _spendLimit) SpendLimit(_spendLimit) Ownable(_owner, _transferable) Controllable(_controllerName) TokenWhitelistable(_tokenWhitelistName) public {
+    }
+
+    function _vaultProxyConstructor(address _owner, bool _transferable, bytes32 _tokenWhitelistName, bytes32 _controllerName, uint _spendLimit) public {
+      _spendLimitProxyConstructor(_spendLimit);
+      _ownableProxyConstructor(_owner, _transferable);
+      _controllableProxyConstructor(_controllerName);
+      _tokenWhitelistableProxyConstructor(_tokenWhitelistName);
     }
 
     /// @dev Checks if the value is not zero.
@@ -590,18 +611,63 @@ contract Vault is Whitelist, SpendLimit, ERC165, TokenWhitelistable {
     }
 }
 
+contract Upgradeable {
+    address public codeAddress;
+
+    function upgrade(address _newAddress) {
+        codeAddress = _newAddress;
+    }
+}
+
+interface ProxyConstructable {
+    function _proxyConstructor(address _owner, bool _transferable, address _ens, bytes32 _oracleName, bytes32 _controllerName, bytes32 _licenceName, uint _spendLimit) external;
+}
+
+/// @title Proxy - Generic proxy contract allows to execute all transactions applying the code of a master contract.
+/// @author Stefan George - <stefan@gnosis.pm>
+contract ProxyWallet {
+
+    // masterCopy always needs to be first declared variable, to ensure that it is at the same location in the contracts to which calls are delegated.
+    // To reduce deployment costs this variable is internal and needs to be retrieved via `getStorageAt`
+    address internal masterCopy;
+
+    /// @dev Constructor function sets address of master copy contract.
+    /// @param _masterCopy Master copy address.
+    constructor(address _masterCopy, address _owner, bool _transferable, address _ens, bytes32 _oracleName, bytes32 _controllerName, bytes32 _licenceName, uint _spendLimit) public {
+        require(_masterCopy != address(0), "Invalid master copy address provided");
+        masterCopy = _masterCopy;
+        /* ProxyConstructable(this)._proxyConstructor(_owner, _transferable, _ens, _oracleName, _controllerName, _licenceName, _spendLimit); */
+    }
+
+    /* function() payable {
+        if(masterCopy.delegatecall(msg.data)) {
+          this;
+        }
+    } */
+
+
+    /// @dev Fallback function forwards all transactions and returns all received return data.
+    function () external payable {
+        // solium-disable-next-line security/no-inline-assembly
+        assembly {
+            let masterCopy := and(sload(0), 0xffffffffffffffffffffffffffffffffffffffff)
+            calldatacopy(0, 0, calldatasize())
+            let success := delegatecall(gas, masterCopy, 0, calldatasize(), 0, 0)
+            returndatacopy(0, 0, returndatasize())
+            if eq(success, 0) { revert(0, returndatasize()) }
+            return(0, returndatasize())
+        }
+    }
+}
 
 //// @title Asset wallet with extra security features, gas top up management and card integration.
-contract Wallet is Vault, GasTopUpLimit, LoadLimit {
+contract Wallet is Upgradeable, ENSable, Vault, GasTopUpLimit, LoadLimit {
 
     event ToppedUpGas(address _sender, address _owner, uint _amount);
     event LoadedTokenCard(address _asset, uint _amount);
 
     /// @dev Is the registered ENS name of the oracle contract.
     bytes32 private _licenceNode;
-
-    /// @dev ENS points to the ENS registry smart contract.
-    ENS internal _ENS;
 
     /// @dev Constructor initializes the wallet top up limit and the vault contract.
     /// @param _owner is the owner account of the wallet contract.
@@ -611,9 +677,16 @@ contract Wallet is Vault, GasTopUpLimit, LoadLimit {
     /// @param _controllerName is the ENS name of the Controller.
     /// @param _licenceName is the ENS name of the licence.
     /// @param _spendLimit is the initial spend limit.
-    constructor(address _owner, bool _transferable, address _ens, bytes32 _oracleName, bytes32 _controllerName, bytes32 _licenceName, uint _spendLimit) Vault(_owner, _transferable, _ens, _oracleName, _controllerName, _spendLimit) public {
+    constructor(address _owner, bool _transferable, address _ens, bytes32 _oracleName, bytes32 _controllerName, bytes32 _licenceName, uint _spendLimit) ENSable(_ens) Vault(_owner, _transferable, _oracleName, _controllerName, _spendLimit) public {
         _licenceNode = _licenceName;
-        _ENS = ENS(_ens);
+    }
+
+    function _proxyConstructor(address _owner, bool _transferable, address _ens, bytes32 _oracleName, bytes32 _controllerName, bytes32 _licenceName, uint _spendLimit) external {
+      _ensableProxyConstructor(_ens);
+      _vaultProxyConstructor(_owner, _transferable, _oracleName, _controllerName, _spendLimit);
+      _gasTopupProxyConstructor();
+      _loadLimitProxyConstructor();
+      _licenceNode = _licenceName;
     }
 
     /// @dev Refill owner's gas balance, revert if the transaction amount is too large
@@ -636,7 +709,7 @@ contract Wallet is Vault, GasTopUpLimit, LoadLimit {
     function loadTokenCard(address _asset, uint _amount) external payable onlyOwner {
         // Get the TKN licenceAddress from ENS
         address licenceAddress = PublicResolver(_ENS.resolver(_licenceNode)).addr(_licenceNode);
-  
+
         if (_asset != address(0)) {
             //check if token is allowed to be used for loading the card
             require(_isTokenLoadable(_asset), "token not loadable");
@@ -651,7 +724,7 @@ contract Wallet is Vault, GasTopUpLimit, LoadLimit {
             _enforceLimit(_loadLimit, _amount);
             ILicence(licenceAddress).load.value(_amount)(_asset, _amount);
         }
-  
+
         emit LoadedTokenCard(_asset, _amount);
     }
 }

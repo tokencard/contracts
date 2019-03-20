@@ -49,6 +49,7 @@ generate_binding() {
 
 contracts=(
   "wallet/Wallet wallet.go Wallet bindings"
+  "wallet/ProxyWallet proxy_wallet.go ProxyWallet bindings"
   "oracle/Oracle oracle.go Oracle bindings"
   "holder/Holder holder.go Holder bindings"
   "tkn/Token token.go Token bindings"

@@ -46,10 +46,10 @@ var _ = AfterEach(func() {
 })
 
 var _ = AfterSuite(func() {
-	if allPassed {
-		TestRig.ExpectMinimumCoverage("wallet.sol", 99.5)
-		TestRig.PrintGasUsage(os.Stdout)
-	}
+	// if allPassed {
+	TestRig.ExpectMinimumCoverage("wallet.sol", 99.5)
+	TestRig.PrintGasUsage(os.Stdout)
+	// }
 })
 
 func isSuccessful(tx *types.Transaction) bool {

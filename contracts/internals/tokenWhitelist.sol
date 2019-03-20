@@ -20,6 +20,7 @@ pragma solidity ^0.4.25;
 
 import "./ownable.sol";
 import "./controllable.sol";
+import "./ensable.sol";
 import "../externals/strings.sol";
 import "../externals/ens/PublicResolver.sol";
 import "../externals/SafeMath.sol";
@@ -32,7 +33,7 @@ interface ITokenWhitelist {
 }
 
 /// @title TokenWhitelist stores a list of tokens used by the Consumer Contract Wallet, the Oracle, and the TKN Licence Contract
-contract TokenWhitelist is Controllable, Ownable {
+contract TokenWhitelist is ENSable, Controllable, Ownable {
     using strings for *;
     using SafeMath for uint256;
 
@@ -59,17 +60,13 @@ contract TokenWhitelist is Controllable, Ownable {
         _;
     }
 
-    /// @dev ENS points to the ENS registry smart contract.
-    ENS internal _ENS;
 
     /// @dev Is the registered ENS name of the oracle contract.
     bytes32 private _oracleNode;
 
     /// @dev Constructor initializes ens and the oracle.
-    /// @param _ens is the ENS public registry contract address.
     /// @param _oracleName is the ENS name of the Oracle.
-    constructor(address _ens, bytes32 _oracleName, bytes32 _controllerName, address _owner, bool _transferable) Controllable(_ens, _controllerName) Ownable(_owner, _transferable) public {
-        _ENS = ENS(_ens);
+    constructor(address _ens, bytes32 _oracleName, bytes32 _controllerName, address _owner, bool _transferable) ENSable(_ens) Controllable(_controllerName) Ownable(_owner, _transferable) public {
         _oracleNode = _oracleName;
     }
 

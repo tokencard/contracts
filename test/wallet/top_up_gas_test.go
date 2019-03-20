@@ -34,7 +34,7 @@ var _ = Describe("topUpGas", func() {
 		Context("When called by the wallet controller and is lower than top up limit", func() {
 
 			BeforeEach(func() {
-				tx, err = Wallet.TopUpGas(caller.TransactOpts(ethertest.WithGasLimit(81000)), FinneyToWei(1))
+				tx, err = Wallet.TopUpGas(caller.TransactOpts(ethertest.WithGasLimit(181000)), FinneyToWei(1))
 				Backend.Commit()
 			})
 

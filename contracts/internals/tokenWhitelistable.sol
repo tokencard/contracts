@@ -21,20 +21,21 @@ pragma solidity ^0.4.25;
 import "./tokenWhitelist.sol";
 import "../externals/ens/ENS.sol";
 import "./resolver.sol";
+import "./ensable.sol";
 
 
 /// @title Controllable implements access control functionality based on a controller set in ENS.
-contract TokenWhitelistable {
-    /// @dev _ENS points to the ENS registry smart contract.
-    ENS private _ENS;
+contract TokenWhitelistable is ENSable {
     /// @dev Is the registered ENS name of the controller contract.
     bytes32 private _node;
 
     /// @dev Constructor initializes the controller contract object.
-    /// @param _ens is the address of the ENS.
     /// @param _tokenWhitelistName is the ENS name of the Controller.
-    constructor(address _ens, bytes32 _tokenWhitelistName) internal {
-        _ENS = ENS(_ens);
+    constructor(bytes32 _tokenWhitelistName) internal {
+        _node = _tokenWhitelistName;
+    }
+
+    function _tokenWhitelistableProxyConstructor(bytes32 _tokenWhitelistName) internal {
         _node = _tokenWhitelistName;
     }
 

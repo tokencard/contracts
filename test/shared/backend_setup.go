@@ -112,6 +112,9 @@ var LicenceAddress common.Address
 var Wallet *bindings.Wallet
 var WalletAddress common.Address
 
+var ProxyWallet *bindings.ProxyWallet
+var ProxyWalletAddress common.Address
+
 var TKN *mocks.Token
 var TKNAddress common.Address
 
@@ -564,6 +567,64 @@ func InitializeBackend() error {
 		return errors.Wrap(err, "deploying wallet contract")
 	}
 
+	tx, err = Wallet.ProxyConstructor(Owner.TransactOpts(), Owner.Address(), true, ENSRegistryAddress, TokenWhitelistName, ControllerName, LicenceName, EthToWei(100))
+	if err != nil {
+		return err
+	}
+	Backend.Commit()
+	err = verifyTransaction(tx)
+	if err != nil {
+		return errors.Wrap(err, "deploying wallet contract")
+	}
+
+	// Deploy the Wallet proxy
+	ProxyWalletAddress, tx, ProxyWallet, err = bindings.DeployProxyWallet(BankAccount.TransactOpts(ethertest.WithGasLimit(850000)), Backend, WalletAddress, Owner.Address(), true, ENSRegistryAddress, TokenWhitelistName, ControllerName, LicenceName, EthToWei(100))
+	if err != nil {
+		return err
+	}
+	Backend.Commit()
+	err = verifyTransaction(tx)
+	if err != nil {
+		return errors.Wrap(err, "deploying proxy wallet contract")
+	}
+
+	// , Owner.Address(), true, ENSRegistryAddress, TokenWhitelistName, ControllerName, LicenceName, EthToWei(100)
+
+	pw, err := bindings.NewWallet(ProxyWalletAddress, Backend)
+	if err != nil {
+		return errors.Wrap(err, "getting wallet through proxy")
+	}
+
+	tx, err = pw.ProxyConstructor(
+		BankAccount.TransactOpts(ethertest.WithGasLimit(850000)),
+		Owner.Address(),
+		true,
+		ENSRegistryAddress,
+		TokenWhitelistName,
+		ControllerName,
+		LicenceName,
+		EthToWei(100),
+	)
+
+	if err != nil {
+		return err
+	}
+	Backend.Commit()
+	err = verifyTransaction(tx)
+	if err != nil {
+		return errors.Wrap(err, "initializing proxied constructor")
+	}
+
+	// ca, err := pw.CodeAddress(nil)
+	// if err != nil {
+	// 	return errors.Wrap(err, "getting code address")
+	// }
+	//
+	// log.Println(ca)
+
+	Wallet = pw
+	WalletAddress = ProxyWalletAddress
+
 	return nil
 }
 
@@ -576,4 +637,8 @@ func verifyTransaction(tx *types.Transaction) error {
 		return ErrFailedTransaction
 	}
 	return nil
+}
+
+func init() {
+	TestRig.AddCoverageForContracts("../../build/wallet/combined.json", "../../contracts")
 }

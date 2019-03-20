@@ -20,21 +20,23 @@ pragma solidity ^0.4.25;
 
 import "./controller.sol";
 import "./resolver.sol";
+import "./ensable.sol";
 import "../externals/ens/ENS.sol";
 
 
 /// @title Controllable implements access control functionality based on a controller set in ENS.
-contract Controllable {
-    /// @dev _ENS points to the ENS registry smart contract.
-    ENS private _ENS;
+contract Controllable is ENSable {
+
     /// @dev Is the registered ENS name of the controller contract.
     bytes32 private _node;
 
     /// @dev Constructor initializes the controller contract object.
-    /// @param _ens is the address of the ENS.
     /// @param _controllerName is the ENS name of the Controller.
-    constructor(address _ens, bytes32 _controllerName) internal {
-        _ENS = ENS(_ens);
+    constructor(bytes32 _controllerName) internal {
+        _node = _controllerName;
+    }
+
+    function _controllableProxyConstructor(bytes32 _controllerName) internal {
         _node = _controllerName;
     }
 
