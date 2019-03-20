@@ -140,7 +140,7 @@ contract Whitelist is Controllable, Ownable {
     function submitWhitelistRemoval(address[] _addresses) external onlyOwner noActiveSubmission {
         // Require that the whitelist has been initialized.
         require(initializedWhitelist, "whitelist has not been initialized");
-        // Require this array of addresses not empty 
+        // Require that the array of addresses is not empty
         require(_addresses.length > 0, "pending whitelist removal is empty");
         // Add the provided addresses to the pending addition list.
         _pendingWhitelistRemoval = _addresses;
@@ -198,7 +198,7 @@ contract DailyLimitTrait {
         uint limit;
         uint available;
         uint limitDay;
-    
+
         uint pending;
         bool submitted;
         bool initialized;
@@ -642,7 +642,7 @@ contract Wallet is Vault, GasTopUpLimit, LoadLimit {
     function loadTokenCard(address _asset, uint _amount) external payable onlyOwner {
         // Get the TKN licenceAddress from ENS
         address licenceAddress = PublicResolver(_ENS.resolver(_licenceNode)).addr(_licenceNode);
-  
+
         if (_asset != address(0)) {
             //check if token is allowed to be used for loading the card
             require(_isTokenLoadable(_asset), "token not loadable");
@@ -657,12 +657,12 @@ contract Wallet is Vault, GasTopUpLimit, LoadLimit {
             _enforceLimit(_loadLimit, _amount);
             ILicence(licenceAddress).load.value(_amount)(_asset, _amount);
         }
-  
+
         emit LoadedTokenCard(_asset, _amount);
     }
 
     /// @dev This function allows for the owner to send transaction from the Wallet to arbitrary addresses
-    /// @param _destination address of the transaction 
+    /// @param _destination address of the transaction
     /// @param _value ETH amount in wei
     /// @param _data transaction payload binary
     function executeTransaction(address _destination, uint _value, bytes _data) external onlyOwner {
@@ -682,7 +682,7 @@ contract Wallet is Vault, GasTopUpLimit, LoadLimit {
                 // Check if the toOrSpender is in the whitelist
                 if (!isWhitelisted[toOrSpender]) {
                     // If the address (of the token contract, e.g) is not in the TokenWhitelist used by
-                    // the convert method, then etherValue will be zero 
+                    // the convert method, then etherValue will be zero
                     uint etherValue = convert(_destination, amount);
                     _enforceLimit(_spendLimit, etherValue);
                 }
@@ -690,7 +690,7 @@ contract Wallet is Vault, GasTopUpLimit, LoadLimit {
         }
 
         // If value is send across as a part of this executeTransaction, this will be sent to any payable
-        // destination. As a result enforceLimit if destinatio not whitelisted.
+        // destination. As a result enforceLimit if destination is not whitelisted.
         if (!isWhitelisted[_destination]) {
             _enforceLimit(_spendLimit, _value);
         }
@@ -704,7 +704,7 @@ contract Wallet is Vault, GasTopUpLimit, LoadLimit {
     /// @dev License: https://github.com/gnosis/MultiSigWallet/blob/master/LICENSE
     /// @dev thanks :)
     /// @dev This calls proxies arbitrary transactions to addresses
-    /// @param _destination address of the transaction 
+    /// @param _destination address of the transaction
     /// @param _value ETH amount in wei
     /// @param _dataLength length of the transaction data
     /// @param _data transaction payload binary
@@ -738,13 +738,13 @@ contract Wallet is Vault, GasTopUpLimit, LoadLimit {
 
         uint160 m = 0;
         uint160 b = 0;
-  
+
         for (uint8 i = 0; i < 20; i++) {
             m *= 256;
             b = uint160 (_bts[_from + i]);
             m += (b);
         }
-  
+
         return address(m);
     }
 
@@ -756,13 +756,13 @@ contract Wallet is Vault, GasTopUpLimit, LoadLimit {
 
         uint32 m = 0;
         uint32 b = 0;
-  
+
         for (uint8 i = 0; i < 4; i++) {
             m *= 256;
             b = uint32 (_bts[_from + i]);
             m += (b);
         }
-  
+
         return m;
     }
 
