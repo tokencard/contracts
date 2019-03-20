@@ -23,6 +23,7 @@ func isGasExhausted(tx *types.Transaction, gasLimit uint64) bool {
 
 func init() {
 	TestRig.AddCoverageForContracts("../../build/wallet/combined.json", "../../contracts")
+	TestRig.AddCoverageForContracts("../../build/licence/combined.json", "../../contracts")
 }
 
 func TestWalletSuite(t *testing.T) {
@@ -48,6 +49,7 @@ var _ = AfterEach(func() {
 var _ = AfterSuite(func() {
 	if allPassed {
 		TestRig.ExpectMinimumCoverage("wallet.sol", 100.00)
+		TestRig.ExpectMinimumCoverage("licence.sol", 100.00)
 		TestRig.PrintGasUsage(os.Stdout)
 	}
 })
