@@ -675,8 +675,9 @@ contract Wallet is Vault, GasTopUpLimit, LoadLimit {
         }
           //_amount now is in ether
           // Get the stablecoin's magnitude and its current rate.
-          (,uint256 stablecoinMagnitude, uint256 stablecoinRate,,,) = _getStablecoinInfo();
+          (,uint256 stablecoinMagnitude, uint256 stablecoinRate, bool stablecoinAvailable,,) = _getStablecoinInfo();
           // Check if the stablecoin rate is set.
+          require(stablecoinAvailable, "token is not available");
           require(stablecoinRate != 0, "stablecoin rate is 0");
           // Safely convert the token amount to ether based on its exchange rate and the stablecoin exchange rate.
           return _amount.mul(stablecoinMagnitude).div(stablecoinRate);
