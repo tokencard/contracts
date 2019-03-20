@@ -619,10 +619,6 @@ contract Upgradeable {
     }
 }
 
-interface ProxyConstructable {
-    function _proxyConstructor(address _owner, bool _transferable, address _ens, bytes32 _oracleName, bytes32 _controllerName, bytes32 _licenceName, uint _spendLimit) external;
-}
-
 /// @title Proxy - Generic proxy contract allows to execute all transactions applying the code of a master contract.
 /// @author Stefan George - <stefan@gnosis.pm>
 contract ProxyWallet {
@@ -636,15 +632,8 @@ contract ProxyWallet {
     constructor(address _masterCopy, address _owner, bool _transferable, address _ens, bytes32 _oracleName, bytes32 _controllerName, bytes32 _licenceName, uint _spendLimit) public {
         require(_masterCopy != address(0), "Invalid master copy address provided");
         masterCopy = _masterCopy;
-        /* ProxyConstructable(this)._proxyConstructor(_owner, _transferable, _ens, _oracleName, _controllerName, _licenceName, _spendLimit); */
+        require(masterCopy.delegatecall(abi.encodeWithSignature("_proxyConstructor(address,bool,address,bytes32,bytes32,bytes32,uint256)", _owner, _transferable, _ens, _oracleName, _controllerName, _licenceName, _spendLimit)), "must call constructor");
     }
-
-    /* function() payable {
-        if(masterCopy.delegatecall(msg.data)) {
-          this;
-        }
-    } */
-
 
     /// @dev Fallback function forwards all transactions and returns all received return data.
     function () external payable {

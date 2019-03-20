@@ -578,7 +578,7 @@ func InitializeBackend() error {
 	}
 
 	// Deploy the Wallet proxy
-	ProxyWalletAddress, tx, ProxyWallet, err = bindings.DeployProxyWallet(BankAccount.TransactOpts(ethertest.WithGasLimit(850000)), Backend, WalletAddress, Owner.Address(), true, ENSRegistryAddress, TokenWhitelistName, ControllerName, LicenceName, EthToWei(100))
+	ProxyWalletAddress, tx, ProxyWallet, err = bindings.DeployProxyWallet(BankAccount.TransactOpts(ethertest.WithGasLimit(3850000)), Backend, WalletAddress, Owner.Address(), true, ENSRegistryAddress, TokenWhitelistName, ControllerName, LicenceName, EthToWei(100))
 	if err != nil {
 		return err
 	}
@@ -595,25 +595,25 @@ func InitializeBackend() error {
 		return errors.Wrap(err, "getting wallet through proxy")
 	}
 
-	tx, err = pw.ProxyConstructor(
-		BankAccount.TransactOpts(ethertest.WithGasLimit(850000)),
-		Owner.Address(),
-		true,
-		ENSRegistryAddress,
-		TokenWhitelistName,
-		ControllerName,
-		LicenceName,
-		EthToWei(100),
-	)
+	// tx, err = pw.ProxyConstructor(
+	// 	BankAccount.TransactOpts(ethertest.WithGasLimit(850000)),
+	// 	Owner.Address(),
+	// 	true,
+	// 	ENSRegistryAddress,
+	// 	TokenWhitelistName,
+	// 	ControllerName,
+	// 	LicenceName,
+	// 	EthToWei(100),
+	// )
 
-	if err != nil {
-		return err
-	}
-	Backend.Commit()
-	err = verifyTransaction(tx)
-	if err != nil {
-		return errors.Wrap(err, "initializing proxied constructor")
-	}
+	// if err != nil {
+	// 	return err
+	// }
+	// Backend.Commit()
+	// err = verifyTransaction(tx)
+	// if err != nil {
+	// 	return errors.Wrap(err, "initializing proxied constructor")
+	// }
 
 	// ca, err := pw.CodeAddress(nil)
 	// if err != nil {
