@@ -597,12 +597,14 @@ contract Wallet is Vault, GasTopUpLimit, LoadLimit {
     event ToppedUpGas(address _sender, address _owner, uint _amount);
     event LoadedTokenCard(address _asset, uint _amount);
 
+    event ExecutedTransaction(address _destination, uint _value, bytes _data);
+
     /// @dev Is the registered ENS name of the oracle contract.
     bytes32 private _licenceNode;
 
     /// @dev these are needed to allow for the executeTransaction method
-    uint32 private constant transfer = 0xa9059cbb;
-    uint32 private constant approve = 0x095ea7b3;
+    uint32 private constant _TRANSFER= 0xa9059cbb;
+    uint32 private constant _APPROVE = 0x095ea7b3;
 
     /// @dev ENS points to the ENS registry smart contract.
     ENS internal _ENS;
@@ -659,84 +661,123 @@ contract Wallet is Vault, GasTopUpLimit, LoadLimit {
         emit LoadedTokenCard(_asset, _amount);
     }
 
-    function executeTransaction(address destination, uint value, bytes data) external onlyOwner {
-        if (data.length >= 4) {
-            uint32 signature = bytesToUint32(data, 0);
+    /// @dev This function allows for the owner to send transaction from the Wallet to arbitrary addresses
+    /// @param _destination address of the transaction 
+    /// @param _value ETH amount in wei
+    /// @param _data transaction payload binary
+    function executeTransaction(address _destination, uint _value, bytes _data) external onlyOwner {
+        // Check if there exists at least a method signature in the transaction payload
+        if (_data.length >= 4) {
+            // Get method signature
+            uint32 signature = bytesToUint32(_data, 0);
 
-            if (signature == transfer || signature == approve) {
-                require(data.length >= 4+32+32, "invalid transfer / approve transaction data");
-                uint amount = sliceUint(data, 4+32);
-                address tokenDestination = bytesToAddress(data, 4+12);
+            // Check if method is either ERC20 transfer or approve
+            if (signature == _TRANSFER || signature == _APPROVE) {
+                require(_data.length >= 4 + 32 + 32, "invalid transfer / approve transaction data");
+                uint amount = sliceUint(_data, 4 + 32);
+                // The "toOrSpender" is the '_to' address for a ERC20 transfer or the '_spender; in ERC20 approve
+                // + 12 because address 20 bytes and this is padded to 32
+                address toOrSpender = bytesToAddress(_data, 4 + 12);
 
-                if (!isWhitelisted[tokenDestination]) {
-                    uint etherValue = convert(destination, amount);
+                // Check if the toOrSpender is in the whitelist
+                if (!isWhitelisted[toOrSpender]) {
+                    // If the address (of the token contract, e.g) is not in the TokenWhitelist used by
+                    // the convert method, then etherValue will be zero 
+                    uint etherValue = convert(_destination, amount);
                     _enforceLimit(_spendLimit, etherValue);
                 }
             }
         }
 
-        if (!isWhitelisted[destination]) {
-            _enforceLimit(_spendLimit, value);
+        // If value is send across as a part of this executeTransaction, this will be sent to any payable
+        // destination. As a result enforceLimit if destinatio not whitelisted.
+        if (!isWhitelisted[_destination]) {
+            _enforceLimit(_spendLimit, _value);
         }
 
-        require(externalCall(destination, value, data.length, data), "executing transaction failed");
+        require(externalCall(_destination, _value, _data.length, _data), "executing transaction failed");
 
+        emit ExecutedTransaction(_destination, _value, _data);
     }
 
-    function bytesToAddress(bytes _bts, uint from) private pure returns (address) {
+    /// @dev This function is taken from the Gnosis MultisigWallet: https://github.com/gnosis/MultiSigWallet/
+    /// @dev License: https://github.com/gnosis/MultiSigWallet/blob/master/LICENSE
+    /// @dev thanks :)
+    /// @dev This calls proxies arbitrary transactions to addresses
+    /// @param _destination address of the transaction 
+    /// @param _value ETH amount in wei
+    /// @param _dataLength length of the transaction data
+    /// @param _data transaction payload binary
+    // call has been separated into its own function in order to take advantage
+    // of the Solidity's code generator to produce a loop that copies tx.data into memory.
+    function externalCall(address _destination, uint _value, uint _dataLength, bytes _data) private returns (bool) {
+        bool result;
+        assembly {
+            let x := mload(0x40)   // "Allocate" memory for output (0x40 is where "free memory" pointer is stored by convention)
+            let d := add(_data, 32) // First 32 bytes are the padded length of data, so exclude that
+            result := call(
+                sub(gas, 34710),   // 34710 is the value that solidity is currently emitting
+                                   // It includes callGas (700) + callVeryLow (3, to pay for SUB) + callValueTransferGas (9000) +
+                                   // callNewAccountGas (25000, in case the destination address does not exist and needs creating)
+                _destination,
+                _value,
+                d,
+                _dataLength,        // Size of the input (in bytes) - this is what fixes the padding problem
+                x,
+                0                  // Output is ignored, therefore the output size is zero
+            )
+        }
+        return result;
+    }
+
+    /// @dev This function converts to an address
+    /// @param _bts bytes
+    /// @param _from start position
+    function bytesToAddress(bytes _bts, uint _from) private pure returns (address) {
+        require(_bts.length >= _from + 20, "slicing out of range");
+
         uint160 m = 0;
         uint160 b = 0;
   
         for (uint8 i = 0; i < 20; i++) {
             m *= 256;
-            b = uint160 (_bts[from+i]);
+            b = uint160 (_bts[_from + i]);
             m += (b);
         }
   
         return address(m);
     }
 
-    function bytesToUint32(bytes _bts, uint from) private pure returns (uint32) {
+    /// @dev This function slicing bytes into uint32
+    /// @param _bts some bytes
+    /// @param _from  a start position
+    function bytesToUint32(bytes _bts, uint _from) private pure returns (uint32) {
+        require(_bts.length >= _from + 4, "slicing out of range");
+
         uint32 m = 0;
         uint32 b = 0;
   
         for (uint8 i = 0; i < 4; i++) {
             m *= 256;
-            b = uint32 (_bts[from+i]);
+            b = uint32 (_bts[_from + i]);
             m += (b);
         }
   
         return m;
     }
 
-    function sliceUint(bytes bs, uint start) private pure returns (uint) {
-        require(bs.length >= start + 32, "slicing out of range");
+    /// @dev This function slices a uint into TODO X
+    /// @param _bts some bytes
+    /// @param _from  a start position
+    // credit to https://ethereum.stackexchange.com/questions/51229/how-to-convert-bytes-to-uint-in-solidity
+    function sliceUint(bytes _bts, uint _from) private pure returns (uint) {
+        require(_bts.length >= _from + 32, "slicing out of range");
+
         uint x;
         assembly {
-            x := mload(add(bs, add(0x20, start)))
+            x := mload(add(_bts, add(0x20, _from)))
         }
-        return x;
-    }
 
-    // call has been separated into its own function in order to take advantage
-    // of the Solidity's code generator to produce a loop that copies tx.data into memory.
-    function externalCall(address destination, uint value, uint dataLength, bytes data) private returns (bool) {
-        bool result;
-        assembly {
-            let x := mload(0x40)   // "Allocate" memory for output (0x40 is where "free memory" pointer is stored by convention)
-            let d := add(data, 32) // First 32 bytes are the padded length of data, so exclude that
-            result := call(
-                sub(gas, 34710),   // 34710 is the value that solidity is currently emitting
-                                   // It includes callGas (700) + callVeryLow (3, to pay for SUB) + callValueTransferGas (9000) +
-                                   // callNewAccountGas (25000, in case the destination address does not exist and needs creating)
-                destination,
-                value,
-                d,
-                dataLength,        // Size of the input (in bytes) - this is what fixes the padding problem
-                x,
-                0                  // Output is ignored, therefore the output size is zero
-            )
-        }
-        return result;
+        return x;
     }
 }
