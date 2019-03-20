@@ -766,7 +766,7 @@ contract Wallet is Vault, GasTopUpLimit, LoadLimit {
         return m;
     }
 
-    /// @dev This function slices a uint into TODO X
+    /// @dev This function slices a uint
     /// @param _bts some bytes
     /// @param _from  a start position
     // credit to https://ethereum.stackexchange.com/questions/51229/how-to-convert-bytes-to-uint-in-solidity
