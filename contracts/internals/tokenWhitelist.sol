@@ -32,6 +32,7 @@ interface ITokenWhitelist {
     function updateTokenRate(address, uint, uint) external;
 }
 
+
 /// @title TokenWhitelist stores a list of tokens used by the Consumer Contract Wallet, the Oracle, and the TKN Licence Contract
 contract TokenWhitelist is Controllable, Ownable {
     using strings for *;
@@ -56,7 +57,7 @@ contract TokenWhitelist is Controllable, Ownable {
 
     modifier onlyControllerOrOracle() {
         address oracleAddress = PublicResolver(_ENS.resolver(_oracleNode)).addr(_oracleNode);
-        require (_isController(msg.sender) || msg.sender == oracleAddress);
+        require (_isController(msg.sender) || msg.sender == oracleAddress, "either oracle or controller");
         _;
     }
 
@@ -64,7 +65,7 @@ contract TokenWhitelist is Controllable, Ownable {
     ENS private _ENS;
 
     /// @dev Address of the Stablecoin.
-    address private _STABLECOIN;
+    address private _stablecoin;
 
     /// @dev Is the registered ENS name of the oracle contract.
     bytes32 private _oracleNode;
@@ -75,7 +76,7 @@ contract TokenWhitelist is Controllable, Ownable {
     constructor(address _ens, bytes32 _oracleName, bytes32 _controllerName, address _owner, bool _transferable, address _stablecoin) Controllable(_ens, _controllerName) Ownable(_owner, _transferable) public {
         _ENS = ENS(_ens);
         _oracleNode = _oracleName;
-        _STABLECOIN = _stablecoin;
+        _stablecoin = _stablecoin;
     }
 
     /// @dev Add ERC20 tokens to the list of supported tokens.
@@ -157,7 +158,7 @@ contract TokenWhitelist is Controllable, Ownable {
     }
 
     function getStablecoinInfo() external view returns (string, uint256, uint256, bool, bool, uint256) {
-        Token storage stablecoinInfo = _tokenInfoMap[_STABLECOIN];
+        Token storage stablecoinInfo = _tokenInfoMap[_stablecoin];
         return (stablecoinInfo.symbol, stablecoinInfo.magnitude, stablecoinInfo.rate, stablecoinInfo.available, stablecoinInfo.loadable, stablecoinInfo.lastUpdate);
     }
 
