@@ -3,6 +3,7 @@ package wallet_test
 import (
 	"context"
 	"math/big"
+	"math"
 
 	"github.com/ethereum/go-ethereum/common"
 	. "github.com/onsi/ginkgo"
@@ -13,16 +14,18 @@ import (
 
 var _ = Describe("wallet load eth", func() {
 
-	When("no value is sent", func() {
 
-		It("Should revert", func() {
-			tx, err := Wallet.LoadTokenCard(Owner.TransactOpts(ethertest.WithGasLimit(100000)), common.HexToAddress("0x0"), big.NewInt(1000))
-			Expect(err).ToNot(HaveOccurred())
-			Backend.Commit()
-			Expect(isGasExhausted(tx, 100000)).To(BeFalse())
-			Expect(isSuccessful(tx)).To(BeFalse())
-		})
-	})
+	// When("no value is sent", func() {
+	//
+	// 	FIt("Should revert", func() {
+	// 		tx, err := Wallet.LoadTokenCard(Owner.TransactOpts(ethertest.WithGasLimit(100000)), common.HexToAddress("0x0"), big.NewInt(1000))
+	// 		Expect(err).ToNot(HaveOccurred())
+	// 		Backend.Commit()
+	// 		Expect(isGasExhausted(tx, 100000)).To(BeFalse())
+	// 		Expect(isSuccessful(tx)).To(BeFalse())
+	// 		Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*_loadLimit.useAmount\(_amount\);`))
+	// 	})
+	// })
 
 	When("not called by the owner", func() {
 
@@ -59,79 +62,149 @@ var _ = Describe("wallet load eth", func() {
 			RandomAccount.MustTransfer(Backend, WalletAddress, EthToWei(102))
 		})
 
-		When("a valid amount is loaded (101 ETH)", func() {
+		When("ETH (0x0) is not in the token whitelist", func() {
+			It("Should revert", func() {
+				tx, err := Wallet.LoadTokenCard(Owner.TransactOpts(ethertest.WithGasLimit(100000)), common.HexToAddress("0x0"), big.NewInt(1000))
+				Expect(err).ToNot(HaveOccurred())
+				Backend.Commit()
+				Expect(isGasExhausted(tx, 100000)).To(BeFalse())
+				Expect(isSuccessful(tx)).To(BeFalse())
+				Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*_isTokenLoadable\(_asset\), "token not loadable"\);`))
+			})
+		})
 
+		When("ETH (0x0) is added to the token whitelist", func() {
 			BeforeEach(func() {
-				tx, err := Wallet.LoadTokenCard(Owner.TransactOpts(), common.HexToAddress("0x0"), EthToWei(101))
+				tx, err := TokenWhitelist.AddTokens(
+					Controller.TransactOpts(),
+					[]common.Address{common.HexToAddress("0x0")},
+					StringsToByte32("ETH"),
+					[]*big.Int{DecimalsToMagnitude(big.NewInt(18))},
+					[]bool{true},
+					big.NewInt(20180913153211),
+				)
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 				Expect(isSuccessful(tx)).To(BeTrue())
 			})
 
-			It("Should emit a TransferredToTokenHolder event", func() {
-				it, err := Licence.FilterTransferredToTokenHolder(nil)
-				Expect(err).ToNot(HaveOccurred())
-				Expect(it.Next()).To(BeTrue())
-				evt := it.Event
-				Expect(it.Next()).To(BeFalse())
-				Expect(evt.From).To(Equal(WalletAddress))
-				Expect(evt.To).To(Equal(TokenHolderAddress))
-				Expect(evt.Asset).To(Equal(common.HexToAddress("0x0"))) //represents ETH
-				Expect(evt.Amount.String()).To(Equal(EthToWei(1).String()))
-			})
+			When("a valid amount is loaded (101 ETH) and the stablecoin rate is 1", func() {
 
-			It("Should emit a TransferredToCryptoFloat event", func() {
-				it, err := Licence.FilterTransferredToCryptoFloat(nil)
-				Expect(err).ToNot(HaveOccurred())
-				Expect(it.Next()).To(BeTrue())
-				evt := it.Event
-				Expect(it.Next()).To(BeFalse())
-				Expect(evt.From).To(Equal(WalletAddress))
-				Expect(evt.To).To(Equal(CryptoFloatAddress))
-				Expect(evt.Asset).To(Equal(common.HexToAddress("0x0"))) //represents ETH
-				Expect(evt.Amount.String()).To(Equal(EthToWei(100).String()))
-			})
+				BeforeEach(func() {
+					tx, err := TokenWhitelist.UpdateTokenRate(
+						Controller.TransactOpts(),
+						StablecoinAddress,
+						EthToWei(1),
+						big.NewInt(20180913153211),
+					)
+					Expect(err).ToNot(HaveOccurred())
+					Backend.Commit()
+					Expect(isSuccessful(tx)).To(BeTrue())
+				})
 
-			It("Should emit a LoadedTokenCard event", func() {
-				it, err := Wallet.FilterLoadedTokenCard(nil)
-				Expect(err).ToNot(HaveOccurred())
-				Expect(it.Next()).To(BeTrue())
-				evt := it.Event
-				Expect(it.Next()).To(BeFalse())
-				Expect(evt.Asset).To(Equal(common.HexToAddress("0x0"))) //represents ETH
-				Expect(evt.Amount.String()).To(Equal(EthToWei(101).String()))
-			})
+				BeforeEach(func() {
+					tx, err := Wallet.LoadTokenCard(Owner.TransactOpts(), common.HexToAddress("0x0"), EthToWei(101))
+					Expect(err).ToNot(HaveOccurred())
+					Backend.Commit()
+					Expect(isSuccessful(tx)).To(BeTrue())
+				})
 
-			It("should increase the ETH balance of the holder contract address by 1 ETH", func() {
-				b, e := Backend.BalanceAt(context.Background(), TokenHolderAddress, nil)
-				Expect(e).ToNot(HaveOccurred())
-				Expect(b.String()).To(Equal(EthToWei(1).String()))
-			})
+				It("Should emit a TransferredToTokenHolder event", func() {
+					it, err := Licence.FilterTransferredToTokenHolder(nil)
+					Expect(err).ToNot(HaveOccurred())
+					Expect(it.Next()).To(BeTrue())
+					evt := it.Event
+					Expect(it.Next()).To(BeFalse())
+					Expect(evt.From).To(Equal(WalletAddress))
+					Expect(evt.To).To(Equal(TokenHolderAddress))
+					Expect(evt.Asset).To(Equal(common.HexToAddress("0x0"))) //represents ETH
+					Expect(evt.Amount.String()).To(Equal(EthToWei(1).String()))
+				})
 
-			It("should increase the ETH balance of the holder contract address by 100 ETH", func() {
-				b, e := Backend.BalanceAt(context.Background(), CryptoFloatAddress, nil)
-				Expect(e).ToNot(HaveOccurred())
-				Expect(b.String()).To(Equal(EthToWei(100).String()))
-			})
-		}) //101 eth are transferred
+				It("Should emit a TransferredToCryptoFloat event", func() {
+					it, err := Licence.FilterTransferredToCryptoFloat(nil)
+					Expect(err).ToNot(HaveOccurred())
+					Expect(it.Next()).To(BeTrue())
+					evt := it.Event
+					Expect(it.Next()).To(BeFalse())
+					Expect(evt.From).To(Equal(WalletAddress))
+					Expect(evt.To).To(Equal(CryptoFloatAddress))
+					Expect(evt.Asset).To(Equal(common.HexToAddress("0x0"))) //represents ETH
+					Expect(evt.Amount.String()).To(Equal(EthToWei(100).String()))
+				})
 
-		When("a bigger amount than daily Load limit is loaded", func() {
+				It("Should emit a LoadedTokenCard event", func() {
+					it, err := Wallet.FilterLoadedTokenCard(nil)
+					Expect(err).ToNot(HaveOccurred())
+					Expect(it.Next()).To(BeTrue())
+					evt := it.Event
+					Expect(it.Next()).To(BeFalse())
+					Expect(evt.Asset).To(Equal(common.HexToAddress("0x0"))) //represents ETH
+					Expect(evt.Amount.String()).To(Equal(EthToWei(101).String()))
+				})
 
-			It("Should revert", func() {
-				limPlusOneWei, err := Wallet.LoadLimit(nil)
-				Expect(err).ToNot(HaveOccurred())
+				It("should increase the ETH balance of the holder contract address by 1 ETH", func() {
+					b, e := Backend.BalanceAt(context.Background(), TokenHolderAddress, nil)
+					Expect(e).ToNot(HaveOccurred())
+					Expect(b.String()).To(Equal(EthToWei(1).String()))
+				})
 
-				limPlusOneWei.Add(limPlusOneWei, big.NewInt(1))
+				It("should increase the ETH balance of the holder contract address by 100 ETH", func() {
+					b, e := Backend.BalanceAt(context.Background(), CryptoFloatAddress, nil)
+					Expect(e).ToNot(HaveOccurred())
+					Expect(b.String()).To(Equal(EthToWei(100).String()))
+				})
+			}) //101 eth are transferred
 
-				tx, err := Wallet.LoadTokenCard(Owner.TransactOpts(ethertest.WithGasLimit(100000)), common.HexToAddress("0x0"), limPlusOneWei)
-				Expect(err).ToNot(HaveOccurred())
-				Backend.Commit()
-				Expect(isGasExhausted(tx, 100000)).To(BeFalse())
-				Expect(isSuccessful(tx)).To(BeFalse())
-				Expect(TestRig.LastExecuted()).To(MatchRegexp(`require\(dl.available >= _amount, "available has to be greater or equal to use amount"\);`))
-			})
+			When("the stablecoin rate is 0.001", func() {
 
-		}) //more daily Load limit
+				BeforeEach(func() {
+					tx, err := TokenWhitelist.UpdateTokenRate(
+						Controller.TransactOpts(),
+						StablecoinAddress,
+						big.NewInt(int64(0.001*math.Pow10(18))),
+						big.NewInt(20180913153211),
+					)
+					Expect(err).ToNot(HaveOccurred())
+					Backend.Commit()
+					Expect(isSuccessful(tx)).To(BeTrue())
+				})
+
+				When("a bigger amount than daily Load limit is loaded", func(){
+
+					It("Should revert", func() {
+						limPlusOneWei := EthToWei(10)
+						limPlusOneWei.Add(limPlusOneWei, big.NewInt(1)) // 10 ETH * 1000 + 1= 10,001 stablecoins
+						tx, err := Wallet.LoadTokenCard(Owner.TransactOpts(ethertest.WithGasLimit(100000)), common.HexToAddress("0x0"), limPlusOneWei)
+						Expect(err).ToNot(HaveOccurred())
+						Backend.Commit()
+						Expect(isGasExhausted(tx, 100000)).To(BeFalse())
+						Expect(isSuccessful(tx)).To(BeFalse())
+						Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*_loadLimit.useAmount\(stablecoinValue\);`))
+					})
+			}) //more daily Load limit
+
+			When("the precise amount of the daily Load limit is loaded", func(){
+
+				It("Should return 10000", func() {
+					value, err := Wallet.ConvertToStablecoin(nil, common.HexToAddress("0x0"), EthToWei(10))
+					Expect(err).ToNot(HaveOccurred())
+					finalAmount := EthToWei(10)
+					finalAmount.Mul(finalAmount, big.NewInt(1000))
+					Expect(value.String()).To(Equal(finalAmount.String()))
+				})
+
+				It("Should succeed", func() {
+					tx, err := Wallet.LoadTokenCard(Owner.TransactOpts(), common.HexToAddress("0x0"), EthToWei(10))
+					Expect(err).ToNot(HaveOccurred())
+					Backend.Commit()
+					Expect(isSuccessful(tx)).To(BeTrue())
+				})
+		}) //amount = loadLimit
+
+		}) //stablecoin rate is 0.001
+
+		}) //0x0 added to whitelist
 
 	}) //102 eth are sent to the wallet
 

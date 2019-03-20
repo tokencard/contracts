@@ -37,6 +37,7 @@ var _ = Describe("ownable", func() {
 		})
 	})
 	Context("When a contract without transferable ownership has been deployed", func() {
+
 		BeforeEach(func() {
 			var err error
 			var tx *types.Transaction
@@ -46,7 +47,7 @@ var _ = Describe("ownable", func() {
 				Owner.Address(),
 				false,
 				ENSRegistryAddress,
-				OracleName,
+				TokenWhitelistName,
 				ControllerName,
 				LicenceName,
 				EthToWei(100),

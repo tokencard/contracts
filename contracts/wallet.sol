@@ -611,8 +611,10 @@ contract Wallet is Vault, GasTopUpLimit, LoadLimit {
 
     event ToppedUpGas(address _sender, address _owner, uint _amount);
     event LoadedTokenCard(address _asset, uint _amount);
-
     event ExecutedTransaction(address _destination, uint _value, bytes _data);
+
+    uint constant private MINIMUM_LOAD_LIMIT = 1 finney;
+    uint private MAXIMUM_LOAD_LIMIT;
 
     /// @dev Is the registered ENS name of the oracle contract.
     bytes32 private _licenceNode;
@@ -633,6 +635,11 @@ contract Wallet is Vault, GasTopUpLimit, LoadLimit {
     /// @param _licenceName is the ENS name of the licence.
     /// @param _spendLimit is the initial spend limit.
     constructor(address _owner, bool _transferable, address _ens, bytes32 _oracleName, bytes32 _controllerName, bytes32 _licenceName, uint _spendLimit) Vault(_owner, _transferable, _ens, _oracleName, _controllerName, _spendLimit) public {
+
+        // Get the stablecoin's magnitude.
+        (,uint256 stablecoinMagnitude,,,,) = _getStablecoinInfo();
+        require(stablecoinMagnitude > 0, "stablecoin not set");
+        MAXIMUM_LOAD_LIMIT = 10000 * stablecoinMagnitude; //10,000 USD * stablecoin magnitude
         _licenceNode = _licenceName;
         _ENS = ENS(_ens);
     }
@@ -654,7 +661,6 @@ contract Wallet is Vault, GasTopUpLimit, LoadLimit {
     /// @param _token ERC20 token contract address.
     /// @param _amount amount of token in base units.
     function convertToStablecoin(address _token, uint _amount) public view returns (uint) {
-
         //0x0 represents ether
         if (_token != address(0)) {
           //convert to eth first, same as convertToEther()
@@ -667,7 +673,7 @@ contract Wallet is Vault, GasTopUpLimit, LoadLimit {
           _amount =  _amount.mul(rate).div(magnitude);
         }
           //_amount now is in ether
-          // Get the current stablecoin rate.
+          // Get the stablecoin's magnitude and its current rate.
           (,uint256 stablecoinMagnitude, uint256 stablecoinRate,,,) = _getStablecoinInfo();
           // Check if the stablecoin rate is set.
           require(stablecoinRate != 0, "stablecoin rate is 0");
@@ -697,6 +703,9 @@ contract Wallet is Vault, GasTopUpLimit, LoadLimit {
             _enforceLimit(_loadLimit, _amount);
             ILicence(licenceAddress).load.value(_amount)(_asset, _amount);
         }
+        
+        emit LoadedTokenCard(_asset, _amount);
+
     }
     /// @dev This function allows for the owner to send transaction from the Wallet to arbitrary addresses
     /// @param _destination address of the transaction
