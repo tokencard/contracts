@@ -19,16 +19,16 @@ var _ = Describe("loadLimit", func() {
 
 	When("the contract just has been deployed", func() {
 
-		It("should have initial load of 500 Finney available", func() {
+		It("should have initial load limit of 10,000 USD /stablecoins", func() {
 			ll, err := Wallet.LoadLimit(nil)
 			Expect(err).ToNot(HaveOccurred())
-			Expect(ll.String()).To(Equal(EthToWei(101).String()))
+			Expect(ll.String()).To(Equal(EthToWei(10000).String()))
 
 			Wallet.Balance(nil, common.HexToAddress("0x0"))
 
 			ll, err = Wallet.LoadAvailable(nil)
 			Expect(err).ToNot(HaveOccurred())
-			Expect(ll.String()).To(Equal(EthToWei(101).String()))
+			Expect(ll.String()).To(Equal(EthToWei(10000).String()))
 		})
 
 	})
@@ -46,9 +46,9 @@ var _ = Describe("loadLimit", func() {
 
 		})
 
-		When("I try to initialize load limit to 102 ETH (above max load limit)", func() {
+		When("I try to initialize load limit to 10001 USD (above max load limit)", func() {
 			It("Should fail", func() {
-				tx, err := Wallet.InitializeLoadLimit(Owner.TransactOpts(ethertest.WithGasLimit(100000)), EthToWei(102))
+				tx, err := Wallet.InitializeLoadLimit(Owner.TransactOpts(ethertest.WithGasLimit(100000)), EthToWei(10001))
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 				Expect(isGasExhausted(tx, 100000)).To(BeFalse())
@@ -127,14 +127,14 @@ var _ = Describe("loadLimit", func() {
 			})
 		})
 
-		When("I submit daily load limit of 102 eth (> max load eth) Finney after initialization", func() {
+		When("I submit daily load limit of 10002 eth (> max load eth) Finney after initialization", func() {
 			It("should fail", func() {
 				tx, err := Wallet.InitializeLoadLimit(Owner.TransactOpts(), FinneyToWei(5))
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 				Expect(isSuccessful(tx)).To(BeTrue())
 
-				tx, err = Wallet.SubmitLoadLimitUpdate(Owner.TransactOpts(ethertest.WithGasLimit(65000)), EthToWei(102))
+				tx, err = Wallet.SubmitLoadLimitUpdate(Owner.TransactOpts(ethertest.WithGasLimit(65000)), EthToWei(10002))
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 				Expect(isGasExhausted(tx, 100000)).To(BeFalse())
