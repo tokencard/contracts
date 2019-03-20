@@ -614,7 +614,7 @@ contract Wallet is Vault, GasTopUpLimit, LoadLimit {
     event ExecutedTransaction(address _destination, uint _value, bytes _data);
 
     uint constant private MINIMUM_LOAD_LIMIT = 1 finney;
-    uint constant private DEFAULT_MAX_STABLECOIN_LOAD_LIMIT = 10000;
+    uint constant private DEFAULT_MAX_STABLECOIN_LOAD_LIMIT = 10000; //10,000 USD
     uint private _maximum_load_limit;
 
     /// @dev Is the registered ENS name of the oracle contract.
