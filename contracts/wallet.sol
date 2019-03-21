@@ -587,22 +587,6 @@ contract Vault is Whitelist, SpendLimit, ERC165, TokenWhitelistable {
         return interfaceID == _ERC165_INTERFACE_ID;
     }
 
-    /// @dev Convert ERC20 token amount to the corresponding ether amount (used by the wallet contract).
-    /// @param _token ERC20 token contract address.
-    /// @param _amount amount of token in base units.
-    function convert(address _token, uint _amount) public view returns (uint) {
-        // Store the token in memory to save map entry lookup gas.
-        ( , uint256 magnitude, uint256 rate, bool available, , ) = _getTokenInfo(_token);
-        // If the token exists require that its rate is not zero
-        if (available) {
-            require(rate != 0, "token rate is 0");
-            // Safely convert the token amount to ether based on the exchange rate.
-            // return the value, the token is, AT LEAST, protected
-            return _amount.mul(rate).div(magnitude);
-        }
-        // this returns a 0/'false' to imply that the token is not protected
-        return 0;
-    }
 }
 
 
@@ -679,7 +663,7 @@ contract Wallet is Vault, GasTopUpLimit, LoadLimit {
           // Check if the stablecoin rate is set.
           require(stablecoinAvailable, "token is not available");
           require(stablecoinRate != 0, "stablecoin rate is 0");
-          // Safely convert the token amount to ether based on its exchange rate and the stablecoin exchange rate.
+          // Safely convert the token amount to stablecoin based on its exchange rate and the stablecoin exchange rate.
           return _amount.mul(stablecoinMagnitude).div(stablecoinRate);
     }
 
@@ -688,21 +672,18 @@ contract Wallet is Vault, GasTopUpLimit, LoadLimit {
     /// @param _asset is the address of an ERC20 token or 0x0 for ether.
     /// @param _amount is the amount of assets to be transferred in base units.
     function loadTokenCard(address _asset, uint _amount) external payable onlyOwner {
+        //check if token is allowed to be used for loading the card
+        require(_isTokenLoadable(_asset), "token not loadable");
+        // Convert token amount to stablecoin value.
+        uint stablecoinValue = convertToStablecoin(_asset, _amount);
+        // Check against the daily spent limit and update accordingly, require that the value is under remaining limit.
+        _enforceLimit(_loadLimit, stablecoinValue);
         // Get the TKN licenceAddress from ENS
         address licenceAddress = PublicResolver(_ENS.resolver(_licenceNode)).addr(_licenceNode);
-
         if (_asset != address(0)) {
-            //check if token is allowed to be used for loading the card
-            require(_isTokenLoadable(_asset), "token not loadable");
-            // Convert token amount to ether value.
-            uint stablecoinValue = convertToStablecoin(_asset, _amount);
-            // Check against the daily spent limit and update accordingly, require that the value is under remaining limit.
-            _enforceLimit(_loadLimit, stablecoinValue);
             require(ERC20(_asset).approve(licenceAddress, _amount), "ERC20 token approval was unsuccessful");
             ILicence(licenceAddress).load(_asset, _amount);
         } else {
-            //_amount is in wei, require that the value is under remaining limit.
-            _enforceLimit(_loadLimit, _amount);
             ILicence(licenceAddress).load.value(_amount)(_asset, _amount);
         }
 
