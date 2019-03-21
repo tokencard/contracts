@@ -1,3 +1,4 @@
 *.abi linguist-generated=true
 *.bin linguist-generated=true
 combined.json linguist-generated=true
+/pkg/bindings/**/* linguist-generated=true
