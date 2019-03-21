@@ -206,7 +206,7 @@ var _ = Describe("wallet load eth", func() {
 						Backend.Commit()
 						Expect(isGasExhausted(tx, 100000)).To(BeFalse())
 						Expect(isSuccessful(tx)).To(BeFalse())
-						Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*_loadLimit.useAmount\(stablecoinValue\);`))
+						Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*require\(dl.available >= _amount, "available has to be greater or equal to use amount"\);`))
 					})
 			}) //more daily Load limit
 
