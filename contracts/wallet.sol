@@ -434,19 +434,21 @@ contract LoadLimit is Controllable, Ownable, DailyLimitTrait {
     event CancelledLoadLimitUpdate(address _sender, uint _amount);
 
     uint constant private _MINIMUM_LOAD_LIMIT = 1 finney;
-    uint constant private _MAXIMUM_LOAD_LIMIT = 101 ether;
+    uint private _maximumLoadLimit;
 
     DailyLimit internal _loadLimit;
 
-    /// @dev Constructor initializes the daily spend limit in wei.
-    constructor() internal {
-        _loadLimit = DailyLimit(_MAXIMUM_LOAD_LIMIT, _MAXIMUM_LOAD_LIMIT, now, 0, false, false);
+    /// @dev initializes the daily spend limit in wei.
+    /// @param _maxLimit is the maximum load limit amount in USD/stablecoin.
+    function setLoadLimitStruct(uint _maxLimit) internal {
+        _maximumLoadLimit = _maxLimit;
+        _loadLimit = DailyLimit(_maximumLoadLimit, _maximumLoadLimit, now, 0, false, false);
     }
 
     /// @dev Initialize a daily card load limit.
     /// @param _amount is the card load amount in wei.
     function initializeLoadLimit(uint _amount) external onlyOwner {
-        require(_MINIMUM_LOAD_LIMIT <= _amount && _amount <= _MAXIMUM_LOAD_LIMIT, "card load amount is outside the min/max range");
+        require(_MINIMUM_LOAD_LIMIT <= _amount && _amount <= _maximumLoadLimit, "card load amount is outside the min/max range");
         _initializeLimit(_loadLimit, _amount);
         emit SetLoadLimit(msg.sender, _amount);
     }
@@ -454,7 +456,7 @@ contract LoadLimit is Controllable, Ownable, DailyLimitTrait {
     /// @dev Set a daily load limit.
     /// @param _amount is the daily load limit amount in wei.
     function submitLoadLimitUpdate(uint _amount) external onlyOwner {
-        require(_MINIMUM_LOAD_LIMIT <= _amount && _amount <= _MAXIMUM_LOAD_LIMIT, "card load amount is outside the min/max range");
+        require(_MINIMUM_LOAD_LIMIT <= _amount && _amount <= _maximumLoadLimit, "card load amount is outside the min/max range");
         _submitLimitUpdate(_loadLimit, _amount);
         emit SubmittedLoadLimitUpdate(_amount);
     }
@@ -597,9 +599,7 @@ contract Wallet is Vault, GasTopUpLimit, LoadLimit {
     event LoadedTokenCard(address _asset, uint _amount);
     event ExecutedTransaction(address _destination, uint _value, bytes _data);
 
-    uint constant private MINIMUM_LOAD_LIMIT = 1 finney;
     uint constant private DEFAULT_MAX_STABLECOIN_LOAD_LIMIT = 10000; //10,000 USD
-    uint private _maximum_load_limit;
 
     /// @dev Is the registered ENS name of the oracle contract.
     bytes32 private _licenceNode;
@@ -624,7 +624,7 @@ contract Wallet is Vault, GasTopUpLimit, LoadLimit {
         // Get the stablecoin's magnitude.
         (,uint256 stablecoinMagnitude,,,,) = _getStablecoinInfo();
         require(stablecoinMagnitude > 0, "stablecoin not set");
-        _maximum_load_limit = DEFAULT_MAX_STABLECOIN_LOAD_LIMIT * stablecoinMagnitude; //10,000 USD * stablecoin magnitude
+        setLoadLimitStruct(DEFAULT_MAX_STABLECOIN_LOAD_LIMIT * stablecoinMagnitude);
         _licenceNode = _licenceName;
         _ENS = ENS(_ens);
     }
@@ -712,7 +712,7 @@ contract Wallet is Vault, GasTopUpLimit, LoadLimit {
                 if (!isWhitelisted[toOrSpender]) {
                     // If the address (of the token contract, e.g) is not in the TokenWhitelist used by
                     // the convert method, then etherValue will be zero
-                    uint etherValue = convert(_destination, amount);
+                    uint etherValue = convertToEther(_destination, amount);
                     _enforceLimit(_spendLimit, etherValue);
                 }
             }
