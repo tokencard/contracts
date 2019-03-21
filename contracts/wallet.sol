@@ -438,13 +438,6 @@ contract LoadLimit is Controllable, Ownable, DailyLimitTrait {
 
     DailyLimit internal _loadLimit;
 
-    /// @dev initializes the daily spend limit in wei.
-    /// @param _maxLimit is the maximum load limit amount in USD/stablecoin.
-    function setLoadLimitStruct(uint _maxLimit) internal {
-        _maximumLoadLimit = _maxLimit;
-        _loadLimit = DailyLimit(_maximumLoadLimit, _maximumLoadLimit, now, 0, false, false);
-    }
-
     /// @dev Initialize a daily card load limit.
     /// @param _amount is the card load amount in wei.
     function initializeLoadLimit(uint _amount) external onlyOwner {
@@ -491,6 +484,13 @@ contract LoadLimit is Controllable, Ownable, DailyLimitTrait {
 
     function pendingLoadLimit() public view returns (uint) {
         return _loadLimit.pending;
+    }
+
+    /// @dev initializes the daily spend limit in wei.
+    /// @param _maxLimit is the maximum load limit amount in USD/stablecoin.
+    function _setLoadLimitStruct(uint _maxLimit) internal {
+        _maximumLoadLimit = _maxLimit;
+        _loadLimit = DailyLimit(_maximumLoadLimit, _maximumLoadLimit, now, 0, false, false);
     }
 }
 
@@ -624,7 +624,7 @@ contract Wallet is Vault, GasTopUpLimit, LoadLimit {
         // Get the stablecoin's magnitude.
         (,uint256 stablecoinMagnitude,,,,) = _getStablecoinInfo();
         require(stablecoinMagnitude > 0, "stablecoin not set");
-        setLoadLimitStruct(DEFAULT_MAX_STABLECOIN_LOAD_LIMIT * stablecoinMagnitude);
+        _setLoadLimitStruct(DEFAULT_MAX_STABLECOIN_LOAD_LIMIT * stablecoinMagnitude);
         _licenceNode = _licenceName;
         _ENS = ENS(_ens);
     }
