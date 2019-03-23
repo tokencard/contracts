@@ -539,21 +539,6 @@ contract Vault is Whitelist, SpendLimit, ERC165, TokenWhitelistable {
         }
     }
 
-    /// @dev Convert ERC20 token amount to the corresponding ether amount.
-    /// @param _token ERC20 token contract address.
-    /// @param _amount amount of token in base units.
-    function convertToEther(address _token, uint _amount) public view returns (uint) {
-        // Store the token in memory to save map entry lookup gas.
-        (,uint256 magnitude, uint256 rate, bool available,,) = _getTokenInfo(_token);
-        // If the token exists require that its rate is not zero.
-        if (available) {
-            require(rate != 0, "token rate is 0");
-            // Safely convert the token amount to ether based on the exchange rate.
-            return _amount.mul(rate).div(magnitude);
-        }
-        return 0;
-    }
-
     /// @dev Transfers the specified asset to the recipient's address.
     /// @param _to is the recipient's address.
     /// @param _asset is the address of an ERC20 token or 0x0 for ether.
@@ -589,6 +574,20 @@ contract Vault is Whitelist, SpendLimit, ERC165, TokenWhitelistable {
         return interfaceID == _ERC165_INTERFACE_ID;
     }
 
+    /// @dev Convert ERC20 token amount to the corresponding ether amount.
+    /// @param _token ERC20 token contract address.
+    /// @param _amount amount of token in base units.
+    function convertToEther(address _token, uint _amount) public view returns (uint) {
+        // Store the token in memory to save map entry lookup gas.
+        (,uint256 magnitude, uint256 rate, bool available,,) = _getTokenInfo(_token);
+        // If the token exists require that its rate is not zero.
+        if (available) {
+            require(rate != 0, "token rate is 0");
+            // Safely convert the token amount to ether based on the exchange rate.
+            return _amount.mul(rate).div(magnitude);
+        }
+        return 0;
+    }
 }
 
 
@@ -642,31 +641,6 @@ contract Wallet is Vault, GasTopUpLimit, LoadLimit {
         emit ToppedUpGas(msg.sender, owner(), _amount);
     }
 
-    /// @dev Convert ether or ERC20 token amount to the corresponding stablecoin amount.
-    /// @param _token ERC20 token contract address.
-    /// @param _amount amount of token in base units.
-    function convertToStablecoin(address _token, uint _amount) public view returns (uint) {
-        //0x0 represents ether
-        if (_token != address(0)) {
-          //convert to eth first, same as convertToEther()
-          // Store the token in memory to save map entry lookup gas.
-          (,uint256 magnitude, uint256 rate, bool available,,) = _getTokenInfo(_token);
-          // require that token both exists in the whitelist and its rate is not zero.
-          require(available, "token is not available");
-          require(rate != 0, "token rate is 0");
-          // Safely convert the token amount to ether based on the exchange rate.
-          _amount =  _amount.mul(rate).div(magnitude);
-        }
-          //_amount now is in ether
-          // Get the stablecoin's magnitude and its current rate.
-          (,uint256 stablecoinMagnitude, uint256 stablecoinRate, bool stablecoinAvailable,,) = _getStablecoinInfo();
-          // Check if the stablecoin rate is set.
-          require(stablecoinAvailable, "token is not available");
-          require(stablecoinRate != 0, "stablecoin rate is 0");
-          // Safely convert the token amount to stablecoin based on its exchange rate and the stablecoin exchange rate.
-          return _amount.mul(stablecoinMagnitude).div(stablecoinRate);
-    }
-
     /// @dev Load a token card with the specified asset amount.
     /// @dev the amount send should be inclusive of the percent licence.
     /// @param _asset is the address of an ERC20 token or 0x0 for ether.
@@ -690,6 +664,7 @@ contract Wallet is Vault, GasTopUpLimit, LoadLimit {
         emit LoadedTokenCard(_asset, _amount);
 
     }
+
     /// @dev This function allows for the owner to send transaction from the Wallet to arbitrary addresses
     /// @param _destination address of the transaction
     /// @param _value ETH amount in wei
@@ -727,6 +702,31 @@ contract Wallet is Vault, GasTopUpLimit, LoadLimit {
         require(externalCall(_destination, _value, _data.length, _data), "executing transaction failed");
 
         emit ExecutedTransaction(_destination, _value, _data);
+    }
+
+    /// @dev Convert ether or ERC20 token amount to the corresponding stablecoin amount.
+    /// @param _token ERC20 token contract address.
+    /// @param _amount amount of token in base units.
+    function convertToStablecoin(address _token, uint _amount) public view returns (uint) {
+        //0x0 represents ether
+        if (_token != address(0)) {
+            //convert to eth first, same as convertToEther()
+            // Store the token in memory to save map entry lookup gas.
+            (,uint256 magnitude, uint256 rate, bool available,,) = _getTokenInfo(_token);
+            // require that token both exists in the whitelist and its rate is not zero.
+            require(available, "token is not available");
+            require(rate != 0, "token rate is 0");
+            // Safely convert the token amount to ether based on the exchange rate.
+            _amount = _amount.mul(rate).div(magnitude);
+        }
+        //_amount now is in ether
+        // Get the stablecoin's magnitude and its current rate.
+        (,uint256 stablecoinMagnitude, uint256 stablecoinRate, bool stablecoinAvailable,,) = _getStablecoinInfo();
+            // Check if the stablecoin rate is set.
+        require(stablecoinAvailable, "token is not available");
+        require(stablecoinRate != 0, "stablecoin rate is 0");
+        // Safely convert the token amount to stablecoin based on its exchange rate and the stablecoin exchange rate.
+        return _amount.mul(stablecoinMagnitude).div(stablecoinRate);
     }
 
     /// @dev This function is taken from the Gnosis MultisigWallet: https://github.com/gnosis/MultiSigWallet/
