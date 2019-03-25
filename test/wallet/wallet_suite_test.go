@@ -47,7 +47,7 @@ var _ = AfterEach(func() {
 
 var _ = AfterSuite(func() {
 	if allPassed {
-		TestRig.ExpectMinimumCoverage("wallet.sol", 99.90)		
+		TestRig.ExpectMinimumCoverage("wallet.sol", 99.90)
 		TestRig.PrintGasUsage(os.Stdout)
 	}
 })
@@ -67,12 +67,3 @@ var _ = AfterEach(func() {
 	err := Backend.Close()
 	Expect(err).ToNot(HaveOccurred())
 })
-
-func isGasExhausted(tx *types.Transaction, gasLimit uint64) bool {
-	r, err := Backend.TransactionReceipt(context.Background(), tx.Hash())
-	Expect(err).ToNot(HaveOccurred())
-	if r.Status == types.ReceiptStatusSuccessful {
-		return false
-	}
-	return r.GasUsed == gasLimit
-}

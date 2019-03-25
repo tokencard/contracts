@@ -236,7 +236,6 @@ var _ = Describe("GasTopUpLimit", func() {
 			When("the controller cancels the limit change with wrong amount", func() {
 				var txSuccessful bool
 				var tx *types.Transaction
-				var err error
 				BeforeEach(func() {
 					tx, err := Wallet.CancelGasTopUpLimitUpdate(Controller.TransactOpts(ethertest.WithGasLimit(100000)), FinneyToWei(2))
 					Expect(err).ToNot(HaveOccurred())

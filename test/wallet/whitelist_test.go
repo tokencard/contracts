@@ -188,7 +188,7 @@ var _ = Describe("whitelistAddition", func() {
 			evt := it.Event
 			Expect(it.Next()).To(BeFalse())
 			Expect(evt.Addresses).To(Equal([]common.Address{RandomAccount.Address()}))
-			hash, err := Wallet.PendingWhitelistHash(nil, []common.Address{RandomAccount.Address()})
+			hash, err := Wallet.CalculateHash(nil, []common.Address{RandomAccount.Address()})
 			Expect(it.Next()).To(BeFalse())
 			Expect(evt.Hash).To(Equal(hash))
 		})
@@ -413,7 +413,7 @@ var _ = Describe("whitelistRemoval", func() {
 				Expect(evt.Addresses).To(Equal([]common.Address{RandomAccount.Address()}))
 				pwl, err := Wallet.PendingWhitelistRemoval(nil)
 				Expect(err).ToNot(HaveOccurred())
-				hash, err := Wallet.PendingWhitelistHash(nil, pwl)
+				hash, err := Wallet.CalculateHash(nil, pwl)
 				Expect(err).ToNot(HaveOccurred())
 				Expect(evt.Hash).To(Equal(hash))
 			})
