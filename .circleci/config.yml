@@ -34,18 +34,10 @@ jobs:
     steps:
       - checkout
       # TODO:(daniel) Reduced the max depth which makes the tests not time out, but also doesn't show as many warnings, might have to re-visit this.
-      - run:
-          command: myth --max-depth=12 -x ./contracts/wallet.sol
-            timeout: 1200
-      - run:
-          command: myth --max-depth=12 -x ./contracts/oracle.sol
-            timeout: 1200
-      - run: 
-          command: myth --max-depth=12 -x ./contracts/licence.sol
-            timeout: 1200
-      - run: 
-          command: myth --max-depth=12 -x ./contracts/holder.sol
-            timeout: 1200
+      - run: myth --max-depth=12 -x ./contracts/wallet.sol
+      - run: myth --max-depth=12 -x ./contracts/oracle.sol
+      - run: myth --max-depth=12 -x ./contracts/licence.sol
+      - run: myth --max-depth=12 -x ./contracts/holder.sol
 
   snyk_check:
     docker:
