@@ -239,7 +239,7 @@ func InitializeBackend() error {
 		return errors.Wrap(err, "deploying Stablecoin token contract")
 	}
 
-	ControllerContractAddress, tx, ControllerContract, err = internals.DeployController(BankAccount.TransactOpts(), Backend, BankAccount.Address(), false)
+	ControllerContractAddress, tx, ControllerContract, err = internals.DeployController(BankAccount.TransactOpts(), Backend, ControllerOwner.Address(), false)
 	if err != nil {
 		return err
 	}
