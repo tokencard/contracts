@@ -10,7 +10,10 @@ jobs:
           keys:
           - vendor-{{ checksum "go.sum" }}
       - run: go mod vendor
-      - run: go test -v ./...
+      - run: 
+          command: go test -v ./...
+          no_output_timeout: 30m
+
       - save_cache:
           key: vendor-{{ checksum "go.sum" }}
           paths:
@@ -29,15 +32,22 @@ jobs:
 
   mythril:
     docker:
-      - image: mythril/myth:0.18.12
+      - image: mythril/myth:0.19.3
     working_directory: /src
     steps:
       - checkout
-      # TODO:(daniel) Reduced the max depth which makes the tests not time out, but also doesn't show as many warnings, might have to re-visit this.
-      - run: myth --max-depth=12 -x ./contracts/wallet.sol
-      - run: myth --max-depth=12 -x ./contracts/oracle.sol
-      - run: myth --max-depth=12 -x ./contracts/licence.sol
-      - run: myth --max-depth=12 -x ./contracts/holder.sol
+      - run:
+          command: myth -x ./contracts/oracle.sol
+          no_output_timeout: 30m
+      - run:
+          command: myth -x ./contracts/wallet.sol
+          no_output_timeout: 30m
+      - run:
+          command: myth -x ./contracts/license.sol
+          no_output_timeout: 30m
+      - run:
+          command: myth -x ./contracts/holder.sol
+          no_output_timeout: 30m
 
   snyk_check:
     docker:
