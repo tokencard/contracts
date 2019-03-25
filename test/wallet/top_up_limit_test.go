@@ -237,7 +237,8 @@ var _ = Describe("GasTopUpLimit", func() {
 				var txSuccessful bool
 				var tx *types.Transaction
 				BeforeEach(func() {
-					tx, err := Wallet.CancelGasTopUpLimitUpdate(Controller.TransactOpts(ethertest.WithGasLimit(100000)), FinneyToWei(2))
+					var err error
+					tx, err = Wallet.CancelGasTopUpLimitUpdate(Controller.TransactOpts(ethertest.WithGasLimit(100000)), FinneyToWei(2))
 					Expect(err).ToNot(HaveOccurred())
 					Backend.Commit()
 					txSuccessful = isSuccessful(tx)
