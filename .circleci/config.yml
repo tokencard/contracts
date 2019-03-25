@@ -2,7 +2,7 @@ version: 2
 jobs:
   build_test:
     docker:
-      - image: quay.io/token/go-build:v0.3.0
+      - image: quay.io/token/go-build:v0.3.3
     working_directory: /home/circleci/github.com/tokencard/contracts
     steps:
       - checkout
@@ -51,7 +51,7 @@ jobs:
 
   snyk_check:
     docker:
-      - image: quay.io/token/go-build:v0.3.0
+      - image: quay.io/token/go-build:v0.3.3
     working_directory: /go/src/github.com/tokencard/contracts
     steps:
       - checkout
