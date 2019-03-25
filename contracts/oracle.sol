@@ -104,6 +104,11 @@ contract Oracle is usingOraclize, Claimable, Base64, Date, JSON, Controllable, P
         _to.transfer(_amount);
     }
 
+    //// @dev Withdraw tokens from the smart contract to the specified account.
+    function claim(address _to, address _asset, uint _amount) external onlyController {
+        _claim(_to, _asset, _amount);
+    }
+
     //// @dev Handle Oraclize query callback and verifiy the provided origin proof.
     //// @param _queryID Oraclize query ID.
     //// @param _result query result in JSON format.
@@ -311,4 +316,5 @@ contract Oracle is usingOraclize, Claimable, Base64, Date, JSON, Controllable, P
 
         return (timestamp > _lastUpdate, timestamp);
     }
+
 }

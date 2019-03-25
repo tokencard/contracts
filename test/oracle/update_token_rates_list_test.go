@@ -17,11 +17,12 @@ var _ = Describe("updateRatesList", func() {
 	Context("When tokens are already supported", func() {
 		BeforeEach(func() {
 			tokens := []common.Address{common.HexToAddress("0x0"), common.HexToAddress("0x1"), common.HexToAddress("0x2")}
-			tx, err := Oracle.AddTokens(
+			tx, err := TokenWhitelist.AddTokens(
 				Controller.TransactOpts(),
 				tokens,
 				StringsToByte32("BNT", "TKN", "DGX"),
 				[]*big.Int{DecimalsToMagnitude(big.NewInt(18)), DecimalsToMagnitude(big.NewInt(8)), DecimalsToMagnitude(big.NewInt(18))},
+				[]bool{false, true, false},
 				big.NewInt(20180913153211),
 			)
 			Expect(err).ToNot(HaveOccurred())
@@ -56,7 +57,7 @@ var _ = Describe("updateRatesList", func() {
 				Expect(err).ToNot(HaveOccurred())
 				Expect(b.String()).NotTo(Equal("0"))
 				newbalance := new(big.Int).Sub(big.NewInt(100000000), big.NewInt(2000000)) //10^6 is the mock price of the Oraclize query (x2 queries)
-    		Expect(b.String()).To(Equal(newbalance.String()))
+				Expect(b.String()).To(Equal(newbalance.String()))
 
 				Expect(b.String()).To(Equal(newbalance.String()))
 			})

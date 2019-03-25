@@ -6,11 +6,11 @@ import (
 
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
-	"golang.org/x/crypto/sha3"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	. "github.com/tokencard/contracts/test/shared"
 	"github.com/tokencard/ethertest"
+	"golang.org/x/crypto/sha3"
 )
 
 func stringToQueryId(url string) [32]byte {
@@ -70,7 +70,7 @@ var _ = Describe("callback", func() {
 							BeforeEach(func() {
 								proof := common.Hex2Bytes("0041ed930d0cf64c73b82c3a04b958f2d27572c09ef7faacb14f062b2ce63eb78331a885fda74e113383ead579337b7e02cc414a214c3bd210142628087dcf5ded781c0060646174653a205765642c203033204f637420323031382031373a30303a323220474d540a6469676573743a205348412d3235363d36514d48744c664e677576362b63795a6133376d68513962776f394449482f6451672f54715a34467453383d")
 								tx, err = Oracle.Callback(OraclizeConnectorOwner.TransactOpts(), id, "{\"ETH\":0.001702}", proof)
- 								Expect(err).ToNot(HaveOccurred())
+								Expect(err).ToNot(HaveOccurred())
 								Backend.Commit()
 							})
 							It("Should succeed", func() {
@@ -126,10 +126,10 @@ var _ = Describe("callback", func() {
 
 							BeforeEach(func() {
 								proof := common.Hex2Bytes("0041ed930d0cf64c73b82c3a04b958f2d27572c09ef7faacb14f062b2ce63eb78331a885fda74e113383ead579337b7e02cc414a214c3bd210142628087dcf5ded781c0060646174653a205765642c203033204f637420323031382031373a30303a323220474d540a6469676573743a205348412d3235363d36514d48744c664e677576362b63795a6133376d68513962776f394449482f6451672f54715a34467453383d")
-								tx, err = Oracle.Callback(OraclizeConnectorOwner.TransactOpts(ethertest.WithGasLimit(100000)), id, "{\"ETH\":0.001702}", proof)
- 								Expect(err).ToNot(HaveOccurred())
+								tx, err = Oracle.Callback(OraclizeConnectorOwner.TransactOpts(ethertest.WithGasLimit(200000)), id, "{\"ETH\":0.001702}", proof)
+								Expect(err).ToNot(HaveOccurred())
 								Backend.Commit()
-								Expect(isGasExhausted(tx, 100000)).To(BeFalse())
+								Expect(isGasExhausted(tx, 200000)).To(BeFalse())
 								Expect(isSuccessful(tx)).To(BeFalse())
 								Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*require\(available, "token must be available"\);`))
 							})
@@ -157,7 +157,6 @@ var _ = Describe("callback", func() {
 								Expect(lastUpdate.String()).To(Equal("0"))
 							})
 						})
-
 
 						Context("When the result is is misformated", func() {
 
