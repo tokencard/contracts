@@ -3,14 +3,16 @@ jobs:
   build_test:
     docker:
       - image: quay.io/token/go-build:v0.3.3
-        environment:
-          GO111MODULE: on
     working_directory: /home/circleci/github.com/tokencard/contracts
     steps:
       - checkout
       - restore_cache:
           keys:
           - vendor-{{ checksum "go.sum" }}
+      - run: 
+          name: "Setup custom environment variables"
+          command: |
+            echo 'export GO111MODULE="on"' >> $BASH_ENV # Redirect MY_ENV_VAR into $BASH_ENV
       - run: go mod vendor
       - run: 
           command: go test -v ./test/...
