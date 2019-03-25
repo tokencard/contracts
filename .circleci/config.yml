@@ -11,7 +11,7 @@ jobs:
           - vendor-{{ checksum "go.sum" }}
       - run: go mod vendor
       - run: 
-          command: go test -v ./...
+          command: go test -v ./test/...
           no_output_timeout: 30m
 
       - save_cache:
@@ -51,7 +51,7 @@ jobs:
 
   snyk_check:
     docker:
-      - image: quay.io/token/go-build:v0.3.3
+      - image: quay.io/token/go-build:v0.3.0
     working_directory: /go/src/github.com/tokencard/contracts
     steps:
       - checkout
