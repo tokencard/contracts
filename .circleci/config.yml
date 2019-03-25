@@ -4,6 +4,8 @@ jobs:
     docker:
       - image: quay.io/token/go-build:v0.3.3
     working_directory: /home/circleci/github.com/tokencard/contracts
+    environment:
+      GO111MODULE: on
     steps:
       - checkout
       - restore_cache:
@@ -43,7 +45,7 @@ jobs:
           command: myth -x ./contracts/wallet.sol
           no_output_timeout: 30m
       - run:
-          command: myth -x ./contracts/license.sol
+          command: myth -x ./contracts/licence.sol
           no_output_timeout: 30m
       - run:
           command: myth -x ./contracts/holder.sol
