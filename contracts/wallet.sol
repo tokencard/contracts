@@ -28,10 +28,21 @@ import "./externals/ERC20.sol";
 import "./externals/ERC165.sol";
 
 
+/// @title ControllableOwnable combines Controllable and Ownable
+/// @dev providing an additional modifier to check if Owner or Controller
+contract ControllableOwnable is Controllable, Ownable {
+    /// @dev Check if the sender is the Owner or one of the Controllers
+    modifier onlyOwnerOrController() {
+        require (_isOwner() || _isController(msg.sender), "either owner or controller");
+        _;
+    }
+}
+
+
 /// @title Whitelist provides payee-whitelist functionality.
 /// @dev This contract will allow the user to maintain a whitelist of addresses
 /// @dev These addresses will live outside of the various spend limits
-contract Whitelist is Controllable, Ownable {
+contract Whitelist is ControllableOwnable {
     event AddedToWhitelist(address _sender, address[] _addresses);
     event SubmittedWhitelistAddition(address[] _addresses, bytes32 _hash);
     event CancelledWhitelistAddition(address _sender, bytes32 _hash);
@@ -122,7 +133,7 @@ contract Whitelist is Controllable, Ownable {
     }
 
     /// @dev Cancel pending whitelist addition.
-    function cancelWhitelistAddition(bytes32 _hash) external onlyController {
+    function cancelWhitelistAddition(bytes32 _hash) external onlyOwnerOrController {
         // Check if operation has been submitted.
         require(submittedWhitelistAddition, "whitelist addition has not been submitted");
         // Require that confirmation hash and the hash of the pending whitelist addition match
@@ -169,7 +180,7 @@ contract Whitelist is Controllable, Ownable {
     }
 
     /// @dev Cancel pending removal of whitelisted addresses.
-    function cancelWhitelistRemoval(bytes32 _hash) external onlyController {
+    function cancelWhitelistRemoval(bytes32 _hash) external onlyOwnerOrController {
         // Check if operation has been submitted.
         require(submittedWhitelistRemoval, "whitelist removal has not been submitted");
         // Require that confirmation hash and the hash of the pending whitelist removal match
@@ -299,7 +310,7 @@ contract DailyLimitTrait {
 
 
 //// @title SpendLimit provides daily spend limit functionality.
-contract SpendLimit is Controllable, Ownable, DailyLimitTrait {
+contract SpendLimit is ControllableOwnable, DailyLimitTrait {
     event SetSpendLimit(address _sender, uint _amount);
     event SubmittedSpendLimitUpdate(uint _amount);
     event CancelledSpendLimitUpdate(address _sender, uint _amount);
@@ -332,7 +343,7 @@ contract SpendLimit is Controllable, Ownable, DailyLimitTrait {
     }
 
     /// @dev Cancel pending set daily limit operation.
-    function cancelSpendLimitUpdate(uint _amount) external onlyController {
+    function cancelSpendLimitUpdate(uint _amount) external onlyOwnerOrController {
         _cancelLimitUpdate(_spendLimit, _amount);
         emit CancelledSpendLimitUpdate(msg.sender, _amount);
     }
@@ -360,7 +371,7 @@ contract SpendLimit is Controllable, Ownable, DailyLimitTrait {
 
 
 //// @title GasTopUpLimit provides daily  limit functionality.
-contract GasTopUpLimit is Controllable, Ownable, DailyLimitTrait {
+contract GasTopUpLimit is ControllableOwnable, DailyLimitTrait {
 
     event SetGasTopUpLimit(address _sender, uint _amount);
     event SubmittedGasTopUpLimitUpdate(uint _amount);
@@ -399,17 +410,17 @@ contract GasTopUpLimit is Controllable, Ownable, DailyLimitTrait {
     }
 
     /// @dev Cancel pending set top up gas limit operation.
-    function cancelGasTopUpLimitUpdate(uint _amount) external onlyController {
+    function cancelGasTopUpLimitUpdate(uint _amount) external onlyOwnerOrController {
         _cancelLimitUpdate(_gasTopUpLimit, _amount);
         emit CancelledGasTopUpLimitUpdate(msg.sender, _amount);
     }
 
-    function gasTopUpLimit() public view returns (uint) {
-        return _gasTopUpLimit.limit;
-    }
-
     function gasTopUpAvailable() public view returns (uint) {
         return _getAvailableLimit(_gasTopUpLimit);
+    }
+
+    function gasTopUpLimit() public view returns (uint) {
+        return _gasTopUpLimit.limit;
     }
 
     function initializedGasTopUpLimit() public view returns (bool) {
@@ -427,7 +438,7 @@ contract GasTopUpLimit is Controllable, Ownable, DailyLimitTrait {
 
 
 /// @title LoadLimit provides daily Load limit functionality.
-contract LoadLimit is Controllable, Ownable, DailyLimitTrait {
+contract LoadLimit is ControllableOwnable, DailyLimitTrait {
 
     event SetLoadLimit(address _sender, uint _amount);
     event SubmittedLoadLimitUpdate(uint _amount);
@@ -461,17 +472,17 @@ contract LoadLimit is Controllable, Ownable, DailyLimitTrait {
     }
 
     /// @dev Cancel pending set load limit operation.
-    function cancelLoadLimitUpdate(uint _amount) external onlyController {
+    function cancelLoadLimitUpdate(uint _amount) external onlyOwnerOrController {
         _cancelLimitUpdate(_loadLimit, _amount);
         emit CancelledLoadLimitUpdate(msg.sender, _amount);
     }
 
-    function loadLimit() public view returns (uint) {
-        return _loadLimit.limit;
-    }
-
     function loadAvailable() public view returns (uint) {
         return _getAvailableLimit(_loadLimit);
+    }
+
+    function loadLimit() public view returns (uint) {
+        return _loadLimit.limit;
     }
 
     function initializedLoadLimit() public view returns (bool) {
@@ -623,9 +634,7 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
 
     /// @dev Refill owner's gas balance, revert if the transaction amount is too large
     /// @param _amount is the amount of ether to transfer to the owner account in wei.
-    function topUpGas(uint _amount) external isNotZero(_amount) {
-        // Require that the sender is either the owner or a controller.
-        require(_isOwner() || _isController(msg.sender), "sender is neither an owner nor a controller");
+    function topUpGas(uint _amount) external isNotZero(_amount) onlyOwnerOrController {
         // Check against the daily spent limit and update accordingly, require that the value is under remaining limit.
         _enforceLimit(_gasTopUpLimit, _amount);
         // Then perform the transfer

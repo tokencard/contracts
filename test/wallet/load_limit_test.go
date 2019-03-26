@@ -244,12 +244,12 @@ var _ = Describe("loadLimit", func() {
 			})
 
 			When("the Owner tries to cancel the limit change", func() {
-				It("should fail", func() {
+				It("should pass", func() {
 					tx, err := Wallet.CancelLoadLimitUpdate(Owner.TransactOpts(ethertest.WithGasLimit(65000)), FinneyToWei(1))
 					Expect(err).ToNot(HaveOccurred())
 					Backend.Commit()
 					Expect(isGasExhausted(tx, 65000)).To(BeFalse())
-					Expect(isSuccessful(tx)).To(BeFalse())
+					Expect(isSuccessful(tx)).To(BeTrue())
 				})
 			})
 
