@@ -35,7 +35,7 @@ var _ = Describe("updateRatesList", func() {
 			var err error
 			BeforeEach(func() {
 				tokenList := []common.Address{common.HexToAddress("0x0"), common.HexToAddress("0x2")}
-				tx, err = Oracle.UpdateTokenRatesList(Controller.TransactOpts(ethertest.WithValue(big.NewInt(100000000))), big.NewInt(GAS_LIMIT), tokenList)
+				tx, err = Oracle.UpdateTokenRatesList(Controller.TransactOpts(ethertest.WithValue(big.NewInt(100000000))), big.NewInt(gasLimit), tokenList)
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 				Expect(isSuccessful(tx)).To(BeTrue())
@@ -68,7 +68,7 @@ var _ = Describe("updateRatesList", func() {
 			var err error
 			BeforeEach(func() {
 				tokenList := []common.Address{common.HexToAddress("0x0"), common.HexToAddress("0x2")}
-				tx, err = Oracle.UpdateTokenRatesList(Controller.TransactOpts(), big.NewInt(GAS_LIMIT), tokenList)
+				tx, err = Oracle.UpdateTokenRatesList(Controller.TransactOpts(), big.NewInt(gasLimit), tokenList)
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 				Expect(isSuccessful(tx)).To(BeTrue())
@@ -91,7 +91,7 @@ var _ = Describe("updateRatesList", func() {
 
 		Context("When called by a random address", func() {
 			It("Should fail", func() {
-				tx, err := Oracle.UpdateTokenRates(RandomAccount.TransactOpts(ethertest.WithGasLimit(100000)), big.NewInt(GAS_LIMIT))
+				tx, err := Oracle.UpdateTokenRates(RandomAccount.TransactOpts(ethertest.WithGasLimit(100000)), big.NewInt(gasLimit))
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 				Expect(isGasExhausted(tx, 100000)).To(BeFalse())
@@ -108,7 +108,7 @@ var _ = Describe("updateRatesList", func() {
 			var err error
 			BeforeEach(func() {
 				tokenList := []common.Address{}
-				tx, err = Oracle.UpdateTokenRatesList(Controller.TransactOpts(ethertest.WithValue(big.NewInt(100000000))), big.NewInt(GAS_LIMIT), tokenList)
+				tx, err = Oracle.UpdateTokenRatesList(Controller.TransactOpts(ethertest.WithValue(big.NewInt(100000000))), big.NewInt(gasLimit), tokenList)
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 				Expect(isGasExhausted(tx, 100000000)).To(BeFalse())

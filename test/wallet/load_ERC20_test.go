@@ -46,10 +46,6 @@ var _ = Describe("wallet load ERC20", func() {
 			Expect(isSuccessful(tx)).To(BeTrue())
 		})
 
-		// BeforeEach(func() {
-		// 	RandomAccount.MustTransfer(Backend, WalletAddress, EthToWei(102))
-		// })
-
 		It("should increase the ERC20 type-1 balance of the Wallet by 1000", func() {
 			b, err := ERC20Contract1.BalanceOf(nil, WalletAddress)
 			Expect(err).ToNot(HaveOccurred())

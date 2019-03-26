@@ -2,8 +2,9 @@ package internals_test
 
 import (
 	"context"
-	"testing"
 	"os"
+	"testing"
+
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	. "github.com/onsi/ginkgo"
@@ -17,7 +18,6 @@ var ParseIntScientificExporterAddress common.Address
 
 func init() {
 	TestRig.AddCoverageForContracts(
-		// "../../build/internals/parseIntScientific/combined.json",
 		"../../build/mocks/parseIntScientific-exporter/combined.json",
 		"../../contracts",
 	)

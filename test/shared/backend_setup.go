@@ -30,6 +30,7 @@ func EthToWei(amount int) *big.Int {
 	r := big.NewInt(1000000000000000000)
 	return r.Mul(r, big.NewInt(int64(amount)))
 }
+
 func FinneyToWei(amount int) *big.Int {
 	r := big.NewInt(1000000000000000)
 	return r.Mul(r, big.NewInt(int64(amount)))
@@ -102,7 +103,6 @@ var TKNBurnerAddress common.Address
 var TokenHolder *bindings.Holder
 var TokenHolderAddress common.Address
 
-// var CryptoFloat *bindings.CryptoFloat
 var CryptoFloatAddress common.Address
 
 var Licence *bindings.Licence
@@ -354,7 +354,6 @@ func InitializeBackend() error {
 
 	{
 		// Register controller with ENS
-
 		tx, err = ENSRegistry.SetResolver(BankAccount.TransactOpts(), ControllerName, ENSResolverAddress)
 		if err != nil {
 			return err

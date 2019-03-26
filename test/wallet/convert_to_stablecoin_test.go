@@ -1,4 +1,5 @@
 package wallet_test
+
 import (
 	"errors"
 	"math"
@@ -28,7 +29,7 @@ var _ = Describe("convertToStablecoin", func() {
 		})
 
 		When("the exchange rate is 0", func() {
-			 It("Should revert", func() {
+			It("Should revert", func() {
 				_, err := Wallet.ConvertToStablecoin(nil, common.HexToAddress("0xfe209bdE5CA32fa20E6728A005F26D651FFF5982"), big.NewInt(100))
 				Expect(err).To(HaveOccurred())
 				Expect(err.Error()).To(ContainSubstring("token rate is 0"))
@@ -49,60 +50,60 @@ var _ = Describe("convertToStablecoin", func() {
 				Expect(isSuccessful(tx)).To(BeTrue())
 			})
 
-		When("the token rate is 0.1", func() {
+			When("the token rate is 0.1", func() {
 
-			BeforeEach(func() {
-				tx, err := TokenWhitelist.UpdateTokenRate(
-					Controller.TransactOpts(),
-					common.HexToAddress("0xfe209bdE5CA32fa20E6728A005F26D651FFF5982"),
-					big.NewInt(int64(0.1*math.Pow10(18))),
-					big.NewInt(20180913153211),
-				)
-				Expect(err).ToNot(HaveOccurred())
-				Backend.Commit()
-				Expect(isSuccessful(tx)).To(BeTrue())
-			})
+				BeforeEach(func() {
+					tx, err := TokenWhitelist.UpdateTokenRate(
+						Controller.TransactOpts(),
+						common.HexToAddress("0xfe209bdE5CA32fa20E6728A005F26D651FFF5982"),
+						big.NewInt(int64(0.1*math.Pow10(18))),
+						big.NewInt(20180913153211),
+					)
+					Expect(err).ToNot(HaveOccurred())
+					Backend.Commit()
+					Expect(isSuccessful(tx)).To(BeTrue())
+				})
 
-			When("overflow occurs", func() {
-				It("Should trigger assert() (empty output)", func() {
-					_, err := Wallet.ConvertToStablecoin(nil, common.HexToAddress("0xfe209bdE5CA32fa20E6728A005F26D651FFF5982"), big.NewInt(-1))
-					Expect(err).To(MatchError(errors.New("abi: unmarshalling empty output")))
+				When("overflow occurs", func() {
+					It("Should trigger assert() (empty output)", func() {
+						_, err := Wallet.ConvertToStablecoin(nil, common.HexToAddress("0xfe209bdE5CA32fa20E6728A005F26D651FFF5982"), big.NewInt(-1))
+						Expect(err).To(MatchError(errors.New("abi: unmarshalling empty output")))
+					})
+				})
+
+				When("overflow does not occur", func() {
+					It("Should return 0.1(amount)*0.1(rate)/0.1(stablecoin rate)*10^18(in wei)", func() {
+						value, err := Wallet.ConvertToStablecoin(nil, common.HexToAddress("0xfe209bdE5CA32fa20E6728A005F26D651FFF5982"), big.NewInt(int64(0.1*math.Pow10(8))))
+						Expect(err).ToNot(HaveOccurred())
+						finalAmount := EthToWei(1)
+						finalAmount.Div(finalAmount, big.NewInt(10)) //the final amount should be 0.1*0.1*10*1ETH => 1/10 ETH
+						Expect(value.String()).To(Equal(finalAmount.String()))
+					})
 				})
 			})
 
-			When("overflow does not occur", func() {
-				It("Should return 0.1(amount)*0.1(rate)/0.1(stablecoin rate)*10^18(in wei)", func() {
+			When("the token rate is 5.09", func() { //MKR
+				BeforeEach(func() {
+					tx, err := TokenWhitelist.UpdateTokenRate(
+						Controller.TransactOpts(),
+						common.HexToAddress("0xfe209bdE5CA32fa20E6728A005F26D651FFF5982"),
+						big.NewInt(int64(5.09*math.Pow10(18))),
+						big.NewInt(20180913153211),
+					)
+					Expect(err).ToNot(HaveOccurred())
+					Backend.Commit()
+					Expect(isSuccessful(tx)).To(BeTrue())
+				})
+
+				It("Should return 0.1(amount)*5.09(rate)/0.1(stablecoin rate)*10^18(in wei)", func() {
 					value, err := Wallet.ConvertToStablecoin(nil, common.HexToAddress("0xfe209bdE5CA32fa20E6728A005F26D651FFF5982"), big.NewInt(int64(0.1*math.Pow10(8))))
 					Expect(err).ToNot(HaveOccurred())
-					finalAmount := EthToWei(1)
-					finalAmount.Div(finalAmount, big.NewInt(10))//the final amount should be 0.1*0.1*10*1ETH => 1/10 ETH
+					finalAmount := EthToWei(509)
+					finalAmount.Div(finalAmount, big.NewInt(100)) //the final amount should be 0.1*5.09*10*1ETH => 5.09 ETH => 509/100
 					Expect(value.String()).To(Equal(finalAmount.String()))
 				})
-			})
-		})
 
-		When("the token rate is 5.09", func() { //MKR
-			BeforeEach(func() {
-				tx, err := TokenWhitelist.UpdateTokenRate(
-					Controller.TransactOpts(),
-					common.HexToAddress("0xfe209bdE5CA32fa20E6728A005F26D651FFF5982"),
-					big.NewInt(int64(5.09*math.Pow10(18))),
-					big.NewInt(20180913153211),
-				)
-				Expect(err).ToNot(HaveOccurred())
-				Backend.Commit()
-				Expect(isSuccessful(tx)).To(BeTrue())
 			})
-
-			It("Should return 0.1(amount)*5.09(rate)/0.1(stablecoin rate)*10^18(in wei)", func() {
-				value, err := Wallet.ConvertToStablecoin(nil, common.HexToAddress("0xfe209bdE5CA32fa20E6728A005F26D651FFF5982"), big.NewInt(int64(0.1*math.Pow10(8))))
-				Expect(err).ToNot(HaveOccurred())
-				finalAmount := EthToWei(509)
-				finalAmount.Div(finalAmount, big.NewInt(100))//the final amount should be 0.1*5.09*10*1ETH => 5.09 ETH => 509/100
-				Expect(value.String()).To(Equal(finalAmount.String()))
-			})
-
-		})
 
 		})
 	})
@@ -156,13 +157,13 @@ var _ = Describe("convertToStablecoin", func() {
 				Expect(isSuccessful(tx)).To(BeTrue())
 			})
 
-			 It("Should return 0.1(amount)/0.001(stablecoin rate)*10^18(in wei)", func() {
-				 value, err := Wallet.ConvertToStablecoin(nil, common.HexToAddress("0x0"), big.NewInt(int64(0.1*math.Pow10(18))))
-				 Expect(err).ToNot(HaveOccurred())
-				 finalAmount := EthToWei(1)
-				 finalAmount.Mul(finalAmount, big.NewInt(100))//the final amount should be 0.1*1000*1ETH => 1*100 ETH
-				 Expect(value.String()).To(Equal(finalAmount.String()))
-			 })
+			It("Should return 0.1(amount)/0.001(stablecoin rate)*10^18(in wei)", func() {
+				value, err := Wallet.ConvertToStablecoin(nil, common.HexToAddress("0x0"), big.NewInt(int64(0.1*math.Pow10(18))))
+				Expect(err).ToNot(HaveOccurred())
+				finalAmount := EthToWei(1)
+				finalAmount.Mul(finalAmount, big.NewInt(100)) //the final amount should be 0.1*1000*1ETH => 1*100 ETH
+				Expect(value.String()).To(Equal(finalAmount.String()))
+			})
 		})
 
 		When("the stablecoin rate is 0", func() {
@@ -179,10 +180,10 @@ var _ = Describe("convertToStablecoin", func() {
 			})
 
 			It("Should revert", func() {
-			 _, err := Wallet.ConvertToStablecoin(nil, common.HexToAddress("0x0"), big.NewInt(100))
-			 Expect(err).To(HaveOccurred())
-			 Expect(err.Error()).To(ContainSubstring("stablecoin rate is 0"))
-		 })
+				_, err := Wallet.ConvertToStablecoin(nil, common.HexToAddress("0x0"), big.NewInt(100))
+				Expect(err).To(HaveOccurred())
+				Expect(err.Error()).To(ContainSubstring("stablecoin rate is 0"))
+			})
 
 		})
 	})
@@ -203,10 +204,10 @@ var _ = Describe("convertToStablecoin", func() {
 			})
 
 			It("Should return the same amount", func() {
-				 value, err := Wallet.ConvertToStablecoin(nil, StablecoinAddress, big.NewInt(1000))
-				 Expect(err).ToNot(HaveOccurred())
-				 Expect(value.String()).To(Equal("1000"))
-			 })
+				value, err := Wallet.ConvertToStablecoin(nil, StablecoinAddress, big.NewInt(1000))
+				Expect(err).ToNot(HaveOccurred())
+				Expect(value.String()).To(Equal("1000"))
+			})
 
 			It("Should return the same amount", func() {
 				amount := new(big.Int).Mul(EthToWei(1), big.NewInt(int64(1232.76546365*math.Pow10(8))))

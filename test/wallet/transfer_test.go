@@ -218,6 +218,7 @@ var _ = Describe("transfer", func() {
 				It("should fail", func() {
 					Expect(isSuccessful(tx)).To(BeFalse())
 				})
+
 			})
 
 		})

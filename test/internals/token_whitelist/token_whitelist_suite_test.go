@@ -1,7 +1,10 @@
-package tokenWhitelist_test
+package token_whitelist_test
 
 import (
 	"context"
+	"os"
+	"testing"
+
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	. "github.com/onsi/ginkgo"
@@ -10,8 +13,6 @@ import (
 	"github.com/tokencard/contracts/pkg/bindings/internals"
 	"github.com/tokencard/contracts/pkg/bindings/mocks"
 	. "github.com/tokencard/contracts/test/shared"
-	"os"
-	"testing"
 )
 
 var TokenWhitelistableExporter *mocks.TokenWhitelistableExporter

@@ -14,7 +14,7 @@ import (
 	. "github.com/tokencard/contracts/test/shared"
 )
 
-const GAS_LIMIT = 2000000
+const gasLimit = 2000000
 
 func init() {
 	TestRig.AddCoverageForContracts(
@@ -40,7 +40,6 @@ var _ = BeforeEach(func() {
 
 	{
 		// Register oracle with ENS
-
 		tx, err = ENSRegistry.SetResolver(BankAccount.TransactOpts(), OracleName, ENSResolverAddress)
 		Expect(err).ToNot(HaveOccurred())
 		Backend.Commit()

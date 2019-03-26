@@ -25,6 +25,7 @@ var _ = Describe("withdraw", func() {
 				[]bool{false, true, false},
 				big.NewInt(20180913153211),
 			)
+
 			Expect(err).ToNot(HaveOccurred())
 			Backend.Commit()
 			Expect(isSuccessful(tx)).To(BeTrue())
@@ -46,9 +47,10 @@ var _ = Describe("withdraw", func() {
 		Context("When called by the controller with value", func() {
 			var tx *types.Transaction
 			var err error
+
 			BeforeEach(func() {
 				tokenList := []common.Address{common.HexToAddress("0x0"), common.HexToAddress("0x2")}
-				tx, err = Oracle.UpdateTokenRatesList(Controller.TransactOpts(ethertest.WithValue(big.NewInt(100000000))), big.NewInt(GAS_LIMIT), tokenList)
+				tx, err = Oracle.UpdateTokenRatesList(Controller.TransactOpts(ethertest.WithValue(big.NewInt(100000000))), big.NewInt(gasLimit), tokenList)
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 				Expect(isSuccessful(tx)).To(BeTrue())
@@ -91,9 +93,10 @@ var _ = Describe("withdraw", func() {
 		Context("When called by a Random account", func() {
 			var tx *types.Transaction
 			var err error
+
 			BeforeEach(func() {
 				tokenList := []common.Address{common.HexToAddress("0x0"), common.HexToAddress("0x2")}
-				tx, err = Oracle.UpdateTokenRatesList(Controller.TransactOpts(ethertest.WithValue(big.NewInt(100000000))), big.NewInt(GAS_LIMIT), tokenList)
+				tx, err = Oracle.UpdateTokenRatesList(Controller.TransactOpts(ethertest.WithValue(big.NewInt(100000000))), big.NewInt(gasLimit), tokenList)
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 				Expect(isSuccessful(tx)).To(BeTrue())

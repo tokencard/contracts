@@ -8,7 +8,6 @@ import (
 	. "github.com/tokencard/contracts/test/shared"
 )
 
-
 func TestWalletSuite(t *testing.T) {
 	RegisterFailHandler(Fail)
 	RunSpecs(t, "Contract Suite")

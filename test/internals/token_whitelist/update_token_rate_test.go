@@ -1,4 +1,4 @@
-package tokenWhitelist_test
+package token_whitelist_test
 
 import (
 	"math/big"

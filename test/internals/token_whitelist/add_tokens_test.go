@@ -1,4 +1,4 @@
-package tokenWhitelist_test
+package token_whitelist_test
 
 import (
 	"math/big"
@@ -90,7 +90,7 @@ var _ = Describe("addTokens", func() {
 							DecimalsToMagnitude(big.NewInt(18)),
 							DecimalsToMagnitude(big.NewInt(18)),
 						},
-						[]bool{true,true},
+						[]bool{true, true},
 						big.NewInt(20180913153211),
 					)
 					Expect(err).ToNot(HaveOccurred())
@@ -115,7 +115,7 @@ var _ = Describe("addTokens", func() {
 							DecimalsToMagnitude(big.NewInt(18)),
 							DecimalsToMagnitude(big.NewInt(8)),
 						},
-						[]bool{true,true},
+						[]bool{true, true},
 						big.NewInt(20180913153211),
 					)
 					Expect(err).ToNot(HaveOccurred())
@@ -142,7 +142,7 @@ var _ = Describe("addTokens", func() {
 						DecimalsToMagnitude(big.NewInt(18)),
 						DecimalsToMagnitude(big.NewInt(8)),
 					},
-					[]bool{true,true},
+					[]bool{true, true},
 					big.NewInt(20180913153211),
 				)
 				Expect(err).ToNot(HaveOccurred())
@@ -189,7 +189,7 @@ var _ = Describe("addTokens", func() {
 					DecimalsToMagnitude(big.NewInt(18)),
 					DecimalsToMagnitude(big.NewInt(8)),
 				},
-				[]bool{true,true},
+				[]bool{true, true},
 				big.NewInt(20180913153211),
 			)
 			Expect(err).ToNot(HaveOccurred())

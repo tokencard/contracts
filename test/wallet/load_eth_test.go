@@ -2,8 +2,8 @@ package wallet_test
 
 import (
 	"context"
-	"math/big"
 	"math"
+	"math/big"
 
 	"github.com/ethereum/go-ethereum/common"
 	. "github.com/onsi/ginkgo"
@@ -13,7 +13,6 @@ import (
 )
 
 var _ = Describe("wallet load eth", func() {
-
 
 	When("the contract has no balance", func() {
 
@@ -196,7 +195,7 @@ var _ = Describe("wallet load eth", func() {
 					Expect(isSuccessful(tx)).To(BeTrue())
 				})
 
-				When("a bigger amount than daily Load limit is loaded", func(){
+				When("a bigger amount than daily Load limit is loaded", func() {
 
 					It("Should revert", func() {
 						limPlusOneWei := EthToWei(10)
@@ -208,27 +207,28 @@ var _ = Describe("wallet load eth", func() {
 						Expect(isSuccessful(tx)).To(BeFalse())
 						Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*require\(dl.available >= _amount, "available has to be greater or equal to use amount"\);`))
 					})
-			}) //more daily Load limit
+				}) //more daily Load limit
 
-			When("the precise amount of the daily Load limit is loaded", func(){
+				When("the precise amount of the daily Load limit is loaded", func() {
 
-				It("Should return 10000", func() {
-					value, err := Wallet.ConvertToStablecoin(nil, common.HexToAddress("0x0"), EthToWei(10))
-					Expect(err).ToNot(HaveOccurred())
-					finalAmount := EthToWei(10)
-					finalAmount.Mul(finalAmount, big.NewInt(1000))
-					Expect(value.String()).To(Equal(finalAmount.String()))
-				})
+					It("Should return 10000", func() {
+						value, err := Wallet.ConvertToStablecoin(nil, common.HexToAddress("0x0"), EthToWei(10))
+						Expect(err).ToNot(HaveOccurred())
+						finalAmount := EthToWei(10)
+						finalAmount.Mul(finalAmount, big.NewInt(1000))
+						Expect(value.String()).To(Equal(finalAmount.String()))
+					})
 
-				It("Should succeed", func() {
-					tx, err := Wallet.LoadTokenCard(Owner.TransactOpts(), common.HexToAddress("0x0"), EthToWei(10))
-					Expect(err).ToNot(HaveOccurred())
-					Backend.Commit()
-					Expect(isSuccessful(tx)).To(BeTrue())
-				})
-		}) //amount = loadLimit
+					It("Should succeed", func() {
+						tx, err := Wallet.LoadTokenCard(Owner.TransactOpts(), common.HexToAddress("0x0"), EthToWei(10))
+						Expect(err).ToNot(HaveOccurred())
+						Backend.Commit()
+						Expect(isSuccessful(tx)).To(BeTrue())
+					})
 
-		}) //stablecoin rate is 0.001
+				}) //amount = loadLimit
+
+			}) //stablecoin rate is 0.001
 
 		}) //0x0 added to whitelist
 

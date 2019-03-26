@@ -101,7 +101,6 @@ var _ = Describe("convertToEther", func() {
 			Expect(value.String()).To(Equal("100"))
 		})
 
-
 	})
 
 })

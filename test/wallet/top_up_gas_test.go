@@ -243,7 +243,9 @@ var _ = Describe("topUpGas", func() {
 					})
 
 				})
+
 			})
+
 		})
 
 		Context("When called by some random address and is lower than top up limit", func() {
@@ -265,7 +267,9 @@ var _ = Describe("topUpGas", func() {
 			It("should fail", func() {
 				Expect(isSuccessful(tx)).To(BeFalse())
 			})
+
 		})
 
 	})
+
 })

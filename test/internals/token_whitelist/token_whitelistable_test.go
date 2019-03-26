@@ -1,12 +1,13 @@
-package tokenWhitelist_test
+package token_whitelist_test
 
 import (
 	"math/big"
+
 	"github.com/ethereum/go-ethereum/common"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	. "github.com/tokencard/contracts/test/shared"
-  "github.com/tokencard/ethertest"
+	"github.com/tokencard/ethertest"
 )
 
 var _ = Describe("tokenWhitelistable", func() {
@@ -39,7 +40,7 @@ var _ = Describe("tokenWhitelistable", func() {
 		})
 	})
 
-  Context("When a token is added", func() {
+	Context("When a token is added", func() {
 		BeforeEach(func() {
 			tx, err := TokenWhitelist.AddTokens(
 				Controller.TransactOpts(),
@@ -54,38 +55,36 @@ var _ = Describe("tokenWhitelistable", func() {
 			Expect(isSuccessful(tx)).To(BeTrue())
 		})
 
-    It("Should update the token mapping", func() {
-      symbol, magnitude, rate, available, loadable, lastUpdate, err := TokenWhitelistableExporter.GetTokenInfo(nil, common.HexToAddress("0x1"))
-      Expect(err).ToNot(HaveOccurred())
-      Expect(symbol).To(Equal("ETH"))
-      Expect(magnitude.String()).To(Equal(DecimalsToMagnitude(big.NewInt(18)).String()))
-      Expect(rate.String()).To(Equal("0"))
-      Expect(available).To(BeTrue())
-      Expect(loadable).To(BeTrue())
-      Expect(lastUpdate.String()).To(Equal(big.NewInt(20180913153211).String()))
-    })
+		It("Should update the token mapping", func() {
+			symbol, magnitude, rate, available, loadable, lastUpdate, err := TokenWhitelistableExporter.GetTokenInfo(nil, common.HexToAddress("0x1"))
+			Expect(err).ToNot(HaveOccurred())
+			Expect(symbol).To(Equal("ETH"))
+			Expect(magnitude.String()).To(Equal(DecimalsToMagnitude(big.NewInt(18)).String()))
+			Expect(rate.String()).To(Equal("0"))
+			Expect(available).To(BeTrue())
+			Expect(loadable).To(BeTrue())
+			Expect(lastUpdate.String()).To(Equal(big.NewInt(20180913153211).String()))
+		})
 
+		It("Should update the TokenAddressArray", func() {
+			arr, err := TokenWhitelistableExporter.GetTokenAddressArray(nil)
+			Expect(err).ToNot(HaveOccurred())
+			Expect(arr).To(Equal([]common.Address{common.HexToAddress("0x1")}))
+		})
 
-    It("Should update the TokenAddressArray", func() {
-      arr, err := TokenWhitelistableExporter.GetTokenAddressArray(nil)
-      Expect(err).ToNot(HaveOccurred())
-      Expect(arr).To(Equal([]common.Address{common.HexToAddress("0x1")}))
-    })
+		It("Should return true", func() {
+			av, err := TokenWhitelistableExporter.IsTokenAvailable(nil, common.HexToAddress("0x1"))
+			Expect(err).ToNot(HaveOccurred())
+			Expect(av).To(BeTrue())
+		})
 
-    It("Should return true", func() {
-      av, err := TokenWhitelistableExporter.IsTokenAvailable(nil, common.HexToAddress("0x1"))
-      Expect(err).ToNot(HaveOccurred())
-      Expect(av).To(BeTrue())
-    })
+		It("Should return true", func() {
+			ld, err := TokenWhitelistableExporter.IsTokenLoadable(nil, common.HexToAddress("0x1"))
+			Expect(err).ToNot(HaveOccurred())
+			Expect(ld).To(BeTrue())
+		})
 
-    It("Should return true", func() {
-      ld, err := TokenWhitelistableExporter.IsTokenLoadable(nil, common.HexToAddress("0x1"))
-      Expect(err).ToNot(HaveOccurred())
-      Expect(ld).To(BeTrue())
-    })
-
-
-    Context("When updateRate is called", func() {
+		Context("When updateRate is called", func() {
 			It("Should fail", func() {
 				tx, err := TokenWhitelistableExporter.UpdateTokenRate(
 					Controller.TransactOpts(ethertest.WithGasLimit(100000)),
@@ -100,7 +99,7 @@ var _ = Describe("tokenWhitelistable", func() {
 			})
 		})
 
-    Context("When called by the controller directly", func() {
+		Context("When called by the controller directly", func() {
 
 			BeforeEach(func() {
 				tx, err := TokenWhitelist.UpdateTokenRate(
@@ -111,7 +110,7 @@ var _ = Describe("tokenWhitelistable", func() {
 				)
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
-        Expect(isSuccessful(tx)).To(BeTrue())
+				Expect(isSuccessful(tx)).To(BeTrue())
 			})
 
 			It("Should update the token rate", func() {
@@ -124,6 +123,7 @@ var _ = Describe("tokenWhitelistable", func() {
 				Expect(loadable).To(BeTrue())
 				Expect(lastUpdate.String()).To(Equal(big.NewInt(20180913153211).String()))
 			})
+
 			It("Should emit a TokenRateUpdate event", func() {
 				it, err := TokenWhitelist.FilterUpdatedTokenRate(nil)
 				Expect(err).ToNot(HaveOccurred())
@@ -136,6 +136,6 @@ var _ = Describe("tokenWhitelistable", func() {
 			})
 		})
 
-  })
+	})
 
 })

@@ -30,7 +30,6 @@ var _ = Describe("wallet constructor", func() {
 			Expect(isSuccessful(tx)).To(BeTrue())
 		})
 
-
 		It("Should NOT deploy a new wallet", func() {
 			_, tx, _, err := bindings.DeployWallet(
 				BankAccount.TransactOpts(ethertest.WithGasLimit(7000000)),

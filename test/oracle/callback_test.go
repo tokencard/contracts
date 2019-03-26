@@ -13,7 +13,7 @@ import (
 	"golang.org/x/crypto/sha3"
 )
 
-func stringToQueryId(url string) [32]byte {
+func stringToQueryID(url string) [32]byte {
 	var id = [32]byte{}
 	sha := sha3.NewLegacyKeccak256()
 	_, err := sha.Write([]byte(url))
@@ -46,7 +46,7 @@ var _ = Describe("callback", func() {
 				Expect(isSuccessful(tx)).To(BeTrue())
 			})
 			BeforeEach(func() {
-				tx, err := Oracle.UpdateTokenRates(Controller.TransactOpts(ethertest.WithValue(big.NewInt(100000000))), big.NewInt(GAS_LIMIT))
+				tx, err := Oracle.UpdateTokenRates(Controller.TransactOpts(ethertest.WithValue(big.NewInt(100000000))), big.NewInt(gasLimit))
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 				Expect(isSuccessful(tx)).To(BeTrue())
@@ -58,7 +58,7 @@ var _ = Describe("callback", func() {
 
 					var id [32]byte
 					BeforeEach(func() {
-						id = stringToQueryId("https://min-api.cryptocompare.com/data/price?fsym=TKN&tsyms=ETH&sign=true")
+						id = stringToQueryID("https://min-api.cryptocompare.com/data/price?fsym=TKN&tsyms=ETH&sign=true")
 					})
 
 					Context("When the proof is valid", func() {
@@ -413,7 +413,6 @@ var _ = Describe("callback", func() {
 						Context("When the signature is invalid", func() {
 							It("Should fail", func() {
 								//change the 3rd-10th bytes to 0xff, beginning of the proof
-								// proof := common.Hex2Bytes("0041ffffffffffffffff2c3a04b958f2d27572c09ef7faacb14f062b2ce63eb78331a885fda74e113383ead579337b7e02cc414a214c3bd210142628087dcf5ded781c0060646174653a205765642c203033204f637420323031382031373a30303a323220474d540a6469676573743a205348412d3235363d36514d48744c664e677576362b63795a6133376d68513962776f394449482f6451672f54715a34467453383d")
 								//date has been tampered with (year 2019 instead of 2018), this invalidates the signature since the whole header is signed
 								proof := common.Hex2Bytes("0041ed930d0cf64c73b82c3a04b958f2d27572c09ef7faacb14f062b2ce63eb78331a885fda74e113383ead579337b7e02cc414a214c3bd210142628087dcf5ded781c0060646174653a205765642c203033204f637420323031392031373a30303a323220474d540a6469676573743a205348412d3235363d36514d48744c664e677576362b63795a6133376d68513962776f394449482f6451672f54715a34467453383d")
 								tx, err := Oracle.Callback(OraclizeConnectorOwner.TransactOpts(ethertest.WithGasLimit(200000)), id, "{\"ETH\":0.001702}", proof)
@@ -546,7 +545,7 @@ var _ = Describe("callback", func() {
 					var id [32]byte
 					BeforeEach(func() {
 						//change pair to EOS/ETH instead of TKN/ETH
-						id = stringToQueryId("https://min-api.cryptocompare.com/data/price?fsym=EOS&tsyms=ETH&sign=true")
+						id = stringToQueryID("https://min-api.cryptocompare.com/data/price?fsym=EOS&tsyms=ETH&sign=true")
 					})
 
 					Context("When the proof is valid", func() {
@@ -568,7 +567,7 @@ var _ = Describe("callback", func() {
 
 				var id [32]byte
 				BeforeEach(func() {
-					id = stringToQueryId("https://min-api.cryptocompare.com/data/price?fsym=TKN&tsyms=ETH&sign=true")
+					id = stringToQueryID("https://min-api.cryptocompare.com/data/price?fsym=TKN&tsyms=ETH&sign=true")
 				})
 				BeforeEach(func() {
 					tx, err := Oracle.UpdateAPIPublicKey(Controller.TransactOpts(), common.Hex2Bytes("fffffff"))
@@ -619,7 +618,7 @@ var _ = Describe("callback", func() {
 
 			It("Should fail", func() {
 				proof := common.Hex2Bytes("0041ed930d0cf64c73b82c3a04b958f2d27572c09ef7faacb14f062b2ce63eb78331a885fda74e113383ead579337b7e02cc414a214c3bd210142628087dcf5ded781c0060646174653a205765642c203033204f637420323031382031373a30303a323220474d540a6469676573743a205348412d3235363d36514d48744c664e677576362b63795a6133376d68513962776f394449482f6451672f54715a34467453383d")
-				id := stringToQueryId("https://min-api.cryptocompare.com/data/price?fsym=TKN&tsyms=ETH&sign=true")
+				id := stringToQueryID("https://min-api.cryptocompare.com/data/price?fsym=TKN&tsyms=ETH&sign=true")
 				tx, err := Oracle.Callback(OraclizeConnectorOwner.TransactOpts(ethertest.WithGasLimit(200000)), id, "{\"ETH\":0.001702}", proof)
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
@@ -657,14 +656,14 @@ var _ = Describe("callback", func() {
 				Expect(isSuccessful(tx)).To(BeTrue())
 			})
 			BeforeEach(func() {
-				tx, err := Oracle.UpdateTokenRates(Controller.TransactOpts(ethertest.WithValue(big.NewInt(100000000))), big.NewInt(GAS_LIMIT))
+				tx, err := Oracle.UpdateTokenRates(Controller.TransactOpts(ethertest.WithValue(big.NewInt(100000000))), big.NewInt(gasLimit))
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 				Expect(isSuccessful(tx)).To(BeTrue())
 			})
 			It("Should fail", func() {
 				proof := common.Hex2Bytes("0041ed930d0cf64c73b82c3a04b958f2d27572c09ef7faacb14f062b2ce63eb78331a885fda74e113383ead579337b7e02cc414a214c3bd210142628087dcf5ded781c0060646174653a205765642c203033204f637420323031382031373a30303a323220474d540a6469676573743a205348412d3235363d36514d48744c664e677576362b63795a6133376d68513962776f394449482f6451672f54715a34467453383d")
-				id := stringToQueryId("https://min-api.cryptocompare.com/data/price?fsym=TKN&tsyms=ETH&sign=true")
+				id := stringToQueryID("https://min-api.cryptocompare.com/data/price?fsym=TKN&tsyms=ETH&sign=true")
 				tx, err := Oracle.Callback(Controller.TransactOpts(ethertest.WithGasLimit(200000)), id, "{\"ETH\":0.001702}", proof)
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
