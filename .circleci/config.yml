@@ -9,13 +9,13 @@ jobs:
       - restore_cache:
           keys:
           - vendor-{{ checksum "go.sum" }}
-      - run: 
+      - run:
           name: "Setup custom environment variables"
           command: |
             echo 'export GO111MODULE="on"' >> $BASH_ENV # Redirect MY_ENV_VAR into $BASH_ENV
       - run: go mod vendor
-      - run: 
-          command: go test -v ./test/...
+      - run:
+          command: go test -parallel 1 -v ./test/...
           no_output_timeout: 30m
 
       - save_cache:
