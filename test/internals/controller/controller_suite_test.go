@@ -34,6 +34,11 @@ var _ = AfterEach(func() {
 	}
 })
 
+var _ = AfterEach(func() {
+	err := Backend.Close()
+	Expect(err).ToNot(HaveOccurred())
+})
+
 var _ = AfterSuite(func() {
 	if !someFailed {
 		TestRig.ExpectMinimumCoverage("internals/controller.sol", 100.00)
