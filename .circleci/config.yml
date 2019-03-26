@@ -15,7 +15,7 @@ jobs:
             echo 'export GO111MODULE="on"' >> $BASH_ENV # Redirect MY_ENV_VAR into $BASH_ENV
       - run: go mod vendor
       - run:
-          command: go test -parallel 1 -v ./test/...
+          command: go run github.com/onsi/ginkgo/ginkgo -r ./test/...
           no_output_timeout: 30m
 
       - save_cache:
