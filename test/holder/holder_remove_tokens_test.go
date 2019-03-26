@@ -42,23 +42,23 @@ var _ = Describe("holder removeTokens", func() {
 					Expect(it.Next()).To(BeTrue())
 					evt := it.Event
 					Expect(it.Next()).To(BeFalse())
-          Expect(evt.Sender).To(Equal(Owner.Address()))
+					Expect(evt.Sender).To(Equal(Owner.Address()))
 					Expect(evt.Token).To(Equal(common.HexToAddress("0x2")))
 				})
 
 				It("Should update the tokenExists mapping", func() {
-          exists, err := TokenHolder.TokenExists(nil, common.HexToAddress("0x2"))
-  				Expect(err).ToNot(HaveOccurred())
-  				Expect(exists).ToNot(BeTrue())
+					exists, err := TokenHolder.TokenExists(nil, common.HexToAddress("0x2"))
+					Expect(err).ToNot(HaveOccurred())
+					Expect(exists).ToNot(BeTrue())
 
 					//the other tokens should remain unchanged
-          exists, err = TokenHolder.TokenExists(nil, common.HexToAddress("0x1"))
-  				Expect(err).ToNot(HaveOccurred())
-  				Expect(exists).To(BeTrue())
+					exists, err = TokenHolder.TokenExists(nil, common.HexToAddress("0x1"))
+					Expect(err).ToNot(HaveOccurred())
+					Expect(exists).To(BeTrue())
 
-          exists, err = TokenHolder.TokenExists(nil, common.HexToAddress("0x3"))
-  				Expect(err).ToNot(HaveOccurred())
-  				Expect(exists).To(BeTrue())
+					exists, err = TokenHolder.TokenExists(nil, common.HexToAddress("0x3"))
+					Expect(err).ToNot(HaveOccurred())
+					Expect(exists).To(BeTrue())
 				})
 			})
 
@@ -83,15 +83,15 @@ var _ = Describe("holder removeTokens", func() {
 					Expect(it.Next()).To(BeTrue())
 					evt := it.Event
 					Expect(it.Next()).To(BeTrue())
-          Expect(evt.Sender).To(Equal(Owner.Address()))
+					Expect(evt.Sender).To(Equal(Owner.Address()))
 					Expect(evt.Token).To(Equal(common.HexToAddress("0x1")))
 					evt = it.Event
 					Expect(it.Next()).To(BeTrue())
-          Expect(evt.Sender).To(Equal(Owner.Address()))
+					Expect(evt.Sender).To(Equal(Owner.Address()))
 					Expect(evt.Token).To(Equal(common.HexToAddress("0x2")))
 					evt = it.Event
 					Expect(it.Next()).To(BeFalse())
-          Expect(evt.Sender).To(Equal(Owner.Address()))
+					Expect(evt.Sender).To(Equal(Owner.Address()))
 					Expect(evt.Token).To(Equal(common.HexToAddress("0x3")))
 				})
 			})

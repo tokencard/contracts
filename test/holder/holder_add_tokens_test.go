@@ -45,11 +45,11 @@ var _ = Describe("holder addTokens", func() {
 				Expect(it.Next()).To(BeTrue())
 				evt := it.Event
 				Expect(it.Next()).To(BeTrue())
-        Expect(evt.Sender).To(Equal(Owner.Address()))
+				Expect(evt.Sender).To(Equal(Owner.Address()))
 				Expect(evt.Token).To(Equal(common.HexToAddress("0x0")))
 				evt = it.Event
 				Expect(it.Next()).To(BeFalse())
-        Expect(evt.Sender).To(Equal(Owner.Address()))
+				Expect(evt.Sender).To(Equal(Owner.Address()))
 				Expect(evt.Token).To(Equal(common.HexToAddress("0x1")))
 			})
 
@@ -84,7 +84,7 @@ var _ = Describe("holder addTokens", func() {
 			var tx *types.Transaction
 			BeforeEach(func() {
 				var err error
-        tx, err = TokenHolder.AddTokens(Owner.TransactOpts(), nil)
+				tx, err = TokenHolder.AddTokens(Owner.TransactOpts(), nil)
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 			})

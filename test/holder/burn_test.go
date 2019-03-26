@@ -1,76 +1,74 @@
 package holder_test
 
-	import (
-		// "errors"
-		"math/big"
-		"context"
+import (
+	"context"
+	"math/big"
 
-	  "github.com/ethereum/go-ethereum/core/types"
+	"github.com/ethereum/go-ethereum/core/types"
 
-		. "github.com/onsi/ginkgo"
-		. "github.com/onsi/gomega"
-		. "github.com/tokencard/contracts/test/shared"
-		// "github.com/tokencard/ethertest"
-		"github.com/ethereum/go-ethereum/common"
+	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/gomega"
+	. "github.com/tokencard/contracts/test/shared"
 
-	)
+	"github.com/ethereum/go-ethereum/common"
+)
 
-	var _ = Describe("TokenHolder", func() {
+var _ = Describe("TokenHolder", func() {
 
-		Context("A valid Hodler wants to burrrrrnnnn TKN", func() {
+	Context("A valid Hodler wants to burrrrrnnnn TKN", func() {
 
-	    var tx *types.Transaction
+		var tx *types.Transaction
 
-	    When("one thousand TKN are credited(minted) to an external address", func() {
+		When("one thousand TKN are credited(minted) to an external address", func() {
+
+			BeforeEach(func() {
+				tx, err := TKNBurner.Mint(Owner.TransactOpts(), BankAccount.Address(), big.NewInt(1000))
+				Expect(err).ToNot(HaveOccurred())
+				Backend.Commit()
+				Expect(isSuccessful(tx)).To(BeTrue())
+			})
+
+			It("should increase the total TKN supply to 1000", func() {
+				s, err := TKNBurner.TotalSupply(nil)
+				Expect(err).ToNot(HaveOccurred())
+				Expect(s.String()).To(Equal("1000"))
+			})
+
+			It("should increase TKN balance of the specific address", func() {
+				b, err := TKNBurner.BalanceOf(nil, BankAccount.Address())
+				Expect(err).ToNot(HaveOccurred())
+				Expect(b.String()).To(Equal("1000"))
+			})
+
+			It("Should emit a Transfer event", func() {
+				from := []common.Address{common.HexToAddress("0x0")}
+				to := []common.Address{BankAccount.Address()}
+				it, err := TKNBurner.FilterTransfer(nil, from, to)
+				Expect(err).ToNot(HaveOccurred())
+				Expect(it.Next()).To(BeTrue())
+				evt := it.Event
+				Expect(it.Next()).To(BeFalse())
+				Expect(evt.From).To(Equal(common.HexToAddress("0x0")))
+				Expect(evt.To).To(Equal(BankAccount.Address()))
+				Expect(evt.Value.String()).To(Equal("1000"))
+			})
+
+			When("it is launched by the owner", func() {
 
 				BeforeEach(func() {
-					tx, err := TKNBurner.Mint(Owner.TransactOpts(), BankAccount.Address(), big.NewInt(1000))
+					tx, err := TKNBurner.Launch(Owner.TransactOpts())
 					Expect(err).ToNot(HaveOccurred())
 					Backend.Commit()
 					Expect(isSuccessful(tx)).To(BeTrue())
 				})
 
-	      It("should increase the total TKN supply to 1000", func() {
-	        s, err := TKNBurner.TotalSupply(nil)
-	        Expect(err).ToNot(HaveOccurred())
-	        Expect(s.String()).To(Equal("1000"))
-	      })
-
-	      It("should increase TKN balance of the specific address", func() {
-	        b, err := TKNBurner.BalanceOf(nil, BankAccount.Address())
-	        Expect(err).ToNot(HaveOccurred())
-	        Expect(b.String()).To(Equal("1000"))
-	      })
-
-				It("Should emit a Transfer event", func() {
-					from := []common.Address{common.HexToAddress("0x0")}
-					to := []common.Address{BankAccount.Address()}
-					it, err := TKNBurner.FilterTransfer(nil, from, to)
+				It("set launched to true!", func() {
+					launched, err := TKNBurner.Launched(nil)
 					Expect(err).ToNot(HaveOccurred())
-					Expect(it.Next()).To(BeTrue())
-					evt := it.Event
-					Expect(it.Next()).To(BeFalse())
-					Expect(evt.From).To(Equal(common.HexToAddress("0x0")))
-					Expect(evt.To).To(Equal(BankAccount.Address()))
-					Expect(evt.Value.String()).To(Equal("1000"))
+					Expect(launched).To(BeTrue())
 				})
 
-				When("it is launched by the owner", func() {
-
-					BeforeEach(func() {
-						tx, err := TKNBurner.Launch(Owner.TransactOpts())
-						Expect(err).ToNot(HaveOccurred())
-						Backend.Commit()
-						Expect(isSuccessful(tx)).To(BeTrue())
-					})
-
-					It("set launched to true!", func() {
-						launched, err := TKNBurner.Launched(nil)
-						Expect(err).ToNot(HaveOccurred())
-						Expect(launched).To(BeTrue())
-					})
-
-	      When("300 TKN are transfered to a random address", func() {
+				When("300 TKN are transfered to a random address", func() {
 
 					BeforeEach(func() {
 						tx, err := TKNBurner.Transfer(BankAccount.TransactOpts(), RandomAccount.Address(), big.NewInt(300))
@@ -91,10 +89,10 @@ package holder_test
 						Expect(b.String()).To(Equal("700"))
 					})
 
-	        It("should leave the total supply intact", func() {
-	          s, err := TKNBurner.TotalSupply(nil)
-	          Expect(err).ToNot(HaveOccurred())
-	          Expect(s.String()).To(Equal("1000"))
+					It("should leave the total supply intact", func() {
+						s, err := TKNBurner.TotalSupply(nil)
+						Expect(err).ToNot(HaveOccurred())
+						Expect(s.String()).To(Equal("1000"))
 					})
 
 					It("Should emit a Transfer event", func() {
@@ -172,7 +170,6 @@ package holder_test
 								Expect(isSuccessful(tx)).To(BeTrue())
 							})
 
-
 							When("When the random address tries to burn more TKN than it owns", func() {
 
 								var initialBalance *big.Int
@@ -182,7 +179,7 @@ package holder_test
 									var err error
 									initialBalance, err = Backend.BalanceAt(context.Background(), RandomAccount.Address(), nil)
 									Expect(err).ToNot(HaveOccurred())
-							 })
+								})
 
 								BeforeEach(func() {
 									tx, err := TKNBurner.Burn(RandomAccount.TransactOpts(), big.NewInt(301))
@@ -202,9 +199,9 @@ package holder_test
 								})
 
 								It("should leave the total supply intact", func() {
-				          s, err := TKNBurner.TotalSupply(nil)
-				          Expect(err).ToNot(HaveOccurred())
-		 	 	          Expect(s.String()).To(Equal("1000"))
+									s, err := TKNBurner.TotalSupply(nil)
+									Expect(err).ToNot(HaveOccurred())
+									Expect(s.String()).To(Equal("1000"))
 								})
 
 								It("should leave the TKN balance of the random address intact", func() {
@@ -265,7 +262,7 @@ package holder_test
 									var err error
 									initialBalance, err = Backend.BalanceAt(context.Background(), RandomAccount.Address(), nil)
 									Expect(err).ToNot(HaveOccurred())
-							 })
+								})
 
 								BeforeEach(func() {
 									tx, err := TKNBurner.Burn(RandomAccount.TransactOpts(), big.NewInt(200))
@@ -281,14 +278,14 @@ package holder_test
 									b, e := Backend.BalanceAt(context.Background(), TokenHolderAddress, nil)
 									Expect(e).ToNot(HaveOccurred())
 									finalBal := EthToWei(8)
-									finalBal.Div(finalBal, big.NewInt(10))//the final balance should be 0.8 ETH -> 8/10
+									finalBal.Div(finalBal, big.NewInt(10)) //the final balance should be 0.8 ETH -> 8/10
 									Expect(b.String()).To(Equal(finalBal.String()))
 								})
 
 								It("should decrease the total supply by 200 (800 remaining)", func() {
-				          s, err := TKNBurner.TotalSupply(nil)
-				          Expect(err).ToNot(HaveOccurred())
-		 	 	          Expect(s.String()).To(Equal("800"))
+									s, err := TKNBurner.TotalSupply(nil)
+									Expect(err).ToNot(HaveOccurred())
+									Expect(s.String()).To(Equal("800"))
 								})
 
 								It("should decrease TKN balance of the random address", func() {
@@ -339,7 +336,7 @@ package holder_test
 									Expect(e).ToNot(HaveOccurred())
 									bStr := b.String()
 									newBalance := initialBalance.Add(initialBalance, big.NewInt(200000000000000000)) //we first add the 20% of 1 ETH
-									newBalance.Sub(newBalance, txCost) //we have to deduct the tx cost
+									newBalance.Sub(newBalance, txCost)                                               //we have to deduct the tx cost
 									Expect(bStr).To(Equal(newBalance.String()))
 								})
 
@@ -354,7 +351,7 @@ package holder_test
 									var err error
 									initialBalance, err = Backend.BalanceAt(context.Background(), RandomAccount.Address(), nil)
 									Expect(err).ToNot(HaveOccurred())
-							 })
+								})
 
 								BeforeEach(func() {
 									tx, err := TKNBurner.Burn(RandomAccount.TransactOpts(), big.NewInt(0))
@@ -374,9 +371,9 @@ package holder_test
 								})
 
 								It("should leave the total supply intact", func() {
-				          s, err := TKNBurner.TotalSupply(nil)
-				          Expect(err).ToNot(HaveOccurred())
-		 	 	          Expect(s.String()).To(Equal("1000"))
+									s, err := TKNBurner.TotalSupply(nil)
+									Expect(err).ToNot(HaveOccurred())
+									Expect(s.String()).To(Equal("1000"))
 								})
 
 								It("should leave the TKN balance of the random address intact", func() {
@@ -433,13 +430,12 @@ package holder_test
 
 							})
 
-
 						})
 					}) //When("The holder contract has two types of ERC20 tokens"
-	    })
+				})
 
-		 })//When it is launched by the owner"
-	  })
+			}) //When it is launched by the owner"
+		})
 	})
 
 })
