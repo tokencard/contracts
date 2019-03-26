@@ -1,1 +1,1 @@
-[{"inputs":[{"name":"_ens","type":"address"},{"name":"_controllerName","type":"bytes32"}],"payable":false,"stateMutability":"nonpayable","type":"constructor"}]
+[{"inputs":[{"name":"_ensRegistry","type":"address"},{"name":"_controllerName","type":"bytes32"}],"payable":false,"stateMutability":"nonpayable","type":"constructor"}]

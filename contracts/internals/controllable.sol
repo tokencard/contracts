@@ -19,26 +19,23 @@
 pragma solidity ^0.4.25;
 
 import "./controller.sol";
+import "./resolver.sol";
 import "../externals/ens/ENS.sol";
 
-/// @title Resolver returns the controller contract address.
-interface IResolver {
-    function addr(bytes32) external view returns (address);
-}
 
 /// @title Controllable implements access control functionality based on a controller set in ENS.
 contract Controllable {
     /// @dev _ENS points to the ENS registry smart contract.
-    ENS private _ENS;
+    ENS private _ens;
     /// @dev Is the registered ENS name of the controller contract.
     bytes32 private _node;
 
     /// @dev Constructor initializes the controller contract object.
-    /// @param _ens is the address of the ENS.
+    /// @param _ensRegistry is the address of the ENS.
     /// @param _controllerName is the ENS name of the Controller.
-    constructor(address _ens, bytes32 _controllerName) internal {
-      _ENS = ENS(_ens);
-      _node = _controllerName;
+    constructor(address _ensRegistry, bytes32 _controllerName) internal {
+        _ens = ENS(_ensRegistry);
+        _node = _controllerName;
     }
 
     /// @dev Checks if message sender is the controller.
@@ -49,6 +46,6 @@ contract Controllable {
 
     /// @return true if the provided account is the controller.
     function _isController(address _account) internal view returns (bool) {
-        return IController(IResolver(_ENS.resolver(_node)).addr(_node)).isController(_account);
+        return IController(IResolver(_ens.resolver(_node)).addr(_node)).isController(_account);
     }
 }

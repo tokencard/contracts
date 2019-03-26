@@ -28,18 +28,18 @@ var (
 )
 
 // WalletABI is the input ABI used to generate the binding from.
-const WalletABI = "[{\"constant\":true,\"inputs\":[{\"name\":\"interfaceID\",\"type\":\"bytes4\"}],\"name\":\"supportsInterface\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_hash\",\"type\":\"bytes32\"}],\"name\":\"cancelWhitelistAddition\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"isTransferable\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"submittedWhitelistAddition\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"confirmTopUpLimit\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"pendingWhitelistRemoval\",\"outputs\":[{\"name\":\"\",\"type\":\"address[]\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"submitTopUpLimit\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"\",\"type\":\"address\"}],\"name\":\"isWhitelisted\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"pendingWhitelistAddition\",\"outputs\":[{\"name\":\"\",\"type\":\"address[]\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"initializedSpendLimit\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"initializeSpendLimit\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_hash\",\"type\":\"bytes32\"}],\"name\":\"confirmWhitelistAddition\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_addresses\",\"type\":\"address[]\"}],\"name\":\"submitWhitelistRemoval\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"initializeTopUpLimit\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"pendingTopUpLimit\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[],\"name\":\"renounceOwnership\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"cancelTopUpLimit\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_pendingWhitelist\",\"type\":\"address[]\"}],\"name\":\"pendingWhitelistHash\",\"outputs\":[{\"name\":\"\",\"type\":\"bytes32\"}],\"payable\":false,\"stateMutability\":\"pure\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_addresses\",\"type\":\"address[]\"}],\"name\":\"submitWhitelistAddition\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"topUpLimit\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"submittedTopUpLimit\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"topUpAvailable\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"spendLimit\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"initializedWhitelist\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_to\",\"type\":\"address\"},{\"name\":\"_asset\",\"type\":\"address\"},{\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"transfer\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"pendingSpendLimit\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_hash\",\"type\":\"bytes32\"}],\"name\":\"confirmWhitelistRemoval\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_hash\",\"type\":\"bytes32\"}],\"name\":\"cancelWhitelistRemoval\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"submittedSpendLimit\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"submitSpendLimit\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"spendAvailable\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"submittedWhitelistRemoval\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_asset\",\"type\":\"address\"}],\"name\":\"balance\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"cancelSpendLimit\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"topUpGas\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_account\",\"type\":\"address\"}],\"name\":\"transferOwnership\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"confirmSpendLimit\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_addresses\",\"type\":\"address[]\"}],\"name\":\"initializeWhitelist\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"initializedTopUpLimit\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"name\":\"_owner\",\"type\":\"address\"},{\"name\":\"_transferable\",\"type\":\"bool\"},{\"name\":\"_ens\",\"type\":\"address\"},{\"name\":\"_oracleName\",\"type\":\"bytes32\"},{\"name\":\"_controllerName\",\"type\":\"bytes32\"},{\"name\":\"_spendLimit\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"payable\":true,\"stateMutability\":\"payable\",\"type\":\"fallback\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_sender\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"SetTopUpLimit\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"SubmittedTopUpLimitChange\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_sender\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"CancelledTopUpLimitChange\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_sender\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_owner\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"ToppedUpGas\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_from\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"Received\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_to\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_asset\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"Transferred\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_sender\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"SetSpendLimit\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"SubmittedSpendLimitChange\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_sender\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"CancelledSpendLimitChange\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_sender\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_addresses\",\"type\":\"address[]\"}],\"name\":\"AddedToWhitelist\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_addresses\",\"type\":\"address[]\"},{\"indexed\":false,\"name\":\"_hash\",\"type\":\"bytes32\"}],\"name\":\"SubmittedWhitelistAddition\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_sender\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_hash\",\"type\":\"bytes32\"}],\"name\":\"CancelledWhitelistAddition\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_sender\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_addresses\",\"type\":\"address[]\"}],\"name\":\"RemovedFromWhitelist\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_addresses\",\"type\":\"address[]\"},{\"indexed\":false,\"name\":\"_hash\",\"type\":\"bytes32\"}],\"name\":\"SubmittedWhitelistRemoval\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_sender\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_hash\",\"type\":\"bytes32\"}],\"name\":\"CancelledWhitelistRemoval\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_from\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_to\",\"type\":\"address\"}],\"name\":\"TransferredOwnership\",\"type\":\"event\"}]"
+const WalletABI = "[{\"constant\":true,\"inputs\":[{\"name\":\"interfaceID\",\"type\":\"bytes4\"}],\"name\":\"supportsInterface\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"initializeLoadLimit\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"gasTopUpAvailable\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_hash\",\"type\":\"bytes32\"}],\"name\":\"cancelWhitelistAddition\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"isTransferable\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"submitSpendLimitUpdate\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"submittedWhitelistAddition\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"pendingWhitelistRemoval\",\"outputs\":[{\"name\":\"\",\"type\":\"address[]\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"pendingGasTopUpLimit\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_asset\",\"type\":\"address\"},{\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"loadTokenCard\",\"outputs\":[],\"payable\":true,\"stateMutability\":\"payable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"\",\"type\":\"address\"}],\"name\":\"isWhitelisted\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_destination\",\"type\":\"address\"},{\"name\":\"_value\",\"type\":\"uint256\"},{\"name\":\"_data\",\"type\":\"bytes\"}],\"name\":\"executeTransaction\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"submittedGasTopUpLimit\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"pendingWhitelistAddition\",\"outputs\":[{\"name\":\"\",\"type\":\"address[]\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"initializedSpendLimit\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"initializeSpendLimit\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"initializedLoadLimit\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_hash\",\"type\":\"bytes32\"}],\"name\":\"confirmWhitelistAddition\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_addresses\",\"type\":\"address[]\"}],\"name\":\"submitWhitelistRemoval\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"pendingLoadLimit\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[],\"name\":\"renounceOwnership\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"submitGasTopUpLimitUpdate\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_addresses\",\"type\":\"address[]\"}],\"name\":\"submitWhitelistAddition\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"loadAvailable\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"loadLimit\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"spendLimit\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"initializedWhitelist\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"submitLoadLimitUpdate\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_account\",\"type\":\"address\"},{\"name\":\"_transferable\",\"type\":\"bool\"}],\"name\":\"transferOwnership\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_token\",\"type\":\"address\"},{\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"convertToEther\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"cancelGasTopUpLimitUpdate\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_to\",\"type\":\"address\"},{\"name\":\"_asset\",\"type\":\"address\"},{\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"transfer\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"pendingSpendLimit\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_hash\",\"type\":\"bytes32\"}],\"name\":\"confirmWhitelistRemoval\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_addresses\",\"type\":\"address[]\"}],\"name\":\"calculateHash\",\"outputs\":[{\"name\":\"\",\"type\":\"bytes32\"}],\"payable\":false,\"stateMutability\":\"pure\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_hash\",\"type\":\"bytes32\"}],\"name\":\"cancelWhitelistRemoval\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"submittedSpendLimit\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"initializedGasTopUpLimit\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"submittedLoadLimit\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"spendAvailable\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"submittedWhitelistRemoval\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_asset\",\"type\":\"address\"}],\"name\":\"balance\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"topUpGas\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"confirmSpendLimitUpdate\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"cancelSpendLimitUpdate\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"gasTopUpLimit\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_token\",\"type\":\"address\"},{\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"convertToStablecoin\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"confirmLoadLimitUpdate\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_addresses\",\"type\":\"address[]\"}],\"name\":\"initializeWhitelist\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"confirmGasTopUpLimitUpdate\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"cancelLoadLimitUpdate\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"initializeGasTopUpLimit\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"name\":\"_owner\",\"type\":\"address\"},{\"name\":\"_transferable\",\"type\":\"bool\"},{\"name\":\"_ens\",\"type\":\"address\"},{\"name\":\"_oracleName\",\"type\":\"bytes32\"},{\"name\":\"_controllerName\",\"type\":\"bytes32\"},{\"name\":\"_licenceName\",\"type\":\"bytes32\"},{\"name\":\"_spendLimit\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"payable\":true,\"stateMutability\":\"payable\",\"type\":\"fallback\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_sender\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_owner\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"ToppedUpGas\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_asset\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"LoadedTokenCard\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_destination\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_value\",\"type\":\"uint256\"},{\"indexed\":false,\"name\":\"_data\",\"type\":\"bytes\"}],\"name\":\"ExecutedTransaction\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_sender\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"SetLoadLimit\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"SubmittedLoadLimitUpdate\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_sender\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"CancelledLoadLimitUpdate\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_sender\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"SetGasTopUpLimit\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"SubmittedGasTopUpLimitUpdate\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_sender\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"CancelledGasTopUpLimitUpdate\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_from\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"Received\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_to\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_asset\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"Transferred\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_sender\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"SetSpendLimit\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"SubmittedSpendLimitUpdate\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_sender\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"CancelledSpendLimitUpdate\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_sender\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_addresses\",\"type\":\"address[]\"}],\"name\":\"AddedToWhitelist\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_addresses\",\"type\":\"address[]\"},{\"indexed\":false,\"name\":\"_hash\",\"type\":\"bytes32\"}],\"name\":\"SubmittedWhitelistAddition\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_sender\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_hash\",\"type\":\"bytes32\"}],\"name\":\"CancelledWhitelistAddition\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_sender\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_addresses\",\"type\":\"address[]\"}],\"name\":\"RemovedFromWhitelist\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_addresses\",\"type\":\"address[]\"},{\"indexed\":false,\"name\":\"_hash\",\"type\":\"bytes32\"}],\"name\":\"SubmittedWhitelistRemoval\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_sender\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_hash\",\"type\":\"bytes32\"}],\"name\":\"CancelledWhitelistRemoval\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_from\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_to\",\"type\":\"address\"}],\"name\":\"TransferredOwnership\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_locked\",\"type\":\"address\"}],\"name\":\"LockedOwnership\",\"type\":\"event\"}]"
 
 // WalletBin is the compiled bytecode used for deploying new contracts.
-const WalletBin = `608060405234801561001057600080fd5b5060405160c080613a5e8339810160408181528251602080850151838601516060870151608088015160a09098015160008054600160a060020a0319908116600160a060020a0380871691909117835560018c90556002805490921690891690811760a060020a60ff02191674010000000000000000000000000000000000000000881515021790915590895294880194909452855194979296919590949293928892889288928892889288928392899289927f850b3df64837d7d518b45f5aa64d104652c3b80eb5b34a8e3d9eb666cb7cdea59281900390910190a150506007819055426008819055600991909155600b8054600160a060020a0390961662010000026201000060b060020a0319909616959095179094555050600c55600e5550506706f05b59d3b20000600d819055600f55505050505050613905806101596000396000f3006080604052600436106101ed5763ffffffff7c010000000000000000000000000000000000000000000000000000000060003504166301ffc9a78114610234578063100f23fd1461027f5780632121dc751461029957806326d05ab2146102ae578063278ffa13146102c3578063294f4025146102db578063295b3299146103405780633af32abf1461035857806347b55a9d146103795780635658eff01461038e57806358453569146103a35780635adc02ab146103bb5780636137d670146103d35780636ea6f0c3146103f357806370332d851461040b578063715018a614610432578063754628d0146104475780637c9555831461045f5780637fd004fa146104b457806383d02803146104d457806385cd9919146104e95780638da5cb5b146104fe578063a83214591461052f578063aceaf92d14610544578063afa0fd9b14610559578063beabacc81461056e578063c8ecaddb14610598578063cbd2ac68146105ad578063ce0b5bd5146105c5578063d5666590146105dd578063d9ec3018146105f2578063dae37fac1461060a578063de212bf31461061f578063e3d670d714610634578063e4682f0014610655578063e61c51ca1461066d578063f2fde38b14610685578063f3492915146106a6578063f4199bb8146106be578063f9c470a5146106de575b36156101f857600080fd5b6040805133815234602082015281517f88a5966d370b9919b20f3e2c13ff65706f196a4e32cc2c12bf57088f88525874929181900390910190a1005b34801561024057600080fd5b5061026b7bffffffffffffffffffffffffffffffffffffffffffffffffffffffff19600435166106f3565b604080519115158252519081900360200190f35b34801561028b57600080fd5b5061029760043561073b565b005b3480156102a557600080fd5b5061026b6108bb565b3480156102ba57600080fd5b5061026b6108dd565b3480156102cf57600080fd5b506102976004356108e6565b3480156102e757600080fd5b506102f0610b2e565b60408051602080825283518183015283519192839290830191858101910280838360005b8381101561032c578181015183820152602001610314565b505050509050019250505060405180910390f35b34801561034c57600080fd5b50610297600435610b90565b34801561036457600080fd5b5061026b600160a060020a0360043516610dc7565b34801561038557600080fd5b506102f0610ddc565b34801561039a57600080fd5b5061026b610e3c565b3480156103af57600080fd5b50610297600435610e4a565b3480156103c757600080fd5b50610297600435610f72565b3480156103df57600080fd5b506102976004803560248101910135611233565b3480156103ff57600080fd5b506102976004356113f2565b34801561041757600080fd5b506104206115b5565b60408051918252519081900360200190f35b34801561043e57600080fd5b506102976115bb565b34801561045357600080fd5b506102976004356116e1565b34801561046b57600080fd5b5060408051602060048035808201358381028086018501909652808552610420953695939460249493850192918291850190849080828437509497506117fa9650505050505050565b3480156104c057600080fd5b5061029760048035602481019101356118a7565b3480156104e057600080fd5b50610420611c5a565b3480156104f557600080fd5b5061026b611c60565b34801561050a57600080fd5b50610513611c69565b60408051600160a060020a039092168252519081900360200190f35b34801561053b57600080fd5b50610420611c78565b34801561055057600080fd5b50610420611c9b565b34801561056557600080fd5b5061026b611ca1565b34801561057a57600080fd5b50610297600160a060020a0360043581169060243516604435611cb0565b3480156105a457600080fd5b50610420612245565b3480156105b957600080fd5b5061029760043561224b565b3480156105d157600080fd5b506102976004356125b8565b3480156105e957600080fd5b5061026b612737565b3480156105fe57600080fd5b50610297600435612740565b34801561061657600080fd5b506104206128db565b34801561062b57600080fd5b5061026b6128fe565b34801561064057600080fd5b50610420600160a060020a036004351661290c565b34801561066157600080fd5b506102976004356129b9565b34801561067957600080fd5b50610297600435612ad2565b34801561069157600080fd5b50610297600160a060020a0360043516612d74565b3480156106b257600080fd5b50610297600435612f4e565b3480156106ca57600080fd5b5061029760048035602481019101356130f7565b3480156106ea57600080fd5b5061026b613409565b7bffffffffffffffffffffffffffffffffffffffffffffffffffffffff1981167f01ffc9a700000000000000000000000000000000000000000000000000000000145b919050565b61074433613417565b1515610788576040805160e560020a62461bcd02815260206004820152601a602482015260008051602061389a833981519152604482015290519081900360640190fd5b6107eb60048054806020026020016040519081016040528092919081815260200182805480156107e157602002820191906000526020600020905b8154600160a060020a031681526001909101906020018083116107c3575b50505050506117fa565b8114610867576040805160e560020a62461bcd02815260206004820152603560248201527f68617368206f66207468652070656e64696e672077686974656c69737420616460448201527f646974696f6e20646f6573206e6f74206d617463680000000000000000000000606482015290519081900360840190fd5b610873600460006137a0565b6006805460ff19169055604080513381526020810183905281517f7794eff834d760583543e6e510e717a5e66d2c064e225f4db448343c3e66afcf929181900390910190a150565b60025474010000000000000000000000000000000000000000900460ff165b90565b60065460ff1681565b6108ef33613417565b1515610933576040805160e560020a62461bcd02815260206004820152601a602482015260008051602061389a833981519152604482015290519081900360640190fd5b60115460ff1615156109b5576040805160e560020a62461bcd02815260206004820152602360248201527f746f70207570206c696d697420686173206e6f74206265656e207375626d697460448201527f7465640000000000000000000000000000000000000000000000000000000000606482015290519081900360840190fd5b60105466038d7ea4c68000111580156109d857506706f05b59d3b2000060105411155b1515610a54576040805160e560020a62461bcd02815260206004820152602a60248201527f746f7020757020616d6f756e74206973206f75747369646520746865206d696e60448201527f2f6d61782072616e676500000000000000000000000000000000000000000000606482015290519081900360840190fd5b6010548114610ad3576040805160e560020a62461bcd02815260206004820152602e60248201527f636f6e6669726d656420616e642070656e64696e6720746f707570206c696d6960448201527f7420617265206e6f742073616d65000000000000000000000000000000000000606482015290519081900360840190fd5b610ade6010546135d7565b60105460408051338152602081019290925280517fb0b775ba506691c666928dfe7120eb5ccedd17f4554dc85ce86eb2b4cc437e369281900390910190a15060006010556011805460ff19169055565b60606005805480602002602001604051908101604052809291908181526020018280548015610b8657602002820191906000526020600020905b8154600160a060020a03168152600190910190602001808311610b68575b5050505050905090565b610b986135f8565b1515610bdc576040805160e560020a62461bcd028152602060048201526016602482015260008051602061387a833981519152604482015290519081900360640190fd5b601154610100900460ff161515610c63576040805160e560020a62461bcd02815260206004820152602560248201527f746f70207570206c696d697420686173206e6f74206265656e20696e6974696160448201527f6c697a6564000000000000000000000000000000000000000000000000000000606482015290519081900360840190fd5b60115460ff1615610ce4576040805160e560020a62461bcd02815260206004820152602760248201527f746f70207570206c696d69742068617320616c7265616479206265656e20737560448201527f626d697474656400000000000000000000000000000000000000000000000000606482015290519081900360840190fd5b8066038d7ea4c6800011158015610d0357506706f05b59d3b200008111155b1515610d7f576040805160e560020a62461bcd02815260206004820152602d60248201527f746f7020757020616d6f756e74206973206f757473696465206f66207468652060448201527f6d696e2f6d61782072616e676500000000000000000000000000000000000000606482015290519081900360840190fd5b60108190556011805460ff191660011790556040805182815290517f9312377d84b68703929715872be9f0309065e102db6152de9c0587d9e294216d9181900360200190a150565b60036020526000908152604090205460ff1681565b60606004805480602002602001604051908101604052809291908181526020018280548015610b8657602002820191906000526020600020908154600160a060020a03168152600190910190602001808311610b68575050505050905090565b600b54610100900460ff1681565b610e526135f8565b1515610e96576040805160e560020a62461bcd028152602060048201526016602482015260008051602061387a833981519152604482015290519081900360640190fd5b600b54610100900460ff1615610f1c576040805160e560020a62461bcd02815260206004820152602860248201527f7370656e64206c696d69742068617320616c7265616479206265656e20696e6960448201527f7469616c697a6564000000000000000000000000000000000000000000000000606482015290519081900360840190fd5b610f2581613609565b600b805461ff001916610100179055604080513381526020810183905281517f068f112e5ec923d412be64779fe69e0fcbb6784c6617e94cccc8fd348f2e0f21929181900390910190a150565b6000610f7d33613417565b1515610fc1576040805160e560020a62461bcd02815260206004820152601a602482015260008051602061389a833981519152604482015290519081900360640190fd5b60065460ff161515611043576040805160e560020a62461bcd02815260206004820152602960248201527f77686974656c697374206164646974696f6e20686173206e6f74206265656e2060448201527f7375626d69747465640000000000000000000000000000000000000000000000606482015290519081900360840190fd5b6110a460048054806020026020016040519081016040528092919081815260200182805480156107e157602002820191906000526020600020908154600160a060020a031681526001909101906020018083116107c35750505050506117fa565b8214611120576040805160e560020a62461bcd02815260206004820152603360248201527f68617368206f66207468652070656e64696e672077686974656c69737420616460448201527f646974696f6e20646f206e6f74206d6174636800000000000000000000000000606482015290519081900360840190fd5b5060005b60045481101561117f5760016003600060048481548110151561114357fe5b600091825260208083209190910154600160a060020a031683528201929092526040019020805460ff1916911515919091179055600101611124565b7fb2f6cccee7a369e23e293c25aa19bef80af11eb26deba3ea0f2a02783f752e4a3360046040518083600160a060020a0316600160a060020a0316815260200180602001828103825283818154815260200191508054801561120a57602002820191906000526020600020905b8154600160a060020a031681526001909101906020018083116111ec575b5050935050505060405180910390a1611225600460006137a0565b50506006805460ff19169055565b61123b6135f8565b151561127f576040805160e560020a62461bcd028152602060048201526016602482015260008051602061387a833981519152604482015290519081900360640190fd5b60065460ff1615801561129a5750600654610100900460ff16155b1515611316576040805160e560020a62461bcd02815260206004820152602e60248201527f77686974656c697374206f7065726174696f6e2068617320616c72656164792060448201527f6265656e207375626d6974746564000000000000000000000000000000000000606482015290519081900360840190fd5b611322600583836137be565b506006805461ff00191661010017905560058054604080516020808402820181019092528281527ffbc0e5ca6c7e4858daf0fdb185ef5186203e74ec9c64737e93c0aeaec596e1d193869386936113b7939291908301828280156107e157602002820191906000526020600020908154600160a060020a031681526001909101906020018083116107c35750505050506117fa565b604080516020808201849052828252918101849052908190606082019086908602808284376040519201829003965090945050505050a15050565b6113fa6135f8565b151561143e576040805160e560020a62461bcd028152602060048201526016602482015260008051602061387a833981519152604482015290519081900360640190fd5b601154610100900460ff16156114c4576040805160e560020a62461bcd02815260206004820152602960248201527f746f70207570206c696d69742068617320616c7265616479206265656e20696e60448201527f697469616c697a65640000000000000000000000000000000000000000000000606482015290519081900360840190fd5b8066038d7ea4c68000111580156114e357506706f05b59d3b200008111155b151561155f576040805160e560020a62461bcd02815260206004820152602d60248201527f746f7020757020616d6f756e74206973206f757473696465206f66207468652060448201527f6d696e2f6d61782072616e676500000000000000000000000000000000000000606482015290519081900360840190fd5b611568816135d7565b6011805461ff001916610100179055604080513381526020810183905281517fb0b775ba506691c666928dfe7120eb5ccedd17f4554dc85ce86eb2b4cc437e36929181900390910190a150565b60105481565b6115c36135f8565b1515611607576040805160e560020a62461bcd028152602060048201526016602482015260008051602061387a833981519152604482015290519081900360640190fd5b60025474010000000000000000000000000000000000000000900460ff16151561167b576040805160e560020a62461bcd02815260206004820152601d60248201527f6f776e657273686970206973206e6f74207472616e7366657261626c65000000604482015290519081900360640190fd5b60025460408051600160a060020a0390921682526000602083015280517f850b3df64837d7d518b45f5aa64d104652c3b80eb5b34a8e3d9eb666cb7cdea59281900390910190a16002805473ffffffffffffffffffffffffffffffffffffffff19169055565b6116ea33613417565b151561172e576040805160e560020a62461bcd02815260206004820152601a602482015260008051602061389a833981519152604482015290519081900360640190fd5b60105481146117ad576040805160e560020a62461bcd02815260206004820152602e60248201527f70656e64696e6720616e642063616e63656c6c656420746f70207570206c696d60448201527f69747320646f6e74206d61746368000000000000000000000000000000000000606482015290519081900360840190fd5b60006010556011805460ff19169055604080513381526020810183905281517f25d36a8351febb568fa2c8f5a167990291168552d0f3381a618eb120f42d91f4929181900390910190a150565b60008160405160200180828051906020019060200280838360005b8381101561182d578181015183820152602001611815565b505050509050019150506040516020818303038152906040526040518082805190602001908083835b602083106118755780518252601f199092019160209182019101611856565b5181516020939093036101000a6000190180199091169216919091179052604051920182900390912095945050505050565b6118af6135f8565b15156118f3576040805160e560020a62461bcd028152602060048201526016602482015260008051602061387a833981519152604482015290519081900360640190fd5b60065460ff1615801561190e5750600654610100900460ff16155b151561198a576040805160e560020a62461bcd02815260206004820152602e60248201527f77686974656c697374206f7065726174696f6e2068617320616c72656164792060448201527f6265656e207375626d6974746564000000000000000000000000000000000000606482015290519081900360840190fd5b8181808060200260200160405190810160405280939291908181526020018383602002808284375060009450505050505b8151811015611af6576119cc611c69565b600160a060020a031682828151811015156119e357fe5b60209081029091010151600160a060020a03161415611a60576040805160e560020a62461bcd02815260206004820152602d60248201526000805160206138ba83398151915260448201527f6f776e6572206164647265737300000000000000000000000000000000000000606482015290519081900360840190fd5b8151600090839083908110611a7157fe5b60209081029091010151600160a060020a03161415611aee576040805160e560020a62461bcd02815260206004820152602c60248201526000805160206138ba83398151915260448201527f7a65726f20616464726573730000000000000000000000000000000000000000606482015290519081900360840190fd5b6001016119bb565b60065462010000900460ff161515611b7e576040805160e560020a62461bcd02815260206004820152602260248201527f77686974656c69737420686173206e6f74206265656e20696e697469616c697a60448201527f6564000000000000000000000000000000000000000000000000000000000000606482015290519081900360840190fd5b611b8a600485856137be565b506006805460ff1916600117905560048054604080516020808402820181019092528281527f9c80b3b5f68b3e017766d59e8d09b34efe6462b05c398f35cab9e271d9bc3b9c9388938893611c1d939291908301828280156107e157602002820191906000526020600020908154600160a060020a031681526001909101906020018083116107c35750505050506117fa565b604080516020808201849052828252918101849052908190606082019086908602808284376040519201829003965090945050505050a150505050565b600d5481565b60115460ff1681565b600254600160a060020a031690565b6000600e546201518001421115611c925750600d546108da565b50600f546108da565b60075481565b60065462010000900460ff1681565b600080611cbb6135f8565b1515611cff576040805160e560020a62461bcd028152602060048201526016602482015260008051602061387a833981519152604482015290519081900360640190fd5b82801515611d57576040805160e560020a62461bcd02815260206004820152601d60248201527f70726f76696465642076616c75652063616e6e6f74206265207a65726f000000604482015290519081900360640190fd5b600160a060020a0386161515611db7576040805160e560020a62461bcd02815260206004820181905260248201527f5f746f20616464726573732063616e6e6f742062652073657420746f20307830604482015290519081900360640190fd5b600160a060020a03861660009081526003602052604090205460ff16151561208357611de1613629565b600160a060020a03851615611fc257600b54600c54604080517f0178b8bf00000000000000000000000000000000000000000000000000000000815260048101929092525162010000909204600160a060020a031691630178b8bf916024808201926020929091908290030181600087803b158015611e5f57600080fd5b505af1158015611e73573d6000803e3d6000fd5b505050506040513d6020811015611e8957600080fd5b5051600c54604080517f3b3b57de000000000000000000000000000000000000000000000000000000008152600481019290925251600160a060020a0390921691633b3b57de916024808201926020929091908290030181600087803b158015611ef257600080fd5b505af1158015611f06573d6000803e3d6000fd5b505050506040513d6020811015611f1c57600080fd5b5051604080517f67c6e39c000000000000000000000000000000000000000000000000000000008152600160a060020a0388811660048301526024820188905282519316926367c6e39c926044808401939192918290030181600087803b158015611f8657600080fd5b505af1158015611f9a573d6000803e3d6000fd5b505050506040513d6040811015611fb057600080fd5b50805160209091015193509150611fc6565b8392505b8180611fd95750600160a060020a038516155b1561208357611fe66128db565b831115612063576040805160e560020a62461bcd02815260206004820152602d60248201527f7472616e7366657220616d6f756e74206578636565647320617661696c61626c60448201527f65207370656e64206c696d697400000000000000000000000000000000000000606482015290519081900360840190fd5b61208361207e846120726128db565b9063ffffffff6136a416565b6136c2565b600160a060020a038516156121bb5784600160a060020a031663a9059cbb87866040518363ffffffff167c01000000000000000000000000000000000000000000000000000000000281526004018083600160a060020a0316600160a060020a0316815260200182815260200192505050602060405180830381600087803b15801561210e57600080fd5b505af1158015612122573d6000803e3d6000fd5b505050506040513d602081101561213857600080fd5b505115156121b6576040805160e560020a62461bcd02815260206004820152602560248201527f455243323020746f6b656e207472616e736665722077617320756e737563636560448201527f737366756c000000000000000000000000000000000000000000000000000000606482015290519081900360840190fd5b6121f3565b604051600160a060020a0387169085156108fc029086906000818181858888f193505050501580156121f1573d6000803e3d6000fd5b505b60408051600160a060020a0380891682528716602082015280820186905290517fd1ba4ac2e2a11b5101f6cb4d978f514a155b421e8ec396d2d9abaf0bb02917ee9181900360600190a1505050505050565b600a5481565b600061225633613417565b151561229a576040805160e560020a62461bcd02815260206004820152601a602482015260008051602061389a833981519152604482015290519081900360640190fd5b600654610100900460ff161515612321576040805160e560020a62461bcd02815260206004820152602860248201527f77686974656c6973742072656d6f76616c20686173206e6f74206265656e207360448201527f75626d6974746564000000000000000000000000000000000000000000000000606482015290519081900360840190fd5b6005546000106123a1576040805160e560020a62461bcd02815260206004820152602260248201527f70656e64696e672077686974656c6973742072656d6f76616c20697320656d7060448201527f7479000000000000000000000000000000000000000000000000000000000000606482015290519081900360840190fd5b61240260058054806020026020016040519081016040528092919081815260200182805480156107e157602002820191906000526020600020908154600160a060020a031681526001909101906020018083116107c35750505050506117fa565b82146124a4576040805160e560020a62461bcd02815260206004820152604760248201527f68617368206f66207468652070656e64696e672077686974656c69737420726560448201527f6d6f76616c20646f6573206e6f74206d617463682074686520636f6e6669726d60648201527f6564206861736800000000000000000000000000000000000000000000000000608482015290519081900360a40190fd5b5060005b600554811015612503576000600360006005848154811015156124c757fe5b600091825260208083209190910154600160a060020a031683528201929092526040019020805460ff19169115159190911790556001016124a8565b7fd218c430fa348f4ce67791021b6b89c0c3eacd4ead1d8f5b83c60038ec28249b3360056040518083600160a060020a0316600160a060020a0316815260200180602001828103825283818154815260200191508054801561258e57602002820191906000526020600020905b8154600160a060020a03168152600190910190602001808311612570575b5050935050505060405180910390a16125a9600560006137a0565b50506006805461ff0019169055565b6125c133613417565b1515612605576040805160e560020a62461bcd02815260206004820152601a602482015260008051602061389a833981519152604482015290519081900360640190fd5b61266660058054806020026020016040519081016040528092919081815260200182805480156107e157602002820191906000526020600020908154600160a060020a031681526001909101906020018083116107c35750505050506117fa565b81146126e2576040805160e560020a62461bcd02815260206004820152603460248201527f68617368206f66207468652070656e64696e672077686974656c69737420726560448201527f6d6f76616c20646f6573206e6f74206d61746368000000000000000000000000606482015290519081900360840190fd5b6126ee600560006137a0565b6006805461ff0019169055604080513381526020810183905281517f13c935eb475aa0f6e931fece83e2ac44569ce2d53460d29a6dedab40b965c8a3929181900390910190a150565b600b5460ff1681565b6127486135f8565b151561278c576040805160e560020a62461bcd028152602060048201526016602482015260008051602061387a833981519152604482015290519081900360640190fd5b600b54610100900460ff161515612812576040805160e560020a62461bcd028152602060048201526024808201527f7370656e64206c696d697420686173206e6f74206265656e20696e697469616c60448201527f697a656400000000000000000000000000000000000000000000000000000000606482015290519081900360840190fd5b600b5460ff1615612893576040805160e560020a62461bcd02815260206004820152602660248201527f7370656e64206c696d69742068617320616c7265616479206265656e2073756260448201527f6d69747465640000000000000000000000000000000000000000000000000000606482015290519081900360840190fd5b600a819055600b805460ff191660011790556040805182815290517ff7155f467a69de148f41fc3c39089f07e9bff6d91519f3d69d46936643d5197a9181900360200190a150565b600060085462015180014211156128f557506007546108da565b506009546108da565b600654610100900460ff1681565b6000600160a060020a038216156129b157604080517f70a082310000000000000000000000000000000000000000000000000000000081523060048201529051600160a060020a038416916370a082319160248083019260209291908290030181600087803b15801561297e57600080fd5b505af1158015612992573d6000803e3d6000fd5b505050506040513d60208110156129a857600080fd5b50519050610736565b503031610736565b6129c233613417565b1515612a06576040805160e560020a62461bcd02815260206004820152601a602482015260008051602061389a833981519152604482015290519081900360640190fd5b600a548114612a85576040805160e560020a62461bcd02815260206004820152602d60248201527f70656e64696e6720616e642063616e63656c6c6564207370656e64206c696d6960448201527f747320646f6e74206d6174636800000000000000000000000000000000000000606482015290519081900360840190fd5b6000600a55600b805460ff19169055604080513381526020810183905281517f83e15565cfc238cf8d4e7a0a2cefeda3c9d6621e44a4d2ee96034ea403648b6a929181900390910190a150565b80801515612b2a576040805160e560020a62461bcd02815260206004820152601d60248201527f70726f76696465642076616c75652063616e6e6f74206265207a65726f000000604482015290519081900360640190fd5b612b326135f8565b80612b415750612b4133613417565b1515612bbd576040805160e560020a62461bcd02815260206004820152602b60248201527f73656e646572206973206e65697468657220616e206f776e6572206e6f72206160448201527f20636f6e74726f6c6c6572000000000000000000000000000000000000000000606482015290519081900360840190fd5b612bc56136c7565b600f541515612c44576040805160e560020a62461bcd02815260206004820152602560248201527f617661696c61626c6520746f70207570206c696d69742063616e6e6f7420626560448201527f207a65726f000000000000000000000000000000000000000000000000000000606482015290519081900360840190fd5b600f54821115612cc4576040805160e560020a62461bcd02815260206004820152603160248201527f617661696c61626c6520746f70207570206c696d6974206c657373207468616e60448201527f20616d6f756e742070617373656420696e000000000000000000000000000000606482015290519081900360840190fd5b600f54612cd7908363ffffffff6136a416565b600f55612ce2611c69565b600160a060020a03166108fc839081150290604051600060405180830381858888f19350505050158015612d1a573d6000803e3d6000fd5b507f611b7c0d84fda988026215bef9b3e4d81cbceced7e679be6d5e044b588467c0e32612d45611c69565b60408051600160a060020a03938416815291909216602082015280820185905290519081900360600190a15050565b612d7c6135f8565b1515612dc0576040805160e560020a62461bcd028152602060048201526016602482015260008051602061387a833981519152604482015290519081900360640190fd5b60025474010000000000000000000000000000000000000000900460ff161515612e34576040805160e560020a62461bcd02815260206004820152601d60248201527f6f776e657273686970206973206e6f74207472616e7366657261626c65000000604482015290519081900360640190fd5b600160a060020a0381161515612eba576040805160e560020a62461bcd02815260206004820152602360248201527f6f776e65722063616e6e6f742062652073657420746f207a65726f206164647260448201527f6573730000000000000000000000000000000000000000000000000000000000606482015290519081900360840190fd5b6002805474ff000000000000000000000000000000000000000019811690915560408051600160a060020a039283168152918316602083015280517f850b3df64837d7d518b45f5aa64d104652c3b80eb5b34a8e3d9eb666cb7cdea59281900390910190a16002805473ffffffffffffffffffffffffffffffffffffffff1916600160a060020a0392909216919091179055565b612f5733613417565b1515612f9b576040805160e560020a62461bcd02815260206004820152601a602482015260008051602061389a833981519152604482015290519081900360640190fd5b600b5460ff16151561301d576040805160e560020a62461bcd02815260206004820152602260248201527f7370656e64206c696d697420686173206e6f74206265656e207375626d69747460448201527f6564000000000000000000000000000000000000000000000000000000000000606482015290519081900360840190fd5b600a54811461309c576040805160e560020a62461bcd02815260206004820152602f60248201527f636f6e6669726d656420616e64207375626d6974746564207370656e64206c6960448201527f6d69747320646f6e74206d617463680000000000000000000000000000000000606482015290519081900360840190fd5b6130a7600a54613609565b600a5460408051338152602081019290925280517f068f112e5ec923d412be64779fe69e0fcbb6784c6617e94cccc8fd348f2e0f219281900390910190a150600b805460ff191690556000600a55565b60006131016135f8565b1515613145576040805160e560020a62461bcd028152602060048201526016602482015260008051602061387a833981519152604482015290519081900360640190fd5b8282808060200260200160405190810160405280939291908181526020018383602002808284375060009450505050505b81518110156132b157613187611c69565b600160a060020a0316828281518110151561319e57fe5b60209081029091010151600160a060020a0316141561321b576040805160e560020a62461bcd02815260206004820152602d60248201526000805160206138ba83398151915260448201527f6f776e6572206164647265737300000000000000000000000000000000000000606482015290519081900360840190fd5b815160009083908390811061322c57fe5b60209081029091010151600160a060020a031614156132a9576040805160e560020a62461bcd02815260206004820152602c60248201526000805160206138ba83398151915260448201527f7a65726f20616464726573730000000000000000000000000000000000000000606482015290519081900360840190fd5b600101613176565b60065462010000900460ff1615613338576040805160e560020a62461bcd02815260206004820152602660248201527f77686974656c6973742068617320616c7265616479206265656e20696e69746960448201527f616c697a65640000000000000000000000000000000000000000000000000000606482015290519081900360840190fd5b600092505b838310156133945760016003600087878781811061335757fe5b60209081029290920135600160a060020a0316835250810191909152604001600020805460ff19169115159190911790556001929092019161333d565b6006805462ff0000191662010000179055604080513380825260208083018481529383018890527fb2f6cccee7a369e23e293c25aa19bef80af11eb26deba3ea0f2a02783f752e4a93919289928992606083019085908502808284376040519201829003965090945050505050a15050505050565b601154610100900460ff1681565b60008054600154604080517f0178b8bf000000000000000000000000000000000000000000000000000000008152600481019290925251600160a060020a0390921691630178b8bf9160248082019260209290919082900301818787803b15801561348157600080fd5b505af1158015613495573d6000803e3d6000fd5b505050506040513d60208110156134ab57600080fd5b5051600154604080517f3b3b57de000000000000000000000000000000000000000000000000000000008152600481019290925251600160a060020a0390921691633b3b57de916024808201926020929091908290030181600087803b15801561351457600080fd5b505af1158015613528573d6000803e3d6000fd5b505050506040513d602081101561353e57600080fd5b5051604080517fb429afeb000000000000000000000000000000000000000000000000000000008152600160a060020a0385811660048301529151919092169163b429afeb9160248083019260209291908290030181600087803b1580156135a557600080fd5b505af11580156135b9573d6000803e3d6000fd5b505050506040513d60208110156135cf57600080fd5b505192915050565b6135df6136c7565b600d819055600f548110156135f557600d54600f555b50565b600254600160a060020a0316331490565b613611613629565b60078190556009548110156135f55760075460095550565b600854600090613642906201518063ffffffff61373616565b4211156135f55761367162015180613665600854426136a490919063ffffffff16565b9063ffffffff61374f16565b9050613698613689826201518063ffffffff61377216565b6008549063ffffffff61373616565b60085560075460095550565b600080838311156136b457600080fd5b5050808203805b5092915050565b600955565b600e546000906136e0906201518063ffffffff61373616565b4211156135f55761370362015180613665600e54426136a490919063ffffffff16565b905061372a61371b826201518063ffffffff61377216565b600e549063ffffffff61373616565b600e55600d54600f5550565b60008282018381101561374857600080fd5b9392505050565b60008080831161375e57600080fd5b828481151561376957fe5b04949350505050565b60008083151561378557600091506136bb565b5082820282848281151561379557fe5b041461374857600080fd5b50805460008255906000526020600020908101906135f5919061382e565b82805482825590600052602060002090810192821561381e579160200282015b8281111561381e57815473ffffffffffffffffffffffffffffffffffffffff1916600160a060020a038435161782556020909201916001909101906137de565b5061382a929150613848565b5090565b6108da91905b8082111561382a5760008155600101613834565b6108da91905b8082111561382a57805473ffffffffffffffffffffffffffffffffffffffff1916815560010161384e560073656e646572206973206e6f7420616e206f776e65720000000000000000000073656e646572206973206e6f74206120636f6e74726f6c6c657200000000000070726f76696465642077686974656c69737420636f6e7461696e732074686520a165627a7a72305820ec443179d656920e8a56e050ac95dce976bdf44e4a3504357aef0d218e15a5970029`
+const WalletBin = `60806040523480156200001157600080fd5b5060405160e08062004ecf83398101604090815281516020830151918301516060840151608085015160a086015160c09096015160008054600160a060020a0319908116600160a060020a038088169190911783556001859055600280549092169088161760a060020a60ff0219167401000000000000000000000000000000000000000089151590810291909117909155959794959394929388908890889088908890879084908490839089908990620001035760408051600160a060020a038416815290517f808639ff9c8e4732d60b6c2330de498035416d229f27a77d259680895efec1229181900360200190a15b6040805160008152600160a060020a038416602082015281517f850b3df64837d7d518b45f5aa64d104652c3b80eb5b34a8e3d9eb666cb7cdea5929181900390910190a150506040805160c0808201835283825260208083018590524283850181905260006060808601829052608080870183905260a096870183905260078990556008989098556009839055600a829055600b805461ffff19908116909155600c8054600160a060020a031916600160a060020a039c909c169b909b17909a55600d98909855855193840186526706f05b59d3b2000080855292840183905294830181905295820184905293810183905201819052600e829055600f919091556010919091556011556012805490911690555062000231945050640100000000620002f281020492505050565b50505050915050600081111515620002aa57604080517f08c379a000000000000000000000000000000000000000000000000000000000815260206004820152601260248201527f737461626c65636f696e206e6f74207365740000000000000000000000000000604482015290519081900360640190fd5b620002c2612710820264010000000062000543810204565b50506019555050601a8054600160a060020a031916600160a060020a039290921691909117905550620005999050565b600c54600d54604080517f0178b8bf0000000000000000000000000000000000000000000000000000000081526004810192909252516060926000928392839283928392600160a060020a0390921691630178b8bf9160248082019260209290919082900301818787803b1580156200036a57600080fd5b505af11580156200037f573d6000803e3d6000fd5b505050506040513d60208110156200039657600080fd5b5051600d54604080517f3b3b57de000000000000000000000000000000000000000000000000000000008152600481019290925251600160a060020a0390921691633b3b57de916024808201926020929091908290030181600087803b1580156200040057600080fd5b505af115801562000415573d6000803e3d6000fd5b505050506040513d60208110156200042c57600080fd5b5051604080517f3efec5e90000000000000000000000000000000000000000000000000000000081529051600160a060020a0390921691633efec5e99160048082019260009290919082900301818387803b1580156200048b57600080fd5b505af1158015620004a0573d6000803e3d6000fd5b505050506040513d6000823e601f3d908101601f1916820160405260c0811015620004ca57600080fd5b810190808051640100000000811115620004e357600080fd5b82016020810184811115620004f757600080fd5b81516401000000008111828201871017156200051257600080fd5b5050602082015160408301516060840151608085015160a090950151939d929c50909a509850919650945092505050565b60138190556040805160c08101825282815260208101839052429181018290526000606082018190526080820181905260a090910181905260148390556015929092556016556017556018805461ffff19169055565b61492680620005a96000396000f3006080604052600436106102635763ffffffff60e060020a60003504166301ffc9a781146102f557806303561eb01461034057806304190c8d1461035a578063100f23fd146103815780632121dc751461039957806321ce918d146103ae57806326d05ab2146103c6578063294f4025146103db578063302c6220146104405780633a43199f146104555780633af32abf1461046c5780633f579f421461048d5780633fc8b4f7146104be57806347b55a9d146104d35780635658eff0146104e857806358453569146104fd578063597bfd18146105155780635adc02ab1461052a5780636137d67014610542578063714af5e514610562578063715018a61461057757806374624c551461058c5780637fd004fa146105a457806383c4ecfb146105c45780638da5cb5b146105d9578063aa5367df1461060a578063aceaf92d1461061f578063afa0fd9b14610634578063b221f31614610649578063b242e53414610661578063b87e21ef14610687578063b9b262be146106ab578063beabacc8146106c3578063c8ecaddb146106ed578063cbd2ac6814610702578063cd7958dd1461071a578063ce0b5bd51461076f578063d566659014610787578063d66030ba1461079c578063d8424ab8146107b1578063dae37fac146107c6578063de212bf3146107db578063e3d670d7146107f0578063e61c51ca14610811578063eadd3cea14610829578063ed2e930414610841578063f04ee51914610859578063f36febda1461086e578063f40b51f814610892578063f4199bb8146108aa578063f41c4319146108ca578063fd6da9b4146108e2578063feb6aff1146108fa575b36156102b9576040805160e560020a62461bcd02815260206004820152601a60248201527f6d73672064617461206e6565647320746f20626520656d707479000000000000604482015290519081900360640190fd5b6040805133815234602082015281517f88a5966d370b9919b20f3e2c13ff65706f196a4e32cc2c12bf57088f88525874929181900390910190a1005b34801561030157600080fd5b5061032c7bffffffffffffffffffffffffffffffffffffffffffffffffffffffff1960043516610912565b604080519115158252519081900360200190f35b34801561034c57600080fd5b5061035860043561095a565b005b34801561036657600080fd5b5061036f610a84565b60408051918252519081900360200190f35b34801561038d57600080fd5b50610358600435610a96565b3480156103a557600080fd5b5061032c610c98565b3480156103ba57600080fd5b50610358600435610cb9565b3480156103d257600080fd5b5061032c610d46565b3480156103e757600080fd5b506103f0610d4f565b60408051602080825283518183015283519192839290830191858101910280838360005b8381101561042c578181015183820152602001610414565b505050509050019250505060405180910390f35b34801561044c57600080fd5b5061036f610db1565b610358600160a060020a0360043516602435610db7565b34801561047857600080fd5b5061032c600160a060020a03600435166111dc565b34801561049957600080fd5b5061035860048035600160a060020a03169060248035916044359182019101356111f1565b3480156104ca57600080fd5b5061032c611522565b3480156104df57600080fd5b506103f061152b565b3480156104f457600080fd5b5061032c61158b565b34801561050957600080fd5b50610358600435611599565b34801561052157600080fd5b5061032c61162e565b34801561053657600080fd5b5061035860043561163c565b34801561054e57600080fd5b5061035860048035602481019101356118fd565b34801561056e57600080fd5b5061036f611b96565b34801561058357600080fd5b50610358611b9c565b34801561059857600080fd5b50610358600435611cc2565b3480156105b057600080fd5b506103586004803560248101910135611dea565b3480156105d057600080fd5b5061036f6121ef565b3480156105e557600080fd5b506105ee6121fb565b60408051600160a060020a039092168252519081900360200190f35b34801561061657600080fd5b5061036f61220a565b34801561062b57600080fd5b5061036f612210565b34801561064057600080fd5b5061032c612216565b34801561065557600080fd5b50610358600435612225565b34801561066d57600080fd5b50610358600160a060020a03600435166024351515612347565b34801561069357600080fd5b5061036f600160a060020a0360043516602435612585565b3480156106b757600080fd5b5061035860043561262f565b3480156106cf57600080fd5b50610358600160a060020a03600435811690602435166044356126c5565b3480156106f957600080fd5b5061036f6129bf565b34801561070e57600080fd5b506103586004356129c5565b34801561072657600080fd5b506040805160206004803580820135838102808601850190965280855261036f95369593946024949385019291829185019084908082843750949750612cb29650505050505050565b34801561077b57600080fd5b50610358600435612d5f565b34801561079357600080fd5b5061032c612f65565b3480156107a857600080fd5b5061032c612f6e565b3480156107bd57600080fd5b5061032c612f7c565b3480156107d257600080fd5b5061036f612f85565b3480156107e757600080fd5b5061032c612f91565b3480156107fc57600080fd5b5061036f600160a060020a0360043516612f9f565b34801561081d57600080fd5b5061035860043561304c565b34801561083557600080fd5b506103586004356131dc565b34801561084d57600080fd5b50610358600435613234565b34801561086557600080fd5b5061036f6132ca565b34801561087a57600080fd5b5061036f600160a060020a03600435166024356132d0565b34801561089e57600080fd5b5061035860043561349e565b3480156108b657600080fd5b5061035860048035602481019101356134f6565b3480156108d657600080fd5b50610358600435613808565b3480156108ee57600080fd5b5061035860043561389e565b34801561090657600080fd5b50610358600435613934565b7bffffffffffffffffffffffffffffffffffffffffffffffffffffffff1981167f01ffc9a700000000000000000000000000000000000000000000000000000000145b919050565b610962613a26565b15156109a6576040805160e560020a62461bcd028152602060048201526016602482015260008051602061489b833981519152604482015290519081900360640190fd5b8066038d7ea4c68000111580156109bf57506013548111155b1515610a3b576040805160e560020a62461bcd02815260206004820152602d60248201527f63617264206c6f616420616d6f756e74206973206f757473696465207468652060448201527f6d696e2f6d61782072616e676500000000000000000000000000000000000000606482015290519081900360840190fd5b610a46601482613a37565b604080513381526020810183905281517f0b05243483e17c3f3377aee82b7d47e5700b48288695fc08b7ecc2759afa44ef929181900390910190a150565b6000610a90600e613adc565b90505b90565b610a9f33613b02565b1515610ae3576040805160e560020a62461bcd02815260206004820152601a60248201526000805160206148bb833981519152604482015290519081900360640190fd5b60065460ff161515610b65576040805160e560020a62461bcd02815260206004820152602960248201527f77686974656c697374206164646974696f6e20686173206e6f74206265656e2060448201527f7375626d69747465640000000000000000000000000000000000000000000000606482015290519081900360840190fd5b610bc86004805480602002602001604051908101604052809291908181526020018280548015610bbe57602002820191906000526020600020905b8154600160a060020a03168152600190910190602001808311610ba0575b5050505050612cb2565b8114610c44576040805160e560020a62461bcd02815260206004820152603560248201527f68617368206f66207468652070656e64696e672077686974656c69737420616460448201527f646974696f6e20646f6573206e6f74206d617463680000000000000000000000606482015290519081900360840190fd5b610c50600460006147be565b6006805460ff19169055604080513381526020810183905281517f7794eff834d760583543e6e510e717a5e66d2c064e225f4db448343c3e66afcf929181900390910190a150565b60025474010000000000000000000000000000000000000000900460ff1690565b610cc1613a26565b1515610d05576040805160e560020a62461bcd028152602060048201526016602482015260008051602061489b833981519152604482015290519081900360640190fd5b610d10600782613c96565b6040805182815290517f4b1b970c8a0fa761e7803ed70c13d7aca71904b13df60fbe03f981da1730da919181900360200190a150565b60065460ff1681565b60606005805480602002602001604051908101604052809291908181526020018280548015610da757602002820191906000526020600020905b8154600160a060020a03168152600190910190602001808311610d89575b5050505050905090565b60115490565b600080610dc2613a26565b1515610e06576040805160e560020a62461bcd028152602060048201526016602482015260008051602061489b833981519152604482015290519081900360640190fd5b610e0f84613d6b565b1515610e65576040805160e560020a62461bcd02815260206004820152601260248201527f746f6b656e206e6f74206c6f616461626c650000000000000000000000000000604482015290519081900360640190fd5b610e6f84846132d0565b9150610e7c601483613d83565b601a546019546040805160e060020a630178b8bf028152600481019290925251600160a060020a0390921691630178b8bf916024808201926020929091908290030181600087803b158015610ed057600080fd5b505af1158015610ee4573d6000803e3d6000fd5b505050506040513d6020811015610efa57600080fd5b50516019546040805160e160020a631d9dabef028152600481019290925251600160a060020a0390921691633b3b57de916024808201926020929091908290030181600087803b158015610f4d57600080fd5b505af1158015610f61573d6000803e3d6000fd5b505050506040513d6020811015610f7757600080fd5b50519050600160a060020a038416156111155783600160a060020a031663095ea7b382856040518363ffffffff1660e060020a0281526004018083600160a060020a0316600160a060020a0316815260200182815260200192505050602060405180830381600087803b158015610fed57600080fd5b505af1158015611001573d6000803e3d6000fd5b505050506040513d602081101561101757600080fd5b50511515611095576040805160e560020a62461bcd02815260206004820152602560248201527f455243323020746f6b656e20617070726f76616c2077617320756e737563636560448201527f737366756c000000000000000000000000000000000000000000000000000000606482015290519081900360840190fd5b80600160a060020a0316631b3c96b485856040518363ffffffff1660e060020a0281526004018083600160a060020a0316600160a060020a0316815260200182815260200192505050600060405180830381600087803b1580156110f857600080fd5b505af115801561110c573d6000803e3d6000fd5b50505050611192565b80600160a060020a0316631b3c96b48486866040518463ffffffff1660e060020a0281526004018083600160a060020a0316600160a060020a03168152602001828152602001925050506000604051808303818588803b15801561117857600080fd5b505af115801561118c573d6000803e3d6000fd5b50505050505b60408051600160a060020a03861681526020810185905281517f5f65674bec9af81f71be68674135a0ea3f163fb91984e3893d06da9f6ea2ce8a929181900390910190a150505050565b60036020526000908152604090205460ff1681565b6000806000806111ff613a26565b1515611243576040805160e560020a62461bcd028152602060048201526016602482015260008051602061489b833981519152604482015290519081900360640190fd5b600485106113e45761128786868080601f0160208091040260200160405190810160405280939291908181526020018383808284375060009450613e2f9350505050565b935063ffffffff841663a9059cbb14806112aa575063ffffffff841663095ea7b3145b156113e457604485101561132e576040805160e560020a62461bcd02815260206004820152602b60248201527f696e76616c6964207472616e73666572202f20617070726f7665207472616e7360448201527f616374696f6e2064617461000000000000000000000000000000000000000000606482015290519081900360840190fd5b61136a86868080601f0160208091040260200160405190810160405280939291908181526020018383808284375060249450613f089350505050565b92506113a886868080601f0160208091040260200160405190810160405280939291908181526020018383808284375060109450613f7b9350505050565b600160a060020a03811660009081526003602052604090205490925060ff1615156113e4576113d78884612585565b90506113e4600782613d83565b600160a060020a03881660009081526003602052604090205460ff16151561141157611411600788613d83565b61145088888888905089898080601f0160208091040260200160405190810160405280939291908181526020018383808284375061404a945050505050565b15156114a6576040805160e560020a62461bcd02815260206004820152601c60248201527f657865637574696e67207472616e73616374696f6e206661696c656400000000604482015290519081900360640190fd5b7faf022f6b53b11c364e2dfc0aea08eb9416c94f2661451ea82ead8831385617a6888888886040518085600160a060020a0316600160a060020a03168152602001848152602001806020018281038252848482818152602001925080828437604051920182900397509095505050505050a15050505050505050565b60125460ff1690565b60606004805480602002602001604051908101604052809291908181526020018280548015610da757602002820191906000526020600020908154600160a060020a03168152600190910190602001808311610d89575050505050905090565b600b54610100900460ff1690565b6115a1613a26565b15156115e5576040805160e560020a62461bcd028152602060048201526016602482015260008051602061489b833981519152604482015290519081900360640190fd5b6115f0600782613a37565b604080513381526020810183905281517f068f112e5ec923d412be64779fe69e0fcbb6784c6617e94cccc8fd348f2e0f21929181900390910190a150565b601854610100900460ff1690565b600061164733613b02565b151561168b576040805160e560020a62461bcd02815260206004820152601a60248201526000805160206148bb833981519152604482015290519081900360640190fd5b60065460ff16151561170d576040805160e560020a62461bcd02815260206004820152602960248201527f77686974656c697374206164646974696f6e20686173206e6f74206265656e2060448201527f7375626d69747465640000000000000000000000000000000000000000000000606482015290519081900360840190fd5b61176e6004805480602002602001604051908101604052809291908181526020018280548015610bbe57602002820191906000526020600020908154600160a060020a03168152600190910190602001808311610ba0575050505050612cb2565b82146117ea576040805160e560020a62461bcd02815260206004820152603360248201527f68617368206f66207468652070656e64696e672077686974656c69737420616460448201527f646974696f6e20646f206e6f74206d6174636800000000000000000000000000606482015290519081900360840190fd5b5060005b6004548110156118495760016003600060048481548110151561180d57fe5b600091825260208083209190910154600160a060020a031683528201929092526040019020805460ff19169115159190911790556001016117ee565b7fb2f6cccee7a369e23e293c25aa19bef80af11eb26deba3ea0f2a02783f752e4a3360046040518083600160a060020a0316600160a060020a031681526020018060200182810382528381815481526020019150805480156118d457602002820191906000526020600020905b8154600160a060020a031681526001909101906020018083116118b6575b5050935050505060405180910390a16118ef600460006147be565b50506006805460ff19169055565b611905613a26565b1515611949576040805160e560020a62461bcd028152602060048201526016602482015260008051602061489b833981519152604482015290519081900360640190fd5b60065460ff161580156119645750600654610100900460ff16155b15156119e0576040805160e560020a62461bcd02815260206004820152602e60248201527f77686974656c697374206f7065726174696f6e2068617320616c72656164792060448201527f6265656e207375626d6974746564000000000000000000000000000000000000606482015290519081900360840190fd5b60065462010000900460ff161515611a68576040805160e560020a62461bcd02815260206004820152602260248201527f77686974656c69737420686173206e6f74206265656e20696e697469616c697a60448201527f6564000000000000000000000000000000000000000000000000000000000000606482015290519081900360840190fd5b60008111611ae6576040805160e560020a62461bcd02815260206004820152602260248201527f70656e64696e672077686974656c6973742072656d6f76616c20697320656d7060448201527f7479000000000000000000000000000000000000000000000000000000000000606482015290519081900360840190fd5b611af2600583836147df565b506006805461ff00191661010017905560408051602080840282810182019093528382527ffbc0e5ca6c7e4858daf0fdb185ef5186203e74ec9c64737e93c0aeaec596e1d19285928592611b5b9285918591829185019084908082843750612cb2945050505050565b604080516020808201849052828252918101849052908190606082019086908602808284376040519201829003965090945050505050a15050565b60175490565b611ba4613a26565b1515611be8576040805160e560020a62461bcd028152602060048201526016602482015260008051602061489b833981519152604482015290519081900360640190fd5b60025474010000000000000000000000000000000000000000900460ff161515611c5c576040805160e560020a62461bcd02815260206004820152601d60248201527f6f776e657273686970206973206e6f74207472616e7366657261626c65000000604482015290519081900360640190fd5b60025460408051600160a060020a0390921682526000602083015280517f850b3df64837d7d518b45f5aa64d104652c3b80eb5b34a8e3d9eb666cb7cdea59281900390910190a16002805473ffffffffffffffffffffffffffffffffffffffff19169055565b611cca613a26565b1515611d0e576040805160e560020a62461bcd028152602060048201526016602482015260008051602061489b833981519152604482015290519081900360640190fd5b8066038d7ea4c6800011158015611d2d57506706f05b59d3b200008111155b1515611da9576040805160e560020a62461bcd02815260206004820152602e60248201527f67617320746f7020757020616d6f756e74206973206f7574736964652074686560448201527f206d696e2f6d61782072616e6765000000000000000000000000000000000000606482015290519081900360840190fd5b611db4600e82613c96565b6040805182815290517faf2a77cd04c3cc155588dd3bf67b310ab4fb3b1da3cf6b8d7d4d2aa1d09b794c9181900360200190a150565b611df2613a26565b1515611e36576040805160e560020a62461bcd028152602060048201526016602482015260008051602061489b833981519152604482015290519081900360640190fd5b60065460ff16158015611e515750600654610100900460ff16155b1515611ecd576040805160e560020a62461bcd02815260206004820152602e60248201527f77686974656c697374206f7065726174696f6e2068617320616c72656164792060448201527f6265656e207375626d6974746564000000000000000000000000000000000000606482015290519081900360840190fd5b8181808060200260200160405190810160405280939291908181526020018383602002808284375060009450505050505b815181101561203957611f0f6121fb565b600160a060020a03168282815181101515611f2657fe5b60209081029091010151600160a060020a03161415611fa3576040805160e560020a62461bcd02815260206004820152602d60248201526000805160206148db83398151915260448201527f6f776e6572206164647265737300000000000000000000000000000000000000606482015290519081900360840190fd5b8151600090839083908110611fb457fe5b60209081029091010151600160a060020a03161415612031576040805160e560020a62461bcd02815260206004820152602c60248201526000805160206148db83398151915260448201527f7a65726f20616464726573730000000000000000000000000000000000000000606482015290519081900360840190fd5b600101611efe565b60065462010000900460ff1615156120c1576040805160e560020a62461bcd02815260206004820152602260248201527f77686974656c69737420686173206e6f74206265656e20696e697469616c697a60448201527f6564000000000000000000000000000000000000000000000000000000000000606482015290519081900360840190fd5b6000831161213f576040805160e560020a62461bcd02815260206004820152602360248201527f70656e64696e672077686974656c697374206164646974696f6e20697320656d60448201527f7074790000000000000000000000000000000000000000000000000000000000606482015290519081900360840190fd5b61214b600485856147df565b506006805460ff1916600117905560408051602080860282810182019093528582527f9c80b3b5f68b3e017766d59e8d09b34efe6462b05c398f35cab9e271d9bc3b9c92879287926121b29285918591829185019084908082843750612cb2945050505050565b604080516020808201849052828252918101849052908190606082019086908602808284376040519201829003965090945050505050a150505050565b6000610a906014613adc565b600254600160a060020a031690565b60145490565b60075490565b60065462010000900460ff1681565b61222d613a26565b1515612271576040805160e560020a62461bcd028152602060048201526016602482015260008051602061489b833981519152604482015290519081900360640190fd5b8066038d7ea4c680001115801561228a57506013548111155b1515612306576040805160e560020a62461bcd02815260206004820152602d60248201527f63617264206c6f616420616d6f756e74206973206f757473696465207468652060448201527f6d696e2f6d61782072616e676500000000000000000000000000000000000000606482015290519081900360840190fd5b612311601482613c96565b6040805182815290517fc178d379965e5657b6fc57494e392f121a14119215dfb422aad7db4cc03f2d109181900360200190a150565b61234f613a26565b1515612393576040805160e560020a62461bcd028152602060048201526016602482015260008051602061489b833981519152604482015290519081900360640190fd5b60025474010000000000000000000000000000000000000000900460ff161515612407576040805160e560020a62461bcd02815260206004820152601d60248201527f6f776e657273686970206973206e6f74207472616e7366657261626c65000000604482015290519081900360640190fd5b600160a060020a038216151561248d576040805160e560020a62461bcd02815260206004820152602360248201527f6f776e65722063616e6e6f742062652073657420746f207a65726f206164647260448201527f6573730000000000000000000000000000000000000000000000000000000000606482015290519081900360840190fd5b6002805474ff00000000000000000000000000000000000000001916740100000000000000000000000000000000000000008315159081029190911790915561250d5760408051600160a060020a038416815290517f808639ff9c8e4732d60b6c2330de498035416d229f27a77d259680895efec1229181900360200190a15b60025460408051600160a060020a039283168152918416602083015280517f850b3df64837d7d518b45f5aa64d104652c3b80eb5b34a8e3d9eb666cb7cdea59281900390910190a1506002805473ffffffffffffffffffffffffffffffffffffffff1916600160a060020a0392909216919091179055565b6000806000806125948661406d565b5050935093509350508015612621578115156125fa576040805160e560020a62461bcd02815260206004820152600f60248201527f746f6b656e207261746520697320300000000000000000000000000000000000604482015290519081900360640190fd5b61261a8361260e878563ffffffff61428f16565b9063ffffffff6142c416565b9350612626565b600093505b50505092915050565b61263833613b02565b151561267c576040805160e560020a62461bcd02815260206004820152601a60248201526000805160206148bb833981519152604482015290519081900360640190fd5b612687600e826142e7565b604080513381526020810183905281517f7afd2a3e96f4d1c71f2bbdb873ac6920055d55bc8063293860ca8cb660d2403d929181900390910190a150565b60006126cf613a26565b1515612713576040805160e560020a62461bcd028152602060048201526016602482015260008051602061489b833981519152604482015290519081900360640190fd5b8180151561276b576040805160e560020a62461bcd02815260206004820152601d60248201527f70726f76696465642076616c75652063616e6e6f74206265207a65726f000000604482015290519081900360640190fd5b600160a060020a03851615156127cb576040805160e560020a62461bcd02815260206004820181905260248201527f5f746f20616464726573732063616e6e6f742062652073657420746f20307830604482015290519081900360640190fd5b600160a060020a03851660009081526003602052604090205460ff16151561281757829150600160a060020a0384161561280c576128098484612585565b91505b612817600783613d83565b600160a060020a038416156129365783600160a060020a031663a9059cbb86856040518363ffffffff1660e060020a0281526004018083600160a060020a0316600160a060020a0316815260200182815260200192505050602060405180830381600087803b15801561288957600080fd5b505af115801561289d573d6000803e3d6000fd5b505050506040513d60208110156128b357600080fd5b50511515612931576040805160e560020a62461bcd02815260206004820152602560248201527f455243323020746f6b656e207472616e736665722077617320756e737563636560448201527f737366756c000000000000000000000000000000000000000000000000000000606482015290519081900360840190fd5b61296e565b604051600160a060020a0386169084156108fc029085906000818181858888f1935050505015801561296c573d6000803e3d6000fd5b505b60408051600160a060020a0380881682528616602082015280820185905290517fd1ba4ac2e2a11b5101f6cb4d978f514a155b421e8ec396d2d9abaf0bb02917ee9181900360600190a15050505050565b600a5490565b60006129d033613b02565b1515612a14576040805160e560020a62461bcd02815260206004820152601a60248201526000805160206148bb833981519152604482015290519081900360640190fd5b600654610100900460ff161515612a9b576040805160e560020a62461bcd02815260206004820152602860248201527f77686974656c6973742072656d6f76616c20686173206e6f74206265656e207360448201527f75626d6974746564000000000000000000000000000000000000000000000000606482015290519081900360840190fd5b612afc6005805480602002602001604051908101604052809291908181526020018280548015610bbe57602002820191906000526020600020908154600160a060020a03168152600190910190602001808311610ba0575050505050612cb2565b8214612b9e576040805160e560020a62461bcd02815260206004820152604760248201527f68617368206f66207468652070656e64696e672077686974656c69737420726560448201527f6d6f76616c20646f6573206e6f74206d617463682074686520636f6e6669726d60648201527f6564206861736800000000000000000000000000000000000000000000000000608482015290519081900360a40190fd5b5060005b600554811015612bfd57600060036000600584815481101515612bc157fe5b600091825260208083209190910154600160a060020a031683528201929092526040019020805460ff1916911515919091179055600101612ba2565b7fd218c430fa348f4ce67791021b6b89c0c3eacd4ead1d8f5b83c60038ec28249b3360056040518083600160a060020a0316600160a060020a03168152602001806020018281038252838181548152602001915080548015612c8857602002820191906000526020600020905b8154600160a060020a03168152600190910190602001808311612c6a575b5050935050505060405180910390a1612ca3600560006147be565b50506006805461ff0019169055565b60008160405160200180828051906020019060200280838360005b83811015612ce5578181015183820152602001612ccd565b505050509050019150506040516020818303038152906040526040518082805190602001908083835b60208310612d2d5780518252601f199092019160209182019101612d0e565b5181516020939093036101000a6000190180199091169216919091179052604051920182900390912095945050505050565b612d6833613b02565b1515612dac576040805160e560020a62461bcd02815260206004820152601a60248201526000805160206148bb833981519152604482015290519081900360640190fd5b600654610100900460ff161515612e33576040805160e560020a62461bcd02815260206004820152602860248201527f77686974656c6973742072656d6f76616c20686173206e6f74206265656e207360448201527f75626d6974746564000000000000000000000000000000000000000000000000606482015290519081900360840190fd5b612e946005805480602002602001604051908101604052809291908181526020018280548015610bbe57602002820191906000526020600020908154600160a060020a03168152600190910190602001808311610ba0575050505050612cb2565b8114612f10576040805160e560020a62461bcd02815260206004820152603260248201527f68617368206f66207468652070656e64696e672077686974656c69737420726560448201527f6d6f76616c20646f206e6f74206d617463680000000000000000000000000000606482015290519081900360840190fd5b612f1c600560006147be565b6006805461ff0019169055604080513381526020810183905281517f13c935eb475aa0f6e931fece83e2ac44569ce2d53460d29a6dedab40b965c8a3929181900390910190a150565b600b5460ff1690565b601254610100900460ff1690565b60185460ff1690565b6000610a906007613adc565b600654610100900460ff1681565b6000600160a060020a0382161561304457604080517f70a082310000000000000000000000000000000000000000000000000000000081523060048201529051600160a060020a038416916370a082319160248083019260209291908290030181600087803b15801561301157600080fd5b505af1158015613025573d6000803e3d6000fd5b505050506040513d602081101561303b57600080fd5b50519050610955565b503031610955565b808015156130a4576040805160e560020a62461bcd02815260206004820152601d60248201527f70726f76696465642076616c75652063616e6e6f74206265207a65726f000000604482015290519081900360640190fd5b6130ac613a26565b806130bb57506130bb33613b02565b1515613137576040805160e560020a62461bcd02815260206004820152602b60248201527f73656e646572206973206e65697468657220616e206f776e6572206e6f72206160448201527f20636f6e74726f6c6c6572000000000000000000000000000000000000000000606482015290519081900360840190fd5b613142600e83613d83565b61314a6121fb565b600160a060020a03166108fc839081150290604051600060405180830381858888f19350505050158015613182573d6000803e3d6000fd5b507f611b7c0d84fda988026215bef9b3e4d81cbceced7e679be6d5e044b588467c0e336131ad6121fb565b60408051600160a060020a03938416815291909216602082015280820185905290519081900360600190a15050565b6131e533613b02565b1515613229576040805160e560020a62461bcd02815260206004820152601a60248201526000805160206148bb833981519152604482015290519081900360640190fd5b6115f06007826143db565b61323d33613b02565b1515613281576040805160e560020a62461bcd02815260206004820152601a60248201526000805160206148bb833981519152604482015290519081900360640190fd5b61328c6007826142e7565b604080513381526020810183905281517f18133cfc1a26798f5efaa036be77bc55c949fca408b7b85d1dced0a91240f204929181900390910190a150565b600e5490565b6000808080808080600160a060020a038916156133be576132f08961406d565b505096509650965050831515613350576040805160e560020a62461bcd02815260206004820152601660248201527f746f6b656e206973206e6f7420617661696c61626c6500000000000000000000604482015290519081900360640190fd5b8415156133a7576040805160e560020a62461bcd02815260206004820152600f60248201527f746f6b656e207261746520697320300000000000000000000000000000000000604482015290519081900360640190fd5b6133bb8661260e8a8863ffffffff61428f16565b97505b6133c66144df565b505093509350935050801515613426576040805160e560020a62461bcd02815260206004820152601660248201527f746f6b656e206973206e6f7420617661696c61626c6500000000000000000000604482015290519081900360640190fd5b81151561347d576040805160e560020a62461bcd02815260206004820152601460248201527f737461626c65636f696e20726174652069732030000000000000000000000000604482015290519081900360640190fd5b6134918261260e8a8663ffffffff61428f16565b9998505050505050505050565b6134a733613b02565b15156134eb576040805160e560020a62461bcd02815260206004820152601a60248201526000805160206148bb833981519152604482015290519081900360640190fd5b610a466014826143db565b6000613500613a26565b1515613544576040805160e560020a62461bcd028152602060048201526016602482015260008051602061489b833981519152604482015290519081900360640190fd5b8282808060200260200160405190810160405280939291908181526020018383602002808284375060009450505050505b81518110156136b0576135866121fb565b600160a060020a0316828281518110151561359d57fe5b60209081029091010151600160a060020a0316141561361a576040805160e560020a62461bcd02815260206004820152602d60248201526000805160206148db83398151915260448201527f6f776e6572206164647265737300000000000000000000000000000000000000606482015290519081900360840190fd5b815160009083908390811061362b57fe5b60209081029091010151600160a060020a031614156136a8576040805160e560020a62461bcd02815260206004820152602c60248201526000805160206148db83398151915260448201527f7a65726f20616464726573730000000000000000000000000000000000000000606482015290519081900360840190fd5b600101613575565b60065462010000900460ff1615613737576040805160e560020a62461bcd02815260206004820152602660248201527f77686974656c6973742068617320616c7265616479206265656e20696e69746960448201527f616c697a65640000000000000000000000000000000000000000000000000000606482015290519081900360840190fd5b600092505b838310156137935760016003600087878781811061375657fe5b60209081029290920135600160a060020a0316835250810191909152604001600020805460ff19169115159190911790556001929092019161373c565b6006805462ff0000191662010000179055604080513380825260208083018481529383018890527fb2f6cccee7a369e23e293c25aa19bef80af11eb26deba3ea0f2a02783f752e4a93919289928992606083019085908502808284376040519201829003965090945050505050a15050505050565b61381133613b02565b1515613855576040805160e560020a62461bcd02815260206004820152601a60248201526000805160206148bb833981519152604482015290519081900360640190fd5b613860600e826143db565b604080513381526020810183905281517f41ff5d5ce3b7935893a4e7269ec5caae9cca5e3bf0eb4b21d2f443489667112e929181900390910190a150565b6138a733613b02565b15156138eb576040805160e560020a62461bcd02815260206004820152601a60248201526000805160206148bb833981519152604482015290519081900360640190fd5b6138f66014826142e7565b604080513381526020810183905281517feac146812c136bbb04d4f500dec69a01b4e1981fd21b4cf38816f7723b54ac25929181900390910190a150565b61393c613a26565b1515613980576040805160e560020a62461bcd028152602060048201526016602482015260008051602061489b833981519152604482015290519081900360640190fd5b8066038d7ea4c680001115801561399f57506706f05b59d3b200008111155b1515613a1b576040805160e560020a62461bcd02815260206004820152602e60248201527f67617320746f7020757020616d6f756e74206973206f7574736964652074686560448201527f206d696e2f6d61782072616e6765000000000000000000000000000000000000606482015290519081900360840190fd5b613860600e82613a37565b600254600160a060020a0316331490565b6004820154610100900460ff1615613abf576040805160e560020a62461bcd02815260206004820152602860248201527f6461696c79206c696d69742068617320616c7265616479206265656e20696e6960448201527f7469616c697a6564000000000000000000000000000000000000000000000000606482015290519081900360840190fd5b613ac982826146f8565b50600401805461ff001916610100179055565b600081600201546201518001421115613af757508054610955565b506001810154610955565b600080546001546040805160e060020a630178b8bf028152600481019290925251600160a060020a0390921691630178b8bf9160248082019260209290919082900301818787803b158015613b5657600080fd5b505af1158015613b6a573d6000803e3d6000fd5b505050506040513d6020811015613b8057600080fd5b50516001546040805160e160020a631d9dabef028152600481019290925251600160a060020a0390921691633b3b57de916024808201926020929091908290030181600087803b158015613bd357600080fd5b505af1158015613be7573d6000803e3d6000fd5b505050506040513d6020811015613bfd57600080fd5b5051604080517fb429afeb000000000000000000000000000000000000000000000000000000008152600160a060020a0385811660048301529151919092169163b429afeb9160248083019260209291908290030181600087803b158015613c6457600080fd5b505af1158015613c78573d6000803e3d6000fd5b505050506040513d6020811015613c8e57600080fd5b505192915050565b6004820154610100900460ff161515613cf9576040805160e560020a62461bcd02815260206004820152601e60248201527f6c696d697420686173206e6f74206265656e20696e697469616c697a65640000604482015290519081900360640190fd5b600482015460ff1615613d56576040805160e560020a62461bcd02815260206004820181905260248201527f6c696d69742068617320616c7265616479206265656e207375626d6974746564604482015290519081900360640190fd5b6003820155600401805460ff19166001179055565b600080613d778361406d565b50979650505050505050565b613d8c8261471c565b6001820154811115613e0e576040805160e560020a62461bcd02815260206004820152603260248201527f617661696c61626c652068617320746f2062652067726561746572206f72206560448201527f7175616c20746f2075736520616d6f756e740000000000000000000000000000606482015290519081900360840190fd5b6001820154613e23908263ffffffff61479516565b82600101819055505050565b60008060008084600401865110151515613e93576040805160e560020a62461bcd02815260206004820152601460248201527f736c6963696e67206f7574206f662072616e6765000000000000000000000000604482015290519081900360640190fd5b5060009150819050805b60048160ff161015613efe5761010083029250858160ff168601815181101515613ec357fe5b01602001517f010000000000000000000000000000000000000000000000000000000000000090819004810204928301929150600101613e9d565b5090949350505050565b60008082602001845110151515613f69576040805160e560020a62461bcd02815260206004820152601460248201527f736c6963696e67206f7574206f662072616e6765000000000000000000000000604482015290519081900360640190fd5b505081810160200151805b5092915050565b60008060008084601401865110151515613fdf576040805160e560020a62461bcd02815260206004820152601460248201527f736c6963696e67206f7574206f662072616e6765000000000000000000000000604482015290519081900360640190fd5b5060009150819050805b60148160ff161015613efe5761010083029250858160ff16860181518110151561400f57fe5b01602001517f010000000000000000000000000000000000000000000000000000000000000090819004810204928301929150600101613fe9565b6000806040516020840160008287838a8c6187965a03f198975050505050505050565b600c54600d546040805160e060020a630178b8bf0281526004810192909252516060926000928392839283928392600160a060020a0390921691630178b8bf9160248082019260209290919082900301818787803b1580156140ce57600080fd5b505af11580156140e2573d6000803e3d6000fd5b505050506040513d60208110156140f857600080fd5b5051600d546040805160e160020a631d9dabef028152600481019290925251600160a060020a0390921691633b3b57de916024808201926020929091908290030181600087803b15801561414b57600080fd5b505af115801561415f573d6000803e3d6000fd5b505050506040513d602081101561417557600080fd5b5051604080517f1f69565f000000000000000000000000000000000000000000000000000000008152600160a060020a038a8116600483015291519190921691631f69565f91602480830192600092919082900301818387803b1580156141db57600080fd5b505af11580156141ef573d6000803e3d6000fd5b505050506040513d6000823e601f3d908101601f1916820160405260c081101561421857600080fd5b81019080805164010000000081111561423057600080fd5b8201602081018481111561424357600080fd5b815164010000000081118282018710171561425d57600080fd5b5050602082015160408301516060840151608085015160a090950151939e929d50909b50995091975095509350505050565b6000808315156142a25760009150613f74565b508282028284828115156142b257fe5b04146142bd57600080fd5b9392505050565b6000808083116142d357600080fd5b82848115156142de57fe5b04949350505050565b600482015460ff161515614345576040805160e560020a62461bcd02815260206004820152601a60248201527f6c696d697420757064617465206e6f74207375626d6974746564000000000000604482015290519081900360640190fd5b600382015481146143c6576040805160e560020a62461bcd02815260206004820152602960248201527f636f6e6669726d656420616e642063616e63656c6c6564206c696d697473206460448201527f6f6e74206d617463680000000000000000000000000000000000000000000000606482015290519081900360840190fd5b5060006003820155600401805460ff19169055565b600482015460ff161515614439576040805160e560020a62461bcd02815260206004820152601c60248201527f6c696d697420686173206e6f74206265656e207375626d697474656400000000604482015290519081900360640190fd5b600382015481146144ba576040805160e560020a62461bcd02815260206004820152602960248201527f636f6e6669726d656420616e64207375626d6974746564206c696d697473206460448201527f6f6e74206d617463680000000000000000000000000000000000000000000000606482015290519081900360840190fd5b6144c88283600301546146f8565b5060048101805460ff191690556000600390910155565b600c54600d546040805160e060020a630178b8bf0281526004810192909252516060926000928392839283928392600160a060020a0390921691630178b8bf9160248082019260209290919082900301818787803b15801561454057600080fd5b505af1158015614554573d6000803e3d6000fd5b505050506040513d602081101561456a57600080fd5b5051600d546040805160e160020a631d9dabef028152600481019290925251600160a060020a0390921691633b3b57de916024808201926020929091908290030181600087803b1580156145bd57600080fd5b505af11580156145d1573d6000803e3d6000fd5b505050506040513d60208110156145e757600080fd5b5051604080517f3efec5e90000000000000000000000000000000000000000000000000000000081529051600160a060020a0390921691633efec5e99160048082019260009290919082900301818387803b15801561464557600080fd5b505af1158015614659573d6000803e3d6000fd5b505050506040513d6000823e601f3d908101601f1916820160405260c081101561468257600080fd5b81019080805164010000000081111561469a57600080fd5b820160208101848111156146ad57600080fd5b81516401000000008111828201871017156146c757600080fd5b5050602082015160408301516060840151608085015160a090950151939d929c50909a509850919650945092505050565b6147018261471c565b808255600182015481101561471857815460018301555b5050565b6002810154600090614737906201518063ffffffff6147ac16565b4211156147185761475c6201518061260e84600201544261479590919063ffffffff16565b9050614785614774826201518063ffffffff61428f16565b60028401549063ffffffff6147ac16565b6002830155815460018301555050565b600080838311156147a557600080fd5b5050900390565b6000828201838110156142bd57600080fd5b50805460008255906000526020600020908101906147dc919061484f565b50565b82805482825590600052602060002090810192821561483f579160200282015b8281111561483f57815473ffffffffffffffffffffffffffffffffffffffff1916600160a060020a038435161782556020909201916001909101906147ff565b5061484b929150614869565b5090565b610a9391905b8082111561484b5760008155600101614855565b610a9391905b8082111561484b57805473ffffffffffffffffffffffffffffffffffffffff1916815560010161486f560073656e646572206973206e6f7420616e206f776e65720000000000000000000073656e646572206973206e6f74206120636f6e74726f6c6c657200000000000070726f76696465642077686974656c69737420636f6e7461696e732074686520a165627a7a7230582067367105d7a72575456547269fef42639a4f773c7a8946eb03357220932bc7260029`
 
 // DeployWallet deploys a new Ethereum contract, binding an instance of Wallet to it.
-func DeployWallet(auth *bind.TransactOpts, backend bind.ContractBackend, _owner common.Address, _transferable bool, _ens common.Address, _oracleName [32]byte, _controllerName [32]byte, _spendLimit *big.Int) (common.Address, *types.Transaction, *Wallet, error) {
+func DeployWallet(auth *bind.TransactOpts, backend bind.ContractBackend, _owner common.Address, _transferable bool, _ens common.Address, _oracleName [32]byte, _controllerName [32]byte, _licenceName [32]byte, _spendLimit *big.Int) (common.Address, *types.Transaction, *Wallet, error) {
 	parsed, err := abi.JSON(strings.NewReader(WalletABI))
 	if err != nil {
 		return common.Address{}, nil, nil, err
 	}
-	address, tx, contract, err := bind.DeployContract(auth, parsed, common.FromHex(WalletBin), backend, _owner, _transferable, _ens, _oracleName, _controllerName, _spendLimit)
+	address, tx, contract, err := bind.DeployContract(auth, parsed, common.FromHex(WalletBin), backend, _owner, _transferable, _ens, _oracleName, _controllerName, _licenceName, _spendLimit)
 	if err != nil {
 		return common.Address{}, nil, nil, err
 	}
@@ -190,7 +190,7 @@ func (_Wallet *WalletTransactorRaw) Transact(opts *bind.TransactOpts, method str
 
 // Balance is a free data retrieval call binding the contract method 0xe3d670d7.
 //
-// Solidity: function balance(_asset address) constant returns(uint256)
+// Solidity: function balance(address _asset) constant returns(uint256)
 func (_Wallet *WalletCaller) Balance(opts *bind.CallOpts, _asset common.Address) (*big.Int, error) {
 	var (
 		ret0 = new(*big.Int)
@@ -202,16 +202,198 @@ func (_Wallet *WalletCaller) Balance(opts *bind.CallOpts, _asset common.Address)
 
 // Balance is a free data retrieval call binding the contract method 0xe3d670d7.
 //
-// Solidity: function balance(_asset address) constant returns(uint256)
+// Solidity: function balance(address _asset) constant returns(uint256)
 func (_Wallet *WalletSession) Balance(_asset common.Address) (*big.Int, error) {
 	return _Wallet.Contract.Balance(&_Wallet.CallOpts, _asset)
 }
 
 // Balance is a free data retrieval call binding the contract method 0xe3d670d7.
 //
-// Solidity: function balance(_asset address) constant returns(uint256)
+// Solidity: function balance(address _asset) constant returns(uint256)
 func (_Wallet *WalletCallerSession) Balance(_asset common.Address) (*big.Int, error) {
 	return _Wallet.Contract.Balance(&_Wallet.CallOpts, _asset)
+}
+
+// CalculateHash is a free data retrieval call binding the contract method 0xcd7958dd.
+//
+// Solidity: function calculateHash(address[] _addresses) constant returns(bytes32)
+func (_Wallet *WalletCaller) CalculateHash(opts *bind.CallOpts, _addresses []common.Address) ([32]byte, error) {
+	var (
+		ret0 = new([32]byte)
+	)
+	out := ret0
+	err := _Wallet.contract.Call(opts, out, "calculateHash", _addresses)
+	return *ret0, err
+}
+
+// CalculateHash is a free data retrieval call binding the contract method 0xcd7958dd.
+//
+// Solidity: function calculateHash(address[] _addresses) constant returns(bytes32)
+func (_Wallet *WalletSession) CalculateHash(_addresses []common.Address) ([32]byte, error) {
+	return _Wallet.Contract.CalculateHash(&_Wallet.CallOpts, _addresses)
+}
+
+// CalculateHash is a free data retrieval call binding the contract method 0xcd7958dd.
+//
+// Solidity: function calculateHash(address[] _addresses) constant returns(bytes32)
+func (_Wallet *WalletCallerSession) CalculateHash(_addresses []common.Address) ([32]byte, error) {
+	return _Wallet.Contract.CalculateHash(&_Wallet.CallOpts, _addresses)
+}
+
+// ConvertToEther is a free data retrieval call binding the contract method 0xb87e21ef.
+//
+// Solidity: function convertToEther(address _token, uint256 _amount) constant returns(uint256)
+func (_Wallet *WalletCaller) ConvertToEther(opts *bind.CallOpts, _token common.Address, _amount *big.Int) (*big.Int, error) {
+	var (
+		ret0 = new(*big.Int)
+	)
+	out := ret0
+	err := _Wallet.contract.Call(opts, out, "convertToEther", _token, _amount)
+	return *ret0, err
+}
+
+// ConvertToEther is a free data retrieval call binding the contract method 0xb87e21ef.
+//
+// Solidity: function convertToEther(address _token, uint256 _amount) constant returns(uint256)
+func (_Wallet *WalletSession) ConvertToEther(_token common.Address, _amount *big.Int) (*big.Int, error) {
+	return _Wallet.Contract.ConvertToEther(&_Wallet.CallOpts, _token, _amount)
+}
+
+// ConvertToEther is a free data retrieval call binding the contract method 0xb87e21ef.
+//
+// Solidity: function convertToEther(address _token, uint256 _amount) constant returns(uint256)
+func (_Wallet *WalletCallerSession) ConvertToEther(_token common.Address, _amount *big.Int) (*big.Int, error) {
+	return _Wallet.Contract.ConvertToEther(&_Wallet.CallOpts, _token, _amount)
+}
+
+// ConvertToStablecoin is a free data retrieval call binding the contract method 0xf36febda.
+//
+// Solidity: function convertToStablecoin(address _token, uint256 _amount) constant returns(uint256)
+func (_Wallet *WalletCaller) ConvertToStablecoin(opts *bind.CallOpts, _token common.Address, _amount *big.Int) (*big.Int, error) {
+	var (
+		ret0 = new(*big.Int)
+	)
+	out := ret0
+	err := _Wallet.contract.Call(opts, out, "convertToStablecoin", _token, _amount)
+	return *ret0, err
+}
+
+// ConvertToStablecoin is a free data retrieval call binding the contract method 0xf36febda.
+//
+// Solidity: function convertToStablecoin(address _token, uint256 _amount) constant returns(uint256)
+func (_Wallet *WalletSession) ConvertToStablecoin(_token common.Address, _amount *big.Int) (*big.Int, error) {
+	return _Wallet.Contract.ConvertToStablecoin(&_Wallet.CallOpts, _token, _amount)
+}
+
+// ConvertToStablecoin is a free data retrieval call binding the contract method 0xf36febda.
+//
+// Solidity: function convertToStablecoin(address _token, uint256 _amount) constant returns(uint256)
+func (_Wallet *WalletCallerSession) ConvertToStablecoin(_token common.Address, _amount *big.Int) (*big.Int, error) {
+	return _Wallet.Contract.ConvertToStablecoin(&_Wallet.CallOpts, _token, _amount)
+}
+
+// GasTopUpAvailable is a free data retrieval call binding the contract method 0x04190c8d.
+//
+// Solidity: function gasTopUpAvailable() constant returns(uint256)
+func (_Wallet *WalletCaller) GasTopUpAvailable(opts *bind.CallOpts) (*big.Int, error) {
+	var (
+		ret0 = new(*big.Int)
+	)
+	out := ret0
+	err := _Wallet.contract.Call(opts, out, "gasTopUpAvailable")
+	return *ret0, err
+}
+
+// GasTopUpAvailable is a free data retrieval call binding the contract method 0x04190c8d.
+//
+// Solidity: function gasTopUpAvailable() constant returns(uint256)
+func (_Wallet *WalletSession) GasTopUpAvailable() (*big.Int, error) {
+	return _Wallet.Contract.GasTopUpAvailable(&_Wallet.CallOpts)
+}
+
+// GasTopUpAvailable is a free data retrieval call binding the contract method 0x04190c8d.
+//
+// Solidity: function gasTopUpAvailable() constant returns(uint256)
+func (_Wallet *WalletCallerSession) GasTopUpAvailable() (*big.Int, error) {
+	return _Wallet.Contract.GasTopUpAvailable(&_Wallet.CallOpts)
+}
+
+// GasTopUpLimit is a free data retrieval call binding the contract method 0xf04ee519.
+//
+// Solidity: function gasTopUpLimit() constant returns(uint256)
+func (_Wallet *WalletCaller) GasTopUpLimit(opts *bind.CallOpts) (*big.Int, error) {
+	var (
+		ret0 = new(*big.Int)
+	)
+	out := ret0
+	err := _Wallet.contract.Call(opts, out, "gasTopUpLimit")
+	return *ret0, err
+}
+
+// GasTopUpLimit is a free data retrieval call binding the contract method 0xf04ee519.
+//
+// Solidity: function gasTopUpLimit() constant returns(uint256)
+func (_Wallet *WalletSession) GasTopUpLimit() (*big.Int, error) {
+	return _Wallet.Contract.GasTopUpLimit(&_Wallet.CallOpts)
+}
+
+// GasTopUpLimit is a free data retrieval call binding the contract method 0xf04ee519.
+//
+// Solidity: function gasTopUpLimit() constant returns(uint256)
+func (_Wallet *WalletCallerSession) GasTopUpLimit() (*big.Int, error) {
+	return _Wallet.Contract.GasTopUpLimit(&_Wallet.CallOpts)
+}
+
+// InitializedGasTopUpLimit is a free data retrieval call binding the contract method 0xd66030ba.
+//
+// Solidity: function initializedGasTopUpLimit() constant returns(bool)
+func (_Wallet *WalletCaller) InitializedGasTopUpLimit(opts *bind.CallOpts) (bool, error) {
+	var (
+		ret0 = new(bool)
+	)
+	out := ret0
+	err := _Wallet.contract.Call(opts, out, "initializedGasTopUpLimit")
+	return *ret0, err
+}
+
+// InitializedGasTopUpLimit is a free data retrieval call binding the contract method 0xd66030ba.
+//
+// Solidity: function initializedGasTopUpLimit() constant returns(bool)
+func (_Wallet *WalletSession) InitializedGasTopUpLimit() (bool, error) {
+	return _Wallet.Contract.InitializedGasTopUpLimit(&_Wallet.CallOpts)
+}
+
+// InitializedGasTopUpLimit is a free data retrieval call binding the contract method 0xd66030ba.
+//
+// Solidity: function initializedGasTopUpLimit() constant returns(bool)
+func (_Wallet *WalletCallerSession) InitializedGasTopUpLimit() (bool, error) {
+	return _Wallet.Contract.InitializedGasTopUpLimit(&_Wallet.CallOpts)
+}
+
+// InitializedLoadLimit is a free data retrieval call binding the contract method 0x597bfd18.
+//
+// Solidity: function initializedLoadLimit() constant returns(bool)
+func (_Wallet *WalletCaller) InitializedLoadLimit(opts *bind.CallOpts) (bool, error) {
+	var (
+		ret0 = new(bool)
+	)
+	out := ret0
+	err := _Wallet.contract.Call(opts, out, "initializedLoadLimit")
+	return *ret0, err
+}
+
+// InitializedLoadLimit is a free data retrieval call binding the contract method 0x597bfd18.
+//
+// Solidity: function initializedLoadLimit() constant returns(bool)
+func (_Wallet *WalletSession) InitializedLoadLimit() (bool, error) {
+	return _Wallet.Contract.InitializedLoadLimit(&_Wallet.CallOpts)
+}
+
+// InitializedLoadLimit is a free data retrieval call binding the contract method 0x597bfd18.
+//
+// Solidity: function initializedLoadLimit() constant returns(bool)
+func (_Wallet *WalletCallerSession) InitializedLoadLimit() (bool, error) {
+	return _Wallet.Contract.InitializedLoadLimit(&_Wallet.CallOpts)
 }
 
 // InitializedSpendLimit is a free data retrieval call binding the contract method 0x5658eff0.
@@ -238,32 +420,6 @@ func (_Wallet *WalletSession) InitializedSpendLimit() (bool, error) {
 // Solidity: function initializedSpendLimit() constant returns(bool)
 func (_Wallet *WalletCallerSession) InitializedSpendLimit() (bool, error) {
 	return _Wallet.Contract.InitializedSpendLimit(&_Wallet.CallOpts)
-}
-
-// InitializedTopUpLimit is a free data retrieval call binding the contract method 0xf9c470a5.
-//
-// Solidity: function initializedTopUpLimit() constant returns(bool)
-func (_Wallet *WalletCaller) InitializedTopUpLimit(opts *bind.CallOpts) (bool, error) {
-	var (
-		ret0 = new(bool)
-	)
-	out := ret0
-	err := _Wallet.contract.Call(opts, out, "initializedTopUpLimit")
-	return *ret0, err
-}
-
-// InitializedTopUpLimit is a free data retrieval call binding the contract method 0xf9c470a5.
-//
-// Solidity: function initializedTopUpLimit() constant returns(bool)
-func (_Wallet *WalletSession) InitializedTopUpLimit() (bool, error) {
-	return _Wallet.Contract.InitializedTopUpLimit(&_Wallet.CallOpts)
-}
-
-// InitializedTopUpLimit is a free data retrieval call binding the contract method 0xf9c470a5.
-//
-// Solidity: function initializedTopUpLimit() constant returns(bool)
-func (_Wallet *WalletCallerSession) InitializedTopUpLimit() (bool, error) {
-	return _Wallet.Contract.InitializedTopUpLimit(&_Wallet.CallOpts)
 }
 
 // InitializedWhitelist is a free data retrieval call binding the contract method 0xafa0fd9b.
@@ -320,7 +476,7 @@ func (_Wallet *WalletCallerSession) IsTransferable() (bool, error) {
 
 // IsWhitelisted is a free data retrieval call binding the contract method 0x3af32abf.
 //
-// Solidity: function isWhitelisted( address) constant returns(bool)
+// Solidity: function isWhitelisted(address ) constant returns(bool)
 func (_Wallet *WalletCaller) IsWhitelisted(opts *bind.CallOpts, arg0 common.Address) (bool, error) {
 	var (
 		ret0 = new(bool)
@@ -332,16 +488,68 @@ func (_Wallet *WalletCaller) IsWhitelisted(opts *bind.CallOpts, arg0 common.Addr
 
 // IsWhitelisted is a free data retrieval call binding the contract method 0x3af32abf.
 //
-// Solidity: function isWhitelisted( address) constant returns(bool)
+// Solidity: function isWhitelisted(address ) constant returns(bool)
 func (_Wallet *WalletSession) IsWhitelisted(arg0 common.Address) (bool, error) {
 	return _Wallet.Contract.IsWhitelisted(&_Wallet.CallOpts, arg0)
 }
 
 // IsWhitelisted is a free data retrieval call binding the contract method 0x3af32abf.
 //
-// Solidity: function isWhitelisted( address) constant returns(bool)
+// Solidity: function isWhitelisted(address ) constant returns(bool)
 func (_Wallet *WalletCallerSession) IsWhitelisted(arg0 common.Address) (bool, error) {
 	return _Wallet.Contract.IsWhitelisted(&_Wallet.CallOpts, arg0)
+}
+
+// LoadAvailable is a free data retrieval call binding the contract method 0x83c4ecfb.
+//
+// Solidity: function loadAvailable() constant returns(uint256)
+func (_Wallet *WalletCaller) LoadAvailable(opts *bind.CallOpts) (*big.Int, error) {
+	var (
+		ret0 = new(*big.Int)
+	)
+	out := ret0
+	err := _Wallet.contract.Call(opts, out, "loadAvailable")
+	return *ret0, err
+}
+
+// LoadAvailable is a free data retrieval call binding the contract method 0x83c4ecfb.
+//
+// Solidity: function loadAvailable() constant returns(uint256)
+func (_Wallet *WalletSession) LoadAvailable() (*big.Int, error) {
+	return _Wallet.Contract.LoadAvailable(&_Wallet.CallOpts)
+}
+
+// LoadAvailable is a free data retrieval call binding the contract method 0x83c4ecfb.
+//
+// Solidity: function loadAvailable() constant returns(uint256)
+func (_Wallet *WalletCallerSession) LoadAvailable() (*big.Int, error) {
+	return _Wallet.Contract.LoadAvailable(&_Wallet.CallOpts)
+}
+
+// LoadLimit is a free data retrieval call binding the contract method 0xaa5367df.
+//
+// Solidity: function loadLimit() constant returns(uint256)
+func (_Wallet *WalletCaller) LoadLimit(opts *bind.CallOpts) (*big.Int, error) {
+	var (
+		ret0 = new(*big.Int)
+	)
+	out := ret0
+	err := _Wallet.contract.Call(opts, out, "loadLimit")
+	return *ret0, err
+}
+
+// LoadLimit is a free data retrieval call binding the contract method 0xaa5367df.
+//
+// Solidity: function loadLimit() constant returns(uint256)
+func (_Wallet *WalletSession) LoadLimit() (*big.Int, error) {
+	return _Wallet.Contract.LoadLimit(&_Wallet.CallOpts)
+}
+
+// LoadLimit is a free data retrieval call binding the contract method 0xaa5367df.
+//
+// Solidity: function loadLimit() constant returns(uint256)
+func (_Wallet *WalletCallerSession) LoadLimit() (*big.Int, error) {
+	return _Wallet.Contract.LoadLimit(&_Wallet.CallOpts)
 }
 
 // Owner is a free data retrieval call binding the contract method 0x8da5cb5b.
@@ -370,6 +578,58 @@ func (_Wallet *WalletCallerSession) Owner() (common.Address, error) {
 	return _Wallet.Contract.Owner(&_Wallet.CallOpts)
 }
 
+// PendingGasTopUpLimit is a free data retrieval call binding the contract method 0x302c6220.
+//
+// Solidity: function pendingGasTopUpLimit() constant returns(uint256)
+func (_Wallet *WalletCaller) PendingGasTopUpLimit(opts *bind.CallOpts) (*big.Int, error) {
+	var (
+		ret0 = new(*big.Int)
+	)
+	out := ret0
+	err := _Wallet.contract.Call(opts, out, "pendingGasTopUpLimit")
+	return *ret0, err
+}
+
+// PendingGasTopUpLimit is a free data retrieval call binding the contract method 0x302c6220.
+//
+// Solidity: function pendingGasTopUpLimit() constant returns(uint256)
+func (_Wallet *WalletSession) PendingGasTopUpLimit() (*big.Int, error) {
+	return _Wallet.Contract.PendingGasTopUpLimit(&_Wallet.CallOpts)
+}
+
+// PendingGasTopUpLimit is a free data retrieval call binding the contract method 0x302c6220.
+//
+// Solidity: function pendingGasTopUpLimit() constant returns(uint256)
+func (_Wallet *WalletCallerSession) PendingGasTopUpLimit() (*big.Int, error) {
+	return _Wallet.Contract.PendingGasTopUpLimit(&_Wallet.CallOpts)
+}
+
+// PendingLoadLimit is a free data retrieval call binding the contract method 0x714af5e5.
+//
+// Solidity: function pendingLoadLimit() constant returns(uint256)
+func (_Wallet *WalletCaller) PendingLoadLimit(opts *bind.CallOpts) (*big.Int, error) {
+	var (
+		ret0 = new(*big.Int)
+	)
+	out := ret0
+	err := _Wallet.contract.Call(opts, out, "pendingLoadLimit")
+	return *ret0, err
+}
+
+// PendingLoadLimit is a free data retrieval call binding the contract method 0x714af5e5.
+//
+// Solidity: function pendingLoadLimit() constant returns(uint256)
+func (_Wallet *WalletSession) PendingLoadLimit() (*big.Int, error) {
+	return _Wallet.Contract.PendingLoadLimit(&_Wallet.CallOpts)
+}
+
+// PendingLoadLimit is a free data retrieval call binding the contract method 0x714af5e5.
+//
+// Solidity: function pendingLoadLimit() constant returns(uint256)
+func (_Wallet *WalletCallerSession) PendingLoadLimit() (*big.Int, error) {
+	return _Wallet.Contract.PendingLoadLimit(&_Wallet.CallOpts)
+}
+
 // PendingSpendLimit is a free data retrieval call binding the contract method 0xc8ecaddb.
 //
 // Solidity: function pendingSpendLimit() constant returns(uint256)
@@ -396,32 +656,6 @@ func (_Wallet *WalletCallerSession) PendingSpendLimit() (*big.Int, error) {
 	return _Wallet.Contract.PendingSpendLimit(&_Wallet.CallOpts)
 }
 
-// PendingTopUpLimit is a free data retrieval call binding the contract method 0x70332d85.
-//
-// Solidity: function pendingTopUpLimit() constant returns(uint256)
-func (_Wallet *WalletCaller) PendingTopUpLimit(opts *bind.CallOpts) (*big.Int, error) {
-	var (
-		ret0 = new(*big.Int)
-	)
-	out := ret0
-	err := _Wallet.contract.Call(opts, out, "pendingTopUpLimit")
-	return *ret0, err
-}
-
-// PendingTopUpLimit is a free data retrieval call binding the contract method 0x70332d85.
-//
-// Solidity: function pendingTopUpLimit() constant returns(uint256)
-func (_Wallet *WalletSession) PendingTopUpLimit() (*big.Int, error) {
-	return _Wallet.Contract.PendingTopUpLimit(&_Wallet.CallOpts)
-}
-
-// PendingTopUpLimit is a free data retrieval call binding the contract method 0x70332d85.
-//
-// Solidity: function pendingTopUpLimit() constant returns(uint256)
-func (_Wallet *WalletCallerSession) PendingTopUpLimit() (*big.Int, error) {
-	return _Wallet.Contract.PendingTopUpLimit(&_Wallet.CallOpts)
-}
-
 // PendingWhitelistAddition is a free data retrieval call binding the contract method 0x47b55a9d.
 //
 // Solidity: function pendingWhitelistAddition() constant returns(address[])
@@ -446,32 +680,6 @@ func (_Wallet *WalletSession) PendingWhitelistAddition() ([]common.Address, erro
 // Solidity: function pendingWhitelistAddition() constant returns(address[])
 func (_Wallet *WalletCallerSession) PendingWhitelistAddition() ([]common.Address, error) {
 	return _Wallet.Contract.PendingWhitelistAddition(&_Wallet.CallOpts)
-}
-
-// PendingWhitelistHash is a free data retrieval call binding the contract method 0x7c955583.
-//
-// Solidity: function pendingWhitelistHash(_pendingWhitelist address[]) constant returns(bytes32)
-func (_Wallet *WalletCaller) PendingWhitelistHash(opts *bind.CallOpts, _pendingWhitelist []common.Address) ([32]byte, error) {
-	var (
-		ret0 = new([32]byte)
-	)
-	out := ret0
-	err := _Wallet.contract.Call(opts, out, "pendingWhitelistHash", _pendingWhitelist)
-	return *ret0, err
-}
-
-// PendingWhitelistHash is a free data retrieval call binding the contract method 0x7c955583.
-//
-// Solidity: function pendingWhitelistHash(_pendingWhitelist address[]) constant returns(bytes32)
-func (_Wallet *WalletSession) PendingWhitelistHash(_pendingWhitelist []common.Address) ([32]byte, error) {
-	return _Wallet.Contract.PendingWhitelistHash(&_Wallet.CallOpts, _pendingWhitelist)
-}
-
-// PendingWhitelistHash is a free data retrieval call binding the contract method 0x7c955583.
-//
-// Solidity: function pendingWhitelistHash(_pendingWhitelist address[]) constant returns(bytes32)
-func (_Wallet *WalletCallerSession) PendingWhitelistHash(_pendingWhitelist []common.Address) ([32]byte, error) {
-	return _Wallet.Contract.PendingWhitelistHash(&_Wallet.CallOpts, _pendingWhitelist)
 }
 
 // PendingWhitelistRemoval is a free data retrieval call binding the contract method 0x294f4025.
@@ -552,6 +760,58 @@ func (_Wallet *WalletCallerSession) SpendLimit() (*big.Int, error) {
 	return _Wallet.Contract.SpendLimit(&_Wallet.CallOpts)
 }
 
+// SubmittedGasTopUpLimit is a free data retrieval call binding the contract method 0x3fc8b4f7.
+//
+// Solidity: function submittedGasTopUpLimit() constant returns(bool)
+func (_Wallet *WalletCaller) SubmittedGasTopUpLimit(opts *bind.CallOpts) (bool, error) {
+	var (
+		ret0 = new(bool)
+	)
+	out := ret0
+	err := _Wallet.contract.Call(opts, out, "submittedGasTopUpLimit")
+	return *ret0, err
+}
+
+// SubmittedGasTopUpLimit is a free data retrieval call binding the contract method 0x3fc8b4f7.
+//
+// Solidity: function submittedGasTopUpLimit() constant returns(bool)
+func (_Wallet *WalletSession) SubmittedGasTopUpLimit() (bool, error) {
+	return _Wallet.Contract.SubmittedGasTopUpLimit(&_Wallet.CallOpts)
+}
+
+// SubmittedGasTopUpLimit is a free data retrieval call binding the contract method 0x3fc8b4f7.
+//
+// Solidity: function submittedGasTopUpLimit() constant returns(bool)
+func (_Wallet *WalletCallerSession) SubmittedGasTopUpLimit() (bool, error) {
+	return _Wallet.Contract.SubmittedGasTopUpLimit(&_Wallet.CallOpts)
+}
+
+// SubmittedLoadLimit is a free data retrieval call binding the contract method 0xd8424ab8.
+//
+// Solidity: function submittedLoadLimit() constant returns(bool)
+func (_Wallet *WalletCaller) SubmittedLoadLimit(opts *bind.CallOpts) (bool, error) {
+	var (
+		ret0 = new(bool)
+	)
+	out := ret0
+	err := _Wallet.contract.Call(opts, out, "submittedLoadLimit")
+	return *ret0, err
+}
+
+// SubmittedLoadLimit is a free data retrieval call binding the contract method 0xd8424ab8.
+//
+// Solidity: function submittedLoadLimit() constant returns(bool)
+func (_Wallet *WalletSession) SubmittedLoadLimit() (bool, error) {
+	return _Wallet.Contract.SubmittedLoadLimit(&_Wallet.CallOpts)
+}
+
+// SubmittedLoadLimit is a free data retrieval call binding the contract method 0xd8424ab8.
+//
+// Solidity: function submittedLoadLimit() constant returns(bool)
+func (_Wallet *WalletCallerSession) SubmittedLoadLimit() (bool, error) {
+	return _Wallet.Contract.SubmittedLoadLimit(&_Wallet.CallOpts)
+}
+
 // SubmittedSpendLimit is a free data retrieval call binding the contract method 0xd5666590.
 //
 // Solidity: function submittedSpendLimit() constant returns(bool)
@@ -576,32 +836,6 @@ func (_Wallet *WalletSession) SubmittedSpendLimit() (bool, error) {
 // Solidity: function submittedSpendLimit() constant returns(bool)
 func (_Wallet *WalletCallerSession) SubmittedSpendLimit() (bool, error) {
 	return _Wallet.Contract.SubmittedSpendLimit(&_Wallet.CallOpts)
-}
-
-// SubmittedTopUpLimit is a free data retrieval call binding the contract method 0x85cd9919.
-//
-// Solidity: function submittedTopUpLimit() constant returns(bool)
-func (_Wallet *WalletCaller) SubmittedTopUpLimit(opts *bind.CallOpts) (bool, error) {
-	var (
-		ret0 = new(bool)
-	)
-	out := ret0
-	err := _Wallet.contract.Call(opts, out, "submittedTopUpLimit")
-	return *ret0, err
-}
-
-// SubmittedTopUpLimit is a free data retrieval call binding the contract method 0x85cd9919.
-//
-// Solidity: function submittedTopUpLimit() constant returns(bool)
-func (_Wallet *WalletSession) SubmittedTopUpLimit() (bool, error) {
-	return _Wallet.Contract.SubmittedTopUpLimit(&_Wallet.CallOpts)
-}
-
-// SubmittedTopUpLimit is a free data retrieval call binding the contract method 0x85cd9919.
-//
-// Solidity: function submittedTopUpLimit() constant returns(bool)
-func (_Wallet *WalletCallerSession) SubmittedTopUpLimit() (bool, error) {
-	return _Wallet.Contract.SubmittedTopUpLimit(&_Wallet.CallOpts)
 }
 
 // SubmittedWhitelistAddition is a free data retrieval call binding the contract method 0x26d05ab2.
@@ -658,7 +892,7 @@ func (_Wallet *WalletCallerSession) SubmittedWhitelistRemoval() (bool, error) {
 
 // SupportsInterface is a free data retrieval call binding the contract method 0x01ffc9a7.
 //
-// Solidity: function supportsInterface(interfaceID bytes4) constant returns(bool)
+// Solidity: function supportsInterface(bytes4 interfaceID) constant returns(bool)
 func (_Wallet *WalletCaller) SupportsInterface(opts *bind.CallOpts, interfaceID [4]byte) (bool, error) {
 	var (
 		ret0 = new(bool)
@@ -670,299 +904,352 @@ func (_Wallet *WalletCaller) SupportsInterface(opts *bind.CallOpts, interfaceID 
 
 // SupportsInterface is a free data retrieval call binding the contract method 0x01ffc9a7.
 //
-// Solidity: function supportsInterface(interfaceID bytes4) constant returns(bool)
+// Solidity: function supportsInterface(bytes4 interfaceID) constant returns(bool)
 func (_Wallet *WalletSession) SupportsInterface(interfaceID [4]byte) (bool, error) {
 	return _Wallet.Contract.SupportsInterface(&_Wallet.CallOpts, interfaceID)
 }
 
 // SupportsInterface is a free data retrieval call binding the contract method 0x01ffc9a7.
 //
-// Solidity: function supportsInterface(interfaceID bytes4) constant returns(bool)
+// Solidity: function supportsInterface(bytes4 interfaceID) constant returns(bool)
 func (_Wallet *WalletCallerSession) SupportsInterface(interfaceID [4]byte) (bool, error) {
 	return _Wallet.Contract.SupportsInterface(&_Wallet.CallOpts, interfaceID)
 }
 
-// TopUpAvailable is a free data retrieval call binding the contract method 0xa8321459.
+// CancelGasTopUpLimitUpdate is a paid mutator transaction binding the contract method 0xb9b262be.
 //
-// Solidity: function topUpAvailable() constant returns(uint256)
-func (_Wallet *WalletCaller) TopUpAvailable(opts *bind.CallOpts) (*big.Int, error) {
-	var (
-		ret0 = new(*big.Int)
-	)
-	out := ret0
-	err := _Wallet.contract.Call(opts, out, "topUpAvailable")
-	return *ret0, err
+// Solidity: function cancelGasTopUpLimitUpdate(uint256 _amount) returns()
+func (_Wallet *WalletTransactor) CancelGasTopUpLimitUpdate(opts *bind.TransactOpts, _amount *big.Int) (*types.Transaction, error) {
+	return _Wallet.contract.Transact(opts, "cancelGasTopUpLimitUpdate", _amount)
 }
 
-// TopUpAvailable is a free data retrieval call binding the contract method 0xa8321459.
+// CancelGasTopUpLimitUpdate is a paid mutator transaction binding the contract method 0xb9b262be.
 //
-// Solidity: function topUpAvailable() constant returns(uint256)
-func (_Wallet *WalletSession) TopUpAvailable() (*big.Int, error) {
-	return _Wallet.Contract.TopUpAvailable(&_Wallet.CallOpts)
+// Solidity: function cancelGasTopUpLimitUpdate(uint256 _amount) returns()
+func (_Wallet *WalletSession) CancelGasTopUpLimitUpdate(_amount *big.Int) (*types.Transaction, error) {
+	return _Wallet.Contract.CancelGasTopUpLimitUpdate(&_Wallet.TransactOpts, _amount)
 }
 
-// TopUpAvailable is a free data retrieval call binding the contract method 0xa8321459.
+// CancelGasTopUpLimitUpdate is a paid mutator transaction binding the contract method 0xb9b262be.
 //
-// Solidity: function topUpAvailable() constant returns(uint256)
-func (_Wallet *WalletCallerSession) TopUpAvailable() (*big.Int, error) {
-	return _Wallet.Contract.TopUpAvailable(&_Wallet.CallOpts)
+// Solidity: function cancelGasTopUpLimitUpdate(uint256 _amount) returns()
+func (_Wallet *WalletTransactorSession) CancelGasTopUpLimitUpdate(_amount *big.Int) (*types.Transaction, error) {
+	return _Wallet.Contract.CancelGasTopUpLimitUpdate(&_Wallet.TransactOpts, _amount)
 }
 
-// TopUpLimit is a free data retrieval call binding the contract method 0x83d02803.
+// CancelLoadLimitUpdate is a paid mutator transaction binding the contract method 0xfd6da9b4.
 //
-// Solidity: function topUpLimit() constant returns(uint256)
-func (_Wallet *WalletCaller) TopUpLimit(opts *bind.CallOpts) (*big.Int, error) {
-	var (
-		ret0 = new(*big.Int)
-	)
-	out := ret0
-	err := _Wallet.contract.Call(opts, out, "topUpLimit")
-	return *ret0, err
+// Solidity: function cancelLoadLimitUpdate(uint256 _amount) returns()
+func (_Wallet *WalletTransactor) CancelLoadLimitUpdate(opts *bind.TransactOpts, _amount *big.Int) (*types.Transaction, error) {
+	return _Wallet.contract.Transact(opts, "cancelLoadLimitUpdate", _amount)
 }
 
-// TopUpLimit is a free data retrieval call binding the contract method 0x83d02803.
+// CancelLoadLimitUpdate is a paid mutator transaction binding the contract method 0xfd6da9b4.
 //
-// Solidity: function topUpLimit() constant returns(uint256)
-func (_Wallet *WalletSession) TopUpLimit() (*big.Int, error) {
-	return _Wallet.Contract.TopUpLimit(&_Wallet.CallOpts)
+// Solidity: function cancelLoadLimitUpdate(uint256 _amount) returns()
+func (_Wallet *WalletSession) CancelLoadLimitUpdate(_amount *big.Int) (*types.Transaction, error) {
+	return _Wallet.Contract.CancelLoadLimitUpdate(&_Wallet.TransactOpts, _amount)
 }
 
-// TopUpLimit is a free data retrieval call binding the contract method 0x83d02803.
+// CancelLoadLimitUpdate is a paid mutator transaction binding the contract method 0xfd6da9b4.
 //
-// Solidity: function topUpLimit() constant returns(uint256)
-func (_Wallet *WalletCallerSession) TopUpLimit() (*big.Int, error) {
-	return _Wallet.Contract.TopUpLimit(&_Wallet.CallOpts)
+// Solidity: function cancelLoadLimitUpdate(uint256 _amount) returns()
+func (_Wallet *WalletTransactorSession) CancelLoadLimitUpdate(_amount *big.Int) (*types.Transaction, error) {
+	return _Wallet.Contract.CancelLoadLimitUpdate(&_Wallet.TransactOpts, _amount)
 }
 
-// CancelSpendLimit is a paid mutator transaction binding the contract method 0xe4682f00.
+// CancelSpendLimitUpdate is a paid mutator transaction binding the contract method 0xed2e9304.
 //
-// Solidity: function cancelSpendLimit(_amount uint256) returns()
-func (_Wallet *WalletTransactor) CancelSpendLimit(opts *bind.TransactOpts, _amount *big.Int) (*types.Transaction, error) {
-	return _Wallet.contract.Transact(opts, "cancelSpendLimit", _amount)
+// Solidity: function cancelSpendLimitUpdate(uint256 _amount) returns()
+func (_Wallet *WalletTransactor) CancelSpendLimitUpdate(opts *bind.TransactOpts, _amount *big.Int) (*types.Transaction, error) {
+	return _Wallet.contract.Transact(opts, "cancelSpendLimitUpdate", _amount)
 }
 
-// CancelSpendLimit is a paid mutator transaction binding the contract method 0xe4682f00.
+// CancelSpendLimitUpdate is a paid mutator transaction binding the contract method 0xed2e9304.
 //
-// Solidity: function cancelSpendLimit(_amount uint256) returns()
-func (_Wallet *WalletSession) CancelSpendLimit(_amount *big.Int) (*types.Transaction, error) {
-	return _Wallet.Contract.CancelSpendLimit(&_Wallet.TransactOpts, _amount)
+// Solidity: function cancelSpendLimitUpdate(uint256 _amount) returns()
+func (_Wallet *WalletSession) CancelSpendLimitUpdate(_amount *big.Int) (*types.Transaction, error) {
+	return _Wallet.Contract.CancelSpendLimitUpdate(&_Wallet.TransactOpts, _amount)
 }
 
-// CancelSpendLimit is a paid mutator transaction binding the contract method 0xe4682f00.
+// CancelSpendLimitUpdate is a paid mutator transaction binding the contract method 0xed2e9304.
 //
-// Solidity: function cancelSpendLimit(_amount uint256) returns()
-func (_Wallet *WalletTransactorSession) CancelSpendLimit(_amount *big.Int) (*types.Transaction, error) {
-	return _Wallet.Contract.CancelSpendLimit(&_Wallet.TransactOpts, _amount)
-}
-
-// CancelTopUpLimit is a paid mutator transaction binding the contract method 0x754628d0.
-//
-// Solidity: function cancelTopUpLimit(_amount uint256) returns()
-func (_Wallet *WalletTransactor) CancelTopUpLimit(opts *bind.TransactOpts, _amount *big.Int) (*types.Transaction, error) {
-	return _Wallet.contract.Transact(opts, "cancelTopUpLimit", _amount)
-}
-
-// CancelTopUpLimit is a paid mutator transaction binding the contract method 0x754628d0.
-//
-// Solidity: function cancelTopUpLimit(_amount uint256) returns()
-func (_Wallet *WalletSession) CancelTopUpLimit(_amount *big.Int) (*types.Transaction, error) {
-	return _Wallet.Contract.CancelTopUpLimit(&_Wallet.TransactOpts, _amount)
-}
-
-// CancelTopUpLimit is a paid mutator transaction binding the contract method 0x754628d0.
-//
-// Solidity: function cancelTopUpLimit(_amount uint256) returns()
-func (_Wallet *WalletTransactorSession) CancelTopUpLimit(_amount *big.Int) (*types.Transaction, error) {
-	return _Wallet.Contract.CancelTopUpLimit(&_Wallet.TransactOpts, _amount)
+// Solidity: function cancelSpendLimitUpdate(uint256 _amount) returns()
+func (_Wallet *WalletTransactorSession) CancelSpendLimitUpdate(_amount *big.Int) (*types.Transaction, error) {
+	return _Wallet.Contract.CancelSpendLimitUpdate(&_Wallet.TransactOpts, _amount)
 }
 
 // CancelWhitelistAddition is a paid mutator transaction binding the contract method 0x100f23fd.
 //
-// Solidity: function cancelWhitelistAddition(_hash bytes32) returns()
+// Solidity: function cancelWhitelistAddition(bytes32 _hash) returns()
 func (_Wallet *WalletTransactor) CancelWhitelistAddition(opts *bind.TransactOpts, _hash [32]byte) (*types.Transaction, error) {
 	return _Wallet.contract.Transact(opts, "cancelWhitelistAddition", _hash)
 }
 
 // CancelWhitelistAddition is a paid mutator transaction binding the contract method 0x100f23fd.
 //
-// Solidity: function cancelWhitelistAddition(_hash bytes32) returns()
+// Solidity: function cancelWhitelistAddition(bytes32 _hash) returns()
 func (_Wallet *WalletSession) CancelWhitelistAddition(_hash [32]byte) (*types.Transaction, error) {
 	return _Wallet.Contract.CancelWhitelistAddition(&_Wallet.TransactOpts, _hash)
 }
 
 // CancelWhitelistAddition is a paid mutator transaction binding the contract method 0x100f23fd.
 //
-// Solidity: function cancelWhitelistAddition(_hash bytes32) returns()
+// Solidity: function cancelWhitelistAddition(bytes32 _hash) returns()
 func (_Wallet *WalletTransactorSession) CancelWhitelistAddition(_hash [32]byte) (*types.Transaction, error) {
 	return _Wallet.Contract.CancelWhitelistAddition(&_Wallet.TransactOpts, _hash)
 }
 
 // CancelWhitelistRemoval is a paid mutator transaction binding the contract method 0xce0b5bd5.
 //
-// Solidity: function cancelWhitelistRemoval(_hash bytes32) returns()
+// Solidity: function cancelWhitelistRemoval(bytes32 _hash) returns()
 func (_Wallet *WalletTransactor) CancelWhitelistRemoval(opts *bind.TransactOpts, _hash [32]byte) (*types.Transaction, error) {
 	return _Wallet.contract.Transact(opts, "cancelWhitelistRemoval", _hash)
 }
 
 // CancelWhitelistRemoval is a paid mutator transaction binding the contract method 0xce0b5bd5.
 //
-// Solidity: function cancelWhitelistRemoval(_hash bytes32) returns()
+// Solidity: function cancelWhitelistRemoval(bytes32 _hash) returns()
 func (_Wallet *WalletSession) CancelWhitelistRemoval(_hash [32]byte) (*types.Transaction, error) {
 	return _Wallet.Contract.CancelWhitelistRemoval(&_Wallet.TransactOpts, _hash)
 }
 
 // CancelWhitelistRemoval is a paid mutator transaction binding the contract method 0xce0b5bd5.
 //
-// Solidity: function cancelWhitelistRemoval(_hash bytes32) returns()
+// Solidity: function cancelWhitelistRemoval(bytes32 _hash) returns()
 func (_Wallet *WalletTransactorSession) CancelWhitelistRemoval(_hash [32]byte) (*types.Transaction, error) {
 	return _Wallet.Contract.CancelWhitelistRemoval(&_Wallet.TransactOpts, _hash)
 }
 
-// ConfirmSpendLimit is a paid mutator transaction binding the contract method 0xf3492915.
+// ConfirmGasTopUpLimitUpdate is a paid mutator transaction binding the contract method 0xf41c4319.
 //
-// Solidity: function confirmSpendLimit(_amount uint256) returns()
-func (_Wallet *WalletTransactor) ConfirmSpendLimit(opts *bind.TransactOpts, _amount *big.Int) (*types.Transaction, error) {
-	return _Wallet.contract.Transact(opts, "confirmSpendLimit", _amount)
+// Solidity: function confirmGasTopUpLimitUpdate(uint256 _amount) returns()
+func (_Wallet *WalletTransactor) ConfirmGasTopUpLimitUpdate(opts *bind.TransactOpts, _amount *big.Int) (*types.Transaction, error) {
+	return _Wallet.contract.Transact(opts, "confirmGasTopUpLimitUpdate", _amount)
 }
 
-// ConfirmSpendLimit is a paid mutator transaction binding the contract method 0xf3492915.
+// ConfirmGasTopUpLimitUpdate is a paid mutator transaction binding the contract method 0xf41c4319.
 //
-// Solidity: function confirmSpendLimit(_amount uint256) returns()
-func (_Wallet *WalletSession) ConfirmSpendLimit(_amount *big.Int) (*types.Transaction, error) {
-	return _Wallet.Contract.ConfirmSpendLimit(&_Wallet.TransactOpts, _amount)
+// Solidity: function confirmGasTopUpLimitUpdate(uint256 _amount) returns()
+func (_Wallet *WalletSession) ConfirmGasTopUpLimitUpdate(_amount *big.Int) (*types.Transaction, error) {
+	return _Wallet.Contract.ConfirmGasTopUpLimitUpdate(&_Wallet.TransactOpts, _amount)
 }
 
-// ConfirmSpendLimit is a paid mutator transaction binding the contract method 0xf3492915.
+// ConfirmGasTopUpLimitUpdate is a paid mutator transaction binding the contract method 0xf41c4319.
 //
-// Solidity: function confirmSpendLimit(_amount uint256) returns()
-func (_Wallet *WalletTransactorSession) ConfirmSpendLimit(_amount *big.Int) (*types.Transaction, error) {
-	return _Wallet.Contract.ConfirmSpendLimit(&_Wallet.TransactOpts, _amount)
+// Solidity: function confirmGasTopUpLimitUpdate(uint256 _amount) returns()
+func (_Wallet *WalletTransactorSession) ConfirmGasTopUpLimitUpdate(_amount *big.Int) (*types.Transaction, error) {
+	return _Wallet.Contract.ConfirmGasTopUpLimitUpdate(&_Wallet.TransactOpts, _amount)
 }
 
-// ConfirmTopUpLimit is a paid mutator transaction binding the contract method 0x278ffa13.
+// ConfirmLoadLimitUpdate is a paid mutator transaction binding the contract method 0xf40b51f8.
 //
-// Solidity: function confirmTopUpLimit(_amount uint256) returns()
-func (_Wallet *WalletTransactor) ConfirmTopUpLimit(opts *bind.TransactOpts, _amount *big.Int) (*types.Transaction, error) {
-	return _Wallet.contract.Transact(opts, "confirmTopUpLimit", _amount)
+// Solidity: function confirmLoadLimitUpdate(uint256 _amount) returns()
+func (_Wallet *WalletTransactor) ConfirmLoadLimitUpdate(opts *bind.TransactOpts, _amount *big.Int) (*types.Transaction, error) {
+	return _Wallet.contract.Transact(opts, "confirmLoadLimitUpdate", _amount)
 }
 
-// ConfirmTopUpLimit is a paid mutator transaction binding the contract method 0x278ffa13.
+// ConfirmLoadLimitUpdate is a paid mutator transaction binding the contract method 0xf40b51f8.
 //
-// Solidity: function confirmTopUpLimit(_amount uint256) returns()
-func (_Wallet *WalletSession) ConfirmTopUpLimit(_amount *big.Int) (*types.Transaction, error) {
-	return _Wallet.Contract.ConfirmTopUpLimit(&_Wallet.TransactOpts, _amount)
+// Solidity: function confirmLoadLimitUpdate(uint256 _amount) returns()
+func (_Wallet *WalletSession) ConfirmLoadLimitUpdate(_amount *big.Int) (*types.Transaction, error) {
+	return _Wallet.Contract.ConfirmLoadLimitUpdate(&_Wallet.TransactOpts, _amount)
 }
 
-// ConfirmTopUpLimit is a paid mutator transaction binding the contract method 0x278ffa13.
+// ConfirmLoadLimitUpdate is a paid mutator transaction binding the contract method 0xf40b51f8.
 //
-// Solidity: function confirmTopUpLimit(_amount uint256) returns()
-func (_Wallet *WalletTransactorSession) ConfirmTopUpLimit(_amount *big.Int) (*types.Transaction, error) {
-	return _Wallet.Contract.ConfirmTopUpLimit(&_Wallet.TransactOpts, _amount)
+// Solidity: function confirmLoadLimitUpdate(uint256 _amount) returns()
+func (_Wallet *WalletTransactorSession) ConfirmLoadLimitUpdate(_amount *big.Int) (*types.Transaction, error) {
+	return _Wallet.Contract.ConfirmLoadLimitUpdate(&_Wallet.TransactOpts, _amount)
+}
+
+// ConfirmSpendLimitUpdate is a paid mutator transaction binding the contract method 0xeadd3cea.
+//
+// Solidity: function confirmSpendLimitUpdate(uint256 _amount) returns()
+func (_Wallet *WalletTransactor) ConfirmSpendLimitUpdate(opts *bind.TransactOpts, _amount *big.Int) (*types.Transaction, error) {
+	return _Wallet.contract.Transact(opts, "confirmSpendLimitUpdate", _amount)
+}
+
+// ConfirmSpendLimitUpdate is a paid mutator transaction binding the contract method 0xeadd3cea.
+//
+// Solidity: function confirmSpendLimitUpdate(uint256 _amount) returns()
+func (_Wallet *WalletSession) ConfirmSpendLimitUpdate(_amount *big.Int) (*types.Transaction, error) {
+	return _Wallet.Contract.ConfirmSpendLimitUpdate(&_Wallet.TransactOpts, _amount)
+}
+
+// ConfirmSpendLimitUpdate is a paid mutator transaction binding the contract method 0xeadd3cea.
+//
+// Solidity: function confirmSpendLimitUpdate(uint256 _amount) returns()
+func (_Wallet *WalletTransactorSession) ConfirmSpendLimitUpdate(_amount *big.Int) (*types.Transaction, error) {
+	return _Wallet.Contract.ConfirmSpendLimitUpdate(&_Wallet.TransactOpts, _amount)
 }
 
 // ConfirmWhitelistAddition is a paid mutator transaction binding the contract method 0x5adc02ab.
 //
-// Solidity: function confirmWhitelistAddition(_hash bytes32) returns()
+// Solidity: function confirmWhitelistAddition(bytes32 _hash) returns()
 func (_Wallet *WalletTransactor) ConfirmWhitelistAddition(opts *bind.TransactOpts, _hash [32]byte) (*types.Transaction, error) {
 	return _Wallet.contract.Transact(opts, "confirmWhitelistAddition", _hash)
 }
 
 // ConfirmWhitelistAddition is a paid mutator transaction binding the contract method 0x5adc02ab.
 //
-// Solidity: function confirmWhitelistAddition(_hash bytes32) returns()
+// Solidity: function confirmWhitelistAddition(bytes32 _hash) returns()
 func (_Wallet *WalletSession) ConfirmWhitelistAddition(_hash [32]byte) (*types.Transaction, error) {
 	return _Wallet.Contract.ConfirmWhitelistAddition(&_Wallet.TransactOpts, _hash)
 }
 
 // ConfirmWhitelistAddition is a paid mutator transaction binding the contract method 0x5adc02ab.
 //
-// Solidity: function confirmWhitelistAddition(_hash bytes32) returns()
+// Solidity: function confirmWhitelistAddition(bytes32 _hash) returns()
 func (_Wallet *WalletTransactorSession) ConfirmWhitelistAddition(_hash [32]byte) (*types.Transaction, error) {
 	return _Wallet.Contract.ConfirmWhitelistAddition(&_Wallet.TransactOpts, _hash)
 }
 
 // ConfirmWhitelistRemoval is a paid mutator transaction binding the contract method 0xcbd2ac68.
 //
-// Solidity: function confirmWhitelistRemoval(_hash bytes32) returns()
+// Solidity: function confirmWhitelistRemoval(bytes32 _hash) returns()
 func (_Wallet *WalletTransactor) ConfirmWhitelistRemoval(opts *bind.TransactOpts, _hash [32]byte) (*types.Transaction, error) {
 	return _Wallet.contract.Transact(opts, "confirmWhitelistRemoval", _hash)
 }
 
 // ConfirmWhitelistRemoval is a paid mutator transaction binding the contract method 0xcbd2ac68.
 //
-// Solidity: function confirmWhitelistRemoval(_hash bytes32) returns()
+// Solidity: function confirmWhitelistRemoval(bytes32 _hash) returns()
 func (_Wallet *WalletSession) ConfirmWhitelistRemoval(_hash [32]byte) (*types.Transaction, error) {
 	return _Wallet.Contract.ConfirmWhitelistRemoval(&_Wallet.TransactOpts, _hash)
 }
 
 // ConfirmWhitelistRemoval is a paid mutator transaction binding the contract method 0xcbd2ac68.
 //
-// Solidity: function confirmWhitelistRemoval(_hash bytes32) returns()
+// Solidity: function confirmWhitelistRemoval(bytes32 _hash) returns()
 func (_Wallet *WalletTransactorSession) ConfirmWhitelistRemoval(_hash [32]byte) (*types.Transaction, error) {
 	return _Wallet.Contract.ConfirmWhitelistRemoval(&_Wallet.TransactOpts, _hash)
 }
 
+// ExecuteTransaction is a paid mutator transaction binding the contract method 0x3f579f42.
+//
+// Solidity: function executeTransaction(address _destination, uint256 _value, bytes _data) returns()
+func (_Wallet *WalletTransactor) ExecuteTransaction(opts *bind.TransactOpts, _destination common.Address, _value *big.Int, _data []byte) (*types.Transaction, error) {
+	return _Wallet.contract.Transact(opts, "executeTransaction", _destination, _value, _data)
+}
+
+// ExecuteTransaction is a paid mutator transaction binding the contract method 0x3f579f42.
+//
+// Solidity: function executeTransaction(address _destination, uint256 _value, bytes _data) returns()
+func (_Wallet *WalletSession) ExecuteTransaction(_destination common.Address, _value *big.Int, _data []byte) (*types.Transaction, error) {
+	return _Wallet.Contract.ExecuteTransaction(&_Wallet.TransactOpts, _destination, _value, _data)
+}
+
+// ExecuteTransaction is a paid mutator transaction binding the contract method 0x3f579f42.
+//
+// Solidity: function executeTransaction(address _destination, uint256 _value, bytes _data) returns()
+func (_Wallet *WalletTransactorSession) ExecuteTransaction(_destination common.Address, _value *big.Int, _data []byte) (*types.Transaction, error) {
+	return _Wallet.Contract.ExecuteTransaction(&_Wallet.TransactOpts, _destination, _value, _data)
+}
+
+// InitializeGasTopUpLimit is a paid mutator transaction binding the contract method 0xfeb6aff1.
+//
+// Solidity: function initializeGasTopUpLimit(uint256 _amount) returns()
+func (_Wallet *WalletTransactor) InitializeGasTopUpLimit(opts *bind.TransactOpts, _amount *big.Int) (*types.Transaction, error) {
+	return _Wallet.contract.Transact(opts, "initializeGasTopUpLimit", _amount)
+}
+
+// InitializeGasTopUpLimit is a paid mutator transaction binding the contract method 0xfeb6aff1.
+//
+// Solidity: function initializeGasTopUpLimit(uint256 _amount) returns()
+func (_Wallet *WalletSession) InitializeGasTopUpLimit(_amount *big.Int) (*types.Transaction, error) {
+	return _Wallet.Contract.InitializeGasTopUpLimit(&_Wallet.TransactOpts, _amount)
+}
+
+// InitializeGasTopUpLimit is a paid mutator transaction binding the contract method 0xfeb6aff1.
+//
+// Solidity: function initializeGasTopUpLimit(uint256 _amount) returns()
+func (_Wallet *WalletTransactorSession) InitializeGasTopUpLimit(_amount *big.Int) (*types.Transaction, error) {
+	return _Wallet.Contract.InitializeGasTopUpLimit(&_Wallet.TransactOpts, _amount)
+}
+
+// InitializeLoadLimit is a paid mutator transaction binding the contract method 0x03561eb0.
+//
+// Solidity: function initializeLoadLimit(uint256 _amount) returns()
+func (_Wallet *WalletTransactor) InitializeLoadLimit(opts *bind.TransactOpts, _amount *big.Int) (*types.Transaction, error) {
+	return _Wallet.contract.Transact(opts, "initializeLoadLimit", _amount)
+}
+
+// InitializeLoadLimit is a paid mutator transaction binding the contract method 0x03561eb0.
+//
+// Solidity: function initializeLoadLimit(uint256 _amount) returns()
+func (_Wallet *WalletSession) InitializeLoadLimit(_amount *big.Int) (*types.Transaction, error) {
+	return _Wallet.Contract.InitializeLoadLimit(&_Wallet.TransactOpts, _amount)
+}
+
+// InitializeLoadLimit is a paid mutator transaction binding the contract method 0x03561eb0.
+//
+// Solidity: function initializeLoadLimit(uint256 _amount) returns()
+func (_Wallet *WalletTransactorSession) InitializeLoadLimit(_amount *big.Int) (*types.Transaction, error) {
+	return _Wallet.Contract.InitializeLoadLimit(&_Wallet.TransactOpts, _amount)
+}
+
 // InitializeSpendLimit is a paid mutator transaction binding the contract method 0x58453569.
 //
-// Solidity: function initializeSpendLimit(_amount uint256) returns()
+// Solidity: function initializeSpendLimit(uint256 _amount) returns()
 func (_Wallet *WalletTransactor) InitializeSpendLimit(opts *bind.TransactOpts, _amount *big.Int) (*types.Transaction, error) {
 	return _Wallet.contract.Transact(opts, "initializeSpendLimit", _amount)
 }
 
 // InitializeSpendLimit is a paid mutator transaction binding the contract method 0x58453569.
 //
-// Solidity: function initializeSpendLimit(_amount uint256) returns()
+// Solidity: function initializeSpendLimit(uint256 _amount) returns()
 func (_Wallet *WalletSession) InitializeSpendLimit(_amount *big.Int) (*types.Transaction, error) {
 	return _Wallet.Contract.InitializeSpendLimit(&_Wallet.TransactOpts, _amount)
 }
 
 // InitializeSpendLimit is a paid mutator transaction binding the contract method 0x58453569.
 //
-// Solidity: function initializeSpendLimit(_amount uint256) returns()
+// Solidity: function initializeSpendLimit(uint256 _amount) returns()
 func (_Wallet *WalletTransactorSession) InitializeSpendLimit(_amount *big.Int) (*types.Transaction, error) {
 	return _Wallet.Contract.InitializeSpendLimit(&_Wallet.TransactOpts, _amount)
 }
 
-// InitializeTopUpLimit is a paid mutator transaction binding the contract method 0x6ea6f0c3.
-//
-// Solidity: function initializeTopUpLimit(_amount uint256) returns()
-func (_Wallet *WalletTransactor) InitializeTopUpLimit(opts *bind.TransactOpts, _amount *big.Int) (*types.Transaction, error) {
-	return _Wallet.contract.Transact(opts, "initializeTopUpLimit", _amount)
-}
-
-// InitializeTopUpLimit is a paid mutator transaction binding the contract method 0x6ea6f0c3.
-//
-// Solidity: function initializeTopUpLimit(_amount uint256) returns()
-func (_Wallet *WalletSession) InitializeTopUpLimit(_amount *big.Int) (*types.Transaction, error) {
-	return _Wallet.Contract.InitializeTopUpLimit(&_Wallet.TransactOpts, _amount)
-}
-
-// InitializeTopUpLimit is a paid mutator transaction binding the contract method 0x6ea6f0c3.
-//
-// Solidity: function initializeTopUpLimit(_amount uint256) returns()
-func (_Wallet *WalletTransactorSession) InitializeTopUpLimit(_amount *big.Int) (*types.Transaction, error) {
-	return _Wallet.Contract.InitializeTopUpLimit(&_Wallet.TransactOpts, _amount)
-}
-
 // InitializeWhitelist is a paid mutator transaction binding the contract method 0xf4199bb8.
 //
-// Solidity: function initializeWhitelist(_addresses address[]) returns()
+// Solidity: function initializeWhitelist(address[] _addresses) returns()
 func (_Wallet *WalletTransactor) InitializeWhitelist(opts *bind.TransactOpts, _addresses []common.Address) (*types.Transaction, error) {
 	return _Wallet.contract.Transact(opts, "initializeWhitelist", _addresses)
 }
 
 // InitializeWhitelist is a paid mutator transaction binding the contract method 0xf4199bb8.
 //
-// Solidity: function initializeWhitelist(_addresses address[]) returns()
+// Solidity: function initializeWhitelist(address[] _addresses) returns()
 func (_Wallet *WalletSession) InitializeWhitelist(_addresses []common.Address) (*types.Transaction, error) {
 	return _Wallet.Contract.InitializeWhitelist(&_Wallet.TransactOpts, _addresses)
 }
 
 // InitializeWhitelist is a paid mutator transaction binding the contract method 0xf4199bb8.
 //
-// Solidity: function initializeWhitelist(_addresses address[]) returns()
+// Solidity: function initializeWhitelist(address[] _addresses) returns()
 func (_Wallet *WalletTransactorSession) InitializeWhitelist(_addresses []common.Address) (*types.Transaction, error) {
 	return _Wallet.Contract.InitializeWhitelist(&_Wallet.TransactOpts, _addresses)
+}
+
+// LoadTokenCard is a paid mutator transaction binding the contract method 0x3a43199f.
+//
+// Solidity: function loadTokenCard(address _asset, uint256 _amount) returns()
+func (_Wallet *WalletTransactor) LoadTokenCard(opts *bind.TransactOpts, _asset common.Address, _amount *big.Int) (*types.Transaction, error) {
+	return _Wallet.contract.Transact(opts, "loadTokenCard", _asset, _amount)
+}
+
+// LoadTokenCard is a paid mutator transaction binding the contract method 0x3a43199f.
+//
+// Solidity: function loadTokenCard(address _asset, uint256 _amount) returns()
+func (_Wallet *WalletSession) LoadTokenCard(_asset common.Address, _amount *big.Int) (*types.Transaction, error) {
+	return _Wallet.Contract.LoadTokenCard(&_Wallet.TransactOpts, _asset, _amount)
+}
+
+// LoadTokenCard is a paid mutator transaction binding the contract method 0x3a43199f.
+//
+// Solidity: function loadTokenCard(address _asset, uint256 _amount) returns()
+func (_Wallet *WalletTransactorSession) LoadTokenCard(_asset common.Address, _amount *big.Int) (*types.Transaction, error) {
+	return _Wallet.Contract.LoadTokenCard(&_Wallet.TransactOpts, _asset, _amount)
 }
 
 // RenounceOwnership is a paid mutator transaction binding the contract method 0x715018a6.
@@ -986,151 +1273,172 @@ func (_Wallet *WalletTransactorSession) RenounceOwnership() (*types.Transaction,
 	return _Wallet.Contract.RenounceOwnership(&_Wallet.TransactOpts)
 }
 
-// SubmitSpendLimit is a paid mutator transaction binding the contract method 0xd9ec3018.
+// SubmitGasTopUpLimitUpdate is a paid mutator transaction binding the contract method 0x74624c55.
 //
-// Solidity: function submitSpendLimit(_amount uint256) returns()
-func (_Wallet *WalletTransactor) SubmitSpendLimit(opts *bind.TransactOpts, _amount *big.Int) (*types.Transaction, error) {
-	return _Wallet.contract.Transact(opts, "submitSpendLimit", _amount)
+// Solidity: function submitGasTopUpLimitUpdate(uint256 _amount) returns()
+func (_Wallet *WalletTransactor) SubmitGasTopUpLimitUpdate(opts *bind.TransactOpts, _amount *big.Int) (*types.Transaction, error) {
+	return _Wallet.contract.Transact(opts, "submitGasTopUpLimitUpdate", _amount)
 }
 
-// SubmitSpendLimit is a paid mutator transaction binding the contract method 0xd9ec3018.
+// SubmitGasTopUpLimitUpdate is a paid mutator transaction binding the contract method 0x74624c55.
 //
-// Solidity: function submitSpendLimit(_amount uint256) returns()
-func (_Wallet *WalletSession) SubmitSpendLimit(_amount *big.Int) (*types.Transaction, error) {
-	return _Wallet.Contract.SubmitSpendLimit(&_Wallet.TransactOpts, _amount)
+// Solidity: function submitGasTopUpLimitUpdate(uint256 _amount) returns()
+func (_Wallet *WalletSession) SubmitGasTopUpLimitUpdate(_amount *big.Int) (*types.Transaction, error) {
+	return _Wallet.Contract.SubmitGasTopUpLimitUpdate(&_Wallet.TransactOpts, _amount)
 }
 
-// SubmitSpendLimit is a paid mutator transaction binding the contract method 0xd9ec3018.
+// SubmitGasTopUpLimitUpdate is a paid mutator transaction binding the contract method 0x74624c55.
 //
-// Solidity: function submitSpendLimit(_amount uint256) returns()
-func (_Wallet *WalletTransactorSession) SubmitSpendLimit(_amount *big.Int) (*types.Transaction, error) {
-	return _Wallet.Contract.SubmitSpendLimit(&_Wallet.TransactOpts, _amount)
+// Solidity: function submitGasTopUpLimitUpdate(uint256 _amount) returns()
+func (_Wallet *WalletTransactorSession) SubmitGasTopUpLimitUpdate(_amount *big.Int) (*types.Transaction, error) {
+	return _Wallet.Contract.SubmitGasTopUpLimitUpdate(&_Wallet.TransactOpts, _amount)
 }
 
-// SubmitTopUpLimit is a paid mutator transaction binding the contract method 0x295b3299.
+// SubmitLoadLimitUpdate is a paid mutator transaction binding the contract method 0xb221f316.
 //
-// Solidity: function submitTopUpLimit(_amount uint256) returns()
-func (_Wallet *WalletTransactor) SubmitTopUpLimit(opts *bind.TransactOpts, _amount *big.Int) (*types.Transaction, error) {
-	return _Wallet.contract.Transact(opts, "submitTopUpLimit", _amount)
+// Solidity: function submitLoadLimitUpdate(uint256 _amount) returns()
+func (_Wallet *WalletTransactor) SubmitLoadLimitUpdate(opts *bind.TransactOpts, _amount *big.Int) (*types.Transaction, error) {
+	return _Wallet.contract.Transact(opts, "submitLoadLimitUpdate", _amount)
 }
 
-// SubmitTopUpLimit is a paid mutator transaction binding the contract method 0x295b3299.
+// SubmitLoadLimitUpdate is a paid mutator transaction binding the contract method 0xb221f316.
 //
-// Solidity: function submitTopUpLimit(_amount uint256) returns()
-func (_Wallet *WalletSession) SubmitTopUpLimit(_amount *big.Int) (*types.Transaction, error) {
-	return _Wallet.Contract.SubmitTopUpLimit(&_Wallet.TransactOpts, _amount)
+// Solidity: function submitLoadLimitUpdate(uint256 _amount) returns()
+func (_Wallet *WalletSession) SubmitLoadLimitUpdate(_amount *big.Int) (*types.Transaction, error) {
+	return _Wallet.Contract.SubmitLoadLimitUpdate(&_Wallet.TransactOpts, _amount)
 }
 
-// SubmitTopUpLimit is a paid mutator transaction binding the contract method 0x295b3299.
+// SubmitLoadLimitUpdate is a paid mutator transaction binding the contract method 0xb221f316.
 //
-// Solidity: function submitTopUpLimit(_amount uint256) returns()
-func (_Wallet *WalletTransactorSession) SubmitTopUpLimit(_amount *big.Int) (*types.Transaction, error) {
-	return _Wallet.Contract.SubmitTopUpLimit(&_Wallet.TransactOpts, _amount)
+// Solidity: function submitLoadLimitUpdate(uint256 _amount) returns()
+func (_Wallet *WalletTransactorSession) SubmitLoadLimitUpdate(_amount *big.Int) (*types.Transaction, error) {
+	return _Wallet.Contract.SubmitLoadLimitUpdate(&_Wallet.TransactOpts, _amount)
+}
+
+// SubmitSpendLimitUpdate is a paid mutator transaction binding the contract method 0x21ce918d.
+//
+// Solidity: function submitSpendLimitUpdate(uint256 _amount) returns()
+func (_Wallet *WalletTransactor) SubmitSpendLimitUpdate(opts *bind.TransactOpts, _amount *big.Int) (*types.Transaction, error) {
+	return _Wallet.contract.Transact(opts, "submitSpendLimitUpdate", _amount)
+}
+
+// SubmitSpendLimitUpdate is a paid mutator transaction binding the contract method 0x21ce918d.
+//
+// Solidity: function submitSpendLimitUpdate(uint256 _amount) returns()
+func (_Wallet *WalletSession) SubmitSpendLimitUpdate(_amount *big.Int) (*types.Transaction, error) {
+	return _Wallet.Contract.SubmitSpendLimitUpdate(&_Wallet.TransactOpts, _amount)
+}
+
+// SubmitSpendLimitUpdate is a paid mutator transaction binding the contract method 0x21ce918d.
+//
+// Solidity: function submitSpendLimitUpdate(uint256 _amount) returns()
+func (_Wallet *WalletTransactorSession) SubmitSpendLimitUpdate(_amount *big.Int) (*types.Transaction, error) {
+	return _Wallet.Contract.SubmitSpendLimitUpdate(&_Wallet.TransactOpts, _amount)
 }
 
 // SubmitWhitelistAddition is a paid mutator transaction binding the contract method 0x7fd004fa.
 //
-// Solidity: function submitWhitelistAddition(_addresses address[]) returns()
+// Solidity: function submitWhitelistAddition(address[] _addresses) returns()
 func (_Wallet *WalletTransactor) SubmitWhitelistAddition(opts *bind.TransactOpts, _addresses []common.Address) (*types.Transaction, error) {
 	return _Wallet.contract.Transact(opts, "submitWhitelistAddition", _addresses)
 }
 
 // SubmitWhitelistAddition is a paid mutator transaction binding the contract method 0x7fd004fa.
 //
-// Solidity: function submitWhitelistAddition(_addresses address[]) returns()
+// Solidity: function submitWhitelistAddition(address[] _addresses) returns()
 func (_Wallet *WalletSession) SubmitWhitelistAddition(_addresses []common.Address) (*types.Transaction, error) {
 	return _Wallet.Contract.SubmitWhitelistAddition(&_Wallet.TransactOpts, _addresses)
 }
 
 // SubmitWhitelistAddition is a paid mutator transaction binding the contract method 0x7fd004fa.
 //
-// Solidity: function submitWhitelistAddition(_addresses address[]) returns()
+// Solidity: function submitWhitelistAddition(address[] _addresses) returns()
 func (_Wallet *WalletTransactorSession) SubmitWhitelistAddition(_addresses []common.Address) (*types.Transaction, error) {
 	return _Wallet.Contract.SubmitWhitelistAddition(&_Wallet.TransactOpts, _addresses)
 }
 
 // SubmitWhitelistRemoval is a paid mutator transaction binding the contract method 0x6137d670.
 //
-// Solidity: function submitWhitelistRemoval(_addresses address[]) returns()
+// Solidity: function submitWhitelistRemoval(address[] _addresses) returns()
 func (_Wallet *WalletTransactor) SubmitWhitelistRemoval(opts *bind.TransactOpts, _addresses []common.Address) (*types.Transaction, error) {
 	return _Wallet.contract.Transact(opts, "submitWhitelistRemoval", _addresses)
 }
 
 // SubmitWhitelistRemoval is a paid mutator transaction binding the contract method 0x6137d670.
 //
-// Solidity: function submitWhitelistRemoval(_addresses address[]) returns()
+// Solidity: function submitWhitelistRemoval(address[] _addresses) returns()
 func (_Wallet *WalletSession) SubmitWhitelistRemoval(_addresses []common.Address) (*types.Transaction, error) {
 	return _Wallet.Contract.SubmitWhitelistRemoval(&_Wallet.TransactOpts, _addresses)
 }
 
 // SubmitWhitelistRemoval is a paid mutator transaction binding the contract method 0x6137d670.
 //
-// Solidity: function submitWhitelistRemoval(_addresses address[]) returns()
+// Solidity: function submitWhitelistRemoval(address[] _addresses) returns()
 func (_Wallet *WalletTransactorSession) SubmitWhitelistRemoval(_addresses []common.Address) (*types.Transaction, error) {
 	return _Wallet.Contract.SubmitWhitelistRemoval(&_Wallet.TransactOpts, _addresses)
 }
 
 // TopUpGas is a paid mutator transaction binding the contract method 0xe61c51ca.
 //
-// Solidity: function topUpGas(_amount uint256) returns()
+// Solidity: function topUpGas(uint256 _amount) returns()
 func (_Wallet *WalletTransactor) TopUpGas(opts *bind.TransactOpts, _amount *big.Int) (*types.Transaction, error) {
 	return _Wallet.contract.Transact(opts, "topUpGas", _amount)
 }
 
 // TopUpGas is a paid mutator transaction binding the contract method 0xe61c51ca.
 //
-// Solidity: function topUpGas(_amount uint256) returns()
+// Solidity: function topUpGas(uint256 _amount) returns()
 func (_Wallet *WalletSession) TopUpGas(_amount *big.Int) (*types.Transaction, error) {
 	return _Wallet.Contract.TopUpGas(&_Wallet.TransactOpts, _amount)
 }
 
 // TopUpGas is a paid mutator transaction binding the contract method 0xe61c51ca.
 //
-// Solidity: function topUpGas(_amount uint256) returns()
+// Solidity: function topUpGas(uint256 _amount) returns()
 func (_Wallet *WalletTransactorSession) TopUpGas(_amount *big.Int) (*types.Transaction, error) {
 	return _Wallet.Contract.TopUpGas(&_Wallet.TransactOpts, _amount)
 }
 
 // Transfer is a paid mutator transaction binding the contract method 0xbeabacc8.
 //
-// Solidity: function transfer(_to address, _asset address, _amount uint256) returns()
+// Solidity: function transfer(address _to, address _asset, uint256 _amount) returns()
 func (_Wallet *WalletTransactor) Transfer(opts *bind.TransactOpts, _to common.Address, _asset common.Address, _amount *big.Int) (*types.Transaction, error) {
 	return _Wallet.contract.Transact(opts, "transfer", _to, _asset, _amount)
 }
 
 // Transfer is a paid mutator transaction binding the contract method 0xbeabacc8.
 //
-// Solidity: function transfer(_to address, _asset address, _amount uint256) returns()
+// Solidity: function transfer(address _to, address _asset, uint256 _amount) returns()
 func (_Wallet *WalletSession) Transfer(_to common.Address, _asset common.Address, _amount *big.Int) (*types.Transaction, error) {
 	return _Wallet.Contract.Transfer(&_Wallet.TransactOpts, _to, _asset, _amount)
 }
 
 // Transfer is a paid mutator transaction binding the contract method 0xbeabacc8.
 //
-// Solidity: function transfer(_to address, _asset address, _amount uint256) returns()
+// Solidity: function transfer(address _to, address _asset, uint256 _amount) returns()
 func (_Wallet *WalletTransactorSession) Transfer(_to common.Address, _asset common.Address, _amount *big.Int) (*types.Transaction, error) {
 	return _Wallet.Contract.Transfer(&_Wallet.TransactOpts, _to, _asset, _amount)
 }
 
-// TransferOwnership is a paid mutator transaction binding the contract method 0xf2fde38b.
+// TransferOwnership is a paid mutator transaction binding the contract method 0xb242e534.
 //
-// Solidity: function transferOwnership(_account address) returns()
-func (_Wallet *WalletTransactor) TransferOwnership(opts *bind.TransactOpts, _account common.Address) (*types.Transaction, error) {
-	return _Wallet.contract.Transact(opts, "transferOwnership", _account)
+// Solidity: function transferOwnership(address _account, bool _transferable) returns()
+func (_Wallet *WalletTransactor) TransferOwnership(opts *bind.TransactOpts, _account common.Address, _transferable bool) (*types.Transaction, error) {
+	return _Wallet.contract.Transact(opts, "transferOwnership", _account, _transferable)
 }
 
-// TransferOwnership is a paid mutator transaction binding the contract method 0xf2fde38b.
+// TransferOwnership is a paid mutator transaction binding the contract method 0xb242e534.
 //
-// Solidity: function transferOwnership(_account address) returns()
-func (_Wallet *WalletSession) TransferOwnership(_account common.Address) (*types.Transaction, error) {
-	return _Wallet.Contract.TransferOwnership(&_Wallet.TransactOpts, _account)
+// Solidity: function transferOwnership(address _account, bool _transferable) returns()
+func (_Wallet *WalletSession) TransferOwnership(_account common.Address, _transferable bool) (*types.Transaction, error) {
+	return _Wallet.Contract.TransferOwnership(&_Wallet.TransactOpts, _account, _transferable)
 }
 
-// TransferOwnership is a paid mutator transaction binding the contract method 0xf2fde38b.
+// TransferOwnership is a paid mutator transaction binding the contract method 0xb242e534.
 //
-// Solidity: function transferOwnership(_account address) returns()
-func (_Wallet *WalletTransactorSession) TransferOwnership(_account common.Address) (*types.Transaction, error) {
-	return _Wallet.Contract.TransferOwnership(&_Wallet.TransactOpts, _account)
+// Solidity: function transferOwnership(address _account, bool _transferable) returns()
+func (_Wallet *WalletTransactorSession) TransferOwnership(_account common.Address, _transferable bool) (*types.Transaction, error) {
+	return _Wallet.Contract.TransferOwnership(&_Wallet.TransactOpts, _account, _transferable)
 }
 
 // WalletAddedToWhitelistIterator is returned from FilterAddedToWhitelist and is used to iterate over the raw logs and unpacked data for AddedToWhitelist events raised by the Wallet contract.
@@ -1209,7 +1517,7 @@ type WalletAddedToWhitelist struct {
 
 // FilterAddedToWhitelist is a free log retrieval operation binding the contract event 0xb2f6cccee7a369e23e293c25aa19bef80af11eb26deba3ea0f2a02783f752e4a.
 //
-// Solidity: e AddedToWhitelist(_sender address, _addresses address[])
+// Solidity: event AddedToWhitelist(address _sender, address[] _addresses)
 func (_Wallet *WalletFilterer) FilterAddedToWhitelist(opts *bind.FilterOpts) (*WalletAddedToWhitelistIterator, error) {
 
 	logs, sub, err := _Wallet.contract.FilterLogs(opts, "AddedToWhitelist")
@@ -1221,7 +1529,7 @@ func (_Wallet *WalletFilterer) FilterAddedToWhitelist(opts *bind.FilterOpts) (*W
 
 // WatchAddedToWhitelist is a free log subscription operation binding the contract event 0xb2f6cccee7a369e23e293c25aa19bef80af11eb26deba3ea0f2a02783f752e4a.
 //
-// Solidity: e AddedToWhitelist(_sender address, _addresses address[])
+// Solidity: event AddedToWhitelist(address _sender, address[] _addresses)
 func (_Wallet *WalletFilterer) WatchAddedToWhitelist(opts *bind.WatchOpts, sink chan<- *WalletAddedToWhitelist) (event.Subscription, error) {
 
 	logs, sub, err := _Wallet.contract.WatchLogs(opts, "AddedToWhitelist")
@@ -1256,9 +1564,9 @@ func (_Wallet *WalletFilterer) WatchAddedToWhitelist(opts *bind.WatchOpts, sink 
 	}), nil
 }
 
-// WalletCancelledSpendLimitChangeIterator is returned from FilterCancelledSpendLimitChange and is used to iterate over the raw logs and unpacked data for CancelledSpendLimitChange events raised by the Wallet contract.
-type WalletCancelledSpendLimitChangeIterator struct {
-	Event *WalletCancelledSpendLimitChange // Event containing the contract specifics and raw log
+// WalletCancelledGasTopUpLimitUpdateIterator is returned from FilterCancelledGasTopUpLimitUpdate and is used to iterate over the raw logs and unpacked data for CancelledGasTopUpLimitUpdate events raised by the Wallet contract.
+type WalletCancelledGasTopUpLimitUpdateIterator struct {
+	Event *WalletCancelledGasTopUpLimitUpdate // Event containing the contract specifics and raw log
 
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
@@ -1272,7 +1580,7 @@ type WalletCancelledSpendLimitChangeIterator struct {
 // Next advances the iterator to the subsequent event, returning whether there
 // are any more events found. In case of a retrieval or parsing error, false is
 // returned and Error() can be queried for the exact failure.
-func (it *WalletCancelledSpendLimitChangeIterator) Next() bool {
+func (it *WalletCancelledGasTopUpLimitUpdateIterator) Next() bool {
 	// If the iterator failed, stop iterating
 	if it.fail != nil {
 		return false
@@ -1281,7 +1589,7 @@ func (it *WalletCancelledSpendLimitChangeIterator) Next() bool {
 	if it.done {
 		select {
 		case log := <-it.logs:
-			it.Event = new(WalletCancelledSpendLimitChange)
+			it.Event = new(WalletCancelledGasTopUpLimitUpdate)
 			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 				it.fail = err
 				return false
@@ -1296,7 +1604,7 @@ func (it *WalletCancelledSpendLimitChangeIterator) Next() bool {
 	// Iterator still in progress, wait for either a data or an error event
 	select {
 	case log := <-it.logs:
-		it.Event = new(WalletCancelledSpendLimitChange)
+		it.Event = new(WalletCancelledGasTopUpLimitUpdate)
 		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 			it.fail = err
 			return false
@@ -1312,42 +1620,42 @@ func (it *WalletCancelledSpendLimitChangeIterator) Next() bool {
 }
 
 // Error returns any retrieval or parsing error occurred during filtering.
-func (it *WalletCancelledSpendLimitChangeIterator) Error() error {
+func (it *WalletCancelledGasTopUpLimitUpdateIterator) Error() error {
 	return it.fail
 }
 
 // Close terminates the iteration process, releasing any pending underlying
 // resources.
-func (it *WalletCancelledSpendLimitChangeIterator) Close() error {
+func (it *WalletCancelledGasTopUpLimitUpdateIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
 
-// WalletCancelledSpendLimitChange represents a CancelledSpendLimitChange event raised by the Wallet contract.
-type WalletCancelledSpendLimitChange struct {
+// WalletCancelledGasTopUpLimitUpdate represents a CancelledGasTopUpLimitUpdate event raised by the Wallet contract.
+type WalletCancelledGasTopUpLimitUpdate struct {
 	Sender common.Address
 	Amount *big.Int
 	Raw    types.Log // Blockchain specific contextual infos
 }
 
-// FilterCancelledSpendLimitChange is a free log retrieval operation binding the contract event 0x83e15565cfc238cf8d4e7a0a2cefeda3c9d6621e44a4d2ee96034ea403648b6a.
+// FilterCancelledGasTopUpLimitUpdate is a free log retrieval operation binding the contract event 0x7afd2a3e96f4d1c71f2bbdb873ac6920055d55bc8063293860ca8cb660d2403d.
 //
-// Solidity: e CancelledSpendLimitChange(_sender address, _amount uint256)
-func (_Wallet *WalletFilterer) FilterCancelledSpendLimitChange(opts *bind.FilterOpts) (*WalletCancelledSpendLimitChangeIterator, error) {
+// Solidity: event CancelledGasTopUpLimitUpdate(address _sender, uint256 _amount)
+func (_Wallet *WalletFilterer) FilterCancelledGasTopUpLimitUpdate(opts *bind.FilterOpts) (*WalletCancelledGasTopUpLimitUpdateIterator, error) {
 
-	logs, sub, err := _Wallet.contract.FilterLogs(opts, "CancelledSpendLimitChange")
+	logs, sub, err := _Wallet.contract.FilterLogs(opts, "CancelledGasTopUpLimitUpdate")
 	if err != nil {
 		return nil, err
 	}
-	return &WalletCancelledSpendLimitChangeIterator{contract: _Wallet.contract, event: "CancelledSpendLimitChange", logs: logs, sub: sub}, nil
+	return &WalletCancelledGasTopUpLimitUpdateIterator{contract: _Wallet.contract, event: "CancelledGasTopUpLimitUpdate", logs: logs, sub: sub}, nil
 }
 
-// WatchCancelledSpendLimitChange is a free log subscription operation binding the contract event 0x83e15565cfc238cf8d4e7a0a2cefeda3c9d6621e44a4d2ee96034ea403648b6a.
+// WatchCancelledGasTopUpLimitUpdate is a free log subscription operation binding the contract event 0x7afd2a3e96f4d1c71f2bbdb873ac6920055d55bc8063293860ca8cb660d2403d.
 //
-// Solidity: e CancelledSpendLimitChange(_sender address, _amount uint256)
-func (_Wallet *WalletFilterer) WatchCancelledSpendLimitChange(opts *bind.WatchOpts, sink chan<- *WalletCancelledSpendLimitChange) (event.Subscription, error) {
+// Solidity: event CancelledGasTopUpLimitUpdate(address _sender, uint256 _amount)
+func (_Wallet *WalletFilterer) WatchCancelledGasTopUpLimitUpdate(opts *bind.WatchOpts, sink chan<- *WalletCancelledGasTopUpLimitUpdate) (event.Subscription, error) {
 
-	logs, sub, err := _Wallet.contract.WatchLogs(opts, "CancelledSpendLimitChange")
+	logs, sub, err := _Wallet.contract.WatchLogs(opts, "CancelledGasTopUpLimitUpdate")
 	if err != nil {
 		return nil, err
 	}
@@ -1357,8 +1665,8 @@ func (_Wallet *WalletFilterer) WatchCancelledSpendLimitChange(opts *bind.WatchOp
 			select {
 			case log := <-logs:
 				// New log arrived, parse the event and forward to the user
-				event := new(WalletCancelledSpendLimitChange)
-				if err := _Wallet.contract.UnpackLog(event, "CancelledSpendLimitChange", log); err != nil {
+				event := new(WalletCancelledGasTopUpLimitUpdate)
+				if err := _Wallet.contract.UnpackLog(event, "CancelledGasTopUpLimitUpdate", log); err != nil {
 					return err
 				}
 				event.Raw = log
@@ -1379,9 +1687,9 @@ func (_Wallet *WalletFilterer) WatchCancelledSpendLimitChange(opts *bind.WatchOp
 	}), nil
 }
 
-// WalletCancelledTopUpLimitChangeIterator is returned from FilterCancelledTopUpLimitChange and is used to iterate over the raw logs and unpacked data for CancelledTopUpLimitChange events raised by the Wallet contract.
-type WalletCancelledTopUpLimitChangeIterator struct {
-	Event *WalletCancelledTopUpLimitChange // Event containing the contract specifics and raw log
+// WalletCancelledLoadLimitUpdateIterator is returned from FilterCancelledLoadLimitUpdate and is used to iterate over the raw logs and unpacked data for CancelledLoadLimitUpdate events raised by the Wallet contract.
+type WalletCancelledLoadLimitUpdateIterator struct {
+	Event *WalletCancelledLoadLimitUpdate // Event containing the contract specifics and raw log
 
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
@@ -1395,7 +1703,7 @@ type WalletCancelledTopUpLimitChangeIterator struct {
 // Next advances the iterator to the subsequent event, returning whether there
 // are any more events found. In case of a retrieval or parsing error, false is
 // returned and Error() can be queried for the exact failure.
-func (it *WalletCancelledTopUpLimitChangeIterator) Next() bool {
+func (it *WalletCancelledLoadLimitUpdateIterator) Next() bool {
 	// If the iterator failed, stop iterating
 	if it.fail != nil {
 		return false
@@ -1404,7 +1712,7 @@ func (it *WalletCancelledTopUpLimitChangeIterator) Next() bool {
 	if it.done {
 		select {
 		case log := <-it.logs:
-			it.Event = new(WalletCancelledTopUpLimitChange)
+			it.Event = new(WalletCancelledLoadLimitUpdate)
 			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 				it.fail = err
 				return false
@@ -1419,7 +1727,7 @@ func (it *WalletCancelledTopUpLimitChangeIterator) Next() bool {
 	// Iterator still in progress, wait for either a data or an error event
 	select {
 	case log := <-it.logs:
-		it.Event = new(WalletCancelledTopUpLimitChange)
+		it.Event = new(WalletCancelledLoadLimitUpdate)
 		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 			it.fail = err
 			return false
@@ -1435,42 +1743,42 @@ func (it *WalletCancelledTopUpLimitChangeIterator) Next() bool {
 }
 
 // Error returns any retrieval or parsing error occurred during filtering.
-func (it *WalletCancelledTopUpLimitChangeIterator) Error() error {
+func (it *WalletCancelledLoadLimitUpdateIterator) Error() error {
 	return it.fail
 }
 
 // Close terminates the iteration process, releasing any pending underlying
 // resources.
-func (it *WalletCancelledTopUpLimitChangeIterator) Close() error {
+func (it *WalletCancelledLoadLimitUpdateIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
 
-// WalletCancelledTopUpLimitChange represents a CancelledTopUpLimitChange event raised by the Wallet contract.
-type WalletCancelledTopUpLimitChange struct {
+// WalletCancelledLoadLimitUpdate represents a CancelledLoadLimitUpdate event raised by the Wallet contract.
+type WalletCancelledLoadLimitUpdate struct {
 	Sender common.Address
 	Amount *big.Int
 	Raw    types.Log // Blockchain specific contextual infos
 }
 
-// FilterCancelledTopUpLimitChange is a free log retrieval operation binding the contract event 0x25d36a8351febb568fa2c8f5a167990291168552d0f3381a618eb120f42d91f4.
+// FilterCancelledLoadLimitUpdate is a free log retrieval operation binding the contract event 0xeac146812c136bbb04d4f500dec69a01b4e1981fd21b4cf38816f7723b54ac25.
 //
-// Solidity: e CancelledTopUpLimitChange(_sender address, _amount uint256)
-func (_Wallet *WalletFilterer) FilterCancelledTopUpLimitChange(opts *bind.FilterOpts) (*WalletCancelledTopUpLimitChangeIterator, error) {
+// Solidity: event CancelledLoadLimitUpdate(address _sender, uint256 _amount)
+func (_Wallet *WalletFilterer) FilterCancelledLoadLimitUpdate(opts *bind.FilterOpts) (*WalletCancelledLoadLimitUpdateIterator, error) {
 
-	logs, sub, err := _Wallet.contract.FilterLogs(opts, "CancelledTopUpLimitChange")
+	logs, sub, err := _Wallet.contract.FilterLogs(opts, "CancelledLoadLimitUpdate")
 	if err != nil {
 		return nil, err
 	}
-	return &WalletCancelledTopUpLimitChangeIterator{contract: _Wallet.contract, event: "CancelledTopUpLimitChange", logs: logs, sub: sub}, nil
+	return &WalletCancelledLoadLimitUpdateIterator{contract: _Wallet.contract, event: "CancelledLoadLimitUpdate", logs: logs, sub: sub}, nil
 }
 
-// WatchCancelledTopUpLimitChange is a free log subscription operation binding the contract event 0x25d36a8351febb568fa2c8f5a167990291168552d0f3381a618eb120f42d91f4.
+// WatchCancelledLoadLimitUpdate is a free log subscription operation binding the contract event 0xeac146812c136bbb04d4f500dec69a01b4e1981fd21b4cf38816f7723b54ac25.
 //
-// Solidity: e CancelledTopUpLimitChange(_sender address, _amount uint256)
-func (_Wallet *WalletFilterer) WatchCancelledTopUpLimitChange(opts *bind.WatchOpts, sink chan<- *WalletCancelledTopUpLimitChange) (event.Subscription, error) {
+// Solidity: event CancelledLoadLimitUpdate(address _sender, uint256 _amount)
+func (_Wallet *WalletFilterer) WatchCancelledLoadLimitUpdate(opts *bind.WatchOpts, sink chan<- *WalletCancelledLoadLimitUpdate) (event.Subscription, error) {
 
-	logs, sub, err := _Wallet.contract.WatchLogs(opts, "CancelledTopUpLimitChange")
+	logs, sub, err := _Wallet.contract.WatchLogs(opts, "CancelledLoadLimitUpdate")
 	if err != nil {
 		return nil, err
 	}
@@ -1480,8 +1788,131 @@ func (_Wallet *WalletFilterer) WatchCancelledTopUpLimitChange(opts *bind.WatchOp
 			select {
 			case log := <-logs:
 				// New log arrived, parse the event and forward to the user
-				event := new(WalletCancelledTopUpLimitChange)
-				if err := _Wallet.contract.UnpackLog(event, "CancelledTopUpLimitChange", log); err != nil {
+				event := new(WalletCancelledLoadLimitUpdate)
+				if err := _Wallet.contract.UnpackLog(event, "CancelledLoadLimitUpdate", log); err != nil {
+					return err
+				}
+				event.Raw = log
+
+				select {
+				case sink <- event:
+				case err := <-sub.Err():
+					return err
+				case <-quit:
+					return nil
+				}
+			case err := <-sub.Err():
+				return err
+			case <-quit:
+				return nil
+			}
+		}
+	}), nil
+}
+
+// WalletCancelledSpendLimitUpdateIterator is returned from FilterCancelledSpendLimitUpdate and is used to iterate over the raw logs and unpacked data for CancelledSpendLimitUpdate events raised by the Wallet contract.
+type WalletCancelledSpendLimitUpdateIterator struct {
+	Event *WalletCancelledSpendLimitUpdate // Event containing the contract specifics and raw log
+
+	contract *bind.BoundContract // Generic contract to use for unpacking event data
+	event    string              // Event name to use for unpacking event data
+
+	logs chan types.Log        // Log channel receiving the found contract events
+	sub  ethereum.Subscription // Subscription for errors, completion and termination
+	done bool                  // Whether the subscription completed delivering logs
+	fail error                 // Occurred error to stop iteration
+}
+
+// Next advances the iterator to the subsequent event, returning whether there
+// are any more events found. In case of a retrieval or parsing error, false is
+// returned and Error() can be queried for the exact failure.
+func (it *WalletCancelledSpendLimitUpdateIterator) Next() bool {
+	// If the iterator failed, stop iterating
+	if it.fail != nil {
+		return false
+	}
+	// If the iterator completed, deliver directly whatever's available
+	if it.done {
+		select {
+		case log := <-it.logs:
+			it.Event = new(WalletCancelledSpendLimitUpdate)
+			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+				it.fail = err
+				return false
+			}
+			it.Event.Raw = log
+			return true
+
+		default:
+			return false
+		}
+	}
+	// Iterator still in progress, wait for either a data or an error event
+	select {
+	case log := <-it.logs:
+		it.Event = new(WalletCancelledSpendLimitUpdate)
+		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+			it.fail = err
+			return false
+		}
+		it.Event.Raw = log
+		return true
+
+	case err := <-it.sub.Err():
+		it.done = true
+		it.fail = err
+		return it.Next()
+	}
+}
+
+// Error returns any retrieval or parsing error occurred during filtering.
+func (it *WalletCancelledSpendLimitUpdateIterator) Error() error {
+	return it.fail
+}
+
+// Close terminates the iteration process, releasing any pending underlying
+// resources.
+func (it *WalletCancelledSpendLimitUpdateIterator) Close() error {
+	it.sub.Unsubscribe()
+	return nil
+}
+
+// WalletCancelledSpendLimitUpdate represents a CancelledSpendLimitUpdate event raised by the Wallet contract.
+type WalletCancelledSpendLimitUpdate struct {
+	Sender common.Address
+	Amount *big.Int
+	Raw    types.Log // Blockchain specific contextual infos
+}
+
+// FilterCancelledSpendLimitUpdate is a free log retrieval operation binding the contract event 0x18133cfc1a26798f5efaa036be77bc55c949fca408b7b85d1dced0a91240f204.
+//
+// Solidity: event CancelledSpendLimitUpdate(address _sender, uint256 _amount)
+func (_Wallet *WalletFilterer) FilterCancelledSpendLimitUpdate(opts *bind.FilterOpts) (*WalletCancelledSpendLimitUpdateIterator, error) {
+
+	logs, sub, err := _Wallet.contract.FilterLogs(opts, "CancelledSpendLimitUpdate")
+	if err != nil {
+		return nil, err
+	}
+	return &WalletCancelledSpendLimitUpdateIterator{contract: _Wallet.contract, event: "CancelledSpendLimitUpdate", logs: logs, sub: sub}, nil
+}
+
+// WatchCancelledSpendLimitUpdate is a free log subscription operation binding the contract event 0x18133cfc1a26798f5efaa036be77bc55c949fca408b7b85d1dced0a91240f204.
+//
+// Solidity: event CancelledSpendLimitUpdate(address _sender, uint256 _amount)
+func (_Wallet *WalletFilterer) WatchCancelledSpendLimitUpdate(opts *bind.WatchOpts, sink chan<- *WalletCancelledSpendLimitUpdate) (event.Subscription, error) {
+
+	logs, sub, err := _Wallet.contract.WatchLogs(opts, "CancelledSpendLimitUpdate")
+	if err != nil {
+		return nil, err
+	}
+	return event.NewSubscription(func(quit <-chan struct{}) error {
+		defer sub.Unsubscribe()
+		for {
+			select {
+			case log := <-logs:
+				// New log arrived, parse the event and forward to the user
+				event := new(WalletCancelledSpendLimitUpdate)
+				if err := _Wallet.contract.UnpackLog(event, "CancelledSpendLimitUpdate", log); err != nil {
 					return err
 				}
 				event.Raw = log
@@ -1578,7 +2009,7 @@ type WalletCancelledWhitelistAddition struct {
 
 // FilterCancelledWhitelistAddition is a free log retrieval operation binding the contract event 0x7794eff834d760583543e6e510e717a5e66d2c064e225f4db448343c3e66afcf.
 //
-// Solidity: e CancelledWhitelistAddition(_sender address, _hash bytes32)
+// Solidity: event CancelledWhitelistAddition(address _sender, bytes32 _hash)
 func (_Wallet *WalletFilterer) FilterCancelledWhitelistAddition(opts *bind.FilterOpts) (*WalletCancelledWhitelistAdditionIterator, error) {
 
 	logs, sub, err := _Wallet.contract.FilterLogs(opts, "CancelledWhitelistAddition")
@@ -1590,7 +2021,7 @@ func (_Wallet *WalletFilterer) FilterCancelledWhitelistAddition(opts *bind.Filte
 
 // WatchCancelledWhitelistAddition is a free log subscription operation binding the contract event 0x7794eff834d760583543e6e510e717a5e66d2c064e225f4db448343c3e66afcf.
 //
-// Solidity: e CancelledWhitelistAddition(_sender address, _hash bytes32)
+// Solidity: event CancelledWhitelistAddition(address _sender, bytes32 _hash)
 func (_Wallet *WalletFilterer) WatchCancelledWhitelistAddition(opts *bind.WatchOpts, sink chan<- *WalletCancelledWhitelistAddition) (event.Subscription, error) {
 
 	logs, sub, err := _Wallet.contract.WatchLogs(opts, "CancelledWhitelistAddition")
@@ -1701,7 +2132,7 @@ type WalletCancelledWhitelistRemoval struct {
 
 // FilterCancelledWhitelistRemoval is a free log retrieval operation binding the contract event 0x13c935eb475aa0f6e931fece83e2ac44569ce2d53460d29a6dedab40b965c8a3.
 //
-// Solidity: e CancelledWhitelistRemoval(_sender address, _hash bytes32)
+// Solidity: event CancelledWhitelistRemoval(address _sender, bytes32 _hash)
 func (_Wallet *WalletFilterer) FilterCancelledWhitelistRemoval(opts *bind.FilterOpts) (*WalletCancelledWhitelistRemovalIterator, error) {
 
 	logs, sub, err := _Wallet.contract.FilterLogs(opts, "CancelledWhitelistRemoval")
@@ -1713,7 +2144,7 @@ func (_Wallet *WalletFilterer) FilterCancelledWhitelistRemoval(opts *bind.Filter
 
 // WatchCancelledWhitelistRemoval is a free log subscription operation binding the contract event 0x13c935eb475aa0f6e931fece83e2ac44569ce2d53460d29a6dedab40b965c8a3.
 //
-// Solidity: e CancelledWhitelistRemoval(_sender address, _hash bytes32)
+// Solidity: event CancelledWhitelistRemoval(address _sender, bytes32 _hash)
 func (_Wallet *WalletFilterer) WatchCancelledWhitelistRemoval(opts *bind.WatchOpts, sink chan<- *WalletCancelledWhitelistRemoval) (event.Subscription, error) {
 
 	logs, sub, err := _Wallet.contract.WatchLogs(opts, "CancelledWhitelistRemoval")
@@ -1728,6 +2159,375 @@ func (_Wallet *WalletFilterer) WatchCancelledWhitelistRemoval(opts *bind.WatchOp
 				// New log arrived, parse the event and forward to the user
 				event := new(WalletCancelledWhitelistRemoval)
 				if err := _Wallet.contract.UnpackLog(event, "CancelledWhitelistRemoval", log); err != nil {
+					return err
+				}
+				event.Raw = log
+
+				select {
+				case sink <- event:
+				case err := <-sub.Err():
+					return err
+				case <-quit:
+					return nil
+				}
+			case err := <-sub.Err():
+				return err
+			case <-quit:
+				return nil
+			}
+		}
+	}), nil
+}
+
+// WalletExecutedTransactionIterator is returned from FilterExecutedTransaction and is used to iterate over the raw logs and unpacked data for ExecutedTransaction events raised by the Wallet contract.
+type WalletExecutedTransactionIterator struct {
+	Event *WalletExecutedTransaction // Event containing the contract specifics and raw log
+
+	contract *bind.BoundContract // Generic contract to use for unpacking event data
+	event    string              // Event name to use for unpacking event data
+
+	logs chan types.Log        // Log channel receiving the found contract events
+	sub  ethereum.Subscription // Subscription for errors, completion and termination
+	done bool                  // Whether the subscription completed delivering logs
+	fail error                 // Occurred error to stop iteration
+}
+
+// Next advances the iterator to the subsequent event, returning whether there
+// are any more events found. In case of a retrieval or parsing error, false is
+// returned and Error() can be queried for the exact failure.
+func (it *WalletExecutedTransactionIterator) Next() bool {
+	// If the iterator failed, stop iterating
+	if it.fail != nil {
+		return false
+	}
+	// If the iterator completed, deliver directly whatever's available
+	if it.done {
+		select {
+		case log := <-it.logs:
+			it.Event = new(WalletExecutedTransaction)
+			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+				it.fail = err
+				return false
+			}
+			it.Event.Raw = log
+			return true
+
+		default:
+			return false
+		}
+	}
+	// Iterator still in progress, wait for either a data or an error event
+	select {
+	case log := <-it.logs:
+		it.Event = new(WalletExecutedTransaction)
+		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+			it.fail = err
+			return false
+		}
+		it.Event.Raw = log
+		return true
+
+	case err := <-it.sub.Err():
+		it.done = true
+		it.fail = err
+		return it.Next()
+	}
+}
+
+// Error returns any retrieval or parsing error occurred during filtering.
+func (it *WalletExecutedTransactionIterator) Error() error {
+	return it.fail
+}
+
+// Close terminates the iteration process, releasing any pending underlying
+// resources.
+func (it *WalletExecutedTransactionIterator) Close() error {
+	it.sub.Unsubscribe()
+	return nil
+}
+
+// WalletExecutedTransaction represents a ExecutedTransaction event raised by the Wallet contract.
+type WalletExecutedTransaction struct {
+	Destination common.Address
+	Value       *big.Int
+	Data        []byte
+	Raw         types.Log // Blockchain specific contextual infos
+}
+
+// FilterExecutedTransaction is a free log retrieval operation binding the contract event 0xaf022f6b53b11c364e2dfc0aea08eb9416c94f2661451ea82ead8831385617a6.
+//
+// Solidity: event ExecutedTransaction(address _destination, uint256 _value, bytes _data)
+func (_Wallet *WalletFilterer) FilterExecutedTransaction(opts *bind.FilterOpts) (*WalletExecutedTransactionIterator, error) {
+
+	logs, sub, err := _Wallet.contract.FilterLogs(opts, "ExecutedTransaction")
+	if err != nil {
+		return nil, err
+	}
+	return &WalletExecutedTransactionIterator{contract: _Wallet.contract, event: "ExecutedTransaction", logs: logs, sub: sub}, nil
+}
+
+// WatchExecutedTransaction is a free log subscription operation binding the contract event 0xaf022f6b53b11c364e2dfc0aea08eb9416c94f2661451ea82ead8831385617a6.
+//
+// Solidity: event ExecutedTransaction(address _destination, uint256 _value, bytes _data)
+func (_Wallet *WalletFilterer) WatchExecutedTransaction(opts *bind.WatchOpts, sink chan<- *WalletExecutedTransaction) (event.Subscription, error) {
+
+	logs, sub, err := _Wallet.contract.WatchLogs(opts, "ExecutedTransaction")
+	if err != nil {
+		return nil, err
+	}
+	return event.NewSubscription(func(quit <-chan struct{}) error {
+		defer sub.Unsubscribe()
+		for {
+			select {
+			case log := <-logs:
+				// New log arrived, parse the event and forward to the user
+				event := new(WalletExecutedTransaction)
+				if err := _Wallet.contract.UnpackLog(event, "ExecutedTransaction", log); err != nil {
+					return err
+				}
+				event.Raw = log
+
+				select {
+				case sink <- event:
+				case err := <-sub.Err():
+					return err
+				case <-quit:
+					return nil
+				}
+			case err := <-sub.Err():
+				return err
+			case <-quit:
+				return nil
+			}
+		}
+	}), nil
+}
+
+// WalletLoadedTokenCardIterator is returned from FilterLoadedTokenCard and is used to iterate over the raw logs and unpacked data for LoadedTokenCard events raised by the Wallet contract.
+type WalletLoadedTokenCardIterator struct {
+	Event *WalletLoadedTokenCard // Event containing the contract specifics and raw log
+
+	contract *bind.BoundContract // Generic contract to use for unpacking event data
+	event    string              // Event name to use for unpacking event data
+
+	logs chan types.Log        // Log channel receiving the found contract events
+	sub  ethereum.Subscription // Subscription for errors, completion and termination
+	done bool                  // Whether the subscription completed delivering logs
+	fail error                 // Occurred error to stop iteration
+}
+
+// Next advances the iterator to the subsequent event, returning whether there
+// are any more events found. In case of a retrieval or parsing error, false is
+// returned and Error() can be queried for the exact failure.
+func (it *WalletLoadedTokenCardIterator) Next() bool {
+	// If the iterator failed, stop iterating
+	if it.fail != nil {
+		return false
+	}
+	// If the iterator completed, deliver directly whatever's available
+	if it.done {
+		select {
+		case log := <-it.logs:
+			it.Event = new(WalletLoadedTokenCard)
+			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+				it.fail = err
+				return false
+			}
+			it.Event.Raw = log
+			return true
+
+		default:
+			return false
+		}
+	}
+	// Iterator still in progress, wait for either a data or an error event
+	select {
+	case log := <-it.logs:
+		it.Event = new(WalletLoadedTokenCard)
+		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+			it.fail = err
+			return false
+		}
+		it.Event.Raw = log
+		return true
+
+	case err := <-it.sub.Err():
+		it.done = true
+		it.fail = err
+		return it.Next()
+	}
+}
+
+// Error returns any retrieval or parsing error occurred during filtering.
+func (it *WalletLoadedTokenCardIterator) Error() error {
+	return it.fail
+}
+
+// Close terminates the iteration process, releasing any pending underlying
+// resources.
+func (it *WalletLoadedTokenCardIterator) Close() error {
+	it.sub.Unsubscribe()
+	return nil
+}
+
+// WalletLoadedTokenCard represents a LoadedTokenCard event raised by the Wallet contract.
+type WalletLoadedTokenCard struct {
+	Asset  common.Address
+	Amount *big.Int
+	Raw    types.Log // Blockchain specific contextual infos
+}
+
+// FilterLoadedTokenCard is a free log retrieval operation binding the contract event 0x5f65674bec9af81f71be68674135a0ea3f163fb91984e3893d06da9f6ea2ce8a.
+//
+// Solidity: event LoadedTokenCard(address _asset, uint256 _amount)
+func (_Wallet *WalletFilterer) FilterLoadedTokenCard(opts *bind.FilterOpts) (*WalletLoadedTokenCardIterator, error) {
+
+	logs, sub, err := _Wallet.contract.FilterLogs(opts, "LoadedTokenCard")
+	if err != nil {
+		return nil, err
+	}
+	return &WalletLoadedTokenCardIterator{contract: _Wallet.contract, event: "LoadedTokenCard", logs: logs, sub: sub}, nil
+}
+
+// WatchLoadedTokenCard is a free log subscription operation binding the contract event 0x5f65674bec9af81f71be68674135a0ea3f163fb91984e3893d06da9f6ea2ce8a.
+//
+// Solidity: event LoadedTokenCard(address _asset, uint256 _amount)
+func (_Wallet *WalletFilterer) WatchLoadedTokenCard(opts *bind.WatchOpts, sink chan<- *WalletLoadedTokenCard) (event.Subscription, error) {
+
+	logs, sub, err := _Wallet.contract.WatchLogs(opts, "LoadedTokenCard")
+	if err != nil {
+		return nil, err
+	}
+	return event.NewSubscription(func(quit <-chan struct{}) error {
+		defer sub.Unsubscribe()
+		for {
+			select {
+			case log := <-logs:
+				// New log arrived, parse the event and forward to the user
+				event := new(WalletLoadedTokenCard)
+				if err := _Wallet.contract.UnpackLog(event, "LoadedTokenCard", log); err != nil {
+					return err
+				}
+				event.Raw = log
+
+				select {
+				case sink <- event:
+				case err := <-sub.Err():
+					return err
+				case <-quit:
+					return nil
+				}
+			case err := <-sub.Err():
+				return err
+			case <-quit:
+				return nil
+			}
+		}
+	}), nil
+}
+
+// WalletLockedOwnershipIterator is returned from FilterLockedOwnership and is used to iterate over the raw logs and unpacked data for LockedOwnership events raised by the Wallet contract.
+type WalletLockedOwnershipIterator struct {
+	Event *WalletLockedOwnership // Event containing the contract specifics and raw log
+
+	contract *bind.BoundContract // Generic contract to use for unpacking event data
+	event    string              // Event name to use for unpacking event data
+
+	logs chan types.Log        // Log channel receiving the found contract events
+	sub  ethereum.Subscription // Subscription for errors, completion and termination
+	done bool                  // Whether the subscription completed delivering logs
+	fail error                 // Occurred error to stop iteration
+}
+
+// Next advances the iterator to the subsequent event, returning whether there
+// are any more events found. In case of a retrieval or parsing error, false is
+// returned and Error() can be queried for the exact failure.
+func (it *WalletLockedOwnershipIterator) Next() bool {
+	// If the iterator failed, stop iterating
+	if it.fail != nil {
+		return false
+	}
+	// If the iterator completed, deliver directly whatever's available
+	if it.done {
+		select {
+		case log := <-it.logs:
+			it.Event = new(WalletLockedOwnership)
+			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+				it.fail = err
+				return false
+			}
+			it.Event.Raw = log
+			return true
+
+		default:
+			return false
+		}
+	}
+	// Iterator still in progress, wait for either a data or an error event
+	select {
+	case log := <-it.logs:
+		it.Event = new(WalletLockedOwnership)
+		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+			it.fail = err
+			return false
+		}
+		it.Event.Raw = log
+		return true
+
+	case err := <-it.sub.Err():
+		it.done = true
+		it.fail = err
+		return it.Next()
+	}
+}
+
+// Error returns any retrieval or parsing error occurred during filtering.
+func (it *WalletLockedOwnershipIterator) Error() error {
+	return it.fail
+}
+
+// Close terminates the iteration process, releasing any pending underlying
+// resources.
+func (it *WalletLockedOwnershipIterator) Close() error {
+	it.sub.Unsubscribe()
+	return nil
+}
+
+// WalletLockedOwnership represents a LockedOwnership event raised by the Wallet contract.
+type WalletLockedOwnership struct {
+	Locked common.Address
+	Raw    types.Log // Blockchain specific contextual infos
+}
+
+// FilterLockedOwnership is a free log retrieval operation binding the contract event 0x808639ff9c8e4732d60b6c2330de498035416d229f27a77d259680895efec122.
+//
+// Solidity: event LockedOwnership(address _locked)
+func (_Wallet *WalletFilterer) FilterLockedOwnership(opts *bind.FilterOpts) (*WalletLockedOwnershipIterator, error) {
+
+	logs, sub, err := _Wallet.contract.FilterLogs(opts, "LockedOwnership")
+	if err != nil {
+		return nil, err
+	}
+	return &WalletLockedOwnershipIterator{contract: _Wallet.contract, event: "LockedOwnership", logs: logs, sub: sub}, nil
+}
+
+// WatchLockedOwnership is a free log subscription operation binding the contract event 0x808639ff9c8e4732d60b6c2330de498035416d229f27a77d259680895efec122.
+//
+// Solidity: event LockedOwnership(address _locked)
+func (_Wallet *WalletFilterer) WatchLockedOwnership(opts *bind.WatchOpts, sink chan<- *WalletLockedOwnership) (event.Subscription, error) {
+
+	logs, sub, err := _Wallet.contract.WatchLogs(opts, "LockedOwnership")
+	if err != nil {
+		return nil, err
+	}
+	return event.NewSubscription(func(quit <-chan struct{}) error {
+		defer sub.Unsubscribe()
+		for {
+			select {
+			case log := <-logs:
+				// New log arrived, parse the event and forward to the user
+				event := new(WalletLockedOwnership)
+				if err := _Wallet.contract.UnpackLog(event, "LockedOwnership", log); err != nil {
 					return err
 				}
 				event.Raw = log
@@ -1824,7 +2624,7 @@ type WalletReceived struct {
 
 // FilterReceived is a free log retrieval operation binding the contract event 0x88a5966d370b9919b20f3e2c13ff65706f196a4e32cc2c12bf57088f88525874.
 //
-// Solidity: e Received(_from address, _amount uint256)
+// Solidity: event Received(address _from, uint256 _amount)
 func (_Wallet *WalletFilterer) FilterReceived(opts *bind.FilterOpts) (*WalletReceivedIterator, error) {
 
 	logs, sub, err := _Wallet.contract.FilterLogs(opts, "Received")
@@ -1836,7 +2636,7 @@ func (_Wallet *WalletFilterer) FilterReceived(opts *bind.FilterOpts) (*WalletRec
 
 // WatchReceived is a free log subscription operation binding the contract event 0x88a5966d370b9919b20f3e2c13ff65706f196a4e32cc2c12bf57088f88525874.
 //
-// Solidity: e Received(_from address, _amount uint256)
+// Solidity: event Received(address _from, uint256 _amount)
 func (_Wallet *WalletFilterer) WatchReceived(opts *bind.WatchOpts, sink chan<- *WalletReceived) (event.Subscription, error) {
 
 	logs, sub, err := _Wallet.contract.WatchLogs(opts, "Received")
@@ -1947,7 +2747,7 @@ type WalletRemovedFromWhitelist struct {
 
 // FilterRemovedFromWhitelist is a free log retrieval operation binding the contract event 0xd218c430fa348f4ce67791021b6b89c0c3eacd4ead1d8f5b83c60038ec28249b.
 //
-// Solidity: e RemovedFromWhitelist(_sender address, _addresses address[])
+// Solidity: event RemovedFromWhitelist(address _sender, address[] _addresses)
 func (_Wallet *WalletFilterer) FilterRemovedFromWhitelist(opts *bind.FilterOpts) (*WalletRemovedFromWhitelistIterator, error) {
 
 	logs, sub, err := _Wallet.contract.FilterLogs(opts, "RemovedFromWhitelist")
@@ -1959,7 +2759,7 @@ func (_Wallet *WalletFilterer) FilterRemovedFromWhitelist(opts *bind.FilterOpts)
 
 // WatchRemovedFromWhitelist is a free log subscription operation binding the contract event 0xd218c430fa348f4ce67791021b6b89c0c3eacd4ead1d8f5b83c60038ec28249b.
 //
-// Solidity: e RemovedFromWhitelist(_sender address, _addresses address[])
+// Solidity: event RemovedFromWhitelist(address _sender, address[] _addresses)
 func (_Wallet *WalletFilterer) WatchRemovedFromWhitelist(opts *bind.WatchOpts, sink chan<- *WalletRemovedFromWhitelist) (event.Subscription, error) {
 
 	logs, sub, err := _Wallet.contract.WatchLogs(opts, "RemovedFromWhitelist")
@@ -1974,6 +2774,252 @@ func (_Wallet *WalletFilterer) WatchRemovedFromWhitelist(opts *bind.WatchOpts, s
 				// New log arrived, parse the event and forward to the user
 				event := new(WalletRemovedFromWhitelist)
 				if err := _Wallet.contract.UnpackLog(event, "RemovedFromWhitelist", log); err != nil {
+					return err
+				}
+				event.Raw = log
+
+				select {
+				case sink <- event:
+				case err := <-sub.Err():
+					return err
+				case <-quit:
+					return nil
+				}
+			case err := <-sub.Err():
+				return err
+			case <-quit:
+				return nil
+			}
+		}
+	}), nil
+}
+
+// WalletSetGasTopUpLimitIterator is returned from FilterSetGasTopUpLimit and is used to iterate over the raw logs and unpacked data for SetGasTopUpLimit events raised by the Wallet contract.
+type WalletSetGasTopUpLimitIterator struct {
+	Event *WalletSetGasTopUpLimit // Event containing the contract specifics and raw log
+
+	contract *bind.BoundContract // Generic contract to use for unpacking event data
+	event    string              // Event name to use for unpacking event data
+
+	logs chan types.Log        // Log channel receiving the found contract events
+	sub  ethereum.Subscription // Subscription for errors, completion and termination
+	done bool                  // Whether the subscription completed delivering logs
+	fail error                 // Occurred error to stop iteration
+}
+
+// Next advances the iterator to the subsequent event, returning whether there
+// are any more events found. In case of a retrieval or parsing error, false is
+// returned and Error() can be queried for the exact failure.
+func (it *WalletSetGasTopUpLimitIterator) Next() bool {
+	// If the iterator failed, stop iterating
+	if it.fail != nil {
+		return false
+	}
+	// If the iterator completed, deliver directly whatever's available
+	if it.done {
+		select {
+		case log := <-it.logs:
+			it.Event = new(WalletSetGasTopUpLimit)
+			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+				it.fail = err
+				return false
+			}
+			it.Event.Raw = log
+			return true
+
+		default:
+			return false
+		}
+	}
+	// Iterator still in progress, wait for either a data or an error event
+	select {
+	case log := <-it.logs:
+		it.Event = new(WalletSetGasTopUpLimit)
+		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+			it.fail = err
+			return false
+		}
+		it.Event.Raw = log
+		return true
+
+	case err := <-it.sub.Err():
+		it.done = true
+		it.fail = err
+		return it.Next()
+	}
+}
+
+// Error returns any retrieval or parsing error occurred during filtering.
+func (it *WalletSetGasTopUpLimitIterator) Error() error {
+	return it.fail
+}
+
+// Close terminates the iteration process, releasing any pending underlying
+// resources.
+func (it *WalletSetGasTopUpLimitIterator) Close() error {
+	it.sub.Unsubscribe()
+	return nil
+}
+
+// WalletSetGasTopUpLimit represents a SetGasTopUpLimit event raised by the Wallet contract.
+type WalletSetGasTopUpLimit struct {
+	Sender common.Address
+	Amount *big.Int
+	Raw    types.Log // Blockchain specific contextual infos
+}
+
+// FilterSetGasTopUpLimit is a free log retrieval operation binding the contract event 0x41ff5d5ce3b7935893a4e7269ec5caae9cca5e3bf0eb4b21d2f443489667112e.
+//
+// Solidity: event SetGasTopUpLimit(address _sender, uint256 _amount)
+func (_Wallet *WalletFilterer) FilterSetGasTopUpLimit(opts *bind.FilterOpts) (*WalletSetGasTopUpLimitIterator, error) {
+
+	logs, sub, err := _Wallet.contract.FilterLogs(opts, "SetGasTopUpLimit")
+	if err != nil {
+		return nil, err
+	}
+	return &WalletSetGasTopUpLimitIterator{contract: _Wallet.contract, event: "SetGasTopUpLimit", logs: logs, sub: sub}, nil
+}
+
+// WatchSetGasTopUpLimit is a free log subscription operation binding the contract event 0x41ff5d5ce3b7935893a4e7269ec5caae9cca5e3bf0eb4b21d2f443489667112e.
+//
+// Solidity: event SetGasTopUpLimit(address _sender, uint256 _amount)
+func (_Wallet *WalletFilterer) WatchSetGasTopUpLimit(opts *bind.WatchOpts, sink chan<- *WalletSetGasTopUpLimit) (event.Subscription, error) {
+
+	logs, sub, err := _Wallet.contract.WatchLogs(opts, "SetGasTopUpLimit")
+	if err != nil {
+		return nil, err
+	}
+	return event.NewSubscription(func(quit <-chan struct{}) error {
+		defer sub.Unsubscribe()
+		for {
+			select {
+			case log := <-logs:
+				// New log arrived, parse the event and forward to the user
+				event := new(WalletSetGasTopUpLimit)
+				if err := _Wallet.contract.UnpackLog(event, "SetGasTopUpLimit", log); err != nil {
+					return err
+				}
+				event.Raw = log
+
+				select {
+				case sink <- event:
+				case err := <-sub.Err():
+					return err
+				case <-quit:
+					return nil
+				}
+			case err := <-sub.Err():
+				return err
+			case <-quit:
+				return nil
+			}
+		}
+	}), nil
+}
+
+// WalletSetLoadLimitIterator is returned from FilterSetLoadLimit and is used to iterate over the raw logs and unpacked data for SetLoadLimit events raised by the Wallet contract.
+type WalletSetLoadLimitIterator struct {
+	Event *WalletSetLoadLimit // Event containing the contract specifics and raw log
+
+	contract *bind.BoundContract // Generic contract to use for unpacking event data
+	event    string              // Event name to use for unpacking event data
+
+	logs chan types.Log        // Log channel receiving the found contract events
+	sub  ethereum.Subscription // Subscription for errors, completion and termination
+	done bool                  // Whether the subscription completed delivering logs
+	fail error                 // Occurred error to stop iteration
+}
+
+// Next advances the iterator to the subsequent event, returning whether there
+// are any more events found. In case of a retrieval or parsing error, false is
+// returned and Error() can be queried for the exact failure.
+func (it *WalletSetLoadLimitIterator) Next() bool {
+	// If the iterator failed, stop iterating
+	if it.fail != nil {
+		return false
+	}
+	// If the iterator completed, deliver directly whatever's available
+	if it.done {
+		select {
+		case log := <-it.logs:
+			it.Event = new(WalletSetLoadLimit)
+			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+				it.fail = err
+				return false
+			}
+			it.Event.Raw = log
+			return true
+
+		default:
+			return false
+		}
+	}
+	// Iterator still in progress, wait for either a data or an error event
+	select {
+	case log := <-it.logs:
+		it.Event = new(WalletSetLoadLimit)
+		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+			it.fail = err
+			return false
+		}
+		it.Event.Raw = log
+		return true
+
+	case err := <-it.sub.Err():
+		it.done = true
+		it.fail = err
+		return it.Next()
+	}
+}
+
+// Error returns any retrieval or parsing error occurred during filtering.
+func (it *WalletSetLoadLimitIterator) Error() error {
+	return it.fail
+}
+
+// Close terminates the iteration process, releasing any pending underlying
+// resources.
+func (it *WalletSetLoadLimitIterator) Close() error {
+	it.sub.Unsubscribe()
+	return nil
+}
+
+// WalletSetLoadLimit represents a SetLoadLimit event raised by the Wallet contract.
+type WalletSetLoadLimit struct {
+	Sender common.Address
+	Amount *big.Int
+	Raw    types.Log // Blockchain specific contextual infos
+}
+
+// FilterSetLoadLimit is a free log retrieval operation binding the contract event 0x0b05243483e17c3f3377aee82b7d47e5700b48288695fc08b7ecc2759afa44ef.
+//
+// Solidity: event SetLoadLimit(address _sender, uint256 _amount)
+func (_Wallet *WalletFilterer) FilterSetLoadLimit(opts *bind.FilterOpts) (*WalletSetLoadLimitIterator, error) {
+
+	logs, sub, err := _Wallet.contract.FilterLogs(opts, "SetLoadLimit")
+	if err != nil {
+		return nil, err
+	}
+	return &WalletSetLoadLimitIterator{contract: _Wallet.contract, event: "SetLoadLimit", logs: logs, sub: sub}, nil
+}
+
+// WatchSetLoadLimit is a free log subscription operation binding the contract event 0x0b05243483e17c3f3377aee82b7d47e5700b48288695fc08b7ecc2759afa44ef.
+//
+// Solidity: event SetLoadLimit(address _sender, uint256 _amount)
+func (_Wallet *WalletFilterer) WatchSetLoadLimit(opts *bind.WatchOpts, sink chan<- *WalletSetLoadLimit) (event.Subscription, error) {
+
+	logs, sub, err := _Wallet.contract.WatchLogs(opts, "SetLoadLimit")
+	if err != nil {
+		return nil, err
+	}
+	return event.NewSubscription(func(quit <-chan struct{}) error {
+		defer sub.Unsubscribe()
+		for {
+			select {
+			case log := <-logs:
+				// New log arrived, parse the event and forward to the user
+				event := new(WalletSetLoadLimit)
+				if err := _Wallet.contract.UnpackLog(event, "SetLoadLimit", log); err != nil {
 					return err
 				}
 				event.Raw = log
@@ -2070,7 +3116,7 @@ type WalletSetSpendLimit struct {
 
 // FilterSetSpendLimit is a free log retrieval operation binding the contract event 0x068f112e5ec923d412be64779fe69e0fcbb6784c6617e94cccc8fd348f2e0f21.
 //
-// Solidity: e SetSpendLimit(_sender address, _amount uint256)
+// Solidity: event SetSpendLimit(address _sender, uint256 _amount)
 func (_Wallet *WalletFilterer) FilterSetSpendLimit(opts *bind.FilterOpts) (*WalletSetSpendLimitIterator, error) {
 
 	logs, sub, err := _Wallet.contract.FilterLogs(opts, "SetSpendLimit")
@@ -2082,7 +3128,7 @@ func (_Wallet *WalletFilterer) FilterSetSpendLimit(opts *bind.FilterOpts) (*Wall
 
 // WatchSetSpendLimit is a free log subscription operation binding the contract event 0x068f112e5ec923d412be64779fe69e0fcbb6784c6617e94cccc8fd348f2e0f21.
 //
-// Solidity: e SetSpendLimit(_sender address, _amount uint256)
+// Solidity: event SetSpendLimit(address _sender, uint256 _amount)
 func (_Wallet *WalletFilterer) WatchSetSpendLimit(opts *bind.WatchOpts, sink chan<- *WalletSetSpendLimit) (event.Subscription, error) {
 
 	logs, sub, err := _Wallet.contract.WatchLogs(opts, "SetSpendLimit")
@@ -2117,9 +3163,9 @@ func (_Wallet *WalletFilterer) WatchSetSpendLimit(opts *bind.WatchOpts, sink cha
 	}), nil
 }
 
-// WalletSetTopUpLimitIterator is returned from FilterSetTopUpLimit and is used to iterate over the raw logs and unpacked data for SetTopUpLimit events raised by the Wallet contract.
-type WalletSetTopUpLimitIterator struct {
-	Event *WalletSetTopUpLimit // Event containing the contract specifics and raw log
+// WalletSubmittedGasTopUpLimitUpdateIterator is returned from FilterSubmittedGasTopUpLimitUpdate and is used to iterate over the raw logs and unpacked data for SubmittedGasTopUpLimitUpdate events raised by the Wallet contract.
+type WalletSubmittedGasTopUpLimitUpdateIterator struct {
+	Event *WalletSubmittedGasTopUpLimitUpdate // Event containing the contract specifics and raw log
 
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
@@ -2133,7 +3179,7 @@ type WalletSetTopUpLimitIterator struct {
 // Next advances the iterator to the subsequent event, returning whether there
 // are any more events found. In case of a retrieval or parsing error, false is
 // returned and Error() can be queried for the exact failure.
-func (it *WalletSetTopUpLimitIterator) Next() bool {
+func (it *WalletSubmittedGasTopUpLimitUpdateIterator) Next() bool {
 	// If the iterator failed, stop iterating
 	if it.fail != nil {
 		return false
@@ -2142,7 +3188,7 @@ func (it *WalletSetTopUpLimitIterator) Next() bool {
 	if it.done {
 		select {
 		case log := <-it.logs:
-			it.Event = new(WalletSetTopUpLimit)
+			it.Event = new(WalletSubmittedGasTopUpLimitUpdate)
 			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 				it.fail = err
 				return false
@@ -2157,7 +3203,7 @@ func (it *WalletSetTopUpLimitIterator) Next() bool {
 	// Iterator still in progress, wait for either a data or an error event
 	select {
 	case log := <-it.logs:
-		it.Event = new(WalletSetTopUpLimit)
+		it.Event = new(WalletSubmittedGasTopUpLimitUpdate)
 		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 			it.fail = err
 			return false
@@ -2173,42 +3219,41 @@ func (it *WalletSetTopUpLimitIterator) Next() bool {
 }
 
 // Error returns any retrieval or parsing error occurred during filtering.
-func (it *WalletSetTopUpLimitIterator) Error() error {
+func (it *WalletSubmittedGasTopUpLimitUpdateIterator) Error() error {
 	return it.fail
 }
 
 // Close terminates the iteration process, releasing any pending underlying
 // resources.
-func (it *WalletSetTopUpLimitIterator) Close() error {
+func (it *WalletSubmittedGasTopUpLimitUpdateIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
 
-// WalletSetTopUpLimit represents a SetTopUpLimit event raised by the Wallet contract.
-type WalletSetTopUpLimit struct {
-	Sender common.Address
+// WalletSubmittedGasTopUpLimitUpdate represents a SubmittedGasTopUpLimitUpdate event raised by the Wallet contract.
+type WalletSubmittedGasTopUpLimitUpdate struct {
 	Amount *big.Int
 	Raw    types.Log // Blockchain specific contextual infos
 }
 
-// FilterSetTopUpLimit is a free log retrieval operation binding the contract event 0xb0b775ba506691c666928dfe7120eb5ccedd17f4554dc85ce86eb2b4cc437e36.
+// FilterSubmittedGasTopUpLimitUpdate is a free log retrieval operation binding the contract event 0xaf2a77cd04c3cc155588dd3bf67b310ab4fb3b1da3cf6b8d7d4d2aa1d09b794c.
 //
-// Solidity: e SetTopUpLimit(_sender address, _amount uint256)
-func (_Wallet *WalletFilterer) FilterSetTopUpLimit(opts *bind.FilterOpts) (*WalletSetTopUpLimitIterator, error) {
+// Solidity: event SubmittedGasTopUpLimitUpdate(uint256 _amount)
+func (_Wallet *WalletFilterer) FilterSubmittedGasTopUpLimitUpdate(opts *bind.FilterOpts) (*WalletSubmittedGasTopUpLimitUpdateIterator, error) {
 
-	logs, sub, err := _Wallet.contract.FilterLogs(opts, "SetTopUpLimit")
+	logs, sub, err := _Wallet.contract.FilterLogs(opts, "SubmittedGasTopUpLimitUpdate")
 	if err != nil {
 		return nil, err
 	}
-	return &WalletSetTopUpLimitIterator{contract: _Wallet.contract, event: "SetTopUpLimit", logs: logs, sub: sub}, nil
+	return &WalletSubmittedGasTopUpLimitUpdateIterator{contract: _Wallet.contract, event: "SubmittedGasTopUpLimitUpdate", logs: logs, sub: sub}, nil
 }
 
-// WatchSetTopUpLimit is a free log subscription operation binding the contract event 0xb0b775ba506691c666928dfe7120eb5ccedd17f4554dc85ce86eb2b4cc437e36.
+// WatchSubmittedGasTopUpLimitUpdate is a free log subscription operation binding the contract event 0xaf2a77cd04c3cc155588dd3bf67b310ab4fb3b1da3cf6b8d7d4d2aa1d09b794c.
 //
-// Solidity: e SetTopUpLimit(_sender address, _amount uint256)
-func (_Wallet *WalletFilterer) WatchSetTopUpLimit(opts *bind.WatchOpts, sink chan<- *WalletSetTopUpLimit) (event.Subscription, error) {
+// Solidity: event SubmittedGasTopUpLimitUpdate(uint256 _amount)
+func (_Wallet *WalletFilterer) WatchSubmittedGasTopUpLimitUpdate(opts *bind.WatchOpts, sink chan<- *WalletSubmittedGasTopUpLimitUpdate) (event.Subscription, error) {
 
-	logs, sub, err := _Wallet.contract.WatchLogs(opts, "SetTopUpLimit")
+	logs, sub, err := _Wallet.contract.WatchLogs(opts, "SubmittedGasTopUpLimitUpdate")
 	if err != nil {
 		return nil, err
 	}
@@ -2218,8 +3263,8 @@ func (_Wallet *WalletFilterer) WatchSetTopUpLimit(opts *bind.WatchOpts, sink cha
 			select {
 			case log := <-logs:
 				// New log arrived, parse the event and forward to the user
-				event := new(WalletSetTopUpLimit)
-				if err := _Wallet.contract.UnpackLog(event, "SetTopUpLimit", log); err != nil {
+				event := new(WalletSubmittedGasTopUpLimitUpdate)
+				if err := _Wallet.contract.UnpackLog(event, "SubmittedGasTopUpLimitUpdate", log); err != nil {
 					return err
 				}
 				event.Raw = log
@@ -2240,9 +3285,9 @@ func (_Wallet *WalletFilterer) WatchSetTopUpLimit(opts *bind.WatchOpts, sink cha
 	}), nil
 }
 
-// WalletSubmittedSpendLimitChangeIterator is returned from FilterSubmittedSpendLimitChange and is used to iterate over the raw logs and unpacked data for SubmittedSpendLimitChange events raised by the Wallet contract.
-type WalletSubmittedSpendLimitChangeIterator struct {
-	Event *WalletSubmittedSpendLimitChange // Event containing the contract specifics and raw log
+// WalletSubmittedLoadLimitUpdateIterator is returned from FilterSubmittedLoadLimitUpdate and is used to iterate over the raw logs and unpacked data for SubmittedLoadLimitUpdate events raised by the Wallet contract.
+type WalletSubmittedLoadLimitUpdateIterator struct {
+	Event *WalletSubmittedLoadLimitUpdate // Event containing the contract specifics and raw log
 
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
@@ -2256,7 +3301,7 @@ type WalletSubmittedSpendLimitChangeIterator struct {
 // Next advances the iterator to the subsequent event, returning whether there
 // are any more events found. In case of a retrieval or parsing error, false is
 // returned and Error() can be queried for the exact failure.
-func (it *WalletSubmittedSpendLimitChangeIterator) Next() bool {
+func (it *WalletSubmittedLoadLimitUpdateIterator) Next() bool {
 	// If the iterator failed, stop iterating
 	if it.fail != nil {
 		return false
@@ -2265,7 +3310,7 @@ func (it *WalletSubmittedSpendLimitChangeIterator) Next() bool {
 	if it.done {
 		select {
 		case log := <-it.logs:
-			it.Event = new(WalletSubmittedSpendLimitChange)
+			it.Event = new(WalletSubmittedLoadLimitUpdate)
 			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 				it.fail = err
 				return false
@@ -2280,7 +3325,7 @@ func (it *WalletSubmittedSpendLimitChangeIterator) Next() bool {
 	// Iterator still in progress, wait for either a data or an error event
 	select {
 	case log := <-it.logs:
-		it.Event = new(WalletSubmittedSpendLimitChange)
+		it.Event = new(WalletSubmittedLoadLimitUpdate)
 		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 			it.fail = err
 			return false
@@ -2296,41 +3341,41 @@ func (it *WalletSubmittedSpendLimitChangeIterator) Next() bool {
 }
 
 // Error returns any retrieval or parsing error occurred during filtering.
-func (it *WalletSubmittedSpendLimitChangeIterator) Error() error {
+func (it *WalletSubmittedLoadLimitUpdateIterator) Error() error {
 	return it.fail
 }
 
 // Close terminates the iteration process, releasing any pending underlying
 // resources.
-func (it *WalletSubmittedSpendLimitChangeIterator) Close() error {
+func (it *WalletSubmittedLoadLimitUpdateIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
 
-// WalletSubmittedSpendLimitChange represents a SubmittedSpendLimitChange event raised by the Wallet contract.
-type WalletSubmittedSpendLimitChange struct {
+// WalletSubmittedLoadLimitUpdate represents a SubmittedLoadLimitUpdate event raised by the Wallet contract.
+type WalletSubmittedLoadLimitUpdate struct {
 	Amount *big.Int
 	Raw    types.Log // Blockchain specific contextual infos
 }
 
-// FilterSubmittedSpendLimitChange is a free log retrieval operation binding the contract event 0xf7155f467a69de148f41fc3c39089f07e9bff6d91519f3d69d46936643d5197a.
+// FilterSubmittedLoadLimitUpdate is a free log retrieval operation binding the contract event 0xc178d379965e5657b6fc57494e392f121a14119215dfb422aad7db4cc03f2d10.
 //
-// Solidity: e SubmittedSpendLimitChange(_amount uint256)
-func (_Wallet *WalletFilterer) FilterSubmittedSpendLimitChange(opts *bind.FilterOpts) (*WalletSubmittedSpendLimitChangeIterator, error) {
+// Solidity: event SubmittedLoadLimitUpdate(uint256 _amount)
+func (_Wallet *WalletFilterer) FilterSubmittedLoadLimitUpdate(opts *bind.FilterOpts) (*WalletSubmittedLoadLimitUpdateIterator, error) {
 
-	logs, sub, err := _Wallet.contract.FilterLogs(opts, "SubmittedSpendLimitChange")
+	logs, sub, err := _Wallet.contract.FilterLogs(opts, "SubmittedLoadLimitUpdate")
 	if err != nil {
 		return nil, err
 	}
-	return &WalletSubmittedSpendLimitChangeIterator{contract: _Wallet.contract, event: "SubmittedSpendLimitChange", logs: logs, sub: sub}, nil
+	return &WalletSubmittedLoadLimitUpdateIterator{contract: _Wallet.contract, event: "SubmittedLoadLimitUpdate", logs: logs, sub: sub}, nil
 }
 
-// WatchSubmittedSpendLimitChange is a free log subscription operation binding the contract event 0xf7155f467a69de148f41fc3c39089f07e9bff6d91519f3d69d46936643d5197a.
+// WatchSubmittedLoadLimitUpdate is a free log subscription operation binding the contract event 0xc178d379965e5657b6fc57494e392f121a14119215dfb422aad7db4cc03f2d10.
 //
-// Solidity: e SubmittedSpendLimitChange(_amount uint256)
-func (_Wallet *WalletFilterer) WatchSubmittedSpendLimitChange(opts *bind.WatchOpts, sink chan<- *WalletSubmittedSpendLimitChange) (event.Subscription, error) {
+// Solidity: event SubmittedLoadLimitUpdate(uint256 _amount)
+func (_Wallet *WalletFilterer) WatchSubmittedLoadLimitUpdate(opts *bind.WatchOpts, sink chan<- *WalletSubmittedLoadLimitUpdate) (event.Subscription, error) {
 
-	logs, sub, err := _Wallet.contract.WatchLogs(opts, "SubmittedSpendLimitChange")
+	logs, sub, err := _Wallet.contract.WatchLogs(opts, "SubmittedLoadLimitUpdate")
 	if err != nil {
 		return nil, err
 	}
@@ -2340,8 +3385,8 @@ func (_Wallet *WalletFilterer) WatchSubmittedSpendLimitChange(opts *bind.WatchOp
 			select {
 			case log := <-logs:
 				// New log arrived, parse the event and forward to the user
-				event := new(WalletSubmittedSpendLimitChange)
-				if err := _Wallet.contract.UnpackLog(event, "SubmittedSpendLimitChange", log); err != nil {
+				event := new(WalletSubmittedLoadLimitUpdate)
+				if err := _Wallet.contract.UnpackLog(event, "SubmittedLoadLimitUpdate", log); err != nil {
 					return err
 				}
 				event.Raw = log
@@ -2362,9 +3407,9 @@ func (_Wallet *WalletFilterer) WatchSubmittedSpendLimitChange(opts *bind.WatchOp
 	}), nil
 }
 
-// WalletSubmittedTopUpLimitChangeIterator is returned from FilterSubmittedTopUpLimitChange and is used to iterate over the raw logs and unpacked data for SubmittedTopUpLimitChange events raised by the Wallet contract.
-type WalletSubmittedTopUpLimitChangeIterator struct {
-	Event *WalletSubmittedTopUpLimitChange // Event containing the contract specifics and raw log
+// WalletSubmittedSpendLimitUpdateIterator is returned from FilterSubmittedSpendLimitUpdate and is used to iterate over the raw logs and unpacked data for SubmittedSpendLimitUpdate events raised by the Wallet contract.
+type WalletSubmittedSpendLimitUpdateIterator struct {
+	Event *WalletSubmittedSpendLimitUpdate // Event containing the contract specifics and raw log
 
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
@@ -2378,7 +3423,7 @@ type WalletSubmittedTopUpLimitChangeIterator struct {
 // Next advances the iterator to the subsequent event, returning whether there
 // are any more events found. In case of a retrieval or parsing error, false is
 // returned and Error() can be queried for the exact failure.
-func (it *WalletSubmittedTopUpLimitChangeIterator) Next() bool {
+func (it *WalletSubmittedSpendLimitUpdateIterator) Next() bool {
 	// If the iterator failed, stop iterating
 	if it.fail != nil {
 		return false
@@ -2387,7 +3432,7 @@ func (it *WalletSubmittedTopUpLimitChangeIterator) Next() bool {
 	if it.done {
 		select {
 		case log := <-it.logs:
-			it.Event = new(WalletSubmittedTopUpLimitChange)
+			it.Event = new(WalletSubmittedSpendLimitUpdate)
 			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 				it.fail = err
 				return false
@@ -2402,7 +3447,7 @@ func (it *WalletSubmittedTopUpLimitChangeIterator) Next() bool {
 	// Iterator still in progress, wait for either a data or an error event
 	select {
 	case log := <-it.logs:
-		it.Event = new(WalletSubmittedTopUpLimitChange)
+		it.Event = new(WalletSubmittedSpendLimitUpdate)
 		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 			it.fail = err
 			return false
@@ -2418,41 +3463,41 @@ func (it *WalletSubmittedTopUpLimitChangeIterator) Next() bool {
 }
 
 // Error returns any retrieval or parsing error occurred during filtering.
-func (it *WalletSubmittedTopUpLimitChangeIterator) Error() error {
+func (it *WalletSubmittedSpendLimitUpdateIterator) Error() error {
 	return it.fail
 }
 
 // Close terminates the iteration process, releasing any pending underlying
 // resources.
-func (it *WalletSubmittedTopUpLimitChangeIterator) Close() error {
+func (it *WalletSubmittedSpendLimitUpdateIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
 
-// WalletSubmittedTopUpLimitChange represents a SubmittedTopUpLimitChange event raised by the Wallet contract.
-type WalletSubmittedTopUpLimitChange struct {
+// WalletSubmittedSpendLimitUpdate represents a SubmittedSpendLimitUpdate event raised by the Wallet contract.
+type WalletSubmittedSpendLimitUpdate struct {
 	Amount *big.Int
 	Raw    types.Log // Blockchain specific contextual infos
 }
 
-// FilterSubmittedTopUpLimitChange is a free log retrieval operation binding the contract event 0x9312377d84b68703929715872be9f0309065e102db6152de9c0587d9e294216d.
+// FilterSubmittedSpendLimitUpdate is a free log retrieval operation binding the contract event 0x4b1b970c8a0fa761e7803ed70c13d7aca71904b13df60fbe03f981da1730da91.
 //
-// Solidity: e SubmittedTopUpLimitChange(_amount uint256)
-func (_Wallet *WalletFilterer) FilterSubmittedTopUpLimitChange(opts *bind.FilterOpts) (*WalletSubmittedTopUpLimitChangeIterator, error) {
+// Solidity: event SubmittedSpendLimitUpdate(uint256 _amount)
+func (_Wallet *WalletFilterer) FilterSubmittedSpendLimitUpdate(opts *bind.FilterOpts) (*WalletSubmittedSpendLimitUpdateIterator, error) {
 
-	logs, sub, err := _Wallet.contract.FilterLogs(opts, "SubmittedTopUpLimitChange")
+	logs, sub, err := _Wallet.contract.FilterLogs(opts, "SubmittedSpendLimitUpdate")
 	if err != nil {
 		return nil, err
 	}
-	return &WalletSubmittedTopUpLimitChangeIterator{contract: _Wallet.contract, event: "SubmittedTopUpLimitChange", logs: logs, sub: sub}, nil
+	return &WalletSubmittedSpendLimitUpdateIterator{contract: _Wallet.contract, event: "SubmittedSpendLimitUpdate", logs: logs, sub: sub}, nil
 }
 
-// WatchSubmittedTopUpLimitChange is a free log subscription operation binding the contract event 0x9312377d84b68703929715872be9f0309065e102db6152de9c0587d9e294216d.
+// WatchSubmittedSpendLimitUpdate is a free log subscription operation binding the contract event 0x4b1b970c8a0fa761e7803ed70c13d7aca71904b13df60fbe03f981da1730da91.
 //
-// Solidity: e SubmittedTopUpLimitChange(_amount uint256)
-func (_Wallet *WalletFilterer) WatchSubmittedTopUpLimitChange(opts *bind.WatchOpts, sink chan<- *WalletSubmittedTopUpLimitChange) (event.Subscription, error) {
+// Solidity: event SubmittedSpendLimitUpdate(uint256 _amount)
+func (_Wallet *WalletFilterer) WatchSubmittedSpendLimitUpdate(opts *bind.WatchOpts, sink chan<- *WalletSubmittedSpendLimitUpdate) (event.Subscription, error) {
 
-	logs, sub, err := _Wallet.contract.WatchLogs(opts, "SubmittedTopUpLimitChange")
+	logs, sub, err := _Wallet.contract.WatchLogs(opts, "SubmittedSpendLimitUpdate")
 	if err != nil {
 		return nil, err
 	}
@@ -2462,8 +3507,8 @@ func (_Wallet *WalletFilterer) WatchSubmittedTopUpLimitChange(opts *bind.WatchOp
 			select {
 			case log := <-logs:
 				// New log arrived, parse the event and forward to the user
-				event := new(WalletSubmittedTopUpLimitChange)
-				if err := _Wallet.contract.UnpackLog(event, "SubmittedTopUpLimitChange", log); err != nil {
+				event := new(WalletSubmittedSpendLimitUpdate)
+				if err := _Wallet.contract.UnpackLog(event, "SubmittedSpendLimitUpdate", log); err != nil {
 					return err
 				}
 				event.Raw = log
@@ -2560,7 +3605,7 @@ type WalletSubmittedWhitelistAddition struct {
 
 // FilterSubmittedWhitelistAddition is a free log retrieval operation binding the contract event 0x9c80b3b5f68b3e017766d59e8d09b34efe6462b05c398f35cab9e271d9bc3b9c.
 //
-// Solidity: e SubmittedWhitelistAddition(_addresses address[], _hash bytes32)
+// Solidity: event SubmittedWhitelistAddition(address[] _addresses, bytes32 _hash)
 func (_Wallet *WalletFilterer) FilterSubmittedWhitelistAddition(opts *bind.FilterOpts) (*WalletSubmittedWhitelistAdditionIterator, error) {
 
 	logs, sub, err := _Wallet.contract.FilterLogs(opts, "SubmittedWhitelistAddition")
@@ -2572,7 +3617,7 @@ func (_Wallet *WalletFilterer) FilterSubmittedWhitelistAddition(opts *bind.Filte
 
 // WatchSubmittedWhitelistAddition is a free log subscription operation binding the contract event 0x9c80b3b5f68b3e017766d59e8d09b34efe6462b05c398f35cab9e271d9bc3b9c.
 //
-// Solidity: e SubmittedWhitelistAddition(_addresses address[], _hash bytes32)
+// Solidity: event SubmittedWhitelistAddition(address[] _addresses, bytes32 _hash)
 func (_Wallet *WalletFilterer) WatchSubmittedWhitelistAddition(opts *bind.WatchOpts, sink chan<- *WalletSubmittedWhitelistAddition) (event.Subscription, error) {
 
 	logs, sub, err := _Wallet.contract.WatchLogs(opts, "SubmittedWhitelistAddition")
@@ -2683,7 +3728,7 @@ type WalletSubmittedWhitelistRemoval struct {
 
 // FilterSubmittedWhitelistRemoval is a free log retrieval operation binding the contract event 0xfbc0e5ca6c7e4858daf0fdb185ef5186203e74ec9c64737e93c0aeaec596e1d1.
 //
-// Solidity: e SubmittedWhitelistRemoval(_addresses address[], _hash bytes32)
+// Solidity: event SubmittedWhitelistRemoval(address[] _addresses, bytes32 _hash)
 func (_Wallet *WalletFilterer) FilterSubmittedWhitelistRemoval(opts *bind.FilterOpts) (*WalletSubmittedWhitelistRemovalIterator, error) {
 
 	logs, sub, err := _Wallet.contract.FilterLogs(opts, "SubmittedWhitelistRemoval")
@@ -2695,7 +3740,7 @@ func (_Wallet *WalletFilterer) FilterSubmittedWhitelistRemoval(opts *bind.Filter
 
 // WatchSubmittedWhitelistRemoval is a free log subscription operation binding the contract event 0xfbc0e5ca6c7e4858daf0fdb185ef5186203e74ec9c64737e93c0aeaec596e1d1.
 //
-// Solidity: e SubmittedWhitelistRemoval(_addresses address[], _hash bytes32)
+// Solidity: event SubmittedWhitelistRemoval(address[] _addresses, bytes32 _hash)
 func (_Wallet *WalletFilterer) WatchSubmittedWhitelistRemoval(opts *bind.WatchOpts, sink chan<- *WalletSubmittedWhitelistRemoval) (event.Subscription, error) {
 
 	logs, sub, err := _Wallet.contract.WatchLogs(opts, "SubmittedWhitelistRemoval")
@@ -2807,7 +3852,7 @@ type WalletToppedUpGas struct {
 
 // FilterToppedUpGas is a free log retrieval operation binding the contract event 0x611b7c0d84fda988026215bef9b3e4d81cbceced7e679be6d5e044b588467c0e.
 //
-// Solidity: e ToppedUpGas(_sender address, _owner address, _amount uint256)
+// Solidity: event ToppedUpGas(address _sender, address _owner, uint256 _amount)
 func (_Wallet *WalletFilterer) FilterToppedUpGas(opts *bind.FilterOpts) (*WalletToppedUpGasIterator, error) {
 
 	logs, sub, err := _Wallet.contract.FilterLogs(opts, "ToppedUpGas")
@@ -2819,7 +3864,7 @@ func (_Wallet *WalletFilterer) FilterToppedUpGas(opts *bind.FilterOpts) (*Wallet
 
 // WatchToppedUpGas is a free log subscription operation binding the contract event 0x611b7c0d84fda988026215bef9b3e4d81cbceced7e679be6d5e044b588467c0e.
 //
-// Solidity: e ToppedUpGas(_sender address, _owner address, _amount uint256)
+// Solidity: event ToppedUpGas(address _sender, address _owner, uint256 _amount)
 func (_Wallet *WalletFilterer) WatchToppedUpGas(opts *bind.WatchOpts, sink chan<- *WalletToppedUpGas) (event.Subscription, error) {
 
 	logs, sub, err := _Wallet.contract.WatchLogs(opts, "ToppedUpGas")
@@ -2931,7 +3976,7 @@ type WalletTransferred struct {
 
 // FilterTransferred is a free log retrieval operation binding the contract event 0xd1ba4ac2e2a11b5101f6cb4d978f514a155b421e8ec396d2d9abaf0bb02917ee.
 //
-// Solidity: e Transferred(_to address, _asset address, _amount uint256)
+// Solidity: event Transferred(address _to, address _asset, uint256 _amount)
 func (_Wallet *WalletFilterer) FilterTransferred(opts *bind.FilterOpts) (*WalletTransferredIterator, error) {
 
 	logs, sub, err := _Wallet.contract.FilterLogs(opts, "Transferred")
@@ -2943,7 +3988,7 @@ func (_Wallet *WalletFilterer) FilterTransferred(opts *bind.FilterOpts) (*Wallet
 
 // WatchTransferred is a free log subscription operation binding the contract event 0xd1ba4ac2e2a11b5101f6cb4d978f514a155b421e8ec396d2d9abaf0bb02917ee.
 //
-// Solidity: e Transferred(_to address, _asset address, _amount uint256)
+// Solidity: event Transferred(address _to, address _asset, uint256 _amount)
 func (_Wallet *WalletFilterer) WatchTransferred(opts *bind.WatchOpts, sink chan<- *WalletTransferred) (event.Subscription, error) {
 
 	logs, sub, err := _Wallet.contract.WatchLogs(opts, "Transferred")
@@ -3054,7 +4099,7 @@ type WalletTransferredOwnership struct {
 
 // FilterTransferredOwnership is a free log retrieval operation binding the contract event 0x850b3df64837d7d518b45f5aa64d104652c3b80eb5b34a8e3d9eb666cb7cdea5.
 //
-// Solidity: e TransferredOwnership(_from address, _to address)
+// Solidity: event TransferredOwnership(address _from, address _to)
 func (_Wallet *WalletFilterer) FilterTransferredOwnership(opts *bind.FilterOpts) (*WalletTransferredOwnershipIterator, error) {
 
 	logs, sub, err := _Wallet.contract.FilterLogs(opts, "TransferredOwnership")
@@ -3066,7 +4111,7 @@ func (_Wallet *WalletFilterer) FilterTransferredOwnership(opts *bind.FilterOpts)
 
 // WatchTransferredOwnership is a free log subscription operation binding the contract event 0x850b3df64837d7d518b45f5aa64d104652c3b80eb5b34a8e3d9eb666cb7cdea5.
 //
-// Solidity: e TransferredOwnership(_from address, _to address)
+// Solidity: event TransferredOwnership(address _from, address _to)
 func (_Wallet *WalletFilterer) WatchTransferredOwnership(opts *bind.WatchOpts, sink chan<- *WalletTransferredOwnership) (event.Subscription, error) {
 
 	logs, sub, err := _Wallet.contract.WatchLogs(opts, "TransferredOwnership")

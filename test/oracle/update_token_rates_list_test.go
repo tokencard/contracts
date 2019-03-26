@@ -17,11 +17,12 @@ var _ = Describe("updateRatesList", func() {
 	Context("When tokens are already supported", func() {
 		BeforeEach(func() {
 			tokens := []common.Address{common.HexToAddress("0x0"), common.HexToAddress("0x1"), common.HexToAddress("0x2")}
-			tx, err := Oracle.AddTokens(
+			tx, err := TokenWhitelist.AddTokens(
 				Controller.TransactOpts(),
 				tokens,
 				StringsToByte32("BNT", "TKN", "DGX"),
 				[]*big.Int{DecimalsToMagnitude(big.NewInt(18)), DecimalsToMagnitude(big.NewInt(8)), DecimalsToMagnitude(big.NewInt(18))},
+				[]bool{false, true, false},
 				big.NewInt(20180913153211),
 			)
 			Expect(err).ToNot(HaveOccurred())
@@ -34,7 +35,7 @@ var _ = Describe("updateRatesList", func() {
 			var err error
 			BeforeEach(func() {
 				tokenList := []common.Address{common.HexToAddress("0x0"), common.HexToAddress("0x2")}
-				tx, err = Oracle.UpdateTokenRatesList(Controller.TransactOpts(ethertest.WithValue(big.NewInt(100000000))), big.NewInt(GAS_LIMIT), tokenList)
+				tx, err = Oracle.UpdateTokenRatesList(Controller.TransactOpts(ethertest.WithValue(big.NewInt(100000000))), big.NewInt(gasLimit), tokenList)
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 				Expect(isSuccessful(tx)).To(BeTrue())
@@ -56,7 +57,7 @@ var _ = Describe("updateRatesList", func() {
 				Expect(err).ToNot(HaveOccurred())
 				Expect(b.String()).NotTo(Equal("0"))
 				newbalance := new(big.Int).Sub(big.NewInt(100000000), big.NewInt(2000000)) //10^6 is the mock price of the Oraclize query (x2 queries)
-    		Expect(b.String()).To(Equal(newbalance.String()))
+				Expect(b.String()).To(Equal(newbalance.String()))
 
 				Expect(b.String()).To(Equal(newbalance.String()))
 			})
@@ -67,7 +68,7 @@ var _ = Describe("updateRatesList", func() {
 			var err error
 			BeforeEach(func() {
 				tokenList := []common.Address{common.HexToAddress("0x0"), common.HexToAddress("0x2")}
-				tx, err = Oracle.UpdateTokenRatesList(Controller.TransactOpts(), big.NewInt(GAS_LIMIT), tokenList)
+				tx, err = Oracle.UpdateTokenRatesList(Controller.TransactOpts(), big.NewInt(gasLimit), tokenList)
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 				Expect(isSuccessful(tx)).To(BeTrue())
@@ -90,7 +91,7 @@ var _ = Describe("updateRatesList", func() {
 
 		Context("When called by a random address", func() {
 			It("Should fail", func() {
-				tx, err := Oracle.UpdateTokenRates(RandomAccount.TransactOpts(ethertest.WithGasLimit(100000)), big.NewInt(GAS_LIMIT))
+				tx, err := Oracle.UpdateTokenRates(RandomAccount.TransactOpts(ethertest.WithGasLimit(100000)), big.NewInt(gasLimit))
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 				Expect(isGasExhausted(tx, 100000)).To(BeFalse())
@@ -107,7 +108,7 @@ var _ = Describe("updateRatesList", func() {
 			var err error
 			BeforeEach(func() {
 				tokenList := []common.Address{}
-				tx, err = Oracle.UpdateTokenRatesList(Controller.TransactOpts(ethertest.WithValue(big.NewInt(100000000))), big.NewInt(GAS_LIMIT), tokenList)
+				tx, err = Oracle.UpdateTokenRatesList(Controller.TransactOpts(ethertest.WithValue(big.NewInt(100000000))), big.NewInt(gasLimit), tokenList)
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 				Expect(isGasExhausted(tx, 100000000)).To(BeFalse())

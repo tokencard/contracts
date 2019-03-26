@@ -35,6 +35,7 @@ var _ = Describe("setCustomGasPrice", func() {
 			Expect(evt.GasPrice.String()).To(Equal(big.NewInt(777).String()))
 		})
 	})
+
 	Context("When not called by the controller", func() {
 		It("Should fail", func() {
 			tx, err := Oracle.SetCustomGasPrice(RandomAccount.TransactOpts(ethertest.WithGasLimit(100000)), big.NewInt(777))

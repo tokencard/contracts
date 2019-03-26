@@ -11,13 +11,18 @@ compile_solidity() {
 
 contract_sources=(
   'wallet'
+  'oracle'
+  'holder'
+  'tkn'
+  'licence'
   'mocks/token'
   'mocks/oraclize-connector'
   'mocks/oraclize-resolver'
   'mocks/base64-exporter'
   'mocks/parseIntScientific-exporter'
-  'oracle'
+  'mocks/tokenWhitelistableExporter'
   'internals/controller'
+  'internals/tokenWhitelist'
   'internals/parseIntScientific'
   'externals/ens/PublicResolver'
   'externals/ens/ENSRegistry'
@@ -31,7 +36,7 @@ done
 GE_PATH=${PWD}/vendor/github.com/ethereum/go-ethereum
 
 # Generate Go bindings from solidity contracts.
-ABIGEN="docker run --rm -u `id -u` --workdir /go/src/github/tokencard/contracts -e GOPATH=/go -v $GE_PATH:/go/src/github.com/ethereum/go-ethereum -v $PWD:/go/src/github/tokencard/contracts ethereum/client-go:alltools-v1.8.17 abigen"
+ABIGEN="docker run --rm -u `id -u` --workdir /go/src/github/tokencard/contracts -e GOPATH=/go -v $GE_PATH:/go/src/github.com/ethereum/go-ethereum -v $PWD:/go/src/github/tokencard/contracts ethereum/client-go:alltools-v1.8.21 abigen"
 
 generate_binding() {
   contract=$(echo $1 | awk '{print $1}')
@@ -44,13 +49,18 @@ generate_binding() {
 
 contracts=(
   "wallet/Wallet wallet.go Wallet bindings"
+  "oracle/Oracle oracle.go Oracle bindings"
+  "holder/Holder holder.go Holder bindings"
+  "tkn/Token token.go Token bindings"
+  "licence/Licence licence.go Licence bindings"
   "mocks/token/Token mocks/token.go Token mocks"
   "mocks/oraclize-connector/Oraclize mocks/oraclize-connector.go Oraclize mocks"
   "mocks/oraclize-resolver/OraclizeAddrResolver mocks/oraclize-resolver.go OraclizeAddrResolver mocks"
   "mocks/base64-exporter/Base64Exporter mocks/base64-exporter.go Base64Exporter mocks"
   "mocks/parseIntScientific-exporter/ParseIntScientificExporter mocks/parseIntScientific-exporter.go ParseIntScientificExporter mocks"
-  "oracle/Oracle oracle.go Oracle bindings"
+  "mocks/tokenWhitelistableExporter/TokenWhitelistableExporter mocks/tokenWhitelistableExporter.go TokenWhitelistableExporter mocks"
   "internals/controller/Controller internals/controller.go Controller internals"
+  "internals/tokenWhitelist/TokenWhitelist internals/tokenWhitelist.go TokenWhitelist internals"
   "internals/parseIntScientific/ParseIntScientific internals/parseIntScientific.go ParseIntScientific internals"
   "externals/ens/ENSRegistry/ENSRegistry externals/ens/ens-registry.go ENSRegistry ens"
   "externals/ens/PublicResolver/PublicResolver externals/ens/public-resolver.go PublicResolver ens"

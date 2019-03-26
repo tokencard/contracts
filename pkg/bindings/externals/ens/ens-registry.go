@@ -190,7 +190,7 @@ func (_ENSRegistry *ENSRegistryTransactorRaw) Transact(opts *bind.TransactOpts, 
 
 // Owner is a free data retrieval call binding the contract method 0x02571be3.
 //
-// Solidity: function owner(node bytes32) constant returns(address)
+// Solidity: function owner(bytes32 node) constant returns(address)
 func (_ENSRegistry *ENSRegistryCaller) Owner(opts *bind.CallOpts, node [32]byte) (common.Address, error) {
 	var (
 		ret0 = new(common.Address)
@@ -202,21 +202,21 @@ func (_ENSRegistry *ENSRegistryCaller) Owner(opts *bind.CallOpts, node [32]byte)
 
 // Owner is a free data retrieval call binding the contract method 0x02571be3.
 //
-// Solidity: function owner(node bytes32) constant returns(address)
+// Solidity: function owner(bytes32 node) constant returns(address)
 func (_ENSRegistry *ENSRegistrySession) Owner(node [32]byte) (common.Address, error) {
 	return _ENSRegistry.Contract.Owner(&_ENSRegistry.CallOpts, node)
 }
 
 // Owner is a free data retrieval call binding the contract method 0x02571be3.
 //
-// Solidity: function owner(node bytes32) constant returns(address)
+// Solidity: function owner(bytes32 node) constant returns(address)
 func (_ENSRegistry *ENSRegistryCallerSession) Owner(node [32]byte) (common.Address, error) {
 	return _ENSRegistry.Contract.Owner(&_ENSRegistry.CallOpts, node)
 }
 
 // Resolver is a free data retrieval call binding the contract method 0x0178b8bf.
 //
-// Solidity: function resolver(node bytes32) constant returns(address)
+// Solidity: function resolver(bytes32 node) constant returns(address)
 func (_ENSRegistry *ENSRegistryCaller) Resolver(opts *bind.CallOpts, node [32]byte) (common.Address, error) {
 	var (
 		ret0 = new(common.Address)
@@ -228,21 +228,21 @@ func (_ENSRegistry *ENSRegistryCaller) Resolver(opts *bind.CallOpts, node [32]by
 
 // Resolver is a free data retrieval call binding the contract method 0x0178b8bf.
 //
-// Solidity: function resolver(node bytes32) constant returns(address)
+// Solidity: function resolver(bytes32 node) constant returns(address)
 func (_ENSRegistry *ENSRegistrySession) Resolver(node [32]byte) (common.Address, error) {
 	return _ENSRegistry.Contract.Resolver(&_ENSRegistry.CallOpts, node)
 }
 
 // Resolver is a free data retrieval call binding the contract method 0x0178b8bf.
 //
-// Solidity: function resolver(node bytes32) constant returns(address)
+// Solidity: function resolver(bytes32 node) constant returns(address)
 func (_ENSRegistry *ENSRegistryCallerSession) Resolver(node [32]byte) (common.Address, error) {
 	return _ENSRegistry.Contract.Resolver(&_ENSRegistry.CallOpts, node)
 }
 
 // Ttl is a free data retrieval call binding the contract method 0x16a25cbd.
 //
-// Solidity: function ttl(node bytes32) constant returns(uint64)
+// Solidity: function ttl(bytes32 node) constant returns(uint64)
 func (_ENSRegistry *ENSRegistryCaller) Ttl(opts *bind.CallOpts, node [32]byte) (uint64, error) {
 	var (
 		ret0 = new(uint64)
@@ -254,98 +254,98 @@ func (_ENSRegistry *ENSRegistryCaller) Ttl(opts *bind.CallOpts, node [32]byte) (
 
 // Ttl is a free data retrieval call binding the contract method 0x16a25cbd.
 //
-// Solidity: function ttl(node bytes32) constant returns(uint64)
+// Solidity: function ttl(bytes32 node) constant returns(uint64)
 func (_ENSRegistry *ENSRegistrySession) Ttl(node [32]byte) (uint64, error) {
 	return _ENSRegistry.Contract.Ttl(&_ENSRegistry.CallOpts, node)
 }
 
 // Ttl is a free data retrieval call binding the contract method 0x16a25cbd.
 //
-// Solidity: function ttl(node bytes32) constant returns(uint64)
+// Solidity: function ttl(bytes32 node) constant returns(uint64)
 func (_ENSRegistry *ENSRegistryCallerSession) Ttl(node [32]byte) (uint64, error) {
 	return _ENSRegistry.Contract.Ttl(&_ENSRegistry.CallOpts, node)
 }
 
 // SetOwner is a paid mutator transaction binding the contract method 0x5b0fc9c3.
 //
-// Solidity: function setOwner(node bytes32, owner address) returns()
+// Solidity: function setOwner(bytes32 node, address owner) returns()
 func (_ENSRegistry *ENSRegistryTransactor) SetOwner(opts *bind.TransactOpts, node [32]byte, owner common.Address) (*types.Transaction, error) {
 	return _ENSRegistry.contract.Transact(opts, "setOwner", node, owner)
 }
 
 // SetOwner is a paid mutator transaction binding the contract method 0x5b0fc9c3.
 //
-// Solidity: function setOwner(node bytes32, owner address) returns()
+// Solidity: function setOwner(bytes32 node, address owner) returns()
 func (_ENSRegistry *ENSRegistrySession) SetOwner(node [32]byte, owner common.Address) (*types.Transaction, error) {
 	return _ENSRegistry.Contract.SetOwner(&_ENSRegistry.TransactOpts, node, owner)
 }
 
 // SetOwner is a paid mutator transaction binding the contract method 0x5b0fc9c3.
 //
-// Solidity: function setOwner(node bytes32, owner address) returns()
+// Solidity: function setOwner(bytes32 node, address owner) returns()
 func (_ENSRegistry *ENSRegistryTransactorSession) SetOwner(node [32]byte, owner common.Address) (*types.Transaction, error) {
 	return _ENSRegistry.Contract.SetOwner(&_ENSRegistry.TransactOpts, node, owner)
 }
 
 // SetResolver is a paid mutator transaction binding the contract method 0x1896f70a.
 //
-// Solidity: function setResolver(node bytes32, resolver address) returns()
+// Solidity: function setResolver(bytes32 node, address resolver) returns()
 func (_ENSRegistry *ENSRegistryTransactor) SetResolver(opts *bind.TransactOpts, node [32]byte, resolver common.Address) (*types.Transaction, error) {
 	return _ENSRegistry.contract.Transact(opts, "setResolver", node, resolver)
 }
 
 // SetResolver is a paid mutator transaction binding the contract method 0x1896f70a.
 //
-// Solidity: function setResolver(node bytes32, resolver address) returns()
+// Solidity: function setResolver(bytes32 node, address resolver) returns()
 func (_ENSRegistry *ENSRegistrySession) SetResolver(node [32]byte, resolver common.Address) (*types.Transaction, error) {
 	return _ENSRegistry.Contract.SetResolver(&_ENSRegistry.TransactOpts, node, resolver)
 }
 
 // SetResolver is a paid mutator transaction binding the contract method 0x1896f70a.
 //
-// Solidity: function setResolver(node bytes32, resolver address) returns()
+// Solidity: function setResolver(bytes32 node, address resolver) returns()
 func (_ENSRegistry *ENSRegistryTransactorSession) SetResolver(node [32]byte, resolver common.Address) (*types.Transaction, error) {
 	return _ENSRegistry.Contract.SetResolver(&_ENSRegistry.TransactOpts, node, resolver)
 }
 
 // SetSubnodeOwner is a paid mutator transaction binding the contract method 0x06ab5923.
 //
-// Solidity: function setSubnodeOwner(node bytes32, label bytes32, owner address) returns()
+// Solidity: function setSubnodeOwner(bytes32 node, bytes32 label, address owner) returns()
 func (_ENSRegistry *ENSRegistryTransactor) SetSubnodeOwner(opts *bind.TransactOpts, node [32]byte, label [32]byte, owner common.Address) (*types.Transaction, error) {
 	return _ENSRegistry.contract.Transact(opts, "setSubnodeOwner", node, label, owner)
 }
 
 // SetSubnodeOwner is a paid mutator transaction binding the contract method 0x06ab5923.
 //
-// Solidity: function setSubnodeOwner(node bytes32, label bytes32, owner address) returns()
+// Solidity: function setSubnodeOwner(bytes32 node, bytes32 label, address owner) returns()
 func (_ENSRegistry *ENSRegistrySession) SetSubnodeOwner(node [32]byte, label [32]byte, owner common.Address) (*types.Transaction, error) {
 	return _ENSRegistry.Contract.SetSubnodeOwner(&_ENSRegistry.TransactOpts, node, label, owner)
 }
 
 // SetSubnodeOwner is a paid mutator transaction binding the contract method 0x06ab5923.
 //
-// Solidity: function setSubnodeOwner(node bytes32, label bytes32, owner address) returns()
+// Solidity: function setSubnodeOwner(bytes32 node, bytes32 label, address owner) returns()
 func (_ENSRegistry *ENSRegistryTransactorSession) SetSubnodeOwner(node [32]byte, label [32]byte, owner common.Address) (*types.Transaction, error) {
 	return _ENSRegistry.Contract.SetSubnodeOwner(&_ENSRegistry.TransactOpts, node, label, owner)
 }
 
 // SetTTL is a paid mutator transaction binding the contract method 0x14ab9038.
 //
-// Solidity: function setTTL(node bytes32, ttl uint64) returns()
+// Solidity: function setTTL(bytes32 node, uint64 ttl) returns()
 func (_ENSRegistry *ENSRegistryTransactor) SetTTL(opts *bind.TransactOpts, node [32]byte, ttl uint64) (*types.Transaction, error) {
 	return _ENSRegistry.contract.Transact(opts, "setTTL", node, ttl)
 }
 
 // SetTTL is a paid mutator transaction binding the contract method 0x14ab9038.
 //
-// Solidity: function setTTL(node bytes32, ttl uint64) returns()
+// Solidity: function setTTL(bytes32 node, uint64 ttl) returns()
 func (_ENSRegistry *ENSRegistrySession) SetTTL(node [32]byte, ttl uint64) (*types.Transaction, error) {
 	return _ENSRegistry.Contract.SetTTL(&_ENSRegistry.TransactOpts, node, ttl)
 }
 
 // SetTTL is a paid mutator transaction binding the contract method 0x14ab9038.
 //
-// Solidity: function setTTL(node bytes32, ttl uint64) returns()
+// Solidity: function setTTL(bytes32 node, uint64 ttl) returns()
 func (_ENSRegistry *ENSRegistryTransactorSession) SetTTL(node [32]byte, ttl uint64) (*types.Transaction, error) {
 	return _ENSRegistry.Contract.SetTTL(&_ENSRegistry.TransactOpts, node, ttl)
 }
@@ -427,7 +427,7 @@ type ENSRegistryNewOwner struct {
 
 // FilterNewOwner is a free log retrieval operation binding the contract event 0xce0457fe73731f824cc272376169235128c118b49d344817417c6d108d155e82.
 //
-// Solidity: e NewOwner(node indexed bytes32, label indexed bytes32, owner address)
+// Solidity: event NewOwner(bytes32 indexed node, bytes32 indexed label, address owner)
 func (_ENSRegistry *ENSRegistryFilterer) FilterNewOwner(opts *bind.FilterOpts, node [][32]byte, label [][32]byte) (*ENSRegistryNewOwnerIterator, error) {
 
 	var nodeRule []interface{}
@@ -448,7 +448,7 @@ func (_ENSRegistry *ENSRegistryFilterer) FilterNewOwner(opts *bind.FilterOpts, n
 
 // WatchNewOwner is a free log subscription operation binding the contract event 0xce0457fe73731f824cc272376169235128c118b49d344817417c6d108d155e82.
 //
-// Solidity: e NewOwner(node indexed bytes32, label indexed bytes32, owner address)
+// Solidity: event NewOwner(bytes32 indexed node, bytes32 indexed label, address owner)
 func (_ENSRegistry *ENSRegistryFilterer) WatchNewOwner(opts *bind.WatchOpts, sink chan<- *ENSRegistryNewOwner, node [][32]byte, label [][32]byte) (event.Subscription, error) {
 
 	var nodeRule []interface{}
@@ -568,7 +568,7 @@ type ENSRegistryNewResolver struct {
 
 // FilterNewResolver is a free log retrieval operation binding the contract event 0x335721b01866dc23fbee8b6b2c7b1e14d6f05c28cd35a2c934239f94095602a0.
 //
-// Solidity: e NewResolver(node indexed bytes32, resolver address)
+// Solidity: event NewResolver(bytes32 indexed node, address resolver)
 func (_ENSRegistry *ENSRegistryFilterer) FilterNewResolver(opts *bind.FilterOpts, node [][32]byte) (*ENSRegistryNewResolverIterator, error) {
 
 	var nodeRule []interface{}
@@ -585,7 +585,7 @@ func (_ENSRegistry *ENSRegistryFilterer) FilterNewResolver(opts *bind.FilterOpts
 
 // WatchNewResolver is a free log subscription operation binding the contract event 0x335721b01866dc23fbee8b6b2c7b1e14d6f05c28cd35a2c934239f94095602a0.
 //
-// Solidity: e NewResolver(node indexed bytes32, resolver address)
+// Solidity: event NewResolver(bytes32 indexed node, address resolver)
 func (_ENSRegistry *ENSRegistryFilterer) WatchNewResolver(opts *bind.WatchOpts, sink chan<- *ENSRegistryNewResolver, node [][32]byte) (event.Subscription, error) {
 
 	var nodeRule []interface{}
@@ -701,7 +701,7 @@ type ENSRegistryNewTTL struct {
 
 // FilterNewTTL is a free log retrieval operation binding the contract event 0x1d4f9bbfc9cab89d66e1a1562f2233ccbf1308cb4f63de2ead5787adddb8fa68.
 //
-// Solidity: e NewTTL(node indexed bytes32, ttl uint64)
+// Solidity: event NewTTL(bytes32 indexed node, uint64 ttl)
 func (_ENSRegistry *ENSRegistryFilterer) FilterNewTTL(opts *bind.FilterOpts, node [][32]byte) (*ENSRegistryNewTTLIterator, error) {
 
 	var nodeRule []interface{}
@@ -718,7 +718,7 @@ func (_ENSRegistry *ENSRegistryFilterer) FilterNewTTL(opts *bind.FilterOpts, nod
 
 // WatchNewTTL is a free log subscription operation binding the contract event 0x1d4f9bbfc9cab89d66e1a1562f2233ccbf1308cb4f63de2ead5787adddb8fa68.
 //
-// Solidity: e NewTTL(node indexed bytes32, ttl uint64)
+// Solidity: event NewTTL(bytes32 indexed node, uint64 ttl)
 func (_ENSRegistry *ENSRegistryFilterer) WatchNewTTL(opts *bind.WatchOpts, sink chan<- *ENSRegistryNewTTL, node [][32]byte) (event.Subscription, error) {
 
 	var nodeRule []interface{}
@@ -834,7 +834,7 @@ type ENSRegistryTransfer struct {
 
 // FilterTransfer is a free log retrieval operation binding the contract event 0xd4735d920b0f87494915f556dd9b54c8f309026070caea5c737245152564d266.
 //
-// Solidity: e Transfer(node indexed bytes32, owner address)
+// Solidity: event Transfer(bytes32 indexed node, address owner)
 func (_ENSRegistry *ENSRegistryFilterer) FilterTransfer(opts *bind.FilterOpts, node [][32]byte) (*ENSRegistryTransferIterator, error) {
 
 	var nodeRule []interface{}
@@ -851,7 +851,7 @@ func (_ENSRegistry *ENSRegistryFilterer) FilterTransfer(opts *bind.FilterOpts, n
 
 // WatchTransfer is a free log subscription operation binding the contract event 0xd4735d920b0f87494915f556dd9b54c8f309026070caea5c737245152564d266.
 //
-// Solidity: e Transfer(node indexed bytes32, owner address)
+// Solidity: event Transfer(bytes32 indexed node, address owner)
 func (_ENSRegistry *ENSRegistryFilterer) WatchTransfer(opts *bind.WatchOpts, sink chan<- *ENSRegistryTransfer, node [][32]byte) (event.Subscription, error) {
 
 	var nodeRule []interface{}

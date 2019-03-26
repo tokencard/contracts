@@ -28,10 +28,10 @@ var (
 )
 
 // OraclizeAddrResolverABI is the input ABI used to generate the binding from.
-const OraclizeAddrResolverABI = "[{\"constant\":false,\"inputs\":[],\"name\":\"getAddress\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"name\":\"_oraclizedAddress\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"}]"
+const OraclizeAddrResolverABI = "[{\"constant\":true,\"inputs\":[],\"name\":\"getAddress\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"name\":\"_oraclizedAddress\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"}]"
 
 // OraclizeAddrResolverBin is the compiled bytecode used for deploying new contracts.
-const OraclizeAddrResolverBin = `608060405234801561001057600080fd5b50604051602080610117833981016040525160008054600160a060020a03909216600160a060020a031990921691909117905560c6806100516000396000f300608060405260043610603e5763ffffffff7c010000000000000000000000000000000000000000000000000000000060003504166338cc483181146043575b600080fd5b348015604e57600080fd5b506055607e565b6040805173ffffffffffffffffffffffffffffffffffffffff9092168252519081900360200190f35b60005473ffffffffffffffffffffffffffffffffffffffff16905600a165627a7a72305820a06848b6f741d358f7e89ef9f8155d52ac46315bec7ec36e093ba5a92042e7900029`
+const OraclizeAddrResolverBin = `608060405234801561001057600080fd5b50604051602080610117833981016040525160008054600160a060020a03909216600160a060020a031990921691909117905560c6806100516000396000f300608060405260043610603e5763ffffffff7c010000000000000000000000000000000000000000000000000000000060003504166338cc483181146043575b600080fd5b348015604e57600080fd5b506055607e565b6040805173ffffffffffffffffffffffffffffffffffffffff9092168252519081900360200190f35b60005473ffffffffffffffffffffffffffffffffffffffff16905600a165627a7a72305820517b8966361b774ca808f642d19f9774e32fea0bc54d1f09d2ecaaf4d131021a0029`
 
 // DeployOraclizeAddrResolver deploys a new Ethereum contract, binding an instance of OraclizeAddrResolver to it.
 func DeployOraclizeAddrResolver(auth *bind.TransactOpts, backend bind.ContractBackend, _oraclizedAddress common.Address) (common.Address, *types.Transaction, *OraclizeAddrResolver, error) {
@@ -188,23 +188,28 @@ func (_OraclizeAddrResolver *OraclizeAddrResolverTransactorRaw) Transact(opts *b
 	return _OraclizeAddrResolver.Contract.contract.Transact(opts, method, params...)
 }
 
-// GetAddress is a paid mutator transaction binding the contract method 0x38cc4831.
+// GetAddress is a free data retrieval call binding the contract method 0x38cc4831.
 //
-// Solidity: function getAddress() returns(address)
-func (_OraclizeAddrResolver *OraclizeAddrResolverTransactor) GetAddress(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return _OraclizeAddrResolver.contract.Transact(opts, "getAddress")
+// Solidity: function getAddress() constant returns(address)
+func (_OraclizeAddrResolver *OraclizeAddrResolverCaller) GetAddress(opts *bind.CallOpts) (common.Address, error) {
+	var (
+		ret0 = new(common.Address)
+	)
+	out := ret0
+	err := _OraclizeAddrResolver.contract.Call(opts, out, "getAddress")
+	return *ret0, err
 }
 
-// GetAddress is a paid mutator transaction binding the contract method 0x38cc4831.
+// GetAddress is a free data retrieval call binding the contract method 0x38cc4831.
 //
-// Solidity: function getAddress() returns(address)
-func (_OraclizeAddrResolver *OraclizeAddrResolverSession) GetAddress() (*types.Transaction, error) {
-	return _OraclizeAddrResolver.Contract.GetAddress(&_OraclizeAddrResolver.TransactOpts)
+// Solidity: function getAddress() constant returns(address)
+func (_OraclizeAddrResolver *OraclizeAddrResolverSession) GetAddress() (common.Address, error) {
+	return _OraclizeAddrResolver.Contract.GetAddress(&_OraclizeAddrResolver.CallOpts)
 }
 
-// GetAddress is a paid mutator transaction binding the contract method 0x38cc4831.
+// GetAddress is a free data retrieval call binding the contract method 0x38cc4831.
 //
-// Solidity: function getAddress() returns(address)
-func (_OraclizeAddrResolver *OraclizeAddrResolverTransactorSession) GetAddress() (*types.Transaction, error) {
-	return _OraclizeAddrResolver.Contract.GetAddress(&_OraclizeAddrResolver.TransactOpts)
+// Solidity: function getAddress() constant returns(address)
+func (_OraclizeAddrResolver *OraclizeAddrResolverCallerSession) GetAddress() (common.Address, error) {
+	return _OraclizeAddrResolver.Contract.GetAddress(&_OraclizeAddrResolver.CallOpts)
 }

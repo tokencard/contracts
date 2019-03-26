@@ -31,7 +31,7 @@ var (
 const OraclizeABI = "[{\"constant\":false,\"inputs\":[{\"name\":\"_datasource\",\"type\":\"string\"},{\"name\":\"gaslimit\",\"type\":\"uint256\"}],\"name\":\"getPrice\",\"outputs\":[{\"name\":\"_dsprice\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_datasource\",\"type\":\"string\"}],\"name\":\"getPrice\",\"outputs\":[{\"name\":\"_dsprice\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_proofType\",\"type\":\"bytes1\"}],\"name\":\"setProofType\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_timestamp\",\"type\":\"uint256\"},{\"name\":\"_datasource\",\"type\":\"string\"},{\"name\":\"_arg1\",\"type\":\"string\"},{\"name\":\"_arg2\",\"type\":\"string\"}],\"name\":\"query2\",\"outputs\":[{\"name\":\"_id\",\"type\":\"bytes32\"}],\"payable\":true,\"stateMutability\":\"payable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_timestamp\",\"type\":\"uint256\"},{\"name\":\"_datasource\",\"type\":\"string\"},{\"name\":\"_argN\",\"type\":\"bytes\"}],\"name\":\"queryN\",\"outputs\":[{\"name\":\"_id\",\"type\":\"bytes32\"}],\"payable\":true,\"stateMutability\":\"payable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_timestamp\",\"type\":\"uint256\"},{\"name\":\"_datasource\",\"type\":\"string\"},{\"name\":\"_arg1\",\"type\":\"string\"},{\"name\":\"_arg2\",\"type\":\"string\"},{\"name\":\"_gaslimit\",\"type\":\"uint256\"}],\"name\":\"query2_withGasLimit\",\"outputs\":[{\"name\":\"_id\",\"type\":\"bytes32\"}],\"payable\":true,\"stateMutability\":\"payable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"randomDS_getSessionPubKeyHash\",\"outputs\":[{\"name\":\"\",\"type\":\"bytes32\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_timestamp\",\"type\":\"uint256\"},{\"name\":\"_datasource\",\"type\":\"string\"},{\"name\":\"_arg\",\"type\":\"string\"}],\"name\":\"query\",\"outputs\":[{\"name\":\"_id\",\"type\":\"bytes32\"}],\"payable\":true,\"stateMutability\":\"payable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"cbAddress\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_timestamp\",\"type\":\"uint256\"},{\"name\":\"_datasource\",\"type\":\"string\"},{\"name\":\"_arg\",\"type\":\"string\"},{\"name\":\"_gaslimit\",\"type\":\"uint256\"}],\"name\":\"query_withGasLimit\",\"outputs\":[{\"name\":\"_id\",\"type\":\"bytes32\"}],\"payable\":true,\"stateMutability\":\"payable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_timestamp\",\"type\":\"uint256\"},{\"name\":\"_datasource\",\"type\":\"string\"},{\"name\":\"_argN\",\"type\":\"bytes\"},{\"name\":\"_gaslimit\",\"type\":\"uint256\"}],\"name\":\"queryN_withGasLimit\",\"outputs\":[{\"name\":\"_id\",\"type\":\"bytes32\"}],\"payable\":true,\"stateMutability\":\"payable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_gasPrice\",\"type\":\"uint256\"}],\"name\":\"setCustomGasPrice\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"name\":\"_cbAddress\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"}]"
 
 // OraclizeBin is the compiled bytecode used for deploying new contracts.
-const OraclizeBin = `608060405234801561001057600080fd5b50604051602080610558833981016040525160008054600160a060020a03909216600160a060020a0319909216919091179055610506806100526000396000f3006080604052600436106100b95763ffffffff7c01000000000000000000000000000000000000000000000000000000006000350416632ef3accc81146100be578063524f38891461012b578063688dcfd71461018457806377228659146101c057806383eed3d51461028d57806385dee34c1461031c578063abaa5f3e1461034e578063adf59f9914610363578063c281d19e14610386578063c51be90f146103c4578063c55c1cb6146103ea578063ca6ad1e414610410575b600080fd5b3480156100ca57600080fd5b506040805160206004803580820135601f810184900484028501840190955284845261011994369492936024939284019190819084018382808284375094975050933594506104289350505050565b60408051918252519081900360200190f35b34801561013757600080fd5b506040805160206004803580820135601f81018490048402850184019095528484526101199436949293602493928401919081908401838280828437509497506104329650505050505050565b34801561019057600080fd5b506101be7fff000000000000000000000000000000000000000000000000000000000000006004351661043a565b005b60408051602060046024803582810135601f810185900485028601850190965285855261011995833595369560449491939091019190819084018382808284375050604080516020601f89358b018035918201839004830284018301909452808352979a99988101979196509182019450925082915084018382808284375050604080516020601f89358b018035918201839004830284018301909452808352979a99988101979196509182019450925082915084018382808284375094975061043d9650505050505050565b60408051602060046024803582810135601f810185900485028601850190965285855261011995833595369560449491939091019190819084018382808284375050604080516020601f89358b018035918201839004830284018301909452808352979a9998810197919650918201945092508291508401838280828437509497506104479650505050505050565b610119600480359060248035808201929081013591604435808201929081013591606435908101910135608435610450565b34801561035a57600080fd5b5061011961045e565b610119600480359060248035808201929081013591604435908101910135610463565b34801561039257600080fd5b5061039b61048a565b6040805173ffffffffffffffffffffffffffffffffffffffff9092168252519081900360200190f35b6101196004803590602480358082019290810135916044359081019101356064356104a6565b6101196004803590602480358082019290810135916044359081019101356064356104ce565b34801561041c57600080fd5b506101be60043561043a565b620f424092915050565b50620f424090565b50565b6000949350505050565b60009392505050565b600098975050505050505050565b600090565b600082826040518083838082843760405192018290039091209a9950505050505050505050565b60005473ffffffffffffffffffffffffffffffffffffffff1681565b600083836040518083838082843760405192018290039091209b9a5050505050505050505050565b600096955050505050505600a165627a7a7230582050f4d42c878dbd1ec0c9b0e73324964e8955bbb1ba5d193f770bd3994e709d510029`
+const OraclizeBin = `608060405234801561001057600080fd5b50604051602080610558833981016040525160008054600160a060020a03909216600160a060020a0319909216919091179055610506806100526000396000f3006080604052600436106100b95763ffffffff7c01000000000000000000000000000000000000000000000000000000006000350416632ef3accc81146100be578063524f38891461012b578063688dcfd71461018457806377228659146101c057806383eed3d51461028d57806385dee34c1461031c578063abaa5f3e1461034e578063adf59f9914610363578063c281d19e14610386578063c51be90f146103c4578063c55c1cb6146103ea578063ca6ad1e414610410575b600080fd5b3480156100ca57600080fd5b506040805160206004803580820135601f810184900484028501840190955284845261011994369492936024939284019190819084018382808284375094975050933594506104289350505050565b60408051918252519081900360200190f35b34801561013757600080fd5b506040805160206004803580820135601f81018490048402850184019095528484526101199436949293602493928401919081908401838280828437509497506104329650505050505050565b34801561019057600080fd5b506101be7fff000000000000000000000000000000000000000000000000000000000000006004351661043a565b005b60408051602060046024803582810135601f810185900485028601850190965285855261011995833595369560449491939091019190819084018382808284375050604080516020601f89358b018035918201839004830284018301909452808352979a99988101979196509182019450925082915084018382808284375050604080516020601f89358b018035918201839004830284018301909452808352979a99988101979196509182019450925082915084018382808284375094975061043d9650505050505050565b60408051602060046024803582810135601f810185900485028601850190965285855261011995833595369560449491939091019190819084018382808284375050604080516020601f89358b018035918201839004830284018301909452808352979a9998810197919650918201945092508291508401838280828437509497506104479650505050505050565b610119600480359060248035808201929081013591604435808201929081013591606435908101910135608435610450565b34801561035a57600080fd5b5061011961045e565b610119600480359060248035808201929081013591604435908101910135610463565b34801561039257600080fd5b5061039b61048a565b6040805173ffffffffffffffffffffffffffffffffffffffff9092168252519081900360200190f35b6101196004803590602480358082019290810135916044359081019101356064356104a6565b6101196004803590602480358082019290810135916044359081019101356064356104ce565b34801561041c57600080fd5b506101be60043561043a565b620f424092915050565b50620f424090565b50565b6000949350505050565b60009392505050565b600098975050505050505050565b600090565b600082826040518083838082843760405192018290039091209a9950505050505050505050565b60005473ffffffffffffffffffffffffffffffffffffffff1681565b600083836040518083838082843760405192018290039091209b9a5050505050505050505050565b600096955050505050505600a165627a7a72305820f095f0d1d6364727c5513b7ff34d628da0d0062f46e728a9ae2541cf460907470029`
 
 // DeployOraclize deploys a new Ethereum contract, binding an instance of Oraclize to it.
 func DeployOraclize(auth *bind.TransactOpts, backend bind.ContractBackend, _cbAddress common.Address) (common.Address, *types.Transaction, *Oraclize, error) {
@@ -242,189 +242,189 @@ func (_Oraclize *OraclizeCallerSession) RandomDSGetSessionPubKeyHash() ([32]byte
 
 // GetPrice is a paid mutator transaction binding the contract method 0x524f3889.
 //
-// Solidity: function getPrice(_datasource string) returns(_dsprice uint256)
+// Solidity: function getPrice(string _datasource) returns(uint256 _dsprice)
 func (_Oraclize *OraclizeTransactor) GetPrice(opts *bind.TransactOpts, _datasource string) (*types.Transaction, error) {
 	return _Oraclize.contract.Transact(opts, "getPrice", _datasource)
 }
 
 // GetPrice is a paid mutator transaction binding the contract method 0x524f3889.
 //
-// Solidity: function getPrice(_datasource string) returns(_dsprice uint256)
+// Solidity: function getPrice(string _datasource) returns(uint256 _dsprice)
 func (_Oraclize *OraclizeSession) GetPrice(_datasource string) (*types.Transaction, error) {
 	return _Oraclize.Contract.GetPrice(&_Oraclize.TransactOpts, _datasource)
 }
 
 // GetPrice is a paid mutator transaction binding the contract method 0x524f3889.
 //
-// Solidity: function getPrice(_datasource string) returns(_dsprice uint256)
+// Solidity: function getPrice(string _datasource) returns(uint256 _dsprice)
 func (_Oraclize *OraclizeTransactorSession) GetPrice(_datasource string) (*types.Transaction, error) {
 	return _Oraclize.Contract.GetPrice(&_Oraclize.TransactOpts, _datasource)
 }
 
 // Query is a paid mutator transaction binding the contract method 0xadf59f99.
 //
-// Solidity: function query(_timestamp uint256, _datasource string, _arg string) returns(_id bytes32)
+// Solidity: function query(uint256 _timestamp, string _datasource, string _arg) returns(bytes32 _id)
 func (_Oraclize *OraclizeTransactor) Query(opts *bind.TransactOpts, _timestamp *big.Int, _datasource string, _arg string) (*types.Transaction, error) {
 	return _Oraclize.contract.Transact(opts, "query", _timestamp, _datasource, _arg)
 }
 
 // Query is a paid mutator transaction binding the contract method 0xadf59f99.
 //
-// Solidity: function query(_timestamp uint256, _datasource string, _arg string) returns(_id bytes32)
+// Solidity: function query(uint256 _timestamp, string _datasource, string _arg) returns(bytes32 _id)
 func (_Oraclize *OraclizeSession) Query(_timestamp *big.Int, _datasource string, _arg string) (*types.Transaction, error) {
 	return _Oraclize.Contract.Query(&_Oraclize.TransactOpts, _timestamp, _datasource, _arg)
 }
 
 // Query is a paid mutator transaction binding the contract method 0xadf59f99.
 //
-// Solidity: function query(_timestamp uint256, _datasource string, _arg string) returns(_id bytes32)
+// Solidity: function query(uint256 _timestamp, string _datasource, string _arg) returns(bytes32 _id)
 func (_Oraclize *OraclizeTransactorSession) Query(_timestamp *big.Int, _datasource string, _arg string) (*types.Transaction, error) {
 	return _Oraclize.Contract.Query(&_Oraclize.TransactOpts, _timestamp, _datasource, _arg)
 }
 
 // Query2 is a paid mutator transaction binding the contract method 0x77228659.
 //
-// Solidity: function query2(_timestamp uint256, _datasource string, _arg1 string, _arg2 string) returns(_id bytes32)
+// Solidity: function query2(uint256 _timestamp, string _datasource, string _arg1, string _arg2) returns(bytes32 _id)
 func (_Oraclize *OraclizeTransactor) Query2(opts *bind.TransactOpts, _timestamp *big.Int, _datasource string, _arg1 string, _arg2 string) (*types.Transaction, error) {
 	return _Oraclize.contract.Transact(opts, "query2", _timestamp, _datasource, _arg1, _arg2)
 }
 
 // Query2 is a paid mutator transaction binding the contract method 0x77228659.
 //
-// Solidity: function query2(_timestamp uint256, _datasource string, _arg1 string, _arg2 string) returns(_id bytes32)
+// Solidity: function query2(uint256 _timestamp, string _datasource, string _arg1, string _arg2) returns(bytes32 _id)
 func (_Oraclize *OraclizeSession) Query2(_timestamp *big.Int, _datasource string, _arg1 string, _arg2 string) (*types.Transaction, error) {
 	return _Oraclize.Contract.Query2(&_Oraclize.TransactOpts, _timestamp, _datasource, _arg1, _arg2)
 }
 
 // Query2 is a paid mutator transaction binding the contract method 0x77228659.
 //
-// Solidity: function query2(_timestamp uint256, _datasource string, _arg1 string, _arg2 string) returns(_id bytes32)
+// Solidity: function query2(uint256 _timestamp, string _datasource, string _arg1, string _arg2) returns(bytes32 _id)
 func (_Oraclize *OraclizeTransactorSession) Query2(_timestamp *big.Int, _datasource string, _arg1 string, _arg2 string) (*types.Transaction, error) {
 	return _Oraclize.Contract.Query2(&_Oraclize.TransactOpts, _timestamp, _datasource, _arg1, _arg2)
 }
 
 // Query2WithGasLimit is a paid mutator transaction binding the contract method 0x85dee34c.
 //
-// Solidity: function query2_withGasLimit(_timestamp uint256, _datasource string, _arg1 string, _arg2 string, _gaslimit uint256) returns(_id bytes32)
+// Solidity: function query2_withGasLimit(uint256 _timestamp, string _datasource, string _arg1, string _arg2, uint256 _gaslimit) returns(bytes32 _id)
 func (_Oraclize *OraclizeTransactor) Query2WithGasLimit(opts *bind.TransactOpts, _timestamp *big.Int, _datasource string, _arg1 string, _arg2 string, _gaslimit *big.Int) (*types.Transaction, error) {
 	return _Oraclize.contract.Transact(opts, "query2_withGasLimit", _timestamp, _datasource, _arg1, _arg2, _gaslimit)
 }
 
 // Query2WithGasLimit is a paid mutator transaction binding the contract method 0x85dee34c.
 //
-// Solidity: function query2_withGasLimit(_timestamp uint256, _datasource string, _arg1 string, _arg2 string, _gaslimit uint256) returns(_id bytes32)
+// Solidity: function query2_withGasLimit(uint256 _timestamp, string _datasource, string _arg1, string _arg2, uint256 _gaslimit) returns(bytes32 _id)
 func (_Oraclize *OraclizeSession) Query2WithGasLimit(_timestamp *big.Int, _datasource string, _arg1 string, _arg2 string, _gaslimit *big.Int) (*types.Transaction, error) {
 	return _Oraclize.Contract.Query2WithGasLimit(&_Oraclize.TransactOpts, _timestamp, _datasource, _arg1, _arg2, _gaslimit)
 }
 
 // Query2WithGasLimit is a paid mutator transaction binding the contract method 0x85dee34c.
 //
-// Solidity: function query2_withGasLimit(_timestamp uint256, _datasource string, _arg1 string, _arg2 string, _gaslimit uint256) returns(_id bytes32)
+// Solidity: function query2_withGasLimit(uint256 _timestamp, string _datasource, string _arg1, string _arg2, uint256 _gaslimit) returns(bytes32 _id)
 func (_Oraclize *OraclizeTransactorSession) Query2WithGasLimit(_timestamp *big.Int, _datasource string, _arg1 string, _arg2 string, _gaslimit *big.Int) (*types.Transaction, error) {
 	return _Oraclize.Contract.Query2WithGasLimit(&_Oraclize.TransactOpts, _timestamp, _datasource, _arg1, _arg2, _gaslimit)
 }
 
 // QueryN is a paid mutator transaction binding the contract method 0x83eed3d5.
 //
-// Solidity: function queryN(_timestamp uint256, _datasource string, _argN bytes) returns(_id bytes32)
+// Solidity: function queryN(uint256 _timestamp, string _datasource, bytes _argN) returns(bytes32 _id)
 func (_Oraclize *OraclizeTransactor) QueryN(opts *bind.TransactOpts, _timestamp *big.Int, _datasource string, _argN []byte) (*types.Transaction, error) {
 	return _Oraclize.contract.Transact(opts, "queryN", _timestamp, _datasource, _argN)
 }
 
 // QueryN is a paid mutator transaction binding the contract method 0x83eed3d5.
 //
-// Solidity: function queryN(_timestamp uint256, _datasource string, _argN bytes) returns(_id bytes32)
+// Solidity: function queryN(uint256 _timestamp, string _datasource, bytes _argN) returns(bytes32 _id)
 func (_Oraclize *OraclizeSession) QueryN(_timestamp *big.Int, _datasource string, _argN []byte) (*types.Transaction, error) {
 	return _Oraclize.Contract.QueryN(&_Oraclize.TransactOpts, _timestamp, _datasource, _argN)
 }
 
 // QueryN is a paid mutator transaction binding the contract method 0x83eed3d5.
 //
-// Solidity: function queryN(_timestamp uint256, _datasource string, _argN bytes) returns(_id bytes32)
+// Solidity: function queryN(uint256 _timestamp, string _datasource, bytes _argN) returns(bytes32 _id)
 func (_Oraclize *OraclizeTransactorSession) QueryN(_timestamp *big.Int, _datasource string, _argN []byte) (*types.Transaction, error) {
 	return _Oraclize.Contract.QueryN(&_Oraclize.TransactOpts, _timestamp, _datasource, _argN)
 }
 
 // QueryNWithGasLimit is a paid mutator transaction binding the contract method 0xc55c1cb6.
 //
-// Solidity: function queryN_withGasLimit(_timestamp uint256, _datasource string, _argN bytes, _gaslimit uint256) returns(_id bytes32)
+// Solidity: function queryN_withGasLimit(uint256 _timestamp, string _datasource, bytes _argN, uint256 _gaslimit) returns(bytes32 _id)
 func (_Oraclize *OraclizeTransactor) QueryNWithGasLimit(opts *bind.TransactOpts, _timestamp *big.Int, _datasource string, _argN []byte, _gaslimit *big.Int) (*types.Transaction, error) {
 	return _Oraclize.contract.Transact(opts, "queryN_withGasLimit", _timestamp, _datasource, _argN, _gaslimit)
 }
 
 // QueryNWithGasLimit is a paid mutator transaction binding the contract method 0xc55c1cb6.
 //
-// Solidity: function queryN_withGasLimit(_timestamp uint256, _datasource string, _argN bytes, _gaslimit uint256) returns(_id bytes32)
+// Solidity: function queryN_withGasLimit(uint256 _timestamp, string _datasource, bytes _argN, uint256 _gaslimit) returns(bytes32 _id)
 func (_Oraclize *OraclizeSession) QueryNWithGasLimit(_timestamp *big.Int, _datasource string, _argN []byte, _gaslimit *big.Int) (*types.Transaction, error) {
 	return _Oraclize.Contract.QueryNWithGasLimit(&_Oraclize.TransactOpts, _timestamp, _datasource, _argN, _gaslimit)
 }
 
 // QueryNWithGasLimit is a paid mutator transaction binding the contract method 0xc55c1cb6.
 //
-// Solidity: function queryN_withGasLimit(_timestamp uint256, _datasource string, _argN bytes, _gaslimit uint256) returns(_id bytes32)
+// Solidity: function queryN_withGasLimit(uint256 _timestamp, string _datasource, bytes _argN, uint256 _gaslimit) returns(bytes32 _id)
 func (_Oraclize *OraclizeTransactorSession) QueryNWithGasLimit(_timestamp *big.Int, _datasource string, _argN []byte, _gaslimit *big.Int) (*types.Transaction, error) {
 	return _Oraclize.Contract.QueryNWithGasLimit(&_Oraclize.TransactOpts, _timestamp, _datasource, _argN, _gaslimit)
 }
 
 // QueryWithGasLimit is a paid mutator transaction binding the contract method 0xc51be90f.
 //
-// Solidity: function query_withGasLimit(_timestamp uint256, _datasource string, _arg string, _gaslimit uint256) returns(_id bytes32)
+// Solidity: function query_withGasLimit(uint256 _timestamp, string _datasource, string _arg, uint256 _gaslimit) returns(bytes32 _id)
 func (_Oraclize *OraclizeTransactor) QueryWithGasLimit(opts *bind.TransactOpts, _timestamp *big.Int, _datasource string, _arg string, _gaslimit *big.Int) (*types.Transaction, error) {
 	return _Oraclize.contract.Transact(opts, "query_withGasLimit", _timestamp, _datasource, _arg, _gaslimit)
 }
 
 // QueryWithGasLimit is a paid mutator transaction binding the contract method 0xc51be90f.
 //
-// Solidity: function query_withGasLimit(_timestamp uint256, _datasource string, _arg string, _gaslimit uint256) returns(_id bytes32)
+// Solidity: function query_withGasLimit(uint256 _timestamp, string _datasource, string _arg, uint256 _gaslimit) returns(bytes32 _id)
 func (_Oraclize *OraclizeSession) QueryWithGasLimit(_timestamp *big.Int, _datasource string, _arg string, _gaslimit *big.Int) (*types.Transaction, error) {
 	return _Oraclize.Contract.QueryWithGasLimit(&_Oraclize.TransactOpts, _timestamp, _datasource, _arg, _gaslimit)
 }
 
 // QueryWithGasLimit is a paid mutator transaction binding the contract method 0xc51be90f.
 //
-// Solidity: function query_withGasLimit(_timestamp uint256, _datasource string, _arg string, _gaslimit uint256) returns(_id bytes32)
+// Solidity: function query_withGasLimit(uint256 _timestamp, string _datasource, string _arg, uint256 _gaslimit) returns(bytes32 _id)
 func (_Oraclize *OraclizeTransactorSession) QueryWithGasLimit(_timestamp *big.Int, _datasource string, _arg string, _gaslimit *big.Int) (*types.Transaction, error) {
 	return _Oraclize.Contract.QueryWithGasLimit(&_Oraclize.TransactOpts, _timestamp, _datasource, _arg, _gaslimit)
 }
 
 // SetCustomGasPrice is a paid mutator transaction binding the contract method 0xca6ad1e4.
 //
-// Solidity: function setCustomGasPrice(_gasPrice uint256) returns()
+// Solidity: function setCustomGasPrice(uint256 _gasPrice) returns()
 func (_Oraclize *OraclizeTransactor) SetCustomGasPrice(opts *bind.TransactOpts, _gasPrice *big.Int) (*types.Transaction, error) {
 	return _Oraclize.contract.Transact(opts, "setCustomGasPrice", _gasPrice)
 }
 
 // SetCustomGasPrice is a paid mutator transaction binding the contract method 0xca6ad1e4.
 //
-// Solidity: function setCustomGasPrice(_gasPrice uint256) returns()
+// Solidity: function setCustomGasPrice(uint256 _gasPrice) returns()
 func (_Oraclize *OraclizeSession) SetCustomGasPrice(_gasPrice *big.Int) (*types.Transaction, error) {
 	return _Oraclize.Contract.SetCustomGasPrice(&_Oraclize.TransactOpts, _gasPrice)
 }
 
 // SetCustomGasPrice is a paid mutator transaction binding the contract method 0xca6ad1e4.
 //
-// Solidity: function setCustomGasPrice(_gasPrice uint256) returns()
+// Solidity: function setCustomGasPrice(uint256 _gasPrice) returns()
 func (_Oraclize *OraclizeTransactorSession) SetCustomGasPrice(_gasPrice *big.Int) (*types.Transaction, error) {
 	return _Oraclize.Contract.SetCustomGasPrice(&_Oraclize.TransactOpts, _gasPrice)
 }
 
 // SetProofType is a paid mutator transaction binding the contract method 0x688dcfd7.
 //
-// Solidity: function setProofType(_proofType bytes1) returns()
+// Solidity: function setProofType(bytes1 _proofType) returns()
 func (_Oraclize *OraclizeTransactor) SetProofType(opts *bind.TransactOpts, _proofType [1]byte) (*types.Transaction, error) {
 	return _Oraclize.contract.Transact(opts, "setProofType", _proofType)
 }
 
 // SetProofType is a paid mutator transaction binding the contract method 0x688dcfd7.
 //
-// Solidity: function setProofType(_proofType bytes1) returns()
+// Solidity: function setProofType(bytes1 _proofType) returns()
 func (_Oraclize *OraclizeSession) SetProofType(_proofType [1]byte) (*types.Transaction, error) {
 	return _Oraclize.Contract.SetProofType(&_Oraclize.TransactOpts, _proofType)
 }
 
 // SetProofType is a paid mutator transaction binding the contract method 0x688dcfd7.
 //
-// Solidity: function setProofType(_proofType bytes1) returns()
+// Solidity: function setProofType(bytes1 _proofType) returns()
 func (_Oraclize *OraclizeTransactorSession) SetProofType(_proofType [1]byte) (*types.Transaction, error) {
 	return _Oraclize.Contract.SetProofType(&_Oraclize.TransactOpts, _proofType)
 }

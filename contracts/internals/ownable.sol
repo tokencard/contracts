@@ -25,6 +25,7 @@ pragma solidity ^0.4.25;
 /// https://github.com/OpenZeppelin/openzeppelin-solidity/blob/master/contracts/ownership/Ownable.sol
 contract Ownable {
     event TransferredOwnership(address _from, address _to);
+    event LockedOwnership(address _locked);
 
     address private _owner;
     bool private _isTransferable;
@@ -33,6 +34,10 @@ contract Ownable {
     constructor(address _account, bool _transferable) internal {
         _owner = _account;
         _isTransferable = _transferable;
+        // Emit the LockedOwnership event if no longer transferable.
+        if (!_transferable) {
+            emit LockedOwnership(_account);
+        }
         emit TransferredOwnership(address(0), _account);
     }
 
@@ -44,20 +49,25 @@ contract Ownable {
 
     /// @dev Allows the current owner to transfer control of the contract to a new address.
     /// @param _account address to transfer ownership to.
-    function transferOwnership(address _account) external onlyOwner {
+    /// @param _transferable indicates whether to keep the ownership transferable.
+    function transferOwnership(address _account, bool _transferable) external onlyOwner {
         // Require that the ownership is transferable.
         require(_isTransferable, "ownership is not transferable");
         // Require that the new owner is not the zero address.
         require(_account != address(0), "owner cannot be set to zero address");
-        // Set the transferable flag to false.
-        _isTransferable = false;
+        // Set the transferable flag to the value _transferable passed in.
+        _isTransferable = _transferable;
+        // Emit the LockedOwnership event if no longer transferable.
+        if (!_transferable) {
+            emit LockedOwnership(_account);
+        }
         // Emit the ownership transfer event.
         emit TransferredOwnership(_owner, _account);
         // Set the owner to the provided address.
         _owner = _account;
     }
 
-    /// @dev Allows the current owner to relinquish control of the contract.
+    /// @dev Allows the current owner to relinquish control of the contract. 
     /// @notice Renouncing to ownership will leave the contract without an owner and unusable.
     /// It will not be possible to call the functions with the `onlyOwner` modifier anymore.
     function renounceOwnership() public onlyOwner {

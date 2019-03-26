@@ -2,15 +2,22 @@ version: 2
 jobs:
   build_test:
     docker:
-      - image: quay.io/token/go-build:v0.3.0
+      - image: quay.io/token/go-build:v0.3.3
     working_directory: /home/circleci/github.com/tokencard/contracts
     steps:
       - checkout
       - restore_cache:
           keys:
           - vendor-{{ checksum "go.sum" }}
+      - run:
+          name: "Setup custom environment variables"
+          command: |
+            echo 'export GO111MODULE="on"' >> $BASH_ENV # Redirect MY_ENV_VAR into $BASH_ENV
       - run: go mod vendor
-      - run: go test -v ./...
+      - run:
+          command: go run github.com/onsi/ginkgo/ginkgo -r ./test/...
+          no_output_timeout: 30m
+
       - save_cache:
           key: vendor-{{ checksum "go.sum" }}
           paths:
@@ -40,7 +47,10 @@ jobs:
           command: myth -x ./contracts/wallet.sol
           no_output_timeout: 30m
       - run:
-          command: myth -x ./contracts/internals/controller.sol
+          command: myth -x ./contracts/licence.sol
+          no_output_timeout: 30m
+      - run:
+          command: myth -x ./contracts/holder.sol
           no_output_timeout: 30m
 
   snyk_check:

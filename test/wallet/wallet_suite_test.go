@@ -12,6 +12,15 @@ import (
 	. "github.com/tokencard/contracts/test/shared"
 )
 
+func isGasExhausted(tx *types.Transaction, gasLimit uint64) bool {
+	r, err := Backend.TransactionReceipt(context.Background(), tx.Hash())
+	Expect(err).ToNot(HaveOccurred())
+	if r.Status == types.ReceiptStatusSuccessful {
+		return false
+	}
+	return r.GasUsed == gasLimit
+}
+
 func init() {
 	TestRig.AddCoverageForContracts("../../build/wallet/combined.json", "../../contracts")
 }
@@ -26,9 +35,21 @@ var _ = BeforeEach(func() {
 	Expect(err).ToNot(HaveOccurred())
 })
 
+var allPassed = true
+
+var _ = AfterEach(func() {
+	td := CurrentGinkgoTestDescription()
+	if td.Failed {
+		allPassed = false
+	}
+
+})
+
 var _ = AfterSuite(func() {
-	// TestRig.ExpectMinimumCoverage("wallet.sol", 100.00)
-	TestRig.PrintGasUsage(os.Stdout)
+	if allPassed {
+		TestRig.ExpectMinimumCoverage("wallet.sol", 99.90)
+		TestRig.PrintGasUsage(os.Stdout)
+	}
 })
 
 func isSuccessful(tx *types.Transaction) bool {
@@ -43,13 +64,6 @@ var _ = AfterEach(func() {
 		fmt.Fprintf(GinkgoWriter, "\nLast Executed Smart Contract Line for %s:%d\n", td.FileName, td.LineNumber)
 		fmt.Fprintln(GinkgoWriter, TestRig.LastExecuted())
 	}
-})
-
-func isGasExhausted(tx *types.Transaction, gasLimit uint64) bool {
-	r, err := Backend.TransactionReceipt(context.Background(), tx.Hash())
+	err := Backend.Close()
 	Expect(err).ToNot(HaveOccurred())
-	if r.Status == types.ReceiptStatusSuccessful {
-		return false
-	}
-	return r.GasUsed == gasLimit
-}
+})
