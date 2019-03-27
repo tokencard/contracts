@@ -23,7 +23,6 @@ import "./internals/ownable.sol";
 import "./internals/controllable.sol";
 import "./internals/ensResolvable.sol";
 import "./internals/tokenWhitelistable.sol";
-import "./externals/ens/PublicResolver.sol";
 import "./externals/SafeMath.sol";
 import "./externals/ERC20.sol";
 import "./externals/ERC165.sol";
@@ -510,8 +509,8 @@ contract Vault is Whitelist, SpendLimit, ERC165, TokenWhitelistable {
     /// @dev Constructor initializes the vault with an owner address and spend limit. It also sets up the oracle and controller contracts.
     /// @param _owner is the owner account of the wallet contract.
     /// @param _transferable indicates whether the contract ownership can be transferred.
-    /// @param _tokenWhitelistName is the ENS name of the Token whitelist.
-    /// @param _controllerName is the ENS name of the controller.
+    /// @param _tokenWhitelistName is the ENS name hash of the Token whitelist.
+    /// @param _controllerName is the ENS name hash of the controller.
     /// @param _spendLimit is the initial spend limit.
    constructor(address _owner, bool _transferable, bytes32 _tokenWhitelistName, bytes32 _controllerName, uint _spendLimit) SpendLimit(_spendLimit) Ownable(_owner, _transferable) Controllable(_controllerName) TokenWhitelistable(_tokenWhitelistName) public {
     }
@@ -610,10 +609,10 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
     /// @dev Constructor initializes the wallet top up limit and the vault contract.
     /// @param _owner is the owner account of the wallet contract.
     /// @param _transferable indicates whether the contract ownership can be transferred.
-    /// @param _ens is the address of the ENS.
-    /// @param _oracleName is the ENS name of the Oracle.
-    /// @param _controllerName is the ENS name of the Controller.
-    /// @param _licenceName is the ENS name of the licence.
+    /// @param _ens is the address of the ENS registry.
+    /// @param _oracleName is the ENS name hash of the Oracle contract.
+    /// @param _controllerName is the ENS name hash of the Controller contract.
+    /// @param _licenceName is the ENS name hash of the Licence contract.
     /// @param _spendLimit is the initial spend limit.
     constructor(address _owner, bool _transferable, address _ens, bytes32 _oracleName, bytes32 _controllerName, bytes32 _licenceName, uint _spendLimit) ENSResolvable(_ens) Vault(_owner, _transferable, _oracleName, _controllerName, _spendLimit) public {
 
