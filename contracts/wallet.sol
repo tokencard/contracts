@@ -21,6 +21,7 @@ pragma solidity ^0.4.25;
 import "./licence.sol";
 import "./internals/ownable.sol";
 import "./internals/controllable.sol";
+import "./internals/ensResolvable.sol";
 import "./internals/tokenWhitelistable.sol";
 import "./externals/ens/PublicResolver.sol";
 import "./externals/SafeMath.sol";
@@ -509,11 +510,10 @@ contract Vault is Whitelist, SpendLimit, ERC165, TokenWhitelistable {
     /// @dev Constructor initializes the vault with an owner address and spend limit. It also sets up the oracle and controller contracts.
     /// @param _owner is the owner account of the wallet contract.
     /// @param _transferable indicates whether the contract ownership can be transferred.
-    /// @param _ens is the ENS public registry contract address.
     /// @param _tokenWhitelistName is the ENS name of the Token whitelist.
     /// @param _controllerName is the ENS name of the controller.
     /// @param _spendLimit is the initial spend limit.
-   constructor(address _owner, bool _transferable, address _ens, bytes32 _tokenWhitelistName, bytes32 _controllerName, uint _spendLimit) SpendLimit(_spendLimit) Ownable(_owner, _transferable) Controllable(_ens, _controllerName) TokenWhitelistable(_ens, _tokenWhitelistName) public {
+   constructor(address _owner, bool _transferable, bytes32 _tokenWhitelistName, bytes32 _controllerName, uint _spendLimit) SpendLimit(_spendLimit) Ownable(_owner, _transferable) Controllable(_controllerName) TokenWhitelistable(_tokenWhitelistName) public {
     }
 
     /// @dev Checks if the value is not zero.
@@ -592,7 +592,7 @@ contract Vault is Whitelist, SpendLimit, ERC165, TokenWhitelistable {
 
 
 //// @title Asset wallet with extra security features, gas top up management and card integration.
-contract Wallet is Vault, GasTopUpLimit, LoadLimit {
+contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
 
     event ToppedUpGas(address _sender, address _owner, uint _amount);
     event LoadedTokenCard(address _asset, uint _amount);
@@ -607,9 +607,6 @@ contract Wallet is Vault, GasTopUpLimit, LoadLimit {
     uint32 private constant _TRANSFER= 0xa9059cbb;
     uint32 private constant _APPROVE = 0x095ea7b3;
 
-    /// @dev ENS points to the ENS registry smart contract.
-    ENS internal _ENS;
-
     /// @dev Constructor initializes the wallet top up limit and the vault contract.
     /// @param _owner is the owner account of the wallet contract.
     /// @param _transferable indicates whether the contract ownership can be transferred.
@@ -618,14 +615,13 @@ contract Wallet is Vault, GasTopUpLimit, LoadLimit {
     /// @param _controllerName is the ENS name of the Controller.
     /// @param _licenceName is the ENS name of the licence.
     /// @param _spendLimit is the initial spend limit.
-    constructor(address _owner, bool _transferable, address _ens, bytes32 _oracleName, bytes32 _controllerName, bytes32 _licenceName, uint _spendLimit) Vault(_owner, _transferable, _ens, _oracleName, _controllerName, _spendLimit) public {
+    constructor(address _owner, bool _transferable, address _ens, bytes32 _oracleName, bytes32 _controllerName, bytes32 _licenceName, uint _spendLimit) ENSResolvable(_ens) Vault(_owner, _transferable, _oracleName, _controllerName, _spendLimit) public {
 
         // Get the stablecoin's magnitude.
         (,uint256 stablecoinMagnitude,,,,) = _getStablecoinInfo();
         require(stablecoinMagnitude > 0, "stablecoin not set");
         _setLoadLimitStruct(DEFAULT_MAX_STABLECOIN_LOAD_LIMIT * stablecoinMagnitude);
         _licenceNode = _licenceName;
-        _ENS = ENS(_ens);
     }
 
     /// @dev Refill owner's gas balance, revert if the transaction amount is too large
@@ -653,7 +649,7 @@ contract Wallet is Vault, GasTopUpLimit, LoadLimit {
         // Check against the daily spent limit and update accordingly, require that the value is under remaining limit.
         _enforceLimit(_loadLimit, stablecoinValue);
         // Get the TKN licenceAddress from ENS
-        address licenceAddress = PublicResolver(_ENS.resolver(_licenceNode)).addr(_licenceNode);
+        address licenceAddress = _ensResolve(_licenceNode);
         if (_asset != address(0)) {
             require(ERC20(_asset).approve(licenceAddress, _amount), "ERC20 token approval was unsuccessful");
             ILicence(licenceAddress).load(_asset, _amount);

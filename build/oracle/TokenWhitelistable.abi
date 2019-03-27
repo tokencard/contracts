@@ -1,1 +1,1 @@
-[{"inputs":[{"name":"_ens","type":"address"},{"name":"_tokenWhitelistName","type":"bytes32"}],"payable":false,"stateMutability":"nonpayable","type":"constructor"}]
+[{"constant":true,"inputs":[],"name":"ensRegistry","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"inputs":[{"name":"_tokenWhitelistName","type":"bytes32"}],"payable":false,"stateMutability":"nonpayable","type":"constructor"}]

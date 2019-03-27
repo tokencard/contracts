@@ -1,1 +1,1 @@
-[{"inputs":[{"name":"_ensRegistry","type":"address"},{"name":"_controllerName","type":"bytes32"}],"payable":false,"stateMutability":"nonpayable","type":"constructor"}]
+[{"constant":true,"inputs":[],"name":"ensRegistry","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"inputs":[{"name":"_controllerName","type":"bytes32"}],"payable":false,"stateMutability":"nonpayable","type":"constructor"}]
