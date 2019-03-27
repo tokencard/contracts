@@ -21,7 +21,6 @@ pragma solidity ^0.4.25;
 import "./tokenWhitelist.sol";
 import "../externals/ens/ENS.sol";
 import "../internals/ensResolvable.sol";
-import "./resolver.sol";
 
 
 /// @title Controllable implements access control functionality based on a controller set in ENS.

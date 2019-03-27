@@ -19,7 +19,6 @@
 pragma solidity ^0.4.25;
 
 import "./controller.sol";
-import "./resolver.sol";
 import "../externals/ens/ENS.sol";
 import "../internals/ensResolvable.sol";
 
