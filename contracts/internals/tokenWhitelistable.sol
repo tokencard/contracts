@@ -19,35 +19,34 @@
 pragma solidity ^0.4.25;
 
 import "./tokenWhitelist.sol";
-import "../externals/ens/ENS.sol";
 import "../internals/ensResolvable.sol";
 
 
 /// @title Controllable implements access control functionality based on a controller set in ENS.
 contract TokenWhitelistable is ENSResolvable {
     /// @dev Is the registered ENS name of the controller contract.
-    bytes32 private _node;
+    bytes32 private _tokenWhitelistNode;
 
     /// @dev Constructor initializes the controller contract object.
     /// @param _tokenWhitelistName is the ENS name of the Controller.
     constructor(bytes32 _tokenWhitelistName) internal {
-        _node = _tokenWhitelistName;
+        _tokenWhitelistNode = _tokenWhitelistName;
     }
 
     function _getTokenInfo(address _a) internal view returns (string, uint256, uint256, bool, bool, uint256) {
-        return ITokenWhitelist(_ensResolve(_node)).getTokenInfo(_a);
+        return ITokenWhitelist(_ensResolve(_tokenWhitelistNode)).getTokenInfo(_a);
     }
 
     function _getStablecoinInfo() internal view returns (string, uint256, uint256, bool, bool, uint256) {
-        return ITokenWhitelist(_ensResolve(_node)).getStablecoinInfo();
+        return ITokenWhitelist(_ensResolve(_tokenWhitelistNode)).getStablecoinInfo();
     }
 
     function _getTokenAddressArray() internal view returns (address[]) {
-        return ITokenWhitelist(_ensResolve(_node)).getTokenAddressArray();
+        return ITokenWhitelist(_ensResolve(_tokenWhitelistNode)).getTokenAddressArray();
     }
 
     function _updateTokenRate(address _token, uint _rate, uint _updateDate) internal {
-        ITokenWhitelist(_ensResolve(_node)).updateTokenRate(_token, _rate, _updateDate);
+        ITokenWhitelist(_ensResolve(_tokenWhitelistNode)).updateTokenRate(_token, _rate, _updateDate);
     }
 
     function _isTokenLoadable(address _a) internal view returns (bool) {

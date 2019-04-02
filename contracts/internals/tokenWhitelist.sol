@@ -63,7 +63,7 @@ contract TokenWhitelist is ENSResolvable, Controllable, Ownable {
     /// @dev Address of the Stablecoin.
     address private _stablecoin;
 
-    /// @dev Is the registered ENS name of the oracle contract.
+    /// @dev this is registered ENS name of the oracle contract.
     bytes32 private _oracleNode;
 
     /// @dev Constructor initializes ens and the oracle.
