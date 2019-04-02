@@ -20,6 +20,7 @@ pragma solidity ^0.4.25;
 
 import "./internals/controllable.sol";
 import "./internals/claimable.sol";
+import "./internals/ensResolvable.sol";
 import "./internals/date.sol";
 import "./internals/json.sol";
 import "./internals/parseIntScientific.sol";
@@ -29,7 +30,7 @@ import "./externals/base64.sol";
 
 
 /// @title Oracle provides asset exchange rates and conversion functionality.
-contract Oracle is usingOraclize, Claimable, Base64, Date, JSON, Controllable, ParseIntScientific, TokenWhitelistable {
+contract Oracle is ENSResolvable, usingOraclize, Claimable, Base64, Date, JSON, Controllable, ParseIntScientific, TokenWhitelistable {
     using strings for *;
     using SafeMath for uint256;
 
@@ -67,7 +68,7 @@ contract Oracle is usingOraclize, Claimable, Base64, Date, JSON, Controllable, P
     /// @dev _resolver is the oraclize address resolver contract address.
     /// @param _ens is the address of the ENS.
     /// @param _controllerName is the ENS name of the Controller.
-    constructor(address _resolver, address _ens, bytes32 _controllerName, bytes32 _tokenWhitelistName) Controllable(_ens, _controllerName) TokenWhitelistable(_ens, _tokenWhitelistName) public {
+    constructor(address _resolver, address _ens, bytes32 _controllerName, bytes32 _tokenWhitelistName) ENSResolvable(_ens) Controllable(_controllerName) TokenWhitelistable(_tokenWhitelistName) public {
         APIPublicKey = hex"a0f4f688350018ad1b9785991c0bde5f704b005dc79972b114dbed4a615a983710bfc647ebe5a320daa28771dce6a2d104f5efa2e4a85ba3760b76d46f8571ca";
         OAR = OraclizeAddrResolverI(_resolver);
         oraclize_setCustomGasPrice(10000000000);

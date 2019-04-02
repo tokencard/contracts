@@ -18,7 +18,28 @@
 
 pragma solidity ^0.4.25;
 
-/// @title Resolver returns the controller contract address.
-interface IResolver {
-    function addr(bytes32) external view returns (address);
+import "../externals/ens/ENS.sol";
+import "../externals/ens/PublicResolver.sol";
+
+///@title ENSResolvable - Ethereum Name Service Resolver helper
+///@dev This contract should be used to get addresses for ENS things
+contract ENSResolvable {
+    /// @dev _ens points to the ENS registry smart contract.
+    ENS private _ens;
+
+    address private _ensRegistry;
+
+    constructor(address _ensReg) internal {
+      _ensRegistry = _ensReg;
+      _ens = ENS(_ensRegistry);
+    }
+
+    function _ensResolve(bytes32 _nodeHash) internal view returns (address) {
+        return PublicResolver(_ens.resolver(_nodeHash)).addr(_nodeHash);
+    }
+
+    function ensRegistry() public view returns (address) {
+        return _ensRegistry;
+    }
+
 }

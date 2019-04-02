@@ -21,7 +21,6 @@ pragma solidity ^0.4.25;
 import "./ownable.sol";
 import "./controllable.sol";
 import "../externals/strings.sol";
-import "../externals/ens/PublicResolver.sol";
 import "../externals/SafeMath.sol";
 
 /// @title The TokenWhitelist interface provides access to an external list of tokens.
@@ -34,7 +33,7 @@ interface ITokenWhitelist {
 
 
 /// @title TokenWhitelist stores a list of tokens used by the Consumer Contract Wallet, the Oracle, and the TKN Licence Contract
-contract TokenWhitelist is Controllable, Ownable {
+contract TokenWhitelist is ENSResolvable, Controllable, Ownable {
     using strings for *;
     using SafeMath for uint256;
 
@@ -56,25 +55,20 @@ contract TokenWhitelist is Controllable, Ownable {
     address[] private _tokenAddressArray;
 
     modifier onlyControllerOrOracle() {
-        address oracleAddress = PublicResolver(_ENS.resolver(_oracleNode)).addr(_oracleNode);
+        address oracleAddress = _ensResolve(_oracleNode);
         require (_isController(msg.sender) || msg.sender == oracleAddress, "either oracle or controller");
         _;
     }
 
-    /// @dev ENS points to the ENS registry smart contract.
-    ENS private _ENS;
-
     /// @dev Address of the Stablecoin.
     address private _stablecoin;
 
-    /// @dev Is the registered ENS name of the oracle contract.
+    /// @dev this is registered ENS name of the oracle contract.
     bytes32 private _oracleNode;
 
     /// @dev Constructor initializes ens and the oracle.
-    /// @param _ens is the ENS public registry contract address.
     /// @param _oracleName is the ENS name of the Oracle.
-    constructor(address _ens, bytes32 _oracleName, bytes32 _controllerName, address _owner, bool _transferable, address _stabelcoinAddress) Controllable(_ens, _controllerName) Ownable(_owner, _transferable) public {
-        _ENS = ENS(_ens);
+    constructor(address _ens, bytes32 _oracleName, bytes32 _controllerName, address _owner, bool _transferable, address _stabelcoinAddress) ENSResolvable(_ens) Controllable(_controllerName) Ownable(_owner, _transferable) public {
         _oracleNode = _oracleName;
         _stablecoin = _stabelcoinAddress;
     }
