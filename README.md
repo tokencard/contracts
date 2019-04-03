@@ -100,6 +100,7 @@ There are three ways to configure a Consumer Contract Wallet:
 
 All of the third-party code we rely on can be found in this folder. The below table details the third-party code used and their licenses.
 
+
 | File            | License       | 
 | --------------- | ------------- |
 | SafeMath.sol    | [MIT](https://github.com/OpenZeppelin/openzeppelin-solidity/blob/master/LICENSE) |

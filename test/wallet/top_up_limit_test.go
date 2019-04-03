@@ -252,11 +252,11 @@ var _ = Describe("GasTopUpLimit", func() {
 			})
 
 			When("I try to cancel the limit change", func() {
-				It("should fail", func() {
+				It("should pass", func() {
 					tx, err := Wallet.CancelGasTopUpLimitUpdate(Owner.TransactOpts(ethertest.WithGasLimit(65000)), FinneyToWei(1))
 					Expect(err).ToNot(HaveOccurred())
 					Backend.Commit()
-					Expect(isSuccessful(tx)).To(BeFalse())
+					Expect(isSuccessful(tx)).To(BeTrue())
 				})
 			})
 

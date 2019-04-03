@@ -41,7 +41,6 @@ contract Controllable is ENSResolvable {
 
     /// @return true if the provided account is the controller.
     function _isController(address _account) internal view returns (bool) {
-
         return IController(_ensResolve(_controllerNode)).isController(_account);
     }
 }
