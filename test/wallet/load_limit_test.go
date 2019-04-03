@@ -33,11 +33,11 @@ var _ = Describe("loadLimit", func() {
 
 	})
 
-	Describe("InitializeLoadLimit", func() {
+	Describe("SetLoadLimit", func() {
 
-		When("I try to initialize load limit to one Gwei (below min load limit)", func() {
+		When("I try to set load limit to one Gwei (below min load limit)", func() {
 			It("Should fail", func() {
-				tx, err := Wallet.InitializeLoadLimit(Owner.TransactOpts(ethertest.WithGasLimit(100000)), GweiToWei(1))
+				tx, err := Wallet.SetLoadLimit(Owner.TransactOpts(ethertest.WithGasLimit(100000)), GweiToWei(1))
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 				Expect(isGasExhausted(tx, 100000)).To(BeFalse())
@@ -46,9 +46,9 @@ var _ = Describe("loadLimit", func() {
 
 		})
 
-		When("I try to initialize load limit to 10001 USD (above max load limit)", func() {
+		When("I try to Set load limit to 10001 USD (above max load limit)", func() {
 			It("Should fail", func() {
-				tx, err := Wallet.InitializeLoadLimit(Owner.TransactOpts(ethertest.WithGasLimit(100000)), EthToWei(10001))
+				tx, err := Wallet.SetLoadLimit(Owner.TransactOpts(ethertest.WithGasLimit(100000)), EthToWei(10001))
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 				Expect(isGasExhausted(tx, 100000)).To(BeFalse())
@@ -56,11 +56,11 @@ var _ = Describe("loadLimit", func() {
 			})
 		})
 
-		When("I initialize load limit for the first time to one Finney", func() {
+		When("I Set load limit for the first time to one Finney", func() {
 			var tx *types.Transaction
 			BeforeEach(func() {
 				var err error
-				tx, err = Wallet.InitializeLoadLimit(Owner.TransactOpts(), FinneyToWei(1))
+				tx, err = Wallet.SetLoadLimit(Owner.TransactOpts(), FinneyToWei(1))
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 			})
@@ -69,10 +69,10 @@ var _ = Describe("loadLimit", func() {
 				Expect(isSuccessful(tx)).To(BeTrue())
 			})
 
-			It("should update the initialization flag", func() {
-				initialized, err := Wallet.InitializedLoadLimit(nil)
+			It("should update the set flag", func() {
+				set, err := Wallet.LoadLimitSet(nil)
 				Expect(err).ToNot(HaveOccurred())
-				Expect(initialized).To(BeTrue())
+				Expect(set).To(BeTrue())
 			})
 
 			It("should emit a load limit set event", func() {
@@ -85,9 +85,9 @@ var _ = Describe("loadLimit", func() {
 				Expect(evt.Amount).To(Equal(FinneyToWei(1)))
 			})
 
-			When("I try to initialize the limit again", func() {
+			When("I try to set the limit again", func() {
 				It("should fail", func() {
-					tx, err := Wallet.InitializeLoadLimit(Owner.TransactOpts(ethertest.WithGasLimit(100000)), FinneyToWei(500))
+					tx, err := Wallet.SetLoadLimit(Owner.TransactOpts(ethertest.WithGasLimit(100000)), FinneyToWei(500))
 					Expect(err).ToNot(HaveOccurred())
 					Backend.Commit()
 					Expect(isGasExhausted(tx, 100000)).To(BeFalse())
@@ -102,7 +102,7 @@ var _ = Describe("loadLimit", func() {
 
 	Describe("Changing daily Load limit", func() {
 
-		When("I submit daily load limit of 5 Finney before initialization", func() {
+		When("I submit daily load limit of 5 Finney before setting", func() {
 			It("should fail", func() {
 				tx, err := Wallet.SubmitLoadLimitUpdate(Owner.TransactOpts(ethertest.WithGasLimit(100000)), FinneyToWei(5))
 				Expect(err).ToNot(HaveOccurred())
@@ -112,9 +112,9 @@ var _ = Describe("loadLimit", func() {
 			})
 		})
 
-		When("I submit daily load limit of 1 GWei (< min load limit) after initialization", func() {
+		When("I submit daily load limit of 1 GWei (< min load limit) after having set it", func() {
 			It("should fail", func() {
-				tx, err := Wallet.InitializeLoadLimit(Owner.TransactOpts(ethertest.WithGasLimit(100000)), FinneyToWei(5))
+				tx, err := Wallet.SetLoadLimit(Owner.TransactOpts(ethertest.WithGasLimit(100000)), FinneyToWei(5))
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 				Expect(isGasExhausted(tx, 100000)).To(BeFalse())
@@ -128,9 +128,9 @@ var _ = Describe("loadLimit", func() {
 			})
 		})
 
-		When("I submit daily load limit of 10002 eth (> max load eth) Finney after initialization", func() {
+		When("I submit daily load limit of 10002 eth (> max load eth) Finney after having set it", func() {
 			It("should fail", func() {
-				tx, err := Wallet.InitializeLoadLimit(Owner.TransactOpts(), FinneyToWei(5))
+				tx, err := Wallet.SetLoadLimit(Owner.TransactOpts(), FinneyToWei(5))
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 				Expect(isSuccessful(tx)).To(BeTrue())
@@ -143,9 +143,9 @@ var _ = Describe("loadLimit", func() {
 			})
 		})
 
-		When("controller submits daily load limit of 1 Finney after initialization", func() {
+		When("controller submits daily load limit of 1 Finney after having set it", func() {
 			It("should fail", func() {
-				tx, err := Wallet.InitializeLoadLimit(Owner.TransactOpts(), FinneyToWei(5))
+				tx, err := Wallet.SetLoadLimit(Owner.TransactOpts(), FinneyToWei(5))
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 				Expect(isSuccessful(tx)).To(BeTrue())
@@ -159,9 +159,9 @@ var _ = Describe("loadLimit", func() {
 
 		})
 
-		When("a random person submits daily load limit of 1 Finney after initialization", func() {
+		When("a random person submits daily load limit of 1 Finney after having set it", func() {
 			It("should fail", func() {
-				tx, err := Wallet.InitializeLoadLimit(Owner.TransactOpts(), FinneyToWei(5))
+				tx, err := Wallet.SetLoadLimit(Owner.TransactOpts(), FinneyToWei(5))
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 				Expect(isSuccessful(tx)).To(BeTrue())
@@ -175,9 +175,9 @@ var _ = Describe("loadLimit", func() {
 
 		})
 
-		When("I submit Load limit of 1 Finney after initialization", func() {
+		When("I submit Load limit of 1 Finney after having set it", func() {
 			BeforeEach(func() {
-				tx, err := Wallet.InitializeLoadLimit(Owner.TransactOpts(), FinneyToWei(5))
+				tx, err := Wallet.SetLoadLimit(Owner.TransactOpts(), FinneyToWei(5))
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 				Expect(isSuccessful(tx)).To(BeTrue())
@@ -189,7 +189,7 @@ var _ = Describe("loadLimit", func() {
 			})
 
 			It("should update the submission flag", func() {
-				submitted, err := Wallet.SubmittedLoadLimit(nil)
+				submitted, err := Wallet.LoadLimitSubmitted(nil)
 				Expect(err).ToNot(HaveOccurred())
 				Expect(submitted).To(BeTrue())
 			})
