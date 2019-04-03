@@ -103,6 +103,8 @@ contract Whitelist is Controllable, Ownable {
     function submitWhitelistAddition(address[] _addresses) external onlyOwner noActiveSubmission hasNoOwnerOrZeroAddress(_addresses)  {
         // Require that the whitelist has been initialized.
         require(initializedWhitelist, "whitelist has not been initialized");
+        // Require this array of addresses not empty
+        require(_addresses.length > 0, "pending whitelist addition is empty");
         // Set the provided addresses to the pending addition addresses.
         _pendingWhitelistAddition = _addresses;
         // Flag the operation as submitted.
@@ -133,6 +135,8 @@ contract Whitelist is Controllable, Ownable {
 
     /// @dev Cancel pending whitelist addition.
     function cancelWhitelistAddition(bytes32 _hash) external onlyController {
+        // Check if operation has been submitted.
+        require(submittedWhitelistAddition, "whitelist addition has not been submitted");
         // Require that confirmation hash and the hash of the pending whitelist addition match
         require(_hash == pendingWhitelistHash(_pendingWhitelistAddition), "hash of the pending whitelist addition does not match");
         // Reset pending addresses.
@@ -146,6 +150,10 @@ contract Whitelist is Controllable, Ownable {
     /// @dev Remove addresses from the whitelist.
     /// @param _addresses are the Ethereum addresses to be removed.
     function submitWhitelistRemoval(address[] _addresses) external onlyOwner noActiveSubmission {
+        // Require that the whitelist has been initialized.
+        require(initializedWhitelist, "whitelist has not been initialized");
+        // Require that the array of addresses is not empty
+        require(_addresses.length > 0, "pending whitelist removal is empty");
         // Add the provided addresses to the pending addition list.
         _pendingWhitelistRemoval = _addresses;
         // Flag the operation as submitted.
@@ -158,7 +166,6 @@ contract Whitelist is Controllable, Ownable {
     function confirmWhitelistRemoval(bytes32 _hash) external onlyController {
         // Require that the pending whitelist is not empty and the operation has been submitted.
         require(submittedWhitelistRemoval, "whitelist removal has not been submitted");
-        require(_pendingWhitelistRemoval.length > 0, "pending whitelist removal is empty");
         // Require that confirmation hash and the hash of the pending whitelist removal match
         require(_hash == pendingWhitelistHash(_pendingWhitelistRemoval), "hash of the pending whitelist removal does not match the confirmed hash");
         // Remove pending addresses.
@@ -175,6 +182,8 @@ contract Whitelist is Controllable, Ownable {
 
     /// @dev Cancel pending removal of whitelisted addresses.
     function cancelWhitelistRemoval(bytes32 _hash) external onlyController {
+        // Check if operation has been submitted.
+        require(submittedWhitelistRemoval, "whitelist removal has not been submitted");
         // Require that confirmation hash and the hash of the pending whitelist removal match
         require(_hash == pendingWhitelistHash(_pendingWhitelistRemoval), "hash of the pending whitelist removal does not match");
         // Reset pending addresses.
