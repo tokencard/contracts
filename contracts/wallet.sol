@@ -320,6 +320,7 @@ contract SpendLimit is Controllable, Ownable {
 contract Vault is Whitelist, SpendLimit, ERC165 {
     event Received(address _from, uint _amount);
     event Transferred(address _to, address _asset, uint _amount);
+    event BulkTransferred(address _to, address[] _assets, uint[] _amounts);
 
     using SafeMath for uint256;
 
@@ -367,11 +368,26 @@ contract Vault is Whitelist, SpendLimit, ERC165 {
         }
     }
 
+    /// @dev This is a bulk transfer convenience function. If any of the transfers fail, this will revert
+    /// @param _to is the recipient's address.
+    /// @param _assets is an array of addresses of ERC20 tokens or 0x0 for ether.
+    /// @param _amounts is an array of amounts of tokens to be transferred in base units.
+    function bulkTransfer(address _to, address[] _assets, uint[] _amounts) external onlyOwner {
+        // check to make sure the two arrays of assets and amounts are of the same length
+        require(_assets.length == _amounts.length, "asset and amount arrays should be the same length");
+        // This loops through all of the transfers to be made
+        for (uint i = 0; i < _assets.length; i++) {
+            transfer(_to, _assets[i], _amounts[i]);
+        }
+        
+        emit BulkTransferred(_to, _assets, _amounts);
+    }
+
     /// @dev Transfers the specified asset to the recipient's address.
     /// @param _to is the recipient's address.
     /// @param _asset is the address of an ERC20 token or 0x0 for ether.
     /// @param _amount is the amount of tokens to be transferred in base units.
-    function transfer(address _to, address _asset, uint _amount) external onlyOwner isNotZero(_amount) {
+    function transfer(address _to, address _asset, uint _amount) public onlyOwner isNotZero(_amount) {
         // Checks if the _to address is not the zero-address
         require(_to != address(0), "_to address cannot be set to 0x0");
 
