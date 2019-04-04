@@ -271,11 +271,11 @@ var _ = Describe("topupLimit", func() {
 			})
 
 			When("I try to submit a second topup limit of 500 Finney", func() {
-				It("should fail", func() {
+				It("should pass", func() {
 					tx, err := Wallet.SubmitTopUpLimit(Owner.TransactOpts(ethertest.WithGasLimit(65000)), FinneyToWei(500))
 					Expect(err).ToNot(HaveOccurred())
 					Backend.Commit()
-					Expect(isSuccessful(tx)).To(BeFalse())
+					Expect(isSuccessful(tx)).To(BeTrue())
 				})
 
 			})

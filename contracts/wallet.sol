@@ -247,8 +247,6 @@ contract SpendLimit is Controllable, Ownable {
     function submitSpendLimit(uint _amount) external onlyOwner {
         // Require that the spend limit has been initialized.
         require(initializedSpendLimit, "spend limit has not been initialized");
-        // Require that the operation has been submitted.
-        require(!submittedSpendLimit, "spend limit has already been submitted");
         // Assign the provided amount to pending daily limit change.
         pendingSpendLimit = _amount;
         // Flag the operation as submitted.
@@ -275,6 +273,8 @@ contract SpendLimit is Controllable, Ownable {
 
     /// @dev Cancel pending set daily limit operation.
     function cancelSpendLimit(uint _amount) external onlyController {
+        // Require a spendlimit has been submitted
+        require(submittedSpendLimit, "a spendlimit needs to be submitted");
         // Require that pending and confirmed spend limit are the same
         require(pendingSpendLimit == _amount, "pending and cancelled spend limits dont match");
         // Reset pending daily limit.
@@ -478,8 +478,6 @@ contract Wallet is Vault {
     function submitTopUpLimit(uint _amount) external onlyOwner {
         // Require that the top up limit has been initialized.
         require(initializedTopUpLimit, "top up limit has not been initialized");
-        // Require that the operation has not been submitted.
-        require(!submittedTopUpLimit, "top up limit has already been submitted");
         // Require that the limit amount is within the acceptable range.
         require(MINIMUM_TOPUP_LIMIT <= _amount && _amount <= MAXIMUM_TOPUP_LIMIT, "top up amount is outside of the min/max range");
         // Assign the provided amount to pending daily limit change.
@@ -510,6 +508,8 @@ contract Wallet is Vault {
 
     /// @dev Cancel pending set top up limit operation.
     function cancelTopUpLimit(uint _amount) external onlyController {
+        // Make sure a topup limit update has been submitted
+        require(submittedTopUpLimit, "a topup limit has to be submitted");
         // Require that pending and confirmed spend limit are the same
         require(pendingTopUpLimit == _amount, "pending and cancelled top up limits dont match");
         // Reset pending daily limit.

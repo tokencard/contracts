@@ -290,7 +290,7 @@ var _ = Describe("spendAvailable", func() {
 					tx, err := Wallet.SubmitSpendLimit(Owner.TransactOpts(ethertest.WithGasLimit(100000)), EthToWei(1))
 					Expect(err).ToNot(HaveOccurred())
 					Backend.Commit()
-					Expect(isSuccessful(tx)).To(BeFalse())
+					Expect(isSuccessful(tx)).To(BeTrue())
 				})
 			})
 		})
