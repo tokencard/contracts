@@ -12,6 +12,24 @@ import (
 
 var _ = Describe("tokenWhitelistable", func() {
 
+	It("Should return the stablecoin's contract address", func() {
+		sa, err := TokenWhitelist.Stablecoin(nil)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(sa).To(Equal(StablecoinAddress))
+	})
+
+	It("Should return the orcale ENS-registered node", func() {
+		sa, err := TokenWhitelist.OracleNode(nil)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(sa).To(Equal([32]byte(OracleName)))
+	})
+
+	It("Should return the tokenWhitelist ENS-registered node", func() {
+		sa, err := TokenWhitelistableExporter.TokenWhitelistNode(nil)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(sa).To(Equal([32]byte(TokenWhitelistName)))
+	})
+
 	When("DAI is the stablecoin used", func() {
 
 		BeforeEach(func() {
@@ -40,7 +58,7 @@ var _ = Describe("tokenWhitelistable", func() {
 		})
 	})
 
-	Context("When a token is added", func() {
+	When("a token is added", func() {
 		BeforeEach(func() {
 			tx, err := TokenWhitelist.AddTokens(
 				Controller.TransactOpts(),
@@ -84,7 +102,7 @@ var _ = Describe("tokenWhitelistable", func() {
 			Expect(ld).To(BeTrue())
 		})
 
-		Context("When updateRate is called", func() {
+		When("updateRate is called", func() {
 			It("Should fail", func() {
 				tx, err := TokenWhitelistableExporter.UpdateTokenRate(
 					Controller.TransactOpts(ethertest.WithGasLimit(100000)),
@@ -99,7 +117,7 @@ var _ = Describe("tokenWhitelistable", func() {
 			})
 		})
 
-		Context("When called by the controller directly", func() {
+		When("called by the controller directly", func() {
 
 			BeforeEach(func() {
 				tx, err := TokenWhitelist.UpdateTokenRate(

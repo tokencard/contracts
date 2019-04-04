@@ -24,7 +24,7 @@ import "../internals/ensResolvable.sol";
 
 /// @title Controllable implements access control functionality based on a controller set in ENS.
 contract TokenWhitelistable is ENSResolvable {
-    /// @dev Is the registered ENS name of the controller contract.
+    /// @dev Is the registered ENS node identifying the tokenWhitelist contract.
     bytes32 private _tokenWhitelistNode;
 
     /// @dev Constructor initializes the controller contract object.
@@ -57,5 +57,10 @@ contract TokenWhitelistable is ENSResolvable {
     function _isTokenAvailable(address _a) internal view returns (bool) {
         ( , , , bool available, , ) = _getTokenInfo(_a);
         return available;
+    }
+
+    /// @return the token whitelist node registered in ENS.
+    function tokenWhitelistNode() public view returns (bytes32) {
+        return _tokenWhitelistNode;
     }
 }
