@@ -67,20 +67,22 @@ var _ = Describe("bulk_transfer", func() {
 			When("the size of the array of assets DOES match the size of the array of amounts", func() {
 
 				var randomBalance *big.Int
+				var assets []common.Address
+				var amounts []*big.Int
 
 				BeforeEach(func() {
 					var err error
 					randomBalance, err = Backend.BalanceAt(context.Background(), RandomAccount.Address(), nil)
 					Expect(err).ToNot(HaveOccurred())
+					assets = []common.Address{common.HexToAddress("0x0"), ERC20Contract1Address, ERC20Contract2Address}
+					amounts = []*big.Int{EthToWei(1), big.NewInt(1000), big.NewInt(500)}
 				})
 
 				BeforeEach(func() {
 					var err error
-					tx, err = Wallet.BulkTransfer(Owner.TransactOpts(), RandomAccount.Address(), []common.Address{common.HexToAddress("0x0"), ERC20Contract1Address, ERC20Contract2Address}, []*big.Int{EthToWei(1), big.NewInt(1000), big.NewInt(500)})
+					tx, err = Wallet.BulkTransfer(Owner.TransactOpts(), RandomAccount.Address(), assets, amounts)
 					Expect(err).ToNot(HaveOccurred())
 					Backend.Commit()
-				})
-				It("should pass", func() {
 					Expect(isSuccessful(tx)).To(BeTrue())
 				})
 				It("the balance of the wallet should be 0", func() {
@@ -115,6 +117,17 @@ var _ = Describe("bulk_transfer", func() {
 					Expect(err).ToNot(HaveOccurred())
 					Expect(b.String()).To(Equal("500"))
 				})
+				It("Should emit a BulkTransferred event", func() {
+				it, err := Wallet.FilterBulkTransferred(nil)
+				Expect(err).ToNot(HaveOccurred())
+				Expect(it.Next()).To(BeTrue())
+				evt := it.Event
+				Expect(it.Next()).To(BeFalse())
+				Expect(evt.To).To(Equal(RandomAccount.Address()))
+				Expect(evt.Assets).To(Equal(assets))
+				Expect(evt.Amounts).To(Equal(amounts))
+			})
+
 			})
 		})//called by the owner
 
