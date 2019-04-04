@@ -52,14 +52,14 @@ contract Oracle is ENSResolvable, usingOraclize, Claimable, Base64, Date, JSON, 
     /*     Constants     */
     /********************/
 
-    uint constant private PROOF_LEN = 165;
-    uint constant private ECDSA_SIG_LEN = 65;
-    uint constant private ENCODING_BYTES = 2;
-    uint constant private HEADERS_LEN = PROOF_LEN - 2 * ENCODING_BYTES - ECDSA_SIG_LEN; // 2 bytes encoding headers length + 2 for signature.
-    uint constant private DIGEST_BASE64_LEN = 44; //base64 encoding of the SHA256 hash (32-bytes) of the result: fixed length.
-    uint constant private DIGEST_OFFSET = HEADERS_LEN - DIGEST_BASE64_LEN; // the starting position of the result hash in the headers string.
+    uint constant private _PROOF_LEN = 165;
+    uint constant private _ECDSA_SIG_LEN = 65;
+    uint constant private _ENCODING_BYTES = 2;
+    uint constant private _HEADERS_LEN = _PROOF_LEN - 2 * _ENCODING_BYTES - _ECDSA_SIG_LEN; // 2 bytes encoding headers length + 2 for signature.
+    uint constant private _DIGEST_BASE64_LEN = 44; //base64 encoding of the SHA256 hash (32-bytes) of the result: fixed length.
+    uint constant private _DIGEST_OFFSET = _HEADERS_LEN - _DIGEST_BASE64_LEN; // the starting position of the result hash in the headers string.
 
-    uint constant private MAX_BYTE_SIZE = 256; //for calculating length encoding
+    uint constant private _MAX_BYTE_SIZE = 256; //for calculating length encoding
 
     bytes public APIPublicKey;
     mapping(bytes32 => address) private _queryToToken;
@@ -217,26 +217,26 @@ contract Oracle is ENSResolvable, usingOraclize, Claimable, Base64, Date, JSON, 
     function _verifyProof(string _result, bytes _proof, bytes _publicKey, uint _lastUpdate) private returns (bool, uint) {
 
         //expecting fixed length proofs
-        if (_proof.length != PROOF_LEN) {
+        if (_proof.length != _PROOF_LEN) {
             revert("invalid proof length");
         }
 
         //proof should be 65 bytes long: R (32 bytes) + S (32 bytes) + v (1 byte)
-        if (uint(_proof[1]) != ECDSA_SIG_LEN) {
+        if (uint(_proof[1]) != _ECDSA_SIG_LEN) {
             revert("invalid signature length");
         }
 
-        bytes memory signature = new bytes(ECDSA_SIG_LEN);
+        bytes memory signature = new bytes(_ECDSA_SIG_LEN);
 
-        signature = copyBytes(_proof, 2, ECDSA_SIG_LEN, signature, 0);
+        signature = copyBytes(_proof, 2, _ECDSA_SIG_LEN, signature, 0);
 
         // Extract the headers, big endian encoding of headers length
-        if (uint(_proof[ENCODING_BYTES + ECDSA_SIG_LEN]) * MAX_BYTE_SIZE + uint(_proof[ENCODING_BYTES + ECDSA_SIG_LEN + 1]) != HEADERS_LEN) {
+        if (uint(_proof[_ENCODING_BYTES + _ECDSA_SIG_LEN]) * _MAX_BYTE_SIZE + uint(_proof[_ENCODING_BYTES + _ECDSA_SIG_LEN + 1]) != _HEADERS_LEN) {
             revert("invalid headers length");
         }
 
-        bytes memory headers = new bytes(HEADERS_LEN);
-        headers = copyBytes(_proof, 2 * ENCODING_BYTES + ECDSA_SIG_LEN, HEADERS_LEN, headers, 0);
+        bytes memory headers = new bytes(_HEADERS_LEN);
+        headers = copyBytes(_proof, 2 * _ENCODING_BYTES + _ECDSA_SIG_LEN, _HEADERS_LEN, headers, 0);
 
         // Check if the signature is valid and if the signer address is matching.
         if (!_verifySignature(headers, signature, _publicKey)) {
@@ -258,8 +258,8 @@ contract Oracle is ENSResolvable, usingOraclize, Claimable, Base64, Date, JSON, 
         }
 
         // Check if the signed digest hash matches the result hash.
-        bytes memory digest = new bytes(DIGEST_BASE64_LEN);
-        digest = copyBytes(headers, DIGEST_OFFSET, DIGEST_BASE64_LEN, digest, 0);
+        bytes memory digest = new bytes(_DIGEST_BASE64_LEN);
+        digest = copyBytes(headers, _DIGEST_OFFSET, _DIGEST_BASE64_LEN, digest, 0);
 
         if (keccak256(abi.encodePacked(sha256(abi.encodePacked(_result)))) != keccak256(_base64decode(digest))) {
             revert("result hash not matching");
