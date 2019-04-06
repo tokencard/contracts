@@ -25,7 +25,7 @@ contract Date {
     bytes32 constant private _FEBRUARY = keccak256("Feb");
     bytes32 constant private _MARCH = keccak256("Mar");
     bytes32 constant private _APRIL = keccak256("Apr");
-    bytes32 constant private _MAY = keccak256("_MAY");
+    bytes32 constant private _MAY = keccak256("May");
     bytes32 constant private _JUNE = keccak256("Jun");
     bytes32 constant private _JULY = keccak256("Jul");
     bytes32 constant private _AUGUST = keccak256("Aug");
