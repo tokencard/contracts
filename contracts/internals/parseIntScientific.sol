@@ -25,13 +25,13 @@ contract ParseIntScientific {
 
     using SafeMath for uint256;
 
-    byte constant private PLUS_ASCII = byte(43); //decimal value of '+'
-    byte constant private DASH_ASCII = byte(45); //decimal value of '-'
-    byte constant private DOT_ASCII = byte(46); //decimal value of '.'
-    byte constant private ZERO_ASCII = byte(48); //decimal value of '0'
-    byte constant private NINE_ASCII = byte(57); //decimal value of '9'
-    byte constant private E_ASCII = byte(69); //decimal value of 'E'
-    byte constant private e_ASCII = byte(101); //decimal value of 'e'
+    byte constant private _PLUS_ASCII = byte(43); //decimal value of '+'
+    byte constant private _DASH_ASCII = byte(45); //decimal value of '-'
+    byte constant private _DOT_ASCII = byte(46); //decimal value of '.'
+    byte constant private _ZERO_ASCII = byte(48); //decimal value of '0'
+    byte constant private _NINE_ASCII = byte(57); //decimal value of '9'
+    byte constant private _E_ASCII = byte(69); //decimal value of 'E'
+    byte constant private _e_ASCII = byte(101); //decimal value of 'e'
 
     /// @dev ParseIntScientific delegates the call to _parseIntScientific(string, uint) with the 2nd argument being 0.
     function _parseIntScientific(string _inString) internal pure returns (uint) {
@@ -61,26 +61,26 @@ contract ParseIntScientific {
         bool plus = false; // indicated if the exponent is positive
 
         for (uint i = 0; i < inBytes.length; i++) {
-            if ((inBytes[i] >= ZERO_ASCII) && (inBytes[i] <= NINE_ASCII) && (!exp)) {
+            if ((inBytes[i] >= _ZERO_ASCII) && (inBytes[i] <= _NINE_ASCII) && (!exp)) {
                 // 'e' not encountered yet, minting integer part or decimals
                 if (decimals) {
                     // '.' encountered
                     //use safeMath in case there is an overflow
                     mintDec = mintDec.mul(10);
-                    mintDec = mintDec.add(uint(inBytes[i]) - uint(ZERO_ASCII));
+                    mintDec = mintDec.add(uint(inBytes[i]) - uint(_ZERO_ASCII));
                     decMinted++; //keep track of the #decimals
                 } else {
                     // integral part (before '.')
                     integral = true;
                     //use safeMath in case there is an overflow
                     mint = mint.mul(10);
-                    mint = mint.add(uint(inBytes[i]) - uint(ZERO_ASCII));
+                    mint = mint.add(uint(inBytes[i]) - uint(_ZERO_ASCII));
                 }
-            } else if ((inBytes[i] >= ZERO_ASCII) && (inBytes[i] <= NINE_ASCII) && (exp)) {
+            } else if ((inBytes[i] >= _ZERO_ASCII) && (inBytes[i] <= _NINE_ASCII) && (exp)) {
                 //exponential notation (e-/+) has been detected, mint the exponent
                 mintExp = mintExp.mul(10);
-                mintExp = mintExp.add(uint(inBytes[i]) - uint(ZERO_ASCII));
-            } else if (inBytes[i] == DOT_ASCII) {
+                mintExp = mintExp.add(uint(inBytes[i]) - uint(_ZERO_ASCII));
+            } else if (inBytes[i] == _DOT_ASCII) {
                 //an integral part before should always exist before '.'
                 require(integral, "missing integral part");
                 // an extra decimal point makes the format invalid
@@ -88,19 +88,19 @@ contract ParseIntScientific {
                 //the decimal point should always be before the exponent
                 require(!exp, "decimal after exponent");
                 decimals = true;
-            } else if (inBytes[i] == DASH_ASCII) {
+            } else if (inBytes[i] == _DASH_ASCII) {
                 // an extra '-' should be considered an invalid character
                 require(!minus, "duplicate -");
                 require(!plus, "extra sign");
                 require(expIndex + 1 == i, "- sign not immediately after e");
                 minus = true;
-            } else if (inBytes[i] == PLUS_ASCII) {
+            } else if (inBytes[i] == _PLUS_ASCII) {
                 // an extra '+' should be considered an invalid character
                 require(!plus, "duplicate +");
                 require(!minus, "extra sign");
                 require(expIndex + 1 == i, "+ sign not immediately after e");
                 plus = true;
-            } else if ((inBytes[i] == E_ASCII) || (inBytes[i] == e_ASCII)) {
+            } else if ((inBytes[i] == _E_ASCII) || (inBytes[i] == _e_ASCII)) {
                 //an integral part before should always exist before 'e'
                 require(integral, "missing integral part");
                 // an extra 'e' or 'E' should be considered an invalid character

@@ -176,7 +176,7 @@ var _ = Describe("callback", func() {
 								Backend.Commit()
 								Expect(isGasExhausted(tx, 500000)).To(BeFalse())
 								Expect(isSuccessful(tx)).To(BeFalse())
-								Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*require\(keccak256\(jsonPrefix\) == prefixHash, "prefix mismatch"\);`))
+								Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*require\(keccak256\(jsonPrefix\) == _PREFIXHASH, "prefix mismatch"\);`))
 							})
 
 							It("It should Fail", func() {

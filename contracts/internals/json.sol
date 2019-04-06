@@ -24,7 +24,7 @@ import "../externals/oraclizeAPI_0.4.25.sol";
 contract JSON is usingOraclize {
     using strings for *;
 
-    bytes32 constant private prefixHash = keccak256("{\"ETH\":");
+    bytes32 constant private _PREFIXHASH = keccak256("{\"ETH\":");
 
     /// @dev Extracts JSON rate value from the response object.
     /// @param _json body of the JSON response from the CryptoCompare API.
@@ -36,7 +36,7 @@ contract JSON is usingOraclize {
 
         bytes memory jsonPrefix = new bytes(7);
         copyBytes(abi.encodePacked(_json), 0, 7, jsonPrefix, 0);
-        require(keccak256(jsonPrefix) == prefixHash, "prefix mismatch");
+        require(keccak256(jsonPrefix) == _PREFIXHASH, "prefix mismatch");
 
         strings.slice memory body = _json.toSlice();
         body.split(":".toSlice());
