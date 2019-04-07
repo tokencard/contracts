@@ -24,7 +24,7 @@ import "../internals/ensResolvable.sol";
 
 /// @title Controllable implements access control functionality based on a controller set in ENS.
 contract Controllable is ENSResolvable {
-    /// @dev Is the registered ENS name of the controller contract.
+    /// @dev Is the registered ENS node identifying the controller contract.
     bytes32 private _controllerNode;
 
     /// @dev Constructor initializes the controller contract object.
@@ -42,5 +42,10 @@ contract Controllable is ENSResolvable {
     /// @return true if the provided account is the controller.
     function _isController(address _account) internal view returns (bool) {
         return IController(_ensResolve(_controllerNode)).isController(_account);
+    }
+
+    /// @return the controller node registered in ENS.
+    function controllerNode() public view returns (bytes32) {
+        return _controllerNode;
     }
 }

@@ -517,7 +517,7 @@ contract Vault is Whitelist, SpendLimit, ERC165, TokenWhitelistable {
     /// @dev Supported ERC165 interface ID.
     bytes4 private constant _ERC165_INTERFACE_ID = 0x01ffc9a7; // solium-disable-line uppercase
 
-    /// @dev Constructor initializes the vault with an owner address and spend limit. It also sets up the oracle and controller contracts.
+    /// @dev Constructor initializes the vault with an owner address and spend limit. It also sets up the controllable and tokenWhitelist contracts with the right name registered in ENS.
     /// @param _owner is the owner account of the wallet contract.
     /// @param _transferable indicates whether the contract ownership can be transferred.
     /// @param _tokenWhitelistName is the ENS name hash of the Token whitelist.
@@ -609,7 +609,7 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
 
     uint constant private _DEFAULT_MAX_STABLECOIN_LOAD_LIMIT = 10000; //10,000 USD
 
-    /// @dev Is the registered ENS name of the oracle contract.
+    /// @dev Is the registered ENS node identifying the licence contract.
     bytes32 private _licenceNode;
 
     /// @dev these are needed to allow for the executeTransaction method
@@ -812,4 +812,10 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
 
         return x;
     }
+
+    /// @return licence contract node registered in ENS.
+    function licenceNode() public view returns (bytes32) {
+        return _licenceNode;
+    }
+
 }

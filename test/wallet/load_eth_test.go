@@ -14,6 +14,12 @@ import (
 
 var _ = Describe("wallet load eth", func() {
 
+	It("Should return the licence ENS-registered node", func() {
+		sa, err := Wallet.LicenceNode(nil)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(sa).To(Equal([32]byte(LicenceName)))
+	})
+
 	When("the contract has no balance", func() {
 
 		BeforeEach(func() {
