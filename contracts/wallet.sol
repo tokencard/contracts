@@ -206,7 +206,7 @@ contract DailyLimitTrait {
     using SafeMath for uint256;
 
     struct DailyLimit {
-        uint limit;
+        uint value;
         uint available;
         uint limitDay;
 
@@ -219,7 +219,7 @@ contract DailyLimitTrait {
     /// @return amount of available to spend within the current day in base units.
     function _getAvailableLimit(DailyLimit storage dl) internal view returns (uint) {
         if (now > dl.limitDay + 24 hours) {
-            return dl.limit;
+            return dl.value;
         } else {
             return dl.available;
         }
@@ -290,7 +290,7 @@ contract DailyLimitTrait {
             uint extraDays = now.sub(dl.limitDay).div(24 hours);
             dl.limitDay = dl.limitDay.add(extraDays.mul(24 hours));
             // Set the available limit to the current spend limit.
-            dl.available = dl.limit;
+            dl.available = dl.value;
         }
     }
 
@@ -300,10 +300,10 @@ contract DailyLimitTrait {
         // Account for the spend limit daily reset.
         _updateAvailableLimit(dl);
         // Set the daily limit to the provided amount.
-        dl.limit = _amount;
+        dl.value = _amount;
         // Lower the available limit if it's higher than the new daily limit.
-        if (dl.available > dl.limit) {
-            dl.available = dl.limit;
+        if (dl.available > dl.value) {
+            dl.available = dl.value;
         }
     }
 }
@@ -348,12 +348,12 @@ contract SpendLimit is ControllableOwnable, DailyLimitTrait {
         emit CancelledSpendLimitUpdate(msg.sender, _amount);
     }
 
-    function spendAvailable() public view returns (uint) {
+    function spendLimitAvailable() public view returns (uint) {
         return _getAvailableLimit(_spendLimit);
     }
 
-    function spendLimit() public view returns (uint) {
-        return _spendLimit.limit;
+    function spendLimitValue() public view returns (uint) {
+        return _spendLimit.value;
     }
 
     function spendLimitSet() public view returns (bool) {
@@ -364,7 +364,7 @@ contract SpendLimit is ControllableOwnable, DailyLimitTrait {
         return _spendLimit.submitted;
     }
 
-    function pendingSpendLimit() public view returns (uint) {
+    function spendLimitPending() public view returns (uint) {
         return _spendLimit.pending;
     }
 }
@@ -415,12 +415,12 @@ contract GasTopUpLimit is ControllableOwnable, DailyLimitTrait {
         emit CancelledGasTopUpLimitUpdate(msg.sender, _amount);
     }
 
-    function gasTopUpAvailable() public view returns (uint) {
+    function gasTopUpLimitAvailable() public view returns (uint) {
         return _getAvailableLimit(_gasTopUpLimit);
     }
 
-    function gasTopUpLimit() public view returns (uint) {
-        return _gasTopUpLimit.limit;
+    function gasTopUpLimitValue() public view returns (uint) {
+        return _gasTopUpLimit.value;
     }
 
     function gasTopUpLimitSet() public view returns (bool) {
@@ -431,7 +431,7 @@ contract GasTopUpLimit is ControllableOwnable, DailyLimitTrait {
         return _gasTopUpLimit.submitted;
     }
 
-    function pendingGasTopUpLimit() public view returns (uint) {
+    function gasTopUpLimitPending() public view returns (uint) {
         return _gasTopUpLimit.pending;
     }
 }
@@ -477,12 +477,12 @@ contract LoadLimit is ControllableOwnable, DailyLimitTrait {
         emit CancelledLoadLimitUpdate(msg.sender, _amount);
     }
 
-    function loadAvailable() public view returns (uint) {
+    function loadLimitAvailable() public view returns (uint) {
         return _getAvailableLimit(_loadLimit);
     }
 
-    function loadLimit() public view returns (uint) {
-        return _loadLimit.limit;
+    function loadLimitValue() public view returns (uint) {
+        return _loadLimit.value;
     }
 
     function loadLimitSet() public view returns (bool) {
@@ -493,7 +493,7 @@ contract LoadLimit is ControllableOwnable, DailyLimitTrait {
         return _loadLimit.submitted;
     }
 
-    function pendingLoadLimit() public view returns (uint) {
+    function loadLimitPending() public view returns (uint) {
         return _loadLimit.pending;
     }
 

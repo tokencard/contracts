@@ -20,13 +20,13 @@ var _ = Describe("loadLimit", func() {
 	When("the contract just has been deployed", func() {
 
 		It("should have initial load limit of 10,000 USD /stablecoins", func() {
-			ll, err := Wallet.LoadLimit(nil)
+			ll, err := Wallet.LoadLimitValue(nil)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(ll.String()).To(Equal(EthToWei(10000).String()))
 
 			Wallet.Balance(nil, common.HexToAddress("0x0"))
 
-			ll, err = Wallet.LoadAvailable(nil)
+			ll, err = Wallet.LoadLimitAvailable(nil)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(ll.String()).To(Equal(EthToWei(10000).String()))
 		})
@@ -204,7 +204,7 @@ var _ = Describe("loadLimit", func() {
 			})
 
 			It("should have pending load limit of 1 Finney", func() {
-				ptl, err := Wallet.PendingLoadLimit(nil)
+				ptl, err := Wallet.LoadLimitPending(nil)
 				Expect(err).ToNot(HaveOccurred())
 				Expect(ptl.String()).To(Equal(FinneyToWei(1).String()))
 			})
@@ -227,7 +227,7 @@ var _ = Describe("loadLimit", func() {
 				})
 
 				It("should set pending load limit to 0", func() {
-					psl, err := Wallet.PendingLoadLimit(nil)
+					psl, err := Wallet.LoadLimitPending(nil)
 					Expect(err).ToNot(HaveOccurred())
 					Expect(psl.String()).To(Equal("0"))
 				})
@@ -313,7 +313,7 @@ var _ = Describe("loadLimit", func() {
 				})
 
 				It("should have 1 Finney available for loading", func() {
-					ll, err := Wallet.LoadAvailable(nil)
+					ll, err := Wallet.LoadLimitAvailable(nil)
 					Expect(err).ToNot(HaveOccurred())
 					Expect(ll.String()).To(Equal(FinneyToWei(1).String()))
 				})
@@ -335,7 +335,7 @@ var _ = Describe("loadLimit", func() {
 						})
 
 						It("should have 1 Finney available for loading", func() {
-							tl, err := Wallet.LoadAvailable(nil)
+							tl, err := Wallet.LoadLimitAvailable(nil)
 							Expect(err).ToNot(HaveOccurred())
 							Expect(tl.String()).To(Equal(FinneyToWei(1).String()))
 						})
@@ -346,7 +346,7 @@ var _ = Describe("loadLimit", func() {
 							})
 
 							It("should have 500 Finney available for further loading", func() {
-								ll, err := Wallet.LoadAvailable(nil)
+								ll, err := Wallet.LoadLimitAvailable(nil)
 								Expect(err).ToNot(HaveOccurred())
 								Expect(ll.String()).To(Equal(FinneyToWei(500).String()))
 							})
