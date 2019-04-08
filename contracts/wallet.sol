@@ -153,7 +153,7 @@ contract Whitelist is Controllable, Ownable {
         // Require that the whitelist has been initialized.
         require(initializedWhitelist, "whitelist has not been initialized");
         // Require that the array of addresses is not empty
-        require(_addresses.length > 0, "pending whitelist removal is empty");
+        require(_addresses.length > 0, "submitted whitelist removal is empty");
         // Add the provided addresses to the pending addition list.
         _pendingWhitelistRemoval = _addresses;
         // Flag the operation as submitted.
