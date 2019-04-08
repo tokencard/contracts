@@ -22,15 +22,15 @@ import "./internals/controllable.sol";
 import "./internals/claimable.sol";
 import "./internals/ensResolvable.sol";
 import "./internals/date.sol";
-import "./internals/json.sol";
 import "./internals/parseIntScientific.sol";
 import "./internals/tokenWhitelistable.sol";
 import "./externals/SafeMath.sol";
+import "./externals/oraclizeAPI_0.4.25.sol";
 import "./externals/base64.sol";
 
 
 /// @title Oracle provides asset exchange rates and conversion functionality.
-contract Oracle is ENSResolvable, usingOraclize, Claimable, Base64, Date, JSON, Controllable, ParseIntScientific, TokenWhitelistable {
+contract Oracle is ENSResolvable, usingOraclize, Claimable, Base64, Date, Controllable, ParseIntScientific, TokenWhitelistable {
     using strings for *;
     using SafeMath for uint256;
 
@@ -60,6 +60,9 @@ contract Oracle is ENSResolvable, usingOraclize, Claimable, Base64, Date, JSON, 
     uint constant private _DIGEST_OFFSET = _HEADERS_LEN - _DIGEST_BASE64_LEN; // the starting position of the result hash in the headers string.
 
     uint constant private _MAX_BYTE_SIZE = 256; //for calculating length encoding
+
+    // This is how the cryptocompare json begins
+    bytes32 constant private _PREFIX_HASH = keccak256("{\"ETH\":");
 
     bytes public APIPublicKey;
     mapping(bytes32 => address) private _queryToToken;
@@ -140,6 +143,28 @@ contract Oracle is ENSResolvable, usingOraclize, Claimable, Base64, Date, JSON, 
 
             _updateTokenRate(_token, parsedRate, parsedLastUpdate);
         }
+    }
+
+    /// @dev Extracts JSON rate value from the response object.
+    /// @param _json body of the JSON response from the CryptoCompare API.
+    function parseRate(string _json) internal pure returns (string) {
+
+        uint jsonLen = abi.encodePacked(_json).length;
+        //{"ETH":}.length = 8, assuming a (maximum of) 18 digit prevision
+        require(jsonLen > 8 && jsonLen <= 28, "misformatted input");
+
+        bytes memory jsonPrefix = new bytes(7);
+        copyBytes(abi.encodePacked(_json), 0, 7, jsonPrefix, 0);
+        require(keccak256(jsonPrefix) == _PREFIX_HASH, "prefix mismatch");
+
+        strings.slice memory body = _json.toSlice();
+        body.split(":".toSlice());
+        //we are sure that ':' is included in the string, body now contains the rate+'}'
+        jsonLen = body._len;
+        body.until("}".toSlice());
+        require(body._len == jsonLen - 1, "not json format");
+        //ensure that the json is properly terminated with a '}'
+        return body.toString();
     }
 
     /// @dev Re-usable helper function that performs the Oraclize Query.

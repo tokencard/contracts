@@ -176,7 +176,7 @@ var _ = Describe("callback", func() {
 								Backend.Commit()
 								Expect(isGasExhausted(tx, 500000)).To(BeFalse())
 								Expect(isSuccessful(tx)).To(BeFalse())
-								Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*require\(keccak256\(jsonPrefix\) == _PREFIXHASH, "prefix mismatch"\);`))
+								Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*require\(keccak256\(jsonPrefix\) == _PREFIX_HASH, "prefix mismatch"\);`))
 							})
 
 							It("It should Fail", func() {
@@ -187,7 +187,7 @@ var _ = Describe("callback", func() {
 								Backend.Commit()
 								Expect(isGasExhausted(tx, 500000)).To(BeFalse())
 								Expect(isSuccessful(tx)).To(BeFalse())
-								Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*require\(json_len > 8 && json_len <= 28, "misformatted input"\);`))
+								Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*require\(jsonLen > 8 && jsonLen <= 28, "misformatted input"\);`))
 							})
 
 							It("It should Fail", func() {
@@ -198,7 +198,7 @@ var _ = Describe("callback", func() {
 								Backend.Commit()
 								Expect(isGasExhausted(tx, 500000)).To(BeFalse())
 								Expect(isSuccessful(tx)).To(BeFalse())
-								Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*require\(json_len > 8 && json_len <= 28, "misformatted input"\);`))
+								Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*require\(jsonLen > 8 && jsonLen <= 28, "misformatted input"\);`))
 							})
 
 							It("It should Fail", func() {
@@ -209,7 +209,7 @@ var _ = Describe("callback", func() {
 								Backend.Commit()
 								Expect(isGasExhausted(tx, 500000)).To(BeFalse())
 								Expect(isSuccessful(tx)).To(BeFalse())
-								Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*require\(json_len > 8 && json_len <= 28, "misformatted input"\);`))
+								Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*require\(jsonLen > 8 && jsonLen <= 28, "misformatted input"\);`))
 							})
 						})
 
