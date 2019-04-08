@@ -320,7 +320,7 @@ contract SpendLimit is Controllable, Ownable {
 contract Vault is Whitelist, SpendLimit, ERC165 {
     event Received(address _from, uint _amount);
     event Transferred(address _to, address _asset, uint _amount);
-    event BulkTransferred(address _to, address[] _assets, uint[] _amounts);
+    event BulkTransferred(address _to, address[] _assets);
 
     using SafeMath for uint256;
 
@@ -368,19 +368,31 @@ contract Vault is Whitelist, SpendLimit, ERC165 {
         }
     }
 
-    /// @dev This is a bulk transfer convenience function. If any of the transfers fail, this will revert
+    /// @dev This is a bulk transfer convenience function, used to migrate contracts.
+    /// If any of the transfers fail, this will revert.
     /// @param _to is the recipient's address.
     /// @param _assets is an array of addresses of ERC20 tokens or 0x0 for ether.
-    /// @param _amounts is an array of amounts of tokens to be transferred in base units.
-    function bulkTransfer(address _to, address[] _assets, uint[] _amounts) external onlyOwner {
-        // check to make sure the two arrays of assets and amounts are of the same length
-        require(_assets.length == _amounts.length, "asset and amount arrays should be the same length");
+    function bulkTransfer(address _to, address[] _assets) public onlyOwner {
+        // can't bulkTransfer to address zero
+        require(_to != address(0), "can't bulkTransfer to address(0)");
+        // check to make sure that _assets isn't empty
+        require(_assets.length != 0, "asset array should be non-empty");
+        // initialise amount
+        uint amount;
         // This loops through all of the transfers to be made
         for (uint i = 0; i < _assets.length; i++) {
-            transfer(_to, _assets[i], _amounts[i]);
+            // reset amount value
+            amount = 0;    
+            // Get amount based on whether eth or erc20
+            if (_assets[i] == address(0)) {    
+                amount = address(this).balance;
+            } else {
+                amount = ERC20(_assets[i]).balanceOf(address(this));
+            }
+            // use our safe, daily limit protected transfer
+            transfer(_to, _assets[i], amount);
         }
-        
-        emit BulkTransferred(_to, _assets, _amounts);
+        emit BulkTransferred(_to, _assets);
     }
 
     /// @dev Transfers the specified asset to the recipient's address.
