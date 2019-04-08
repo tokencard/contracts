@@ -127,7 +127,7 @@ contract Holder {
             if (total > 0) {
                 require((total * amount) / amount == total);
                 // Overflow check.
-                transfer(to, _tokenAddresses[i], (total * amount) / supply);
+                _transfer(to, _tokenAddresses[i], (total * amount) / supply);
             }
         }
 
@@ -148,7 +148,7 @@ contract Holder {
     }
 
     // Transfer funds to an address.
-    function transfer(address to, address token, uint amount) private {
+    function _transfer(address to, address token, uint amount) private {
         if (amount == 0) {
             return;
         }

@@ -675,15 +675,15 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
         // Check if there exists at least a method signature in the transaction payload
         if (_data.length >= 4) {
             // Get method signature
-            uint32 signature = bytesToUint32(_data, 0);
+            uint32 signature = _bytesToUint32(_data, 0);
 
             // Check if method is either ERC20 transfer or approve
             if (signature == _TRANSFER || signature == _APPROVE) {
                 require(_data.length >= 4 + 32 + 32, "invalid transfer / approve transaction data");
-                uint amount = sliceUint(_data, 4 + 32);
+                uint amount = _sliceUint(_data, 4 + 32);
                 // The "toOrSpender" is the '_to' address for a ERC20 transfer or the '_spender; in ERC20 approve
                 // + 12 because address 20 bytes and this is padded to 32
-                address toOrSpender = bytesToAddress(_data, 4 + 12);
+                address toOrSpender = _bytesToAddress(_data, 4 + 12);
 
                 // Check if the toOrSpender is in the whitelist
                 if (!isWhitelisted[toOrSpender]) {
@@ -701,7 +701,7 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
             _enforceLimit(_spendLimit, _value);
         }
 
-        require(externalCall(_destination, _value, _data.length, _data), "executing transaction failed");
+        require(_externalCall(_destination, _value, _data.length, _data), "executing transaction failed");
 
         emit ExecutedTransaction(_destination, _value, _data);
     }
@@ -741,7 +741,7 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
     /// @param _data transaction payload binary
     // call has been separated into its own function in order to take advantage
     // of the Solidity's code generator to produce a loop that copies tx.data into memory.
-    function externalCall(address _destination, uint _value, uint _dataLength, bytes _data) private returns (bool) {
+    function _externalCall(address _destination, uint _value, uint _dataLength, bytes _data) private returns (bool) {
         bool result;
         assembly {
             let x := mload(0x40)   // "Allocate" memory for output (0x40 is where "free memory" pointer is stored by convention)
@@ -758,13 +758,14 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
                 0                  // Output is ignored, therefore the output size is zero
             )
         }
+
         return result;
     }
 
     /// @dev This function converts to an address
     /// @param _bts bytes
     /// @param _from start position
-    function bytesToAddress(bytes _bts, uint _from) private pure returns (address) {
+    function _bytesToAddress(bytes _bts, uint _from) private pure returns (address) {
         require(_bts.length >= _from + 20, "slicing out of range");
 
         uint160 m = 0;
@@ -782,7 +783,7 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
     /// @dev This function slicing bytes into uint32
     /// @param _bts some bytes
     /// @param _from  a start position
-    function bytesToUint32(bytes _bts, uint _from) private pure returns (uint32) {
+    function _bytesToUint32(bytes _bts, uint _from) private pure returns (uint32) {
         require(_bts.length >= _from + 4, "slicing out of range");
 
         uint32 m = 0;
@@ -802,7 +803,7 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
     /// @param _from  a start position
     // credit to https://ethereum.stackexchange.com/questions/51229/how-to-convert-bytes-to-uint-in-solidity
     // and Nick Johnson https://ethereum.stackexchange.com/questions/4170/how-to-convert-a-uint-to-bytes-in-solidity/4177#4177
-    function sliceUint(bytes _bts, uint _from) private pure returns (uint) {
+    function _sliceUint(bytes _bts, uint _from) private pure returns (uint) {
         require(_bts.length >= _from + 32, "slicing out of range");
 
         uint x;
