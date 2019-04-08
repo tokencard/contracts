@@ -122,10 +122,10 @@ contract Oracle is ENSResolvable, usingOraclize, Claimable, Base64, Date, Contro
         // Require that the caller is the Oraclize contract.
         require(msg.sender == oraclize_cbAddress(), "sender is not oraclize");
         // Use the query ID to find the matching token address.
-        address _token = _queryToToken[_queryID];
-        require(_token != address(0), "queryID matches to address 0");
+        address token = _queryToToken[_queryID];
+        require(token != address(0), "queryID matches to address 0");
         // Get the corresponding token object.
-        ( , , , bool available, , uint256 lastUpdate) = _getTokenInfo(_token);
+        ( , , , bool available, , uint256 lastUpdate) = _getTokenInfo(token);
         require(available, "token must be available");
 
         bool valid;
@@ -141,7 +141,7 @@ contract Oracle is ENSResolvable, usingOraclize, Claimable, Base64, Date, Contro
             // Remove query from the list.
             delete _queryToToken[_queryID];
 
-            _updateTokenRate(_token, parsedRate, parsedLastUpdate);
+            _updateTokenRate(token, parsedRate, parsedLastUpdate);
         }
     }
 
