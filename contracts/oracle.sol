@@ -69,9 +69,11 @@ contract Oracle is ENSResolvable, usingOraclize, Claimable, Base64, Date, Contro
 
     /// @dev Construct the oracle with multiple controllers, address resolver and custom gas price.
     /// @dev _resolver is the oraclize address resolver contract address.
+    /// @param _resolver is the address of the oraclize resolver
     /// @param _ens is the address of the ENS.
-    /// @param _controllerName is the ENS name of the Controller.
-    constructor(address _resolver, address _ens, bytes32 _controllerName, bytes32 _tokenWhitelistName) ENSResolvable(_ens) Controllable(_controllerName) TokenWhitelistable(_tokenWhitelistName) public {
+    /// @param _controllerNameHash is the ENS name hash of the Controller.
+    /// @param _tokenWhitelistNameHash is the ENS name hash of the Token Whitelist.
+    constructor(address _resolver, address _ens, bytes32 _controllerNameHash, bytes32 _tokenWhitelistNameHash) ENSResolvable(_ens) Controllable(_controllerNameHash) TokenWhitelistable(_tokenWhitelistNameHash) public {
         APIPublicKey = hex"a0f4f688350018ad1b9785991c0bde5f704b005dc79972b114dbed4a615a983710bfc647ebe5a320daa28771dce6a2d104f5efa2e4a85ba3760b76d46f8571ca";
         OAR = OraclizeAddrResolverI(_resolver);
         oraclize_setCustomGasPrice(10000000000);

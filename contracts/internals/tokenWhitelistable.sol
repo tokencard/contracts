@@ -28,9 +28,9 @@ contract TokenWhitelistable is ENSResolvable {
     bytes32 private _tokenWhitelistNode;
 
     /// @dev Constructor initializes the controller contract object.
-    /// @param _tokenWhitelistName is the ENS name of the Controller.
-    constructor(bytes32 _tokenWhitelistName) internal {
-        _tokenWhitelistNode = _tokenWhitelistName;
+    /// @param _tokenWhitelistNameHash is the ENS name hash of the Controller.
+    constructor(bytes32 _tokenWhitelistNameHash) internal {
+        _tokenWhitelistNode = _tokenWhitelistNameHash;
     }
 
     function _getTokenInfo(address _a) internal view returns (string, uint256, uint256, bool, bool, uint256) {
