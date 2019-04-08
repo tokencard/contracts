@@ -1,5 +1,5 @@
 /**
- *  The Consumer Contract Wallet
+ *  Token Exchange Rate Oracle
  *  Copyright (C) 2018 The Contract Wallet Company Limited
  *
  *  This program is free software: you can redistribute it and/or modify
