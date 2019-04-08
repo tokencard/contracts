@@ -56,7 +56,7 @@ contract Whitelist is ControllableOwnable {
     address[] private _pendingWhitelistRemoval;
     bool public submittedWhitelistAddition;
     bool public submittedWhitelistRemoval;
-    bool public initializedWhitelist;
+    bool public isSetWhitelist;
 
     /// @dev Check if the provided addresses contain the owner or the zero-address address.
     modifier hasNoOwnerOrZeroAddress(address[] _addresses) {
@@ -85,14 +85,14 @@ contract Whitelist is ControllableOwnable {
 
     /// @dev Add initial addresses to the whitelist.
     /// @param _addresses are the Ethereum addresses to be whitelisted.
-    function initializeWhitelist(address[] _addresses) external onlyOwner hasNoOwnerOrZeroAddress(_addresses) {
+    function setWhitelist(address[] _addresses) external onlyOwner hasNoOwnerOrZeroAddress(_addresses) {
         // Require that the whitelist has not been initialized.
-        require(!initializedWhitelist, "whitelist has already been initialized");
+        require(!isSetWhitelist, "whitelist has already been initialized");
         // Add each of the provided addresses to the whitelist.
         for (uint i = 0; i < _addresses.length; i++) {
             isWhitelisted[_addresses[i]] = true;
         }
-        initializedWhitelist = true;
+        isSetWhitelist = true;
         // Emit the addition event.
         emit AddedToWhitelist(msg.sender, _addresses);
     }
@@ -101,7 +101,7 @@ contract Whitelist is ControllableOwnable {
     /// @param _addresses are the Ethereum addresses to be whitelisted.
     function submitWhitelistAddition(address[] _addresses) external onlyOwner noActiveSubmission hasNoOwnerOrZeroAddress(_addresses) {
         // Require that the whitelist has been initialized.
-        require(initializedWhitelist, "whitelist has not been initialized");
+        require(isSetWhitelist, "whitelist has not been initialized");
         // Require this array of addresses not empty
         require(_addresses.length > 0, "pending whitelist addition is empty");
         // Set the provided addresses to the pending addition addresses.
@@ -150,7 +150,7 @@ contract Whitelist is ControllableOwnable {
     /// @param _addresses are the Ethereum addresses to be removed.
     function submitWhitelistRemoval(address[] _addresses) external onlyOwner noActiveSubmission {
         // Require that the whitelist has been initialized.
-        require(initializedWhitelist, "whitelist has not been initialized");
+        require(isSetWhitelist, "whitelist has not been initialized");
         // Require that the array of addresses is not empty
         require(_addresses.length > 0, "pending whitelist removal is empty");
         // Add the provided addresses to the pending addition list.
@@ -449,13 +449,6 @@ contract LoadLimit is ControllableOwnable, DailyLimitTrait {
 
     DailyLimit internal _loadLimit;
 
-    /// @dev initializes the daily load limit.
-    /// @param _maxLimit is the maximum load limit amount in stablecoin base units.
-    function _initializeLoadLimit(uint _maxLimit) internal {
-        _maximumLoadLimit = _maxLimit;
-        _loadLimit = DailyLimit(_maximumLoadLimit, _maximumLoadLimit, now, 0, false, false);
-    }
-
     /// @dev Sets a daily card load limit.
     /// @param _amount is the card load amount in current stablecoin base units.
     function setLoadLimit(uint _amount) external onlyOwner {
@@ -502,6 +495,13 @@ contract LoadLimit is ControllableOwnable, DailyLimitTrait {
 
     function pendingLoadLimit() public view returns (uint) {
         return _loadLimit.pending;
+    }
+
+    /// @dev initializes the daily load limit.
+    /// @param _maxLimit is the maximum load limit amount in stablecoin base units.
+    function _initializeLoadLimit(uint _maxLimit) internal {
+        _maximumLoadLimit = _maxLimit;
+        _loadLimit = DailyLimit(_maximumLoadLimit, _maximumLoadLimit, now, 0, false, false);
     }
 }
 
@@ -706,6 +706,11 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
         emit ExecutedTransaction(_destination, _value, _data);
     }
 
+    /// @return licence contract node registered in ENS.
+    function licenceNode() public view returns (bytes32) {
+        return _licenceNode;
+    }
+
     /// @dev Convert ether or ERC20 token amount to the corresponding stablecoin amount.
     /// @param _token ERC20 token contract address.
     /// @param _amount amount of token in base units.
@@ -812,11 +817,6 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
         }
 
         return x;
-    }
-
-    /// @return licence contract node registered in ENS.
-    function licenceNode() public view returns (bytes32) {
-        return _licenceNode;
     }
 
 }
