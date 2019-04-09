@@ -29,6 +29,7 @@ interface ITokenWhitelist {
     function getStablecoinInfo() external view returns (string, uint256, uint256, bool, bool, uint256);
     function getTokenAddressArray() external view returns (address[]);
     function updateTokenRate(address, uint, uint) external;
+    function stablecoin() public view returns (address);
 }
 
 

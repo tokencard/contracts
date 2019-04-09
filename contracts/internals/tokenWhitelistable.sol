@@ -59,6 +59,11 @@ contract TokenWhitelistable is ENSResolvable {
         return available;
     }
 
+    /// @return the address of the stablecoin contract.
+    function _stablecoin() internal view returns (address) {
+        return ITokenWhitelist(_ensResolve(_tokenWhitelistNode)).stablecoin();
+    }
+
     /// @return the token whitelist node registered in ENS.
     function tokenWhitelistNode() public view returns (bytes32) {
         return _tokenWhitelistNode;

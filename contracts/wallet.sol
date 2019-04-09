@@ -715,6 +715,10 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
     /// @param _token ERC20 token contract address.
     /// @param _amount amount of token in base units.
     function convertToStablecoin(address _token, uint _amount) public view returns (uint) {
+        //avoid the unnecessary calculations if the token to be loaded is the stablecoin itself
+        if (_token == _stablecoin()){
+            return _amount;
+        }
         //0x0 represents ether
         if (_token != address(0)) {
             //convert to eth first, same as convertToEther()
