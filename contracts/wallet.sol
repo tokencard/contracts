@@ -377,14 +377,11 @@ contract Vault is Whitelist, SpendLimit, ERC165 {
         require(_to != address(0), "can't bulkTransfer to address(0)");
         // check to make sure that _assets isn't empty
         require(_assets.length != 0, "asset array should be non-empty");
-        // initialise amount
-        uint amount;
         // This loops through all of the transfers to be made
         for (uint i = 0; i < _assets.length; i++) {
-            // reset amount value
-            amount = 0;    
+            uint amount;
             // Get amount based on whether eth or erc20
-            if (_assets[i] == address(0)) {    
+            if (_assets[i] == address(0)) {
                 amount = address(this).balance;
             } else {
                 amount = ERC20(_assets[i]).balanceOf(address(this));
