@@ -17,7 +17,7 @@ var _ = Describe("spendAvailable", func() {
 
 	When("wallet has been deployed", func() {
 		It("should have 100 ETH spend available", func() {
-			av, err := Wallet.SpendAvailable(nil)
+			av, err := Wallet.SpendLimitAvailable(nil)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(av.String()).To(Equal(EthToWei(100).String()))
 		})
@@ -59,13 +59,13 @@ var _ = Describe("spendAvailable", func() {
 			})
 
 			It("should lower the spend available to 1 ETH", func() {
-				av, err := Wallet.SpendAvailable(nil)
+				av, err := Wallet.SpendLimitAvailable(nil)
 				Expect(err).ToNot(HaveOccurred())
 				Expect(av.String()).To(Equal(EthToWei(1).String()))
 			})
 
 			It("should have spend limit of 1 ETH", func() {
-				sl, err := Wallet.SpendLimit(nil)
+				sl, err := Wallet.SpendLimitValue(nil)
 				Expect(err).ToNot(HaveOccurred())
 				Expect(sl.String()).To(Equal(EthToWei(1).String()))
 			})
@@ -95,7 +95,7 @@ var _ = Describe("spendAvailable", func() {
 			})
 
 			It("should keep the spend available at 100 ETH", func() {
-				av, err := Wallet.SpendAvailable(nil)
+				av, err := Wallet.SpendLimitAvailable(nil)
 				Expect(err).ToNot(HaveOccurred())
 				Expect(av.String()).To(Equal(EthToWei(100).String()))
 			})
@@ -107,7 +107,7 @@ var _ = Describe("spendAvailable", func() {
 				})
 
 				It("should increase the spend available to 1000 ETH", func() {
-					av, err := Wallet.SpendAvailable(nil)
+					av, err := Wallet.SpendLimitAvailable(nil)
 					Expect(err).ToNot(HaveOccurred())
 					Expect(av.String()).To(Equal(EthToWei(1000).String()))
 				})
@@ -125,7 +125,7 @@ var _ = Describe("spendAvailable", func() {
 							Expect(isSuccessful(tx)).To(BeTrue())
 						})
 						It("should have 999 ETH spend available", func() {
-							sa, err := Wallet.SpendAvailable(nil)
+							sa, err := Wallet.SpendLimitAvailable(nil)
 							Expect(err).ToNot(HaveOccurred())
 							Expect(sa.String()).To(Equal(EthToWei(999).String()))
 						})
@@ -176,13 +176,13 @@ var _ = Describe("spendAvailable", func() {
 			})
 
 			It("should not reduce the spend available", func() {
-				av, err := Wallet.SpendAvailable(nil)
+				av, err := Wallet.SpendLimitAvailable(nil)
 				Expect(err).ToNot(HaveOccurred())
 				Expect(av.String()).To(Equal(EthToWei(2).String()))
 			})
 
 			It("should set the pending spend limit to 1 ETH", func() {
-				psl, err := Wallet.PendingSpendLimit(nil)
+				psl, err := Wallet.SpendLimitPending(nil)
 				Expect(err).ToNot(HaveOccurred())
 				Expect(psl.String()).To(Equal(EthToWei(1).String()))
 			})
@@ -221,7 +221,7 @@ var _ = Describe("spendAvailable", func() {
 				})
 
 				It("should reduce the spend available to 1 ETH", func() {
-					av, err := Wallet.SpendAvailable(nil)
+					av, err := Wallet.SpendLimitAvailable(nil)
 					Expect(err).ToNot(HaveOccurred())
 					Expect(av.String()).To(Equal(EthToWei(1).String()))
 				})
@@ -271,7 +271,7 @@ var _ = Describe("spendAvailable", func() {
 				})
 
 				It("should set pending spend limit to 0", func() {
-					psl, err := Wallet.PendingSpendLimit(nil)
+					psl, err := Wallet.SpendLimitPending(nil)
 					Expect(err).ToNot(HaveOccurred())
 					Expect(psl.String()).To(Equal("0"))
 				})

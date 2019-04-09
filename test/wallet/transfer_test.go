@@ -34,7 +34,7 @@ var _ = Describe("transfer", func() {
 			})
 
 			It("should reduce available transfer for today by 1 Finney", func() {
-				av, err := Wallet.SpendAvailable(nil)
+				av, err := Wallet.SpendLimitAvailable(nil)
 				Expect(err).ToNot(HaveOccurred())
 				Expect(av.String()).To(Equal("99999000000000000000"))
 			})
@@ -53,7 +53,7 @@ var _ = Describe("transfer", func() {
 			})
 
 			It("should reduce available transfer for today by 0 Finney", func() {
-				av, err := Wallet.SpendAvailable(nil)
+				av, err := Wallet.SpendLimitAvailable(nil)
 				Expect(err).ToNot(HaveOccurred())
 				Expect(av.String()).To(Equal("100000000000000000000"))
 			})
@@ -121,7 +121,7 @@ var _ = Describe("transfer", func() {
 				})
 
 				It("should reduce the available daily spend balance", func() {
-					av, err := Wallet.SpendAvailable(nil)
+					av, err := Wallet.SpendLimitAvailable(nil)
 					Expect(err).ToNot(HaveOccurred())
 					Expect(av.String()).To(AlmostEqual("99999999999951010000"))
 				})
@@ -187,7 +187,7 @@ var _ = Describe("transfer", func() {
 				})
 
 				It("should not reduce the available daily spend balance", func() {
-					av, err := Wallet.SpendAvailable(nil)
+					av, err := Wallet.SpendLimitAvailable(nil)
 					Expect(err).ToNot(HaveOccurred())
 					Expect(av.String()).To(Equal("100000000000000000000"))
 				})
@@ -224,4 +224,5 @@ var _ = Describe("transfer", func() {
 		})
 
 	})
+
 })

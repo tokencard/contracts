@@ -18,11 +18,11 @@ var _ = Describe("GasTopUpLimit", func() {
 	When("the contract just has been deployed", func() {
 
 		It("should have initial GasTopUp of 500 Finney available", func() {
-			tl, err := Wallet.GasTopUpLimit(nil)
+			tl, err := Wallet.GasTopUpLimitValue(nil)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(tl.String()).To(Equal(FinneyToWei(500).String()))
 
-			tl, err = Wallet.GasTopUpAvailable(nil)
+			tl, err = Wallet.GasTopUpLimitAvailable(nil)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(tl.String()).To(Equal(FinneyToWei(500).String()))
 		})
@@ -204,7 +204,7 @@ var _ = Describe("GasTopUpLimit", func() {
 			})
 
 			It("should have pending GasTopUp limit of 1 Finney", func() {
-				ptl, err := Wallet.PendingGasTopUpLimit(nil)
+				ptl, err := Wallet.GasTopUpLimitPending(nil)
 				Expect(err).ToNot(HaveOccurred())
 				Expect(ptl.String()).To(Equal(FinneyToWei(1).String()))
 			})
@@ -227,7 +227,7 @@ var _ = Describe("GasTopUpLimit", func() {
 				})
 
 				It("should set pending limit to 0", func() {
-					psl, err := Wallet.PendingGasTopUpLimit(nil)
+					psl, err := Wallet.GasTopUpLimitPending(nil)
 					Expect(err).ToNot(HaveOccurred())
 					Expect(psl.String()).To(Equal("0"))
 				})
@@ -320,7 +320,7 @@ var _ = Describe("GasTopUpLimit", func() {
 				})
 
 				It("should have 1 Finney available for GasTopUps", func() {
-					tl, err := Wallet.GasTopUpAvailable(nil)
+					tl, err := Wallet.GasTopUpLimitAvailable(nil)
 					Expect(err).ToNot(HaveOccurred())
 					Expect(tl.String()).To(Equal(FinneyToWei(1).String()))
 				})
@@ -342,7 +342,7 @@ var _ = Describe("GasTopUpLimit", func() {
 						})
 
 						It("should have 1 Finney available for GasTopUps", func() {
-							tl, err := Wallet.GasTopUpAvailable(nil)
+							tl, err := Wallet.GasTopUpLimitAvailable(nil)
 							Expect(err).ToNot(HaveOccurred())
 							Expect(tl.String()).To(Equal(FinneyToWei(1).String()))
 						})
@@ -353,7 +353,7 @@ var _ = Describe("GasTopUpLimit", func() {
 							})
 
 							It("should have 500 Finney available for GasTopUps", func() {
-								tl, err := Wallet.GasTopUpAvailable(nil)
+								tl, err := Wallet.GasTopUpLimitAvailable(nil)
 								Expect(err).ToNot(HaveOccurred())
 								Expect(tl.String()).To(Equal(FinneyToWei(500).String()))
 							})

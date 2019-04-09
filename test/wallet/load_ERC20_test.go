@@ -296,7 +296,7 @@ var _ = Describe("wallet load ERC20", func() {
 				//change the exchange rate to be equal to daily Load limit + 1 wei
 				BeforeEach(func() {
 
-					limPlusOneWei, err := Wallet.LoadLimit(nil)
+					limPlusOneWei, err := Wallet.LoadLimitValue(nil)
 					Expect(err).ToNot(HaveOccurred())
 
 					limPlusOneWei.Add(limPlusOneWei, big.NewInt(1))
