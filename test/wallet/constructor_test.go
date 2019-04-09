@@ -13,7 +13,7 @@ var _ = Describe("wallet constructor", func() {
 
 	Context("the stablecoin should be in the whitelist", func() {
 		It("Should update the tokens map", func() {
-			symbol, _, _, available, loadable, _, err := TokenWhitelist.GetTokenInfo(nil, StablecoinAddress)
+			symbol, _, _, available, loadable, _, _, err := TokenWhitelist.GetTokenInfo(nil, StablecoinAddress)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(symbol).To(Equal("DAI"))
 			Expect(available).To(BeTrue())

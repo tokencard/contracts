@@ -39,6 +39,7 @@ var _ = Describe("tokenWhitelistable", func() {
 				StringsToByte32("DAI"),
 				[]*big.Int{DecimalsToMagnitude(big.NewInt(18))},
 				[]bool{true},
+				[]bool{true},
 				big.NewInt(20180913153211),
 			)
 			Expect(err).ToNot(HaveOccurred())
@@ -47,13 +48,14 @@ var _ = Describe("tokenWhitelistable", func() {
 		})
 
 		It("Should update the token mapping", func() {
-			symbol, magnitude, rate, available, loadable, lastUpdate, err := TokenWhitelistableExporter.GetStablecoinInfo(nil)
+			symbol, magnitude, rate, available, loadable, burnable, lastUpdate, err := TokenWhitelistableExporter.GetStablecoinInfo(nil)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(symbol).To(Equal("DAI"))
 			Expect(magnitude.String()).To(Equal(DecimalsToMagnitude(big.NewInt(18)).String()))
 			Expect(rate.String()).To(Equal("0"))
 			Expect(available).To(BeTrue())
 			Expect(loadable).To(BeTrue())
+			Expect(burnable).To(BeTrue())
 			Expect(lastUpdate.String()).To(Equal(big.NewInt(20180913153211).String()))
 		})
 	})
@@ -66,6 +68,7 @@ var _ = Describe("tokenWhitelistable", func() {
 				StringsToByte32("ETH"),
 				[]*big.Int{DecimalsToMagnitude(big.NewInt(18))},
 				[]bool{true},
+				[]bool{true},
 				big.NewInt(20180913153211),
 			)
 			Expect(err).ToNot(HaveOccurred())
@@ -74,13 +77,14 @@ var _ = Describe("tokenWhitelistable", func() {
 		})
 
 		It("Should update the token mapping", func() {
-			symbol, magnitude, rate, available, loadable, lastUpdate, err := TokenWhitelistableExporter.GetTokenInfo(nil, common.HexToAddress("0x1"))
+			symbol, magnitude, rate, available, loadable, burnable, lastUpdate, err := TokenWhitelistableExporter.GetTokenInfo(nil, common.HexToAddress("0x1"))
 			Expect(err).ToNot(HaveOccurred())
 			Expect(symbol).To(Equal("ETH"))
 			Expect(magnitude.String()).To(Equal(DecimalsToMagnitude(big.NewInt(18)).String()))
 			Expect(rate.String()).To(Equal("0"))
 			Expect(available).To(BeTrue())
 			Expect(loadable).To(BeTrue())
+			Expect(burnable).To(BeTrue())
 			Expect(lastUpdate.String()).To(Equal(big.NewInt(20180913153211).String()))
 		})
 
@@ -98,6 +102,12 @@ var _ = Describe("tokenWhitelistable", func() {
 
 		It("Should return true", func() {
 			ld, err := TokenWhitelistableExporter.IsTokenLoadable(nil, common.HexToAddress("0x1"))
+			Expect(err).ToNot(HaveOccurred())
+			Expect(ld).To(BeTrue())
+		})
+
+		It("Should return true", func() {
+			ld, err := TokenWhitelistableExporter.IsTokenBurnable(nil, common.HexToAddress("0x1"))
 			Expect(err).ToNot(HaveOccurred())
 			Expect(ld).To(BeTrue())
 		})
@@ -132,13 +142,14 @@ var _ = Describe("tokenWhitelistable", func() {
 			})
 
 			It("Should update the token rate", func() {
-				symbol, magnitude, rate, available, loadable, lastUpdate, err := TokenWhitelist.GetTokenInfo(nil, common.HexToAddress("0x1"))
+				symbol, magnitude, rate, available, loadable, burnable, lastUpdate, err := TokenWhitelist.GetTokenInfo(nil, common.HexToAddress("0x1"))
 				Expect(err).ToNot(HaveOccurred())
 				Expect(symbol).To(Equal("ETH"))
 				Expect(magnitude.String()).To(Equal(DecimalsToMagnitude(big.NewInt(18)).String()))
 				Expect(rate.String()).To(Equal(big.NewInt(555).String()))
 				Expect(available).To(BeTrue())
 				Expect(loadable).To(BeTrue())
+				Expect(burnable).To(BeTrue())
 				Expect(lastUpdate.String()).To(Equal(big.NewInt(20180913153211).String()))
 			})
 

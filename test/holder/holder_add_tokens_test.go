@@ -117,6 +117,7 @@ var _ = Describe("holder addTokens", func() {
 					DecimalsToMagnitude(big.NewInt(8)),
 				},
 				[]bool{true},
+				[]bool{true},
 				big.NewInt(20180913153211),
 			)
 			Expect(err).ToNot(HaveOccurred())

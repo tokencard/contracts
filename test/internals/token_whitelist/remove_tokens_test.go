@@ -31,6 +31,7 @@ var _ = Describe("removeTokens", func() {
 					DecimalsToMagnitude(big.NewInt(8)),
 				},
 				[]bool{true, true, true},
+				[]bool{true, true, true},
 				big.NewInt(20180913153211),
 			)
 			Expect(err).ToNot(HaveOccurred())
@@ -63,32 +64,35 @@ var _ = Describe("removeTokens", func() {
 				})
 
 				It("Should update the tokens map", func() {
-					symbol, magnitude, rate, available, loadable, lastUpdate, err := TokenWhitelist.GetTokenInfo(nil, common.HexToAddress("0x2"))
+					symbol, magnitude, rate, available, loadable, burnable, lastUpdate, err := TokenWhitelist.GetTokenInfo(nil, common.HexToAddress("0x2"))
 					Expect(err).ToNot(HaveOccurred())
 					Expect(symbol).To(Equal(""))
 					Expect(magnitude.String()).To(Equal("0"))
 					Expect(rate.String()).To(Equal(big.NewInt(0).String()))
 					Expect(available).To(BeFalse())
 					Expect(loadable).To(BeFalse())
+					Expect(burnable).To(BeFalse())
 					Expect(lastUpdate.String()).To(Equal("0"))
 
 					//the other tokens should remain unchanged
-					symbol, magnitude, rate, available, loadable, lastUpdate, err = TokenWhitelist.GetTokenInfo(nil, common.HexToAddress("0x1"))
+					symbol, magnitude, rate, available, loadable, burnable, lastUpdate, err = TokenWhitelist.GetTokenInfo(nil, common.HexToAddress("0x1"))
 					Expect(err).ToNot(HaveOccurred())
 					Expect(symbol).To(Equal("OMG"))
 					Expect(magnitude.String()).To(Equal(DecimalsToMagnitude(big.NewInt(18)).String()))
 					Expect(rate.String()).To(Equal(big.NewInt(0).String()))
 					Expect(available).To(BeTrue())
 					Expect(loadable).To(BeTrue())
+					Expect(burnable).To(BeTrue())
 					Expect(lastUpdate.String()).To(Equal(big.NewInt(20180913153211).String()))
 
-					symbol, magnitude, rate, available, loadable, lastUpdate, err = TokenWhitelist.GetTokenInfo(nil, common.HexToAddress("0x3"))
+					symbol, magnitude, rate, available, loadable, burnable, lastUpdate, err = TokenWhitelist.GetTokenInfo(nil, common.HexToAddress("0x3"))
 					Expect(err).ToNot(HaveOccurred())
 					Expect(symbol).To(Equal("TKN"))
 					Expect(magnitude.String()).To(Equal(DecimalsToMagnitude(big.NewInt(8)).String()))
 					Expect(rate.String()).To(Equal(big.NewInt(0).String()))
 					Expect(available).To(BeTrue())
 					Expect(loadable).To(BeTrue())
+					Expect(burnable).To(BeTrue())
 					Expect(lastUpdate.String()).To(Equal(big.NewInt(20180913153211).String()))
 				})
 			})

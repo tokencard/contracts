@@ -29,6 +29,7 @@ var _ = Describe("wallet load eth", func() {
 				StringsToByte32("ETH"),
 				[]*big.Int{DecimalsToMagnitude(big.NewInt(18))},
 				[]bool{true},
+				[]bool{true},
 				big.NewInt(20180913153211),
 			)
 			Expect(err).ToNot(HaveOccurred())
@@ -111,6 +112,7 @@ var _ = Describe("wallet load eth", func() {
 					[]common.Address{common.HexToAddress("0x0")},
 					StringsToByte32("ETH"),
 					[]*big.Int{DecimalsToMagnitude(big.NewInt(18))},
+					[]bool{true},
 					[]bool{true},
 					big.NewInt(20180913153211),
 				)

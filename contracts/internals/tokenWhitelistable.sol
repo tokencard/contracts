@@ -33,11 +33,11 @@ contract TokenWhitelistable is ENSResolvable {
         _tokenWhitelistNode = _tokenWhitelistNameHash;
     }
 
-    function _getTokenInfo(address _a) internal view returns (string, uint256, uint256, bool, bool, uint256) {
+    function _getTokenInfo(address _a) internal view returns (string, uint256, uint256, bool, bool, bool, uint256) {
         return ITokenWhitelist(_ensResolve(_tokenWhitelistNode)).getTokenInfo(_a);
     }
 
-    function _getStablecoinInfo() internal view returns (string, uint256, uint256, bool, bool, uint256) {
+    function _getStablecoinInfo() internal view returns (string, uint256, uint256, bool, bool, bool, uint256) {
         return ITokenWhitelist(_ensResolve(_tokenWhitelistNode)).getStablecoinInfo();
     }
 
@@ -50,12 +50,17 @@ contract TokenWhitelistable is ENSResolvable {
     }
 
     function _isTokenLoadable(address _a) internal view returns (bool) {
-        ( , , , , bool loadable, ) = _getTokenInfo(_a);
+        ( , , , , bool loadable, , ) = _getTokenInfo(_a);
         return loadable;
     }
 
+    function _isTokenBurnable(address _a) internal view returns (bool) {
+        ( , , , , , bool burnable, ) = _getTokenInfo(_a);
+        return burnable;
+    }
+
     function _isTokenAvailable(address _a) internal view returns (bool) {
-        ( , , , bool available, , ) = _getTokenInfo(_a);
+        ( , , , bool available, , , ) = _getTokenInfo(_a);
         return available;
     }
 
