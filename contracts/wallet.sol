@@ -39,10 +39,10 @@ contract ControllableOwnable is Controllable, Ownable {
 }
 
 
-/// @title Whitelist provides payee-whitelist functionality.
+/// @title AddressWhitelist provides payee-whitelist functionality.
 /// @dev This contract will allow the user to maintain a whitelist of addresses
 /// @dev These addresses will live outside of the various spend limits
-contract Whitelist is ControllableOwnable {
+contract AddressWhitelist is ControllableOwnable {
     event AddedToWhitelist(address _sender, address[] _addresses);
     event SubmittedWhitelistAddition(address[] _addresses, bytes32 _hash);
     event CancelledWhitelistAddition(address _sender, bytes32 _hash);
@@ -507,7 +507,7 @@ contract LoadLimit is ControllableOwnable, DailyLimitTrait {
 
 
 //// @title Asset store with extra security features.
-contract Vault is Whitelist, SpendLimit, ERC165, TokenWhitelistable {
+contract Vault is AddressWhitelist, SpendLimit, ERC165, TokenWhitelistable {
 
     using SafeMath for uint256;
 
