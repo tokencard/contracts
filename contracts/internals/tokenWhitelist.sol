@@ -67,9 +67,9 @@ contract TokenWhitelist is ENSResolvable, Controllable, Ownable {
     bytes32 private _oracleNode;
 
     /// @dev Constructor initializes ens and the oracle.
-    /// @param _oracleName is the ENS name of the Oracle.
-    constructor(address _ens, bytes32 _oracleName, bytes32 _controllerName, address _owner, bool _transferable, address _stabelcoinAddress) ENSResolvable(_ens) Controllable(_controllerName) Ownable(_owner, _transferable) public {
-        _oracleNode = _oracleName;
+    /// @param _oracleNameHash is the ENS name hash of the Oracle.
+    constructor(address _ens, bytes32 _oracleNameHash, bytes32 _controllerNameHash, address _owner, bool _transferable, address _stabelcoinAddress) ENSResolvable(_ens) Controllable(_controllerNameHash) Ownable(_owner, _transferable) public {
+        _oracleNode = _oracleNameHash;
         _stablecoin = _stabelcoinAddress;
     }
 

@@ -520,10 +520,10 @@ contract Vault is Whitelist, SpendLimit, ERC165, TokenWhitelistable {
     /// @dev Constructor initializes the vault with an owner address and spend limit. It also sets up the controllable and tokenWhitelist contracts with the right name registered in ENS.
     /// @param _owner is the owner account of the wallet contract.
     /// @param _transferable indicates whether the contract ownership can be transferred.
-    /// @param _tokenWhitelistName is the ENS name hash of the Token whitelist.
-    /// @param _controllerName is the ENS name hash of the controller.
+    /// @param _tokenWhitelistNameHash is the ENS name hash of the Token whitelist.
+    /// @param _controllerNameHash is the ENS name hash of the controller.
     /// @param _spendLimit is the initial spend limit.
-    constructor(address _owner, bool _transferable, bytes32 _tokenWhitelistName, bytes32 _controllerName, uint _spendLimit) SpendLimit(_spendLimit) Ownable(_owner, _transferable) Controllable(_controllerName) TokenWhitelistable(_tokenWhitelistName) public {}
+    constructor(address _owner, bool _transferable, bytes32 _tokenWhitelistNameHash, bytes32 _controllerNameHash, uint _spendLimit) SpendLimit(_spendLimit) Ownable(_owner, _transferable) Controllable(_controllerNameHash) TokenWhitelistable(_tokenWhitelistNameHash) public {}
 
     /// @dev Checks if the value is not zero.
     modifier isNotZero(uint _value) {
@@ -620,16 +620,16 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
     /// @param _owner is the owner account of the wallet contract.
     /// @param _transferable indicates whether the contract ownership can be transferred.
     /// @param _ens is the address of the ENS registry.
-    /// @param _tokenWhitelistName is the ENS name hash of the Token whitelist.
-    /// @param _controllerName is the ENS name hash of the Controller contract.
-    /// @param _licenceName is the ENS name hash of the Licence contract.
+    /// @param _tokenWhitelistNameHash is the ENS name hash of the Token whitelist.
+    /// @param _controllerNameHash is the ENS name hash of the Controller contract.
+    /// @param _licenceNameHash is the ENS name hash of the Licence contract.
     /// @param _spendLimit is the initial spend limit.
-    constructor(address _owner, bool _transferable, address _ens, bytes32 _tokenWhitelistName, bytes32 _controllerName, bytes32 _licenceName, uint _spendLimit) ENSResolvable(_ens) Vault(_owner, _transferable, _tokenWhitelistName, _controllerName, _spendLimit) public {
+    constructor(address _owner, bool _transferable, address _ens, bytes32 _tokenWhitelistNameHash, bytes32 _controllerNameHash, bytes32 _licenceNameHash, uint _spendLimit) ENSResolvable(_ens) Vault(_owner, _transferable, _tokenWhitelistNameHash, _controllerNameHash, _spendLimit) public {
         // Get the stablecoin's magnitude.
         (,uint256 stablecoinMagnitude,,,,) = _getStablecoinInfo();
         require(stablecoinMagnitude > 0, "stablecoin not set");
         _initializeLoadLimit(_DEFAULT_MAX_STABLECOIN_LOAD_LIMIT * stablecoinMagnitude);
-        _licenceNode = _licenceName;
+        _licenceNode = _licenceNameHash;
     }
 
     /// @dev Refill owner's gas balance, revert if the transaction amount is too large

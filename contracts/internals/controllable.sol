@@ -28,9 +28,9 @@ contract Controllable is ENSResolvable {
     bytes32 private _controllerNode;
 
     /// @dev Constructor initializes the controller contract object.
-    /// @param _controllerName is the ENS name of the Controller.
-    constructor(bytes32 _controllerName) internal {
-        _controllerNode = _controllerName;
+    /// @param _controllerNameHash is the ENS name hash of the Controller.
+    constructor(bytes32 _controllerNameHash) internal {
+        _controllerNode = _controllerNameHash;
     }
 
     /// @dev Checks if message sender is the controller.
