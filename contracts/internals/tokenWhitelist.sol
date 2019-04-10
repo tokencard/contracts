@@ -161,7 +161,7 @@ contract TokenWhitelist is ENSResolvable, Controllable, Ownable {
     }
 
     /// @return the address of the stablecoin contract.
-    function stablecoin() public view returns (address) {
+    function stablecoin() external view returns (address) {
         return _stablecoin;
     }
 
