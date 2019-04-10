@@ -188,12 +188,6 @@ var _ = Describe("loadLimit", func() {
 				Expect(isSuccessful(tx)).To(BeTrue())
 			})
 
-			It("should update the submission flag", func() {
-				submitted, err := Wallet.LoadLimitSubmitted(nil)
-				Expect(err).ToNot(HaveOccurred())
-				Expect(submitted).To(BeTrue())
-			})
-
 			It("should emit a submission event", func() {
 				it, err := Wallet.FilterSubmittedLoadLimitUpdate(nil)
 				Expect(err).ToNot(HaveOccurred())
@@ -209,67 +203,28 @@ var _ = Describe("loadLimit", func() {
 				Expect(ptl.String()).To(Equal(FinneyToWei(1).String()))
 			})
 
-			When("the controller cancels the limit change", func() {
+			When("the user re-submits the limit update", func() {
 				BeforeEach(func() {
-					tx, err := Wallet.CancelLoadLimitUpdate(Controller.TransactOpts(), FinneyToWei(1))
+					tx, err := Wallet.SubmitLoadLimitUpdate(Owner.TransactOpts(), FinneyToWei(1))
 					Expect(err).ToNot(HaveOccurred())
 					Backend.Commit()
 					Expect(isSuccessful(tx)).To(BeTrue())
-				})
-
-				It("should emit a cancellation event", func() {
-					it, err := Wallet.FilterCancelledLoadLimitUpdate(nil)
-					Expect(err).ToNot(HaveOccurred())
-					Expect(it.Next()).To(BeTrue())
-					evt := it.Event
-					Expect(it.Next()).To(BeFalse())
-					Expect(evt.Sender).To(Equal(Controller.Address()))
 				})
 
 				It("should set pending load limit to 0", func() {
 					psl, err := Wallet.LoadLimitPending(nil)
 					Expect(err).ToNot(HaveOccurred())
-					Expect(psl.String()).To(Equal("0"))
-				})
-			})
-
-			When("the controller cancels the limit change with wrong amount", func() {
-				It("should fail", func() {
-					tx, err := Wallet.CancelLoadLimitUpdate(Controller.TransactOpts(ethertest.WithGasLimit(65000)), FinneyToWei(2))
-					Expect(err).ToNot(HaveOccurred())
-					Backend.Commit()
-					Expect(isGasExhausted(tx, 65000)).To(BeFalse())
-					Expect(isSuccessful(tx)).To(BeFalse())
-				})
-			})
-
-			When("the Owner tries to cancel the limit change", func() {
-				It("should pass", func() {
-					tx, err := Wallet.CancelLoadLimitUpdate(Owner.TransactOpts(ethertest.WithGasLimit(65000)), FinneyToWei(1))
-					Expect(err).ToNot(HaveOccurred())
-					Backend.Commit()
-					Expect(isGasExhausted(tx, 65000)).To(BeFalse())
-					Expect(isSuccessful(tx)).To(BeTrue())
-				})
-			})
-
-			When("a random person tries to cancel the limit change", func() {
-				It("should fail", func() {
-					tx, err := Wallet.CancelLoadLimitUpdate(RandomAccount.TransactOpts(ethertest.WithGasLimit(65000)), FinneyToWei(1))
-					Expect(err).ToNot(HaveOccurred())
-					Backend.Commit()
-					Expect(isGasExhausted(tx, 65000)).To(BeFalse())
-					Expect(isSuccessful(tx)).To(BeFalse())
+					Expect(psl.String()).To(Equal(FinneyToWei(1).String()))
 				})
 			})
 
 			When("the Owner tries to submit a second load limit of 500 Finney", func() {
-				It("should fail", func() {
+				It("should succeed", func() {
 					tx, err := Wallet.SubmitLoadLimitUpdate(Owner.TransactOpts(ethertest.WithGasLimit(65000)), FinneyToWei(500))
 					Expect(err).ToNot(HaveOccurred())
 					Backend.Commit()
 					Expect(isGasExhausted(tx, 65000)).To(BeFalse())
-					Expect(isSuccessful(tx)).To(BeFalse())
+					Expect(isSuccessful(tx)).To(BeTrue())
 				})
 
 			})

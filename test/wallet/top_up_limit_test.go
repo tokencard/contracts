@@ -3,7 +3,7 @@ package wallet_test
 import (
 	"time"
 
-	"github.com/ethereum/go-ethereum/core/types"
+	// "github.com/ethereum/go-ethereum/core/types"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	. "github.com/tokencard/contracts/test/shared"
@@ -188,12 +188,6 @@ var _ = Describe("GasTopUpLimit", func() {
 				Expect(isSuccessful(tx)).To(BeTrue())
 			})
 
-			It("should update the submission flag", func() {
-				submitted, err := Wallet.GasTopUpLimitSubmitted(nil)
-				Expect(err).ToNot(HaveOccurred())
-				Expect(submitted).To(BeTrue())
-			})
-
 			It("should emit a submission event", func() {
 				it, err := Wallet.FilterSubmittedGasTopUpLimitUpdate(nil)
 				Expect(err).ToNot(HaveOccurred())
@@ -209,72 +203,12 @@ var _ = Describe("GasTopUpLimit", func() {
 				Expect(ptl.String()).To(Equal(FinneyToWei(1).String()))
 			})
 
-			When("the controller cancels the limit change", func() {
-				BeforeEach(func() {
-					tx, err := Wallet.CancelGasTopUpLimitUpdate(Controller.TransactOpts(), FinneyToWei(1))
-					Expect(err).ToNot(HaveOccurred())
-					Backend.Commit()
-					Expect(isSuccessful(tx)).To(BeTrue())
-				})
-
-				It("should emit a cancellation event", func() {
-					it, err := Wallet.FilterCancelledGasTopUpLimitUpdate(nil)
-					Expect(err).ToNot(HaveOccurred())
-					Expect(it.Next()).To(BeTrue())
-					evt := it.Event
-					Expect(it.Next()).To(BeFalse())
-					Expect(evt.Sender).To(Equal(Controller.Address()))
-				})
-
-				It("should set pending limit to 0", func() {
-					psl, err := Wallet.GasTopUpLimitPending(nil)
-					Expect(err).ToNot(HaveOccurred())
-					Expect(psl.String()).To(Equal("0"))
-				})
-			})
-
-			When("the controller cancels the limit change with wrong amount", func() {
-				var txSuccessful bool
-				var tx *types.Transaction
-				BeforeEach(func() {
-					var err error
-					tx, err = Wallet.CancelGasTopUpLimitUpdate(Controller.TransactOpts(ethertest.WithGasLimit(100000)), FinneyToWei(2))
-					Expect(err).ToNot(HaveOccurred())
-					Backend.Commit()
-					txSuccessful = isSuccessful(tx)
-
-				})
-
-				It("should fail", func() {
-					Expect(isGasExhausted(tx, 100000)).To(BeFalse())
-					Expect(txSuccessful).To(BeFalse())
-				})
-			})
-
-			When("I try to cancel the limit change", func() {
-				It("should pass", func() {
-					tx, err := Wallet.CancelGasTopUpLimitUpdate(Owner.TransactOpts(ethertest.WithGasLimit(65000)), FinneyToWei(1))
-					Expect(err).ToNot(HaveOccurred())
-					Backend.Commit()
-					Expect(isSuccessful(tx)).To(BeTrue())
-				})
-			})
-
-			When("a random person tries to cancel the limit change", func() {
-				It("should fail", func() {
-					tx, err := Wallet.CancelGasTopUpLimitUpdate(RandomAccount.TransactOpts(ethertest.WithGasLimit(65000)), FinneyToWei(1))
-					Expect(err).ToNot(HaveOccurred())
-					Backend.Commit()
-					Expect(isSuccessful(tx)).To(BeFalse())
-				})
-			})
-
 			When("I try to submit a second GasTopUp limit of 500 Finney", func() {
-				It("should fail", func() {
+				It("should succeed", func() {
 					tx, err := Wallet.SubmitGasTopUpLimitUpdate(Owner.TransactOpts(ethertest.WithGasLimit(65000)), FinneyToWei(500))
 					Expect(err).ToNot(HaveOccurred())
 					Backend.Commit()
-					Expect(isSuccessful(tx)).To(BeFalse())
+					Expect(isSuccessful(tx)).To(BeTrue())
 				})
 
 			})
