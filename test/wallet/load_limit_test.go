@@ -175,9 +175,14 @@ var _ = Describe("loadLimit", func() {
 
 		})
 
-		When("I submit Load limit of 1 Finney after having set it", func() {
+		When("I submit 2 Loadlimits of 2 and 1 Finney respectively after having set it", func() {
 			BeforeEach(func() {
 				tx, err := Wallet.SetLoadLimit(Owner.TransactOpts(), FinneyToWei(5))
+				Expect(err).ToNot(HaveOccurred())
+				Backend.Commit()
+				Expect(isSuccessful(tx)).To(BeTrue())
+
+				tx, err = Wallet.SubmitLoadLimitUpdate(Owner.TransactOpts(), FinneyToWei(2))
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 				Expect(isSuccessful(tx)).To(BeTrue())
@@ -188,11 +193,14 @@ var _ = Describe("loadLimit", func() {
 				Expect(isSuccessful(tx)).To(BeTrue())
 			})
 
-			It("should emit a submission event", func() {
+			It("should emit 2 submission events", func() {
 				it, err := Wallet.FilterSubmittedLoadLimitUpdate(nil)
 				Expect(err).ToNot(HaveOccurred())
 				Expect(it.Next()).To(BeTrue())
 				evt := it.Event
+				Expect(it.Next()).To(BeTrue())
+				Expect(evt.Amount).To(Equal(FinneyToWei(2)))
+				evt = it.Event
 				Expect(it.Next()).To(BeFalse())
 				Expect(evt.Amount).To(Equal(FinneyToWei(1)))
 			})
@@ -203,9 +211,9 @@ var _ = Describe("loadLimit", func() {
 				Expect(ptl.String()).To(Equal(FinneyToWei(1).String()))
 			})
 
-			When("the user re-submits the limit update", func() {
-				BeforeEach(func() {
-					tx, err := Wallet.SubmitLoadLimitUpdate(Owner.TransactOpts(), FinneyToWei(1))
+			When("the Owner tries to re-submit a load limit of 500 Finney", func() {
+				It("should succeed", func() {
+					tx, err := Wallet.SubmitLoadLimitUpdate(Owner.TransactOpts(), FinneyToWei(500))
 					Expect(err).ToNot(HaveOccurred())
 					Backend.Commit()
 					Expect(isSuccessful(tx)).To(BeTrue())
@@ -234,7 +242,6 @@ var _ = Describe("loadLimit", func() {
 					tx, err := Wallet.ConfirmLoadLimitUpdate(Owner.TransactOpts(ethertest.WithGasLimit(65000)), FinneyToWei(1))
 					Expect(err).ToNot(HaveOccurred())
 					Backend.Commit()
-					Expect(isGasExhausted(tx, 65000)).To(BeFalse())
 					Expect(isSuccessful(tx)).To(BeFalse())
 				})
 			})
