@@ -370,11 +370,9 @@ contract Vault is Whitelist, SpendLimit, ERC165 {
 
     /// @dev This is a bulk transfer convenience function, used to migrate contracts.
     /// If any of the transfers fail, this will revert.
-    /// @param _to is the recipient's address.
+    /// @param _to is the recipient's address, can't be the zero (0x0) address: transfer() will revert.
     /// @param _assets is an array of addresses of ERC20 tokens or 0x0 for ether.
     function bulkTransfer(address _to, address[] _assets) public onlyOwner {
-        // can't bulkTransfer to address zero
-        require(_to != address(0), "can't bulkTransfer to address(0)");
         // check to make sure that _assets isn't empty
         require(_assets.length != 0, "asset array should be non-empty");
         // This loops through all of the transfers to be made

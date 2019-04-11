@@ -28,19 +28,19 @@ var _ = Describe("bulk_transfer", func() {
 		})
 
 		BeforeEach(func() {
-			tx, err := Wallet.InitializeSpendLimit(Owner.TransactOpts(), EthToWei(2))
-			Expect(err).ToNot(HaveOccurred())
-			Backend.Commit()
-			Expect(isSuccessful(tx)).To(BeTrue())
-		})
-
-		BeforeEach(func() {
 			tx, err := ERC20Contract2.Credit(BankAccount.TransactOpts(), WalletAddress, big.NewInt(500))
 			Expect(err).ToNot(HaveOccurred())
 			Backend.Commit()
 			Expect(isSuccessful(tx)).To(BeTrue())
 		})
 
+		BeforeEach(func() {
+			tx, err := Wallet.InitializeSpendLimit(Owner.TransactOpts(), EthToWei(2))
+			Expect(err).ToNot(HaveOccurred())
+			Backend.Commit()
+			Expect(isSuccessful(tx)).To(BeTrue())
+		})
+		
 		It("should have a spendLimit of 2 ETH", func() {
 			av, err := Wallet.SpendAvailable(nil)
 			Expect(err).ToNot(HaveOccurred())
