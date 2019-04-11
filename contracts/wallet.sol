@@ -588,7 +588,7 @@ contract Vault is AddressWhitelist, SpendLimit, ERC165, TokenWhitelistable {
     /// @param _amount amount of token in base units.
     function convertToEther(address _token, uint _amount) public view returns (uint) {
         // Store the token in memory to save map entry lookup gas.
-        (,uint256 magnitude, uint256 rate, bool available,,) = _getTokenInfo(_token);
+        (,uint256 magnitude, uint256 rate, bool available, , , ) = _getTokenInfo(_token);
         // If the token exists require that its rate is not zero.
         if (available) {
             require(rate != 0, "token rate is 0");
@@ -626,7 +626,7 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
     /// @param _spendLimit is the initial spend limit.
     constructor(address _owner, bool _transferable, address _ens, bytes32 _tokenWhitelistNameHash, bytes32 _controllerNameHash, bytes32 _licenceNameHash, uint _spendLimit) ENSResolvable(_ens) Vault(_owner, _transferable, _tokenWhitelistNameHash, _controllerNameHash, _spendLimit) public {
         // Get the stablecoin's magnitude.
-        (,uint256 stablecoinMagnitude,,,,) = _getStablecoinInfo();
+        ( ,uint256 stablecoinMagnitude, , , , , ) = _getStablecoinInfo();
         require(stablecoinMagnitude > 0, "stablecoin not set");
         _initializeLoadLimit(_DEFAULT_MAX_STABLECOIN_LOAD_LIMIT * stablecoinMagnitude);
         _licenceNode = _licenceNameHash;
@@ -723,7 +723,7 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
         if (_token != address(0)) {
             //convert to eth first, same as convertToEther()
             // Store the token in memory to save map entry lookup gas.
-            (,uint256 magnitude, uint256 rate, bool available,,) = _getTokenInfo(_token);
+            (,uint256 magnitude, uint256 rate, bool available, , , ) = _getTokenInfo(_token);
             // require that token both exists in the whitelist and its rate is not zero.
             require(available, "token is not available");
             require(rate != 0, "token rate is 0");
@@ -732,7 +732,7 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
         }
         //_amount now is in ether
         // Get the stablecoin's magnitude and its current rate.
-        (,uint256 stablecoinMagnitude, uint256 stablecoinRate, bool stablecoinAvailable,,) = _getStablecoinInfo();
+        ( ,uint256 stablecoinMagnitude, uint256 stablecoinRate, bool stablecoinAvailable, , , ) = _getStablecoinInfo();
             // Check if the stablecoin rate is set.
         require(stablecoinAvailable, "token is not available");
         require(stablecoinRate != 0, "stablecoin rate is 0");

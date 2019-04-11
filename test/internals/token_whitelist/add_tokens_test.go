@@ -32,6 +32,7 @@ var _ = Describe("addTokens", func() {
 						DecimalsToMagnitude(big.NewInt(8)),
 					},
 					[]bool{false, true},
+					[]bool{true, true},
 					big.NewInt(20180913153211),
 				)
 				Expect(err).ToNot(HaveOccurred())
@@ -43,20 +44,22 @@ var _ = Describe("addTokens", func() {
 			})
 
 			It("Should update the tokens map", func() {
-				symbol, magnitude, _, available, loadable, lastUpdate, err := TokenWhitelist.GetTokenInfo(nil, common.HexToAddress("0x0"))
+				symbol, magnitude, _, available, loadable, burnable, lastUpdate, err := TokenWhitelist.GetTokenInfo(nil, common.HexToAddress("0x0"))
 				Expect(err).ToNot(HaveOccurred())
 				Expect(symbol).To(Equal("BNT"))
 				Expect(magnitude).To(Equal(DecimalsToMagnitude(big.NewInt(18))))
 				Expect(available).To(BeTrue())
 				Expect(loadable).To(BeFalse())
+				Expect(burnable).To(BeTrue())
 				Expect(lastUpdate.String()).To(Equal("20180913153211"))
 
-				symbol, magnitude, _, available, loadable, lastUpdate, err = TokenWhitelist.GetTokenInfo(nil, common.HexToAddress("0x1"))
+				symbol, magnitude, _, available, loadable, burnable, lastUpdate, err = TokenWhitelist.GetTokenInfo(nil, common.HexToAddress("0x1"))
 				Expect(err).ToNot(HaveOccurred())
 				Expect(symbol).To(Equal("TKN"))
 				Expect(magnitude.String()).To(Equal("100000000"))
 				Expect(available).To(BeTrue())
 				Expect(loadable).To(BeTrue())
+				Expect(burnable).To(BeTrue())
 				Expect(lastUpdate.String()).To(Equal("20180913153211"))
 			})
 
@@ -91,6 +94,7 @@ var _ = Describe("addTokens", func() {
 							DecimalsToMagnitude(big.NewInt(18)),
 						},
 						[]bool{true, true},
+						[]bool{true, true},
 						big.NewInt(20180913153211),
 					)
 					Expect(err).ToNot(HaveOccurred())
@@ -115,6 +119,7 @@ var _ = Describe("addTokens", func() {
 							DecimalsToMagnitude(big.NewInt(18)),
 							DecimalsToMagnitude(big.NewInt(8)),
 						},
+						[]bool{true, true},
 						[]bool{true, true},
 						big.NewInt(20180913153211),
 					)
@@ -143,6 +148,7 @@ var _ = Describe("addTokens", func() {
 						DecimalsToMagnitude(big.NewInt(8)),
 					},
 					[]bool{true, true},
+					[]bool{true, true},
 					big.NewInt(20180913153211),
 				)
 				Expect(err).ToNot(HaveOccurred())
@@ -157,7 +163,7 @@ var _ = Describe("addTokens", func() {
 			var tx *types.Transaction
 			BeforeEach(func() {
 				var err error
-				tx, err = TokenWhitelist.AddTokens(Controller.TransactOpts(), nil, nil, nil, nil, big.NewInt(20180913153211))
+				tx, err = TokenWhitelist.AddTokens(Controller.TransactOpts(), nil, nil, nil, nil, nil, big.NewInt(20180913153211))
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 			})
@@ -189,6 +195,7 @@ var _ = Describe("addTokens", func() {
 					DecimalsToMagnitude(big.NewInt(18)),
 					DecimalsToMagnitude(big.NewInt(8)),
 				},
+				[]bool{true, true},
 				[]bool{true, true},
 				big.NewInt(20180913153211),
 			)

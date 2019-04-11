@@ -23,6 +23,7 @@ var _ = Describe("updateRatesList", func() {
 				StringsToByte32("BNT", "TKN", "DGX"),
 				[]*big.Int{DecimalsToMagnitude(big.NewInt(18)), DecimalsToMagnitude(big.NewInt(8)), DecimalsToMagnitude(big.NewInt(18))},
 				[]bool{false, true, false},
+				[]bool{false, true, false},
 				big.NewInt(20180913153211),
 			)
 			Expect(err).ToNot(HaveOccurred())

@@ -39,6 +39,7 @@ var _ = Describe("callback", func() {
 					StringsToByte32("TKN"),
 					[]*big.Int{DecimalsToMagnitude(big.NewInt(18))},
 					[]bool{true},
+					[]bool{true},
 					big.NewInt(20180913153211),
 				)
 				Expect(err).ToNot(HaveOccurred())
@@ -95,13 +96,14 @@ var _ = Describe("callback", func() {
 								Expect(evt.Rate.String()).To(Equal(big.NewInt(int64(0.001702 * math.Pow10(18))).String()))
 							})
 							It("Should update the token's rate and timestamp ", func() {
-								symbol, magnitude, rate, available, loadable, lastUpdate, err := TokenWhitelist.GetTokenInfo(nil, common.HexToAddress("0xfe209bdE5CA32fa20E6728A005F26D651FFF5982"))
+								symbol, magnitude, rate, available, loadable, burnable, lastUpdate, err := TokenWhitelist.GetTokenInfo(nil, common.HexToAddress("0xfe209bdE5CA32fa20E6728A005F26D651FFF5982"))
 								Expect(err).ToNot(HaveOccurred())
 								Expect(symbol).To(Equal("TKN"))
 								Expect(magnitude.String()).To(Equal(DecimalsToMagnitude(big.NewInt(18)).String()))
 								Expect(rate.String()).To(Equal(big.NewInt(int64(0.001702 * math.Pow10(18))).String()))
 								Expect(available).To(BeTrue())
 								Expect(loadable).To(BeTrue())
+								Expect(burnable).To(BeTrue())
 								Expect(lastUpdate.String()).NotTo(Equal("20180913153211"))
 							})
 							It("Should fail when called again with the same (deleted, not valid) queryID", func() {
@@ -147,13 +149,14 @@ var _ = Describe("callback", func() {
 							})
 
 							It("Should NOT update the token's rate and timestamp ", func() {
-								symbol, magnitude, rate, available, loadable, lastUpdate, err := TokenWhitelist.GetTokenInfo(nil, common.HexToAddress("0xfe209bdE5CA32fa20E6728A005F26D651FFF5982"))
+								symbol, magnitude, rate, available, loadable, burnable, lastUpdate, err := TokenWhitelist.GetTokenInfo(nil, common.HexToAddress("0xfe209bdE5CA32fa20E6728A005F26D651FFF5982"))
 								Expect(err).ToNot(HaveOccurred())
 								Expect(symbol).To(Equal(""))
 								Expect(magnitude.String()).To(Equal("0"))
 								Expect(rate.String()).To(Equal(big.NewInt(0).String()))
 								Expect(available).To(BeFalse())
 								Expect(loadable).To(BeFalse())
+								Expect(burnable).To(BeFalse())
 								Expect(lastUpdate.String()).To(Equal("0"))
 							})
 						})
@@ -363,13 +366,14 @@ var _ = Describe("callback", func() {
 						Context("When the date is invalid", func() {
 							var timestamp *big.Int
 							BeforeEach(func() {
-								symbol, magnitude, rate, available, loadable, lastUpdate, err := TokenWhitelist.GetTokenInfo(nil, common.HexToAddress("0xfe209bdE5CA32fa20E6728A005F26D651FFF5982"))
+								symbol, magnitude, rate, available, loadable, burnable, lastUpdate, err := TokenWhitelist.GetTokenInfo(nil, common.HexToAddress("0xfe209bdE5CA32fa20E6728A005F26D651FFF5982"))
 								Expect(err).ToNot(HaveOccurred())
 								Expect(symbol).To(Equal("TKN"))
 								Expect(magnitude.String()).To(Equal(DecimalsToMagnitude(big.NewInt(18)).String()))
 								Expect(rate.String()).To(Equal(big.NewInt(0).String()))
 								Expect(available).To(BeTrue())
 								Expect(loadable).To(BeTrue())
+								Expect(burnable).To(BeTrue())
 								Expect(lastUpdate.String()).To(Equal("20180913153211"))
 								timestamp = lastUpdate
 							})
@@ -384,13 +388,14 @@ var _ = Describe("callback", func() {
 								Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*revert\("invalid signature"\);`))
 							})
 							It("Should NOT update the token's rate and timestamp ", func() {
-								symbol, magnitude, rate, available, loadable, lastUpdate, err := TokenWhitelist.GetTokenInfo(nil, common.HexToAddress("0xfe209bdE5CA32fa20E6728A005F26D651FFF5982"))
+								symbol, magnitude, rate, available, loadable, burnable, lastUpdate, err := TokenWhitelist.GetTokenInfo(nil, common.HexToAddress("0xfe209bdE5CA32fa20E6728A005F26D651FFF5982"))
 								Expect(err).ToNot(HaveOccurred())
 								Expect(symbol).To(Equal("TKN"))
 								Expect(magnitude).To(Equal(DecimalsToMagnitude(big.NewInt(18))))
 								Expect(rate.String()).To(Equal(big.NewInt(0).String()))
 								Expect(available).To(BeTrue())
 								Expect(loadable).To(BeTrue())
+								Expect(burnable).To(BeTrue())
 								Expect(lastUpdate.String()).To(Equal(timestamp.String()))
 							})
 						})
@@ -609,6 +614,7 @@ var _ = Describe("callback", func() {
 					StringsToByte32("TKN"),
 					[]*big.Int{DecimalsToMagnitude(big.NewInt(18))},
 					[]bool{true},
+					[]bool{false},
 					big.NewInt(20180913153211),
 				)
 				Expect(err).ToNot(HaveOccurred())
@@ -648,6 +654,7 @@ var _ = Describe("callback", func() {
 					[]common.Address{common.HexToAddress("0xfe209bdE5CA32fa20E6728A005F26D651FFF5982")},
 					StringsToByte32("TKN"),
 					[]*big.Int{DecimalsToMagnitude(big.NewInt(8))},
+					[]bool{true},
 					[]bool{true},
 					big.NewInt(20180913153211),
 				)

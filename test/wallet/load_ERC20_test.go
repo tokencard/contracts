@@ -74,6 +74,7 @@ var _ = Describe("wallet load ERC20", func() {
 						DecimalsToMagnitude(big.NewInt(18)),
 					},
 					[]bool{true, true},
+					[]bool{true, true},
 					big.NewInt(20180913153211),
 				)
 				Expect(err).ToNot(HaveOccurred())
@@ -348,6 +349,7 @@ var _ = Describe("wallet load ERC20", func() {
 					[]*big.Int{
 						DecimalsToMagnitude(big.NewInt(18)),
 					},
+					[]bool{true},
 					[]bool{true},
 					big.NewInt(20180913153211),
 				)

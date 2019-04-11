@@ -25,11 +25,11 @@ import "../externals/SafeMath.sol";
 
 /// @title The TokenWhitelist interface provides access to an external list of tokens.
 interface ITokenWhitelist {
-    function getTokenInfo(address) external view returns (string, uint256, uint256, bool, bool, uint256);
-    function getStablecoinInfo() external view returns (string, uint256, uint256, bool, bool, uint256);
+    function getTokenInfo(address) external view returns (string, uint256, uint256, bool, bool, bool, uint256);
+    function getStablecoinInfo() external view returns (string, uint256, uint256, bool, bool, bool, uint256);
     function getTokenAddressArray() external view returns (address[]);
     function updateTokenRate(address, uint, uint) external;
-    function stablecoin() public view returns (address);
+    function stablecoin() external view returns (address);
 }
 
 
@@ -40,7 +40,7 @@ contract TokenWhitelist is ENSResolvable, Controllable, Ownable {
 
     event UpdatedTokenRate(address _sender, address _token, uint _rate);
 
-    event AddedToken(address _sender, address _token, string _symbol, uint _magnitude, bool _loadable);
+    event AddedToken(address _sender, address _token, string _symbol, uint _magnitude, bool _loadable, bool _burnable);
     event RemovedToken(address _sender, address _token);
 
     struct Token {
@@ -49,6 +49,7 @@ contract TokenWhitelist is ENSResolvable, Controllable, Ownable {
         uint rate;        // Token exchange rate in wei
         bool available;   // Flags if the token is available or not
         bool loadable;    // Flags if token is loadable to the TokenCard
+        bool burnable;    // Flags if token is burnable in the TKN Holder contract
         uint lastUpdate;  // Time of the last rate update
     }
 
@@ -79,32 +80,30 @@ contract TokenWhitelist is ENSResolvable, Controllable, Ownable {
     /// @param _symbols ERC20 token names.
     /// @param _magnitude 10 to the power of number of decimal places used by each ERC20 token.
     /// @param _loadable is a bool that states whether or not a token is loadable to the TokenCard.
-    /// @param _updateDate date for the token updates. This will be compared to when oracle updates are received.
-    function addTokens(address[] _tokens, bytes32[] _symbols, uint[] _magnitude, bool[] _loadable, uint _updateDate) external onlyController {
+    /// @param _burnable is a bool that states whether or not a token is burnable in the TKN Holder Contract.
+    function addTokens(address[] _tokens, bytes32[] _symbols, uint[] _magnitude, bool[] _loadable, bool[] _burnable, uint _lastUpdate) external onlyController {
         // Require that all parameters have the same length.
-        require(_tokens.length == _symbols.length && _tokens.length == _magnitude.length && _tokens.length == _loadable.length, "parameter lengths do not match");
+        require(_tokens.length == _symbols.length && _tokens.length == _magnitude.length && _tokens.length == _loadable.length && _tokens.length == _loadable.length, "parameter lengths do not match");
         // Add each token to the list of supported tokens.
         for (uint i = 0; i < _tokens.length; i++) {
             // Require that the token isn't already available.
-            address token = _tokens[i];
-            require(!_tokenInfoMap[token].available, "token already available");
+            require(!_tokenInfoMap[_tokens[i]].available, "token already available");
             // Store the intermediate values.
             string memory symbol = _symbols[i].toSliceB32().toString();
-            uint magnitude = _magnitude[i];
-            bool loadable = _loadable[i];
             // Add the token to the token list.
-            _tokenInfoMap[token] = Token({
+            _tokenInfoMap[_tokens[i]] = Token({
                 symbol : symbol,
-                magnitude : magnitude,
+                magnitude : _magnitude[i],
                 rate : 0,
                 available : true,
-                loadable : loadable,
-                lastUpdate : _updateDate
+                loadable : _loadable[i],
+                burnable: _burnable[i],
+                lastUpdate : _lastUpdate
                 });
             // Add the token address to the address list.
-            _tokenAddressArray.push(token);
+            _tokenAddressArray.push(_tokens[i]);
             // Emit token addition event.
-            emit AddedToken(msg.sender, token, symbol, magnitude, loadable);
+            emit AddedToken(msg.sender, _tokens[i], symbol, _magnitude[i], _loadable[i], _burnable[i]);
         }
     }
 
@@ -147,14 +146,14 @@ contract TokenWhitelist is ENSResolvable, Controllable, Ownable {
         emit UpdatedTokenRate(msg.sender, _token, _rate);
     }
 
-    function getTokenInfo(address _a) external view returns (string, uint256, uint256, bool, bool, uint256) {
+    function getTokenInfo(address _a) external view returns (string, uint256, uint256, bool, bool, bool, uint256) {
         Token storage tokenInfo = _tokenInfoMap[_a];
-        return (tokenInfo.symbol, tokenInfo.magnitude, tokenInfo.rate, tokenInfo.available, tokenInfo.loadable, tokenInfo.lastUpdate);
+        return (tokenInfo.symbol, tokenInfo.magnitude, tokenInfo.rate, tokenInfo.available, tokenInfo.loadable, tokenInfo.burnable, tokenInfo.lastUpdate);
     }
 
-    function getStablecoinInfo() external view returns (string, uint256, uint256, bool, bool, uint256) {
+    function getStablecoinInfo() external view returns (string, uint256, uint256, bool, bool, bool, uint256) {
         Token storage stablecoinInfo = _tokenInfoMap[_stablecoin];
-        return (stablecoinInfo.symbol, stablecoinInfo.magnitude, stablecoinInfo.rate, stablecoinInfo.available, stablecoinInfo.loadable, stablecoinInfo.lastUpdate);
+        return (stablecoinInfo.symbol, stablecoinInfo.magnitude, stablecoinInfo.rate, stablecoinInfo.available, stablecoinInfo.loadable, stablecoinInfo.burnable, stablecoinInfo.lastUpdate);
     }
 
     function getTokenAddressArray() external view returns (address[]) {
@@ -162,7 +161,7 @@ contract TokenWhitelist is ENSResolvable, Controllable, Ownable {
     }
 
     /// @return the address of the stablecoin contract.
-    function stablecoin() public view returns (address) {
+    function stablecoin() external view returns (address) {
         return _stablecoin;
     }
 

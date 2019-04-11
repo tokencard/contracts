@@ -127,7 +127,7 @@ contract Oracle is ENSResolvable, usingOraclize, Claimable, Base64, Date, Contro
         address token = _queryToToken[_queryID];
         require(token != address(0), "queryID matches to address 0");
         // Get the corresponding token object.
-        ( , , , bool available, , uint256 lastUpdate) = _getTokenInfo(token);
+        ( , , , bool available, , , uint256 lastUpdate) = _getTokenInfo(token);
         require(available, "token must be available");
 
         bool valid;
@@ -189,7 +189,7 @@ contract Oracle is ENSResolvable, usingOraclize, Claimable, Base64, Date, Contro
             // Create a new oraclize query for each supported token.
             for (uint i = 0; i < tokenAddresses.length; i++) {
                 // Store the token symbol used in the query.
-                (string memory symbol, , , , , ) = _getTokenInfo(tokenAddresses[i]);
+                (string memory symbol, , , , , , ) = _getTokenInfo(tokenAddresses[i]);
 
                 strings.slice memory sym = symbol.toSlice();
                 // Create a new oraclize query from the component strings.
@@ -222,7 +222,7 @@ contract Oracle is ENSResolvable, usingOraclize, Claimable, Base64, Date, Contro
             // Create a new oraclize query for each supported token.
             for (uint i = 0; i < _tokenList.length; i++) {
                 //token must exist, revert if it doesn't
-                (string memory tokenSymbol, , , bool available , , ) = _getTokenInfo(_tokenList[i]);
+                (string memory tokenSymbol, , , bool available , , , ) = _getTokenInfo(_tokenList[i]);
                 require(available, "token must be available");
                 // Store the token symbol used in the query.
                 strings.slice memory symbol = tokenSymbol.toSlice();

@@ -562,7 +562,7 @@ func InitializeBackend() error {
 	}
 
 	// Add the TKN token to the oracle list.
-	tx, err = TokenWhitelist.AddTokens(Controller.TransactOpts(), []common.Address{TKNAddress}, StringsToByte32("TKN"), []*big.Int{ExponentiateDecimals(8)}, []bool{true}, big.NewInt(20180913153211))
+	tx, err = TokenWhitelist.AddTokens(Controller.TransactOpts(), []common.Address{TKNAddress}, StringsToByte32("TKN"), []*big.Int{ExponentiateDecimals(8)}, []bool{true}, []bool{true}, big.NewInt(20180913153211))
 	if err != nil {
 		return err
 	}
@@ -573,7 +573,7 @@ func InitializeBackend() error {
 	}
 
 	// Add the Stablecoin token to the oracle list.
-	tx, err = TokenWhitelist.AddTokens(Controller.TransactOpts(), []common.Address{StablecoinAddress}, StringsToByte32("DAI"), []*big.Int{ExponentiateDecimals(18)}, []bool{true}, big.NewInt(20180913153211))
+	tx, err = TokenWhitelist.AddTokens(Controller.TransactOpts(), []common.Address{StablecoinAddress}, StringsToByte32("DAI"), []*big.Int{ExponentiateDecimals(18)}, []bool{true}, []bool{true}, big.NewInt(20180913153211))
 	if err != nil {
 		return err
 	}
