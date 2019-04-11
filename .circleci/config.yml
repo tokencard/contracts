@@ -49,9 +49,6 @@ jobs:
       - run:
           command: myth -x ./contracts/licence.sol
           no_output_timeout: 30m
-      - run:
-          command: myth -x ./contracts/holder.sol
-          no_output_timeout: 30m
 
   snyk_check:
     docker:
