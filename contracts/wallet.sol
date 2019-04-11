@@ -43,6 +43,8 @@ contract ControllableOwnable is Controllable, Ownable {
 /// @dev This contract will allow the user to maintain a whitelist of addresses
 /// @dev These addresses will live outside of the various spend limits
 contract AddressWhitelist is ControllableOwnable {
+    using SafeMath for uint256;
+
     event AddedToWhitelist(address _sender, address[] _addresses);
     event SubmittedWhitelistAddition(address[] _addresses, bytes32 _hash);
     event CancelledWhitelistAddition(address _sender, bytes32 _hash);
@@ -51,7 +53,8 @@ contract AddressWhitelist is ControllableOwnable {
     event SubmittedWhitelistRemoval(address[] _addresses, bytes32 _hash);
     event CancelledWhitelistRemoval(address _sender, bytes32 _hash);
 
-    mapping(address => bool) public isWhitelisted;
+    mapping(address => bool) public whitelistMap;
+    address[] public whitelistArray;
     address[] private _pendingWhitelistAddition;
     address[] private _pendingWhitelistRemoval;
     bool public submittedWhitelistAddition;
@@ -90,7 +93,10 @@ contract AddressWhitelist is ControllableOwnable {
         require(!isSetWhitelist, "whitelist has already been initialized");
         // Add each of the provided addresses to the whitelist.
         for (uint i = 0; i < _addresses.length; i++) {
-            isWhitelisted[_addresses[i]] = true;
+            // adds to the whitelist mapping
+            whitelistMap[_addresses[i]] = true;
+            // adds to the whitelist array
+            whitelistArray.push(_addresses[i]);
         }
         isSetWhitelist = true;
         // Emit the addition event.
@@ -122,7 +128,12 @@ contract AddressWhitelist is ControllableOwnable {
         require(_hash == calculateHash(_pendingWhitelistAddition), "hash of the pending whitelist addition do not match");
         // Whitelist pending addresses.
         for (uint i = 0; i < _pendingWhitelistAddition.length; i++) {
-            isWhitelisted[_pendingWhitelistAddition[i]] = true;
+            // check if it doesn't exist already.
+            if (!whitelistMap[_pendingWhitelistAddition[i]]) {
+                 // add to the Map and the Array
+                whitelistMap[_pendingWhitelistAddition[i]] = true;
+                whitelistArray.push(_pendingWhitelistAddition[i]);
+            }
         }
         // Emit the addition event.
         emit AddedToWhitelist(msg.sender, _pendingWhitelistAddition);
@@ -169,7 +180,17 @@ contract AddressWhitelist is ControllableOwnable {
         require(_hash == calculateHash(_pendingWhitelistRemoval), "hash of the pending whitelist removal does not match the confirmed hash");
         // Remove pending addresses.
         for (uint i = 0; i < _pendingWhitelistRemoval.length; i++) {
-            isWhitelisted[_pendingWhitelistRemoval[i]] = false;
+            // check if it exists
+            if (whitelistMap[_pendingWhitelistRemoval[i]]) {
+                whitelistMap[_pendingWhitelistRemoval[i]] = false;
+                for (uint j = 0; j < whitelistArray.length.sub(1); j++) {
+                    if (whitelistArray[j] == _pendingWhitelistRemoval[i]) {
+                        whitelistArray[j] = whitelistArray[whitelistArray.length - 1];
+                        break;
+                    }
+                }
+                whitelistArray.length--;
+            }
         }
         // Emit the removal event.
         emit RemovedFromWhitelist(msg.sender, _pendingWhitelistRemoval);
@@ -500,7 +521,7 @@ contract Vault is AddressWhitelist, SpendLimit, ERC165, TokenWhitelistable {
         require(_to != address(0), "_to address cannot be set to 0x0");
 
         // If address is not whitelisted, take daily limit into account.
-        if (!isWhitelisted[_to]) {
+        if (!whitelistMap[_to]) {
             //initialize ether value in case the asset is ETH
             uint etherValue = _amount;
             // Convert token amount to ether value if asset is an ERC20 token.
@@ -629,7 +650,7 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
                 address toOrSpender = _bytesToAddress(_data, 4 + 12);
 
                 // Check if the toOrSpender is in the whitelist
-                if (!isWhitelisted[toOrSpender]) {
+                if (!whitelistMap[toOrSpender]) {
                     // If the address (of the token contract, e.g) is not in the TokenWhitelist used by
                     // the convert method, then etherValue will be zero
                     uint etherValue = convertToEther(_destination, amount);
@@ -640,7 +661,7 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
 
         // If value is send across as a part of this executeTransaction, this will be sent to any payable
         // destination. As a result enforceLimit if destination is not whitelisted.
-        if (!isWhitelisted[_destination]) {
+        if (!whitelistMap[_destination]) {
             _enforceLimit(_spendLimit, _value);
         }
 
@@ -659,7 +680,7 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
     /// @param _amount amount of token in base units.
     function convertToStablecoin(address _token, uint _amount) public view returns (uint) {
         //avoid the unnecessary calculations if the token to be loaded is the stablecoin itself
-        if (_token == _stablecoin()){
+        if (_token == _stablecoin()) {
             return _amount;
         }
         //0x0 represents ether
