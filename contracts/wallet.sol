@@ -103,6 +103,8 @@ contract Whitelist is Controllable, Ownable {
     function submitWhitelistAddition(address[] _addresses) external onlyOwner noActiveSubmission hasNoOwnerOrZeroAddress(_addresses)  {
         // Require that the whitelist has been initialized.
         require(initializedWhitelist, "whitelist has not been initialized");
+        // Require this array of addresses not empty
+        require(_addresses.length > 0, "pending whitelist addition is empty");
         // Set the provided addresses to the pending addition addresses.
         _pendingWhitelistAddition = _addresses;
         // Flag the operation as submitted.
@@ -133,6 +135,8 @@ contract Whitelist is Controllable, Ownable {
 
     /// @dev Cancel pending whitelist addition.
     function cancelWhitelistAddition(bytes32 _hash) external onlyController {
+        // Check if operation has been submitted.
+        require(submittedWhitelistAddition, "whitelist addition has not been submitted");
         // Require that confirmation hash and the hash of the pending whitelist addition match
         require(_hash == pendingWhitelistHash(_pendingWhitelistAddition), "hash of the pending whitelist addition does not match");
         // Reset pending addresses.
@@ -146,6 +150,10 @@ contract Whitelist is Controllable, Ownable {
     /// @dev Remove addresses from the whitelist.
     /// @param _addresses are the Ethereum addresses to be removed.
     function submitWhitelistRemoval(address[] _addresses) external onlyOwner noActiveSubmission {
+        // Require that the whitelist has been initialized.
+        require(initializedWhitelist, "whitelist has not been initialized");
+        // Require that the array of addresses is not empty
+        require(_addresses.length > 0, "submitted whitelist removal is empty");
         // Add the provided addresses to the pending addition list.
         _pendingWhitelistRemoval = _addresses;
         // Flag the operation as submitted.
@@ -158,7 +166,6 @@ contract Whitelist is Controllable, Ownable {
     function confirmWhitelistRemoval(bytes32 _hash) external onlyController {
         // Require that the pending whitelist is not empty and the operation has been submitted.
         require(submittedWhitelistRemoval, "whitelist removal has not been submitted");
-        require(_pendingWhitelistRemoval.length > 0, "pending whitelist removal is empty");
         // Require that confirmation hash and the hash of the pending whitelist removal match
         require(_hash == pendingWhitelistHash(_pendingWhitelistRemoval), "hash of the pending whitelist removal does not match the confirmed hash");
         // Remove pending addresses.
@@ -175,6 +182,8 @@ contract Whitelist is Controllable, Ownable {
 
     /// @dev Cancel pending removal of whitelisted addresses.
     function cancelWhitelistRemoval(bytes32 _hash) external onlyController {
+        // Check if operation has been submitted.
+        require(submittedWhitelistRemoval, "whitelist removal has not been submitted");
         // Require that confirmation hash and the hash of the pending whitelist removal match
         require(_hash == pendingWhitelistHash(_pendingWhitelistRemoval), "hash of the pending whitelist removal does not match");
         // Reset pending addresses.
@@ -238,8 +247,6 @@ contract SpendLimit is Controllable, Ownable {
     function submitSpendLimit(uint _amount) external onlyOwner {
         // Require that the spend limit has been initialized.
         require(initializedSpendLimit, "spend limit has not been initialized");
-        // Require that the operation has been submitted.
-        require(!submittedSpendLimit, "spend limit has already been submitted");
         // Assign the provided amount to pending daily limit change.
         pendingSpendLimit = _amount;
         // Flag the operation as submitted.
@@ -266,6 +273,8 @@ contract SpendLimit is Controllable, Ownable {
 
     /// @dev Cancel pending set daily limit operation.
     function cancelSpendLimit(uint _amount) external onlyController {
+        // Require a spendlimit has been submitted
+        require(submittedSpendLimit, "a spendlimit needs to be submitted");
         // Require that pending and confirmed spend limit are the same
         require(pendingSpendLimit == _amount, "pending and cancelled spend limits dont match");
         // Reset pending daily limit.
@@ -311,6 +320,7 @@ contract SpendLimit is Controllable, Ownable {
 contract Vault is Whitelist, SpendLimit, ERC165 {
     event Received(address _from, uint _amount);
     event Transferred(address _to, address _asset, uint _amount);
+    event BulkTransferred(address _to, address[] _assets);
 
     using SafeMath for uint256;
 
@@ -358,11 +368,33 @@ contract Vault is Whitelist, SpendLimit, ERC165 {
         }
     }
 
+    /// @dev This is a bulk transfer convenience function, used to migrate contracts.
+    /// If any of the transfers fail, this will revert.
+    /// @param _to is the recipient's address, can't be the zero (0x0) address: transfer() will revert.
+    /// @param _assets is an array of addresses of ERC20 tokens or 0x0 for ether.
+    function bulkTransfer(address _to, address[] _assets) public onlyOwner {
+        // check to make sure that _assets isn't empty
+        require(_assets.length != 0, "asset array should be non-empty");
+        // This loops through all of the transfers to be made
+        for (uint i = 0; i < _assets.length; i++) {
+            uint amount;
+            // Get amount based on whether eth or erc20
+            if (_assets[i] == address(0)) {
+                amount = address(this).balance;
+            } else {
+                amount = ERC20(_assets[i]).balanceOf(address(this));
+            }
+            // use our safe, daily limit protected transfer
+            transfer(_to, _assets[i], amount);
+        }
+        emit BulkTransferred(_to, _assets);
+    }
+
     /// @dev Transfers the specified asset to the recipient's address.
     /// @param _to is the recipient's address.
     /// @param _asset is the address of an ERC20 token or 0x0 for ether.
     /// @param _amount is the amount of tokens to be transferred in base units.
-    function transfer(address _to, address _asset, uint _amount) external onlyOwner isNotZero(_amount) {
+    function transfer(address _to, address _asset, uint _amount) public onlyOwner isNotZero(_amount) {
         // Checks if the _to address is not the zero-address
         require(_to != address(0), "_to address cannot be set to 0x0");
 
@@ -469,8 +501,6 @@ contract Wallet is Vault {
     function submitTopUpLimit(uint _amount) external onlyOwner {
         // Require that the top up limit has been initialized.
         require(initializedTopUpLimit, "top up limit has not been initialized");
-        // Require that the operation has not been submitted.
-        require(!submittedTopUpLimit, "top up limit has already been submitted");
         // Require that the limit amount is within the acceptable range.
         require(MINIMUM_TOPUP_LIMIT <= _amount && _amount <= MAXIMUM_TOPUP_LIMIT, "top up amount is outside of the min/max range");
         // Assign the provided amount to pending daily limit change.
@@ -501,6 +531,8 @@ contract Wallet is Vault {
 
     /// @dev Cancel pending set top up limit operation.
     function cancelTopUpLimit(uint _amount) external onlyController {
+        // Make sure a topup limit update has been submitted
+        require(submittedTopUpLimit, "a topup limit has to be submitted");
         // Require that pending and confirmed spend limit are the same
         require(pendingTopUpLimit == _amount, "pending and cancelled top up limits dont match");
         // Reset pending daily limit.
