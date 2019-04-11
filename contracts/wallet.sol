@@ -209,9 +209,7 @@ contract DailyLimitTrait {
         uint value;
         uint available;
         uint limitDay;
-
         uint pending;
-        bool submitted;
         bool set;
     }
 
@@ -249,38 +247,16 @@ contract DailyLimitTrait {
     function _submitLimitUpdate(DailyLimit storage dl, uint _amount) internal {
         // Require that the spend limit has been set.
         require(dl.set, "limit has not been set");
-        // Require that the operation has been submitted.
-        require(!dl.submitted, "limit has already been submitted");
-        // Assign the provided amount to pending daily limit change.
+        // Assign the provided amount to pending daily limit.
         dl.pending = _amount;
-        // Flag the operation as submitted.
-        dl.submitted = true;
     }
 
     /// @dev Confirm pending set daily limit operation.
     function _confirmLimitUpdate(DailyLimit storage dl, uint _amount) internal {
-        // Require that the operation has been submitted.
-        require(dl.submitted, "limit has not been submitted");
         // Require that pending and confirmed spend limit are the same
         require(dl.pending == _amount, "confirmed and submitted limits dont match");
         // Modify spend limit based on the pending value.
         _modifyLimit(dl, dl.pending);
-        // Reset the submission flag.
-        dl.submitted = false;
-        // Reset pending daily limit.
-        dl.pending = 0;
-    }
-
-    /// @dev Cancel pending set daily limit operation.
-    function _cancelLimitUpdate(DailyLimit storage dl, uint _amount) internal {
-        // Check if there has been a limit update submitted
-        require(dl.submitted, "limit update not submitted");
-        // Require that pending and confirmed spend limit are the same
-        require(dl.pending == _amount, "confirmed and cancelled limits dont match");
-        // Reset pending daily limit.
-        dl.pending = 0;
-        // Reset the submitted operation flag.
-        dl.submitted = false;
     }
 
     /// @dev Update available spend limit based on the daily reset.
@@ -313,13 +289,12 @@ contract DailyLimitTrait {
 contract SpendLimit is ControllableOwnable, DailyLimitTrait {
     event SetSpendLimit(address _sender, uint _amount);
     event SubmittedSpendLimitUpdate(uint _amount);
-    event CancelledSpendLimitUpdate(address _sender, uint _amount);
 
     DailyLimit internal _spendLimit;
 
     /// @dev Constructor initializes the daily spend limit in wei.
     constructor(uint _limit) internal {
-        _spendLimit = DailyLimit(_limit, _limit, now, 0, false, false);
+        _spendLimit = DailyLimit(_limit, _limit, now, 0, false);
     }
 
     /// @dev Sets the initial daily spend (aka transfer) limit for non-whitelisted addresses.
@@ -342,12 +317,6 @@ contract SpendLimit is ControllableOwnable, DailyLimitTrait {
         emit SetSpendLimit(msg.sender, _amount);
     }
 
-    /// @dev Cancel pending set daily limit operation.
-    function cancelSpendLimitUpdate(uint _amount) external onlyOwnerOrController {
-        _cancelLimitUpdate(_spendLimit, _amount);
-        emit CancelledSpendLimitUpdate(msg.sender, _amount);
-    }
-
     function spendLimitAvailable() public view returns (uint) {
         return _getAvailableLimit(_spendLimit);
     }
@@ -358,10 +327,6 @@ contract SpendLimit is ControllableOwnable, DailyLimitTrait {
 
     function spendLimitSet() public view returns (bool) {
         return _spendLimit.set;
-    }
-
-    function spendLimitSubmitted() public view returns (bool) {
-        return _spendLimit.submitted;
     }
 
     function spendLimitPending() public view returns (uint) {
@@ -375,7 +340,6 @@ contract GasTopUpLimit is ControllableOwnable, DailyLimitTrait {
 
     event SetGasTopUpLimit(address _sender, uint _amount);
     event SubmittedGasTopUpLimitUpdate(uint _amount);
-    event CancelledGasTopUpLimitUpdate(address _sender, uint _amount);
 
     uint constant private _MINIMUM_GAS_TOPUP_LIMIT = 1 finney;
     uint constant private _MAXIMUM_GAS_TOPUP_LIMIT = 500 finney;
@@ -384,7 +348,7 @@ contract GasTopUpLimit is ControllableOwnable, DailyLimitTrait {
 
     /// @dev Constructor initializes the daily gas topup limit in wei.
     constructor() internal {
-        _gasTopUpLimit = DailyLimit(_MAXIMUM_GAS_TOPUP_LIMIT, _MAXIMUM_GAS_TOPUP_LIMIT, now, 0, false, false);
+        _gasTopUpLimit = DailyLimit(_MAXIMUM_GAS_TOPUP_LIMIT, _MAXIMUM_GAS_TOPUP_LIMIT, now, 0, false);
     }
 
     /// @dev Sets the daily gas top up limit.
@@ -409,12 +373,6 @@ contract GasTopUpLimit is ControllableOwnable, DailyLimitTrait {
         emit SetGasTopUpLimit(msg.sender, _amount);
     }
 
-    /// @dev Cancel pending set top up gas limit operation.
-    function cancelGasTopUpLimitUpdate(uint _amount) external onlyOwnerOrController {
-        _cancelLimitUpdate(_gasTopUpLimit, _amount);
-        emit CancelledGasTopUpLimitUpdate(msg.sender, _amount);
-    }
-
     function gasTopUpLimitAvailable() public view returns (uint) {
         return _getAvailableLimit(_gasTopUpLimit);
     }
@@ -425,10 +383,6 @@ contract GasTopUpLimit is ControllableOwnable, DailyLimitTrait {
 
     function gasTopUpLimitSet() public view returns (bool) {
         return _gasTopUpLimit.set;
-    }
-
-    function gasTopUpLimitSubmitted() public view returns (bool) {
-        return _gasTopUpLimit.submitted;
     }
 
     function gasTopUpLimitPending() public view returns (uint) {
@@ -442,7 +396,6 @@ contract LoadLimit is ControllableOwnable, DailyLimitTrait {
 
     event SetLoadLimit(address _sender, uint _amount);
     event SubmittedLoadLimitUpdate(uint _amount);
-    event CancelledLoadLimitUpdate(address _sender, uint _amount);
 
     uint constant private _MINIMUM_LOAD_LIMIT = 1 finney;
     uint private _maximumLoadLimit;
@@ -471,12 +424,6 @@ contract LoadLimit is ControllableOwnable, DailyLimitTrait {
         emit SetLoadLimit(msg.sender, _amount);
     }
 
-    /// @dev Cancel pending set load limit operation.
-    function cancelLoadLimitUpdate(uint _amount) external onlyOwnerOrController {
-        _cancelLimitUpdate(_loadLimit, _amount);
-        emit CancelledLoadLimitUpdate(msg.sender, _amount);
-    }
-
     function loadLimitAvailable() public view returns (uint) {
         return _getAvailableLimit(_loadLimit);
     }
@@ -489,10 +436,6 @@ contract LoadLimit is ControllableOwnable, DailyLimitTrait {
         return _loadLimit.set;
     }
 
-    function loadLimitSubmitted() public view returns (bool) {
-        return _loadLimit.submitted;
-    }
-
     function loadLimitPending() public view returns (uint) {
         return _loadLimit.pending;
     }
@@ -501,7 +444,7 @@ contract LoadLimit is ControllableOwnable, DailyLimitTrait {
     /// @param _maxLimit is the maximum load limit amount in stablecoin base units.
     function _initializeLoadLimit(uint _maxLimit) internal {
         _maximumLoadLimit = _maxLimit;
-        _loadLimit = DailyLimit(_maximumLoadLimit, _maximumLoadLimit, now, 0, false, false);
+        _loadLimit = DailyLimit(_maximumLoadLimit, _maximumLoadLimit, now, 0, false);
     }
 }
 
