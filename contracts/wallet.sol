@@ -43,6 +43,8 @@ contract ControllableOwnable is Controllable, Ownable {
 /// @dev This contract will allow the user to maintain a whitelist of addresses
 /// @dev These addresses will live outside of the various spend limits
 contract AddressWhitelist is ControllableOwnable {
+    using SafeMath for uint256;
+
     event AddedToWhitelist(address _sender, address[] _addresses);
     event SubmittedWhitelistAddition(address[] _addresses, bytes32 _hash);
     event CancelledWhitelistAddition(address _sender, bytes32 _hash);
@@ -91,7 +93,7 @@ contract AddressWhitelist is ControllableOwnable {
         require(!isSetWhitelist, "whitelist has already been initialized");
         // Add each of the provided addresses to the whitelist.
         for (uint i = 0; i < _addresses.length; i++) {
-            // adds to the whitelist mapping 
+            // adds to the whitelist mapping
             whitelistMap[_addresses[i]] = true;
             // adds to the whitelist array
             whitelistArray.push(_addresses[i]);
@@ -126,12 +128,12 @@ contract AddressWhitelist is ControllableOwnable {
         require(_hash == calculateHash(_pendingWhitelistAddition), "hash of the pending whitelist addition do not match");
         // Whitelist pending addresses.
         for (uint i = 0; i < _pendingWhitelistAddition.length; i++) {
-            // check if it doesn't exist already.    
+            // check if it doesn't exist already.
             if (!whitelistMap[_pendingWhitelistAddition[i]]) {
-                 // add to the Map and the Array   
+                 // add to the Map and the Array
                 whitelistMap[_pendingWhitelistAddition[i]] = true;
                 whitelistArray.push(_pendingWhitelistAddition[i]);
-            }    
+            }
         }
         // Emit the addition event.
         emit AddedToWhitelist(msg.sender, _pendingWhitelistAddition);
@@ -178,14 +180,14 @@ contract AddressWhitelist is ControllableOwnable {
         require(_hash == calculateHash(_pendingWhitelistRemoval), "hash of the pending whitelist removal does not match the confirmed hash");
         // Remove pending addresses.
         for (uint i = 0; i < _pendingWhitelistRemoval.length; i++) {
-            // check if it exists    
+            // check if it exists
             if (whitelistMap[_pendingWhitelistRemoval[i]]) {
                 whitelistMap[_pendingWhitelistRemoval[i]] = false;
-                for (uint j = 0; j < whitelistArray.length - 1; j++) {
+                for (uint j = 0; j < whitelistArray.length.sub(1); j++) {
                     if (whitelistArray[j] == _pendingWhitelistRemoval[i]) {
                         whitelistArray[j] = whitelistArray[whitelistArray.length - 1];
                         break;
-                    }        
+                    }
                 }
                 whitelistArray.length--;
             }
