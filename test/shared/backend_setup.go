@@ -100,10 +100,8 @@ var OracleAddress common.Address
 var TKNBurner *bindings.Token
 var TKNBurnerAddress common.Address
 
-var TokenHolder *bindings.Holder
-var TokenHolderAddress common.Address
-
 var CryptoFloatAddress common.Address
+var TokenHolderAddress common.Address
 
 var Licence *bindings.Licence
 var LicenceAddress common.Address
@@ -474,19 +472,9 @@ func InitializeBackend() error {
 		return errors.Wrap(err, "deploying TKN contract")
 	}
 
-	// Deploy the Token holder contract.
-	TokenHolderAddress, tx, TokenHolder, err = bindings.DeployHolder(Controller.TransactOpts(), Backend, TKNBurnerAddress)
-	if err != nil {
-		return err
-	}
-	Backend.Commit()
-	err = verifyTransaction(tx)
-	if err != nil {
-		return errors.Wrap(err, "deploying holder contract")
-	}
-
 	// Deploy the Token licence contract.
 	CryptoFloatAddress = common.HexToAddress(stringToHashString("CryptoFloatAddress"))
+	TokenHolderAddress = common.HexToAddress(stringToHashString("TokenHolderAddress"))
 	LicenceAddress, tx, Licence, err = bindings.DeployLicence(BankAccount.TransactOpts(), Backend, Owner.Address(), true, big.NewInt(10), CryptoFloatAddress, TokenHolderAddress, common.HexToAddress("0x0"))
 	if err != nil {
 		return err
