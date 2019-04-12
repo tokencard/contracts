@@ -15,8 +15,6 @@ contract_sources=(
   'tkn'
   'licence'
   'mocks/token'
-  'mocks/oraclize-connector'
-  'mocks/oraclize-resolver'
   'mocks/base64-exporter'
   'mocks/parseIntScientific-exporter'
   'mocks/tokenWhitelistableExporter'
@@ -52,8 +50,6 @@ contracts=(
   "tkn/Token token.go Token bindings"
   "licence/Licence licence.go Licence bindings"
   "mocks/token/Token mocks/token.go Token mocks"
-  "mocks/oraclize-connector/Oraclize mocks/oraclize-connector.go Oraclize mocks"
-  "mocks/oraclize-resolver/OraclizeAddrResolver mocks/oraclize-resolver.go OraclizeAddrResolver mocks"
   "mocks/base64-exporter/Base64Exporter mocks/base64-exporter.go Base64Exporter mocks"
   "mocks/parseIntScientific-exporter/ParseIntScientificExporter mocks/parseIntScientific-exporter.go ParseIntScientificExporter mocks"
   "mocks/tokenWhitelistableExporter/TokenWhitelistableExporter mocks/tokenWhitelistableExporter.go TokenWhitelistableExporter mocks"
