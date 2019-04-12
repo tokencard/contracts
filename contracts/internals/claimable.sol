@@ -1,5 +1,5 @@
 /**
- *  The Consumer Contract Wallet
+ *  Claimable - The Consumer Contract Wallet
  *  Copyright (C) 2018 Token Group Ltd
  *
  *  This program is free software: you can redistribute it and/or modify
@@ -20,7 +20,8 @@ pragma solidity ^0.4.25;
 
 import "../externals/ERC20.sol";
 
-/// @title Withdrawable to withdraw tokens accidentally sent to a contract
+
+/// @title Claimable, allowing contract to withdraw tokens accidentally sent to itself
 contract Claimable {
 
     event Claimed(address _to, address _asset, uint _amount);
@@ -31,11 +32,13 @@ contract Claimable {
     /// @param _asset is the address of an ERC20 token or 0x0 for ether.
     /// @param _amount is the amount to be transferred in base units.
     function _claim(address _to, address _asset, uint _amount) internal {
+        // address(0) is used to denote ETH
         if (_asset == address(0)) {
-          _to.transfer(_amount);
+            _to.transfer(_amount);
         } else {
-          require(ERC20(_asset).transfer(_to, _amount), "ERC20 token transfer was unsuccessful");
+            require(ERC20(_asset).transfer(_to, _amount), "ERC20 token transfer was unsuccessful");
         }
+
         emit Claimed(_to, _asset, _amount);
     }
 }
