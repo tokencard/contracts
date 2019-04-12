@@ -44,6 +44,8 @@ contract TokenWhitelist is ENSResolvable, Controllable, Ownable {
     event AddedToken(address _sender, address _token, string _symbol, uint _magnitude, bool _loadable, bool _burnable);
     event RemovedToken(address _sender, address _token);
 
+    event UpdatedMaxStablecoinLoadLimit(address _sender, uint _newLimit);
+
     struct Token {
         string symbol;    // Token symbol
         uint magnitude;   // 10^decimals
@@ -148,6 +150,14 @@ contract TokenWhitelist is ENSResolvable, Controllable, Ownable {
         _tokenInfoMap[_token].lastUpdate = _updateDate;
         // Emit the rate update event.
         emit UpdatedTokenRate(msg.sender, _token, _rate);
+    }
+
+    /// @dev Update the maximum card load limit.
+    function  updateMaxStablecoinLoadLimit(uint _newLimit) external onlyController {
+        // Update current max load limit.
+        _maxStablecoinLoadLimit = _newLimit;
+        // Emit the loadLimit update event.
+        emit UpdatedMaxStablecoinLoadLimit(msg.sender, _newLimit);
     }
 
     function getTokenInfo(address _a) external view returns (string, uint256, uint256, bool, bool, bool, uint256) {
