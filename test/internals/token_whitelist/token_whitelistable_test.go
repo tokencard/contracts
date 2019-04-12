@@ -18,16 +18,28 @@ var _ = Describe("tokenWhitelistable", func() {
 		Expect(sa).To(Equal(StablecoinAddress))
 	})
 
-	It("Should return the orcale ENS-registered node", func() {
-		sa, err := TokenWhitelist.OracleNode(nil)
+	It("Should return the stablecoin's contract address", func() {
+		sa, err := TokenWhitelistableExporter.Stablecoin(nil)
 		Expect(err).ToNot(HaveOccurred())
-		Expect(sa).To(Equal([32]byte(OracleName)))
+		Expect(sa).To(Equal(StablecoinAddress))
 	})
 
 	It("Should return 10000", func() {
 		mll, err := TokenWhitelist.MaxStablecoinLoadLimit(nil)
 		Expect(err).ToNot(HaveOccurred())
 		Expect(mll.String()).To(Equal("10000"))
+	})
+
+	It("Should return 10000", func() {
+		mll, err := TokenWhitelistableExporter.MaxStablecoinLoadLimit(nil)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(mll.String()).To(Equal("10000"))
+	})
+
+	It("Should return the orcale ENS-registered node", func() {
+		sa, err := TokenWhitelist.OracleNode(nil)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(sa).To(Equal([32]byte(OracleName)))
 	})
 
 	It("Should return the tokenWhitelist ENS-registered node", func() {

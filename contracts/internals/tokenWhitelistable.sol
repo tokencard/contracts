@@ -65,13 +65,13 @@ contract TokenWhitelistable is ENSResolvable {
     }
 
     /// @return the address of the stablecoin contract.
-    function _maxStablecoinLoadLimit() internal view returns (uint) {
-        return ITokenWhitelist(_ensResolve(_tokenWhitelistNode)).maxStablecoinLoadLimit();
+    function _stablecoin() internal view returns (address) {
+        return ITokenWhitelist(_ensResolve(_tokenWhitelistNode)).stablecoin();
     }
 
     /// @return the address of the stablecoin contract.
-    function _stablecoin() internal view returns (address) {
-        return ITokenWhitelist(_ensResolve(_tokenWhitelistNode)).stablecoin();
+    function _maxStablecoinLoadLimit() internal view returns (uint) {
+        return ITokenWhitelist(_ensResolve(_tokenWhitelistNode)).maxStablecoinLoadLimit();
     }
 
     /// @return the token whitelist node registered in ENS.

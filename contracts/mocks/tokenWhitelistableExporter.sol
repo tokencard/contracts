@@ -35,4 +35,14 @@ contract TokenWhitelistableExporter is ENSResolvable, TokenWhitelistable {
       return _isTokenBurnable(_a);
   }
 
+  /// @return the address of the stablecoin contract.
+  function stablecoin() external view returns (address) {
+      return _stablecoin();
+  }
+
+  /// @return the address of the stablecoin contract.
+  function maxStablecoinLoadLimit() external view returns (uint) {
+      return _maxStablecoinLoadLimit();
+  }
+
 }
