@@ -30,6 +30,7 @@ interface ITokenWhitelist {
     function getTokenAddressArray() external view returns (address[]);
     function updateTokenRate(address, uint, uint) external;
     function stablecoin() external view returns (address);
+    function maxStablecoinLoadLimit() external view returns (uint);
 }
 
 
@@ -64,6 +65,9 @@ contract TokenWhitelist is ENSResolvable, Controllable, Ownable {
 
     /// @dev Address of the Stablecoin.
     address private _stablecoin;
+
+    /// @dev default value of max limit for loading the card in USD
+    uint private _maxStablecoinLoadLimit = 10000;
 
     /// @dev this is registered ENS node identifying the oracle contract.
     bytes32 private _oracleNode;
@@ -163,6 +167,11 @@ contract TokenWhitelist is ENSResolvable, Controllable, Ownable {
     /// @return the address of the stablecoin contract.
     function stablecoin() external view returns (address) {
         return _stablecoin;
+    }
+
+    /// @return the maximum card load limit .
+    function maxStablecoinLoadLimit() external view returns (uint) {
+        return _maxStablecoinLoadLimit;
     }
 
     /// @return the oracle node registered in ENS.

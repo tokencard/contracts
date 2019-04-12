@@ -24,6 +24,12 @@ var _ = Describe("tokenWhitelistable", func() {
 		Expect(sa).To(Equal([32]byte(OracleName)))
 	})
 
+	It("Should return 10000", func() {
+		mll, err := TokenWhitelist.MaxStablecoinLoadLimit(nil)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(mll.String()).To(Equal("10000"))
+	})
+
 	It("Should return the tokenWhitelist ENS-registered node", func() {
 		sa, err := TokenWhitelistableExporter.TokenWhitelistNode(nil)
 		Expect(err).ToNot(HaveOccurred())

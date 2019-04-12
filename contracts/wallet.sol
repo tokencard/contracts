@@ -571,8 +571,6 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
     event LoadedTokenCard(address _asset, uint _amount);
     event ExecutedTransaction(address _destination, uint _value, bytes _data);
 
-    uint constant private _DEFAULT_MAX_STABLECOIN_LOAD_LIMIT = 10000; //10,000 USD
-
     /// @dev Is the registered ENS node identifying the licence contract.
     bytes32 private _licenceNode;
 
@@ -592,7 +590,7 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
         // Get the stablecoin's magnitude.
         ( ,uint256 stablecoinMagnitude, , , , , ) = _getStablecoinInfo();
         require(stablecoinMagnitude > 0, "stablecoin not set");
-        _initializeLoadLimit(_DEFAULT_MAX_STABLECOIN_LOAD_LIMIT * stablecoinMagnitude);
+        _initializeLoadLimit(_maxStablecoinLoadLimit() * stablecoinMagnitude);
         _licenceNode = _licenceNameHash;
     }
 
