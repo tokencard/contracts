@@ -56,7 +56,7 @@ var _ = Describe("updateMaxStablecoinLoadLimit", func() {
 		})
 		When("called by a random account", func() {
 			It("Should fail", func() {
-				tx, err := TokenWhitelist.UpdateMaxStablecoinLoadLimit(RandomAccount.TransactOpts(ethertest.WithGasLimit(100000)),big.NewInt(15000))
+				tx, err := TokenWhitelistableExporter.UpdateMaxStablecoinLoadLimit(RandomAccount.TransactOpts(ethertest.WithGasLimit(100000)),big.NewInt(15000))
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 				Expect(isSuccessful(tx)).To(BeFalse())
