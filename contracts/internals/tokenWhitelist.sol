@@ -1,5 +1,5 @@
 /**
- *  The Consumer Contract Wallet
+ *  TokenWhitelist - The Consumer Contract Wallet
  *  Copyright (C) 2019 The Contract Wallet Company Limited
  *
  *  This program is free software: you can redistribute it and/or modify
@@ -23,17 +23,17 @@ import "./controllable.sol";
 import "../externals/strings.sol";
 import "../externals/SafeMath.sol";
 
-/// @title The TokenWhitelist interface provides access to an external list of tokens.
+/// @title The ITokenWhitelist interface provides access to a whitelist of tokens.
 interface ITokenWhitelist {
     function getTokenInfo(address) external view returns (string, uint256, uint256, bool, bool, bool, uint256);
     function getStablecoinInfo() external view returns (string, uint256, uint256, bool, bool, bool, uint256);
     function getTokenAddressArray() external view returns (address[]);
     function updateTokenRate(address, uint, uint) external;
-    function stablecoin() external view returns (address);
+    function getStablecoinAddress() external view returns (address);
 }
 
 
-/// @title TokenWhitelist stores a list of tokens used by the Consumer Contract Wallet, the Oracle, and the TKN Licence Contract
+/// @title TokenWhitelist stores a list of tokens used by the Consumer Contract Wallet, the Oracle, the TKN Holder and the TKN Licence Contract
 contract TokenWhitelist is ENSResolvable, Controllable, Ownable {
     using strings for *;
     using SafeMath for uint256;
@@ -62,25 +62,27 @@ contract TokenWhitelist is ENSResolvable, Controllable, Ownable {
         _;
     }
 
-    /// @dev Address of the Stablecoin.
+    /// @notice Address of the stablecoin.
     address private _stablecoin;
 
-    /// @dev this is registered ENS node identifying the oracle contract.
+    /// @notice is registered ENS node hash identifying the oracle contract.
     bytes32 private _oracleNode;
 
-    /// @dev Constructor initializes ens and the oracle.
+    /// @notice Constructor initializes ENSResolvable, Controllable, and Ownable
     /// @param _oracleNameHash is the ENS name hash of the Oracle.
+    /// @param _stabelcoinAddress is the address of the stablecoint used by the wallet
     constructor(address _ens, bytes32 _oracleNameHash, bytes32 _controllerNameHash, address _owner, bool _transferable, address _stabelcoinAddress) ENSResolvable(_ens) Controllable(_controllerNameHash) Ownable(_owner, _transferable) public {
         _oracleNode = _oracleNameHash;
         _stablecoin = _stabelcoinAddress;
     }
 
-    /// @dev Add ERC20 tokens to the list of supported tokens.
+    /// @notice Add ERC20 tokens to the list of whitelisted tokens.
     /// @param _tokens ERC20 token contract addresses.
     /// @param _symbols ERC20 token names.
     /// @param _magnitude 10 to the power of number of decimal places used by each ERC20 token.
     /// @param _loadable is a bool that states whether or not a token is loadable to the TokenCard.
     /// @param _burnable is a bool that states whether or not a token is burnable in the TKN Holder Contract.
+    /// @param _lastUpdate is a unit representing an ISO datetime e.g. 20180913153211
     function addTokens(address[] _tokens, bytes32[] _symbols, uint[] _magnitude, bool[] _loadable, bool[] _burnable, uint _lastUpdate) external onlyController {
         // Require that all parameters have the same length.
         require(_tokens.length == _symbols.length && _tokens.length == _magnitude.length && _tokens.length == _loadable.length && _tokens.length == _loadable.length, "parameter lengths do not match");
@@ -107,7 +109,7 @@ contract TokenWhitelist is ENSResolvable, Controllable, Ownable {
         }
     }
 
-    /// @dev Remove ERC20 tokens from the list of supported tokens.
+    /// @notice Remove ERC20 tokens from the whitelist of tokens.
     /// @param _tokens ERC20 token contract addresses.
     function removeTokens(address[] _tokens) external onlyController {
         // Delete each token object from the list of supported tokens based on the addresses provided.
@@ -131,7 +133,7 @@ contract TokenWhitelist is ENSResolvable, Controllable, Ownable {
         }
     }
 
-    /// @dev Update ERC20 token exchange rate manually.
+    /// @notice Update ERC20 token exchange rate.
     /// @param _token ERC20 token contract address.
     /// @param _rate ERC20 token exchange rate in wei.
     /// @param _updateDate date for the token updates. This will be compared to when oracle updates are received.
@@ -146,27 +148,48 @@ contract TokenWhitelist is ENSResolvable, Controllable, Ownable {
         emit UpdatedTokenRate(msg.sender, _token, _rate);
     }
 
+    /// @notice This returns all of the fields for a given token
+    /// @param _a is the address of a given token
+    /// @return string of the token's symbol
+    /// @return uint of the token's magnitude
+    /// @return uint of the token's exchange rate to ETH
+    /// @return bool whether the token is available
+    /// @return bool whether the token is loadable to the TokenCard 
+    /// @return bool whether the token is burnable to the TKN Holder Contract
+    /// @return uint of the lastUpdated time of the token's exchange rate
     function getTokenInfo(address _a) external view returns (string, uint256, uint256, bool, bool, bool, uint256) {
         Token storage tokenInfo = _tokenInfoMap[_a];
         return (tokenInfo.symbol, tokenInfo.magnitude, tokenInfo.rate, tokenInfo.available, tokenInfo.loadable, tokenInfo.burnable, tokenInfo.lastUpdate);
     }
 
+    /// @notice This returns all of the fields for our StableCoin
+    /// @return string of the token's symbol
+    /// @return uint of the token's magnitude
+    /// @return uint of the token's exchange rate to ETH
+    /// @return bool whether the token is available
+    /// @return bool whether the token is loadable to the TokenCard 
+    /// @return bool whether the token is burnable to the TKN Holder Contract
+    /// @return uint of the lastUpdated time of the token's exchange rate
     function getStablecoinInfo() external view returns (string, uint256, uint256, bool, bool, bool, uint256) {
         Token storage stablecoinInfo = _tokenInfoMap[_stablecoin];
         return (stablecoinInfo.symbol, stablecoinInfo.magnitude, stablecoinInfo.rate, stablecoinInfo.available, stablecoinInfo.loadable, stablecoinInfo.burnable, stablecoinInfo.lastUpdate);
     }
 
+    /// @notice This returns an array of our whitelisted address
+    /// @return address[] of our whitelisted tokens
     function getTokenAddressArray() external view returns (address[]) {
         return _tokenAddressArray;
     }
 
+    /// @notice This returns the address of our stablecoin of choice
     /// @return the address of the stablecoin contract.
-    function stablecoin() external view returns (address) {
+    function getStablecoinAddress() external view returns (address) {
         return _stablecoin;
     }
 
+    /// @notice this returns the node hash of our Oracle
     /// @return the oracle node registered in ENS.
-    function oracleNode() public view returns (bytes32) {
+    function oracleNode() external view returns (bytes32) {
         return _oracleNode;
     }
 }

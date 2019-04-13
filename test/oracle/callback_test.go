@@ -165,7 +165,7 @@ var _ = Describe("callback", func() {
 
 							BeforeEach(func() {
 								//update the public key, needed because we sign our own (misformated) results for the callback
-								tx, err := Oracle.UpdateAPIPublicKey(Controller.TransactOpts(), common.Hex2Bytes("717580b4c7577ebe0a7c3c21213ffbfa1221d2c1fe455d4897800d86eb65d91f8fb6c2304a54d89ab5c13a690f03dce25f7d46af90f79908d6be8bcdcdf74c22"))
+								tx, err := Oracle.UpdateCryptoCompareAPIPublicKey(Controller.TransactOpts(), common.Hex2Bytes("717580b4c7577ebe0a7c3c21213ffbfa1221d2c1fe455d4897800d86eb65d91f8fb6c2304a54d89ab5c13a690f03dce25f7d46af90f79908d6be8bcdcdf74c22"))
 								Expect(err).ToNot(HaveOccurred())
 								Backend.Commit()
 								Expect(isSuccessful(tx)).To(BeTrue())
@@ -220,7 +220,7 @@ var _ = Describe("callback", func() {
 
 							BeforeEach(func() {
 								//update the public key, needed because we sign our own (misformated) results for the callback
-								tx, err := Oracle.UpdateAPIPublicKey(Controller.TransactOpts(), common.Hex2Bytes("717580b4c7577ebe0a7c3c21213ffbfa1221d2c1fe455d4897800d86eb65d91f8fb6c2304a54d89ab5c13a690f03dce25f7d46af90f79908d6be8bcdcdf74c22"))
+								tx, err := Oracle.UpdateCryptoCompareAPIPublicKey(Controller.TransactOpts(), common.Hex2Bytes("717580b4c7577ebe0a7c3c21213ffbfa1221d2c1fe455d4897800d86eb65d91f8fb6c2304a54d89ab5c13a690f03dce25f7d46af90f79908d6be8bcdcdf74c22"))
 								Expect(err).ToNot(HaveOccurred())
 								Backend.Commit()
 								Expect(isSuccessful(tx)).To(BeTrue())
@@ -442,7 +442,7 @@ var _ = Describe("callback", func() {
 							Context("When the signature is valid but the proof is not", func() {
 								BeforeEach(func() {
 									//update the public key, needed because we create our own proofs
-									tx, err := Oracle.UpdateAPIPublicKey(Controller.TransactOpts(), common.Hex2Bytes("717580b4c7577ebe0a7c3c21213ffbfa1221d2c1fe455d4897800d86eb65d91f8fb6c2304a54d89ab5c13a690f03dce25f7d46af90f79908d6be8bcdcdf74c22"))
+									tx, err := Oracle.UpdateCryptoCompareAPIPublicKey(Controller.TransactOpts(), common.Hex2Bytes("717580b4c7577ebe0a7c3c21213ffbfa1221d2c1fe455d4897800d86eb65d91f8fb6c2304a54d89ab5c13a690f03dce25f7d46af90f79908d6be8bcdcdf74c22"))
 									Expect(err).ToNot(HaveOccurred())
 									Backend.Commit()
 									Expect(isSuccessful(tx)).To(BeTrue())
@@ -575,14 +575,14 @@ var _ = Describe("callback", func() {
 					id = stringToQueryID("https://min-api.cryptocompare.com/data/price?fsym=TKN&tsyms=ETH&sign=true")
 				})
 				BeforeEach(func() {
-					tx, err := Oracle.UpdateAPIPublicKey(Controller.TransactOpts(), common.Hex2Bytes("fffffff"))
+					tx, err := Oracle.UpdateCryptoCompareAPIPublicKey(Controller.TransactOpts(), common.Hex2Bytes("fffffff"))
 					Expect(err).ToNot(HaveOccurred())
 					Backend.Commit()
 					Expect(isSuccessful(tx)).To(BeTrue())
 				})
 
 				It("Should update public key", func() {
-					key, err := Oracle.APIPublicKey(nil)
+					key, err := Oracle.CryptoCompareAPIPublicKey(nil)
 					Expect(err).ToNot(HaveOccurred())
 					Expect(key).To(Equal(common.Hex2Bytes("fffffff")))
 				})

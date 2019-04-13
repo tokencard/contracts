@@ -1,5 +1,5 @@
 /**
- *  The Consumer Contract Wallet
+ *  ParseIntScientific - The Consumer Contract Wallet
  *  Copyright (C) 2018 The Contract Wallet Company Limited
  *
  *  This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@ pragma solidity ^0.4.25;
 
 import "../externals/SafeMath.sol";
 
+
 /// @title ParseIntScientific provides floating point in scientific notation (e.g. e-5) parsing functionality.
 contract ParseIntScientific {
 
@@ -31,19 +32,19 @@ contract ParseIntScientific {
     byte constant private _ZERO_ASCII = byte(48); //decimal value of '0'
     byte constant private _NINE_ASCII = byte(57); //decimal value of '9'
     byte constant private _E_ASCII = byte(69); //decimal value of 'E'
-    byte constant private _e_ASCII = byte(101); //decimal value of 'e'
+    byte constant private _LOWERCASE_E_ASCII = byte(101); //decimal value of 'e'
 
-    /// @dev ParseIntScientific delegates the call to _parseIntScientific(string, uint) with the 2nd argument being 0.
+    /// @notice ParseIntScientific delegates the call to _parseIntScientific(string, uint) with the 2nd argument being 0.
     function _parseIntScientific(string _inString) internal pure returns (uint) {
         return _parseIntScientific(_inString, 0);
     }
 
-    /// @dev ParseIntScientificWei parses a rate expressed in ETH and returns its wei denomination
+    /// @notice ParseIntScientificWei parses a rate expressed in ETH and returns its wei denomination
     function _parseIntScientificWei(string _inString) internal pure returns (uint) {
         return _parseIntScientific(_inString, 18);
     }
 
-    /// @dev ParseIntScientific parses a JSON standard - floating point number.
+    /// @notice ParseIntScientific parses a JSON standard - floating point number.
     /// @param _inString is input string.
     /// @param _magnitudeMult multiplies the number with 10^_magnitudeMult.
     function _parseIntScientific(string _inString, uint _magnitudeMult) internal pure returns (uint) {
@@ -65,14 +66,14 @@ contract ParseIntScientific {
                 // 'e' not encountered yet, minting integer part or decimals
                 if (decimals) {
                     // '.' encountered
-                    //use safeMath in case there is an overflow
+                    // use safeMath in case there is an overflow
                     mintDec = mintDec.mul(10);
                     mintDec = mintDec.add(uint(inBytes[i]) - uint(_ZERO_ASCII));
                     decMinted++; //keep track of the #decimals
                 } else {
                     // integral part (before '.')
                     integral = true;
-                    //use safeMath in case there is an overflow
+                    // use safeMath in case there is an overflow
                     mint = mint.mul(10);
                     mint = mint.add(uint(inBytes[i]) - uint(_ZERO_ASCII));
                 }
@@ -100,7 +101,7 @@ contract ParseIntScientific {
                 require(!minus, "extra sign");
                 require(expIndex + 1 == i, "+ sign not immediately after e");
                 plus = true;
-            } else if ((inBytes[i] == _E_ASCII) || (inBytes[i] == _e_ASCII)) {
+            } else if ((inBytes[i] == _E_ASCII) || (inBytes[i] == _LOWERCASE_E_ASCII)) {
                 //an integral part before should always exist before 'e'
                 require(integral, "missing integral part");
                 // an extra 'e' or 'E' should be considered an invalid character
@@ -138,29 +139,29 @@ contract ParseIntScientific {
             // e^(+x), positive exponent or no exponent
             // just shift left as many times as indicated by the exponent and the shift parameter
             _magnitudeMult = _magnitudeMult.add(mintExp);
-          }
+        }
 
-          if (_magnitudeMult >= decMinted) {
-              // the decimals are fewer or equal than the shifts: use all of them
-              // shift number and add the decimals at the end
-              // include decimals if present in the original input
-              require(decMinted < 78, "more than 77 decimal digits parsed"); //
-              mint = mint.mul(10 ** (decMinted));
-              mint = mint.add(mintDec);
-              //// add zeros at the end if the decimals were fewer than #_magnitudeMult
-              require(_magnitudeMult - decMinted < 78, "exponent > 77"); //
-              mint = mint.mul(10 ** (_magnitudeMult - decMinted));
-          } else {
-              // the decimals are more than the #_magnitudeMult shifts
-              // use only the ones needed, discard the rest
-              decMinted -= _magnitudeMult;
-              require(decMinted < 78, "more than 77 decimal digits parsed"); //
-              mintDec /= 10 ** (decMinted);
-              // shift number and add the decimals at the end
-              require(_magnitudeMult < 78, "more than 77 decimal digits parsed"); //
-              mint = mint.mul(10 ** (_magnitudeMult));
-              mint = mint.add(mintDec);
-          }
+        if (_magnitudeMult >= decMinted) {
+            // the decimals are fewer or equal than the shifts: use all of them
+            // shift number and add the decimals at the end
+            // include decimals if present in the original input
+            require(decMinted < 78, "more than 77 decimal digits parsed"); //
+            mint = mint.mul(10 ** (decMinted));
+            mint = mint.add(mintDec);
+            //// add zeros at the end if the decimals were fewer than #_magnitudeMult
+            require(_magnitudeMult - decMinted < 78, "exponent > 77"); //
+            mint = mint.mul(10 ** (_magnitudeMult - decMinted));
+        } else {
+            // the decimals are more than the #_magnitudeMult shifts
+            // use only the ones needed, discard the rest
+            decMinted -= _magnitudeMult;
+            require(decMinted < 78, "more than 77 decimal digits parsed"); //
+            mintDec /= 10 ** (decMinted);
+            // shift number and add the decimals at the end
+            require(_magnitudeMult < 78, "more than 77 decimal digits parsed"); //
+            mint = mint.mul(10 ** (_magnitudeMult));
+            mint = mint.add(mintDec);
+        }
 
         return mint;
     }

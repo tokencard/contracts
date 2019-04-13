@@ -1,5 +1,5 @@
 /**
- *  The Consumer Contract Wallet
+ *  Contract - The Consumer Contract Wallet
  *  Copyright (C) 2018 The Contract Wallet Company Limited
  *
  *  This program is free software: you can redistribute it and/or modify
@@ -680,7 +680,7 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
     /// @param _amount amount of token in base units.
     function convertToStablecoin(address _token, uint _amount) public view returns (uint) {
         //avoid the unnecessary calculations if the token to be loaded is the stablecoin itself
-        if (_token == _stablecoin()) {
+        if (_token == _getStablecoinAddress()) {
             return _amount;
         }
         //0x0 represents ether

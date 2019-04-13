@@ -46,7 +46,6 @@ var _ = Describe("updateHolder", func() {
 			Expect(it.Next()).To(BeTrue())
 			evt := it.Event
 			Expect(it.Next()).To(BeFalse())
-			Expect(evt.Sender).To(Equal(Owner.Address()))
 			Expect(evt.NewHolder).To(Equal(CryptoFloatAddress))
 		})
 
@@ -69,11 +68,9 @@ var _ = Describe("updateHolder", func() {
 				Expect(it.Next()).To(BeTrue())
 				evt := it.Event
 				Expect(it.Next()).To(BeTrue())
-				Expect(evt.Sender).To(Equal(Owner.Address()))
 				Expect(evt.NewHolder).To(Equal(CryptoFloatAddress))
 				evt = it.Event
 				Expect(it.Next()).To(BeFalse())
-				Expect(evt.Sender).To(Equal(Owner.Address()))
 				Expect(evt.NewHolder).To(Equal(TokenHolderAddress))
 			})
 
@@ -107,7 +104,6 @@ var _ = Describe("updateHolder", func() {
 				Expect(it.Next()).To(BeTrue())
 				evt := it.Event
 				Expect(it.Next()).To(BeFalse())
-				Expect(evt.Sender).To(Equal(Owner.Address()))
 				Expect(evt.NewHolder).To(Equal(CryptoFloatAddress))
 			})
 

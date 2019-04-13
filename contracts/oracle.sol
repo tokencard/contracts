@@ -1,5 +1,5 @@
 /**
- *  The Consumer Contract Wallet
+ *  Oracle - The Consumer Contract Wallet
  *  Copyright (C) 2018 The Contract Wallet Company Limited
  *
  *  This program is free software: you can redistribute it and/or modify
@@ -64,56 +64,58 @@ contract Oracle is ENSResolvable, usingOraclize, Claimable, Base64, Date, Contro
     // This is how the cryptocompare json begins
     bytes32 constant private _PREFIX_HASH = keccak256("{\"ETH\":");
 
-    bytes public APIPublicKey;
+    bytes public cryptoCompareAPIPublicKey;
     mapping(bytes32 => address) private _queryToToken;
 
-    /// @dev Construct the oracle with multiple controllers, address resolver and custom gas price.
+    /// @notice Construct the oracle with multiple controllers, address resolver and custom gas price.
     /// @dev _resolver is the oraclize address resolver contract address.
     /// @param _resolver is the address of the oraclize resolver
     /// @param _ens is the address of the ENS.
     /// @param _controllerNameHash is the ENS name hash of the Controller.
     /// @param _tokenWhitelistNameHash is the ENS name hash of the Token Whitelist.
     constructor(address _resolver, address _ens, bytes32 _controllerNameHash, bytes32 _tokenWhitelistNameHash) ENSResolvable(_ens) Controllable(_controllerNameHash) TokenWhitelistable(_tokenWhitelistNameHash) public {
-        APIPublicKey = hex"a0f4f688350018ad1b9785991c0bde5f704b005dc79972b114dbed4a615a983710bfc647ebe5a320daa28771dce6a2d104f5efa2e4a85ba3760b76d46f8571ca";
+        cryptoCompareAPIPublicKey = hex"a0f4f688350018ad1b9785991c0bde5f704b005dc79972b114dbed4a615a983710bfc647ebe5a320daa28771dce6a2d104f5efa2e4a85ba3760b76d46f8571ca";
         OAR = OraclizeAddrResolverI(_resolver);
         oraclize_setCustomGasPrice(10000000000);
         oraclize_setProof(proofType_Native);
     }
 
-    /// @dev Updates the Crypto Compare public API key.
-    function updateAPIPublicKey(bytes _publicKey) external onlyController {
-        APIPublicKey = _publicKey;
+    /// @notice Updates the Crypto Compare public API key.
+    /// @param _publicKey new Crypto Compare public API key
+    function updateCryptoCompareAPIPublicKey(bytes _publicKey) external onlyController {
+        cryptoCompareAPIPublicKey = _publicKey;
         emit SetCryptoComparePublicKey(msg.sender, _publicKey);
     }
 
-    /// @dev Sets the gas price used by oraclize query.
+    /// @notice Sets the gas price used by Oraclize query.
+    /// @param _gasPrice in wei for Oraclize
     function setCustomGasPrice(uint _gasPrice) external onlyController {
         oraclize_setCustomGasPrice(_gasPrice);
         emit SetGasPrice(msg.sender, _gasPrice);
     }
 
-    /// @dev Update ERC20 token exchange rates for all supported tokens.
-    //// @param _gasLimit the gas limit is passed, this is used for the Oraclize callback
+    /// @notice Update ERC20 token exchange rates for all supported tokens.
+    /// @param _gasLimit the gas limit is passed, this is used for the Oraclize callback
     function updateTokenRates(uint _gasLimit) external payable onlyController {
         _updateTokenRates(_gasLimit);
     }
 
-    /// @dev Update ERC20 token exchange rates for the list of tokens provided.
-    //// @param _gasLimit the gas limit is passed, this is used for the Oraclize callback
-    //// @param _tokenList the list of tokens that need to be updated
+    /// @notice Update ERC20 token exchange rates for the list of tokens provided.
+    /// @param _gasLimit the gas limit is passed, this is used for the Oraclize callback
+    /// @param _tokenList the list of tokens that need to be updated
     function updateTokenRatesList(uint _gasLimit, address[] _tokenList) external payable onlyController {
         _updateTokenRatesList(_gasLimit, _tokenList);
     }
 
-    //// @dev Withdraw tokens from the smart contract to the specified account.
+    /// @notice Withdraw tokens from the smart contract to the specified account.
     function claim(address _to, address _asset, uint _amount) external onlyController {
         _claim(_to, _asset, _amount);
     }
 
-    //// @dev Handle Oraclize query callback and verifiy the provided origin proof.
-    //// @param _queryID Oraclize query ID.
-    //// @param _result query result in JSON format.
-    //// @param _proof origin proof from crypto compare.
+    /// @notice Handle Oraclize query callback and verifiy the provided origin proof.
+    /// @param _queryID Oraclize query ID.
+    /// @param _result query result in JSON format.
+    /// @param _proof origin proof from crypto compare.
     // solium-disable-next-line mixedcase
     function __callback(bytes32 _queryID, string _result, bytes _proof) public {
         // Require that the caller is the Oraclize contract.
@@ -127,7 +129,7 @@ contract Oracle is ENSResolvable, usingOraclize, Claimable, Base64, Date, Contro
 
         bool valid;
         uint timestamp;
-        (valid, timestamp) = _verifyProof(_result, _proof, APIPublicKey, lastUpdate);
+        (valid, timestamp) = _verifyProof(_result, _proof, cryptoCompareAPIPublicKey, lastUpdate);
 
         // Require that the proof is valid.
         if (valid) {
@@ -142,7 +144,7 @@ contract Oracle is ENSResolvable, usingOraclize, Claimable, Base64, Date, Contro
         }
     }
 
-    /// @dev Extracts JSON rate value from the response object.
+    /// @notice Extracts JSON rate value from the response object.
     /// @param _json body of the JSON response from the CryptoCompare API.
     function parseRate(string _json) internal pure returns (string) {
 
@@ -164,8 +166,8 @@ contract Oracle is ENSResolvable, usingOraclize, Claimable, Base64, Date, Contro
         return body.toString();
     }
 
-    /// @dev Re-usable helper function that performs the Oraclize Query.
-    //// @param _gasLimit the gas limit is passed, this is used for the Oraclize callback
+    /// @notice Re-usable helper function that performs the Oraclize Query.
+    /// @param _gasLimit the gas limit is passed, this is used for the Oraclize callback
     function _updateTokenRates(uint _gasLimit) private {
         address[] memory tokenAddresses = _getTokenAddressArray();
         // Check if there are any existing tokens.
@@ -197,9 +199,9 @@ contract Oracle is ENSResolvable, usingOraclize, Claimable, Base64, Date, Contro
         }
     }
 
-    /// @dev Re-usable helper function that performs the Oraclize Query for a specific list of tokens.
-    //// @param _gasLimit the gas limit is passed, this is used for the Oraclize callback.
-    //// @param _tokenList the list of tokens that need to be updated.
+    /// @notice Re-usable helper function that performs the Oraclize Query for a specific list of tokens.
+    /// @param _gasLimit the gas limit is passed, this is used for the Oraclize callback.
+    /// @param _tokenList the list of tokens that need to be updated.
     function _updateTokenRatesList(uint _gasLimit, address[] _tokenList) private {
         // Check if there are any existing tokens.
         if (_tokenList.length == 0) {
@@ -231,19 +233,19 @@ contract Oracle is ENSResolvable, usingOraclize, Claimable, Base64, Date, Contro
         }
     }
 
-    /// @dev Verify the origin proof returned by the cryptocompare API.
+    /// @notice Verify the origin proof returned by the cryptocompare API.
     /// @param _result query result in JSON format.
     /// @param _proof origin proof from cryptocompare.
     /// @param _publicKey cryptocompare public key.
     /// @param _lastUpdate timestamp of the last time the requested token was updated.
     function _verifyProof(string _result, bytes _proof, bytes _publicKey, uint _lastUpdate) private returns (bool, uint) {
 
-        //expecting fixed length proofs
+        // expecting fixed length proofs
         if (_proof.length != _PROOF_LEN) {
             revert("invalid proof length");
         }
 
-        //proof should be 65 bytes long: R (32 bytes) + S (32 bytes) + v (1 byte)
+        // proof should be 65 bytes long: R (32 bytes) + S (32 bytes) + v (1 byte)
         if (uint(_proof[1]) != _ECDSA_SIG_LEN) {
             revert("invalid signature length");
         }
@@ -267,7 +269,7 @@ contract Oracle is ENSResolvable, usingOraclize, Claimable, Base64, Date, Contro
 
         // Check if the date is valid.
         bytes memory dateHeader = new bytes(20);
-        //keep only the relevant string(e.g. "16 Nov 2018 16:22:18")
+        // keep only the relevant string(e.g. "16 Nov 2018 16:22:18")
         dateHeader = copyBytes(headers, 11, 20, dateHeader, 0);
 
         bool dateValid;
@@ -291,7 +293,7 @@ contract Oracle is ENSResolvable, usingOraclize, Claimable, Base64, Date, Contro
         return (true, timestamp);
     }
 
-    /// @dev Verify the HTTP headers and the signature
+    /// @notice Verify the HTTP headers and the signature
     /// @param _headers HTTP headers provided by the cryptocompare api
     /// @param _signature signature provided by the cryptocompare api
     /// @param _publicKey cryptocompare public key.
@@ -304,15 +306,15 @@ contract Oracle is ENSResolvable, usingOraclize, Claimable, Base64, Date, Contro
         return signatureOK && signer == address(keccak256(_publicKey));
     }
 
-    /// @dev Verify the signed HTTP date header.
+    /// @notice Verify the signed HTTP date header.
     /// @param _dateHeader extracted date string e.g. Wed, 12 Sep 2018 15:18:14 GMT.
     /// @param _lastUpdate timestamp of the last time the requested token was updated.
     function _verifyDate(string _dateHeader, uint _lastUpdate) private pure returns (bool, uint) {
 
-        //called by verifyProof(), _dateHeader is always a string of length = 20
+        // called by verifyProof(), _dateHeader is always a string of length = 20
         assert(abi.encodePacked(_dateHeader).length == 20);
 
-        //Split the date string and get individual date components.
+        // Split the date string and get individual date components.
         strings.slice memory date = _dateHeader.toSlice();
         strings.slice memory timeDelimiter = ":".toSlice();
         strings.slice memory dateDelimiter = " ".toSlice();

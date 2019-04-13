@@ -47,7 +47,6 @@ var _ = Describe("updateDao", func() {
 			Expect(it.Next()).To(BeTrue())
 			evt := it.Event
 			Expect(it.Next()).To(BeFalse())
-			Expect(evt.Sender).To(Equal(Owner.Address()))
 			Expect(evt.NewDAO).To(Equal(DAO.Address()))
 		})
 
@@ -70,11 +69,9 @@ var _ = Describe("updateDao", func() {
 				Expect(it.Next()).To(BeTrue())
 				evt := it.Event
 				Expect(it.Next()).To(BeTrue())
-				Expect(evt.Sender).To(Equal(Owner.Address()))
 				Expect(evt.NewDAO).To(Equal(DAO.Address()))
 				evt = it.Event
 				Expect(it.Next()).To(BeFalse())
-				Expect(evt.Sender).To(Equal(Owner.Address()))
 				Expect(evt.NewDAO).To(Equal(common.HexToAddress("0x1")))
 			})
 
@@ -107,7 +104,6 @@ var _ = Describe("updateDao", func() {
 				Expect(it.Next()).To(BeTrue())
 				evt := it.Event
 				Expect(it.Next()).To(BeFalse())
-				Expect(evt.Sender).To(Equal(Owner.Address()))
 				Expect(evt.NewDAO).To(Equal(DAO.Address()))
 			})
 

@@ -1,5 +1,5 @@
 /**
- *  The Consumer Contract Wallet
+ *  Date - The Consumer Contract Wallet
  *  Copyright (C) 2018 The Contract Wallet Company Limited
  *
  *  This program is free software: you can redistribute it and/or modify
@@ -18,7 +18,9 @@
 
 pragma solidity ^0.4.25;
 
-/// @title Date provides date parsing functionality.
+
+/// @title Date provides redimentary date parsing functionality.
+/// @notice This method parses months found in an ISO date to a number
 contract Date {
 
     bytes32 constant private _JANUARY = keccak256("Jan");
