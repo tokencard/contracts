@@ -74,11 +74,6 @@ contract TokenWhitelistable is ENSResolvable {
         return ITokenWhitelist(_ensResolve(_tokenWhitelistNode)).maxStablecoinLoadLimit();
     }
 
-    /// @dev updates the maximum card loadLimit.
-    function _updateMaxStablecoinLoadLimit(uint newLimit) internal {
-        ITokenWhitelist(_ensResolve(_tokenWhitelistNode)).updateMaxStablecoinLoadLimit(newLimit);
-    }
-
     /// @return the token whitelist node registered in ENS.
     function tokenWhitelistNode() public view returns (bytes32) {
         return _tokenWhitelistNode;

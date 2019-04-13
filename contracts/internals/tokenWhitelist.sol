@@ -31,7 +31,6 @@ interface ITokenWhitelist {
     function updateTokenRate(address, uint, uint) external;
     function stablecoin() external view returns (address);
     function maxStablecoinLoadLimit() external view returns (uint);
-    function updateMaxStablecoinLoadLimit(uint) external;
 }
 
 

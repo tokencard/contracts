@@ -45,9 +45,4 @@ contract TokenWhitelistableExporter is ENSResolvable, TokenWhitelistable {
       return _maxStablecoinLoadLimit();
   }
 
-  /// @dev updates the maximum card loadLimit.
-  function updateMaxStablecoinLoadLimit(uint newLimit) external {
-      _updateMaxStablecoinLoadLimit(newLimit);
-  }
-
 }
