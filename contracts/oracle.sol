@@ -169,7 +169,7 @@ contract Oracle is ENSResolvable, usingOraclize, Claimable, Base64, Date, Contro
     /// @notice Re-usable helper function that performs the Oraclize Query.
     /// @param _gasLimit the gas limit is passed, this is used for the Oraclize callback
     function _updateTokenRates(uint _gasLimit) private {
-        address[] memory tokenAddresses = _getTokenAddressArray();
+        address[] memory tokenAddresses = _tokenAddressArray();
         // Check if there are any existing tokens.
         if (tokenAddresses.length == 0) {
             // Emit a query failure event.

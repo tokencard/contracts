@@ -15,8 +15,8 @@ contract TokenWhitelistableExporter is ENSResolvable, TokenWhitelistable {
       return _getStablecoinInfo();
   }
 
-  function getTokenAddressArray() external view returns (address[]) {
-      return _getTokenAddressArray();
+  function tokenAddressArray() external view returns (address[]) {
+      return _tokenAddressArray();
   }
 
   function updateTokenRate(address _token, uint _rate, uint _updateDate) external {

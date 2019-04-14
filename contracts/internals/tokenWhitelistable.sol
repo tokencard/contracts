@@ -67,8 +67,8 @@ contract TokenWhitelistable is ENSResolvable {
 
     /// @notice This returns an array of our whitelisted address
     /// @return address[] of our whitelisted tokens
-    function _getTokenAddressArray() internal view returns (address[]) {
-        return ITokenWhitelist(_ensResolve(_tokenWhitelistNode)).getTokenAddressArray();
+    function _tokenAddressArray() internal view returns (address[]) {
+        return ITokenWhitelist(_ensResolve(_tokenWhitelistNode)).tokenAddressArray();
     }
 
     /// @notice Update ERC20 token exchange rate.
@@ -102,8 +102,8 @@ contract TokenWhitelistable is ENSResolvable {
 
     /// @notice This gets the address of the stablecoin
     /// @return the address of the stablecoin contract.
-    function _getStablecoinAddress() internal view returns (address) {
-        return ITokenWhitelist(_ensResolve(_tokenWhitelistNode)).getStablecoinAddress();
+    function _stablecoin() internal view returns (address) {
+        return ITokenWhitelist(_ensResolve(_tokenWhitelistNode)).stablecoin();
     }
 
 }

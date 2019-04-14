@@ -27,9 +27,9 @@ import "../externals/SafeMath.sol";
 interface ITokenWhitelist {
     function getTokenInfo(address) external view returns (string, uint256, uint256, bool, bool, bool, uint256);
     function getStablecoinInfo() external view returns (string, uint256, uint256, bool, bool, bool, uint256);
-    function getTokenAddressArray() external view returns (address[]);
+    function tokenAddressArray() external view returns (address[]);
     function updateTokenRate(address, uint, uint) external;
-    function getStablecoinAddress() external view returns (address);
+    function stablecoin() external view returns (address);
 }
 
 
@@ -177,13 +177,13 @@ contract TokenWhitelist is ENSResolvable, Controllable, Ownable {
 
     /// @notice This returns an array of our whitelisted address
     /// @return address[] of our whitelisted tokens
-    function getTokenAddressArray() external view returns (address[]) {
+    function tokenAddressArray() external view returns (address[]) {
         return _tokenAddressArray;
     }
 
     /// @notice This returns the address of our stablecoin of choice
     /// @return the address of the stablecoin contract.
-    function getStablecoinAddress() external view returns (address) {
+    function stablecoin() external view returns (address) {
         return _stablecoin;
     }
 
