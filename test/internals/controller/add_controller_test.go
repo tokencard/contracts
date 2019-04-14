@@ -90,7 +90,7 @@ var _ = Describe("AddController", func() {
 		})
 
 		It("should fail at already controller requirenment", func() {
-			Expect(TestRig.LastExecuted()).To(MatchRegexp(`require\(_account != owner\(\), "provided account is already the owner"\);`))
+			Expect(TestRig.LastExecuted()).To(MatchRegexp(`require\(!_isOwner\(_account\), "provided account is already the owner"\);`))
 		})
 	})
 
