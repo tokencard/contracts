@@ -105,11 +105,6 @@ contract Oracle is ENSResolvable, usingOraclize, Claimable, Base64, Date, Contro
         _updateTokenRatesList(_gasLimit, _tokenList);
     }
 
-    //// @dev Withdraw ether from the smart contract to the specified account.
-    function withdraw(address _to, uint _amount) external onlyController {
-        _to.transfer(_amount);
-    }
-
     //// @dev Withdraw tokens from the smart contract to the specified account.
     function claim(address _to, address _asset, uint _amount) external onlyController {
         _claim(_to, _asset, _amount);

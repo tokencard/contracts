@@ -58,7 +58,7 @@ var _ = Describe("withdraw", func() {
 			})
 
 			BeforeEach(func() {
-				tx, err = Oracle.Withdraw(Controller.TransactOpts(), common.HexToAddress("0x2"), big.NewInt(1000000))
+				tx, err = Oracle.Claim(Controller.TransactOpts(), common.HexToAddress("0x2"), common.HexToAddress("0x0"), big.NewInt(1000000))
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 				Expect(isSuccessful(tx)).To(BeTrue())
@@ -104,7 +104,7 @@ var _ = Describe("withdraw", func() {
 			})
 
 			It("Should fail", func() {
-				tx, err = Oracle.Withdraw(RandomAccount.TransactOpts(ethertest.WithGasLimit(100000)), common.HexToAddress("0x2"), big.NewInt(1000000))
+				tx, err = Oracle.Claim(RandomAccount.TransactOpts(ethertest.WithGasLimit(100000)), common.HexToAddress("0x2"), common.HexToAddress("0x0"), big.NewInt(1000000))
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 				Expect(isGasExhausted(tx, 100000)).To(BeFalse())
