@@ -12,7 +12,6 @@ compile_solidity() {
 contract_sources=(
   'wallet'
   'oracle'
-  'tkn'
   'licence'
   'mocks/token'
   'mocks/base64-exporter'
@@ -47,7 +46,6 @@ generate_binding() {
 contracts=(
   "wallet/Wallet wallet.go Wallet bindings"
   "oracle/Oracle oracle.go Oracle bindings"
-  "tkn/Token token.go Token bindings"
   "licence/Licence licence.go Licence bindings"
   "mocks/token/Token mocks/token.go Token mocks"
   "mocks/base64-exporter/Base64Exporter mocks/base64-exporter.go Base64Exporter mocks"
