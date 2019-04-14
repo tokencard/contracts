@@ -56,7 +56,7 @@ contract Licence is Claimable, Ownable {
     /// @notice This is 100% scaled up by a factor of 10 to give us an extra 1 decimal place of precision
     uint constant public MAX_AMOUNT_SCALE = 1000;
 
-    address private _TKNContractAddress = 0xaAAf91D9b90dF800Df4F55c205fd6989c977E73a; // solium-disable-line uppercase
+    address private _tknContractAddress = 0xaAAf91D9b90dF800Df4F55c205fd6989c977E73a; // solium-disable-line uppercase
 
     address private _cryptoFloat;
     address private _tokenHolder;
@@ -88,7 +88,7 @@ contract Licence is Claimable, Ownable {
         _cryptoFloat = _float;
         _tokenHolder = _holder;
         if (_tknAddress != address(0)) {
-            _TKNContractAddress = _tknAddress;
+            _tknContractAddress = _tknAddress;
         }
     }
 
@@ -124,8 +124,8 @@ contract Licence is Claimable, Ownable {
 
     /// @notice The address of the TKN token
     /// @return the address of the TKN contract.
-    function TKNContractAddress() external view returns (address) {
-        return _TKNContractAddress;
+    function tknContractAddress() external view returns (address) {
+        return _tknContractAddress;
     }
 
     /// @notice This locks the cryptoFloat address 
@@ -179,8 +179,8 @@ contract Licence is Claimable, Ownable {
     /// @notice Updates the address of the TKN contract.
     /// @param _newTKN This is the new address for the TKN contract
     function updateTKNContractAddress(address _newTKN) external onlyOwner {
-        require(!TKNContractAddressLocked(), "TKN is locked");
-        _TKNContractAddress = _newTKN;
+        require(!tknContractAddressLocked(), "TKN is locked");
+        _tknContractAddress = _newTKN;
         emit UpdatedTKNContractAddress(_newTKN);
     }
 
@@ -198,7 +198,7 @@ contract Licence is Claimable, Ownable {
     function load(address _asset, uint _amount) external payable {
         uint loadAmount = _amount;
         // If TKN then no licence to be paid
-        if (_asset == _TKNContractAddress) {
+        if (_asset == _tknContractAddress) {
             require(ERC20(_asset).transferFrom(msg.sender, _cryptoFloat, loadAmount), "TKN transfer from external account was unsuccessful");
         } else {
             loadAmount = _amount.mul(MAX_AMOUNT_SCALE).div(_licenceAmountScaled + MAX_AMOUNT_SCALE);
@@ -240,7 +240,7 @@ contract Licence is Claimable, Ownable {
     }
 
     /// @notice returns whether or not the TKN address is locked
-    function TKNContractAddressLocked() public view returns (bool) {
+    function tknContractAddressLocked() public view returns (bool) {
         return _lockedTKNContractAddress;
     }
 }
