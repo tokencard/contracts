@@ -13,7 +13,7 @@ import (
 var _ = Describe("tokenWhitelistable", func() {
 
 	It("Should return the stablecoin's contract address", func() {
-		sa, err := TokenWhitelist.GetStablecoinAddress(nil)
+		sa, err := TokenWhitelist.Stablecoin(nil)
 		Expect(err).ToNot(HaveOccurred())
 		Expect(sa).To(Equal(StablecoinAddress))
 	})
@@ -89,7 +89,7 @@ var _ = Describe("tokenWhitelistable", func() {
 		})
 
 		It("Should update the TokenAddressArray", func() {
-			arr, err := TokenWhitelistableExporter.GetTokenAddressArray(nil)
+			arr, err := TokenWhitelistableExporter.TokenAddressArray(nil)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(arr).To(Equal([]common.Address{common.HexToAddress("0x1")}))
 		})
