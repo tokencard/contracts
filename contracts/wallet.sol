@@ -33,7 +33,7 @@ import "./externals/ERC165.sol";
 contract ControllableOwnable is Controllable, Ownable {
     /// @dev Check if the sender is the Owner or one of the Controllers
     modifier onlyOwnerOrController() {
-        require (_isOwner() || _isController(msg.sender), "either owner or controller");
+        require (_isOwner(msg.sender) || _isController(msg.sender), "either owner or controller");
         _;
     }
 }
@@ -64,7 +64,7 @@ contract AddressWhitelist is ControllableOwnable {
     /// @dev Check if the provided addresses contain the owner or the zero-address address.
     modifier hasNoOwnerOrZeroAddress(address[] _addresses) {
         for (uint i = 0; i < _addresses.length; i++) {
-            require(_addresses[i] != owner(), "provided whitelist contains the owner address");
+            require(!_isOwner(_addresses[i]), "provided whitelist contains the owner address");
             require(_addresses[i] != address(0), "provided whitelist contains the zero address");
         }
         _;

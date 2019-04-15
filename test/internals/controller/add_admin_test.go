@@ -66,7 +66,7 @@ var _ = Describe("addAdmin", func() {
 		})
 
 		It("should fail at the already owner requirenment", func() {
-			Expect(TestRig.LastExecuted()).To(MatchRegexp(`require\(_account != owner\(\), "provided account is already the owner"\);`))
+			Expect(TestRig.LastExecuted()).To(MatchRegexp(`require\(!_isOwner\(_account\), "provided account is already the owner"\);`))
 		})
 	})
 
@@ -166,7 +166,7 @@ var _ = Describe("addAdmin", func() {
 		})
 
 		It("should fail at the not owner requirenment", func() {
-			Expect(TestRig.LastExecuted()).To(MatchRegexp(`require\(_isOwner\(\), "sender is not an owner"\);`))
+			Expect(TestRig.LastExecuted()).To(MatchRegexp(`require\(_isOwner\(msg.sender\), "sender is not an owner"\);`))
 		})
 	})
 
@@ -191,7 +191,7 @@ var _ = Describe("addAdmin", func() {
 		})
 
 		It("should fail at the not owner requirenment", func() {
-			Expect(TestRig.LastExecuted()).To(MatchRegexp(`require\(_isOwner\(\), "sender is not an owner"\);`))
+			Expect(TestRig.LastExecuted()).To(MatchRegexp(`require\(_isOwner\(msg.sender\), "sender is not an owner"\);`))
 		})
 	})
 
