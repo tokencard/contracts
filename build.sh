@@ -21,7 +21,6 @@ contract_sources=(
   'internals/tokenWhitelist'
   'internals/parseIntScientific'
   'externals/ens/PublicResolver'
-  'externals/ens/ENSRegistry'
 )
 
 for c in "${contract_sources[@]}"
@@ -54,7 +53,6 @@ contracts=(
   "internals/controller/Controller internals/controller.go Controller internals"
   "internals/tokenWhitelist/TokenWhitelist internals/tokenWhitelist.go TokenWhitelist internals"
   "internals/parseIntScientific/ParseIntScientific internals/parseIntScientific.go ParseIntScientific internals"
-  "externals/ens/ENSRegistry/ENSRegistry externals/ens/ens-registry.go ENSRegistry ens"
   "externals/ens/PublicResolver/PublicResolver externals/ens/public-resolver.go PublicResolver ens"
 )
 
