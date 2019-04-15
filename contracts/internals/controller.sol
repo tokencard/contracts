@@ -1,6 +1,6 @@
 /**
  *  Controller - The Consumer Contract Wallet
- *  Copyright (C) 2018 The Contract Wallet Company Limited
+ *  Copyright (C) 2019 The Contract Wallet Company Limited
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
