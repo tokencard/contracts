@@ -5,7 +5,7 @@ import "../internals/ensResolvable.sol";
 
 contract TokenWhitelistableExporter is ENSResolvable, TokenWhitelistable {
 
-  constructor(address _ens, bytes32 _tokenWhitelistName) ENSResolvable(_ens) TokenWhitelistable(_tokenWhitelistName) public {}
+  constructor(address _ens_, bytes32 _tokenWhitelistName_) ENSResolvable(_ens_) TokenWhitelistable(_tokenWhitelistName_) public {}
 
   function getTokenInfo(address _a) external view returns (string, uint256, uint256, bool, bool, bool, uint256) {
       return _getTokenInfo(_a);

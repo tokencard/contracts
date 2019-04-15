@@ -78,17 +78,17 @@ contract Licence is Claimable, Ownable {
     }
 
     /// @notice Constructor initializes the card licence contract.
-    /// @param _owner is the owner account of the wallet contract.
-    /// @param _transferable indicates whether the contract ownership can be transferred.
-    /// @param _licence is the initial card licence amount. this number is scaled 10 = 1%, 9 = 0.9%
-    /// @param _float is the address of the multi-sig cryptocurrency float contract.
-    /// @param _holder is the address of the token holder contract
-    constructor(address _owner, bool _transferable, uint _licence, address _float, address _holder, address _tknAddress) Ownable(_owner, _transferable) public {
-        _licenceAmountScaled = _licence;
-        _cryptoFloat = _float;
-        _tokenHolder = _holder;
-        if (_tknAddress != address(0)) {
-            _tknContractAddress = _tknAddress;
+    /// @param _owner_ is the owner account of the wallet contract.
+    /// @param _transferable_ indicates whether the contract ownership can be transferred.
+    /// @param _licence_ is the initial card licence amount. this number is scaled 10 = 1%, 9 = 0.9%
+    /// @param _float_ is the address of the multi-sig cryptocurrency float contract.
+    /// @param _holder_ is the address of the token holder contract
+    constructor(address _owner_, bool _transferable_, uint _licence_, address _float_, address _holder_, address _tknAddress_) Ownable(_owner_, _transferable_) public {
+        _licenceAmountScaled = _licence_;
+        _cryptoFloat = _float_;
+        _tokenHolder = _holder_;
+        if (_tknAddress_ != address(0)) {
+            _tknContractAddress = _tknAddress_;
         }
     }
 
@@ -128,7 +128,7 @@ contract Licence is Claimable, Ownable {
         return _tknContractAddress;
     }
 
-    /// @notice This locks the cryptoFloat address 
+    /// @notice This locks the cryptoFloat address
     /// @dev so that it can no longer be updated
     function lockFloat() external onlyOwner {
         _lockedCryptoFloat = true;

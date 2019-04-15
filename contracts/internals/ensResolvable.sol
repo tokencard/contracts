@@ -22,7 +22,7 @@ import "../externals/ens/ENS.sol";
 import "../externals/ens/PublicResolver.sol";
 
 
-///@title ENSResolvable - Ethereum Name Service Resolver 
+///@title ENSResolvable - Ethereum Name Service Resolver
 ///@notice contract should be used to get an address for an ENS nodeHash
 contract ENSResolvable {
     /// @notice _ens is an instance of ENS
@@ -31,9 +31,9 @@ contract ENSResolvable {
     /// @notice _ensRegistry points to the ENS registry smart contract.
     address private _ensRegistry;
 
-    /// @param _ensReg is the ENS registry used
-    constructor(address _ensReg) internal {
-        _ensRegistry = _ensReg;
+    /// @param _ensReg_ is the ENS registry used
+    constructor(address _ensReg_) internal {
+        _ensRegistry = _ensReg_;
         _ens = ENS(_ensRegistry);
     }
 

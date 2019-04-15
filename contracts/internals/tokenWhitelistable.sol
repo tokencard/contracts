@@ -29,9 +29,9 @@ contract TokenWhitelistable is ENSResolvable {
     bytes32 private _tokenWhitelistNode;
 
     /// @notice Constructor initializes the TokenWhitelistable object.
-    /// @param _tokenWhitelistNameHash is the ENS name hash of the TokenWhitelist.
-    constructor(bytes32 _tokenWhitelistNameHash) internal {
-        _tokenWhitelistNode = _tokenWhitelistNameHash;
+    /// @param _tokenWhitelistNameHash_ is the ENS name hash of the TokenWhitelist.
+    constructor(bytes32 _tokenWhitelistNameHash_) internal {
+        _tokenWhitelistNode = _tokenWhitelistNameHash_;
     }
 
     /// @notice This shows what TokenWhitelist is being used
@@ -46,7 +46,7 @@ contract TokenWhitelistable is ENSResolvable {
     /// @return uint of the token's magnitude
     /// @return uint of the token's exchange rate to ETH
     /// @return bool whether the token is available
-    /// @return bool whether the token is loadable to the TokenCard 
+    /// @return bool whether the token is loadable to the TokenCard
     /// @return bool whether the token is burnable to the TKN Holder Contract
     /// @return uint of the lastUpdated time of the token's exchange rate
     function _getTokenInfo(address _a) internal view returns (string, uint256, uint256, bool, bool, bool, uint256) {
@@ -58,7 +58,7 @@ contract TokenWhitelistable is ENSResolvable {
     /// @return uint of the token's magnitude
     /// @return uint of the token's exchange rate to ETH
     /// @return bool whether the token is available
-    /// @return bool whether the token is loadable to the TokenCard 
+    /// @return bool whether the token is loadable to the TokenCard
     /// @return bool whether the token is burnable to the TKN Holder Contract
     /// @return uint of the lastUpdated time of the token's exchange rate
     function _getStablecoinInfo() internal view returns (string, uint256, uint256, bool, bool, bool, uint256) {
@@ -80,21 +80,21 @@ contract TokenWhitelistable is ENSResolvable {
     }
 
     /// @notice Checks whether a token is available
-    /// @return bool available or not 
+    /// @return bool available or not
     function _isTokenAvailable(address _a) internal view returns (bool) {
         ( , , , bool available, , , ) = _getTokenInfo(_a);
         return available;
     }
 
     /// @notice Checks whether a token is burnable
-    /// @return bool burnable or not 
+    /// @return bool burnable or not
     function _isTokenBurnable(address _a) internal view returns (bool) {
         ( , , , , , bool burnable, ) = _getTokenInfo(_a);
         return burnable;
     }
 
     /// @notice Checks whether a token is loadable
-    /// @return bool loadable or not 
+    /// @return bool loadable or not
     function _isTokenLoadable(address _a) internal view returns (bool) {
         ( , , , , bool loadable, , ) = _getTokenInfo(_a);
         return loadable;
