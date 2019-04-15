@@ -19,6 +19,7 @@
 pragma solidity ^0.4.25;
 
 import "./ownable.sol";
+import "./claimable.sol";
 
 /// @title The IController interface provides access to the isController check.
 interface IController {
@@ -31,7 +32,7 @@ interface IController {
 /// @dev Owner can change the Admins
 /// @dev Admins and can the Controllers
 /// @dev Controllers are used by the application.
-contract Controller is IController, Ownable {
+contract Controller is IController, Ownable, Claimable {
 
     event AddedController(address _sender, address _controller);
     event RemovedController(address _sender, address _controller);
@@ -145,5 +146,10 @@ contract Controller is IController, Ownable {
         _isController[_account] = false;
         _controllerCount--;
         emit RemovedController(msg.sender, _account);
+    }
+
+    //// @notice Withdraw tokens from the smart contract to the specified account.
+    function claim(address _to, address _asset, uint _amount) external onlyOwner {
+        _claim(_to, _asset, _amount);
     }
 }
