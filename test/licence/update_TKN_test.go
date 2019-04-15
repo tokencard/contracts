@@ -13,13 +13,13 @@ var _ = Describe("updateTKN", func() {
 	Context("Before updating the TKN contract address", func() {
 
 		It("should be pointing to 0xaAAf91D9b90dF800Df4F55c205fd6989c977E73a", func() {
-			addr, err := Licence.TKNContractAddress(nil)
+			addr, err := Licence.TknContractAddress(nil)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(addr).To(Equal(common.HexToAddress("0xaAAf91D9b90dF800Df4F55c205fd6989c977E73a")))
 		})
 
 		It("should NOT be locked", func() {
-			lock, err := Licence.TKNContractAddressLocked(nil)
+			lock, err := Licence.TknContractAddressLocked(nil)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(lock).To(BeFalse())
 		})
@@ -54,7 +54,7 @@ var _ = Describe("updateTKN", func() {
 			})
 
 			It("should be pointing to 0x1 address", func() {
-				addr, err := Licence.TKNContractAddress(nil)
+				addr, err := Licence.TknContractAddress(nil)
 				Expect(err).ToNot(HaveOccurred())
 				Expect(addr).To(Equal(common.HexToAddress("0x1")))
 			})
@@ -91,13 +91,13 @@ var _ = Describe("updateTKN", func() {
 			})
 
 			It("Should be locked", func() {
-				lock, err := Licence.TKNContractAddressLocked(nil)
+				lock, err := Licence.TknContractAddressLocked(nil)
 				Expect(err).ToNot(HaveOccurred())
 				Expect(lock).To(BeTrue())
 			})
 
 			It("should be still pointing to TKNBurnerAddress", func() {
-				addr, err := Licence.TKNContractAddress(nil)
+				addr, err := Licence.TknContractAddress(nil)
 				Expect(err).ToNot(HaveOccurred())
 				Expect(addr).To(Equal(TKNBurnerAddress))
 			})

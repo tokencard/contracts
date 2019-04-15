@@ -21,7 +21,7 @@ var _ = Describe("load TKN", func() {
 	})
 
 	It("should be pointing to TKNBurnerAddress", func() {
-		addr, err := Licence.TKNContractAddress(nil)
+		addr, err := Licence.TknContractAddress(nil)
 		Expect(err).ToNot(HaveOccurred())
 		Expect(addr).To(Equal(TKNBurnerAddress))
 	})
