@@ -306,7 +306,7 @@ contract DailyLimitTrait {
 }
 
 
-//// @title  it provides daily spend limit functionality.
+/// @title  it provides daily spend limit functionality.
 contract SpendLimit is ControllableOwnable, DailyLimitTrait {
     event SetSpendLimit(address _sender, uint _amount);
     event SubmittedSpendLimitUpdate(uint _amount);

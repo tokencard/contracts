@@ -35,7 +35,7 @@ contract Ownable {
         _owner = _account_;
         _isTransferable = _transferable_;
         // Emit the LockedOwnership event if no longer transferable.
-        if (!_transferable_) {
+        if (!_isTransferable) {
             emit LockedOwnership(_account_);
         }
         emit TransferredOwnership(address(0), _account_);
