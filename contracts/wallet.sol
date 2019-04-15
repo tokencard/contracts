@@ -338,19 +338,19 @@ contract SpendLimit is ControllableOwnable, DailyLimitTrait {
         emit SetSpendLimit(msg.sender, _amount);
     }
 
-    function spendLimitAvailable() public view returns (uint) {
+    function spendLimitAvailable() external view returns (uint) {
         return _getAvailableLimit(_spendLimit);
     }
 
-    function spendLimitValue() public view returns (uint) {
+    function spendLimitValue() external view returns (uint) {
         return _spendLimit.value;
     }
 
-    function spendLimitSet() public view returns (bool) {
+    function spendLimitSet() external view returns (bool) {
         return _spendLimit.set;
     }
 
-    function spendLimitPending() public view returns (uint) {
+    function spendLimitPending() external view returns (uint) {
         return _spendLimit.pending;
     }
 }
@@ -394,19 +394,19 @@ contract GasTopUpLimit is ControllableOwnable, DailyLimitTrait {
         emit SetGasTopUpLimit(msg.sender, _amount);
     }
 
-    function gasTopUpLimitAvailable() public view returns (uint) {
+    function gasTopUpLimitAvailable() external view returns (uint) {
         return _getAvailableLimit(_gasTopUpLimit);
     }
 
-    function gasTopUpLimitValue() public view returns (uint) {
+    function gasTopUpLimitValue() external view returns (uint) {
         return _gasTopUpLimit.value;
     }
 
-    function gasTopUpLimitSet() public view returns (bool) {
+    function gasTopUpLimitSet() external view returns (bool) {
         return _gasTopUpLimit.set;
     }
 
-    function gasTopUpLimitPending() public view returns (uint) {
+    function gasTopUpLimitPending() external view returns (uint) {
         return _gasTopUpLimit.pending;
     }
 }
@@ -445,19 +445,19 @@ contract LoadLimit is ControllableOwnable, DailyLimitTrait {
         emit SetLoadLimit(msg.sender, _amount);
     }
 
-    function loadLimitAvailable() public view returns (uint) {
+    function loadLimitAvailable() external view returns (uint) {
         return _getAvailableLimit(_loadLimit);
     }
 
-    function loadLimitValue() public view returns (uint) {
+    function loadLimitValue() external view returns (uint) {
         return _loadLimit.value;
     }
 
-    function loadLimitSet() public view returns (bool) {
+    function loadLimitSet() external view returns (bool) {
         return _loadLimit.set;
     }
 
-    function loadLimitPending() public view returns (uint) {
+    function loadLimitPending() external view returns (uint) {
         return _loadLimit.pending;
     }
 
@@ -496,7 +496,7 @@ contract Vault is AddressWhitelist, SpendLimit, ERC165, TokenWhitelistable {
     }
 
     /// @dev Ether can be deposited from any source, so this contract must be payable by anyone.
-    function() public payable {
+    function() external payable {
         require(msg.data.length == 0, "msg data needs to be empty");
         emit Received(msg.sender, msg.value);
     }
@@ -671,7 +671,7 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
     }
 
     /// @return licence contract node registered in ENS.
-    function licenceNode() public view returns (bytes32) {
+    function licenceNode() external view returns (bytes32) {
         return _licenceNode;
     }
 
