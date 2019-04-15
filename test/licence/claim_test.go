@@ -12,7 +12,7 @@ import (
 
 var _ = Describe("LicenceClaim", func() {
 
-	It("the initial balance of the Licence contracts should be zero", func() {
+	It("the initial balance of the Licence contract should be zero", func() {
 		b, e := Backend.BalanceAt(context.Background(), LicenceAddress, nil)
 		Expect(e).ToNot(HaveOccurred())
 		Expect(b.String()).To(Equal("0"))
@@ -48,7 +48,7 @@ var _ = Describe("LicenceClaim", func() {
 			Expect(b.String()).To(Equal("333"))
 		})
 
-		It("should increase the ETH balance of the Wallet by 2 ETH", func() {
+		It("should increase the ETH balance of the Licence contract by 2 ETH", func() {
 			b, e := Backend.BalanceAt(context.Background(), LicenceAddress, nil)
 			Expect(e).ToNot(HaveOccurred())
 			Expect(b.String()).To(Equal(EthToWei(2).String()))
@@ -93,7 +93,7 @@ var _ = Describe("LicenceClaim", func() {
 				Expect(b.String()).To(Equal("111"))
 			})
 
-			It("should decrease the ETH balance of the Wallet by 1 ETH", func() {
+			It("should decrease the ETH balance of the Licence contract by 1 ETH", func() {
 				b, e := Backend.BalanceAt(context.Background(), LicenceAddress, nil)
 				Expect(e).ToNot(HaveOccurred())
 				Expect(b.String()).To(Equal(EthToWei(1).String()))
@@ -105,7 +105,7 @@ var _ = Describe("LicenceClaim", func() {
 				Expect(b.String()).To(Equal("222"))
 			})
 
-			It("should increase the ETH balance of the Wallet by 1 ETH", func() { //initial balance of RandomAccount is 1000 ETH
+			It("should increase the ETH balance of the Random account by 1 ETH", func() { //initial balance of RandomAccount is 1000 ETH
 				b, e := Backend.BalanceAt(context.Background(), RandomAccount.Address(), nil)
 				Expect(e).ToNot(HaveOccurred())
 				Expect(b.String()).To(Equal(EthToWei(1001).String()))
