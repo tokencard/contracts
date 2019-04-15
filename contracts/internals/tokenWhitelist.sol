@@ -69,11 +69,11 @@ contract TokenWhitelist is ENSResolvable, Controllable, Ownable {
     bytes32 private _oracleNode;
 
     /// @notice Constructor initializes ENSResolvable, Controllable, and Ownable
-    /// @param _oracleNameHash is the ENS name hash of the Oracle.
-    /// @param _stabelcoinAddress is the address of the stablecoint used by the wallet
-    constructor(address _ens, bytes32 _oracleNameHash, bytes32 _controllerNameHash, address _owner, bool _transferable, address _stabelcoinAddress) ENSResolvable(_ens) Controllable(_controllerNameHash) Ownable(_owner, _transferable) public {
-        _oracleNode = _oracleNameHash;
-        _stablecoin = _stabelcoinAddress;
+    /// @param _oracleNameHash_ is the ENS name hash of the Oracle.
+    /// @param _stabelcoinAddress_ is the address of the stablecoint used by the wallet
+    constructor(address _ens_, bytes32 _oracleNameHash_, bytes32 _controllerNameHash_, address _owner_, bool _transferable_, address _stabelcoinAddress_) ENSResolvable(_ens_) Controllable(_controllerNameHash_) Ownable(_owner_, _transferable_) public {
+        _oracleNode = _oracleNameHash_;
+        _stablecoin = _stabelcoinAddress_;
     }
 
     /// @notice Add ERC20 tokens to the list of whitelisted tokens.
@@ -154,7 +154,7 @@ contract TokenWhitelist is ENSResolvable, Controllable, Ownable {
     /// @return uint of the token's magnitude
     /// @return uint of the token's exchange rate to ETH
     /// @return bool whether the token is available
-    /// @return bool whether the token is loadable to the TokenCard 
+    /// @return bool whether the token is loadable to the TokenCard
     /// @return bool whether the token is burnable to the TKN Holder Contract
     /// @return uint of the lastUpdated time of the token's exchange rate
     function getTokenInfo(address _a) external view returns (string, uint256, uint256, bool, bool, bool, uint256) {
@@ -167,7 +167,7 @@ contract TokenWhitelist is ENSResolvable, Controllable, Ownable {
     /// @return uint of the token's magnitude
     /// @return uint of the token's exchange rate to ETH
     /// @return bool whether the token is available
-    /// @return bool whether the token is loadable to the TokenCard 
+    /// @return bool whether the token is loadable to the TokenCard
     /// @return bool whether the token is burnable to the TKN Holder Contract
     /// @return uint of the lastUpdated time of the token's exchange rate
     function getStablecoinInfo() external view returns (string, uint256, uint256, bool, bool, bool, uint256) {

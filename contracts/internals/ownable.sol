@@ -20,7 +20,7 @@ pragma solidity ^0.4.25;
 
 
 /// @title Ownable has an owner address and provides basic authorization control functions.
-/// This contract is modified version of the MIT OpenZepplin Ownable contract 
+/// This contract is modified version of the MIT OpenZepplin Ownable contract
 /// This contract allows for the transferOwnership operation to be made impossible
 /// https://github.com/OpenZeppelin/openzeppelin-solidity/blob/master/contracts/ownership/Ownable.sol
 contract Ownable {
@@ -31,14 +31,14 @@ contract Ownable {
     bool private _isTransferable;
 
     /// @notice Constructor sets the original owner of the contract and whether or not it is one time transferable.
-    constructor(address _account, bool _transferable) internal {
-        _owner = _account;
-        _isTransferable = _transferable;
+    constructor(address _account_, bool _transferable_) internal {
+        _owner = _account_;
+        _isTransferable = _transferable_;
         // Emit the LockedOwnership event if no longer transferable.
-        if (!_transferable) {
-            emit LockedOwnership(_account);
+        if (!_isTransferable) {
+            emit LockedOwnership(_account_);
         }
-        emit TransferredOwnership(address(0), _account);
+        emit TransferredOwnership(address(0), _account_);
     }
 
     /// @notice Reverts if called by any account other than the owner.
@@ -73,7 +73,7 @@ contract Ownable {
         return _isTransferable;
     }
 
-    /// @notice Allows the current owner to relinquish control of the contract. 
+    /// @notice Allows the current owner to relinquish control of the contract.
     /// @dev Renouncing to ownership will leave the contract without an owner and unusable.
     /// @dev It will not be possible to call the functions with the `onlyOwner` modifier anymore.
     function renounceOwnership() external onlyOwner {

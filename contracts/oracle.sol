@@ -68,14 +68,13 @@ contract Oracle is ENSResolvable, usingOraclize, Claimable, Base64, Date, Contro
     mapping(bytes32 => address) private _queryToToken;
 
     /// @notice Construct the oracle with multiple controllers, address resolver and custom gas price.
-    /// @dev _resolver is the oraclize address resolver contract address.
-    /// @param _resolver is the address of the oraclize resolver
-    /// @param _ens is the address of the ENS.
-    /// @param _controllerNameHash is the ENS name hash of the Controller.
-    /// @param _tokenWhitelistNameHash is the ENS name hash of the Token Whitelist.
-    constructor(address _resolver, address _ens, bytes32 _controllerNameHash, bytes32 _tokenWhitelistNameHash) ENSResolvable(_ens) Controllable(_controllerNameHash) TokenWhitelistable(_tokenWhitelistNameHash) public {
+    /// @param _resolver_ is the address of the oraclize resolver
+    /// @param _ens_ is the address of the ENS.
+    /// @param _controllerNameHash_ is the ENS name hash of the Controller.
+    /// @param _tokenWhitelistNameHash_ is the ENS name hash of the Token Whitelist.
+    constructor(address _resolver_, address _ens_, bytes32 _controllerNameHash_, bytes32 _tokenWhitelistNameHash_) ENSResolvable(_ens_) Controllable(_controllerNameHash_) TokenWhitelistable(_tokenWhitelistNameHash_) public {
         cryptoCompareAPIPublicKey = hex"a0f4f688350018ad1b9785991c0bde5f704b005dc79972b114dbed4a615a983710bfc647ebe5a320daa28771dce6a2d104f5efa2e4a85ba3760b76d46f8571ca";
-        OAR = OraclizeAddrResolverI(_resolver);
+        OAR = OraclizeAddrResolverI(_resolver_);
         oraclize_setCustomGasPrice(10000000000);
         oraclize_setProof(proofType_Native);
     }
