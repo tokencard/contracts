@@ -65,7 +65,6 @@ var _ = Describe("updatedLicenceAmount", func() {
 				Expect(it.Next()).To(BeTrue())
 				evt := it.Event
 				Expect(it.Next()).To(BeFalse())
-				Expect(evt.Sender).To(Equal(DAO.Address()))
 				Expect(evt.NewAmount).To(Equal(big.NewInt(100)))
 			})
 		}) // 1 <= licenceAmount <= 100

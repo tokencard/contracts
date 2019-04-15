@@ -41,7 +41,6 @@ var _ = Describe("updateTKN", func() {
 			Expect(it.Next()).To(BeTrue())
 			evt := it.Event
 			Expect(it.Next()).To(BeFalse())
-			Expect(evt.Sender).To(Equal(Owner.Address()))
 			Expect(evt.NewTKN).To(Equal(TKNBurnerAddress))
 		})
 
@@ -66,11 +65,9 @@ var _ = Describe("updateTKN", func() {
 				Expect(it.Next()).To(BeTrue())
 				evt := it.Event
 				Expect(it.Next()).To(BeTrue())
-				Expect(evt.Sender).To(Equal(Owner.Address()))
 				Expect(evt.NewTKN).To(Equal(TKNBurnerAddress))
 				evt = it.Event
 				Expect(it.Next()).To(BeFalse())
-				Expect(evt.Sender).To(Equal(Owner.Address()))
 				Expect(evt.NewTKN).To(Equal(common.HexToAddress("0x1")))
 			})
 
@@ -111,7 +108,6 @@ var _ = Describe("updateTKN", func() {
 				Expect(it.Next()).To(BeTrue())
 				evt := it.Event
 				Expect(it.Next()).To(BeFalse())
-				Expect(evt.Sender).To(Equal(Owner.Address()))
 				Expect(evt.NewTKN).To(Equal(TKNBurnerAddress))
 			})
 

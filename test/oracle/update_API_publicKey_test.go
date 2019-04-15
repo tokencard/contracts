@@ -17,7 +17,7 @@ var _ = Describe("updateAPIPublicKey", func() {
 
 		BeforeEach(func() {
 			var err error
-			tx, err = Oracle.UpdateAPIPublicKey(Controller.TransactOpts(), common.Hex2Bytes("fffffff"))
+			tx, err = Oracle.UpdateCryptoCompareAPIPublicKey(Controller.TransactOpts(), common.Hex2Bytes("fffffff"))
 			Expect(err).ToNot(HaveOccurred())
 			Backend.Commit()
 		})
@@ -38,7 +38,7 @@ var _ = Describe("updateAPIPublicKey", func() {
 
 	Context("When not called by the controller", func() {
 		It("Should fail", func() {
-			tx, err := Oracle.UpdateAPIPublicKey(RandomAccount.TransactOpts(ethertest.WithGasLimit(100000)), common.Hex2Bytes("fffffff"))
+			tx, err := Oracle.UpdateCryptoCompareAPIPublicKey(RandomAccount.TransactOpts(ethertest.WithGasLimit(100000)), common.Hex2Bytes("fffffff"))
 			Expect(err).ToNot(HaveOccurred())
 			Backend.Commit()
 			Expect(isGasExhausted(tx, 100000)).To(BeFalse())

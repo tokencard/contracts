@@ -46,7 +46,6 @@ var _ = Describe("updateFloat", func() {
 			Expect(it.Next()).To(BeTrue())
 			evt := it.Event
 			Expect(it.Next()).To(BeFalse())
-			Expect(evt.Sender).To(Equal(Owner.Address()))
 			Expect(evt.NewFloat).To(Equal(TokenHolderAddress))
 		})
 
@@ -69,11 +68,9 @@ var _ = Describe("updateFloat", func() {
 				Expect(it.Next()).To(BeTrue())
 				evt := it.Event
 				Expect(it.Next()).To(BeTrue())
-				Expect(evt.Sender).To(Equal(Owner.Address()))
 				Expect(evt.NewFloat).To(Equal(TokenHolderAddress))
 				evt = it.Event
 				Expect(it.Next()).To(BeFalse())
-				Expect(evt.Sender).To(Equal(Owner.Address()))
 				Expect(evt.NewFloat).To(Equal(CryptoFloatAddress))
 			})
 
@@ -106,7 +103,6 @@ var _ = Describe("updateFloat", func() {
 				Expect(it.Next()).To(BeTrue())
 				evt := it.Event
 				Expect(it.Next()).To(BeFalse())
-				Expect(evt.Sender).To(Equal(Owner.Address()))
 				Expect(evt.NewFloat).To(Equal(TokenHolderAddress))
 			})
 
