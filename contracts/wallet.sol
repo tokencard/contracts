@@ -237,7 +237,7 @@ contract DailyLimitTrait {
     /// @dev Returns the available daily balance - accounts for daily limit reset.
     /// @return amount of available to spend within the current day in base units.
     function _getAvailableLimit(DailyLimit storage dl) internal view returns (uint) {
-        if (now > dl.limitDay + 24 hours) {
+        if (now > dl.limitDay.add(24 hours)) {
             return dl.value;
         } else {
             return dl.available;
