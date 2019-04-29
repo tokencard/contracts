@@ -14,6 +14,7 @@ contract_sources=(
   'oracle'
   'licence'
   'mocks/token'
+  'mocks/nonCompliantToken'
   'mocks/base64-exporter'
   'mocks/parseIntScientific-exporter'
   'mocks/tokenWhitelistableExporter'
@@ -47,6 +48,7 @@ contracts=(
   "oracle/Oracle oracle.go Oracle bindings"
   "licence/Licence licence.go Licence bindings"
   "mocks/token/Token mocks/token.go Token mocks"
+  "mocks/nonCompliantToken/NonCompliantToken mocks/nonCompliantToken.go NonCompliantToken mocks"
   "mocks/base64-exporter/Base64Exporter mocks/base64-exporter.go Base64Exporter mocks"
   "mocks/parseIntScientific-exporter/ParseIntScientificExporter mocks/parseIntScientific-exporter.go ParseIntScientificExporter mocks"
   "mocks/tokenWhitelistableExporter/TokenWhitelistableExporter mocks/tokenWhitelistableExporter.go TokenWhitelistableExporter mocks"

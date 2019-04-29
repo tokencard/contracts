@@ -18,8 +18,7 @@
 
 pragma solidity ^0.4.25;
 
-import "./externals/SafeMath.sol";
-import "./externals/ERC20.sol";
+import "./externals/SafeERC20.sol";
 import "./internals/ownable.sol";
 import "./internals/claimable.sol";
 
@@ -35,7 +34,7 @@ interface ILicence {
 contract Licence is Claimable, Ownable {
 
     using SafeMath for uint256;
-
+    using SafeERC20 for ERC20;
     /*******************/
     /*     Events     */
     /*****************/
@@ -199,14 +198,14 @@ contract Licence is Claimable, Ownable {
         uint loadAmount = _amount;
         // If TKN then no licence to be paid
         if (_asset == _tknContractAddress) {
-            require(ERC20(_asset).transferFrom(msg.sender, _cryptoFloat, loadAmount), "TKN transfer from external account was unsuccessful");
+            ERC20(_asset).safeTransferFrom(msg.sender, _cryptoFloat, loadAmount);
         } else {
             loadAmount = _amount.mul(MAX_AMOUNT_SCALE).div(_licenceAmountScaled + MAX_AMOUNT_SCALE);
             uint licenceAmount = _amount.sub(loadAmount);
 
             if (_asset != address(0)) {
-                require(ERC20(_asset).transferFrom(msg.sender, _tokenHolder, licenceAmount), "ERC20 licenceAmount transfer from external account was unsuccessful");
-                require(ERC20(_asset).transferFrom(msg.sender, _cryptoFloat, loadAmount), "ERC20 token transfer from external account was unsuccessful");
+                ERC20(_asset).safeTransferFrom(msg.sender, _tokenHolder, licenceAmount);
+                ERC20(_asset).safeTransferFrom(msg.sender, _cryptoFloat, loadAmount);
             } else {
                 require(msg.value == _amount, "ETH sent is not equal to amount");
                 _tokenHolder.transfer(licenceAmount);
