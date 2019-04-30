@@ -25,11 +25,11 @@ contract nonCompliantToken {
     }
 
     function transferFrom(address _from, address _to, uint _value) public {
-        if (_to == 0x0) return;
-        if (balanceOf[_from] < _value) return;
+        if (_to == 0x0) revert();
+        if (balanceOf[_from] < _value) revert();
 
         uint allowed = allowance[_from][msg.sender];
-        if (allowed < _value) return;
+        if (allowed < _value) revert();
 
         balanceOf[_to] = SafeMath.add(balanceOf[_to], _value);
         balanceOf[_from] = SafeMath.sub(balanceOf[_from], _value);
@@ -40,7 +40,7 @@ contract nonCompliantToken {
     function approve(address _spender, uint _value) public {
         //require user to set to zero before resetting to nonzero
         if ((_value != 0) && (allowance[msg.sender][_spender] != 0)) {
-            return;
+            revert();
         }
 
         allowance[msg.sender][_spender] = _value;

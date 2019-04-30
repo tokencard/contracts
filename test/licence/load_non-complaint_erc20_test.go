@@ -27,31 +27,15 @@ var _ = Describe("load ERC20", func() {
 
 	When("The RandomAccount is credited with two types of ERC20 tokens", func() {
 		BeforeEach(func() {
-			tx, err := ERC20Contract1.Credit(BankAccount.TransactOpts(), RandomAccount.Address(), big.NewInt(1000))
-			Expect(err).ToNot(HaveOccurred())
-			Backend.Commit()
-			Expect(isSuccessful(tx)).To(BeTrue())
-		})
-
-		BeforeEach(func() {
-			tx, err := ERC20Contract2.Credit(BankAccount.TransactOpts(), RandomAccount.Address(), big.NewInt(500))
+			tx, err := NonCompliantERC20.Credit(BankAccount.TransactOpts(), RandomAccount.Address(), big.NewInt(1000))
 			Expect(err).ToNot(HaveOccurred())
 			Backend.Commit()
 			Expect(isSuccessful(tx)).To(BeTrue())
 		})
 
 		When("no approval is given", func() {
-
 			It("Should revert", func() {
-				tx, err := Licence.Load(RandomAccount.TransactOpts(ethertest.WithGasLimit(100000)), ERC20Contract1Address, big.NewInt(100))
-				Expect(err).ToNot(HaveOccurred())
-				Backend.Commit()
-				Expect(isGasExhausted(tx, 100000)).To(BeFalse())
-				Expect(isSuccessful(tx)).To(BeFalse())
-			})
-
-			It("Should revert", func() {
-				tx, err := Licence.Load(RandomAccount.TransactOpts(ethertest.WithGasLimit(100000)), ERC20Contract2Address, big.NewInt(50))
+				tx, err := Licence.Load(RandomAccount.TransactOpts(ethertest.WithGasLimit(100000)), NonCompliantERC20Address, big.NewInt(100))
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 				Expect(isGasExhausted(tx, 100000)).To(BeFalse())
@@ -59,26 +43,19 @@ var _ = Describe("load ERC20", func() {
 			})
 		})
 
-		When("approval to Licence contract to transfer 101 and 2 tokens respectively is given", func() {
+		When("approval to Licence contract to transfer 101 tokens is given", func() {
 
 			BeforeEach(func() {
-				tx, err := ERC20Contract1.Approve(RandomAccount.TransactOpts(), LicenceAddress, big.NewInt(101))
+				tx, err := NonCompliantERC20.Approve(RandomAccount.TransactOpts(), LicenceAddress, big.NewInt(101))
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 				Expect(isSuccessful(tx)).To(BeTrue())
 			})
 
-			BeforeEach(func() {
-				tx, err := ERC20Contract2.Approve(RandomAccount.TransactOpts(), LicenceAddress, big.NewInt(2))
-				Expect(err).ToNot(HaveOccurred())
-				Backend.Commit()
-				Expect(isSuccessful(tx)).To(BeTrue())
-			})
-
-			It("Should emit 1 ERC20Contract1 Approval event", func() {
+			It("Should emit 1 NonCompliantERC20 Approval event", func() {
 				owner := []common.Address{RandomAccount.Address()}
 				spender := []common.Address{LicenceAddress}
-				it, err := ERC20Contract1.FilterApproval(nil, owner, spender)
+				it, err := NonCompliantERC20.FilterApproval(nil, owner, spender)
 				Expect(err).ToNot(HaveOccurred())
 				Expect(it.Next()).To(BeTrue())
 				evt := it.Event
@@ -88,75 +65,43 @@ var _ = Describe("load ERC20", func() {
 				Expect(evt.Value.String()).To(Equal("101"))
 			})
 
-			It("Should emit 1 ERC20Contract2 Approval event", func() {
-				owner := []common.Address{RandomAccount.Address()}
-				spender := []common.Address{LicenceAddress}
-				it, err := ERC20Contract2.FilterApproval(nil, owner, spender)
-				Expect(err).ToNot(HaveOccurred())
-				Expect(it.Next()).To(BeTrue())
-				evt := it.Event
-				Expect(it.Next()).To(BeFalse())
-				Expect(evt.Owner).To(Equal(RandomAccount.Address()))
-				Expect(evt.Spender).To(Equal(LicenceAddress))
-				Expect(evt.Value.String()).To(Equal("2"))
-			})
-
 			When("the exact approved amount is transfered ", func() {
 
 				BeforeEach(func() {
-					tx, err := Licence.Load(RandomAccount.TransactOpts(), ERC20Contract1Address, big.NewInt(101))
+					tx, err := Licence.Load(RandomAccount.TransactOpts(), NonCompliantERC20Address, big.NewInt(101))
 					Expect(err).ToNot(HaveOccurred())
 					Backend.Commit()
 					Expect(isSuccessful(tx)).To(BeTrue())
 				})
 
-				BeforeEach(func() {
-					tx, err := Licence.Load(RandomAccount.TransactOpts(), ERC20Contract2Address, big.NewInt(2))
-					Expect(err).ToNot(HaveOccurred())
-					Backend.Commit()
-					Expect(isSuccessful(tx)).To(BeTrue())
-				})
-
-				It("Should emit 2 TransferredToTokenHolder events", func() {
+				It("Should emit 1 TransferredToTokenHolder event", func() {
 					it, err := Licence.FilterTransferredToTokenHolder(nil)
 					Expect(err).ToNot(HaveOccurred())
 					Expect(it.Next()).To(BeTrue())
 					evt := it.Event
-					Expect(it.Next()).To(BeTrue())
-					Expect(evt.From).To(Equal(RandomAccount.Address()))
-					Expect(evt.To).To(Equal(TokenHolderAddress))
-					Expect(evt.Asset).To(Equal(ERC20Contract1Address))
-					Expect(evt.Amount.String()).To(Equal("1"))
-					evt = it.Event
 					Expect(it.Next()).To(BeFalse())
 					Expect(evt.From).To(Equal(RandomAccount.Address()))
 					Expect(evt.To).To(Equal(TokenHolderAddress))
-					Expect(evt.Asset).To(Equal(ERC20Contract2Address))
+					Expect(evt.Asset).To(Equal(NonCompliantERC20Address))
 					Expect(evt.Amount.String()).To(Equal("1"))
 				})
 
-				It("Should emit 2 TransferredToCryptoFloat events", func() {
+				It("Should emit 1 TransferredToCryptoFloat event", func() {
 					it, err := Licence.FilterTransferredToCryptoFloat(nil)
 					Expect(err).ToNot(HaveOccurred())
 					Expect(it.Next()).To(BeTrue())
 					evt := it.Event
-					Expect(it.Next()).To(BeTrue())
-					Expect(evt.From).To(Equal(RandomAccount.Address()))
-					Expect(evt.To).To(Equal(CryptoFloatAddress))
-					Expect(evt.Asset).To(Equal(ERC20Contract1Address))
-					Expect(evt.Amount.String()).To(Equal("100"))
-					evt = it.Event
 					Expect(it.Next()).To(BeFalse())
 					Expect(evt.From).To(Equal(RandomAccount.Address()))
 					Expect(evt.To).To(Equal(CryptoFloatAddress))
-					Expect(evt.Asset).To(Equal(ERC20Contract2Address))
-					Expect(evt.Amount.String()).To(Equal("1"))
+					Expect(evt.Asset).To(Equal(NonCompliantERC20Address))
+					Expect(evt.Amount.String()).To(Equal("100"))
 				})
 
-				It("Should emit 2 ERC20Contract1 Transfer events", func() {
+				It("Should emit 2 NonCompliantERC20 Transfer events", func() {
 					from := []common.Address{RandomAccount.Address()}
 					var to []common.Address
-					it, err := ERC20Contract1.FilterTransfer(nil, from, to)
+					it, err := NonCompliantERC20.FilterTransfer(nil, from, to)
 					Expect(err).ToNot(HaveOccurred())
 					Expect(it.Next()).To(BeTrue())
 					evt := it.Event
@@ -171,58 +116,22 @@ var _ = Describe("load ERC20", func() {
 					Expect(evt.Amount.String()).To(Equal("100"))
 				})
 
-				It("Should emit 2 ERC20Contract2 Transfer events", func() {
-					from := []common.Address{RandomAccount.Address()}
-					var to []common.Address
-					it, err := ERC20Contract2.FilterTransfer(nil, from, to)
-					Expect(err).ToNot(HaveOccurred())
-					Expect(it.Next()).To(BeTrue())
-					evt := it.Event
-					Expect(it.Next()).To(BeTrue())
-					Expect(evt.From).To(Equal(RandomAccount.Address()))
-					Expect(evt.To).To(Equal(TokenHolderAddress))
-					Expect(evt.Amount.String()).To(Equal("1"))
-					evt = it.Event
-					Expect(it.Next()).To(BeFalse())
-					Expect(evt.From).To(Equal(RandomAccount.Address()))
-					Expect(evt.To).To(Equal(CryptoFloatAddress))
-					Expect(evt.Amount.String()).To(Equal("1"))
-				})
-
-				It("should increase the ERC20 type-1 balance of the Holder contract by 1", func() {
-					b, err := ERC20Contract1.BalanceOf(nil, TokenHolderAddress)
+				It("should increase the NonCompliantERC20 balance of the Holder contract by 1", func() {
+					b, err := NonCompliantERC20.BalanceOf(nil, TokenHolderAddress)
 					Expect(err).ToNot(HaveOccurred())
 					Expect(b.String()).To(Equal("1"))
 				})
 
-				It("should increase the ERC20 type-2 balance of the Holder contract by 1", func() {
-					b, err := ERC20Contract2.BalanceOf(nil, TokenHolderAddress)
-					Expect(err).ToNot(HaveOccurred())
-					Expect(b.String()).To(Equal("1"))
-				})
-
-				It("should increase the ERC20 type-1 balance of the Float contract by 100", func() {
-					b, err := ERC20Contract1.BalanceOf(nil, CryptoFloatAddress)
+				It("should increase the NonCompliantERC20 balance of the Float contract by 100", func() {
+					b, err := NonCompliantERC20.BalanceOf(nil, CryptoFloatAddress)
 					Expect(err).ToNot(HaveOccurred())
 					Expect(b.String()).To(Equal("100"))
 				})
 
-				It("should increase the ERC20 type-2 balance of the Float contract by 1", func() {
-					b, err := ERC20Contract2.BalanceOf(nil, CryptoFloatAddress)
-					Expect(err).ToNot(HaveOccurred())
-					Expect(b.String()).To(Equal("1"))
-				})
-
-				It("should decrease the ERC20 type-1 balance of the RandomAccount 101", func() {
-					b, err := ERC20Contract1.BalanceOf(nil, RandomAccount.Address())
+				It("should decrease the NonCompliantERC20 balance of the RandomAccount 101", func() {
+					b, err := NonCompliantERC20.BalanceOf(nil, RandomAccount.Address())
 					Expect(err).ToNot(HaveOccurred())
 					Expect(b.String()).To(Equal("899"))
-				})
-
-				It("should decrease the ERC20 type-2 balance of the RandomAccount by 2", func() {
-					b, err := ERC20Contract2.BalanceOf(nil, RandomAccount.Address())
-					Expect(err).ToNot(HaveOccurred())
-					Expect(b.String()).To(Equal("498"))
 				})
 
 			}) //equal to approval
@@ -230,15 +139,7 @@ var _ = Describe("load ERC20", func() {
 			When("a bigger amount than the approved one is tried to be transfered ", func() {
 
 				It("Should revert", func() {
-					tx, err := Licence.Load(RandomAccount.TransactOpts(ethertest.WithGasLimit(100000)), ERC20Contract1Address, big.NewInt(102))
-					Expect(err).ToNot(HaveOccurred())
-					Backend.Commit()
-					Expect(isGasExhausted(tx, 100000)).To(BeFalse())
-					Expect(isSuccessful(tx)).To(BeFalse())
-				})
-
-				It("Should revert", func() {
-					tx, err := Licence.Load(RandomAccount.TransactOpts(ethertest.WithGasLimit(100000)), ERC20Contract2Address, big.NewInt(3))
+					tx, err := Licence.Load(RandomAccount.TransactOpts(ethertest.WithGasLimit(100000)), NonCompliantERC20Address, big.NewInt(102))
 					Expect(err).ToNot(HaveOccurred())
 					Backend.Commit()
 					Expect(isGasExhausted(tx, 100000)).To(BeFalse())

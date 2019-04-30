@@ -12,7 +12,6 @@ import (
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	"github.com/tokencard/contracts/pkg/bindings"
-	"github.com/tokencard/contracts/pkg/bindings/mocks"
 	. "github.com/tokencard/contracts/test/shared"
 	"github.com/tokencard/ethertest"
 )
@@ -21,9 +20,6 @@ import (
 // var DAOAddress common.Address
 
 var DAO *ethertest.Account
-
-var NonCompliantERC20 *mocks.NonCompliantToken
-var NonCompliantERC20Address common.Address
 
 func init() {
 	TestRig.AddCoverageForContracts(
@@ -44,13 +40,7 @@ var _ = BeforeEach(func() {
 
 	DAO = ethertest.NewAccount()
 	err = BankAccount.Transfer(Backend, DAO.Address(), EthToWei(50))
-
 	Expect(err).ToNot(HaveOccurred())
-
-	NonCompliantERC20Address, tx, NonCompliantERC20, err = mocks.DeployNonCompliantToken(BankAccount.TransactOpts(), Backend)
-	Expect(err).ToNot(HaveOccurred())
-	Backend.Commit()
-	Expect(isSuccessful(tx)).To(BeTrue())
 
 	LicenceAddress, tx, Licence, err = bindings.DeployLicence(BankAccount.TransactOpts(), Backend, Owner.Address(), true, big.NewInt(10), CryptoFloatAddress, TokenHolderAddress, common.HexToAddress("0x0"))
 	Expect(err).ToNot(HaveOccurred())
