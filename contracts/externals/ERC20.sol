@@ -1,4 +1,4 @@
-pragma solidity ^0.4.25;
+pragma solidity ^0.5.7;
 
 /// @title ERC20 interface is a subset of the ERC20 specification.
 interface ERC20 {

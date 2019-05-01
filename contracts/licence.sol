@@ -16,7 +16,7 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-pragma solidity ^0.4.25;
+pragma solidity ^0.5.7;
 
 import "./externals/SafeMath.sol";
 import "./externals/ERC20.sol";
@@ -58,8 +58,8 @@ contract Licence is Claimable, Ownable {
 
     address private _tknContractAddress = 0xaAAf91D9b90dF800Df4F55c205fd6989c977E73a; // solium-disable-line uppercase
 
-    address private _cryptoFloat;
-    address private _tokenHolder;
+    address payable private _cryptoFloat;
+    address payable private _tokenHolder;
     address private _licenceDAO;
 
     bool private _lockedCryptoFloat;
@@ -83,7 +83,7 @@ contract Licence is Claimable, Ownable {
     /// @param _licence_ is the initial card licence amount. this number is scaled 10 = 1%, 9 = 0.9%
     /// @param _float_ is the address of the multi-sig cryptocurrency float contract.
     /// @param _holder_ is the address of the token holder contract
-    constructor(address _owner_, bool _transferable_, uint _licence_, address _float_, address _holder_, address _tknAddress_) Ownable(_owner_, _transferable_) public {
+    constructor(address payable _owner_, bool _transferable_, uint _licence_, address payable _float_, address payable _holder_, address _tknAddress_) Ownable(_owner_, _transferable_) public {
         _licenceAmountScaled = _licence_;
         _cryptoFloat = _float_;
         _tokenHolder = _holder_;
@@ -154,7 +154,7 @@ contract Licence is Claimable, Ownable {
 
     /// @notice Updates the address of the cyptoFloat.
     /// @param _newFloat This is the new address for the CryptoFloat
-    function updateFloat(address _newFloat) external onlyOwner {
+    function updateFloat(address payable _newFloat) external onlyOwner {
         require(!floatLocked(), "float is locked");
         _cryptoFloat = _newFloat;
         emit UpdatedCryptoFloat(_newFloat);
@@ -162,7 +162,7 @@ contract Licence is Claimable, Ownable {
 
     /// @notice Updates the address of the Holder contract.
     /// @param _newHolder This is the new address for the TokenHolder
-    function updateHolder(address _newHolder) external onlyOwner {
+    function updateHolder(address payable _newHolder) external onlyOwner {
         require(!holderLocked(), "holder contract is locked");
         _tokenHolder = _newHolder;
         emit UpdatedTokenHolder(_newHolder);
@@ -220,7 +220,7 @@ contract Licence is Claimable, Ownable {
     }
 
     //// @notice Withdraw tokens from the smart contract to the specified account.
-    function claim(address _to, address _asset, uint _amount) external onlyOwner {
+    function claim(address payable _to, address _asset, uint _amount) external onlyOwner {
         _claim(_to, _asset, _amount);
     }
 

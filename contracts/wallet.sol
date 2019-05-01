@@ -16,7 +16,7 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-pragma solidity ^0.4.25;
+pragma solidity ^0.5.7;
 
 import "./licence.sol";
 import "./internals/ownable.sol";
@@ -62,7 +62,7 @@ contract AddressWhitelist is ControllableOwnable {
     bool public isSetWhitelist;
 
     /// @dev Check if the provided addresses contain the owner or the zero-address address.
-    modifier hasNoOwnerOrZeroAddress(address[] _addresses) {
+    modifier hasNoOwnerOrZeroAddress(address[] memory _addresses) {
         for (uint i = 0; i < _addresses.length; i++) {
             require(!_isOwner(_addresses[i]), "provided whitelist contains the owner address");
             require(_addresses[i] != address(0), "provided whitelist contains the zero address");
@@ -77,18 +77,18 @@ contract AddressWhitelist is ControllableOwnable {
     }
 
     /// @dev Getter for pending addition array.
-    function pendingWhitelistAddition() external view returns (address[]) {
+    function pendingWhitelistAddition() external view returns (address[] memory) {
         return _pendingWhitelistAddition;
     }
 
     /// @dev Getter for pending removal array.
-    function pendingWhitelistRemoval() external view returns (address[]) {
+    function pendingWhitelistRemoval() external view returns (address[] memory) {
         return _pendingWhitelistRemoval;
     }
 
     /// @dev Add initial addresses to the whitelist.
     /// @param _addresses are the Ethereum addresses to be whitelisted.
-    function setWhitelist(address[] _addresses) external onlyOwner hasNoOwnerOrZeroAddress(_addresses) {
+    function setWhitelist(address[] calldata _addresses) external onlyOwner hasNoOwnerOrZeroAddress(_addresses) {
         // Require that the whitelist has not been initialized.
         require(!isSetWhitelist, "whitelist has already been initialized");
         // Add each of the provided addresses to the whitelist.
@@ -105,7 +105,7 @@ contract AddressWhitelist is ControllableOwnable {
 
     /// @dev Add addresses to the whitelist.
     /// @param _addresses are the Ethereum addresses to be whitelisted.
-    function submitWhitelistAddition(address[] _addresses) external onlyOwner noActiveSubmission hasNoOwnerOrZeroAddress(_addresses) {
+    function submitWhitelistAddition(address[] calldata _addresses) external onlyOwner noActiveSubmission hasNoOwnerOrZeroAddress(_addresses) {
         // Require that the whitelist has been initialized.
         require(isSetWhitelist, "whitelist has not been initialized");
         // Require this array of addresses not empty
@@ -159,7 +159,7 @@ contract AddressWhitelist is ControllableOwnable {
 
     /// @dev Remove addresses from the whitelist.
     /// @param _addresses are the Ethereum addresses to be removed.
-    function submitWhitelistRemoval(address[] _addresses) external onlyOwner noActiveSubmission {
+    function submitWhitelistRemoval(address[] calldata _addresses) external onlyOwner noActiveSubmission {
         // Require that the whitelist has been initialized.
         require(isSetWhitelist, "whitelist has not been initialized");
         // Require that the array of addresses is not empty
@@ -215,7 +215,7 @@ contract AddressWhitelist is ControllableOwnable {
     }
 
     /// @dev Method used to hash our whitelist address arrays.
-    function calculateHash(address[] _addresses) public pure returns (bytes32) {
+    function calculateHash(address[] memory _addresses) public pure returns (bytes32) {
         return keccak256(abi.encodePacked(_addresses));
     }
 }
@@ -487,7 +487,7 @@ contract Vault is AddressWhitelist, SpendLimit, ERC165, TokenWhitelistable {
     /// @param _tokenWhitelistNameHash_ is the ENS name hash of the Token whitelist.
     /// @param _controllerNameHash_ is the ENS name hash of the controller.
     /// @param _spendLimit_ is the initial spend limit.
-    constructor(address _owner_, bool _transferable_, bytes32 _tokenWhitelistNameHash_, bytes32 _controllerNameHash_, uint _spendLimit_) SpendLimit(_spendLimit_) Ownable(_owner_, _transferable_) Controllable(_controllerNameHash_) TokenWhitelistable(_tokenWhitelistNameHash_) public {}
+    constructor(address payable _owner_, bool _transferable_, bytes32 _tokenWhitelistNameHash_, bytes32 _controllerNameHash_, uint _spendLimit_) SpendLimit(_spendLimit_) Ownable(_owner_, _transferable_) Controllable(_controllerNameHash_) TokenWhitelistable(_tokenWhitelistNameHash_) public {}
 
     /// @dev Checks if the value is not zero.
     modifier isNotZero(uint _value) {
@@ -506,7 +506,7 @@ contract Vault is AddressWhitelist, SpendLimit, ERC165, TokenWhitelistable {
     /// @return balance associated with the wallet address in wei.
     function balance(address _asset) external view returns (uint) {
         if (_asset != address(0)) {
-            return ERC20(_asset).balanceOf(this);
+            return ERC20(_asset).balanceOf(address(this));
         } else {
             return address(this).balance;
         }
@@ -516,7 +516,7 @@ contract Vault is AddressWhitelist, SpendLimit, ERC165, TokenWhitelistable {
     /// @param _to is the recipient's address.
     /// @param _asset is the address of an ERC20 token or 0x0 for ether.
     /// @param _amount is the amount of assets to be transferred in base units.
-    function transfer(address _to, address _asset, uint _amount) external onlyOwner isNotZero(_amount) {
+    function transfer(address payable _to, address _asset, uint _amount) external onlyOwner isNotZero(_amount) {
         // Checks if the _to address is not the zero-address
         require(_to != address(0), "_to address cannot be set to 0x0");
 
@@ -588,7 +588,7 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
     /// @param _controllerNameHash_ is the ENS name hash of the Controller contract.
     /// @param _licenceNameHash_ is the ENS name hash of the Licence contract.
     /// @param _spendLimit_ is the initial spend limit.
-    constructor(address _owner_, bool _transferable_, address _ens_, bytes32 _tokenWhitelistNameHash_, bytes32 _controllerNameHash_, bytes32 _licenceNameHash_, uint _spendLimit_) ENSResolvable(_ens_) Vault(_owner_, _transferable_, _tokenWhitelistNameHash_, _controllerNameHash_, _spendLimit_) public {
+    constructor(address payable _owner_, bool _transferable_, address _ens_, bytes32 _tokenWhitelistNameHash_, bytes32 _controllerNameHash_, bytes32 _licenceNameHash_, uint _spendLimit_) ENSResolvable(_ens_) Vault(_owner_, _transferable_, _tokenWhitelistNameHash_, _controllerNameHash_, _spendLimit_) public {
         // Get the stablecoin's magnitude.
         ( ,uint256 stablecoinMagnitude, , , , , ) = _getStablecoinInfo();
         require(stablecoinMagnitude > 0, "stablecoin not set");
@@ -635,7 +635,7 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
     /// @param _destination address of the transaction
     /// @param _value ETH amount in wei
     /// @param _data transaction payload binary
-    function executeTransaction(address _destination, uint _value, bytes _data) external onlyOwner {
+    function executeTransaction(address _destination, uint _value, bytes calldata _data) external onlyOwner {
         // Check if there exists at least a method signature in the transaction payload
         if (_data.length >= 4) {
             // Get method signature
@@ -714,7 +714,7 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
     /// @param _data transaction payload binary
     // call has been separated into its own function in order to take advantage
     // of the Solidity's code generator to produce a loop that copies tx.data into memory.
-    function _externalCall(address _destination, uint _value, uint _dataLength, bytes _data) private returns (bool) {
+    function _externalCall(address _destination, uint _value, uint _dataLength, bytes memory _data) private returns (bool) {
         bool result;
         assembly {
             let x := mload(0x40)   // "Allocate" memory for output (0x40 is where "free memory" pointer is stored by convention)
@@ -738,37 +738,32 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
     /// @dev This function converts to an address
     /// @param _bts bytes
     /// @param _from start position
-    function _bytesToAddress(bytes _bts, uint _from) private pure returns (address) {
+    function _bytesToAddress(bytes memory _bts, uint _from) private pure returns (address) {
         require(_bts.length >= _from + 20, "slicing out of range");
 
-        uint160 m = 0;
-        uint160 b = 0;
+        uint160 addressUint;
 
         for (uint8 i = 0; i < 20; i++) {
-            m *= 256;
-            b = uint160 (_bts[_from + i]);
-            m += (b);
+            addressUint *= 256;
+            addressUint += uint8(_bts[_from + i]);
         }
-
-        return address(m);
+        return address(addressUint);
     }
 
     /// @dev This function slicing bytes into uint32
     /// @param _bts some bytes
     /// @param _from  a start position
-    function _bytesToUint32(bytes _bts, uint _from) private pure returns (uint32) {
+    function _bytesToUint32(bytes memory _bts, uint _from) private pure returns (uint32) {
         require(_bts.length >= _from + 4, "slicing out of range");
 
-        uint32 m = 0;
-        uint32 b = 0;
+        uint32 accum = 0;
 
         for (uint8 i = 0; i < 4; i++) {
-            m *= 256;
-            b = uint32 (_bts[_from + i]);
-            m += (b);
+            accum *= 256;
+            accum += uint8(_bts[_from + i]);
         }
 
-        return m;
+        return accum;
     }
 
     /// @dev This function slices a uint
@@ -776,7 +771,7 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
     /// @param _from  a start position
     // credit to https://ethereum.stackexchange.com/questions/51229/how-to-convert-bytes-to-uint-in-solidity
     // and Nick Johnson https://ethereum.stackexchange.com/questions/4170/how-to-convert-a-uint-to-bytes-in-solidity/4177#4177
-    function _sliceUint(bytes _bts, uint _from) private pure returns (uint) {
+    function _sliceUint(bytes memory _bts, uint _from) private pure returns (uint) {
         require(_bts.length >= _from + 32, "slicing out of range");
 
         uint x;

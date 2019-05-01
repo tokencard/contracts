@@ -16,7 +16,7 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-pragma solidity ^0.4.25;
+pragma solidity ^0.5.7;
 
 import "./internals/controllable.sol";
 import "./internals/claimable.sol";
@@ -25,7 +25,7 @@ import "./internals/date.sol";
 import "./internals/parseIntScientific.sol";
 import "./internals/tokenWhitelistable.sol";
 import "./externals/SafeMath.sol";
-import "./externals/oraclizeAPI_0.4.25.sol";
+import "./externals/oraclizeAPI_0.5.sol";
 import "./externals/base64.sol";
 
 
@@ -81,7 +81,7 @@ contract Oracle is ENSResolvable, usingOraclize, Claimable, Base64, Date, Contro
 
     /// @notice Updates the Crypto Compare public API key.
     /// @param _publicKey new Crypto Compare public API key
-    function updateCryptoCompareAPIPublicKey(bytes _publicKey) external onlyController {
+    function updateCryptoCompareAPIPublicKey(bytes calldata _publicKey) external onlyController {
         cryptoCompareAPIPublicKey = _publicKey;
         emit SetCryptoComparePublicKey(msg.sender, _publicKey);
     }
@@ -102,12 +102,12 @@ contract Oracle is ENSResolvable, usingOraclize, Claimable, Base64, Date, Contro
     /// @notice Update ERC20 token exchange rates for the list of tokens provided.
     /// @param _gasLimit the gas limit is passed, this is used for the Oraclize callback
     /// @param _tokenList the list of tokens that need to be updated
-    function updateTokenRatesList(uint _gasLimit, address[] _tokenList) external payable onlyController {
+    function updateTokenRatesList(uint _gasLimit, address[] calldata _tokenList) external payable onlyController {
         _updateTokenRatesList(_gasLimit, _tokenList);
     }
 
     /// @notice Withdraw tokens from the smart contract to the specified account.
-    function claim(address _to, address _asset, uint _amount) external onlyController {
+    function claim(address payable _to, address _asset, uint _amount) external onlyController {
         _claim(_to, _asset, _amount);
     }
 
@@ -116,7 +116,7 @@ contract Oracle is ENSResolvable, usingOraclize, Claimable, Base64, Date, Contro
     /// @param _result query result in JSON format.
     /// @param _proof origin proof from crypto compare.
     // solium-disable-next-line mixedcase
-    function __callback(bytes32 _queryID, string _result, bytes _proof) public {
+    function __callback(bytes32 _queryID, string memory _result, bytes memory _proof) public {
         // Require that the caller is the Oraclize contract.
         require(msg.sender == oraclize_cbAddress(), "sender is not oraclize");
         // Use the query ID to find the matching token address.
@@ -145,7 +145,7 @@ contract Oracle is ENSResolvable, usingOraclize, Claimable, Base64, Date, Contro
 
     /// @notice Extracts JSON rate value from the response object.
     /// @param _json body of the JSON response from the CryptoCompare API.
-    function parseRate(string _json) internal pure returns (string) {
+    function parseRate(string memory _json) internal pure returns (string memory) {
 
         uint jsonLen = abi.encodePacked(_json).length;
         //{"ETH":}.length = 8, assuming a (maximum of) 18 digit prevision
@@ -201,7 +201,7 @@ contract Oracle is ENSResolvable, usingOraclize, Claimable, Base64, Date, Contro
     /// @notice Re-usable helper function that performs the Oraclize Query for a specific list of tokens.
     /// @param _gasLimit the gas limit is passed, this is used for the Oraclize callback.
     /// @param _tokenList the list of tokens that need to be updated.
-    function _updateTokenRatesList(uint _gasLimit, address[] _tokenList) private {
+    function _updateTokenRatesList(uint _gasLimit, address[] memory _tokenList) private {
         // Check if there are any existing tokens.
         if (_tokenList.length == 0) {
             // Emit a query failure event.
@@ -237,7 +237,7 @@ contract Oracle is ENSResolvable, usingOraclize, Claimable, Base64, Date, Contro
     /// @param _proof origin proof from cryptocompare.
     /// @param _publicKey cryptocompare public key.
     /// @param _lastUpdate timestamp of the last time the requested token was updated.
-    function _verifyProof(string _result, bytes _proof, bytes _publicKey, uint _lastUpdate) private returns (bool, uint) {
+    function _verifyProof(string memory _result, bytes memory _proof, bytes memory _publicKey, uint _lastUpdate) private returns (bool, uint) {
 
         // expecting fixed length proofs
         if (_proof.length != _PROOF_LEN) {
@@ -245,7 +245,7 @@ contract Oracle is ENSResolvable, usingOraclize, Claimable, Base64, Date, Contro
         }
 
         // proof should be 65 bytes long: R (32 bytes) + S (32 bytes) + v (1 byte)
-        if (uint(_proof[1]) != _ECDSA_SIG_LEN) {
+        if (uint(uint8(_proof[1])) != _ECDSA_SIG_LEN) {
             revert("invalid signature length");
         }
 
@@ -254,7 +254,7 @@ contract Oracle is ENSResolvable, usingOraclize, Claimable, Base64, Date, Contro
         signature = copyBytes(_proof, 2, _ECDSA_SIG_LEN, signature, 0);
 
         // Extract the headers, big endian encoding of headers length
-        if (uint(_proof[_ENCODING_BYTES + _ECDSA_SIG_LEN]) * _MAX_BYTE_SIZE + uint(_proof[_ENCODING_BYTES + _ECDSA_SIG_LEN + 1]) != _HEADERS_LEN) {
+        if (uint(uint8(_proof[_ENCODING_BYTES + _ECDSA_SIG_LEN])) * _MAX_BYTE_SIZE + uint(uint8(_proof[_ENCODING_BYTES + _ECDSA_SIG_LEN + 1])) != _HEADERS_LEN) {
             revert("invalid headers length");
         }
 
@@ -296,19 +296,19 @@ contract Oracle is ENSResolvable, usingOraclize, Claimable, Base64, Date, Contro
     /// @param _headers HTTP headers provided by the cryptocompare api
     /// @param _signature signature provided by the cryptocompare api
     /// @param _publicKey cryptocompare public key.
-    function _verifySignature(bytes _headers, bytes _signature, bytes _publicKey) private returns (bool) {
+    function _verifySignature(bytes memory _headers, bytes memory _signature, bytes memory _publicKey) private returns (bool) {
         address signer;
         bool signatureOK;
 
         // Checks if the signature is valid by hashing the headers
         (signatureOK, signer) = ecrecovery(sha256(_headers), _signature);
-        return signatureOK && signer == address(keccak256(_publicKey));
+        return signatureOK && signer == address(uint160(uint256(keccak256(_publicKey))));
     }
 
     /// @notice Verify the signed HTTP date header.
     /// @param _dateHeader extracted date string e.g. Wed, 12 Sep 2018 15:18:14 GMT.
     /// @param _lastUpdate timestamp of the last time the requested token was updated.
-    function _verifyDate(string _dateHeader, uint _lastUpdate) private pure returns (bool, uint) {
+    function _verifyDate(string memory _dateHeader, uint _lastUpdate) private pure returns (bool, uint) {
 
         // called by verifyProof(), _dateHeader is always a string of length = 20
         assert(abi.encodePacked(_dateHeader).length == 20);

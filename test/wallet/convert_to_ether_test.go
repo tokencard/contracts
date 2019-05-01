@@ -1,7 +1,6 @@
 package wallet_test
 
 import (
-	"errors"
 	"math"
 	"math/big"
 
@@ -48,7 +47,7 @@ var _ = Describe("convertToEther", func() {
 			Context("When overflow occurs", func() {
 				It("Should trigger assert() (empty output)", func() {
 					_, err := Wallet.ConvertToEther(nil, common.HexToAddress("0xfe209bdE5CA32fa20E6728A005F26D651FFF5982"), big.NewInt(-1))
-					Expect(err).To(MatchError(errors.New("abi: unmarshalling empty output")))
+					Expect(err.Error()).To(ContainSubstring("SafeMath: multiplication overflow"))
 				})
 			})
 			Context("When overflow does not occur", func() {

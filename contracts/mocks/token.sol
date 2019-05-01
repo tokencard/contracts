@@ -1,4 +1,4 @@
-pragma solidity ^0.4.25;
+pragma solidity ^0.5.7;
 
 import "../externals/SafeMath.sol";
 
@@ -26,7 +26,7 @@ contract Token {
     }
 
     function transferFrom(address _from, address _to, uint _value) public returns (bool) {
-        if (_to == 0x0) return false;
+        if (_to == address(0)) return false;
         if (balanceOf[_from] < _value) return false;
 
         uint allowed = allowance[_from][msg.sender];

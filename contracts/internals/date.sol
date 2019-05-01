@@ -16,7 +16,7 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-pragma solidity ^0.4.25;
+pragma solidity ^0.5.7;
 
 
 /// @title Date provides redimentary date parsing functionality.
@@ -38,7 +38,7 @@ contract Date {
 
     /// @return the number of the month based on its name.
     /// @param _month the first three letters of a month's name e.g. "Jan".
-    function _monthToNumber(string _month) internal pure returns (uint8) {
+    function _monthToNumber(string memory _month) internal pure returns (uint8) {
         bytes32 month = keccak256(abi.encodePacked(_month));
         if (month == _JANUARY) {
             return 1;
