@@ -584,7 +584,7 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
     event LoadedTokenCard(address _asset, uint _amount);
     event ExecutedTransaction(address _destination, uint _value, bytes _data);
     event UpdatedAvailableLimit();
-    
+
     uint constant private _DEFAULT_MAX_STABLECOIN_LOAD_LIMIT = 10000; //10,000 USD
 
     /// @dev Is the registered ENS node identifying the licence contract.
