@@ -16,7 +16,7 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-pragma solidity ^0.4.25;
+pragma solidity ^0.5.7;
 
 
 /// @title Ownable has an owner address and provides basic authorization control functions.
@@ -27,11 +27,11 @@ contract Ownable {
     event TransferredOwnership(address _from, address _to);
     event LockedOwnership(address _locked);
 
-    address private _owner;
+    address payable private _owner;
     bool private _isTransferable;
 
     /// @notice Constructor sets the original owner of the contract and whether or not it is one time transferable.
-    constructor(address _account_, bool _transferable_) internal {
+    constructor(address payable _account_, bool _transferable_) internal {
         _owner = _account_;
         _isTransferable = _transferable_;
         // Emit the LockedOwnership event if no longer transferable.
@@ -50,7 +50,7 @@ contract Ownable {
     /// @notice Allows the current owner to transfer control of the contract to a new address.
     /// @param _account address to transfer ownership to.
     /// @param _transferable indicates whether to keep the ownership transferable.
-    function transferOwnership(address _account, bool _transferable) external onlyOwner {
+    function transferOwnership(address payable _account, bool _transferable) external onlyOwner {
         // Require that the ownership is transferable.
         require(_isTransferable, "ownership is not transferable");
         // Require that the new owner is not the zero address.
@@ -87,7 +87,7 @@ contract Ownable {
 
     /// @notice Find out owner address
     /// @return address of the owner.
-    function owner() public view returns (address) {
+    function owner() public view returns (address payable) {
         return _owner;
     }
 

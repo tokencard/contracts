@@ -25,7 +25,7 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-pragma solidity >=0.4.24;
+pragma solidity ^0.5.0;
 
 interface ENS {
 
@@ -51,4 +51,3 @@ interface ENS {
     function ttl(bytes32 node) external view returns (uint64);
 
 }
-

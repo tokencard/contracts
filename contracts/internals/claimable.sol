@@ -16,7 +16,7 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-pragma solidity ^0.4.25;
+pragma solidity ^0.5.7;
 
 import "../externals/ERC20.sol";
 
@@ -31,7 +31,7 @@ contract Claimable {
     /// @param _to is the recipient's address.
     /// @param _asset is the address of an ERC20 token or 0x0 for ether.
     /// @param _amount is the amount to be transferred in base units.
-    function _claim(address _to, address _asset, uint _amount) internal {
+    function _claim(address payable _to, address _asset, uint _amount) internal {
         // address(0) is used to denote ETH
         if (_asset == address(0)) {
             _to.transfer(_amount);

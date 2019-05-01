@@ -16,7 +16,7 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-pragma solidity ^0.4.25;
+pragma solidity ^0.5.7;
 
 import "./ownable.sol";
 import "./claimable.sol";
@@ -49,7 +49,7 @@ contract Controller is IController, Ownable, Claimable {
     /// @notice Constructor initializes the owner with the provided address.
     /// @param _ownerAddress_ address of the owner.
     /// @param _transferable_ indicates whether the contract ownership can be transferred.
-    constructor(address _ownerAddress_, bool _transferable_) Ownable(_ownerAddress_, _transferable_) public { }
+    constructor(address payable _ownerAddress_, bool _transferable_) Ownable(_ownerAddress_, _transferable_) public { }
 
     /// @notice Checks if message sender is an admin.
     modifier onlyAdmin() {
@@ -149,7 +149,7 @@ contract Controller is IController, Ownable, Claimable {
     }
 
     //// @notice Withdraw tokens from the smart contract to the specified account.
-    function claim(address _to, address _asset, uint _amount) external onlyOwner {
+    function claim(address payable _to, address _asset, uint _amount) external onlyOwner {
         _claim(_to, _asset, _amount);
     }
 }

@@ -6,7 +6,6 @@ import (
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	. "github.com/tokencard/contracts/test/shared"
 )
 
 var _ = Describe("ParseIntScientific", func() {
@@ -727,7 +726,7 @@ var _ = Describe("ParseIntScientific", func() {
 				//input 2^256, 0 <= uint <=2^256-1
 				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "115792089237316195423570985008687907853269984665640564039457584007913129639936", big.NewInt(0))
 				Expect(err).To(HaveOccurred())
-				Expect(err).To(MatchError(errors.New("abi: unmarshalling empty output")))
+				Expect(err.Error()).To(ContainSubstring("SafeMath: addition overflow"))
 			})
 		})
 
@@ -736,7 +735,8 @@ var _ = Describe("ParseIntScientific", func() {
 				//exp = 2^256, 0 <= uint <=2^256-1
 				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "1e115792089237316195423570985008687907853269984665640564039457584007913129639936", big.NewInt(0))
 				Expect(err).To(HaveOccurred())
-				Expect(err).To(MatchError(errors.New("abi: unmarshalling empty output")))
+				Expect(err.Error()).To(ContainSubstring("SafeMath: addition overflow"))
+				// Expect(err).To(MatchError(errors.New("abi: improperly formatted output")))
 			})
 		})
 
@@ -745,7 +745,7 @@ var _ = Describe("ParseIntScientific", func() {
 				//dec = 2^256, 0 <= uint <=2^256-1
 				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "1.115792089237316195423570985008687907853269984665640564039457584007913129639936", big.NewInt(0))
 				Expect(err).To(HaveOccurred())
-				Expect(err).To(MatchError(errors.New("abi: unmarshalling empty output")))
+				Expect(err.Error()).To(ContainSubstring("SafeMath: addition overflow"))
 			})
 		})
 
@@ -754,7 +754,7 @@ var _ = Describe("ParseIntScientific", func() {
 				//exp = 2^255 - 1, _magnitudeMult = 1, 0 <= uint <=2^256-1
 				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "1e115792089237316195423570985008687907853269984665640564039457584007913129639935", big.NewInt(1))
 				Expect(err).To(HaveOccurred())
-				Expect(err).To(MatchError(errors.New("abi: unmarshalling empty output")))
+				Expect(err.Error()).To(ContainSubstring("SafeMath: addition overflow"))
 			})
 		})
 
@@ -763,7 +763,7 @@ var _ = Describe("ParseIntScientific", func() {
 				//exp = 2^255 - 2, _magnitudeMult = 2, 0 <= uint <=2^256-1
 				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "1e115792089237316195423570985008687907853269984665640564039457584007913129639934", big.NewInt(2))
 				Expect(err).To(HaveOccurred())
-				Expect(err).To(MatchError(errors.New("abi: unmarshalling empty output")))
+				Expect(err.Error()).To(ContainSubstring("SafeMath: addition overflow"))
 			})
 		})
 
@@ -782,7 +782,7 @@ var _ = Describe("ParseIntScientific", func() {
 				//10^77 < 2^256 - 1 < 10^78
 				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "10", big.NewInt(77))
 				Expect(err).To(HaveOccurred())
-				Expect(err).To(MatchError(errors.New("abi: unmarshalling empty output")))
+				Expect(err.Error()).To(ContainSubstring("SafeMath: multiplication overflow"))
 			})
 		})
 
@@ -800,8 +800,7 @@ var _ = Describe("ParseIntScientific", func() {
 				//10^77 < 2^256 - 1 < 10^78
 				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "10.11111111111111111111111111111111111111111111111111111111111111111111111111111", big.NewInt(77))
 				Expect(err).To(HaveOccurred())
-				Expect(err).To(MatchError(errors.New("abi: unmarshalling empty output")))
-				Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*require\(c / a == b\);`))
+				Expect(err.Error()).To(ContainSubstring("SafeMath: multiplication overflow"))
 			})
 		})
 
@@ -810,8 +809,7 @@ var _ = Describe("ParseIntScientific", func() {
 				//10^77 < 2^256 - 1 < 10^78
 				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "1.99999999999999999999999999999999999999999999999999999999999999999999999999999", big.NewInt(77))
 				Expect(err).To(HaveOccurred())
-				Expect(err).To(MatchError(errors.New("abi: unmarshalling empty output")))
-				Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*require\(c >= a\);`))
+				Expect(err.Error()).To(ContainSubstring("SafeMath: addition overflow"))
 			})
 		})
 
