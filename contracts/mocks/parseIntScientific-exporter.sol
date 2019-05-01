@@ -2,6 +2,7 @@ pragma solidity ^0.5.10;
 
 import "../internals/parseIntScientific.sol";
 
+
 contract ParseIntScientificExporter is ParseIntScientific {
 
     /// @dev exports _parseIntScientific(string) as an external function.
