@@ -734,6 +734,7 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
         return success;
     }
 
+
     /// @dev This function converts to an address
     /// @param _bts bytes
     /// @param _from start position
