@@ -665,7 +665,7 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
             _enforceLimit(_spendLimit, _value);
         }
 
-        require(_externalCall(_destination, _value, _data.length, _data), "executing transaction failed");
+        require(_executeCall(_destination, _value, _data), "executing transaction failed");
 
         emit ExecutedTransaction(_destination, _value, _data);
     }
@@ -704,36 +704,18 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
         return _amount.mul(stablecoinMagnitude).div(stablecoinRate);
     }
 
-    /// @dev This function is taken from the Gnosis MultisigWallet: https://github.com/gnosis/MultiSigWallet/
-    /// @dev License: https://github.com/gnosis/MultiSigWallet/blob/master/LICENSE
-    /// @dev thanks :)
     /// @dev This calls proxies arbitrary transactions to addresses
-    /// @param _destination address of the transaction
+    /// @param _to desgtination address of the transaction
     /// @param _value ETH amount in wei
-    /// @param _dataLength length of the transaction data
     /// @param _data transaction payload binary
-    // call has been separated into its own function in order to take advantage
-    // of the Solidity's code generator to produce a loop that copies tx.data into memory.
-    function _externalCall(address _destination, uint _value, uint _dataLength, bytes memory _data) private returns (bool) {
-        bool result;
-        assembly {
-            let x := mload(0x40)   // "Allocate" memory for output (0x40 is where "free memory" pointer is stored by convention)
-            let d := add(_data, 32) // First 32 bytes are the padded length of data, so exclude that
-            result := call(
-                sub(gas, 34710),   // 34710 is the value that solidity is currently emitting
-                                   // It includes callGas (700) + callVeryLow (3, to pay for SUB) + callValueTransferGas (9000) +
-                                   // callNewAccountGas (25000, in case the destination address does not exist and needs creating)
-                _destination,
-                _value,
-                d,
-                _dataLength,        // Size of the input (in bytes) - this is what fixes the padding problem
-                x,
-                0                  // Output is ignored, therefore the output size is zero
-            )
-        }
-
-        return result;
+    function _executeCall(address _to, uint256 _value, bytes memory _data) internal  returns (bool success)
+{
+    // solium-disable-next-line security/no-inline-assembly
+    assembly {
+        success := call(gas, _to, _value, add(_data, 0x20), mload(_data), 0, 0)
     }
+}
+
 
     /// @dev This function converts to an address
     /// @param _bts bytes
