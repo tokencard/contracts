@@ -725,7 +725,7 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
     /// @param _to destination address of the transaction
     /// @param _value ETH amount in wei
     /// @param _data transaction payload binary
-    /// @return success
+    /// @return true if the call was successful
     function _executeCall(address _to, uint256 _value, bytes memory _data) internal returns (bool) {
         bool success;
         // solium-disable-next-line security/no-inline-assembly
@@ -734,7 +734,6 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
         }
         return success;
     }
-
 
     /// @dev This function converts to an address
     /// @param _bts bytes
