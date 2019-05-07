@@ -24,7 +24,7 @@ import "./internals/controllable.sol";
 import "./internals/ensResolvable.sol";
 import "./internals/tokenWhitelistable.sol";
 import "./externals/SafeMath.sol";
-import "./externals/ERC20.sol";
+import "./externals/SafeERC20.sol";
 import "./externals/ERC165.sol";
 
 
@@ -479,6 +479,7 @@ contract LoadLimit is ControllableOwnable {
 contract Vault is AddressWhitelist, SpendLimit, ERC165, TokenWhitelistable {
 
     using SafeMath for uint256;
+    using SafeERC20 for ERC20;
 
     event Received(address _from, uint _amount);
     event Transferred(address _to, address _asset, uint _amount);
@@ -539,7 +540,7 @@ contract Vault is AddressWhitelist, SpendLimit, ERC165, TokenWhitelistable {
         }
         // Transfer token or ether based on the provided address.
         if (_asset != address(0)) {
-            require(ERC20(_asset).transfer(_to, _amount), "ERC20 token transfer was unsuccessful");
+            ERC20(_asset).safeTransfer(_to, _amount);
         } else {
             _to.transfer(_amount);
         }
@@ -571,6 +572,8 @@ contract Vault is AddressWhitelist, SpendLimit, ERC165, TokenWhitelistable {
 
 //// @title Asset wallet with extra security features, gas top up management and card integration.
 contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
+
+    using SafeERC20 for ERC20;
 
     event ToppedUpGas(address _sender, address _owner, uint _amount);
     event LoadedTokenCard(address _asset, uint _amount);
@@ -626,7 +629,7 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
         // Get the TKN licenceAddress from ENS
         address licenceAddress = _ensResolve(_licenceNode);
         if (_asset != address(0)) {
-            require(ERC20(_asset).approve(licenceAddress, _amount), "ERC20 token approval was unsuccessful");
+            ERC20(_asset).safeApprove(licenceAddress, _amount);
             ILicence(licenceAddress).load(_asset, _amount);
         } else {
             ILicence(licenceAddress).load.value(_amount)(_asset, _amount);
