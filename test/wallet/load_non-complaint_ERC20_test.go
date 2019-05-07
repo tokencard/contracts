@@ -207,7 +207,7 @@ var _ = Describe("wallet load non-compliant ERC20", func() {
 					Backend.Commit()
 					Expect(isGasExhausted(tx, 100000)).To(BeFalse())
 					Expect(isSuccessful(tx)).To(BeFalse())
-					Expect(TestRig.LastExecuted()).To(MatchRegexp(`require\(self.available >= _amount, "available has to be greater or equal to use amount"\);`))
+					Expect(TestRig.LastExecuted()).To(MatchRegexp(`require\(dl.available >= _amount, "available has to be greater or equal to use amount"\);`))
 				})
 
 			}) //more than daily Load limit
