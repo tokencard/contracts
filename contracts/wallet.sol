@@ -720,16 +720,18 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
     /// @dev This function converts to an address
     /// @param _bts bytes
     /// @param _from start position
-    function _bytesToAddress(bytes memory _bts, uint _from) private pure returns (address) {
+    function _bytesToAddress(bytes memory _bts, uint _from) public pure returns (address payable) {
         require(_bts.length >= _from + 20, "slicing out of range");
 
-        uint160 addressUint;
+        bytes20 convertedAddress;
+        _from += 32;
 
-        for (uint8 i = 0; i < 20; i++) {
-            addressUint *= 256;
-            addressUint += uint8(_bts[_from + i]);
+        assembly {
+            convertedAddress := mload(add(_bts, _from))
         }
-        return address(addressUint);
+
+
+        return address(convertedAddress);
     }
 
     /// @dev This function slicing bytes into uint32
@@ -738,14 +740,14 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
     function _bytesToUint32(bytes memory _bts, uint _from) private pure returns (uint32) {
         require(_bts.length >= _from + 4, "slicing out of range");
 
-        uint32 accum = 0;
+        bytes4 convertedUint32;
+        _from += 32;
 
-        for (uint8 i = 0; i < 4; i++) {
-            accum *= 256;
-            accum += uint8(_bts[_from + i]);
+        assembly {
+            convertedUint32 := mload(add(_bts, _from))
         }
 
-        return accum;
+        return uint32(convertedUint32);
     }
 
     /// @dev This function slices a uint
