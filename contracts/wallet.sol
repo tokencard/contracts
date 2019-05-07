@@ -25,6 +25,7 @@ import "./internals/ensResolvable.sol";
 import "./internals/tokenWhitelistable.sol";
 import "./externals/SafeMath.sol";
 import "./externals/Address.sol";
+import "./externals/ERC20.sol";
 import "./externals/SafeERC20.sol";
 import "./externals/ERC165.sol";
 
