@@ -193,6 +193,44 @@ var _ = Describe("transfer", func() {
 				})
 			})
 
+			When("I have one thousand NonCompliantERC20 tokens that are not whitelisted", func() {
+				BeforeEach(func() {
+					var err error
+					tx, err = NonCompliantERC20.Credit(BankAccount.TransactOpts(), WalletAddress, big.NewInt(1000))
+					Expect(err).ToNot(HaveOccurred())
+					Backend.Commit()
+					Expect(isSuccessful(tx)).To(BeTrue())
+
+				})
+
+				When("I transfer 300 tokens to a random person", func() {
+					BeforeEach(func() {
+						tx, err := Wallet.Transfer(Owner.TransactOpts(), RandomAccount.Address(), NonCompliantERC20Address, big.NewInt(300))
+						Expect(err).ToNot(HaveOccurred())
+						Backend.Commit()
+						Expect(isSuccessful(tx)).To(BeTrue())
+					})
+
+					It("should increase token balance of the random person", func() {
+						b, err := NonCompliantERC20.BalanceOf(nil, RandomAccount.Address())
+						Expect(err).ToNot(HaveOccurred())
+						Expect(b.String()).To(Equal("300"))
+					})
+
+					It("should decrease token balance of the wallet", func() {
+						b, err := Wallet.Balance(nil, NonCompliantERC20Address)
+						Expect(err).ToNot(HaveOccurred())
+						Expect(b.String()).To(Equal("700"))
+					})
+
+					It("should not reduce the available daily spend balance", func() {
+						av, err := Wallet.SpendLimitAvailable(nil)
+						Expect(err).ToNot(HaveOccurred())
+						Expect(av.String()).To(Equal("100000000000000000000"))
+					})
+				})
+			})
+
 			Context("When controller tries to transfer one token to a random person", func() {
 				BeforeEach(func() {
 					var err error

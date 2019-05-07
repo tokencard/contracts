@@ -97,7 +97,7 @@ var OraclizeConnectorAddress common.Address
 var Oracle *bindings.Oracle
 var OracleAddress common.Address
 
-var TKNBurner *bindings.Token
+var TKNBurner *mocks.Token
 var TKNBurnerAddress common.Address
 
 var CryptoFloatAddress common.Address
@@ -123,6 +123,9 @@ var ERC20Contract1Address common.Address
 
 var ERC20Contract2 *mocks.Token
 var ERC20Contract2Address common.Address
+
+var NonCompliantERC20 *mocks.NonCompliantToken
+var NonCompliantERC20Address common.Address
 
 var OracleName = EnsNode("oracle.tokencard.eth")
 var ControllerName = EnsNode("controller.tokencard.eth")
@@ -462,7 +465,7 @@ func InitializeBackend() error {
 	}
 
 	// Deploy the real TKN contract with burner functionality.
-	TKNBurnerAddress, tx, TKNBurner, err = bindings.DeployToken(Owner.TransactOpts(), Backend)
+	TKNBurnerAddress, tx, TKNBurner, err = mocks.DeployToken(Owner.TransactOpts(), Backend)
 	if err != nil {
 		return err
 	}
@@ -547,6 +550,16 @@ func InitializeBackend() error {
 	err = verifyTransaction(tx)
 	if err != nil {
 		return errors.Wrap(err, "deploying ERC20-2 token contract")
+	}
+
+	NonCompliantERC20Address, tx, NonCompliantERC20, err = mocks.DeployNonCompliantToken(BankAccount.TransactOpts(), Backend)
+	if err != nil {
+		return err
+	}
+	Backend.Commit()
+	err = verifyTransaction(tx)
+	if err != nil {
+		return errors.Wrap(err, "deploying NonCompliantERC20 token contract")
 	}
 
 	// Add the TKN token to the oracle list.
