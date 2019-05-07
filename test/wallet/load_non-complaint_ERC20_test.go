@@ -1,6 +1,5 @@
 package wallet_test
 
-
 import (
 	"context"
 	"math/big"
