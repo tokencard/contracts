@@ -11,6 +11,7 @@ compile_solidity() {
 
 contract_sources=(
   'wallet'
+  'wallet-deployer'
   'oracle'
   'licence'
   'mocks/token'
@@ -44,6 +45,7 @@ generate_binding() {
 
 contracts=(
   "wallet/Wallet wallet.go Wallet bindings"
+  "wallet-deployer/WalletDeployer wallet_deployer.go WalletDeployer bindings"
   "oracle/Oracle oracle.go Oracle bindings"
   "licence/Licence licence.go Licence bindings"
   "mocks/token/Token mocks/token.go Token mocks"
