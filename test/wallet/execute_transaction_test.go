@@ -24,22 +24,12 @@ var _ = Describe("executeTransaction", func() {
 		var tx *types.Transaction
 
 		When("I transfer 500 Finney tp a random person using 'executeTransaction'", func() {
-			BeforeEach(func() {
+			It("should reduce the available daily spend balance", func() {
 				tx, err := Wallet.ExecuteTransaction(Owner.TransactOpts(ethertest.WithGasLimit(100000)), RandomAccount.Address(), FinneyToWei(500), nil)
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
-				Expect(isSuccessful(tx)).To(BeTrue())
-			})
-
-			It("should transfer 5 Finney to random person", func() {
-				bal := RandomAccount.Balance(Backend)
-				Expect(bal.String()).To(Equal("1000500000000000000000"))
-			})
-
-			It("should reduce the available daily spend balance", func() {
-				av, err := Wallet.SpendLimitAvailable(nil)
-				Expect(err).ToNot(HaveOccurred())
-				Expect(av.String()).To(AlmostEqual("99500000000000000000"))
+				Expect(isSuccessful(tx)).To(BeFalse())
+				Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*_executeCall: call to non-contract`))
 			})
 
 		})
