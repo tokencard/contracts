@@ -24,6 +24,7 @@ import "./internals/controllable.sol";
 import "./internals/ensResolvable.sol";
 import "./internals/tokenWhitelistable.sol";
 import "./externals/SafeMath.sol";
+import "./externals/Address.sol";
 import "./externals/SafeERC20.sol";
 import "./externals/ERC165.sol";
 
@@ -573,6 +574,7 @@ contract Vault is AddressWhitelist, SpendLimit, ERC165, TokenWhitelistable {
 contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
 
     using SafeERC20 for ERC20;
+    using Address for address;
 
     event ToppedUpGas(address _sender, address _owner, uint _amount);
     event LoadedTokenCard(address _asset, uint _amount);
@@ -716,6 +718,8 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
     /// @param _value ETH amount in wei
     /// @param _data transaction payload binary
     function _executeCall(address _to, uint256 _value, bytes memory _data) internal returns (bool success) {
+        //check if contract exists
+        require(address(_to).isContract(), "_executeCall: call to non-contract");
         // solium-disable-next-line security/no-inline-assembly
         assembly {
             success := call(gas, _to, _value, add(_data, 0x20), mload(_data), 0, 0)
