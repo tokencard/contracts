@@ -4,6 +4,9 @@ This repository contains the Smart Contracts needed to power the TokenCard, writ
 
 The TokenCard is the world's first non-custodial VISA card, that allows people to hold their own assets, whilst being able to seemlessly move funds to a VISA debit card.
 
+| [High Level Architecture](https://github.com/tokencard/contracts/blob/master/README.md/#high-level-architecture) | [Security Features](https://github.com/tokencard/contracts/blob/master/README.md/#security-features) | [Solidity Code](https://github.com/tokencard/contracts/blob/master/README.md/#solidity-code-in-the-contracts-folder) | [Running Contract Tests](https://github.com/tokencard/contracts/blob/master/README.md/#running-contract-tests) | [TokenCard Resources](https://github.com/tokencard/contracts/blob/master/README.md/#tokencard-resources) |
+|---|---|---|---|---|
+
 ## Overview
 
 The functionality encoded in the Smart Contracts found in this repository have been designed to help users protect their tokens, by holding them within their own instance of a *Consumer Contract Wallet* which they can configure to their liking. The functionality within the *Consumer Contract Wallet* has been designed to limit a user's exposure to loss of tokens in the event that a user has had their Private Key compromised.
@@ -159,3 +162,7 @@ Run tests:
 ```sh
 go test -v ./test/...
 ```
+## TokenCard Resources
+
+[🎮 Discord](https://discord.gg/YrrFpFd) | [🗞️Blog](https://medium.com/tokencard) | [📜 Whitepaper](https://tokencard.io/tokencard_whitepaper.pdf) | [🕸️ Website ](https://tokencard.io/) | [🐦 Twitter](https://twitter.com/tokencard_io/) |
+|---|---|---|---|---| 
