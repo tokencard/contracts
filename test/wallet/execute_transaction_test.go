@@ -13,7 +13,7 @@ import (
 	"github.com/tokencard/ethertest"
 )
 
-var _ = FDescribe("executeTransaction", func() {
+var _ = Describe("executeTransaction", func() {
 
 	Context("when the wallet has enough ETH", func() {
 		BeforeEach(func() {
