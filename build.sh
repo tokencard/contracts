@@ -13,6 +13,7 @@ contract_sources=(
   'wallet'
   'oracle'
   'licence'
+  'holder'
   'mocks/token'
   'mocks/nonCompliantToken'
   'mocks/base64-exporter'
@@ -47,6 +48,7 @@ contracts=(
   "wallet/Wallet wallet.go Wallet bindings"
   "oracle/Oracle oracle.go Oracle bindings"
   "licence/Licence licence.go Licence bindings"
+  "holder/Holder holder.go Holder bindings"
   "mocks/token/Token mocks/token.go Token mocks"
   "mocks/nonCompliantToken/NonCompliantToken mocks/nonCompliantToken.go NonCompliantToken mocks"
   "mocks/base64-exporter/Base64Exporter mocks/base64-exporter.go Base64Exporter mocks"
