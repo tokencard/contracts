@@ -90,6 +90,9 @@ var ERC20Contract1Address common.Address
 var ERC20Contract2 *mocks.Token
 var ERC20Contract2Address common.Address
 
+var NonCompliantERC20 *mocks.NonCompliantToken
+var NonCompliantERC20Address common.Address
+
 var OracleName = EnsNode("oracle.tokencard.eth")
 var ControllerName = EnsNode("controller.tokencard.eth")
 
@@ -377,7 +380,17 @@ func InitializeBackend() error {
 	if err != nil {
 		return errors.Wrap(err, "deploying ERC20-2 token contract")
 	}
-	
+
+    NonCompliantERC20Address, tx, NonCompliantERC20, err = mocks.DeployNonCompliantToken(BankAccount.TransactOpts(), Backend)
+	if err != nil {
+		return err
+	}
+	Backend.Commit()
+	err = verifyTransaction(tx)
+	if err != nil {
+		return errors.Wrap(err, "deploying NonCompliantERC20 token contract")
+    }
+
 	tx, err = Oracle.AddTokens(Controller.TransactOpts(), []common.Address{TKNAddress}, StringsToByte32("TKN"), []*big.Int{ExponentiateDecimals(8)}, big.NewInt(20180913153211))
 	if err != nil {
 		return err

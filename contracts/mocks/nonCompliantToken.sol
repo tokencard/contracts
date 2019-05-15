@@ -2,9 +2,8 @@ pragma solidity ^0.4.25;
 
 import "../externals/SafeMath.sol";
 
-
-/// @title Token is a mock ERC20 token used for testing.
-contract Token {
+/// @title NonCompliantToken is a mock ERC20 token that is not compatible with the ERC20 interface.
+contract NonCompliantToken {
 
     using SafeMath for uint256;
 
@@ -18,37 +17,34 @@ contract Token {
     mapping(address => mapping(address => uint)) public allowance;
 
     /// @dev Transfer a token. This throws on insufficient balance.
-    function transfer(address to, uint amount) public returns (bool) {
+    function transfer(address to, uint amount) public {
         require(balanceOf[msg.sender] >= amount);
         balanceOf[msg.sender] -= amount;
         balanceOf[to] += amount;
         emit Transfer(msg.sender, to, amount);
-        return true;
     }
 
-    function transferFrom(address _from, address _to, uint _value) public returns (bool) {
-        if (_to == 0x0) return false;
-        if (balanceOf[_from] < _value) return false;
+    function transferFrom(address _from, address _to, uint _value) public {
+        if (_to == 0x0) revert();
+        if (balanceOf[_from] < _value) revert();
 
         uint allowed = allowance[_from][msg.sender];
-        if (allowed < _value) return false;
+        if (allowed < _value) revert();
 
         balanceOf[_to] = SafeMath.add(balanceOf[_to], _value);
         balanceOf[_from] = SafeMath.sub(balanceOf[_from], _value);
         allowance[_from][msg.sender] = SafeMath.sub(allowed, _value);
         emit Transfer(_from, _to, _value);
-        return true;
     }
 
-    function approve(address _spender, uint _value) public returns (bool) {
+    function approve(address _spender, uint _value) public {
         //require user to set to zero before resetting to nonzero
         if ((_value != 0) && (allowance[msg.sender][_spender] != 0)) {
-            return false;
+            revert();
         }
 
         allowance[msg.sender][_spender] = _value;
         emit Approval(msg.sender, _spender, _value);
-        return true;
     }
 
     /// @dev Credit an address.

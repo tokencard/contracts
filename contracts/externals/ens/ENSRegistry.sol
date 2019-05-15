@@ -30,6 +30,7 @@ pragma solidity ^0.4.24;
 
 import "./ENS.sol";
 
+
 /**
  * The ENS registry contract.
  */

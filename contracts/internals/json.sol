@@ -20,6 +20,8 @@ pragma solidity ^0.4.25;
 
 import "../externals/strings.sol";
 import "../externals/oraclizeAPI_0.4.25.sol";
+
+
 /// @title JSON provides JSON parsing functionality.
 contract JSON is usingOraclize{
     using strings for *;

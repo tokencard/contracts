@@ -2,6 +2,7 @@ pragma solidity ^0.4.25;
 
 import "../externals/base64.sol";
 
+
 contract Base64Exporter is Base64 {
 
     /// @dev export _base64decode() as a public function.

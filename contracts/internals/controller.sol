@@ -23,6 +23,7 @@ interface IController {
     function isController(address) external view returns (bool);
 }
 
+
 /// @title Controller stores a list of controller addresses that can be used for authentication in other contracts.
 contract Controller is IController {
     event AddedController(address _sender, address _controller);

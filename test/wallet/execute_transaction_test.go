@@ -10,7 +10,6 @@ import (
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	. "github.com/tokencard/contracts/test/shared"
-	"github.com/tokencard/ethertest"
 )
 
 var _ = Describe("executeTransaction", func() {
@@ -25,7 +24,7 @@ var _ = Describe("executeTransaction", func() {
 
 		When("I transfer 500 Finney tp a random person using 'executeTransaction'", func() {
 			BeforeEach(func() {
-				tx, err := Wallet.ExecuteTransaction(Owner.TransactOpts(ethertest.WithGasLimit(100000)), RandomAccount.Address(), FinneyToWei(500), nil)
+				tx, err := Wallet.ExecuteTransaction(Owner.TransactOpts(), RandomAccount.Address(), FinneyToWei(500), nil)
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 				Expect(isSuccessful(tx)).To(BeTrue())
