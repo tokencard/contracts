@@ -23,6 +23,7 @@ import "./internals/ownable.sol";
 import "./internals/controllable.sol";
 import "./externals/ens/PublicResolver.sol";
 import "./externals/SafeMath.sol";
+import "./externals/Address.sol";
 
 /// @title ERC20 interface is a subset of the ERC20 specification.
 interface ERC20 {
@@ -439,6 +440,9 @@ contract Vault is Whitelist, SpendLimit, ERC165 {
 
 //// @title Asset wallet with extra security features and gas top up management.
 contract Wallet is Vault {
+
+    using Address for address;
+
     event SetTopUpLimit(address _sender, uint _amount);
     event SubmittedTopUpLimitChange(uint _amount);
     event CancelledTopUpLimitChange(address _sender, uint _amount);
@@ -598,6 +602,9 @@ contract Wallet is Vault {
     /// @param _value ETH amount in wei
     /// @param _data transaction payload binary
     function executeTransaction(address _destination, uint _value, bytes _data) external onlyOwner {
+
+        require(address(_destination).isContract(), "executeTransaction: call to non-contract");
+
         // Check if there exists at least a method signature in the transaction payload
         if (_data.length >= 4) {
             // Get method signature

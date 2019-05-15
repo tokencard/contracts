@@ -10,6 +10,7 @@ import (
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	. "github.com/tokencard/contracts/test/shared"
+    "github.com/tokencard/ethertest"
 )
 
 var _ = Describe("executeTransaction", func() {
@@ -22,26 +23,17 @@ var _ = Describe("executeTransaction", func() {
 
 		var tx *types.Transaction
 
-		When("I transfer 500 Finney tp a random person using 'executeTransaction'", func() {
-			BeforeEach(func() {
-				tx, err := Wallet.ExecuteTransaction(Owner.TransactOpts(), RandomAccount.Address(), FinneyToWei(500), nil)
+        When("I transfer 500 Finney tp a random person using 'executeTransaction'", func() {
+			It("should reduce the available daily spend balance", func() {
+				tx, err := Wallet.ExecuteTransaction(Owner.TransactOpts(ethertest.WithGasLimit(100000)), RandomAccount.Address(), FinneyToWei(500), nil)
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
-				Expect(isSuccessful(tx)).To(BeTrue())
+				Expect(isSuccessful(tx)).To(BeFalse())
+				Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*executeTransaction: call to non-contract`))
 			})
+        })
 
-			It("should transfer 500 Finney to random person", func() {
-				bal := RandomAccount.Balance(Backend)
-				Expect(bal.String()).To(Equal("1000500000000000000000"))
-			})
 
-			It("should reduce the available daily spend balance", func() {
-				av, err := Wallet.SpendAvailable(nil)
-				Expect(err).ToNot(HaveOccurred())
-				Expect(av.String()).To(AlmostEqual("99500000000000000000"))
-			})
-
-		})
 
 		When("I have one thousand tokens", func() {
 			BeforeEach(func() {
@@ -81,6 +73,21 @@ var _ = Describe("executeTransaction", func() {
 					av, err := Wallet.SpendAvailable(nil)
 					Expect(err).ToNot(HaveOccurred())
 					Expect(av.String()).To(AlmostEqual("99999999999951010000"))
+				})
+			})
+
+            When("I transfer 300 tokens to a random person using 'executeTransaction' but the destination is not a contract", func() {
+				It("should fail", func() {
+					a, err := abi.JSON(strings.NewReader(ERC20ABI))
+					Expect(err).ToNot(HaveOccurred())
+					data, err := a.Pack("transfer", RandomAccount.Address(), big.NewInt(300))
+					Expect(err).ToNot(HaveOccurred())
+
+					tx, err = Wallet.ExecuteTransaction(Owner.TransactOpts(ethertest.WithGasLimit(100000)), RandomAccount.Address(), big.NewInt(0), data)
+					Expect(err).ToNot(HaveOccurred())
+					Backend.Commit()
+					Expect(isSuccessful(tx)).To(BeFalse())
+					Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*executeTransaction: call to non-contract`))
 				})
 			})
 
