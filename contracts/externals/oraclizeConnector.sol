@@ -12,7 +12,6 @@ Oraclize Connector v1.2.0
 
 pragma solidity ^0.4.11;
 
-
 contract Oraclize {
     mapping (address => uint) reqc;
 
@@ -51,7 +50,7 @@ contract Oraclize {
     {
         onlyadmin();
         //bytes memory nil = '';
-        addCbAddress(newCbAddress, addressType, hex"");
+        addCbAddress(newCbAddress, addressType, hex'');
     }
 
     // proof is currently a placeholder for when associated proof for addressType is added
@@ -70,8 +69,8 @@ contract Oraclize {
     }
 
     function cbAddress()
-    view
-    returns (address _cbAddress) public
+    constant
+    returns (address _cbAddress)
     {
         if (cbAddresses[tx.origin] != 0)
             _cbAddress = tx.origin;
@@ -87,7 +86,7 @@ contract Oraclize {
     public
     {
         onlyadmin();
-        bytes32 dsname_hash = keccak256(dsname, proofType);
+        bytes32 dsname_hash = sha3(dsname, proofType);
         dsources[dsources.length++] = dsname_hash;
         price_multiplier[dsname_hash] = multiplier;
     }
@@ -146,9 +145,9 @@ contract Oraclize {
     function setOffchainPayment(address _addr, bool _flag)
     external
     {
-      if (msg.sender != paymentFlagger) revert();
+      if (msg.sender != paymentFlagger) throw;
       offchainPayment[_addr] = _flag;
-      emit Emit_OffchainPaymentFlag(_addr, _addr, _flag, _flag);
+      Emit_OffchainPaymentFlag(_addr, _addr, _flag, _flag);
     }
 
     function withdrawFunds(address _addr)
@@ -161,7 +160,7 @@ contract Oraclize {
     // unnecessary?
     //function() {}
 
-    constructor() {
+    function Oraclize() {
         owner = msg.sender;
     }
 
@@ -169,7 +168,7 @@ contract Oraclize {
 
     function onlyadmin()
     private {
-        if (msg.sender != owner) revert();
+        if (msg.sender != owner) throw;
     }
 
     function costs(string datasource, uint gaslimit)
@@ -182,10 +181,10 @@ contract Oraclize {
             if (diff > 0) {
                 // added for correct query cost to be returned
                 if(!msg.sender.send(diff)) {
-                    revert();
+                    throw;
                 }
             }
-        } else revert();
+        } else throw;
     }
 
     mapping (address => byte) addr_proofType;
@@ -207,9 +206,9 @@ contract Oraclize {
 
     function randomDS_getSessionPubKeyHash()
     external
-    view
+    constant
     returns (bytes32) {
-        uint i = uint(keccak256(reqc[msg.sender]))%randomDS_sessionPubKeysHash.length;
+        uint i = uint(sha3(reqc[msg.sender]))%randomDS_sessionPubKeysHash.length;
         return randomDS_sessionPubKeysHash[i];
     }
 
@@ -262,14 +261,14 @@ contract Oraclize {
         ) return 0;
 
         if (gasprice_ == 0) gasprice_ = gasprice;
-        _dsprice = price[keccak256(_datasource, addr_proofType[_addr])];
+        _dsprice = price[sha3(_datasource, addr_proofType[_addr])];
         _dsprice += _gaslimit*gasprice_;
         return _dsprice;
     }
 
     function getCodeSize(address _addr)
     private
-    view
+    constant
     returns(uint _size)
     {
         assembly {
@@ -388,11 +387,11 @@ contract Oraclize {
     returns (bytes32 _id)
     {
         costs(_datasource, _gaslimit);
-    	if ((_timestamp > now+3600*24*60)||(_gaslimit > block.gaslimit)) revert();
+    	if ((_timestamp > now+3600*24*60)||(_gaslimit > block.gaslimit)) throw;
 
-        _id = keccak256(this, msg.sender, reqc[msg.sender]);
+        _id = sha3(this, msg.sender, reqc[msg.sender]);
         reqc[msg.sender]++;
-        emit Log1(msg.sender, _id, _timestamp, _datasource, _arg, _gaslimit, addr_proofType[msg.sender], addr_gasPrice[msg.sender]);
+        Log1(msg.sender, _id, _timestamp, _datasource, _arg, _gaslimit, addr_proofType[msg.sender], addr_gasPrice[msg.sender]);
         return _id;
     }
 
@@ -402,11 +401,11 @@ contract Oraclize {
     returns (bytes32 _id)
     {
         costs(_datasource, _gaslimit);
-    	if ((_timestamp > now+3600*24*60)||(_gaslimit > block.gaslimit)) revert();
+    	if ((_timestamp > now+3600*24*60)||(_gaslimit > block.gaslimit)) throw;
 
-        _id = keccak256(this, msg.sender, reqc[msg.sender]);
+        _id = sha3(this, msg.sender, reqc[msg.sender]);
         reqc[msg.sender]++;
-        emit Log2(msg.sender, _id, _timestamp, _datasource, _arg1, _arg2, _gaslimit, addr_proofType[msg.sender], addr_gasPrice[msg.sender]);
+        Log2(msg.sender, _id, _timestamp, _datasource, _arg1, _arg2, _gaslimit, addr_proofType[msg.sender], addr_gasPrice[msg.sender]);
         return _id;
     }
 
@@ -416,11 +415,11 @@ contract Oraclize {
     returns (bytes32 _id)
     {
         costs(_datasource, _gaslimit);
-    	if ((_timestamp > now+3600*24*60)||(_gaslimit > block.gaslimit)) revert();
+    	if ((_timestamp > now+3600*24*60)||(_gaslimit > block.gaslimit)) throw;
 
-        _id = keccak256(this, msg.sender, reqc[msg.sender]);
+        _id = sha3(this, msg.sender, reqc[msg.sender]);
         reqc[msg.sender]++;
-        emit LogN(msg.sender, _id, _timestamp, _datasource, _args, _gaslimit, addr_proofType[msg.sender], addr_gasPrice[msg.sender]);
+        LogN(msg.sender, _id, _timestamp, _datasource, _args, _gaslimit, addr_proofType[msg.sender], addr_gasPrice[msg.sender]);
         return _id;
     }
 
@@ -430,11 +429,11 @@ contract Oraclize {
     returns (bytes32 _id)
     {
         costs(_datasource, _gaslimit);
-        if ((_timestamp > now+3600*24*60)||(_gaslimit > block.gaslimit)||address(_fnc) != msg.sender) revert();
+        if ((_timestamp > now+3600*24*60)||(_gaslimit > block.gaslimit)||address(_fnc) != msg.sender) throw;
 
-        _id = keccak256(this, msg.sender, reqc[msg.sender]);
+        _id = sha3(this, msg.sender, reqc[msg.sender]);
         reqc[msg.sender]++;
-        emit Log1_fnc(msg.sender, _id, _timestamp, _datasource, _arg, _fnc, _gaslimit, addr_proofType[msg.sender], addr_gasPrice[msg.sender]);
+        Log1_fnc(msg.sender, _id, _timestamp, _datasource, _arg, _fnc, _gaslimit, addr_proofType[msg.sender], addr_gasPrice[msg.sender]);
         return _id;
     }
 
@@ -444,11 +443,11 @@ contract Oraclize {
     returns (bytes32 _id)
     {
         costs(_datasource, _gaslimit);
-        if ((_timestamp > now+3600*24*60)||(_gaslimit > block.gaslimit)||address(_fnc) != msg.sender) revert();
+        if ((_timestamp > now+3600*24*60)||(_gaslimit > block.gaslimit)||address(_fnc) != msg.sender) throw;
 
-        _id = keccak256(this, msg.sender, reqc[msg.sender]);
+        _id = sha3(this, msg.sender, reqc[msg.sender]);
         reqc[msg.sender]++;
-        emit Log2_fnc(msg.sender, _id, _timestamp, _datasource, _arg1, _arg2, _fnc,  _gaslimit, addr_proofType[msg.sender], addr_gasPrice[msg.sender]);
+        Log2_fnc(msg.sender, _id, _timestamp, _datasource, _arg1, _arg2, _fnc,  _gaslimit, addr_proofType[msg.sender], addr_gasPrice[msg.sender]);
         return _id;
     }
 
@@ -458,11 +457,11 @@ contract Oraclize {
     returns (bytes32 _id)
     {
         costs(_datasource, _gaslimit);
-        if ((_timestamp > now+3600*24*60)||(_gaslimit > block.gaslimit)||address(_fnc) != msg.sender) revert();
+        if ((_timestamp > now+3600*24*60)||(_gaslimit > block.gaslimit)||address(_fnc) != msg.sender) throw;
 
-        _id = keccak256(this, msg.sender, reqc[msg.sender]);
+        _id = sha3(this, msg.sender, reqc[msg.sender]);
         reqc[msg.sender]++;
-        emit LogN_fnc(msg.sender, _id, _timestamp, _datasource, _args, _fnc, _gaslimit, addr_proofType[msg.sender], addr_gasPrice[msg.sender]);
+        LogN_fnc(msg.sender, _id, _timestamp, _datasource, _args, _fnc, _gaslimit, addr_proofType[msg.sender], addr_gasPrice[msg.sender]);
         return _id;
     }
 }
