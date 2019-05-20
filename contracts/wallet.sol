@@ -597,12 +597,14 @@ contract Wallet is Vault {
         }
     }
 
-    /// @dev This function allows for the owner to send transaction from the Wallet to arbitrary addresses
+    /// @dev This function allows for the owner to send transaction from the Wallet to arbitrary contracts 
+    /// @dev This function does not allow for the sending of data to arbitrary (non-contract) addresses
     /// @param _destination address of the transaction
     /// @param _value ETH amount in wei
     /// @param _data transaction payload binary
     function executeTransaction(address _destination, uint _value, bytes _data) external onlyOwner {
 
+        // Check if the Address is a Contract
         require(address(_destination).isContract(), "executeTransaction: call to non-contract");
 
         // Check if there exists at least a method signature in the transaction payload
@@ -633,7 +635,7 @@ contract Wallet is Vault {
            }
        }
 
-        // If value is send across as a part of this executeTransaction, this will be sent to any payable
+       // If value is send across as a part of this executeTransaction, this will be sent to any payable
        // destination. As a result enforceLimit if destination is not whitelisted.
         if (!isWhitelisted[_destination]) {
             // Require that the value is under remaining limit.
@@ -642,6 +644,9 @@ contract Wallet is Vault {
             _setSpendAvailable(spendAvailable().sub(_value));
        }
 
+       // This require would succeed if we were sending to an address that isn't a contract, as a result
+       // A transaction with non-empty data is likely to be meant for a contract.
+       // If the contract is destructed or nonexistent, the transaction will be considered successful by mistake.
         require(externalCall(_destination, _value, _data.length, _data), "executing transaction failed");
 
         emit ExecutedTransaction(_destination, _value, _data);
