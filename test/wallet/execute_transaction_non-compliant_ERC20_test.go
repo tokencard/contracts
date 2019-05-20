@@ -54,7 +54,7 @@ var _ = Describe("executeTransaction", func() {
 					data, err := a.Pack("transfer", RandomAccount.Address(), big.NewInt(300))
 					Expect(err).ToNot(HaveOccurred())
 
-					tx, err = Wallet.ExecuteTransaction(Owner.TransactOpts(), NonCompliantERC20Address, big.NewInt(0), data)
+					tx, err = Wallet.ExecuteTransaction(Owner.TransactOpts(), NonCompliantERC20Address, big.NewInt(0), data, true)
 					Expect(err).ToNot(HaveOccurred())
 					Backend.Commit()
 					Expect(isSuccessful(tx)).To(BeTrue())
@@ -102,7 +102,7 @@ var _ = Describe("executeTransaction", func() {
 						data, err := a.Pack("transfer", RandomAccount.Address(), big.NewInt(300))
 						Expect(err).ToNot(HaveOccurred())
 
-						tx, err = Wallet.ExecuteTransaction(Owner.TransactOpts(), NonCompliantERC20Address, big.NewInt(0), data)
+						tx, err = Wallet.ExecuteTransaction(Owner.TransactOpts(), NonCompliantERC20Address, big.NewInt(0), data, true)
 						Expect(err).ToNot(HaveOccurred())
 						Backend.Commit()
 						Expect(isSuccessful(tx)).To(BeTrue())
@@ -135,7 +135,7 @@ var _ = Describe("executeTransaction", func() {
 					data, err := a.Pack("approve", RandomAccount.Address(), big.NewInt(300))
 					Expect(err).ToNot(HaveOccurred())
 
-					tx, err = Wallet.ExecuteTransaction(Owner.TransactOpts(), NonCompliantERC20Address, big.NewInt(0), data)
+					tx, err = Wallet.ExecuteTransaction(Owner.TransactOpts(), NonCompliantERC20Address, big.NewInt(0), data, true)
 					Expect(err).ToNot(HaveOccurred())
 					Backend.Commit()
 					Expect(isSuccessful(tx)).To(BeTrue())
@@ -175,7 +175,7 @@ var _ = Describe("executeTransaction", func() {
 						data, err := a.Pack("approve", RandomAccount.Address(), big.NewInt(300))
 						Expect(err).ToNot(HaveOccurred())
 
-						tx, err = Wallet.ExecuteTransaction(Owner.TransactOpts(), NonCompliantERC20Address, big.NewInt(0), data)
+						tx, err = Wallet.ExecuteTransaction(Owner.TransactOpts(), NonCompliantERC20Address, big.NewInt(0), data, true)
 						Expect(err).ToNot(HaveOccurred())
 						Backend.Commit()
 						Expect(isSuccessful(tx)).To(BeTrue())
