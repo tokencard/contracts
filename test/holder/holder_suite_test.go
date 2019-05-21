@@ -34,7 +34,7 @@ var _ = BeforeEach(func() {
 
 var _ = AfterSuite(func() {
 	TestRig.ExpectMinimumCoverage("holder.sol", 0.00)
-	TestRig.ExpectMinimumCoverage("mocks/tkn.sol", 10.00)
+	TestRig.ExpectMinimumCoverage("mocks/burnerToken.sol", 10.00)
 	TestRig.PrintGasUsage(os.Stdout)
 })
 
