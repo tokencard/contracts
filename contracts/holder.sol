@@ -44,15 +44,13 @@ contract Holder is Claimable, ENSResolvable, TokenWhitelistable {
         // The burner token deducts from the supply before calling.
         uint supply = Burner(_burner).currentSupply() + amount;
 
-        require(amount <= supply);
+        require(amount <= supply, "amount greater that total supply!");
         address[] memory tokenAddresses = _tokenAddressArray();
         for (uint i = 0; i < tokenAddresses.length; i++) {
             uint total = balance(tokenAddresses[i]);
 
             if (total > 0) {
-                require((total * amount) / amount == total);
-                // Overflow check.
-                _claim(to, tokenAddresses[i], (total * amount) / supply);
+                _claim(to, tokenAddresses[i], total.mul(amount).div(supply));
             }
         }
 
