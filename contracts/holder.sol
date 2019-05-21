@@ -1,8 +1,9 @@
 pragma solidity ^0.5.7;
 
-import "./internals/tokenWhitelistable.sol";
-import "./externals/SafeMath.sol";
 import "./externals/ERC20.sol";
+import "./externals/SafeMath.sol";
+import "./internals/ownable.sol";
+import "./internals/tokenWhitelistable.sol";
 import "./mocks/burnerToken.sol";
 
 
@@ -13,44 +14,28 @@ contract Holder is ENSResolvable, TokenWhitelistable {
 
     using SafeMath for uint256;
 
-    // Owner of this contract.
-    address private _owner;
-
-    // New owner in a two-phase ownership transfer.
-    address private _newOwner;
+    /// @dev Check if the sender is the burner contract
+    modifier onlyBurner() {
+        require (msg.sender == _burner, "burner contract is not the sender");
+        _;
+    }
 
     // Burner token which can be burned to redeem shares.
     address private _burner;
 
-    // Only allow the given address to call the method.
-    modifier only(address a) {
-        require(msg.sender == a);
-        _;
-    }
-
-    // Construct a TokenHolder for the given burner token with the sender
-    // as the owner.
+    /// @notice Constructor  initializes the holder contract.
+    /// @param _burnerContract is the address of the token contract with burning functionality.
+    /// @param _ens is the address of the ENS registry.
+    /// @param _tokenWhitelistNameHash is the ENS name hash of the Token whitelist.
     constructor (address _burnerContract, address _ens, bytes32 _tokenWhitelistNameHash) ENSResolvable(_ens) TokenWhitelistable(_tokenWhitelistNameHash) public {
-        _owner = msg.sender;
         _burner = _burnerContract;
     }
 
     // Ether may be sent from anywhere.
     function() external payable {}
 
-    // Change owner in a two-phase ownership transfer.
-    function changeOwner(address to) external only(_owner) {
-        _newOwner = to;
-    }
-
-    // Accept ownership in a two-phase ownership transfer.
-    function acceptOwnership() external only(_newOwner) {
-        _owner = msg.sender;
-        _newOwner = address(0);
-    }
-
     // Burn handles disbursing a share of tokens to an address.
-    function burn(address payable to, uint amount) external only(_burner) returns (bool) {
+    function burn(address payable to, uint amount) external onlyBurner returns (bool) {
         if (amount == 0) {
             return true;
         }
