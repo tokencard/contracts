@@ -38,7 +38,7 @@ jobs:
           no_output_timeout: 30m
       - run:
           command: myth -x ./contracts/wallet.sol
-          no_output_timeout: 30m
+          no_output_timeout: 45m
 
   snyk_check:
     docker:
