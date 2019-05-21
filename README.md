@@ -23,16 +23,14 @@ Each user deploys their own instance of the *Consumer Contract Wallet* ([wallet.
 
 ![High Level Architecture](docs/high_level_architecture.svg)
 
-## Assumptions
-
+### Assumptions
 - Every user will have their own Public and Private key pair, aka the `Owner Address`.
 - Users SHOULD NEVER have to share the Private Key of their `Owner Address` with anyone.
 - There are a number of different "pots of tokens" for a given user:
      - The user’s entire ETH and ERC20 token assets stored within the *Consumer Contract Wallet*.
      - An amount of ETH used to pay for the gas - *Gas Tank*. The *Gas Tank* is a representation of the ETH on the user's `Owner Address`. It should be noted that this ETH is NOT protected by the security features in the *Consumer Contract Wallet* as it resides outside of the Smart Contract.
 
-## Requirements
-
+### Requirements
 - This `Owner Address` will own all of the user’s Smart Contracts and will be referred to as the *Owner*, this is sometime referred to as an *Externally Owned Address*
 - The `Controller` - Is a set of Addresses, owned and operated by Token Group Ltd, used to provide services to the end user
 - The *Consumer Contract Wallet* needs to allow its *Owner* to configure how they wish to secure their tokens in their wallet.
@@ -40,7 +38,7 @@ Each user deploys their own instance of the *Consumer Contract Wallet* ([wallet.
 - The wallet's design is intended to be as decentralised as possible. This will be achieved by eliminating access to user assets by third-parties and minimising reliance of third-party infrastructure in running the *Consumer Contract Wallet*.
 - Must help user protect their funds by minimising the risk in the event of their `Owner Address`'s private key being compromised.
 
-## Security Features
+### Security Features
 
 In order to help users protect their tokens in the event that their Private Key gets compromised, we present the following security features:
 
@@ -74,7 +72,7 @@ This section details the naming convention adopted in this codebase:
  - *crud functions* - when there exist multiple actions on the same variable we will use the suffix to illustrate the action, for example : `dailySpendLimitSet`, and `dailySpendLimitUpdate`
 
 
-## Solidity code in the `/contracts/` folder
+### Solidity code in the `/contracts/` folder
 
 It should be noted that this codebase makes heavy use of inheritance.
 
@@ -84,9 +82,7 @@ It should be noted that this codebase makes heavy use of inheritance.
 
 [licence.sol](/contracts/licence.sol) is the *TKN licence* contract, and it is used to take a 1% fee of all loads of the user's TokenCard so that it can be sent to the TKN Holder contract. This contract is aware of the CryptoFloat where the remain tokens are to be sent for Token Group Ltd for loading to the TokenCards and it is aware of the address of the TKN Holder contract (that is currently still in development). The licence contract has been created in a way to allow for a DAO to change some of its configured features, this way placed to future proof the implementation; see ([licence inhertiance diagram](/docs/licence.inheritance.png)).
 
-
-### Solidity code in the `/contracts/internals/` folder
-
+### Solidity code in the `/contracts/internals/` folder
 [claimable.sol](/contracts/internals/claimable.sol) is an inheritable contract that allows for tokens sent to a smart contract to be claimed by the owner. This is inherited by the oracle, the tokenWhitelist, and the licence contract.
 
 [controllable.sol](/contracts/internals/controllable.sol) is an inheritable contract that integrates with the list of controllers and provides control functionality to the child contract.
@@ -105,7 +101,7 @@ It should be noted that this codebase makes heavy use of inheritance.
 
 [tokenWhitelist.sol](/contracts/internals/tokenWhitelist.sol) is a storage contract that stores a whitelist of tokens for use within the platform. This whitelist is used to determine which tokens are secured by the security settings, along with which tokens are loadable to the TokenCard and which are burnable by the TKN holder contract.
 
-### Solidity code in the `/contracts/mocks/` folder
+### Solidity code in the `/contracts/mocks/` folder
 
 [base64-exporter.sol](/contracts/mocks/base64-exporter.sol]) is a mocked out version of a contract that pulls in the base64 encoder for unit testing purposes.
 
@@ -117,8 +113,7 @@ It should be noted that this codebase makes heavy use of inheritance.
 
 [token.sol](/contracts/mocks/token.sol) is a partial implementation of the ERC20 token standard used for testing and development purposes.
 
-
-### Solidity code in the `/contracts/externals/` folder
+### Solidity code in the `/contracts/externals/` folder
 
 All of the third-party code we rely on can be found in this folder. The below table details the third-party code used and their licenses.
 
