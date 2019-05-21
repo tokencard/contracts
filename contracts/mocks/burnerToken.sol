@@ -6,6 +6,12 @@ interface TokenHolder {
     function burn(address, uint ) external returns (bool);
 }
 
+// The BurnerToken interface is the interface to a token contract which
+// provides the total burnable supply for the TokenHolder contract.
+interface Burner {
+    function currentSupply() external view returns (uint);
+}
+
 contract BurnerToken {
 
     using SafeMath for uint256;

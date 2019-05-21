@@ -2,24 +2,14 @@ pragma solidity ^0.5.7;
 
 import "./internals/tokenWhitelistable.sol";
 import "./externals/SafeMath.sol";
+import "./externals/ERC20.sol";
+import "./mocks/burnerToken.sol";
 
-// The Token interface is a subset of the ERC20 specification.
-interface Token {
-    function transfer(address, uint) external returns (bool);
-
-    function balanceOf(address) external view returns (uint);
-}
-
-// The BurnerToken interface is the interface to a token contract which
-// provides the total burnable supply for the TokenHolder contract.
-interface BurnerToken {
-    function currentSupply() external view returns (uint);
-}
 
 // A TokenHolder holds token assets for a burnable token. When the contract
 // calls the burn method, a share of the tokens held by this contract are
 // disbursed to the burner.
-contract Holder is TokenWhitelistable {
+contract Holder is ENSResolvable, TokenWhitelistable {
 
     using SafeMath for uint256;
 
@@ -40,7 +30,7 @@ contract Holder is TokenWhitelistable {
 
     // Construct a TokenHolder for the given burner token with the sender
     // as the owner.
-    constructor (address _burnerContract, bytes32 _tokenWhitelistNameHash) TokenWhitelistable(_tokenWhitelistNameHash) public {
+    constructor (address _burnerContract, address _ens, bytes32 _tokenWhitelistNameHash) ENSResolvable(_ens) TokenWhitelistable(_tokenWhitelistNameHash) public {
         _owner = msg.sender;
         _burner = _burnerContract;
     }
@@ -66,7 +56,7 @@ contract Holder is TokenWhitelistable {
         }
 
         // The burner token deducts from the supply before calling.
-        uint supply = BurnerToken(_burner).currentSupply() + amount;
+        uint supply = Burner(_burner).currentSupply() + amount;
 
         require(amount <= supply);
         address[] memory tokenAddresses = _tokenAddressArray();
@@ -90,7 +80,7 @@ contract Holder is TokenWhitelistable {
     // Balance returns the amount of a token owned by the contract.
     function balance(address token) public view returns (uint) {
         if (token != address(0)) {
-            return Token(token).balanceOf(address(this));
+            return ERC20(token).balanceOf(address(this));
         } else {
             return address(this).balance;
         }
@@ -103,7 +93,7 @@ contract Holder is TokenWhitelistable {
         }
 
         if (token != address(0)) {
-            require(Token(token).transfer(to, amount));
+            require(ERC20(token).transfer(to, amount));
         } else {
             to.transfer(amount);
         }
