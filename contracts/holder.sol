@@ -2,6 +2,7 @@ pragma solidity ^0.5.7;
 
 import "./externals/ERC20.sol";
 import "./externals/SafeMath.sol";
+import "./internals/claimable.sol";
 import "./internals/ownable.sol";
 import "./internals/tokenWhitelistable.sol";
 import "./mocks/burnerToken.sol";
@@ -10,7 +11,7 @@ import "./mocks/burnerToken.sol";
 // A TokenHolder holds token assets for a burnable token. When the contract
 // calls the burn method, a share of the tokens held by this contract are
 // disbursed to the burner.
-contract Holder is ENSResolvable, TokenWhitelistable {
+contract Holder is Claimable, ENSResolvable, TokenWhitelistable {
 
     using SafeMath for uint256;
 
@@ -51,7 +52,7 @@ contract Holder is ENSResolvable, TokenWhitelistable {
             if (total > 0) {
                 require((total * amount) / amount == total);
                 // Overflow check.
-                _transfer(to, tokenAddresses[i], (total * amount) / supply);
+                _claim(to, tokenAddresses[i], (total * amount) / supply);
             }
         }
 
@@ -71,16 +72,5 @@ contract Holder is ENSResolvable, TokenWhitelistable {
         }
     }
 
-    // Transfer funds to an address.
-    function _transfer(address payable to, address token, uint amount) private {
-        if (amount == 0) {
-            return;
-        }
 
-        if (token != address(0)) {
-            require(ERC20(token).transfer(to, amount));
-        } else {
-            to.transfer(amount);
-        }
-    }
 }
