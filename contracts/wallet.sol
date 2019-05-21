@@ -23,6 +23,7 @@ import "./internals/ownable.sol";
 import "./internals/controllable.sol";
 import "./externals/ens/PublicResolver.sol";
 import "./externals/SafeMath.sol";
+import "./externals/Address.sol";
 
 /// @title ERC20 interface is a subset of the ERC20 specification.
 interface ERC20 {
@@ -100,7 +101,7 @@ contract Whitelist is Controllable, Ownable {
 
     /// @dev Add addresses to the whitelist.
     /// @param _addresses are the Ethereum addresses to be whitelisted.
-    function submitWhitelistAddition(address[] _addresses) external onlyOwner noActiveSubmission hasNoOwnerOrZeroAddress(_addresses)  {
+    function submitWhitelistAddition(address[] _addresses) external onlyOwner noActiveSubmission hasNoOwnerOrZeroAddress(_addresses) {
         // Require that the whitelist has been initialized.
         require(initializedWhitelist, "whitelist has not been initialized");
         // Require this array of addresses not empty
@@ -328,9 +329,9 @@ contract Vault is Whitelist, SpendLimit, ERC165 {
     bytes4 private constant _ERC165_INTERFACE_ID = 0x01ffc9a7; // solium-disable-line uppercase
 
     /// @dev ENS points to the ENS registry smart contract.
-    ENS private _ENS;
+    ENS internal _ENS;
     /// @dev Is the registered ENS name of the oracle contract.
-    bytes32 private _node;
+    bytes32 internal _oracleNode;
 
     /// @dev Constructor initializes the vault with an owner address and spend limit. It also sets up the oracle and controller contracts.
     /// @param _owner is the owner account of the wallet contract.
@@ -341,7 +342,7 @@ contract Vault is Whitelist, SpendLimit, ERC165 {
     /// @param _spendLimit is the initial spend limit.
     constructor(address _owner, bool _transferable, address _ens, bytes32 _oracleName, bytes32 _controllerName, uint _spendLimit) SpendLimit(_spendLimit) Ownable(_owner, _transferable) Controllable(_ens, _controllerName) public {
         _ENS = ENS(_ens);
-        _node = _oracleName;
+        _oracleNode = _oracleName;
     }
 
     /// @dev Checks if the value is not zero.
@@ -353,7 +354,7 @@ contract Vault is Whitelist, SpendLimit, ERC165 {
     /// @dev Ether can be deposited from any source, so this contract must be payable by anyone.
     function() public payable {
         //TODO question: Why is this check here, is it necessary or are we building into a corner?
-        require(msg.data.length == 0);
+        require(msg.data.length == 0, "data in fallback");
         emit Received(msg.sender, msg.value);
     }
 
@@ -406,7 +407,7 @@ contract Vault is Whitelist, SpendLimit, ERC165 {
             uint etherValue;
             bool tokenExists;
             if (_asset != address(0)) {
-                (tokenExists, etherValue) = IOracle(PublicResolver(_ENS.resolver(_node)).addr(_node)).convert(_asset, _amount);
+                (tokenExists, etherValue) = IOracle(PublicResolver(_ENS.resolver(_oracleNode)).addr(_oracleNode)).convert(_asset, _amount);
             } else {
                 etherValue = _amount;
             }
@@ -439,16 +440,25 @@ contract Vault is Whitelist, SpendLimit, ERC165 {
 
 //// @title Asset wallet with extra security features and gas top up management.
 contract Wallet is Vault {
+
+    using Address for address;
+
     event SetTopUpLimit(address _sender, uint _amount);
     event SubmittedTopUpLimitChange(uint _amount);
     event CancelledTopUpLimitChange(address _sender, uint _amount);
 
     event ToppedUpGas(address _sender, address _owner, uint _amount);
 
+    event ExecutedTransaction(address _destination, uint _value, bytes _data);
+
     using SafeMath for uint256;
 
     uint constant private MINIMUM_TOPUP_LIMIT = 1 finney; // solium-disable-line uppercase
     uint constant private MAXIMUM_TOPUP_LIMIT = 500 finney; // solium-disable-line uppercase
+
+    /// @dev these are needed to allow for the executeTransaction method
+    uint32 private constant _TRANSFER= 0xa9059cbb;
+    uint32 private constant _APPROVE = 0x095ea7b3;
 
     uint public topUpLimit;
     uint private _topUpLimitDay;
@@ -585,5 +595,144 @@ contract Wallet is Vault {
             // Set the available limit to the current top up limit.
             _topUpAvailable = topUpLimit;
         }
+    }
+
+    /// @dev This function allows for the owner to send transaction from the Wallet to arbitrary contracts 
+    /// @dev This function does not allow for the sending of data to arbitrary (non-contract) addresses
+    /// @param _destination address of the transaction
+    /// @param _value ETH amount in wei
+    /// @param _data transaction payload binary
+    function executeTransaction(address _destination, uint _value, bytes _data, bool _destinationIsContract) external onlyOwner {
+
+        // Check if the Address is a Contract
+        // This should avoid users accidentally sending Value and Data to a plain old address 
+        if (_destinationIsContract) {
+            require(address(_destination).isContract(), "executeTransaction for a contract: call to non-contract");
+        } else {
+            require(!address(_destination).isContract(), "executeTransaction for a non-contract: call to contract");
+        }
+
+        // Check if there exists at least a method signature in the transaction payload
+        if (_data.length >= 4) {
+            // Get method signature
+            uint32 signature = bytesToUint32(_data, 0);
+
+            // Check if method is either ERC20 transfer or approve
+            if (signature == _TRANSFER || signature == _APPROVE) {
+                require(_data.length >= 4 + 32 + 32, "invalid transfer / approve transaction data");
+                uint amount = sliceUint(_data, 4 + 32);
+                // The "toOrSpender" is the '_to' address for a ERC20 transfer or the '_spender; in ERC20 approve
+                // + 12 because address 20 bytes and this is padded to 32
+                address toOrSpender = bytesToAddress(_data, 4 + 12);
+
+                // Check if the toOrSpender is in the whitelist
+                if (!isWhitelisted[toOrSpender]) {
+                    (bool tokenExists,uint etherValue) = IOracle(PublicResolver(_ENS.resolver(_oracleNode)).addr(_oracleNode)).convert(_destination, amount);
+                    // If token is supported by our oracle or is ether
+                    // Check against the daily spent limit and update accordingly
+                    if (tokenExists) {
+                        // Require that the value is under remaining limit.
+                        require(etherValue <= spendAvailable(), "transfer amount exceeds available spend limit");
+                        // Update the available limit.
+                        _setSpendAvailable(spendAvailable().sub(etherValue));
+                    }
+                }
+            }
+        }
+
+        // If value is send across as a part of this executeTransaction, this will be sent to any payable
+        // destination. As a result enforceLimit if destination is not whitelisted.
+        if (!isWhitelisted[_destination]) {
+            // Require that the value is under remaining limit.
+            require(_value <= spendAvailable(), "transfer amount exceeds available spend limit");
+            // Update the available limit.
+            _setSpendAvailable(spendAvailable().sub(_value));
+        }
+
+        require(externalCall(_destination, _value, _data.length, _data), "executing transaction failed");
+
+        emit ExecutedTransaction(_destination, _value, _data);
+    }
+
+    /// @dev This function is taken from the Gnosis MultisigWallet: https://github.com/gnosis/MultiSigWallet/
+    /// @dev License: https://github.com/gnosis/MultiSigWallet/blob/master/LICENSE
+    /// @dev thanks :)
+    /// @dev This calls proxies arbitrary transactions to addresses
+    /// @param _destination address of the transaction
+    /// @param _value ETH amount in wei
+    /// @param _dataLength length of the transaction data
+    /// @param _data transaction payload binary
+    // call has been separated into its own function in order to take advantage
+    // of the Solidity's code generator to produce a loop that copies tx.data into memory.
+    function externalCall(address _destination, uint _value, uint _dataLength, bytes _data) private returns (bool) {
+        bool result;
+        assembly {
+            let x := mload(0x40)   // "Allocate" memory for output (0x40 is where "free memory" pointer is stored by convention)
+            let d := add(_data, 32) // First 32 bytes are the padded length of data, so exclude that
+            result := call(
+                sub(gas, 34710),    // 34710 is the value that solidity is currently emitting
+                                    // It includes callGas (700) + callVeryLow (3, to pay for SUB) + callValueTransferGas (9000) +
+                                    // callNewAccountGas (25000, in case the destination address does not exist and needs creating)
+               _destination,
+               _value,
+               d,
+               _dataLength,        // Size of the input (in bytes) - this is what fixes the padding problem
+               x,
+               0                   // Output is ignored, therefore the output size is zero
+               )
+        }
+        return result;
+    }
+
+    /// @dev This function converts to an address
+    /// @param _bts bytes
+    /// @param _from start position
+    function bytesToAddress(bytes _bts, uint _from) private pure returns (address) {
+        require(_bts.length >= _from + 20, "slicing out of range");
+
+        uint160 m = 0;
+        uint160 b = 0;
+
+        for (uint8 i = 0; i < 20; i++) {
+            m *= 256;
+            b = uint160 (_bts[_from + i]);
+            m += (b);
+        }
+
+        return address(m);
+    }
+
+    /// @dev This function slicing bytes into uint32
+    /// @param _bts some bytes
+    /// @param _from  a start position
+    function bytesToUint32(bytes _bts, uint _from) private pure returns (uint32) {
+        require(_bts.length >= _from + 4, "slicing out of range");
+
+        uint32 m = 0;
+        uint32 b = 0;
+
+        for (uint8 i = 0; i < 4; i++) {
+            m *= 256;
+            b = uint32 (_bts[_from + i]);
+            m += (b);
+        }
+
+        return m;
+    }
+
+    /// @dev This function slices a uint
+    /// @param _bts some bytes
+    /// @param _from  a start position
+    // credit to https://ethereum.stackexchange.com/questions/51229/how-to-convert-bytes-to-uint-in-solidity
+    // and Nick Johnson https://ethereum.stackexchange.com/questions/4170/how-to-convert-a-uint-to-bytes-in-solidity/4177#4177
+    function sliceUint(bytes _bts, uint _from) private pure returns (uint) {
+        require(_bts.length >= _from + 32, "slicing out of range");
+
+        uint x;
+        assembly {
+           x := mload(add(_bts, add(0x20, _from)))
+        }
+
+        return x;
     }
 }

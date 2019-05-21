@@ -12,12 +12,13 @@ compile_solidity() {
 contract_sources=(
   'wallet'
   'wallet-deployer'
+  'oracle'
   'mocks/token'
+  'mocks/nonCompliantToken'
   'mocks/oraclize-connector'
   'mocks/oraclize-resolver'
   'mocks/base64-exporter'
   'mocks/parseIntScientific-exporter'
-  'oracle'
   'internals/controller'
   'internals/parseIntScientific'
   'externals/ens/PublicResolver'
@@ -46,12 +47,13 @@ generate_binding() {
 contracts=(
   "wallet/Wallet wallet.go Wallet bindings"
   "wallet-deployer/WalletDeployer wallet_deployer.go WalletDeployer bindings"
+  "oracle/Oracle oracle.go Oracle bindings"
   "mocks/token/Token mocks/token.go Token mocks"
+  "mocks/nonCompliantToken/NonCompliantToken mocks/nonCompliantToken.go NonCompliantToken mocks"
   "mocks/oraclize-connector/Oraclize mocks/oraclize-connector.go Oraclize mocks"
   "mocks/oraclize-resolver/OraclizeAddrResolver mocks/oraclize-resolver.go OraclizeAddrResolver mocks"
   "mocks/base64-exporter/Base64Exporter mocks/base64-exporter.go Base64Exporter mocks"
   "mocks/parseIntScientific-exporter/ParseIntScientificExporter mocks/parseIntScientific-exporter.go ParseIntScientificExporter mocks"
-  "oracle/Oracle oracle.go Oracle bindings"
   "internals/controller/Controller internals/controller.go Controller internals"
   "internals/parseIntScientific/ParseIntScientific internals/parseIntScientific.go ParseIntScientific internals"
   "externals/ens/ENSRegistry/ENSRegistry externals/ens/ens-registry.go ENSRegistry ens"

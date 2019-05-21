@@ -26,6 +26,7 @@ interface IResolver {
     function addr(bytes32) external view returns (address);
 }
 
+
 /// @title Controllable implements access control functionality based on a controller set in ENS.
 contract Controllable {
     /// @dev _ENS points to the ENS registry smart contract.
