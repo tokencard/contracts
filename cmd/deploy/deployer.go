@@ -14,10 +14,13 @@ import (
 )
 
 type deployer struct {
-	transactOpts            *bind.TransactOpts
-	ethClient               *ethclient.Client
-	ens                     *ens.ENS
-	ensAddress              common.Address
+	transactOpts *bind.TransactOpts
+	ethClient    *ethclient.Client
+	ens          *ens.ENS
+
+	ensAddress         common.Address
+	ensResolverAddress common.Address
+
 	log                     logrus.FieldLogger
 	controllerOwner         common.Address
 	ctx                     context.Context
@@ -31,19 +34,22 @@ const waitForMiningTimeout = 2 * 60 * time.Second
 func (d *deployer) waitForTransactionToBeMined(txHash common.Hash) error {
 	ctx, cancel := context.WithTimeout(d.ctx, waitForMiningTimeout)
 	defer cancel()
+
 	for {
 		var pending bool
 		_, pending, err := d.ethClient.TransactionByHash(ctx, txHash)
 		if err != nil {
-			return errors.Wrap(err, "while getting transaction status")
+			return errors.Wrapf(err, "while getting transaction status of %s", txHash.Hex())
 		}
 
 		if !pending {
-			continue
+			break
 		}
 
 		time.Sleep(time.Second)
 	}
+
+	return nil
 }
 
 func (d *deployer) ensureTransactionSuccess(txHash common.Hash) error {
@@ -53,9 +59,17 @@ func (d *deployer) ensureTransactionSuccess(txHash common.Hash) error {
 	}
 
 	if rcpt.Status != types.ReceiptStatusSuccessful {
-		return errors.New("controller deployment transaction failed")
+		return errors.Errorf("transaction %s failed", txHash.Hex())
 	}
 
 	return nil
 
+}
+
+func (d *deployer) waitForAndConfirmTransaction(txHash common.Hash) error {
+	err := d.waitForTransactionToBeMined(txHash)
+	if err != nil {
+		return err
+	}
+	return d.ensureTransactionSuccess(txHash)
 }

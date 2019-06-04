@@ -9,12 +9,10 @@ import (
 type createContractDeploymentTransaction func() (common.Address, *types.Transaction, error)
 
 func (d *deployer) deployContract(name string, createTX createContractDeploymentTransaction) error {
-	contractAddr, err := d.ens.Addr(name)
-	if err != nil {
-		return errors.Wrap(err, "while looking up "+name)
-	}
-	if contractAddr != zeroAddress {
-		d.log.Info("Found already deployed %s on %s", name, contractAddr.String())
+	addr, err := d.ens.Addr(name)
+
+	if err == nil {
+		d.log.Infof("%s found, with address %s", name, addr.Hex())
 		return nil
 	}
 
@@ -25,32 +23,16 @@ func (d *deployer) deployContract(name string, createTX createContractDeployment
 	}
 
 	d.log.Info("Waiting for transaction to be mined")
-	err = d.waitForTransactionToBeMined(tx.Hash())
+	err = d.waitForAndConfirmTransaction(tx.Hash())
 	if err != nil {
-		return errors.Wrapf(err, "while waiting for deployment transaction of %s", name)
-	}
-
-	err = d.ensureTransactionSuccess(tx.Hash())
-	if err != nil {
-		return errors.Wrapf(err, "while ensuring transaction success for deployment of %s", name)
+		return errors.Wrap(err, "while waiting for transaction")
 	}
 
 	d.log.Infof("Setting ENS for %s", name)
 
-	tx, err = d.ens.SetAddr(name, contractAddress)
+	err = d.setAddress(name, contractAddress)
 	if err != nil {
-		return errors.Wrap(err, "while deploying %s")
-	}
-
-	d.log.Info("Waiting for ENS transaction to be mined")
-	err = d.waitForTransactionToBeMined(tx.Hash())
-	if err != nil {
-		return errors.Wrap(err, "while waiting for setting ENS transaction to be deployed")
-	}
-
-	err = d.ensureTransactionSuccess(tx.Hash())
-	if err != nil {
-		return errors.Wrapf(err, "while ensuring transaction success for setting ENS of %s", name)
+		return errors.Wrapf(err, "while setting ENS enry for %s", name)
 	}
 
 	return nil
