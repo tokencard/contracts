@@ -15,7 +15,7 @@ var oneETH = big.NewInt(1000000000000000000)
 
 func (d *deployer) deployWalletDeployer() error {
 	return d.deployContract(walletDeployerName, func() (common.Address, *types.Transaction, error) {
-		contractAddress, tx, _, err := bindings.DeployWalletDeployer(d.transactOpts, d.ethClient, d.ensAddress, ens.EnsNode(controllerName), ens.EnsNode(oracleName), oneETH)
+		contractAddress, tx, _, err := bindings.DeployWalletDeployer(d.transactOpts, d.ethClient, d.ensAddress, ens.EnsNode(oracleName), ens.EnsNode(controllerName), oneETH)
 		return contractAddress, tx, err
 	})
 }

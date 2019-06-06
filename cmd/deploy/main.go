@@ -16,6 +16,8 @@ import (
 	"gopkg.in/urfave/cli.v1"
 )
 
+// Running test chain: docker run --rm -p 8545:8545 parity/parity:v2.4.6 --config dev --jsonrpc-interface=0.0.0.0 --jsonrpc-port=8545
+
 func main() {
 	app := cli.NewApp()
 
