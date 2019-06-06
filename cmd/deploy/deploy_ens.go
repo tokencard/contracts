@@ -95,6 +95,7 @@ func (d *deployer) setAddress(name string, address common.Address) error {
 	}
 
 	if resolverAddress == zeroAddress {
+		d.log.Info("resolver not found, looking for parent's resolver...")
 
 		parent, label := EnsParentNode(name)
 
@@ -111,6 +112,22 @@ func (d *deployer) setAddress(name string, address common.Address) error {
 		resolverAddress, err = er.Resolver(nil, parent)
 		if err != nil {
 			return errors.Wrapf(err, "while getting resolver address for parent of %q", name)
+		}
+
+		if resolverAddress == zeroAddress {
+			d.log.Info("resolver of parent is not set, deploying a new resolver ...")
+
+			resolverAddress, tx, _, err = ens.DeployPublicResolver(d.transactOpts, d.ethClient, d.ensAddress)
+			if err != nil {
+				return errors.Wrap(err, "while deploying resolver")
+			}
+
+			err = d.waitForAndConfirmTransaction(tx.Hash())
+
+			if err != nil {
+				return errors.Wrapf(err, "while waiting for transaction")
+			}
+
 		}
 
 		tx, err = er.SetResolver(d.transactOpts, EnsNode(name), resolverAddress)
