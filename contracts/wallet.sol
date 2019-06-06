@@ -644,28 +644,35 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
     /// @param _destination address of the transaction
     /// @param _value ETH amount in wei
     /// @param _data transaction payload binary
-    function executeTransaction(address _destination, uint _value, bytes calldata _data) external onlyOwner {
-        // Check if there exists at least a method signature in the transaction payload
-        if (_data.length >= 4) {
-            // Get method signature
-            uint32 signature = _bytesToUint32(_data, 0);
+    function executeTransaction(address _destination, uint _value, bytes calldata _data, bool _destinationIsContract) external onlyOwner {
+        // Check if the destination is a Contract
+        // This prevents users from accidentally sending Value and Data to a plain old address
+        if (_destinationIsContract) {
+            require(address(_destination).isContract(), "executeTransaction for a contract: call to non-contract");
+            // Check if there exists at least a method signature in the transaction payload
+            if (_data.length >= 4) {
+                // Get method signature
+                uint32 signature = _bytesToUint32(_data, 0);
 
-            // Check if method is either ERC20 transfer or approve
-            if (signature == _TRANSFER || signature == _APPROVE) {
-                require(_data.length >= 4 + 32 + 32, "invalid transfer / approve transaction data");
-                uint amount = _sliceUint(_data, 4 + 32);
-                // The "toOrSpender" is the '_to' address for a ERC20 transfer or the '_spender; in ERC20 approve
-                // + 12 because address 20 bytes and this is padded to 32
-                address toOrSpender = _bytesToAddress(_data, 4 + 12);
+                // Check if method is either ERC20 transfer or approve
+                if (signature == _TRANSFER || signature == _APPROVE) {
+                    require(_data.length >= 4 + 32 + 32, "invalid transfer / approve transaction data");
+                    uint amount = _sliceUint(_data, 4 + 32);
+                    // The "toOrSpender" is the '_to' address for a ERC20 transfer or the '_spender; in ERC20 approve
+                    // + 12 because address 20 bytes and this is padded to 32
+                    address toOrSpender = _bytesToAddress(_data, 4 + 12);
 
-                // Check if the toOrSpender is in the whitelist
-                if (!whitelistMap[toOrSpender]) {
-                    // If the address (of the token contract, e.g) is not in the TokenWhitelist used by
-                    // the convert method, then etherValue will be zero
-                    uint etherValue = convertToEther(_destination, amount);
-                    _spendLimit._enforceLimit(etherValue);
+                    // Check if the toOrSpender is in the whitelist
+                    if (!whitelistMap[toOrSpender]) {
+                        // If the address (of the token contract, e.g) is not in the TokenWhitelist used by
+                        // the convert method, then etherValue will be zero
+                        uint etherValue = convertToEther(_destination, amount);
+                        _spendLimit._enforceLimit(etherValue);
+                    }
                 }
             }
+        } else {
+            require(!address(_destination).isContract(), "executeTransaction for a non-contract: call to contract");
         }
 
         // If value is send across as a part of this executeTransaction, this will be sent to any payable

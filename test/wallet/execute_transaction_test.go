@@ -23,13 +23,12 @@ var _ = Describe("executeTransaction", func() {
 
 		var tx *types.Transaction
 
-		When("I transfer 500 Finney tp a random person using 'executeTransaction'", func() {
-			It("should reduce the available daily spend balance", func() {
-				tx, err := Wallet.ExecuteTransaction(Owner.TransactOpts(ethertest.WithGasLimit(100000)), RandomAccount.Address(), FinneyToWei(500), nil)
+		When("I transfer 500 Finney to a random person using 'executeTransaction'", func() {
+			It("should succeed", func() {
+				tx, err := Wallet.ExecuteTransaction(Owner.TransactOpts(ethertest.WithGasLimit(100000)), RandomAccount.Address(), FinneyToWei(500), nil, false)
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
-				Expect(isSuccessful(tx)).To(BeFalse())
-				Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*_executeCall: call to non-contract`))
+				Expect(isSuccessful(tx)).To(BeTrue())
 			})
 
 		})
@@ -50,7 +49,7 @@ var _ = Describe("executeTransaction", func() {
 					data, err := a.Pack("transfer", RandomAccount.Address(), big.NewInt(300))
 					Expect(err).ToNot(HaveOccurred())
 
-					tx, err = Wallet.ExecuteTransaction(Owner.TransactOpts(), TKNAddress, big.NewInt(0), data)
+					tx, err = Wallet.ExecuteTransaction(Owner.TransactOpts(), TKNAddress, big.NewInt(0), data, true)
 					Expect(err).ToNot(HaveOccurred())
 					Backend.Commit()
 					Expect(isSuccessful(tx)).To(BeTrue())
@@ -75,19 +74,19 @@ var _ = Describe("executeTransaction", func() {
 				})
 			})
 
-			When("I transfer 300 tokens to a random person using 'executeTransaction' but the destination is not a contract", func() {
-				It("should fail", func() {
+			When("I send data (transfer 300 tokens to a random person) using 'executeTransaction' but the destination is not a contract", func() {
+				It("should succeed", func() {
 					a, err := abi.JSON(strings.NewReader(ERC20ABI))
 					Expect(err).ToNot(HaveOccurred())
 					data, err := a.Pack("transfer", RandomAccount.Address(), big.NewInt(300))
 					Expect(err).ToNot(HaveOccurred())
 
-					tx, err = Wallet.ExecuteTransaction(Owner.TransactOpts(ethertest.WithGasLimit(100000)), RandomAccount.Address(), big.NewInt(0), data)
+					tx, err = Wallet.ExecuteTransaction(Owner.TransactOpts(), RandomAccount.Address(), big.NewInt(0), data, false)
 					Expect(err).ToNot(HaveOccurred())
 					Backend.Commit()
-					Expect(isSuccessful(tx)).To(BeFalse())
-					Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*_executeCall: call to non-contract`))
+					Expect(isSuccessful(tx)).To(BeTrue())
 				})
+
 			})
 
 			When("random person is whitelisted", func() {
@@ -106,7 +105,7 @@ var _ = Describe("executeTransaction", func() {
 						data, err := a.Pack("transfer", RandomAccount.Address(), big.NewInt(300))
 						Expect(err).ToNot(HaveOccurred())
 
-						tx, err = Wallet.ExecuteTransaction(Owner.TransactOpts(), TKNAddress, big.NewInt(0), data)
+						tx, err = Wallet.ExecuteTransaction(Owner.TransactOpts(), TKNAddress, big.NewInt(0), data, true)
 						Expect(err).ToNot(HaveOccurred())
 						Backend.Commit()
 						Expect(isSuccessful(tx)).To(BeTrue())
@@ -139,7 +138,7 @@ var _ = Describe("executeTransaction", func() {
 					data, err := a.Pack("approve", RandomAccount.Address(), big.NewInt(300))
 					Expect(err).ToNot(HaveOccurred())
 
-					tx, err = Wallet.ExecuteTransaction(Owner.TransactOpts(), TKNAddress, big.NewInt(0), data)
+					tx, err = Wallet.ExecuteTransaction(Owner.TransactOpts(), TKNAddress, big.NewInt(0), data, true)
 					Expect(err).ToNot(HaveOccurred())
 					Backend.Commit()
 					Expect(isSuccessful(tx)).To(BeTrue())
@@ -179,7 +178,7 @@ var _ = Describe("executeTransaction", func() {
 						data, err := a.Pack("approve", RandomAccount.Address(), big.NewInt(300))
 						Expect(err).ToNot(HaveOccurred())
 
-						tx, err = Wallet.ExecuteTransaction(Owner.TransactOpts(), TKNAddress, big.NewInt(0), data)
+						tx, err = Wallet.ExecuteTransaction(Owner.TransactOpts(), TKNAddress, big.NewInt(0), data, true)
 						Expect(err).ToNot(HaveOccurred())
 						Backend.Commit()
 						Expect(isSuccessful(tx)).To(BeTrue())
