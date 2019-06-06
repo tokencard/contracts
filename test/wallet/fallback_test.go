@@ -35,7 +35,7 @@ var _ = Describe("fallback", func() {
 	})
 
 	Context("When a random person calls a wallet method that doesn't exist", func() {
-		It("should fail", func() {
+		It("should succeed", func() {
 			privateKey, err := crypto.GenerateKey()
 			Expect(err).ToNot(HaveOccurred())
 			BankAccount.MustTransfer(Backend, crypto.PubkeyToAddress(privateKey.PublicKey), EthToWei(1))
@@ -45,7 +45,7 @@ var _ = Describe("fallback", func() {
 			err = Backend.SendTransaction(context.Background(), signedTx)
 			Expect(err).ToNot(HaveOccurred())
 			Backend.Commit()
-			Expect(isSuccessful(signedTx)).To(BeFalse())
+			Expect(isSuccessful(signedTx)).To(BeTrue())
 		})
 	})
 })
