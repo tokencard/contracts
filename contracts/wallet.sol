@@ -498,7 +498,6 @@ contract Vault is AddressWhitelist, SpendLimit, ERC165, TokenWhitelistable {
 
     /// @dev Ether can be deposited from any source, so this contract must be payable by anyone.
     function() external payable {
-        require(msg.data.length == 0, "msg data needs to be empty");
         emit Received(msg.sender, msg.value);
     }
 
