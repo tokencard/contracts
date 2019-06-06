@@ -95,7 +95,6 @@ contract Licence is Claimable, Ownable {
 
     /// @notice Ether can be deposited from any source, so this contract should be payable by anyone.
     function() external payable {
-        require(msg.data.length == 0, "msg data length should be 0");
         emit Received(msg.sender, msg.value);
     }
 
