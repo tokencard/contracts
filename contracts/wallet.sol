@@ -712,17 +712,15 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
     }
 
     /// @dev This calls proxies arbitrary transactions to addresses
-    /// @param _to desgtination address of the transaction
+    /// @param _to destination address of the transaction
     /// @param _value ETH amount in wei
     /// @param _data transaction payload binary
-    function _executeCall(address _to, uint256 _value, bytes memory _data) internal  returns (bool success)
-{
-    // solium-disable-next-line security/no-inline-assembly
-    assembly {
-        success := call(gas, _to, _value, add(_data, 0x20), mload(_data), 0, 0)
+    function _executeCall(address _to, uint256 _value, bytes memory _data) internal returns (bool success) {
+        // solium-disable-next-line security/no-inline-assembly
+        assembly {
+            success := call(gas, _to, _value, add(_data, 0x20), mload(_data), 0, 0)
+        }
     }
-}
-
 
     /// @dev This function converts to an address
     /// @param _bts bytes
