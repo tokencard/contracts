@@ -47,10 +47,12 @@ contract Holder is Claimable, ENSResolvable, TokenWhitelistable {
         require(amount <= supply, "amount greater that total supply!");
         address[] memory tokenAddresses = _tokenAddressArray();
         for (uint i = 0; i < tokenAddresses.length; i++) {
-            uint total = balance(tokenAddresses[i]);
-
-            if (total > 0) {
-                _claim(to, tokenAddresses[i], total.mul(amount).div(supply));
+            //redeem only if token is burnable
+            if (_isTokenBurnable(tokenAddresses[i])){
+                uint total = balance(tokenAddresses[i]);
+                if (total > 0) {
+                    _claim(to, tokenAddresses[i], total.mul(amount).div(supply));
+                }
             }
         }
 

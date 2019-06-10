@@ -10,7 +10,12 @@ import (
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	. "github.com/tokencard/contracts/test/shared"
+    "github.com/tokencard/contracts/pkg/bindings/mocks"
+    "github.com/ethereum/go-ethereum/common"
 )
+
+var ERC20Contract3 *mocks.Token
+var ERC20Contract3Address common.Address
 
 func init() {
 	TestRig.AddCoverageForContracts(
@@ -30,6 +35,12 @@ func TestHolderSuite(t *testing.T) {
 var _ = BeforeEach(func() {
 	err := InitializeBackend()
 	Expect(err).ToNot(HaveOccurred())
+
+    var tx *types.Transaction
+    ERC20Contract3Address, tx, ERC20Contract3, err = mocks.DeployToken(BankAccount.TransactOpts(), Backend)
+	Expect(err).ToNot(HaveOccurred())
+	Backend.Commit()
+	Expect(isSuccessful(tx)).To(BeTrue())
 })
 
 var _ = AfterSuite(func() {
