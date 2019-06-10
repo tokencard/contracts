@@ -172,7 +172,7 @@ var _ = Describe("TokenHolder", func() {
 					})
 
                     It("should increase the ERC20 type-3 balance of the holder contract by 1000", func() {
-						b, err := ERC20Contract2.BalanceOf(nil, TokenHolderAddress)
+						b, err := ERC20Contract3.BalanceOf(nil, TokenHolderAddress)
 						Expect(err).ToNot(HaveOccurred())
 						Expect(b.String()).To(Equal("1000"))
 					})
