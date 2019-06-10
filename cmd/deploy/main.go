@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"errors"
 	"io/ioutil"
 	"log"
 	"os"
@@ -12,7 +13,9 @@ import (
 	"github.com/ethereum/go-ethereum/contracts/ens"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/ethclient"
+	hdwallet "github.com/miguelmota/go-ethereum-hdwallet"
 	"github.com/sirupsen/logrus"
+	"github.com/tyler-smith/go-bip39"
 	"gopkg.in/urfave/cli.v1"
 )
 
@@ -52,6 +55,12 @@ func main() {
 			Usage:  "JSON key file location.",
 			EnvVar: "KEY_FILE",
 			Value:  "dev.key.json",
+		},
+		cli.StringFlag{
+			Name:   "key-mnemonic",
+			Usage:  "Mnemonic (BIP 39) to derive the key.",
+			EnvVar: "KEY_MNEMONIC",
+			Value:  "",
 		},
 		cli.StringFlag{
 			Name:   "passphrase",
@@ -130,22 +139,69 @@ func deployENS(c *cli.Context) error {
 		log:             logrus.New(),
 	}
 
-	// bal := ec.BalanceAt(context.Background(), decrypted.PrivateKey, nil)
-
 	return d.deployENS()
 
 }
 
 func run(c *cli.Context) error {
 
-	keyJSON, err := ioutil.ReadFile(c.String("key-file"))
-	if err != nil {
-		return err
-	}
+	var txOpt *bind.TransactOpts
 
-	decrypted, err := keystore.DecryptKey(keyJSON, c.String("passphrase"))
-	if err != nil {
-		return err
+	if c.IsSet("key-mnemonic") {
+
+		logrus.Info("using provided mnemonic")
+
+		mnemonic := c.String("key-mnemonic")
+		seed := bip39.NewSeed(mnemonic, "")
+
+		wallet, err := hdwallet.NewFromSeed(seed)
+		if err != nil {
+			return err
+		}
+
+		path, err := hdwallet.ParseDerivationPath("m/44'/60'/0'/0/0")
+		if err != nil {
+			return err
+		}
+
+		account, err := wallet.Derive(path, false)
+		if err != nil {
+			return err
+		}
+
+		txOpt = &bind.TransactOpts{
+			Signer: func(signer types.Signer, addr common.Address, tx *types.Transaction) (*types.Transaction, error) {
+				pk, err := wallet.PrivateKey(account)
+				if err != nil {
+					return nil, err
+				}
+				return types.SignTx(tx, signer, pk)
+			},
+			From: account.Address,
+		}
+	} else if c.IsSet("key-file") {
+
+		logrus.Infof("using keystore at %s", c.String("key-file"))
+
+		keyJSON, err := ioutil.ReadFile(c.String("key-file"))
+		if err != nil {
+			return err
+		}
+
+		decrypted, err := keystore.DecryptKey(keyJSON, c.String("passphrase"))
+		if err != nil {
+			return err
+		}
+
+		txOpt = &bind.TransactOpts{
+			Signer: func(signer types.Signer, addr common.Address, tx *types.Transaction) (*types.Transaction, error) {
+				return types.SignTx(tx, signer, decrypted.PrivateKey)
+			},
+			From: decrypted.Address,
+		}
+
+	} else {
+		return errors.New("neither key file nor key mnemonic used")
 	}
 
 	ec, err := ethclient.Dial(c.String("ethereum"))
@@ -155,16 +211,10 @@ func run(c *cli.Context) error {
 
 	defer ec.Close()
 
-	txOpt := &bind.TransactOpts{
-		Signer: func(signer types.Signer, addr common.Address, tx *types.Transaction) (*types.Transaction, error) {
-			return types.SignTx(tx, signer, decrypted.PrivateKey)
-		},
-		From: decrypted.Address,
-	}
-
 	ensAddress := common.HexToAddress(c.String("ens-address"))
 
-	logrus.Info("ens address", ensAddress.Hex())
+	logrus.Info("using ENS address", ensAddress.Hex())
+	logrus.Info("sending from  address", txOpt.From.Hex())
 
 	en, err := ens.NewENS(txOpt, ensAddress, ec)
 	if err != nil {
@@ -175,7 +225,7 @@ func run(c *cli.Context) error {
 		transactOpts:            txOpt,
 		ens:                     en,
 		ensAddress:              ensAddress,
-		controllerOwner:         decrypted.Address,
+		controllerOwner:         txOpt.From,
 		ctx:                     context.Background(),
 		ethClient:               ec,
 		log:                     logrus.New(),

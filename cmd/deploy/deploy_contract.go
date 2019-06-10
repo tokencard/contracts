@@ -11,7 +11,7 @@ type createContractDeploymentTransaction func() (common.Address, *types.Transact
 func (d *deployer) deployContract(name string, createTX createContractDeploymentTransaction) error {
 	addr, err := d.ens.Addr(name)
 
-	if err == nil {
+	if err == nil && addr != zeroAddress {
 		d.log.Infof("%s found, with address %s", name, addr.Hex())
 		return nil
 	}
