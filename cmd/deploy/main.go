@@ -106,6 +106,7 @@ func addCommand(app *cli.App, name string, fn func(d *deployer, args []string) e
 				Name:   "ens-address",
 				Usage:  "Ethereum name service contract address.",
 				EnvVar: "ENS_ADDRESS",
+				Value:  "0x314159265dd8dbb310642f98f50c066173c1259b",
 			},
 			cli.StringFlag{
 				Name:   "ens-resolver-address",
