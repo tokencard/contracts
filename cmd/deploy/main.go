@@ -248,5 +248,10 @@ func run(c *cli.Context) error {
 		return err
 	}
 
+	err = d.deployWallet()
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
