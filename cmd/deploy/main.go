@@ -1,21 +1,13 @@
 package main
 
 import (
-	"context"
-	"errors"
-	"io/ioutil"
 	"log"
+	"math/big"
 	"os"
+	"strconv"
 
-	"github.com/ethereum/go-ethereum/accounts/abi/bind"
-	"github.com/ethereum/go-ethereum/accounts/keystore"
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/contracts/ens"
-	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/ethclient"
-	hdwallet "github.com/miguelmota/go-ethereum-hdwallet"
-	"github.com/sirupsen/logrus"
-	"github.com/tyler-smith/go-bip39"
+	"github.com/pkg/errors"
+	"github.com/tokencard/contracts/pkg/bindings"
 	"gopkg.in/urfave/cli.v1"
 )
 
@@ -27,77 +19,68 @@ func main() {
 	app.Name = "deploy"
 	app.Usage = "deploy infrastructure contracts to an ethereum network"
 
-	app.Flags = []cli.Flag{
-		cli.StringFlag{
-			Name:   "ethereum",
-			Usage:  "Ethereum node's address.",
-			EnvVar: "ETHEREUM_ADDRESS",
-			Value:  "http://localhost:8545",
-		},
-		cli.StringFlag{
-			Name:   "ens-address",
-			Usage:  "Ethereum name service contract address.",
-			EnvVar: "ENS_ADDRESS",
-		},
-		cli.StringFlag{
-			Name:   "ens-resolver-address",
-			Usage:  "Tokencard's ENS resolver address.",
-			EnvVar: "ENS_RESOLVER_ADDRESS",
-		},
-		cli.StringFlag{
-			Name:   "oraclize-resolver-address",
-			Usage:  "Oraclize resolver address.",
-			EnvVar: "ORACLIZE_RESOLVER_ADDRESS",
-			Value:  "0x1",
-		},
-		cli.StringFlag{
-			Name:   "key-file",
-			Usage:  "JSON key file location.",
-			EnvVar: "KEY_FILE",
-			Value:  "dev.key.json",
-		},
-		cli.StringFlag{
-			Name:   "key-mnemonic",
-			Usage:  "Mnemonic (BIP 39) to derive the key.",
-			EnvVar: "KEY_MNEMONIC",
-			Value:  "",
-		},
-		cli.StringFlag{
-			Name:   "passphrase",
-			Usage:  "Keystore file passphrase.",
-			EnvVar: "PASSPHRASE",
-			Value:  "",
-		},
-	}
+	addCommand(app, "wallet-deployer", func(d *deployer, args []string) error {
+		return d.deployWalletDeployer()
+	})
 
-	app.Action = run
+	addCommand(app, "deploy-ens", func(d *deployer, args []string) error {
+		d.log.Info("Deploying ENS ...")
+		return d.deployENS()
+	})
 
-	app.Commands = []cli.Command{
-		cli.Command{
-			Name:   "deploy-ens",
-			Action: deployENS,
-			Flags: []cli.Flag{
-				cli.StringFlag{
-					Name:   "ethereum",
-					Usage:  "Ethereum node's address.",
-					EnvVar: "ETHEREUM_ADDRESS",
-					Value:  "http://localhost:8545",
-				},
-				cli.StringFlag{
-					Name:   "key-file",
-					Usage:  "JSON key file location.",
-					EnvVar: "KEY_FILE",
-					Value:  "dev.key.json",
-				},
-				cli.StringFlag{
-					Name:   "passphrase",
-					Usage:  "Keystore file passphrase.",
-					EnvVar: "PASSPHRASE",
-					Value:  "",
-				},
-			},
-		},
-	}
+	addCommand(app, "cache-wallets", func(d *deployer, args []string) error {
+
+		toCache := 0
+
+		if len(args) > 1 {
+			return errors.New("only one argument (number of instances) is accepted")
+		}
+
+		if len(args) == 1 {
+			var err error
+			toCache, err = strconv.Atoi(args[0])
+			if err != nil {
+				return errors.Wrapf(err, "while parsing integer %q", args[0])
+			}
+		}
+
+		d.log.Infof("Caching %d instances of wallet", toCache)
+
+		addr, err := d.ens.Addr(walletDeployerName)
+		if err != nil {
+			return err
+		}
+
+		if addr == zeroAddress {
+			return errors.New("deployer not found")
+		}
+
+		wd, err := bindings.NewWalletDeployer(addr, d.ethClient)
+		if err != nil {
+			return err
+		}
+
+		txOpts := *d.transactOpts
+
+		// use 1 GWEI for contract caching
+		txOpts.GasPrice = big.NewInt(1000000000)
+
+		nonce, err := d.ethClient.PendingNonceAt(d.ctx, txOpts.From)
+		if err != nil {
+			return errors.Wrapf(err, "while getting pending nonce for %s", txOpts.From.Hex())
+		}
+
+		for i := 0; i < toCache; i++ {
+			txOpts.Nonce = big.NewInt(int64(nonce) + int64(i))
+			tx, err := wd.CacheWallet(&txOpts)
+			if err != nil {
+				return errors.Wrap(err, "while sending transaction")
+			}
+			d.log.Infof("Created transaction %s", tx.Hash().Hex())
+		}
+
+		return nil
+	})
 
 	err := app.Run(os.Args)
 	if err != nil {
@@ -106,152 +89,53 @@ func main() {
 
 }
 
-func deployENS(c *cli.Context) error {
-	keyJSON, err := ioutil.ReadFile(c.String("key-file"))
-	if err != nil {
-		return err
-	}
-
-	decrypted, err := keystore.DecryptKey(keyJSON, c.String("passphrase"))
-	if err != nil {
-		return err
-	}
-
-	ec, err := ethclient.Dial(c.String("ethereum"))
-	if err != nil {
-		return err
-	}
-
-	defer ec.Close()
-
-	txOpt := &bind.TransactOpts{
-		Signer: func(signer types.Signer, addr common.Address, tx *types.Transaction) (*types.Transaction, error) {
-			return types.SignTx(tx, signer, decrypted.PrivateKey)
+func addCommand(app *cli.App, name string, fn func(d *deployer, args []string) error) {
+	app.Commands = append(app.Commands, cli.Command{
+		Name: name,
+		Action: runWithDeployer(func(d *deployer, args []string) error {
+			return fn(d, args)
+		}),
+		Flags: []cli.Flag{
+			cli.StringFlag{
+				Name:   "ethereum",
+				Usage:  "Ethereum node's address.",
+				EnvVar: "ETHEREUM_ADDRESS",
+				Value:  "http://localhost:8545",
+			},
+			cli.StringFlag{
+				Name:   "ens-address",
+				Usage:  "Ethereum name service contract address.",
+				EnvVar: "ENS_ADDRESS",
+			},
+			cli.StringFlag{
+				Name:   "ens-resolver-address",
+				Usage:  "Tokencard's ENS resolver address.",
+				EnvVar: "ENS_RESOLVER_ADDRESS",
+			},
+			cli.StringFlag{
+				Name:   "oraclize-resolver-address",
+				Usage:  "Oraclize resolver address.",
+				EnvVar: "ORACLIZE_RESOLVER_ADDRESS",
+				Value:  "0x1",
+			},
+			cli.StringFlag{
+				Name:   "key-file",
+				Usage:  "JSON key file location.",
+				EnvVar: "KEY_FILE",
+				Value:  "dev.key.json",
+			},
+			cli.StringFlag{
+				Name:   "passphrase",
+				Usage:  "Keystore file passphrase.",
+				EnvVar: "PASSPHRASE",
+				Value:  "",
+			},
+			cli.StringFlag{
+				Name:   "key-mnemonic",
+				Usage:  "Mnemonic (BIP 39) to derive the key.",
+				EnvVar: "KEY_MNEMONIC",
+				Value:  "",
+			},
 		},
-		From: decrypted.Address,
-	}
-
-	d := &deployer{
-		transactOpts:    txOpt,
-		controllerOwner: decrypted.Address,
-		ctx:             context.Background(),
-		ethClient:       ec,
-		log:             logrus.New(),
-	}
-
-	return d.deployENS()
-
-}
-
-func run(c *cli.Context) error {
-
-	var txOpt *bind.TransactOpts
-
-	if c.IsSet("key-mnemonic") {
-
-		logrus.Info("using provided mnemonic")
-
-		mnemonic := c.String("key-mnemonic")
-		seed := bip39.NewSeed(mnemonic, "")
-
-		wallet, err := hdwallet.NewFromSeed(seed)
-		if err != nil {
-			return err
-		}
-
-		path, err := hdwallet.ParseDerivationPath("m/44'/60'/0'/0/0")
-		if err != nil {
-			return err
-		}
-
-		account, err := wallet.Derive(path, false)
-		if err != nil {
-			return err
-		}
-
-		txOpt = &bind.TransactOpts{
-			Signer: func(signer types.Signer, addr common.Address, tx *types.Transaction) (*types.Transaction, error) {
-				pk, err := wallet.PrivateKey(account)
-				if err != nil {
-					return nil, err
-				}
-				return types.SignTx(tx, signer, pk)
-			},
-			From: account.Address,
-		}
-	} else if c.IsSet("key-file") {
-
-		logrus.Infof("using keystore at %s", c.String("key-file"))
-
-		keyJSON, err := ioutil.ReadFile(c.String("key-file"))
-		if err != nil {
-			return err
-		}
-
-		decrypted, err := keystore.DecryptKey(keyJSON, c.String("passphrase"))
-		if err != nil {
-			return err
-		}
-
-		txOpt = &bind.TransactOpts{
-			Signer: func(signer types.Signer, addr common.Address, tx *types.Transaction) (*types.Transaction, error) {
-				return types.SignTx(tx, signer, decrypted.PrivateKey)
-			},
-			From: decrypted.Address,
-		}
-
-	} else {
-		return errors.New("neither key file nor key mnemonic used")
-	}
-
-	ec, err := ethclient.Dial(c.String("ethereum"))
-	if err != nil {
-		return err
-	}
-
-	defer ec.Close()
-
-	ensAddress := common.HexToAddress(c.String("ens-address"))
-
-	logrus.Info("using ENS address", ensAddress.Hex())
-	logrus.Info("sending from  address", txOpt.From.Hex())
-
-	en, err := ens.NewENS(txOpt, ensAddress, ec)
-	if err != nil {
-		return err
-	}
-
-	d := &deployer{
-		transactOpts:            txOpt,
-		ens:                     en,
-		ensAddress:              ensAddress,
-		controllerOwner:         txOpt.From,
-		ctx:                     context.Background(),
-		ethClient:               ec,
-		log:                     logrus.New(),
-		oraclizeResolverAddress: common.HexToAddress(c.String("oraclize-resolver-address")),
-	}
-
-	err = d.deployController()
-	if err != nil {
-		return err
-	}
-
-	// TODO deploy oracle - needs fixing, ATM it's failing
-	// err = d.deployOracle()
-	// if err != nil {
-	// 	return err
-	// }
-
-	err = d.deployWalletDeployer()
-	if err != nil {
-		return err
-	}
-
-	err = d.deployWallet()
-	if err != nil {
-		return err
-	}
-
-	return nil
+	})
 }

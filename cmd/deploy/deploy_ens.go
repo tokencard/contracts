@@ -12,8 +12,6 @@ import (
 
 func (d *deployer) deployENS() error {
 
-	// name := "ENS"
-
 	ensRegistryAddress, tx, ensRegistry, err := externalens.DeployENSRegistry(d.transactOpts, d.ethClient)
 	if err != nil {
 		return err

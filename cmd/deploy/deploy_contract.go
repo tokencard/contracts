@@ -28,7 +28,7 @@ func (d *deployer) deployContract(name string, createTX createContractDeployment
 		return errors.Wrap(err, "while waiting for transaction")
 	}
 
-	d.log.Infof("Setting ENS for %s", name)
+	d.log.Infof("Setting ENS for %s to %s", name, contractAddress.Hex())
 
 	err = d.setAddress(name, contractAddress)
 	if err != nil {
