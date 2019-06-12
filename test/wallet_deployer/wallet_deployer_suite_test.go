@@ -177,8 +177,8 @@ var _ = Describe("WalletDeployer", func() {
 			Backend.Commit()
 		})
 
-		It("should fail", func() {
-			Expect(isSuccessful(tx)).To(BeFalse())
+		It("should succeed", func() {
+			Expect(isSuccessful(tx)).To(BeTrue())
 		})
 	})
 
