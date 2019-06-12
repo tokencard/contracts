@@ -53,7 +53,7 @@ contract WalletDeployer is Controllable {
 		emit WalletDeployed(walletAddress, owner);
 	}
 
-	function cacheWallet() public onlyController {
+	function cacheWallet() public {
 		address walletAddress = new Wallet(address(this), true, ens, oracleName, controllerName, spendLimit);
 		cached.push(walletAddress);
 		emit WalletCached(walletAddress);
