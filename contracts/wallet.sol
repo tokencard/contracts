@@ -110,7 +110,7 @@ contract Whitelist is Controllable, Ownable {
         _pendingWhitelistAddition = _addresses;
         // Flag the operation as submitted.
         submittedWhitelistAddition = true;
-        // Emit the submission event.
+        // Emit the submission eve   nt.
         emit SubmittedWhitelistAddition(_addresses, pendingWhitelistHash(_pendingWhitelistAddition));
     }
 
@@ -202,6 +202,7 @@ contract SpendLimit is Controllable, Ownable {
     event SetSpendLimit(address _sender, uint _amount);
     event SubmittedSpendLimitChange(uint _amount);
     event CancelledSpendLimitChange(address _sender, uint _amount);
+    event UpdatedSpendAvailable();
 
     using SafeMath for uint256;
 
@@ -299,6 +300,7 @@ contract SpendLimit is Controllable, Ownable {
             _spendLimitDay = _spendLimitDay.add(extraDays.mul(24 hours));
             // Set the available limit to the current spend limit.
             _spendAvailable = spendLimit;
+            emit UpdatedSpendAvailable();
         }
     }
 
@@ -597,7 +599,7 @@ contract Wallet is Vault {
         }
     }
 
-    /// @dev This function allows for the owner to send transaction from the Wallet to arbitrary contracts 
+    /// @dev This function allows for the owner to send transaction from the Wallet to arbitrary contracts
     /// @dev This function does not allow for the sending of data to arbitrary (non-contract) addresses
     /// @param _destination address of the transaction
     /// @param _value ETH amount in wei
@@ -605,7 +607,7 @@ contract Wallet is Vault {
     function executeTransaction(address _destination, uint _value, bytes _data, bool _destinationIsContract) external onlyOwner {
 
         // Check if the Address is a Contract
-        // This should avoid users accidentally sending Value and Data to a plain old address 
+        // This should avoid users accidentally sending Value and Data to a plain old address
         if (_destinationIsContract) {
             require(address(_destination).isContract(), "executeTransaction for a contract: call to non-contract");
         } else {

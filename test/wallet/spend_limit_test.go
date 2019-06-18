@@ -124,6 +124,15 @@ var _ = Describe("spendAvailable", func() {
 							Backend.Commit()
 							Expect(isSuccessful(tx)).To(BeTrue())
 						})
+
+                        It("should emit UpdatedSpendAvailable event", func() {
+            				it, err := Wallet.FilterUpdatedSpendAvailable(nil)
+            				Expect(err).ToNot(HaveOccurred())
+            				Expect(it.Next()).To(BeTrue())
+            				_ = it.Event
+            				Expect(it.Next()).To(BeFalse())
+            			})
+
 						It("should have 999 ETH spend available", func() {
 							sa, err := Wallet.SpendAvailable(nil)
 							Expect(err).ToNot(HaveOccurred())
