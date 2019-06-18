@@ -70,6 +70,10 @@ func main() {
 			return errors.Wrapf(err, "while getting pending nonce for %s", txOpts.From.Hex())
 		}
 
+		if d.initialNonce >= 0 {
+			nonce = uint64(d.initialNonce)
+		}
+
 		for i := 0; i < toCache; i++ {
 			txOpts.Nonce = big.NewInt(int64(nonce) + int64(i))
 			tx, err := wd.CacheWallet(&txOpts)
@@ -136,6 +140,12 @@ func addCommand(app *cli.App, name string, fn func(d *deployer, args []string) e
 				Usage:  "Mnemonic (BIP 39) to derive the key.",
 				EnvVar: "KEY_MNEMONIC",
 				Value:  "",
+			},
+			cli.Int64Flag{
+				Name:   "initial-nonce",
+				Usage:  "Initial nonce to be used for transaction",
+				EnvVar: "INITIAL_NONCE",
+				Value:  -1,
 			},
 		},
 	})

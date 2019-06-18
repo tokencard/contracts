@@ -28,6 +28,7 @@ type deployer struct {
 
 	log                     logrus.FieldLogger
 	controllerOwner         common.Address
+	initialNonce            int64
 	ctx                     context.Context
 	oraclizeResolverAddress common.Address
 }
@@ -120,6 +121,7 @@ func runWithDeployer(fn func(*deployer, []string) error) func(c *cli.Context) er
 			ethClient:               ec,
 			log:                     logrus.New(),
 			oraclizeResolverAddress: common.HexToAddress(c.String("oraclize-resolver-address")),
+			initialNonce:            c.Int64("initial-nonce"),
 		}
 
 		balance, err := ec.BalanceAt(d.ctx, d.transactOpts.From, nil)
