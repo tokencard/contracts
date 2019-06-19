@@ -454,7 +454,7 @@ contract Wallet is Vault {
 
     using SafeMath for uint256;
 
-    string constant public WALLET_VERSION = "v1.5.8";
+    string constant public WALLET_VERSION = "1.5.8";
     uint constant private MINIMUM_TOPUP_LIMIT = 1 finney; // solium-disable-line uppercase
     uint constant private MAXIMUM_TOPUP_LIMIT = 500 finney; // solium-disable-line uppercase
 
