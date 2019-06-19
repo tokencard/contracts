@@ -36,7 +36,7 @@ jobs:
 
   test:
     docker:
-      - image: quay.io/token/go-build:v0.3.0
+      - image: quay.io/token/go-build:v0.3.3
     working_directory:  /home/circleci/github.com/tokencard/contracts
     steps:
       - checkout
@@ -63,24 +63,24 @@ jobs:
           command: myth -x ./contracts/licence.sol
           no_output_timeout: 30m
 
-  snyk_check:
-    docker:
-      - image: quay.io/token/go-build:v0.3.0
-    working_directory: /go/src/github.com/tokencard/contracts
-    steps:
-      - checkout
-      - restore_cache:
-          keys:
-          - artefacts-{{ .Revision }}
-      - run: mv /home/circleci/github.com/tokencard/contracts/pkg/bindings pkg
-      - run: go get -u github.com/golang/dep/cmd/dep
-      - run: dep init --no-examples
-      - run: dep ensure
-      - run: apk add -U --no-cache nodejs nodejs-npm
-      - run: npm config set unsafe-perm true
-      - run: npm install -g snyk@1.101.1
-      - run: snyk auth ${SNYK_TOKEN}
-      - run: snyk test --org=token
+  # snyk_check:
+  #   docker:
+  #     - image: quay.io/token/go-build:v0.3.3
+  #   working_directory: /go/src/github.com/tokencard/contracts
+  #   steps:
+  #     - checkout
+  #     - restore_cache:
+  #         keys:
+  #         - artefacts-{{ .Revision }}
+  #     - run: mv /home/circleci/github.com/tokencard/contracts/pkg/bindings pkg
+  #     - run: go get -u github.com/golang/dep/cmd/dep
+  #     - run: dep init --no-examples
+  #     - run: dep ensure
+  #     - run: apk add -U --no-cache nodejs nodejs-npm
+  #     - run: npm config set unsafe-perm true
+  #     - run: npm install -g snyk@1.101.1
+  #     - run: snyk auth ${SNYK_TOKEN}
+  #     - run: snyk test --org=token
 
   publish_github_release:
     docker:
@@ -125,10 +125,10 @@ workflows:
           filters:
             tags:
               ignore: ""
-      - snyk_check:
-          requires:
-            - test
-          context: snyk
+      # - snyk_check:
+      #     requires:
+      #       - test
+      #     context: snyk
       - publish_github_release:
           context: "github-releases"
           requires:
