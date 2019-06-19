@@ -26,14 +26,14 @@ var _ = BeforeEach(func() {
 	Expect(err).ToNot(HaveOccurred())
 })
 
-var currentVersion = "v1.5.8"
+var currentVersion = "1.5.8"
 
 var _ = Describe("Wallet Version", func() {
-    It("should return the current version", func() {
-        v, err := Wallet.WALLETVERSION(nil)
-        Expect(err).ToNot(HaveOccurred())
-        Expect(v).To(Equal(currentVersion))
-    })
+	It("should return the current version", func() {
+		v, err := Wallet.WALLETVERSION(nil)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(v).To(Equal(currentVersion))
+	})
 })
 
 var _ = AfterSuite(func() {
