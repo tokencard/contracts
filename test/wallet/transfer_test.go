@@ -2,6 +2,7 @@ package wallet_test
 
 import (
 	"math/big"
+    "time"
 
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
@@ -15,7 +16,7 @@ var _ = Describe("transfer", func() {
 
 	Context("when the wallet has enough ETH", func() {
 		BeforeEach(func() {
-			BankAccount.MustTransfer(Backend, WalletAddress, EthToWei(1))
+			BankAccount.MustTransfer(Backend, WalletAddress, EthToWei(102))
 			BankAccount.MustTransfer(Backend, Controller.Address(), EthToWei(1))
 		})
 
@@ -40,7 +41,83 @@ var _ = Describe("transfer", func() {
 
 		})
 
-		Context("When I transfer 1 Finney to a the zero address", func() {
+        Context("When I transfer 100 ETH to a randon person", func() {
+			BeforeEach(func() {
+				var err error
+				tx, err = Wallet.Transfer(Owner.TransactOpts(ethertest.WithGasLimit(81000)), RandomAccount.Address(), common.HexToAddress("0x"), EthToWei(100))
+				Expect(err).ToNot(HaveOccurred())
+				Backend.Commit()
+			})
+			It("should succeed", func() {
+				Expect(isSuccessful(tx)).To(BeTrue())
+			})
+
+			It("should reduce available transfer for today by 100 ETH", func() {
+				av, err := Wallet.SpendAvailable(nil)
+				Expect(err).ToNot(HaveOccurred())
+				Expect(av.String()).To(Equal("0"))
+			})
+
+            It("should update the spend available to 0", func() {
+				av, err := Wallet.SpendAvailable(nil)
+				Expect(err).ToNot(HaveOccurred())
+				Expect(av.String()).To(Equal("0"))
+			})
+
+            When("I transfer 1 extra wei to a randon person", func() {
+                It("should fail", func() {
+    				var err error
+    				tx, err = Wallet.Transfer(Owner.TransactOpts(ethertest.WithGasLimit(81000)), RandomAccount.Address(), common.HexToAddress("0x"), big.NewInt(1))
+    				Expect(err).ToNot(HaveOccurred())
+    				Backend.Commit()
+                    Expect(isSuccessful(tx)).To(BeFalse())
+                })
+            })
+
+            Context("After I wait for 24 hours", func() {
+				BeforeEach(func() {
+					Backend.AdjustTime(time.Hour*24 + time.Second)
+					Backend.Commit()
+				})
+
+                It("should update the spend available to 100 ETH", func() {
+    				av, err := Wallet.SpendAvailable(nil)
+    				Expect(err).ToNot(HaveOccurred())
+    				Expect(av.String()).To(Equal(EthToWei(100).String()))
+    			})
+
+                When("I transfer 1 Finney  to a randon person", func() {
+                    BeforeEach(func() {
+        				var err error
+        				tx, err = Wallet.Transfer(Owner.TransactOpts(ethertest.WithGasLimit(81000)), RandomAccount.Address(), common.HexToAddress("0x"), FinneyToWei(1))
+        				Expect(err).ToNot(HaveOccurred())
+        				Backend.Commit()
+        			})
+
+        			It("should succeed", func() {
+        				Expect(isSuccessful(tx)).To(BeTrue())
+        			})
+
+                    It("should emit UpdatedSpendAvailable event", func() {
+                        it, err := Wallet.FilterUpdatedSpendAvailable(nil)
+                        Expect(err).ToNot(HaveOccurred())
+                        Expect(it.Next()).To(BeTrue())
+                        _ = it.Event
+                        Expect(it.Next()).To(BeFalse())
+                    })
+
+                    It("should reduce available transfer for today by 1 Finney", func() {
+        				av, err := Wallet.SpendAvailable(nil)
+        				Expect(err).ToNot(HaveOccurred())
+        				Expect(av.String()).To(Equal("99999000000000000000"))
+        			})
+
+                })
+            })
+
+		})
+
+		Context("When I transfer 1 Finney to the zero address", func() {
 			BeforeEach(func() {
 				var err error
 				tx, err = Wallet.Transfer(Owner.TransactOpts(ethertest.WithGasLimit(81000)), common.HexToAddress("0x0"), common.HexToAddress("0x"), FinneyToWei(1))
