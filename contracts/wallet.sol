@@ -110,7 +110,7 @@ contract Whitelist is Controllable, Ownable {
         _pendingWhitelistAddition = _addresses;
         // Flag the operation as submitted.
         submittedWhitelistAddition = true;
-        // Emit the submission eve   nt.
+        // Emit the submission event.
         emit SubmittedWhitelistAddition(_addresses, pendingWhitelistHash(_pendingWhitelistAddition));
     }
 
@@ -295,9 +295,8 @@ contract SpendLimit is Controllable, Ownable {
     /// @dev Update available spend limit based on the daily reset.
     function _updateSpendAvailable() internal {
         if (now > _spendLimitDay.add(24 hours)) {
-            // Advance the current day by how many days have passed.
-            uint extraDays = now.sub(_spendLimitDay).div(24 hours);
-            _spendLimitDay = _spendLimitDay.add(extraDays.mul(24 hours));
+            // Advance the current timestamp.
+            _spendLimitDay = now;
             // Set the available limit to the current spend limit.
             _spendAvailable = spendLimit;
             emit UpdatedSpendAvailable();
@@ -455,6 +454,7 @@ contract Wallet is Vault {
 
     using SafeMath for uint256;
 
+    string constant public WALLET_VERSION = "1.5.8";
     uint constant private MINIMUM_TOPUP_LIMIT = 1 finney; // solium-disable-line uppercase
     uint constant private MAXIMUM_TOPUP_LIMIT = 500 finney; // solium-disable-line uppercase
 
@@ -591,9 +591,8 @@ contract Wallet is Vault {
     /// @dev Update available top up limit based on the daily reset.
     function _updateTopUpAvailable() private {
         if (now > _topUpLimitDay.add(24 hours)) {
-            // Advance the current day by how many days have passed.
-            uint extraDays = now.sub(_topUpLimitDay).div(24 hours);
-            _topUpLimitDay = _topUpLimitDay.add(extraDays.mul(24 hours));
+            // Advance the current timestamp.
+            _topUpLimitDay = now;
             // Set the available limit to the current top up limit.
             _topUpAvailable = topUpLimit;
         }
@@ -613,6 +612,9 @@ contract Wallet is Vault {
         } else {
             require(!address(_destination).isContract(), "executeTransaction for a non-contract: call to contract");
         }
+
+        // Update the available spend limit.
+        _updateSpendAvailable();
 
         // Check if there exists at least a method signature in the transaction payload
         if (_data.length >= 4) {
