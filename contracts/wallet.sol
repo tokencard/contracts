@@ -591,9 +591,8 @@ contract Wallet is Vault {
     /// @dev Update available top up limit based on the daily reset.
     function _updateTopUpAvailable() private {
         if (now > _topUpLimitDay.add(24 hours)) {
-            // Advance the current day by how many days have passed.
-            uint extraDays = now.sub(_topUpLimitDay).div(24 hours);
-            _topUpLimitDay = _topUpLimitDay.add(extraDays.mul(24 hours));
+            // Advance the current timestamp.
+            _topUpLimitDay = now;
             // Set the available limit to the current top up limit.
             _topUpAvailable = topUpLimit;
         }
