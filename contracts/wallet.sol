@@ -110,7 +110,7 @@ contract Whitelist is Controllable, Ownable {
         _pendingWhitelistAddition = _addresses;
         // Flag the operation as submitted.
         submittedWhitelistAddition = true;
-        // Emit the submission eve   nt.
+        // Emit the submission event.
         emit SubmittedWhitelistAddition(_addresses, pendingWhitelistHash(_pendingWhitelistAddition));
     }
 
@@ -614,6 +614,9 @@ contract Wallet is Vault {
             require(!address(_destination).isContract(), "executeTransaction for a non-contract: call to contract");
         }
 
+        // Update the available spend limit.
+        _updateSpendAvailable();
+        
         // Check if there exists at least a method signature in the transaction payload
         if (_data.length >= 4) {
             // Get method signature
