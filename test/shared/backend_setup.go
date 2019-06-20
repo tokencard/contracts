@@ -221,7 +221,7 @@ func InitializeBackend() error {
 	TestRig.AddGenesisAccountAllocation(Controller.Address(), EthToWei(1000))
 	TestRig.AddGenesisAccountAllocation(RandomAccount.Address(), EthToWei(1000))
 	TestRig.AddGenesisAccountAllocation(OraclizeConnectorOwner.Address(), EthToWei(1000))
-	TestRig.AddGenesisAccountAllocation(BankAccount.Address(), EthToWei(100))
+	TestRig.AddGenesisAccountAllocation(BankAccount.Address(), EthToWei(1000))
 	TestRig.AddGenesisAccountAllocation(Owner.Address(), EthToWei(1))
 
 	Backend = TestRig.NewTestBackend(ethertest.WithBlockchainTime(time.Date(2018, 9, 13, 15, 10, 0, 0, time.Local)))

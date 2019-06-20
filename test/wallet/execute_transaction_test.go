@@ -18,7 +18,7 @@ var _ = Describe("executeTransaction", func() {
 
 	Context("when the wallet has enough ETH", func() {
 		BeforeEach(func() {
-			BankAccount.MustTransfer(Backend, WalletAddress, EthToWei(1))
+			BankAccount.MustTransfer(Backend, WalletAddress, EthToWei(101))
 			BankAccount.MustTransfer(Backend, Controller.Address(), EthToWei(1))
 		})
 
