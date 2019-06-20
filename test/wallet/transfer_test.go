@@ -79,13 +79,13 @@ var _ = Describe("transfer", func() {
         				Expect(isSuccessful(tx)).To(BeTrue())
         			})
 
-                    //  It("should emit UpdatedSpendAvailable event", func() {
-                    //     it, err := Wallet.FilterUpdatedSpendAvailable(nil)
-                    //     Expect(err).ToNot(HaveOccurred())
-                    //     Expect(it.Next()).To(BeTrue())
-                    //     _ = it.Event
-                    //     Expect(it.Next()).To(BeFalse())
-                    // })
+                    It("should emit UpdatedSpendAvailable event", func() {
+                        it, err := Wallet.FilterUpdatedAvailableLimit(nil)
+                        Expect(err).ToNot(HaveOccurred())
+                        Expect(it.Next()).To(BeTrue())
+                        _ = it.Event
+                        Expect(it.Next()).To(BeFalse())
+                    })
 
                      It("should reduce available transfer for today by 1 Finney", func() {
         				av, err := Wallet.SpendLimitAvailable(nil)
