@@ -59,6 +59,30 @@ contract Holder is Claimable, ENSResolvable, TokenWhitelistable {
         return true;
     }
 
+    function dustClaim(address payable to) external  {//should be onlyOwner
+
+        address[] memory tokenAddresses = _tokenAddressArray();
+        for (uint i = 0; i < tokenAddresses.length; i++) {
+            //redeem only if token is burnable
+            if (!_isTokenBurnable(tokenAddresses[i])){
+                uint total = balance(tokenAddresses[i]);
+                if (total > 0) {
+                    _claim(to, tokenAddresses[i], total);
+                }
+            }
+        }
+    }
+
+    function dustTokenClaim(address payable to, address tokenAddress) external  { //should be onlyOwner
+            //redeem only if token is burnable
+        if (!_isTokenBurnable(tokenAddress)){
+            uint total = balance(tokenAddress);
+            if (total > 0) {
+                _claim(to, tokenAddress, total);
+            }
+        }
+    }
+
     function burner() external view returns (address) {
         return _burner;
     }
