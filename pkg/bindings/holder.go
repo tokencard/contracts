@@ -28,18 +28,18 @@ var (
 )
 
 // HolderABI is the input ABI used to generate the binding from.
-const HolderABI = "[{\"constant\":true,\"inputs\":[],\"name\":\"burner\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"to\",\"type\":\"address\"},{\"name\":\"tokenAddress\",\"type\":\"address\"}],\"name\":\"dustTokenClaim\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"ensRegistry\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"tokenWhitelistNode\",\"outputs\":[{\"name\":\"\",\"type\":\"bytes32\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"to\",\"type\":\"address\"}],\"name\":\"dustClaim\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"to\",\"type\":\"address\"},{\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"burn\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"token\",\"type\":\"address\"}],\"name\":\"balance\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"name\":\"_burnerContract\",\"type\":\"address\"},{\"name\":\"_ens\",\"type\":\"address\"},{\"name\":\"_tokenWhitelistNameHash\",\"type\":\"bytes32\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"payable\":true,\"stateMutability\":\"payable\",\"type\":\"fallback\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_to\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_asset\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"Claimed\",\"type\":\"event\"}]"
+const HolderABI = "[{\"constant\":true,\"inputs\":[],\"name\":\"isTransferable\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"burner\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"to\",\"type\":\"address\"},{\"name\":\"tokenAddress\",\"type\":\"address\"}],\"name\":\"dustTokenClaim\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[],\"name\":\"renounceOwnership\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"ensRegistry\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"tokenWhitelistNode\",\"outputs\":[{\"name\":\"\",\"type\":\"bytes32\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"to\",\"type\":\"address\"}],\"name\":\"dustClaim\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"to\",\"type\":\"address\"},{\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"burn\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_account\",\"type\":\"address\"},{\"name\":\"_transferable\",\"type\":\"bool\"}],\"name\":\"transferOwnership\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"token\",\"type\":\"address\"}],\"name\":\"balance\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"name\":\"_owner\",\"type\":\"address\"},{\"name\":\"_transferable\",\"type\":\"bool\"},{\"name\":\"_burnerContract\",\"type\":\"address\"},{\"name\":\"_ens\",\"type\":\"address\"},{\"name\":\"_tokenWhitelistNameHash\",\"type\":\"bytes32\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"payable\":true,\"stateMutability\":\"payable\",\"type\":\"fallback\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_to\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_asset\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"Claimed\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_from\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_to\",\"type\":\"address\"}],\"name\":\"TransferredOwnership\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_locked\",\"type\":\"address\"}],\"name\":\"LockedOwnership\",\"type\":\"event\"}]"
 
 // HolderBin is the compiled bytecode used for deploying new contracts.
-const HolderBin = `608060405234801561001057600080fd5b50604051610cea380380610cea8339818101604052606081101561003357600080fd5b5080516020820151604090920151600180546001600160a01b039485166001600160a01b031991821617918290556000805482169286169290921790915560029190915560038054939092169216919091179055610c54806100966000396000f3fe6080604052600436106100705760003560e01c8063877337b01161004e578063877337b0146100f35780638f64f7051461011a5780639dc29fac1461014d578063e3d670d71461019a57610070565b806327810b6e146100725780636b70f20c146100a35780637d73b231146100de575b005b34801561007e57600080fd5b506100876101cd565b604080516001600160a01b039092168252519081900360200190f35b3480156100af57600080fd5b50610070600480360360408110156100c657600080fd5b506001600160a01b03813581169160200135166101dc565b3480156100ea57600080fd5b5061008761020d565b3480156100ff57600080fd5b5061010861021c565b60408051918252519081900360200190f35b34801561012657600080fd5b506100706004803603602081101561013d57600080fd5b50356001600160a01b0316610222565b34801561015957600080fd5b506101866004803603604081101561017057600080fd5b506001600160a01b0381351690602001356102a8565b604080519115158252519081900360200190f35b3480156101a657600080fd5b50610108600480360360208110156101bd57600080fd5b50356001600160a01b031661045d565b6003546001600160a01b031690565b6101e5816104f0565b6102095760006101f48261045d565b9050801561020757610207838383610509565b505b5050565b6001546001600160a01b031690565b60025490565b606061022c6105bc565b905060005b81518110156102075761025682828151811061024957fe5b60200260200101516104f0565b6102a057600061027883838151811061026b57fe5b602002602001015161045d565b9050801561029e5761029e8484848151811061029057fe5b602002602001015183610509565b505b600101610231565b6003546000906001600160a01b031633146102f45760405162461bcd60e51b8152600401808060200182810382526021815260200180610bff6021913960400191505060405180910390fd5b8161030157506001610457565b600082600360009054906101000a90046001600160a01b03166001600160a01b031663771282f66040518163ffffffff1660e01b815260040160206040518083038186803b15801561035257600080fd5b505afa158015610366573d6000803e3d6000fd5b505050506040513d602081101561037c57600080fd5b5051019050808311156103c05760405162461bcd60e51b8152600401808060200182810382526021815260200180610bb46021913960400191505060405180910390fd5b60606103ca6105bc565b905060005b815181101561044f576103e782828151811061024957fe5b156104475760006103fd83838151811061026b57fe5b90508015610445576104458784848151811061041557fe5b6020026020010151610440876104348b8761069190919063ffffffff16565b9063ffffffff6106f116565b610509565b505b6001016103cf565b506001925050505b92915050565b60006001600160a01b038216156104e757604080516370a0823160e01b815230600482015290516001600160a01b038416916370a08231916024808301926020929190829003018186803b1580156104b457600080fd5b505afa1580156104c8573d6000803e3d6000fd5b505050506040513d60208110156104de57600080fd5b505190506104eb565b5030315b919050565b6000806104fc8361075b565b5098975050505050505050565b6001600160a01b038216610553576040516001600160a01b0384169082156108fc029083906000818181858888f1935050505015801561054d573d6000803e3d6000fd5b5061056d565b61056d6001600160a01b038316848363ffffffff61088816565b604080516001600160a01b0380861682528416602082015280820183905290517ff7a40077ff7a04c7e61f6f26fb13774259ddf1b6bce9ecf26a8276cdd39926839181900360600190a1505050565b60606105c96002546108da565b6001600160a01b031663443dd2a46040518163ffffffff1660e01b815260040160006040518083038186803b15801561060157600080fd5b505afa158015610615573d6000803e3d6000fd5b505050506040513d6000823e601f3d908101601f19168201604052602081101561063e57600080fd5b81019080805164010000000081111561065657600080fd5b8201602081018481111561066957600080fd5b815185602082028301116401000000008211171561068657600080fd5b509094505050505090565b6000826106a057506000610457565b828202828482816106ad57fe5b04146106ea5760405162461bcd60e51b8152600401808060200182810382526021815260200180610b936021913960400191505060405180910390fd5b9392505050565b6000808211610747576040805162461bcd60e51b815260206004820152601a60248201527f536166654d6174683a206469766973696f6e206279207a65726f000000000000604482015290519081900360640190fd5b600082848161075257fe5b04949350505050565b60606000806000806000806107716002546108da565b6001600160a01b0316631f69565f896040518263ffffffff1660e01b815260040180826001600160a01b03166001600160a01b0316815260200191505060006040518083038186803b1580156107c657600080fd5b505afa1580156107da573d6000803e3d6000fd5b505050506040513d6000823e601f3d908101601f1916820160405260e081101561080357600080fd5b81019080805164010000000081111561081b57600080fd5b8201602081018481111561082e57600080fd5b815164010000000081118282018710171561084857600080fd5b5050602082015160408301516060840151608085015160a086015160c090960151949e50929c50909a509850965090945092505050919395979092949650565b604080516001600160a01b038416602482015260448082018490528251808303909101815260649091019091526020810180516001600160e01b031663a9059cbb60e01b1790526102079084906109ce565b6000805460408051630178b8bf60e01b81526004810185905290516001600160a01b0390921691630178b8bf91602480820192602092909190829003018186803b15801561092757600080fd5b505afa15801561093b573d6000803e3d6000fd5b505050506040513d602081101561095157600080fd5b505160408051631d9dabef60e11b81526004810185905290516001600160a01b0390921691633b3b57de91602480820192602092909190829003018186803b15801561099c57600080fd5b505afa1580156109b0573d6000803e3d6000fd5b505050506040513d60208110156109c657600080fd5b505192915050565b6109e0826001600160a01b0316610b8c565b610a31576040805162461bcd60e51b815260206004820152601f60248201527f5361666545524332303a2063616c6c20746f206e6f6e2d636f6e747261637400604482015290519081900360640190fd5b60006060836001600160a01b0316836040518082805190602001908083835b60208310610a6f5780518252601f199092019160209182019101610a50565b6001836020036101000a0380198251168184511680821785525050505050509050019150506000604051808303816000865af19150503d8060008114610ad1576040519150601f19603f3d011682016040523d82523d6000602084013e610ad6565b606091505b509150915081610b2d576040805162461bcd60e51b815260206004820181905260248201527f5361666545524332303a206c6f772d6c6576656c2063616c6c206661696c6564604482015290519081900360640190fd5b805115610b8657808060200190516020811015610b4957600080fd5b5051610b865760405162461bcd60e51b815260040180806020018281038252602a815260200180610bd5602a913960400191505060405180910390fd5b50505050565b3b15159056fe536166654d6174683a206d756c7469706c69636174696f6e206f766572666c6f77616d6f756e742067726561746572207468617420746f74616c20737570706c79215361666545524332303a204552433230206f7065726174696f6e20646964206e6f7420737563636565646275726e657220636f6e7472616374206973206e6f74207468652073656e646572a265627a7a72305820c51e40c6c1226e23badf7222303f99c6a90a9652cd5fce7fdaf651a17efca45164736f6c634300050a0032`
+const HolderBin = `608060405234801561001057600080fd5b50604051611225380380611225833981810160405260a081101561003357600080fd5b508051602082015160408301516060840151608090940151600080546001600160a01b0319166001600160a01b0386161760ff60a01b1916740100000000000000000000000000000000000000008515158102919091179182905594959394929392829184918891889160ff9104166100e357604080516001600160a01b038416815290517f808639ff9c8e4732d60b6c2330de498035416d229f27a77d259680895efec1229181900360200190a15b60408051600081526001600160a01b038416602082015281517f850b3df64837d7d518b45f5aa64d104652c3b80eb5b34a8e3d9eb666cb7cdea5929181900390910190a15050600280546001600160a01b039283166001600160a01b031991821617918290556001805482169284169290921790915560039290925560048054959091169490911693909317909255505050506110a0806101856000396000f3fe60806040526004361061009c5760003560e01c8063877337b011610064578063877337b01461015d5780638da5cb5b146101845780638f64f705146101995780639dc29fac146101cc578063b242e53414610205578063e3d670d7146102405761009c565b80632121dc751461009e57806327810b6e146100c75780636b70f20c146100f8578063715018a6146101335780637d73b23114610148575b005b3480156100aa57600080fd5b506100b3610273565b604080519115158252519081900360200190f35b3480156100d357600080fd5b506100dc610283565b604080516001600160a01b039092168252519081900360200190f35b34801561010457600080fd5b5061009c6004803603604081101561011b57600080fd5b506001600160a01b0381358116916020013516610292565b34801561013f57600080fd5b5061009c610316565b34801561015457600080fd5b506100dc610414565b34801561016957600080fd5b50610172610423565b60408051918252519081900360200190f35b34801561019057600080fd5b506100dc610429565b3480156101a557600080fd5b5061009c600480360360208110156101bc57600080fd5b50356001600160a01b0316610438565b3480156101d857600080fd5b506100b3600480360360408110156101ef57600080fd5b506001600160a01b038135169060200135610511565b34801561021157600080fd5b5061009c6004803603604081101561022857600080fd5b506001600160a01b03813516906020013515156106b9565b34801561024c57600080fd5b506101726004803603602081101561026357600080fd5b50356001600160a01b0316610873565b600054600160a01b900460ff1690565b6004546001600160a01b031690565b61029b33610906565b6102e5576040805162461bcd60e51b815260206004820152601660248201527539b2b73232b91034b9903737ba1030b71037bbb732b960511b604482015290519081900360640190fd5b6102ee8161091a565b6103125760006102fd82610873565b9050801561031057610310838383610933565b505b5050565b61031f33610906565b610369576040805162461bcd60e51b815260206004820152601660248201527539b2b73232b91034b9903737ba1030b71037bbb732b960511b604482015290519081900360640190fd5b600054600160a01b900460ff166103c7576040805162461bcd60e51b815260206004820152601d60248201527f6f776e657273686970206973206e6f74207472616e7366657261626c65000000604482015290519081900360640190fd5b600080546001600160a01b031916815560408051828152602081019290925280517f850b3df64837d7d518b45f5aa64d104652c3b80eb5b34a8e3d9eb666cb7cdea59281900390910190a1565b6002546001600160a01b031690565b60035490565b6000546001600160a01b031690565b61044133610906565b61048b576040805162461bcd60e51b815260206004820152601660248201527539b2b73232b91034b9903737ba1030b71037bbb732b960511b604482015290519081900360640190fd5b60606104956109e6565b905060005b8151811015610310576104bf8282815181106104b257fe5b602002602001015161091a565b6105095760006104e18383815181106104d457fe5b6020026020010151610873565b9050801561050757610507848484815181106104f957fe5b602002602001015183610933565b505b60010161049a565b6004546000906001600160a01b0316331461055d5760405162461bcd60e51b815260040180806020018281038252602181526020018061104b6021913960400191505060405180910390fd5b8161056a575060016106b3565b6004805460408051633b89417b60e11b8152905160009386936001600160a01b03169263771282f69281830192602092829003018186803b1580156105ae57600080fd5b505afa1580156105c2573d6000803e3d6000fd5b505050506040513d60208110156105d857600080fd5b50510190508083111561061c5760405162461bcd60e51b81526004018080602001828103825260218152602001806110006021913960400191505060405180910390fd5b60606106266109e6565b905060005b81518110156106ab576106438282815181106104b257fe5b156106a35760006106598383815181106104d457fe5b905080156106a1576106a18784848151811061067157fe5b602002602001015161069c876106908b87610abb90919063ffffffff16565b9063ffffffff610b1b16565b610933565b505b60010161062b565b506001925050505b92915050565b6106c233610906565b61070c576040805162461bcd60e51b815260206004820152601660248201527539b2b73232b91034b9903737ba1030b71037bbb732b960511b604482015290519081900360640190fd5b600054600160a01b900460ff1661076a576040805162461bcd60e51b815260206004820152601d60248201527f6f776e657273686970206973206e6f74207472616e7366657261626c65000000604482015290519081900360640190fd5b6001600160a01b0382166107af5760405162461bcd60e51b8152600401808060200182810382526023815260200180610fdd6023913960400191505060405180910390fd5b6000805460ff60a01b1916600160a01b831515021790558061080857604080516001600160a01b038416815290517f808639ff9c8e4732d60b6c2330de498035416d229f27a77d259680895efec1229181900360200190a15b600054604080516001600160a01b039283168152918416602083015280517f850b3df64837d7d518b45f5aa64d104652c3b80eb5b34a8e3d9eb666cb7cdea59281900390910190a150600080546001600160a01b0319166001600160a01b0392909216919091179055565b60006001600160a01b038216156108fd57604080516370a0823160e01b815230600482015290516001600160a01b038416916370a08231916024808301926020929190829003018186803b1580156108ca57600080fd5b505afa1580156108de573d6000803e3d6000fd5b505050506040513d60208110156108f457600080fd5b50519050610901565b5030315b919050565b6000546001600160a01b0390811691161490565b60008061092683610b85565b5098975050505050505050565b6001600160a01b03821661097d576040516001600160a01b0384169082156108fc029083906000818181858888f19350505050158015610977573d6000803e3d6000fd5b50610997565b6109976001600160a01b038316848363ffffffff610cb216565b604080516001600160a01b0380861682528416602082015280820183905290517ff7a40077ff7a04c7e61f6f26fb13774259ddf1b6bce9ecf26a8276cdd39926839181900360600190a1505050565b60606109f3600354610d04565b6001600160a01b031663443dd2a46040518163ffffffff1660e01b815260040160006040518083038186803b158015610a2b57600080fd5b505afa158015610a3f573d6000803e3d6000fd5b505050506040513d6000823e601f3d908101601f191682016040526020811015610a6857600080fd5b810190808051640100000000811115610a8057600080fd5b82016020810184811115610a9357600080fd5b8151856020820283011164010000000082111715610ab057600080fd5b509094505050505090565b600082610aca575060006106b3565b82820282848281610ad757fe5b0414610b145760405162461bcd60e51b8152600401808060200182810382526021815260200180610fbc6021913960400191505060405180910390fd5b9392505050565b6000808211610b71576040805162461bcd60e51b815260206004820152601a60248201527f536166654d6174683a206469766973696f6e206279207a65726f000000000000604482015290519081900360640190fd5b6000828481610b7c57fe5b04949350505050565b6060600080600080600080610b9b600354610d04565b6001600160a01b0316631f69565f896040518263ffffffff1660e01b815260040180826001600160a01b03166001600160a01b0316815260200191505060006040518083038186803b158015610bf057600080fd5b505afa158015610c04573d6000803e3d6000fd5b505050506040513d6000823e601f3d908101601f1916820160405260e0811015610c2d57600080fd5b810190808051640100000000811115610c4557600080fd5b82016020810184811115610c5857600080fd5b8151640100000000811182820187101715610c7257600080fd5b5050602082015160408301516060840151608085015160a086015160c090960151949e50929c50909a509850965090945092505050919395979092949650565b604080516001600160a01b038416602482015260448082018490528251808303909101815260649091019091526020810180516001600160e01b031663a9059cbb60e01b179052610310908490610df7565b60015460408051630178b8bf60e01b81526004810184905290516000926001600160a01b031691630178b8bf916024808301926020929190829003018186803b158015610d5057600080fd5b505afa158015610d64573d6000803e3d6000fd5b505050506040513d6020811015610d7a57600080fd5b505160408051631d9dabef60e11b81526004810185905290516001600160a01b0390921691633b3b57de91602480820192602092909190829003018186803b158015610dc557600080fd5b505afa158015610dd9573d6000803e3d6000fd5b505050506040513d6020811015610def57600080fd5b505192915050565b610e09826001600160a01b0316610fb5565b610e5a576040805162461bcd60e51b815260206004820152601f60248201527f5361666545524332303a2063616c6c20746f206e6f6e2d636f6e747261637400604482015290519081900360640190fd5b60006060836001600160a01b0316836040518082805190602001908083835b60208310610e985780518252601f199092019160209182019101610e79565b6001836020036101000a0380198251168184511680821785525050505050509050019150506000604051808303816000865af19150503d8060008114610efa576040519150601f19603f3d011682016040523d82523d6000602084013e610eff565b606091505b509150915081610f56576040805162461bcd60e51b815260206004820181905260248201527f5361666545524332303a206c6f772d6c6576656c2063616c6c206661696c6564604482015290519081900360640190fd5b805115610faf57808060200190516020811015610f7257600080fd5b5051610faf5760405162461bcd60e51b815260040180806020018281038252602a815260200180611021602a913960400191505060405180910390fd5b50505050565b3b15159056fe536166654d6174683a206d756c7469706c69636174696f6e206f766572666c6f776f776e65722063616e6e6f742062652073657420746f207a65726f2061646472657373616d6f756e742067726561746572207468617420746f74616c20737570706c79215361666545524332303a204552433230206f7065726174696f6e20646964206e6f7420737563636565646275726e657220636f6e7472616374206973206e6f74207468652073656e646572a265627a7a723058208292c70293c18949a92fc43630e9ec0c809e2c77c44308f290823a21fea0b32b64736f6c634300050a0032`
 
 // DeployHolder deploys a new Ethereum contract, binding an instance of Holder to it.
-func DeployHolder(auth *bind.TransactOpts, backend bind.ContractBackend, _burnerContract common.Address, _ens common.Address, _tokenWhitelistNameHash [32]byte) (common.Address, *types.Transaction, *Holder, error) {
+func DeployHolder(auth *bind.TransactOpts, backend bind.ContractBackend, _owner common.Address, _transferable bool, _burnerContract common.Address, _ens common.Address, _tokenWhitelistNameHash [32]byte) (common.Address, *types.Transaction, *Holder, error) {
 	parsed, err := abi.JSON(strings.NewReader(HolderABI))
 	if err != nil {
 		return common.Address{}, nil, nil, err
 	}
-	address, tx, contract, err := bind.DeployContract(auth, parsed, common.FromHex(HolderBin), backend, _burnerContract, _ens, _tokenWhitelistNameHash)
+	address, tx, contract, err := bind.DeployContract(auth, parsed, common.FromHex(HolderBin), backend, _owner, _transferable, _burnerContract, _ens, _tokenWhitelistNameHash)
 	if err != nil {
 		return common.Address{}, nil, nil, err
 	}
@@ -266,6 +266,58 @@ func (_Holder *HolderCallerSession) EnsRegistry() (common.Address, error) {
 	return _Holder.Contract.EnsRegistry(&_Holder.CallOpts)
 }
 
+// IsTransferable is a free data retrieval call binding the contract method 0x2121dc75.
+//
+// Solidity: function isTransferable() constant returns(bool)
+func (_Holder *HolderCaller) IsTransferable(opts *bind.CallOpts) (bool, error) {
+	var (
+		ret0 = new(bool)
+	)
+	out := ret0
+	err := _Holder.contract.Call(opts, out, "isTransferable")
+	return *ret0, err
+}
+
+// IsTransferable is a free data retrieval call binding the contract method 0x2121dc75.
+//
+// Solidity: function isTransferable() constant returns(bool)
+func (_Holder *HolderSession) IsTransferable() (bool, error) {
+	return _Holder.Contract.IsTransferable(&_Holder.CallOpts)
+}
+
+// IsTransferable is a free data retrieval call binding the contract method 0x2121dc75.
+//
+// Solidity: function isTransferable() constant returns(bool)
+func (_Holder *HolderCallerSession) IsTransferable() (bool, error) {
+	return _Holder.Contract.IsTransferable(&_Holder.CallOpts)
+}
+
+// Owner is a free data retrieval call binding the contract method 0x8da5cb5b.
+//
+// Solidity: function owner() constant returns(address)
+func (_Holder *HolderCaller) Owner(opts *bind.CallOpts) (common.Address, error) {
+	var (
+		ret0 = new(common.Address)
+	)
+	out := ret0
+	err := _Holder.contract.Call(opts, out, "owner")
+	return *ret0, err
+}
+
+// Owner is a free data retrieval call binding the contract method 0x8da5cb5b.
+//
+// Solidity: function owner() constant returns(address)
+func (_Holder *HolderSession) Owner() (common.Address, error) {
+	return _Holder.Contract.Owner(&_Holder.CallOpts)
+}
+
+// Owner is a free data retrieval call binding the contract method 0x8da5cb5b.
+//
+// Solidity: function owner() constant returns(address)
+func (_Holder *HolderCallerSession) Owner() (common.Address, error) {
+	return _Holder.Contract.Owner(&_Holder.CallOpts)
+}
+
 // TokenWhitelistNode is a free data retrieval call binding the contract method 0x877337b0.
 //
 // Solidity: function tokenWhitelistNode() constant returns(bytes32)
@@ -353,6 +405,48 @@ func (_Holder *HolderSession) DustTokenClaim(to common.Address, tokenAddress com
 // Solidity: function dustTokenClaim(address to, address tokenAddress) returns()
 func (_Holder *HolderTransactorSession) DustTokenClaim(to common.Address, tokenAddress common.Address) (*types.Transaction, error) {
 	return _Holder.Contract.DustTokenClaim(&_Holder.TransactOpts, to, tokenAddress)
+}
+
+// RenounceOwnership is a paid mutator transaction binding the contract method 0x715018a6.
+//
+// Solidity: function renounceOwnership() returns()
+func (_Holder *HolderTransactor) RenounceOwnership(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _Holder.contract.Transact(opts, "renounceOwnership")
+}
+
+// RenounceOwnership is a paid mutator transaction binding the contract method 0x715018a6.
+//
+// Solidity: function renounceOwnership() returns()
+func (_Holder *HolderSession) RenounceOwnership() (*types.Transaction, error) {
+	return _Holder.Contract.RenounceOwnership(&_Holder.TransactOpts)
+}
+
+// RenounceOwnership is a paid mutator transaction binding the contract method 0x715018a6.
+//
+// Solidity: function renounceOwnership() returns()
+func (_Holder *HolderTransactorSession) RenounceOwnership() (*types.Transaction, error) {
+	return _Holder.Contract.RenounceOwnership(&_Holder.TransactOpts)
+}
+
+// TransferOwnership is a paid mutator transaction binding the contract method 0xb242e534.
+//
+// Solidity: function transferOwnership(address _account, bool _transferable) returns()
+func (_Holder *HolderTransactor) TransferOwnership(opts *bind.TransactOpts, _account common.Address, _transferable bool) (*types.Transaction, error) {
+	return _Holder.contract.Transact(opts, "transferOwnership", _account, _transferable)
+}
+
+// TransferOwnership is a paid mutator transaction binding the contract method 0xb242e534.
+//
+// Solidity: function transferOwnership(address _account, bool _transferable) returns()
+func (_Holder *HolderSession) TransferOwnership(_account common.Address, _transferable bool) (*types.Transaction, error) {
+	return _Holder.Contract.TransferOwnership(&_Holder.TransactOpts, _account, _transferable)
+}
+
+// TransferOwnership is a paid mutator transaction binding the contract method 0xb242e534.
+//
+// Solidity: function transferOwnership(address _account, bool _transferable) returns()
+func (_Holder *HolderTransactorSession) TransferOwnership(_account common.Address, _transferable bool) (*types.Transaction, error) {
+	return _Holder.Contract.TransferOwnership(&_Holder.TransactOpts, _account, _transferable)
 }
 
 // HolderClaimedIterator is returned from FilterClaimed and is used to iterate over the raw logs and unpacked data for Claimed events raised by the Holder contract.
@@ -459,6 +553,251 @@ func (_Holder *HolderFilterer) WatchClaimed(opts *bind.WatchOpts, sink chan<- *H
 				// New log arrived, parse the event and forward to the user
 				event := new(HolderClaimed)
 				if err := _Holder.contract.UnpackLog(event, "Claimed", log); err != nil {
+					return err
+				}
+				event.Raw = log
+
+				select {
+				case sink <- event:
+				case err := <-sub.Err():
+					return err
+				case <-quit:
+					return nil
+				}
+			case err := <-sub.Err():
+				return err
+			case <-quit:
+				return nil
+			}
+		}
+	}), nil
+}
+
+// HolderLockedOwnershipIterator is returned from FilterLockedOwnership and is used to iterate over the raw logs and unpacked data for LockedOwnership events raised by the Holder contract.
+type HolderLockedOwnershipIterator struct {
+	Event *HolderLockedOwnership // Event containing the contract specifics and raw log
+
+	contract *bind.BoundContract // Generic contract to use for unpacking event data
+	event    string              // Event name to use for unpacking event data
+
+	logs chan types.Log        // Log channel receiving the found contract events
+	sub  ethereum.Subscription // Subscription for errors, completion and termination
+	done bool                  // Whether the subscription completed delivering logs
+	fail error                 // Occurred error to stop iteration
+}
+
+// Next advances the iterator to the subsequent event, returning whether there
+// are any more events found. In case of a retrieval or parsing error, false is
+// returned and Error() can be queried for the exact failure.
+func (it *HolderLockedOwnershipIterator) Next() bool {
+	// If the iterator failed, stop iterating
+	if it.fail != nil {
+		return false
+	}
+	// If the iterator completed, deliver directly whatever's available
+	if it.done {
+		select {
+		case log := <-it.logs:
+			it.Event = new(HolderLockedOwnership)
+			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+				it.fail = err
+				return false
+			}
+			it.Event.Raw = log
+			return true
+
+		default:
+			return false
+		}
+	}
+	// Iterator still in progress, wait for either a data or an error event
+	select {
+	case log := <-it.logs:
+		it.Event = new(HolderLockedOwnership)
+		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+			it.fail = err
+			return false
+		}
+		it.Event.Raw = log
+		return true
+
+	case err := <-it.sub.Err():
+		it.done = true
+		it.fail = err
+		return it.Next()
+	}
+}
+
+// Error returns any retrieval or parsing error occurred during filtering.
+func (it *HolderLockedOwnershipIterator) Error() error {
+	return it.fail
+}
+
+// Close terminates the iteration process, releasing any pending underlying
+// resources.
+func (it *HolderLockedOwnershipIterator) Close() error {
+	it.sub.Unsubscribe()
+	return nil
+}
+
+// HolderLockedOwnership represents a LockedOwnership event raised by the Holder contract.
+type HolderLockedOwnership struct {
+	Locked common.Address
+	Raw    types.Log // Blockchain specific contextual infos
+}
+
+// FilterLockedOwnership is a free log retrieval operation binding the contract event 0x808639ff9c8e4732d60b6c2330de498035416d229f27a77d259680895efec122.
+//
+// Solidity: event LockedOwnership(address _locked)
+func (_Holder *HolderFilterer) FilterLockedOwnership(opts *bind.FilterOpts) (*HolderLockedOwnershipIterator, error) {
+
+	logs, sub, err := _Holder.contract.FilterLogs(opts, "LockedOwnership")
+	if err != nil {
+		return nil, err
+	}
+	return &HolderLockedOwnershipIterator{contract: _Holder.contract, event: "LockedOwnership", logs: logs, sub: sub}, nil
+}
+
+// WatchLockedOwnership is a free log subscription operation binding the contract event 0x808639ff9c8e4732d60b6c2330de498035416d229f27a77d259680895efec122.
+//
+// Solidity: event LockedOwnership(address _locked)
+func (_Holder *HolderFilterer) WatchLockedOwnership(opts *bind.WatchOpts, sink chan<- *HolderLockedOwnership) (event.Subscription, error) {
+
+	logs, sub, err := _Holder.contract.WatchLogs(opts, "LockedOwnership")
+	if err != nil {
+		return nil, err
+	}
+	return event.NewSubscription(func(quit <-chan struct{}) error {
+		defer sub.Unsubscribe()
+		for {
+			select {
+			case log := <-logs:
+				// New log arrived, parse the event and forward to the user
+				event := new(HolderLockedOwnership)
+				if err := _Holder.contract.UnpackLog(event, "LockedOwnership", log); err != nil {
+					return err
+				}
+				event.Raw = log
+
+				select {
+				case sink <- event:
+				case err := <-sub.Err():
+					return err
+				case <-quit:
+					return nil
+				}
+			case err := <-sub.Err():
+				return err
+			case <-quit:
+				return nil
+			}
+		}
+	}), nil
+}
+
+// HolderTransferredOwnershipIterator is returned from FilterTransferredOwnership and is used to iterate over the raw logs and unpacked data for TransferredOwnership events raised by the Holder contract.
+type HolderTransferredOwnershipIterator struct {
+	Event *HolderTransferredOwnership // Event containing the contract specifics and raw log
+
+	contract *bind.BoundContract // Generic contract to use for unpacking event data
+	event    string              // Event name to use for unpacking event data
+
+	logs chan types.Log        // Log channel receiving the found contract events
+	sub  ethereum.Subscription // Subscription for errors, completion and termination
+	done bool                  // Whether the subscription completed delivering logs
+	fail error                 // Occurred error to stop iteration
+}
+
+// Next advances the iterator to the subsequent event, returning whether there
+// are any more events found. In case of a retrieval or parsing error, false is
+// returned and Error() can be queried for the exact failure.
+func (it *HolderTransferredOwnershipIterator) Next() bool {
+	// If the iterator failed, stop iterating
+	if it.fail != nil {
+		return false
+	}
+	// If the iterator completed, deliver directly whatever's available
+	if it.done {
+		select {
+		case log := <-it.logs:
+			it.Event = new(HolderTransferredOwnership)
+			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+				it.fail = err
+				return false
+			}
+			it.Event.Raw = log
+			return true
+
+		default:
+			return false
+		}
+	}
+	// Iterator still in progress, wait for either a data or an error event
+	select {
+	case log := <-it.logs:
+		it.Event = new(HolderTransferredOwnership)
+		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+			it.fail = err
+			return false
+		}
+		it.Event.Raw = log
+		return true
+
+	case err := <-it.sub.Err():
+		it.done = true
+		it.fail = err
+		return it.Next()
+	}
+}
+
+// Error returns any retrieval or parsing error occurred during filtering.
+func (it *HolderTransferredOwnershipIterator) Error() error {
+	return it.fail
+}
+
+// Close terminates the iteration process, releasing any pending underlying
+// resources.
+func (it *HolderTransferredOwnershipIterator) Close() error {
+	it.sub.Unsubscribe()
+	return nil
+}
+
+// HolderTransferredOwnership represents a TransferredOwnership event raised by the Holder contract.
+type HolderTransferredOwnership struct {
+	From common.Address
+	To   common.Address
+	Raw  types.Log // Blockchain specific contextual infos
+}
+
+// FilterTransferredOwnership is a free log retrieval operation binding the contract event 0x850b3df64837d7d518b45f5aa64d104652c3b80eb5b34a8e3d9eb666cb7cdea5.
+//
+// Solidity: event TransferredOwnership(address _from, address _to)
+func (_Holder *HolderFilterer) FilterTransferredOwnership(opts *bind.FilterOpts) (*HolderTransferredOwnershipIterator, error) {
+
+	logs, sub, err := _Holder.contract.FilterLogs(opts, "TransferredOwnership")
+	if err != nil {
+		return nil, err
+	}
+	return &HolderTransferredOwnershipIterator{contract: _Holder.contract, event: "TransferredOwnership", logs: logs, sub: sub}, nil
+}
+
+// WatchTransferredOwnership is a free log subscription operation binding the contract event 0x850b3df64837d7d518b45f5aa64d104652c3b80eb5b34a8e3d9eb666cb7cdea5.
+//
+// Solidity: event TransferredOwnership(address _from, address _to)
+func (_Holder *HolderFilterer) WatchTransferredOwnership(opts *bind.WatchOpts, sink chan<- *HolderTransferredOwnership) (event.Subscription, error) {
+
+	logs, sub, err := _Holder.contract.WatchLogs(opts, "TransferredOwnership")
+	if err != nil {
+		return nil, err
+	}
+	return event.NewSubscription(func(quit <-chan struct{}) error {
+		defer sub.Unsubscribe()
+		for {
+			select {
+			case log := <-logs:
+				// New log arrived, parse the event and forward to the user
+				event := new(HolderTransferredOwnership)
+				if err := _Holder.contract.UnpackLog(event, "TransferredOwnership", log); err != nil {
 					return err
 				}
 				event.Raw = log

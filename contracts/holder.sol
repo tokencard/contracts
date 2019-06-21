@@ -11,7 +11,7 @@ import "./mocks/burnerToken.sol";
 // A TokenHolder holds token assets for a burnable token. When the contract
 // calls the burn method, a share of the tokens held by this contract are
 // disbursed to the burner.
-contract Holder is Claimable, ENSResolvable, TokenWhitelistable {
+contract Holder is Ownable, Claimable, ENSResolvable, TokenWhitelistable {
 
     using SafeMath for uint256;
 
@@ -28,7 +28,7 @@ contract Holder is Claimable, ENSResolvable, TokenWhitelistable {
     /// @param _burnerContract is the address of the token contract with burning functionality.
     /// @param _ens is the address of the ENS registry.
     /// @param _tokenWhitelistNameHash is the ENS name hash of the Token whitelist.
-    constructor (address _burnerContract, address _ens, bytes32 _tokenWhitelistNameHash) ENSResolvable(_ens) TokenWhitelistable(_tokenWhitelistNameHash) public {
+    constructor (address payable _owner, bool _transferable, address _burnerContract, address _ens, bytes32 _tokenWhitelistNameHash) Ownable(_owner, _transferable) ENSResolvable(_ens) TokenWhitelistable(_tokenWhitelistNameHash) public {
         _burner = _burnerContract;
     }
 
@@ -59,7 +59,7 @@ contract Holder is Claimable, ENSResolvable, TokenWhitelistable {
         return true;
     }
 
-    function dustClaim(address payable to) external  {//should be onlyOwner
+    function dustClaim(address payable to) external onlyOwner {
 
         address[] memory tokenAddresses = _tokenAddressArray();
         for (uint i = 0; i < tokenAddresses.length; i++) {
@@ -73,7 +73,7 @@ contract Holder is Claimable, ENSResolvable, TokenWhitelistable {
         }
     }
 
-    function dustTokenClaim(address payable to, address tokenAddress) external  { //should be onlyOwner
+    function dustTokenClaim(address payable to, address tokenAddress) external onlyOwner {
             //redeem only if token is burnable
         if (!_isTokenBurnable(tokenAddress)){
             uint total = balance(tokenAddress);
