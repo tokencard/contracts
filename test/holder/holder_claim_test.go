@@ -120,6 +120,17 @@ var _ = Describe("TokenHolder", func() {
                 Expect(err).ToNot(HaveOccurred())
                 Expect(b.String()).To(Equal("500"))
             })
+
+            It("Should emit a Claimed event", func() {
+				it, err := TokenHolder.FilterClaimed(nil)
+				Expect(err).ToNot(HaveOccurred())
+				Expect(it.Next()).To(BeTrue())
+				evt := it.Event
+				Expect(it.Next()).To(BeFalse())
+				Expect(evt.To).To(Equal(Owner.Address()))
+				Expect(evt.Asset).To(Equal(ERC20Contract2Address))
+				Expect(evt.Amount.String()).To(Equal("500"))
+			})
         })
 
         When("The owner tries to claim to undust", func() {
@@ -128,6 +139,22 @@ var _ = Describe("TokenHolder", func() {
                 Expect(err).ToNot(HaveOccurred())
                 Backend.Commit()
                 Expect(isSuccessful(tx)).To(BeTrue())
+			})
+
+            It("Should emit 2 Claimed events", func() {
+				it, err := TokenHolder.FilterClaimed(nil)
+				Expect(err).ToNot(HaveOccurred())
+				Expect(it.Next()).To(BeTrue())
+				evt := it.Event
+				Expect(it.Next()).To(BeTrue())
+				Expect(evt.To).To(Equal(Owner.Address()))
+				Expect(evt.Asset).To(Equal(ERC20Contract2Address))
+				Expect(evt.Amount.String()).To(Equal("500"))
+                evt = it.Event
+				Expect(it.Next()).To(BeFalse())
+				Expect(evt.To).To(Equal(Owner.Address()))
+				Expect(evt.Asset).To(Equal(ERC20Contract3Address))
+				Expect(evt.Amount.String()).To(Equal("1000"))
 			})
 
             It("should increase the ERC20 type-2 balance of the owner by 500", func() {

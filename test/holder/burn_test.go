@@ -341,6 +341,27 @@ var _ = Describe("TokenHolder", func() {
 								Expect(evt.Value.String()).To(Equal("200"))
 							})
 
+                            It("Should emit 3 Claimed events", func() {
+                				it, err := TokenHolder.FilterClaimed(nil)
+                				Expect(err).ToNot(HaveOccurred())
+                				Expect(it.Next()).To(BeTrue())
+                				evt := it.Event
+                				Expect(it.Next()).To(BeTrue())
+                				Expect(evt.To).To(Equal(RandomAccount.Address()))
+                				Expect(evt.Asset).To(Equal(common.HexToAddress("0x0")))
+                				Expect(evt.Amount.String()).To(Equal("200000000000000000"))
+                                evt = it.Event
+                				Expect(it.Next()).To(BeTrue())
+                				Expect(evt.To).To(Equal(RandomAccount.Address()))
+                				Expect(evt.Asset).To(Equal(ERC20Contract1Address))
+                				Expect(evt.Amount.String()).To(Equal("200"))
+                                evt = it.Event
+                				Expect(it.Next()).To(BeFalse())
+                				Expect(evt.To).To(Equal(RandomAccount.Address()))
+                				Expect(evt.Asset).To(Equal(ERC20Contract2Address))
+                				Expect(evt.Amount.String()).To(Equal("100"))
+                			})
+
 							It("should increase the ERC20 type-1 balance of the random address by 200 (20%)", func() {
 								b, err := ERC20Contract1.BalanceOf(nil, RandomAccount.Address())
 								Expect(err).ToNot(HaveOccurred())
