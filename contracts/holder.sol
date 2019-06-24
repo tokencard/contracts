@@ -59,7 +59,7 @@ contract Holder is Ownable, Claimable, ENSResolvable, TokenWhitelistable {
         return true;
     }
 
-    function dustClaim(address payable to) external onlyOwner {
+    function dustClaim(address payable to) external onlyOwner returns (bool) {
 
         address[] memory tokenAddresses = _tokenAddressArray();
         for (uint i = 0; i < tokenAddresses.length; i++) {
@@ -71,16 +71,17 @@ contract Holder is Ownable, Claimable, ENSResolvable, TokenWhitelistable {
                 }
             }
         }
+        return true;
     }
 
-    function dustTokenClaim(address payable to, address tokenAddress) external onlyOwner {
+    function dustTokenClaim(address payable to, address tokenAddress) external onlyOwner returns (bool) {
             //redeem only if token is burnable
-        if (!_isTokenBurnable(tokenAddress)){
-            uint total = balance(tokenAddress);
-            if (total > 0) {
-                _claim(to, tokenAddress, total);
-            }
+        require(!_isTokenBurnable(tokenAddress), "burnables cannot be claimed");
+        uint total = balance(tokenAddress);
+        if (total > 0) {
+            _claim(to, tokenAddress, total);
         }
+        return true;
     }
 
     function burner() external view returns (address) {
