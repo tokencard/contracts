@@ -65,10 +65,38 @@ contract TokenWhitelistable is ENSResolvable {
         return ITokenWhitelist(_ensResolve(_tokenWhitelistNode)).getStablecoinInfo();
     }
 
-    /// @notice This returns an array of our whitelisted address
+    /// @notice This returns an array of our whitelisted addresses
     /// @return address[] of our whitelisted tokens
     function _tokenAddressArray() internal view returns (address[] memory) {
         return ITokenWhitelist(_ensResolve(_tokenWhitelistNode)).tokenAddressArray();
+    }
+
+    /// @notice This returns an array of our burnable tokens
+    /// @return address[] of our burnable tokens
+    function _burnableTokens() internal view returns (address[] memory) {
+        address[] memory tokenAddresses = _tokenAddressArray();
+        address[] memory burnableAddresses = new address[](tokenAddresses.length);
+        for (uint i = 0; i < tokenAddresses.length; i++) {
+            //redeem only if token is burnable
+            if (_isTokenBurnable(tokenAddresses[i])){
+                burnableAddresses[i] = tokenAddresses[i];
+            }
+        }
+        return burnableAddresses;
+    }
+
+    /// @notice This returns an array of our burnable tokens
+    /// @return address[] of our burnable tokens
+    function _nonBurnableTokens() internal view returns (address[] memory) {
+        address[] memory tokenAddresses = _tokenAddressArray();
+        address[] memory nonBurableAddresses = new address[](tokenAddresses.length);
+        for (uint i = 0; i < tokenAddresses.length; i++) {
+            //redeem only if token is burnable
+            if (!_isTokenBurnable(tokenAddresses[i])){
+                nonBurableAddresses[i] = tokenAddresses[i];
+            }
+        }
+        return nonBurableAddresses;
     }
 
     /// @notice Update ERC20 token exchange rate.

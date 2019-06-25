@@ -37,10 +37,7 @@ var _ = Describe("addTokens", func() {
 				)
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
-			})
-
-			It("Should succeed", func() {
-				Expect(isSuccessful(tx)).To(BeTrue())
+                Expect(isSuccessful(tx)).To(BeTrue())
 			})
 
 			It("Should update the tokens map", func() {
@@ -78,6 +75,18 @@ var _ = Describe("addTokens", func() {
 				Expect(evt.Symbol).To(Equal("TKN"))
 				Expect(evt.Magnitude.String()).To(Equal("100000000"))
 			})
+
+            It("Should increase the loadable counter by 1", func() {
+                cnt, err := TokenWhitelist.LoadableCounter(nil)
+                Expect(err).ToNot(HaveOccurred())
+                Expect(cnt.String()).To(Equal("1"))
+            })
+
+            It("Should increase the burnable counter by 2", func() {
+                cnt, err := TokenWhitelist.BurnableCounter(nil)
+                Expect(err).ToNot(HaveOccurred())
+                Expect(cnt.String()).To(Equal("2"))
+            })
 
 			Context("When at least one of the added tokens is already supported", func() {
 				It("Should fail", func() {

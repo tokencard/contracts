@@ -57,11 +57,11 @@ contract TokenWhitelist is ENSResolvable, Controllable, Ownable, Claimable {
     mapping(address => Token) private _tokenInfoMap;
     address[] private _tokenAddressArray;
 
-    modifier onlyControllerOrOracle() {
-        address oracleAddress = _ensResolve(_oracleNode);
-        require (_isController(msg.sender) || msg.sender == oracleAddress, "either oracle or controller");
-        _;
-    }
+    /// @notice keeping track of how many loadable tokens are in the tokenWhitelist
+    uint private _loadableCounter;
+
+    /// @notice keeping track of how many burnable tokens are in the tokenWhitelist
+    uint private _burnableCounter;
 
     /// @notice Address of the stablecoin.
     address private _stablecoin;
@@ -75,6 +75,12 @@ contract TokenWhitelist is ENSResolvable, Controllable, Ownable, Claimable {
     constructor(address _ens_, bytes32 _oracleNameHash_, bytes32 _controllerNameHash_, address payable _owner_, bool _transferable_, address _stabelcoinAddress_) ENSResolvable(_ens_) Controllable(_controllerNameHash_) Ownable(_owner_, _transferable_) public {
         _oracleNode = _oracleNameHash_;
         _stablecoin = _stabelcoinAddress_;
+    }
+
+    modifier onlyControllerOrOracle() {
+        address oracleAddress = _ensResolve(_oracleNode);
+        require (_isController(msg.sender) || msg.sender == oracleAddress, "either oracle or controller");
+        _;
     }
 
     /// @notice Add ERC20 tokens to the list of whitelisted tokens.
@@ -105,6 +111,14 @@ contract TokenWhitelist is ENSResolvable, Controllable, Ownable, Claimable {
                 });
             // Add the token address to the address list.
             _tokenAddressArray.push(_tokens[i]);
+            //if the token is loadable increase the loadableCounter
+            if (_loadable[i]){
+                _loadableCounter = _loadableCounter.add(1);
+            }
+            //if the token is burnable increase the burnableCounter
+            if (_burnable[i]){
+                _burnableCounter = _burnableCounter.add(1);
+            }
             // Emit token addition event.
             emit AddedToken(msg.sender, _tokens[i], symbol, _magnitude[i], _loadable[i], _burnable[i]);
         }
@@ -115,10 +129,18 @@ contract TokenWhitelist is ENSResolvable, Controllable, Ownable, Claimable {
     function removeTokens(address[] calldata _tokens) external onlyController {
         // Delete each token object from the list of supported tokens based on the addresses provided.
         for (uint i = 0; i < _tokens.length; i++) {
-            //token must be available, reverts on duplicates as well
-            require(_tokenInfoMap[_tokens[i]].available, "token is not available");
             // Store the token address.
             address token = _tokens[i];
+            //token must be available, reverts on duplicates as well
+            require(_tokenInfoMap[token].available, "token is not available");
+            //if the token is loadable increase the loadableCounter
+            if (_tokenInfoMap[token].loadable){
+                _loadableCounter = _loadableCounter.sub(1);
+            }
+            //if the token is burnable increase the burnableCounter
+            if (_tokenInfoMap[token].burnable){
+                _burnableCounter = _burnableCounter.sub(1);
+            }
             // Delete the token object.
             delete _tokenInfoMap[token];
             // Remove the token address from the address list.
@@ -185,6 +207,18 @@ contract TokenWhitelist is ENSResolvable, Controllable, Ownable, Claimable {
     /// @return address[] of our whitelisted tokens
     function tokenAddressArray() external view returns (address[] memory) {
         return _tokenAddressArray;
+    }
+
+    /// @notice This returns the number of loadable tokens
+    /// @return current # of loadables
+    function loadableCounter() external view returns (uint) {
+        return _loadableCounter;
+    }
+
+    /// @notice This returns the number of burnable tokens
+    /// @return current # of burnables
+    function burnableCounter() external view returns (uint) {
+        return _burnableCounter;
     }
 
     /// @notice This returns the address of our stablecoin of choice

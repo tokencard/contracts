@@ -45,30 +45,23 @@ contract Holder is Ownable, Claimable, ENSResolvable, TokenWhitelistable {
         uint supply = Burner(_burner).currentSupply() + amount;
 
         require(amount <= supply, "amount greater that total supply!");
-        address[] memory tokenAddresses = _tokenAddressArray();
-        for (uint i = 0; i < tokenAddresses.length; i++) {
-            //redeem only if token is burnable
-            if (_isTokenBurnable(tokenAddresses[i])){
-                uint total = balance(tokenAddresses[i]);
-                if (total > 0) {
-                    _claim(to, tokenAddresses[i], total.mul(amount).div(supply));
-                }
+        address[] memory burnableAddresses = _burnableTokens();
+        for (uint i = 0; i < burnableAddresses.length; i++) {
+            uint total = balance(burnableAddresses[i]);
+            if (total > 0) {
+                _claim(to, burnableAddresses[i], total.mul(amount).div(supply));
             }
         }
-
         return true;
     }
 
     function dustClaim(address payable to) external onlyOwner returns (bool) {
 
-        address[] memory tokenAddresses = _tokenAddressArray();
-        for (uint i = 0; i < tokenAddresses.length; i++) {
-            //redeem only if token is burnable
-            if (!_isTokenBurnable(tokenAddresses[i])){
-                uint total = balance(tokenAddresses[i]);
-                if (total > 0) {
-                    _claim(to, tokenAddresses[i], total);
-                }
+        address[] memory nonBurnableAddresses = _nonBurnableTokens();
+        for (uint i = 0; i < nonBurnableAddresses.length; i++) {
+            uint total = balance(nonBurnableAddresses[i]);
+            if (total > 0) {
+                _claim(to, nonBurnableAddresses[i], total);
             }
         }
         return true;

@@ -15,7 +15,7 @@ import (
 
 var _ = Describe("TokenHolder", func() {
 
-    When("The holder contract owns 3 types of ERC20 tokens (1/3 are burnable) and 1 ETH", func() {
+    FWhen("The holder contract owns 3 types of ERC20 tokens (1/3 are burnable) and 1 ETH", func() {
 
         var tx *types.Transaction
         //add the tokens to the list
