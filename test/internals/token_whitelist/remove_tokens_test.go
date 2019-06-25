@@ -42,16 +42,11 @@ var _ = Describe("removeTokens", func() {
 
 			Context("When removing a supported token", func() {
 
-				var tx *types.Transaction
 				BeforeEach(func() {
-					var err error
-					tx, err = TokenWhitelist.RemoveTokens(Controller.TransactOpts(), []common.Address{common.HexToAddress("0x2")})
+					tx, err := TokenWhitelist.RemoveTokens(Controller.TransactOpts(), []common.Address{common.HexToAddress("0x2")})
 					Expect(err).ToNot(HaveOccurred())
 					Backend.Commit()
-				})
-
-				It("Should succeed", func() {
-					Expect(isSuccessful(tx)).To(BeTrue())
+                    Expect(isSuccessful(tx)).To(BeTrue())
 				})
 
 				It("Should emit a TokenRemoval event", func() {
@@ -106,6 +101,50 @@ var _ = Describe("removeTokens", func() {
                     cnt, err := TokenWhitelist.BurnableCounter(nil)
                     Expect(err).ToNot(HaveOccurred())
                     Expect(cnt.String()).To(Equal("2"))
+                })
+
+                Context("When removing another supported token", func() {
+
+    				BeforeEach(func() {
+    					tx, err := TokenWhitelist.RemoveTokens(Controller.TransactOpts(), []common.Address{common.HexToAddress("0x3")})
+    					Expect(err).ToNot(HaveOccurred())
+    					Backend.Commit()
+                        Expect(isSuccessful(tx)).To(BeTrue())
+    				})
+
+                    It("Should decrease the loadable counter by 1", func() {
+                        cnt, err := TokenWhitelist.LoadableCounter(nil)
+                        Expect(err).ToNot(HaveOccurred())
+                        Expect(cnt.String()).To(Equal("1"))
+                    })
+
+                    It("Should decrease the burnable counter by 1", func() {
+                        cnt, err := TokenWhitelist.BurnableCounter(nil)
+                        Expect(err).ToNot(HaveOccurred())
+                        Expect(cnt.String()).To(Equal("1"))
+                    })
+                })
+
+                Context("When removing an unsupported token", func() {
+
+    				BeforeEach(func() {
+    					tx, err := TokenWhitelist.RemoveTokens(Controller.TransactOpts(ethertest.WithGasLimit(100000)), []common.Address{common.HexToAddress("0x5")})
+    					Expect(err).ToNot(HaveOccurred())
+    					Backend.Commit()
+                        Expect(isSuccessful(tx)).To(BeFalse())
+    				})
+
+                    It("Should NOT decrease the loadable counter", func() {
+                        cnt, err := TokenWhitelist.LoadableCounter(nil)
+                        Expect(err).ToNot(HaveOccurred())
+                        Expect(cnt.String()).To(Equal("2"))
+                    })
+
+                    It("Should NOT decrease the burnable counter", func() {
+                        cnt, err := TokenWhitelist.BurnableCounter(nil)
+                        Expect(err).ToNot(HaveOccurred())
+                        Expect(cnt.String()).To(Equal("2"))
+                    })
                 })
 			})
 

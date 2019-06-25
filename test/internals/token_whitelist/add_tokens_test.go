@@ -114,7 +114,7 @@ var _ = Describe("addTokens", func() {
 			})
 
 			Context("When none of the added tokens is supported", func() {
-				It("Should pass", func() {
+				BeforeEach(func() {
 					var err error
 					tokens := []common.Address{common.HexToAddress("0x4"), common.HexToAddress("0x5")}
 					tx, err = TokenWhitelist.AddTokens(
@@ -137,6 +137,18 @@ var _ = Describe("addTokens", func() {
 					Expect(isGasExhausted(tx, 300000)).To(BeFalse())
 					Expect(isSuccessful(tx)).To(BeTrue())
 				})
+
+                It("Should increase the loadable counter by 2", func() {
+                    cnt, err := TokenWhitelist.LoadableCounter(nil)
+                    Expect(err).ToNot(HaveOccurred())
+                    Expect(cnt.String()).To(Equal("3"))
+                })
+
+                It("Should increase the burnable counter by 2", func() {
+                    cnt, err := TokenWhitelist.BurnableCounter(nil)
+                    Expect(err).ToNot(HaveOccurred())
+                    Expect(cnt.String()).To(Equal("4"))
+                })
 			})
 
 		})
@@ -186,6 +198,15 @@ var _ = Describe("addTokens", func() {
 				Expect(err).ToNot(HaveOccurred())
 				Expect(it.Next()).To(BeFalse())
 			})
+
+            It("Should increase NEITHER the loadable NOR the burnable counter", func() {
+                cnt, err := TokenWhitelist.LoadableCounter(nil)
+                Expect(err).ToNot(HaveOccurred())
+                Expect(cnt.String()).To(Equal("0"))
+                cnt, err = TokenWhitelist.BurnableCounter(nil)
+                Expect(err).ToNot(HaveOccurred())
+                Expect(cnt.String()).To(Equal("0"))
+            })
 		})
 
 	})
