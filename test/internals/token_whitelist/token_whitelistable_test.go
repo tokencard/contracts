@@ -167,4 +167,37 @@ var _ = Describe("tokenWhitelistable", func() {
 
 	})
 
+    When("3 tokens are added: 2 loadable, 1 burnable", func() {
+        BeforeEach(func() {
+            var err error
+            tokens := []common.Address{common.HexToAddress("0x0"), common.HexToAddress("0x1"), common.HexToAddress("0x2")}
+            tx, err := TokenWhitelist.AddTokens(
+                Controller.TransactOpts(),
+                tokens,
+                StringsToByte32(
+                    "BNT",
+                    "TKN",
+                    "YAN",
+                ),
+                []*big.Int{
+                    DecimalsToMagnitude(big.NewInt(18)),
+                    DecimalsToMagnitude(big.NewInt(8)),
+                    DecimalsToMagnitude(big.NewInt(18)),
+                },
+                []bool{false, true, true},
+                []bool{false, false, true},
+                big.NewInt(20180913153211),
+            )
+            Expect(err).ToNot(HaveOccurred())
+            Backend.Commit()
+            Expect(isSuccessful(tx)).To(BeTrue())
+        })
+
+        FIt("Should return 1 burnable Token", func() {
+			arr, err := TokenWhitelistableExporter.BurnableTokens(nil)
+			Expect(err).ToNot(HaveOccurred())
+			Expect(arr).To(Equal([]common.Address{common.HexToAddress("0x2")}))
+		})
+    })
+
 })

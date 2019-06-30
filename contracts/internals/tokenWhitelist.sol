@@ -29,6 +29,7 @@ interface ITokenWhitelist {
     function getTokenInfo(address) external view returns (string memory, uint256, uint256, bool, bool, bool, uint256);
     function getStablecoinInfo() external view returns (string memory, uint256, uint256, bool, bool, bool, uint256);
     function tokenAddressArray() external view returns (address[] memory);
+    function burnableTokens() external view returns (address[] memory);
     function updateTokenRate(address, uint, uint) external;
     function stablecoin() external view returns (address);
 }
@@ -56,9 +57,6 @@ contract TokenWhitelist is ENSResolvable, Controllable, Ownable, Claimable {
 
     mapping(address => Token) private _tokenInfoMap;
     address[] private _tokenAddressArray;
-
-    /// @notice keeping track of how many loadable tokens are in the tokenWhitelist
-    uint private _loadableCounter;
 
     /// @notice keeping track of how many burnable tokens are in the tokenWhitelist
     uint private _burnableCounter;
@@ -111,10 +109,6 @@ contract TokenWhitelist is ENSResolvable, Controllable, Ownable, Claimable {
                 });
             // Add the token address to the address list.
             _tokenAddressArray.push(_tokens[i]);
-            //if the token is loadable increase the loadableCounter
-            if (_loadable[i]){
-                _loadableCounter = _loadableCounter.add(1);
-            }
             //if the token is burnable increase the burnableCounter
             if (_burnable[i]){
                 _burnableCounter = _burnableCounter.add(1);
@@ -133,11 +127,7 @@ contract TokenWhitelist is ENSResolvable, Controllable, Ownable, Claimable {
             address token = _tokens[i];
             //token must be available, reverts on duplicates as well
             require(_tokenInfoMap[token].available, "token is not available");
-            //if the token is loadable increase the loadableCounter
-            if (_tokenInfoMap[token].loadable){
-                _loadableCounter = _loadableCounter.sub(1);
-            }
-            //if the token is burnable increase the burnableCounter
+            //if the token is burnable decrease the burnableCounter
             if (_tokenInfoMap[token].burnable){
                 _burnableCounter = _burnableCounter.sub(1);
             }
@@ -203,16 +193,23 @@ contract TokenWhitelist is ENSResolvable, Controllable, Ownable, Claimable {
         return (stablecoinInfo.symbol, stablecoinInfo.magnitude, stablecoinInfo.rate, stablecoinInfo.available, stablecoinInfo.loadable, stablecoinInfo.burnable, stablecoinInfo.lastUpdate);
     }
 
-    /// @notice This returns an array of our whitelisted address
-    /// @return address[] of our whitelisted tokens
+    /// @notice This returns an array of all whitelisted token addresses
+    /// @return address[] of whitelisted tokens
     function tokenAddressArray() external view returns (address[] memory) {
         return _tokenAddressArray;
     }
 
-    /// @notice This returns the number of loadable tokens
-    /// @return current # of loadables
-    function loadableCounter() external view returns (uint) {
-        return _loadableCounter;
+    /// @notice This returns an array of all burnable token addresses
+    /// @return address[] of burnable tokens
+    function burnableTokens() external view returns (address[] memory) {
+        address[] memory burnableAddresses = new address[](_burnableCounter);
+        for (uint i = 0; i < _tokenAddressArray.length; i++) {
+            address token = _tokenAddressArray[i];
+            if (_tokenInfoMap[token].burnable){
+                burnableAddresses[i] = token;
+            }
+        }
+        return burnableAddresses;
     }
 
     /// @notice This returns the number of burnable tokens

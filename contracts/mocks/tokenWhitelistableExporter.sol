@@ -20,6 +20,10 @@ contract TokenWhitelistableExporter is ENSResolvable, TokenWhitelistable {
         return _tokenAddressArray();
     }
 
+    function burnableTokens() external view returns (address[] memory) {
+        return _burnableTokens();
+    }
+
     function updateTokenRate(address _token, uint _rate, uint _updateDate) external {
         return _updateTokenRate(_token, _rate, _updateDate);
     }
