@@ -42,9 +42,7 @@ contract Holder is Ownable, Claimable, ENSResolvable, TokenWhitelistable {
         }
 
         // The burner token deducts from the supply before calling.
-        uint supply = Burner(_burner).currentSupply() + amount;
-
-        require(amount <= supply, "amount greater that total supply!");
+        uint supply = Burner(_burner).currentSupply().add(amount);
         address[] memory burnableAddresses = _burnableTokens();
         for (uint i = 0; i < burnableAddresses.length; i++) {
             uint burnableBalance = balance(burnableAddresses[i]);
