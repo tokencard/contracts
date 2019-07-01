@@ -6,6 +6,7 @@ import (
 	"os"
 	"strconv"
 
+	"github.com/ethereum/go-ethereum/contracts/ens"
 	"github.com/pkg/errors"
 	"github.com/tokencard/contracts/pkg/bindings"
 	"gopkg.in/urfave/cli.v1"
@@ -21,6 +22,17 @@ func main() {
 
 	addCommand(app, "wallet-deployer", func(d *deployer, args []string) error {
 		return d.deployWalletDeployer()
+	})
+
+	addCommand(app, "wallet-deployer-only", func(d *deployer, args []string) error {
+		contractAddress, tx, _, err := bindings.DeployWalletDeployer(d.transactOpts, d.ethClient, d.ensAddress, ens.EnsNode(oracleName), ens.EnsNode(controllerName), oneETH)
+		if err != nil {
+			return errors.Wrap(err, "while deploying wallet deployer")
+		}
+
+		d.log.Infof("Wallet deployer address: %s", contractAddress.Hex())
+		d.log.Infof("Transaction hash: %s", tx.Hash().Hex())
+		return nil
 	})
 
 	addCommand(app, "deploy-ens", func(d *deployer, args []string) error {
