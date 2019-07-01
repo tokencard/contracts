@@ -91,12 +91,6 @@ var _ = Describe("removeTokens", func() {
 					Expect(lastUpdate.String()).To(Equal(big.NewInt(20180913153211).String()))
 				})
 
-                It("Should decrease the loadable counter by 1", func() {
-                    cnt, err := TokenWhitelist.LoadableCounter(nil)
-                    Expect(err).ToNot(HaveOccurred())
-                    Expect(cnt.String()).To(Equal("2"))
-                })
-
                 It("Should decrease the burnable counter by 1", func() {
                     cnt, err := TokenWhitelist.BurnableCounter(nil)
                     Expect(err).ToNot(HaveOccurred())
@@ -111,12 +105,6 @@ var _ = Describe("removeTokens", func() {
     					Backend.Commit()
                         Expect(isSuccessful(tx)).To(BeTrue())
     				})
-
-                    It("Should decrease the loadable counter by 1", func() {
-                        cnt, err := TokenWhitelist.LoadableCounter(nil)
-                        Expect(err).ToNot(HaveOccurred())
-                        Expect(cnt.String()).To(Equal("1"))
-                    })
 
                     It("Should decrease the burnable counter by 1", func() {
                         cnt, err := TokenWhitelist.BurnableCounter(nil)
@@ -133,12 +121,6 @@ var _ = Describe("removeTokens", func() {
     					Backend.Commit()
                         Expect(isSuccessful(tx)).To(BeFalse())
     				})
-
-                    It("Should NOT decrease the loadable counter", func() {
-                        cnt, err := TokenWhitelist.LoadableCounter(nil)
-                        Expect(err).ToNot(HaveOccurred())
-                        Expect(cnt.String()).To(Equal("2"))
-                    })
 
                     It("Should NOT decrease the burnable counter", func() {
                         cnt, err := TokenWhitelist.BurnableCounter(nil)
@@ -177,12 +159,6 @@ var _ = Describe("removeTokens", func() {
 					Expect(it.Next()).To(BeFalse())
 					Expect(evt.Token).To(Equal(common.HexToAddress("0x3")))
 				})
-
-                It("Should decrease the loadable counter down to 0", func() {
-                    cnt, err := TokenWhitelist.LoadableCounter(nil)
-                    Expect(err).ToNot(HaveOccurred())
-                    Expect(cnt.String()).To(Equal("0"))
-                })
 
                 It("Should decrease the burnable counter down to 0", func() {
                     cnt, err := TokenWhitelist.BurnableCounter(nil)
@@ -232,12 +208,6 @@ var _ = Describe("removeTokens", func() {
 					Expect(err).ToNot(HaveOccurred())
 					Expect(it.Next()).To(BeFalse())
 				})
-
-                It("Should leave the loadable counter intact", func() {
-                    cnt, err := TokenWhitelist.LoadableCounter(nil)
-                    Expect(err).ToNot(HaveOccurred())
-                    Expect(cnt.String()).To(Equal("3"))
-                })
 
                 It("Should leave the burnable counter intact", func() {
                     cnt, err := TokenWhitelist.BurnableCounter(nil)

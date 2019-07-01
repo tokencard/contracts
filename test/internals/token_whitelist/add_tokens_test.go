@@ -76,12 +76,6 @@ var _ = Describe("addTokens", func() {
 				Expect(evt.Magnitude.String()).To(Equal("100000000"))
 			})
 
-            It("Should increase the loadable counter by 1", func() {
-                cnt, err := TokenWhitelist.LoadableCounter(nil)
-                Expect(err).ToNot(HaveOccurred())
-                Expect(cnt.String()).To(Equal("1"))
-            })
-
             It("Should increase the burnable counter by 2", func() {
                 cnt, err := TokenWhitelist.BurnableCounter(nil)
                 Expect(err).ToNot(HaveOccurred())
@@ -138,11 +132,6 @@ var _ = Describe("addTokens", func() {
 					Expect(isSuccessful(tx)).To(BeTrue())
 				})
 
-                It("Should increase the loadable counter by 2", func() {
-                    cnt, err := TokenWhitelist.LoadableCounter(nil)
-                    Expect(err).ToNot(HaveOccurred())
-                    Expect(cnt.String()).To(Equal("3"))
-                })
 
                 It("Should increase the burnable counter by 2", func() {
                     cnt, err := TokenWhitelist.BurnableCounter(nil)
@@ -199,11 +188,8 @@ var _ = Describe("addTokens", func() {
 				Expect(it.Next()).To(BeFalse())
 			})
 
-            It("Should increase NEITHER the loadable NOR the burnable counter", func() {
-                cnt, err := TokenWhitelist.LoadableCounter(nil)
-                Expect(err).ToNot(HaveOccurred())
-                Expect(cnt.String()).To(Equal("0"))
-                cnt, err = TokenWhitelist.BurnableCounter(nil)
+            It("Should not increase the burnable counter", func() {
+                cnt, err := TokenWhitelist.BurnableCounter(nil)
                 Expect(err).ToNot(HaveOccurred())
                 Expect(cnt.String()).To(Equal("0"))
             })

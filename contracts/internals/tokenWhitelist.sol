@@ -203,10 +203,12 @@ contract TokenWhitelist is ENSResolvable, Controllable, Ownable, Claimable {
     /// @return address[] of burnable tokens
     function burnableTokens() external view returns (address[] memory) {
         address[] memory burnableAddresses = new address[](_burnableCounter);
+        uint burnableIndex = 0;
         for (uint i = 0; i < _tokenAddressArray.length; i++) {
             address token = _tokenAddressArray[i];
             if (_tokenInfoMap[token].burnable){
-                burnableAddresses[i] = token;
+                burnableAddresses[burnableIndex] = token;
+                burnableIndex += 1;
             }
         }
         return burnableAddresses;

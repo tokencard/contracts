@@ -193,11 +193,30 @@ var _ = Describe("tokenWhitelistable", func() {
             Expect(isSuccessful(tx)).To(BeTrue())
         })
 
-        FIt("Should return 1 burnable Token", func() {
+        It("Should return 1 burnable Token", func() {
 			arr, err := TokenWhitelistableExporter.BurnableTokens(nil)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(arr).To(Equal([]common.Address{common.HexToAddress("0x2")}))
 		})
+
+        It("Should return 1 burnable Token", func() {
+			arr, err := TokenWhitelist.BurnableTokens(nil)
+			Expect(err).ToNot(HaveOccurred())
+			Expect(arr).To(Equal([]common.Address{common.HexToAddress("0x2")}))
+		})
+
+        It("Should update the TokenAddressArray", func() {
+			arr, err := TokenWhitelistableExporter.TokenAddressArray(nil)
+            tokens := []common.Address{common.HexToAddress("0x0"), common.HexToAddress("0x1"), common.HexToAddress("0x2")}
+			Expect(err).ToNot(HaveOccurred())
+			Expect(arr).To(Equal(tokens))
+		})
+
+        It("Should increase the burnable counter by 1", func() {
+            cnt, err := TokenWhitelist.BurnableCounter(nil)
+            Expect(err).ToNot(HaveOccurred())
+            Expect(cnt.String()).To(Equal("1"))
+        })
     })
 
 })
