@@ -15,12 +15,12 @@ import (
 
 var _ = Describe("TokenHolder", func() {
 
-    FWhen("The holder contract owns 3 types of ERC20 tokens (1/3 are burnable) and 1 ETH", func() {
+    When("The holder contract owns 3 types of ERC20 tokens (1/3 are burnable) and 1 ETH", func() {
 
         var tx *types.Transaction
         //add the tokens to the list
         BeforeEach(func() {
-            tokens := []common.Address{common.HexToAddress("0x0"), ERC20Contract1Address, ERC20Contract2Address,ERC20Contract3Address}
+            tokens := []common.Address{common.HexToAddress("0x0"), ERC20Contract1Address, ERC20Contract2Address, ERC20Contract3Address}
             tx, err := TokenWhitelist.AddTokens(
                 Controller.TransactOpts(),
                 tokens,
@@ -75,67 +75,35 @@ var _ = Describe("TokenHolder", func() {
             BankAccount.MustTransfer(Backend, TokenHolderAddress, EthToWei(1))
         })
 
-        When("a random addrees tries to claim dust", func() {
+        When("a random address tries to claim", func() {
             It("should fail", func() {
-				tx, err := TokenHolder.DustTokenClaim(RandomAccount.TransactOpts(ethertest.WithGasLimit(80000)), Owner.Address(), ERC20Contract3Address)
+				tx, err := TokenHolder.NonBurnableTokenClaim(RandomAccount.TransactOpts(ethertest.WithGasLimit(80000)), Owner.Address(), []common.Address{ERC20Contract3Address})
                 Expect(err).ToNot(HaveOccurred())
                 Backend.Commit()
                 Expect(isSuccessful(tx)).To(BeFalse())
 			})
 
-            It("should fail", func() {
-				tx, err := TokenHolder.DustClaim(RandomAccount.TransactOpts(ethertest.WithGasLimit(80000)), Owner.Address())
-                Expect(err).ToNot(HaveOccurred())
-                Backend.Commit()
-                Expect(isSuccessful(tx)).To(BeFalse())
-			})
         })
 
         When("The owner tries to claim a burnable token or ETH", func() {
             It("should fail", func() {
-				tx, err := TokenHolder.DustTokenClaim(Owner.TransactOpts(ethertest.WithGasLimit(80000)), Owner.Address(), common.HexToAddress("0x0"))
+				tx, err := TokenHolder.NonBurnableTokenClaim(Owner.TransactOpts(ethertest.WithGasLimit(80000)), Owner.Address(), []common.Address{common.HexToAddress("0x0")})
                 Expect(err).ToNot(HaveOccurred())
                 Backend.Commit()
                 Expect(isSuccessful(tx)).To(BeFalse())
 			})
 
             It("should fail", func() {
-				tx, err := TokenHolder.DustTokenClaim(Owner.TransactOpts(ethertest.WithGasLimit(80000)), Owner.Address(), ERC20Contract1Address)
+				tx, err := TokenHolder.NonBurnableTokenClaim(Owner.TransactOpts(ethertest.WithGasLimit(80000)), Owner.Address(), []common.Address{ERC20Contract1Address, ERC20Contract3Address})
                 Expect(err).ToNot(HaveOccurred())
                 Backend.Commit()
                 Expect(isSuccessful(tx)).To(BeFalse())
 			})
         })
 
-        When("The owner tries to claim a non-burnable token", func() {
+        When("The owner tries to claim all non-burnable tokens", func() {
             BeforeEach(func() {
-				tx, err := TokenHolder.DustTokenClaim(Owner.TransactOpts(), Owner.Address(), ERC20Contract2Address)
-                Expect(err).ToNot(HaveOccurred())
-                Backend.Commit()
-                Expect(isSuccessful(tx)).To(BeTrue())
-			})
-
-            It("should increase the ERC20 type-2 balance of the owner by 500", func() {
-                b, err := ERC20Contract2.BalanceOf(nil, Owner.Address())
-                Expect(err).ToNot(HaveOccurred())
-                Expect(b.String()).To(Equal("500"))
-            })
-
-            It("Should emit a Claimed event", func() {
-				it, err := TokenHolder.FilterClaimed(nil)
-				Expect(err).ToNot(HaveOccurred())
-				Expect(it.Next()).To(BeTrue())
-				evt := it.Event
-				Expect(it.Next()).To(BeFalse())
-				Expect(evt.To).To(Equal(Owner.Address()))
-				Expect(evt.Asset).To(Equal(ERC20Contract2Address))
-				Expect(evt.Amount.String()).To(Equal("500"))
-			})
-        })
-
-        When("The owner tries to claim to undust", func() {
-            BeforeEach(func() {
-				tx, err := TokenHolder.DustClaim(Owner.TransactOpts(), Owner.Address())
+				tx, err := TokenHolder.NonBurnableTokenClaim(Owner.TransactOpts(), Owner.Address(), []common.Address{ERC20Contract2Address, ERC20Contract3Address})
                 Expect(err).ToNot(HaveOccurred())
                 Backend.Commit()
                 Expect(isSuccessful(tx)).To(BeTrue())
@@ -156,6 +124,26 @@ var _ = Describe("TokenHolder", func() {
 				Expect(evt.Asset).To(Equal(ERC20Contract3Address))
 				Expect(evt.Amount.String()).To(Equal("1000"))
 			})
+
+            It("Should emit 2 Transfer events", func() {
+                from := []common.Address{TokenHolderAddress}
+                to := []common.Address{Owner.Address()}
+                it, err := ERC20Contract2.FilterTransfer(nil, from, to)
+                Expect(err).ToNot(HaveOccurred())
+                Expect(it.Next()).To(BeTrue())
+                evt := it.Event
+                Expect(it.Next()).To(BeFalse())
+                Expect(evt.From).To(Equal(TokenHolderAddress))
+                Expect(evt.To).To(Equal(Owner.Address()))
+                Expect(evt.Amount.String()).To(Equal("500"))
+                it, err = ERC20Contract3.FilterTransfer(nil, from, to)
+                Expect(err).ToNot(HaveOccurred())
+                Expect(it.Next()).To(BeTrue())
+                evt = it.Event
+                Expect(evt.From).To(Equal(TokenHolderAddress))
+                Expect(evt.To).To(Equal(Owner.Address()))
+                Expect(evt.Amount.String()).To(Equal("1000"))
+            })
 
             It("should increase the ERC20 type-2 balance of the owner by 500", func() {
                 b, err := ERC20Contract2.BalanceOf(nil, Owner.Address())

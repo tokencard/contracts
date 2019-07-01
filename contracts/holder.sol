@@ -55,12 +55,14 @@ contract Holder is Ownable, Claimable, ENSResolvable, TokenWhitelistable {
         return true;
     }
 
-    function nonBurnableTokenClaim(address payable to, address tokenAddress) external onlyOwner returns (bool) {
-        //redeem only if token is burnable
-        require(!_isTokenBurnable(tokenAddress), "burnables cannot be claimed");
-        uint claimBalance = balance(tokenAddress);
-        if (claimBalance > 0) {
-            _claim(to, tokenAddress, claimBalance);
+    function nonBurnableTokenClaim(address payable _to, address[] calldata _nonBurnableAddresses) external onlyOwner returns (bool) {
+        for (uint i = 0; i < _nonBurnableAddresses.length; i++) {
+            //revert if token is burnable
+            require(!_isTokenBurnable(_nonBurnableAddresses[i]), "burnables cannot be claimed");
+            uint claimBalance = balance(_nonBurnableAddresses[i]);
+            if (claimBalance > 0) {
+                _claim(_to, _nonBurnableAddresses[i], claimBalance);
+            }
         }
         return true;
     }
