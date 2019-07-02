@@ -6,6 +6,7 @@ import (
 	"os"
 	"strconv"
 
+	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/contracts/ens"
 	"github.com/pkg/errors"
 	"github.com/tokencard/contracts/pkg/bindings"
@@ -38,6 +39,61 @@ func main() {
 	addCommand(app, "deploy-ens", func(d *deployer, args []string) error {
 		d.log.Info("Deploying ENS ...")
 		return d.deployENS()
+	})
+
+	addCommand(app, "setup-dev", func(d *deployer, args []string) error {
+
+		ethOwners := []common.Address{
+			common.HexToAddress("0x00442c3994155d098f4ffc2e28f76d810ce9209c"),
+			common.HexToAddress("0x0076ed2dd9f7dc78e3f336141329f8784d8cd564"),
+			common.HexToAddress("0x00f137e9bfe37cc015f11cec8339cc2f1a3ae3a6"),
+			common.HexToAddress("0x6b0c56d1ad5144b4d37fa6e27dc9afd5c2435c3b"),
+			common.HexToAddress("0x7464a376e9c27c8f9cbe1e38443cf994169f0839"),
+			common.HexToAddress("0xa04a110c983ee867d70a450ab29464bb04bf5763"),
+		}
+
+		millionETH := &big.Int{}
+		_, valid := millionETH.SetString("1000000000000000000000000", 10)
+		if !valid {
+			return errors.New("could not parse 1M ETH to Wei")
+		}
+
+		for _, eo := range ethOwners {
+			d.transferETH(eo, millionETH)
+		}
+
+		d.log.Info("Deploying ENS ...")
+		err := d.deployENS()
+		if err != nil {
+			return err
+		}
+
+		err = d.deployController()
+		if err != nil {
+			return err
+		}
+
+		err = d.addController(common.HexToAddress("0x00442c3994155d098f4ffc2e28f76d810ce9209c"))
+		if err != nil {
+			return err
+		}
+
+		err = d.deployOraclizeResolver()
+		if err != nil {
+			return err
+		}
+
+		err = d.deployOracle()
+		if err != nil {
+			return err
+		}
+
+		err = d.deployWalletDeployer()
+		if err != nil {
+			return err
+		}
+
+		return nil
 	})
 
 	addCommand(app, "cache-wallets", func(d *deployer, args []string) error {

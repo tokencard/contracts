@@ -9,6 +9,9 @@ import (
 type createContractDeploymentTransaction func() (common.Address, *types.Transaction, error)
 
 func (d *deployer) deployContract(name string, createTX createContractDeploymentTransaction) error {
+
+	d.log.Infof("Deploying %s", name)
+
 	addr, err := d.ens.Addr(name)
 
 	if err == nil && addr != zeroAddress {

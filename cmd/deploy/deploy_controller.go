@@ -34,3 +34,26 @@ func (d *deployer) isController(addr common.Address) (bool, error) {
 
 	return con.IsController(nil, addr)
 }
+
+func (d *deployer) addController(addr common.Address) error {
+
+	d.log.Infof("Adding %s to controllers", addr.Hex())
+
+	cona, err := d.ens.Addr(controllerName)
+	if err != nil {
+		return errors.Wrapf(err, "while looking up %s in ENS", controllerName)
+	}
+
+	if cona == zeroAddress {
+		return errors.Errorf("%s has zero address", controllerName)
+	}
+
+	con, err := internals.NewController(cona, d.ethClient)
+
+	tx, err := con.AddController(d.transactOpts, addr)
+	if err != nil {
+		return err
+	}
+
+	return d.waitForAndConfirmTransaction(tx.Hash())
+}

@@ -4,9 +4,9 @@ import (
 	"strings"
 
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/contracts/ens"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/pkg/errors"
-	"github.com/tokencard/contracts/pkg/bindings/externals/ens"
 	externalens "github.com/tokencard/contracts/pkg/bindings/externals/ens"
 )
 
@@ -49,7 +49,7 @@ func (d *deployer) deployENS() error {
 	}
 
 	{
-		ensResolverAddress, tx, _, err := ens.DeployPublicResolver(d.transactOpts, d.ethClient, ensRegistryAddress)
+		ensResolverAddress, tx, _, err := externalens.DeployPublicResolver(d.transactOpts, d.ethClient, ensRegistryAddress)
 		if err != nil {
 			return errors.Wrap(err, "while deploying resolver")
 		}
@@ -75,6 +75,14 @@ func (d *deployer) deployENS() error {
 		}
 
 	}
+
+	en, err := ens.NewENS(d.transactOpts, ensRegistryAddress, d.ethClient)
+	if err != nil {
+		return err
+	}
+
+	d.ens = en
+	d.ensAddress = ensRegistryAddress
 
 	return nil
 
@@ -115,7 +123,7 @@ func (d *deployer) setAddress(name string, address common.Address) error {
 		if resolverAddress == zeroAddress {
 			d.log.Info("resolver of parent is not set, deploying a new resolver ...")
 
-			resolverAddress, tx, _, err = ens.DeployPublicResolver(d.transactOpts, d.ethClient, d.ensAddress)
+			resolverAddress, tx, _, err = externalens.DeployPublicResolver(d.transactOpts, d.ethClient, d.ensAddress)
 			if err != nil {
 				return errors.Wrap(err, "while deploying resolver")
 			}
