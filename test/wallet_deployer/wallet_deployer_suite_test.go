@@ -78,6 +78,18 @@ var _ = BeforeEach(func() {
 var _ = Describe("WalletDeployer", func() {
 	When("no Wallets are cached", func() {
 
+        It("should have a default spend limit of 1 ETH", func() {
+            sl, err := WalletDeployer.SpendLimit(nil)
+            Expect(err).ToNot(HaveOccurred())
+            Expect(sl.String()).To(Equal(EthToWei(1).String()))
+        })
+
+        It("should point to the right oracle node name", func() {
+            on, err := WalletDeployer.OracleName(nil)
+            Expect(err).ToNot(HaveOccurred())
+            Expect(common.Hash(on)).To(Equal(EnsNode("oracle.tokencard.eth")))
+        })
+
 		It("should have cached Wallet count 0", func() {
 			ccc, err := WalletDeployer.CachedWalletCount(nil)
 			Expect(err).ToNot(HaveOccurred())
