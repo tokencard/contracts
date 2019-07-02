@@ -33,10 +33,10 @@ contract WalletDeployer is Controllable {
     mapping(address => address) public deployed;
     address[] public cached;
 
-    address private ens;
-    bytes32 private controllerName;
-    bytes32 private oracleName;
-    uint private spendLimit;
+    address public ens;
+    bytes32 public controllerName;
+    bytes32 public oracleName;
+    uint public spendLimit;
 
     constructor(address _ens, bytes32 _oracleName, bytes32 _controllerName, uint _spendLimit) Controllable(_ens, _controllerName) public {
         ens = _ens;

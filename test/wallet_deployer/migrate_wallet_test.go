@@ -22,7 +22,7 @@ var _ = Describe("Migrate Wallet", func() {
 	When("no contracts are cached and a controller migrates a Wallet", func() {
 
 			BeforeEach(func() {
-				tx, err := WalletDeployer.MigrateWallet(Controller.TransactOpts(), Owner.Address(), EthToWei(1), []common.Address{common.HexToAddress("0x1"), common.HexToAddress("0x2")})
+				tx, err := WalletDeployer.MigrateWallet(Controller.TransactOpts(), Owner.Address(), EthToWei(2), []common.Address{common.HexToAddress("0x1"), common.HexToAddress("0x2")})
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 				Expect(isSuccessful(tx)).To(BeTrue())
@@ -82,19 +82,19 @@ var _ = Describe("Migrate Wallet", func() {
     				evt := it.Event
     				Expect(it.Next()).To(BeFalse())
     				Expect(evt.Sender).To(Equal(WalletDeployerAddress))
-    				Expect(evt.Amount).To(Equal(EthToWei(1)))
+    				Expect(evt.Amount).To(Equal(EthToWei(2)))
     			})
 
-    			It("should lower the spend available to 1 ETH", func() {
+    			It("should keep the spend available to 1 ETH", func() {
     				av, err := Wallet.SpendAvailable(nil)
     				Expect(err).ToNot(HaveOccurred())
     				Expect(av.String()).To(Equal(EthToWei(1).String()))
     			})
 
-    			It("should have spend limit of 1 ETH", func() {
+    			It("should update the spend limit to 2 ETH", func() {
     				sl, err := Wallet.SpendLimit(nil)
     				Expect(err).ToNot(HaveOccurred())
-    				Expect(sl.String()).To(Equal(EthToWei(1).String()))
+    				Expect(sl.String()).To(Equal(EthToWei(2).String()))
     			})
 
                 It("should update the initialization flag", func() {

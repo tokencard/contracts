@@ -68,7 +68,7 @@ var _ = BeforeEach(func() {
 	Expect(err).ToNot(HaveOccurred())
 
 	var tx *types.Transaction
-	WalletDeployerAddress, tx, WalletDeployer, err = bindings.DeployWalletDeployer(BankAccount.TransactOpts(), Backend, ENSRegistryAddress, OracleName, ControllerName, EthToWei(100))
+	WalletDeployerAddress, tx, WalletDeployer, err = bindings.DeployWalletDeployer(BankAccount.TransactOpts(), Backend, ENSRegistryAddress, OracleName, ControllerName, EthToWei(1))
 	Expect(err).ToNot(HaveOccurred())
 	Backend.Commit()
 	Expect(isSuccessful(tx)).To(BeTrue())
@@ -236,7 +236,7 @@ var _ = Describe("WalletDeployer", func() {
 					Wallet, err = bindings.NewWallet(WalletAddress, Backend)
 					Expect(err).ToNot(HaveOccurred())
 
-					tx, err = Wallet.InitializeSpendLimit(Owner.TransactOpts(), EthToWei(1))
+					tx, err = Wallet.InitializeSpendLimit(Owner.TransactOpts(), FinneyToWei(500))
 					Expect(err).ToNot(HaveOccurred())
 					Backend.Commit()
 				})
@@ -244,6 +244,18 @@ var _ = Describe("WalletDeployer", func() {
 				It("should succeed", func() {
 					Expect(isSuccessful(tx)).To(BeTrue())
 				})
+
+                It("should lower the spend available to 500 Finney", func() {
+    				av, err := Wallet.SpendAvailable(nil)
+    				Expect(err).ToNot(HaveOccurred())
+    				Expect(av.String()).To(Equal(FinneyToWei(500).String()))
+    			})
+
+                It("should have a spend limit of 500 Finney", func() {
+    				sl, err := Wallet.SpendLimit(nil)
+    				Expect(err).ToNot(HaveOccurred())
+    				Expect(sl.String()).To(Equal(FinneyToWei(500).String()))
+    			})
 			})
 
 			It("should emit DeployedWallet event", func() {
