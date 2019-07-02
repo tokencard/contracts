@@ -24,9 +24,9 @@ import "./internals/controllable.sol";
 //// @title Wallet deployer with pre-caching if wallets functionality.
 contract WalletDeployer is Controllable {
 
-    event WalletCached(address wallet);
-    event WalletDeployed(address wallet, address owner);
-    event WalletMigrated(address wallet, address newOwner);
+    event CachedWallet(address wallet);
+    event DeployedWallet(address wallet, address owner);
+    event MigratedWallet(address wallet, address newOwner);
 
     mapping(address => address) public deployed;
     address[] public cached;
@@ -46,7 +46,7 @@ contract WalletDeployer is Controllable {
     function cacheWallet() public {
         address walletAddress = new Wallet(address(this), true, ens, oracleName, controllerName, spendLimit);
         cached.push(walletAddress);
-        emit WalletCached(walletAddress);
+        emit CachedWallet(walletAddress);
     }
 
     function deployWallet(address owner) external onlyController {
@@ -57,7 +57,7 @@ contract WalletDeployer is Controllable {
         cached.length--;
         Wallet(walletAddress).transferOwnership(owner);
         deployed[owner] = walletAddress;
-        emit WalletDeployed(walletAddress, owner);
+        emit DeployedWallet(walletAddress, owner);
     }
 
     function migrateWallet(address newOwner, uint _spendLimit, address[] _whitelistedAddresses) external onlyController {
@@ -70,7 +70,7 @@ contract WalletDeployer is Controllable {
         IWallet(walletAddress).initializeWhitelist(_whitelistedAddresses);
         IWallet(walletAddress).initializeSpendLimit(_spendLimit);
         Wallet(walletAddress).transferOwnership(newOwner);
-        emit WalletMigrated(walletAddress, newOwner);
+        emit MigratedWallet(walletAddress, newOwner);
     }
 
     function cachedContractCount() external view returns (uint) {
