@@ -21,12 +21,14 @@ pragma solidity ^0.4.25;
 import "./wallet.sol";
 import "./internals/controllable.sol";
 
+
+
 //// @title Wallet deployer with pre-caching if wallets functionality.
 contract WalletDeployer is Controllable {
 
     event CachedWallet(address wallet);
     event DeployedWallet(address wallet, address owner);
-    event MigratedWallet(address wallet, address newOwner);
+    event MigratedWallet(address wallet, address owner);
 
     mapping(address => address) public deployed;
     address[] public cached;
@@ -60,20 +62,20 @@ contract WalletDeployer is Controllable {
         emit DeployedWallet(walletAddress, owner);
     }
 
-    function migrateWallet(address newOwner, uint _spendLimit, address[] _whitelistedAddresses) external onlyController {
+    function migrateWallet(address owner, uint _spendLimit, address[] _whitelistedAddresses) external onlyController {
         if (cached.length < 1) {
             cacheWallet();
     	}
         address walletAddress = cached[cached.length-1];
         cached.length--;
-        deployed[newOwner] = walletAddress;
-        IWallet(walletAddress).initializeWhitelist(_whitelistedAddresses);
+        deployed[owner] = walletAddress;
         IWallet(walletAddress).initializeSpendLimit(_spendLimit);
-        Wallet(walletAddress).transferOwnership(newOwner);
-        emit MigratedWallet(walletAddress, newOwner);
+        IWallet(walletAddress).initializeWhitelist(_whitelistedAddresses);
+        Wallet(walletAddress).transferOwnership(owner);
+        emit MigratedWallet(walletAddress, owner);
     }
 
-    function cachedContractCount() external view returns (uint) {
+    function cachedWalletCount() external view returns (uint) {
         return cached.length;
     }
 

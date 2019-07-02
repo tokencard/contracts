@@ -1,4 +1,4 @@
-package wallet_deployer_test
+package Wallet_deployer_test
 
 import (
 	"context"
@@ -23,7 +23,7 @@ func TestWalletDeployer(t *testing.T) {
 
 var _ = BeforeSuite(func() {
 	TestRig.AddCoverageForContracts(
-		"../../build/wallet-deployer/combined.json",
+		"../../build/Wallet-deployer/combined.json",
 		"../../contracts",
 	)
 })
@@ -40,7 +40,7 @@ var _ = AfterEach(func() {
 
 var _ = AfterSuite(func() {
 	if allPassed {
-		TestRig.ExpectMinimumCoverage("wallet-deployer.sol", 100.00)
+		TestRig.ExpectMinimumCoverage("Wallet-deployer.sol", 100.00)
 		TestRig.PrintGasUsage(os.Stdout)
 	}
 })
@@ -54,8 +54,8 @@ var _ = AfterEach(func() {
 	}
 })
 
-var walletDeployerAddress common.Address
-var walletDeployer *bindings.WalletDeployer
+var WalletDeployerAddress common.Address
+var WalletDeployer *bindings.WalletDeployer
 
 func isSuccessful(tx *types.Transaction) bool {
 	r, err := Backend.TransactionReceipt(context.Background(), tx.Hash())
@@ -68,7 +68,7 @@ var _ = BeforeEach(func() {
 	Expect(err).ToNot(HaveOccurred())
 
 	var tx *types.Transaction
-	walletDeployerAddress, tx, walletDeployer, err = bindings.DeployWalletDeployer(BankAccount.TransactOpts(), Backend, ENSRegistryAddress, OracleName, ControllerName, EthToWei(100))
+	WalletDeployerAddress, tx, WalletDeployer, err = bindings.DeployWalletDeployer(BankAccount.TransactOpts(), Backend, ENSRegistryAddress, OracleName, ControllerName, EthToWei(100))
 	Expect(err).ToNot(HaveOccurred())
 	Backend.Commit()
 	Expect(isSuccessful(tx)).To(BeTrue())
@@ -76,69 +76,69 @@ var _ = BeforeEach(func() {
 })
 
 var _ = Describe("WalletDeployer", func() {
-	When("no contracts are cached", func() {
+	When("no Wallets are cached", func() {
 
-		It("should have cached contract count 0", func() {
-			ccc, err := walletDeployer.CachedContractCount(nil)
+		It("should have cached Wallet count 0", func() {
+			ccc, err := WalletDeployer.CachedWalletCount(nil)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(ccc.String()).To(Equal("0"))
 		})
 
-		When("a controller deploys a wallet", func() {
+		When("a controller deploys a Wallet", func() {
 			BeforeEach(func() {
-				tx, err := walletDeployer.DeployWallet(Controller.TransactOpts(), Owner.Address())
+				tx, err := WalletDeployer.DeployWallet(Controller.TransactOpts(), Owner.Address())
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 				Expect(isSuccessful(tx)).To(BeTrue())
 			})
 
-			It("should return new wallet address", func() {
-				addr, err := walletDeployer.Deployed(nil, Owner.Address())
+			It("should return new Wallet address", func() {
+				addr, err := WalletDeployer.Deployed(nil, Owner.Address())
 				Expect(err).ToNot(HaveOccurred())
 				Expect(addr).ToNot(Equal(common.HexToAddress("0x0")))
 			})
 
-			It("should emit ContractDeployed event", func() {
+			It("should emit DeployedWallet event", func() {
 
-				addr, err := walletDeployer.Deployed(nil, Owner.Address())
+				addr, err := WalletDeployer.Deployed(nil, Owner.Address())
 				Expect(err).ToNot(HaveOccurred())
 
-				it, err := walletDeployer.FilterWalletDeployed(nil)
+				it, err := WalletDeployer.FilterDeployedWallet(nil)
 				Expect(err).ToNot(HaveOccurred())
 				Expect(it.Next()).To(BeTrue())
 				Expect(it.Event.Wallet).To(Equal(addr))
 				Expect(it.Event.Owner).To(Equal(Owner.Address()))
 			})
 
-			It("should have cached contract count 0", func() {
-				ccc, err := walletDeployer.CachedContractCount(nil)
+			It("should have cached Wallet count 0", func() {
+				ccc, err := WalletDeployer.CachedWalletCount(nil)
 				Expect(err).ToNot(HaveOccurred())
 				Expect(ccc.String()).To(Equal("0"))
 			})
 
 
-			It("should emit ContractCached event", func() {
+			It("should emit CachedWallet event", func() {
 
-				addr, err := walletDeployer.Deployed(nil, Owner.Address())
+				addr, err := WalletDeployer.Deployed(nil, Owner.Address())
 				Expect(err).ToNot(HaveOccurred())
 
-				it, err := walletDeployer.FilterWalletCached(nil)
+				it, err := WalletDeployer.FilterCachedWallet(nil)
 				Expect(err).ToNot(HaveOccurred())
 				Expect(it.Next()).To(BeTrue())
 				Expect(it.Event.Wallet).To(Equal(addr))
 			})
 
-			When("new wallet owner sets the spend limit", func() {
-				var wallet *bindings.Wallet
+			When("new Wallet owner sets the spend limit", func() {
+				var Wallet *bindings.Wallet
 				var tx *types.Transaction
 
 				BeforeEach(func() {
-					walletAddress, err := walletDeployer.Deployed(nil, Owner.Address())
+					WalletAddress, err := WalletDeployer.Deployed(nil, Owner.Address())
 
-					wallet, err = bindings.NewWallet(walletAddress, Backend)
+					Wallet, err = bindings.NewWallet(WalletAddress, Backend)
 					Expect(err).ToNot(HaveOccurred())
 
-					tx, err = wallet.InitializeSpendLimit(Owner.TransactOpts(), EthToWei(1))
+					tx, err = Wallet.InitializeSpendLimit(Owner.TransactOpts(), EthToWei(1))
 					Expect(err).ToNot(HaveOccurred())
 					Backend.Commit()
 				})
@@ -149,13 +149,13 @@ var _ = Describe("WalletDeployer", func() {
 			})
 		})
 
-		When("a random account tries to deploy a wallet", func() {
+		When("a random account tries to deploy a Wallet", func() {
 
 			var tx *types.Transaction
 
 			BeforeEach(func() {
 				var err error
-				tx, err = walletDeployer.DeployWallet(RandomAccount.TransactOpts(ethertest.WithGasLimit(5000000)), Owner.Address())
+				tx, err = WalletDeployer.DeployWallet(RandomAccount.TransactOpts(ethertest.WithGasLimit(5000000)), Owner.Address())
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 			})
@@ -166,13 +166,13 @@ var _ = Describe("WalletDeployer", func() {
 		})
 	})
 
-	When("a random account tries to cache a wallet", func() {
+	When("a random account tries to cache a Wallet", func() {
 
 		var tx *types.Transaction
 
 		BeforeEach(func() {
 			var err error
-			tx, err = walletDeployer.CacheWallet(RandomAccount.TransactOpts(ethertest.WithGasLimit(5000000)))
+			tx, err = WalletDeployer.CacheWallet(RandomAccount.TransactOpts(ethertest.WithGasLimit(5000000)))
 			Expect(err).ToNot(HaveOccurred())
 			Backend.Commit()
 		})
@@ -182,61 +182,61 @@ var _ = Describe("WalletDeployer", func() {
 		})
 	})
 
-	When("one contract is cached", func() {
+	When("one Wallet is cached", func() {
 		BeforeEach(func() {
-			tx, err := walletDeployer.CacheWallet(Controller.TransactOpts())
+			tx, err := WalletDeployer.CacheWallet(Controller.TransactOpts())
 			Expect(err).ToNot(HaveOccurred())
 			Backend.Commit()
 			Expect(isSuccessful(tx)).To(BeTrue())
 		})
 
-		It("should cache the wallet", func() {
-			addr, err := walletDeployer.Cached(nil, big.NewInt(0))
+		It("should cache the Wallet", func() {
+			addr, err := WalletDeployer.Cached(nil, big.NewInt(0))
 			Expect(err).ToNot(HaveOccurred())
 			Expect(addr).ToNot(Equal(common.HexToAddress("0x0")))
 		})
 
-		It("should have cached contract count 1", func() {
-			ccc, err := walletDeployer.CachedContractCount(nil)
+		It("should have cached Wallet count 1", func() {
+			ccc, err := WalletDeployer.CachedWalletCount(nil)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(ccc.String()).To(Equal("1"))
 		})
 
-		It("should emit ContractCached event", func() {
-			addr, err := walletDeployer.Cached(nil, big.NewInt(0))
+		It("should emit CachedWallet event", func() {
+			addr, err := WalletDeployer.Cached(nil, big.NewInt(0))
 			Expect(err).ToNot(HaveOccurred())
 
-			it, err := walletDeployer.FilterWalletCached(nil)
+			it, err := WalletDeployer.FilterCachedWallet(nil)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(it.Next()).To(BeTrue())
 			Expect(it.Event.Wallet).To(Equal(addr))
 		})
 
-		When("a controller deploys a wallet", func() {
+		When("a controller deploys a Wallet", func() {
 			BeforeEach(func() {
-				tx, err := walletDeployer.DeployWallet(Controller.TransactOpts(), Owner.Address())
+				tx, err := WalletDeployer.DeployWallet(Controller.TransactOpts(), Owner.Address())
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 				Expect(isSuccessful(tx)).To(BeTrue())
 			})
 
-			It("should return new wallet address", func() {
-				addr, err := walletDeployer.Deployed(nil, Owner.Address())
+			It("should return new Wallet address", func() {
+				addr, err := WalletDeployer.Deployed(nil, Owner.Address())
 				Expect(err).ToNot(HaveOccurred())
 				Expect(addr).ToNot(Equal(common.HexToAddress("0x0")))
 			})
 
-			When("New wallet owner sets the spend limit", func() {
-				var wallet *bindings.Wallet
+			When("New Wallet owner sets the spend limit", func() {
+				var Wallet *bindings.Wallet
 				var tx *types.Transaction
 
 				BeforeEach(func() {
-					walletAddress, err := walletDeployer.Deployed(nil, Owner.Address())
+					WalletAddress, err := WalletDeployer.Deployed(nil, Owner.Address())
 
-					wallet, err = bindings.NewWallet(walletAddress, Backend)
+					Wallet, err = bindings.NewWallet(WalletAddress, Backend)
 					Expect(err).ToNot(HaveOccurred())
 
-					tx, err = wallet.InitializeSpendLimit(Owner.TransactOpts(), EthToWei(1))
+					tx, err = Wallet.InitializeSpendLimit(Owner.TransactOpts(), EthToWei(1))
 					Expect(err).ToNot(HaveOccurred())
 					Backend.Commit()
 				})
@@ -246,12 +246,12 @@ var _ = Describe("WalletDeployer", func() {
 				})
 			})
 
-			It("should emit ContractDeployed event", func() {
+			It("should emit DeployedWallet event", func() {
 
-				addr, err := walletDeployer.Deployed(nil, Owner.Address())
+				addr, err := WalletDeployer.Deployed(nil, Owner.Address())
 				Expect(err).ToNot(HaveOccurred())
 
-				it, err := walletDeployer.FilterWalletDeployed(nil)
+				it, err := WalletDeployer.FilterDeployedWallet(nil)
 				Expect(err).ToNot(HaveOccurred())
 				Expect(it.Next()).To(BeTrue())
 				Expect(it.Event.Wallet).To(Equal(addr))
