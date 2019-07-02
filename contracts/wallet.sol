@@ -37,6 +37,11 @@ interface ERC165 {
     function supportsInterface(bytes4) external view returns (bool);
 }
 
+/// @title Wallet interface.
+interface IWallet {
+    function initializeWhitelist(address[]) external;
+    function initializeSpendLimit(uint) external;
+}
 
 /// @title Whitelist provides payee-whitelist functionality.
 contract Whitelist is Controllable, Ownable {
