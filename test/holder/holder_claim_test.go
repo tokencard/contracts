@@ -15,7 +15,7 @@ import (
 
 var _ = Describe("TokenHolder", func() {
 
-    When("The holder contract owns 3 types of ERC20 tokens (1/3 are burnable) and 1 ETH", func() {
+    When("The holder contract owns 3 types of ERC20 tokens (1/3 are redeemable) and 1 ETH", func() {
 
         var tx *types.Transaction
         //add the tokens to the list
@@ -77,7 +77,7 @@ var _ = Describe("TokenHolder", func() {
 
         When("a random address tries to claim", func() {
             It("should fail", func() {
-				tx, err := TokenHolder.NonBurnableTokenClaim(RandomAccount.TransactOpts(ethertest.WithGasLimit(80000)), Owner.Address(), []common.Address{ERC20Contract3Address})
+				tx, err := TokenHolder.NonRedeemableTokenClaim(RandomAccount.TransactOpts(ethertest.WithGasLimit(80000)), Owner.Address(), []common.Address{ERC20Contract3Address})
                 Expect(err).ToNot(HaveOccurred())
                 Backend.Commit()
                 Expect(isSuccessful(tx)).To(BeFalse())
@@ -85,25 +85,25 @@ var _ = Describe("TokenHolder", func() {
 
         })
 
-        When("The owner tries to claim a burnable token or ETH", func() {
+        When("The owner tries to claim a redeemable token or ETH", func() {
             It("should fail", func() {
-				tx, err := TokenHolder.NonBurnableTokenClaim(Owner.TransactOpts(ethertest.WithGasLimit(80000)), Owner.Address(), []common.Address{common.HexToAddress("0x0")})
+				tx, err := TokenHolder.NonRedeemableTokenClaim(Owner.TransactOpts(ethertest.WithGasLimit(80000)), Owner.Address(), []common.Address{common.HexToAddress("0x0")})
                 Expect(err).ToNot(HaveOccurred())
                 Backend.Commit()
                 Expect(isSuccessful(tx)).To(BeFalse())
 			})
 
             It("should fail", func() {
-				tx, err := TokenHolder.NonBurnableTokenClaim(Owner.TransactOpts(ethertest.WithGasLimit(80000)), Owner.Address(), []common.Address{ERC20Contract1Address, ERC20Contract3Address})
+				tx, err := TokenHolder.NonRedeemableTokenClaim(Owner.TransactOpts(ethertest.WithGasLimit(80000)), Owner.Address(), []common.Address{ERC20Contract1Address, ERC20Contract3Address})
                 Expect(err).ToNot(HaveOccurred())
                 Backend.Commit()
                 Expect(isSuccessful(tx)).To(BeFalse())
 			})
         })
 
-        When("The owner tries to claim all non-burnable tokens", func() {
+        When("The owner tries to claim all non-redeemable tokens", func() {
             BeforeEach(func() {
-				tx, err := TokenHolder.NonBurnableTokenClaim(Owner.TransactOpts(), Owner.Address(), []common.Address{ERC20Contract2Address, ERC20Contract3Address})
+				tx, err := TokenHolder.NonRedeemableTokenClaim(Owner.TransactOpts(), Owner.Address(), []common.Address{ERC20Contract2Address, ERC20Contract3Address})
                 Expect(err).ToNot(HaveOccurred())
                 Backend.Commit()
                 Expect(isSuccessful(tx)).To(BeTrue())

@@ -8,7 +8,7 @@ import "./internals/tokenWhitelistable.sol";
 import "./mocks/burnerToken.sol";
 
 
-// A TokenHolder holds token assets for a burnable token. When the contract
+// A TokenHolder holds token assets for a redeemable token. When the contract
 // calls the burn method, a share of the tokens held by this contract are
 // disbursed to the burner.
 contract Holder is Ownable, Claimable, ENSResolvable, TokenWhitelistable {
@@ -43,23 +43,23 @@ contract Holder is Ownable, Claimable, ENSResolvable, TokenWhitelistable {
 
         // The burner token deducts from the supply before calling.
         uint supply = Burner(_burner).currentSupply().add(amount);
-        address[] memory burnableAddresses = _burnableTokens();
-        for (uint i = 0; i < burnableAddresses.length; i++) {
-            uint burnableBalance = balance(burnableAddresses[i]);
-            if (burnableBalance > 0) {
-                _claim(to, burnableAddresses[i], burnableBalance.mul(amount).div(supply));
+        address[] memory redeemableAddresses = _redeemableTokens();
+        for (uint i = 0; i < redeemableAddresses.length; i++) {
+            uint redeemableBalance = balance(redeemableAddresses[i]);
+            if (redeemableBalance > 0) {
+                _claim(to, redeemableAddresses[i], redeemableBalance.mul(amount).div(supply));
             }
         }
         return true;
     }
 
-    function nonBurnableTokenClaim(address payable _to, address[] calldata _nonBurnableAddresses) external onlyOwner returns (bool) {
-        for (uint i = 0; i < _nonBurnableAddresses.length; i++) {
-            //revert if token is burnable
-            require(!_isTokenBurnable(_nonBurnableAddresses[i]), "burnables cannot be claimed");
-            uint claimBalance = balance(_nonBurnableAddresses[i]);
+    function nonRedeemableTokenClaim(address payable _to, address[] calldata _nonRedeemableAddresses) external onlyOwner returns (bool) {
+        for (uint i = 0; i < _nonRedeemableAddresses.length; i++) {
+            //revert if token is redeemable
+            require(!_isTokenRedeemable(_nonRedeemableAddresses[i]), "redeemables cannot be claimed");
+            uint claimBalance = balance(_nonRedeemableAddresses[i]);
             if (claimBalance > 0) {
-                _claim(_to, _nonBurnableAddresses[i], claimBalance);
+                _claim(_to, _nonRedeemableAddresses[i], claimBalance);
             }
         }
         return true;

@@ -93,7 +93,7 @@ var _ = Describe("TokenHolder", func() {
 					Expect(evt.Value.String()).To(Equal("300"))
 				})
 
-				When("The holder contract owns 3 types of ERC20 tokens (2/3 are burnable) and 1 ETH", func() {
+				When("The holder contract owns 3 types of ERC20 tokens (2/3 are redeemable) and 1 ETH", func() {
 
 					//add the tokens to the list
 					BeforeEach(func() {

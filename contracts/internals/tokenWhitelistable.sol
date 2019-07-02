@@ -47,7 +47,7 @@ contract TokenWhitelistable is ENSResolvable {
     /// @return uint of the token's exchange rate to ETH
     /// @return bool whether the token is available
     /// @return bool whether the token is loadable to the TokenCard
-    /// @return bool whether the token is burnable to the TKN Holder Contract
+    /// @return bool whether the token is redeemable to the TKN Holder Contract
     /// @return uint of the lastUpdated time of the token's exchange rate
     function _getTokenInfo(address _a) internal view returns (string memory, uint256, uint256, bool, bool, bool, uint256) {
         return ITokenWhitelist(_ensResolve(_tokenWhitelistNode)).getTokenInfo(_a);
@@ -59,7 +59,7 @@ contract TokenWhitelistable is ENSResolvable {
     /// @return uint of the token's exchange rate to ETH
     /// @return bool whether the token is available
     /// @return bool whether the token is loadable to the TokenCard
-    /// @return bool whether the token is burnable to the TKN Holder Contract
+    /// @return bool whether the token is redeemable to the TKN Holder Contract
     /// @return uint of the lastUpdated time of the token's exchange rate
     function _getStablecoinInfo() internal view returns (string memory, uint256, uint256, bool, bool, bool, uint256) {
         return ITokenWhitelist(_ensResolve(_tokenWhitelistNode)).getStablecoinInfo();
@@ -71,10 +71,10 @@ contract TokenWhitelistable is ENSResolvable {
         return ITokenWhitelist(_ensResolve(_tokenWhitelistNode)).tokenAddressArray();
     }
 
-    /// @notice This returns an array of all burnable token addresses
-    /// @return address[] of burnable tokens
-    function _burnableTokens() internal view returns (address[] memory) {
-        return ITokenWhitelist(_ensResolve(_tokenWhitelistNode)).burnableTokens();
+    /// @notice This returns an array of all redeemable token addresses
+    /// @return address[] of redeemable tokens
+    function _redeemableTokens() internal view returns (address[] memory) {
+        return ITokenWhitelist(_ensResolve(_tokenWhitelistNode)).redeemableTokens();
     }
 
     /// @notice Update ERC20 token exchange rate.
@@ -92,11 +92,11 @@ contract TokenWhitelistable is ENSResolvable {
         return available;
     }
 
-    /// @notice Checks whether a token is burnable
-    /// @return bool burnable or not
-    function _isTokenBurnable(address _a) internal view returns (bool) {
-        ( , , , , , bool burnable, ) = _getTokenInfo(_a);
-        return burnable;
+    /// @notice Checks whether a token is redeemable
+    /// @return bool redeemable or not
+    function _isTokenRedeemable(address _a) internal view returns (bool) {
+        ( , , , , , bool redeemable, ) = _getTokenInfo(_a);
+        return redeemable;
     }
 
     /// @notice Checks whether a token is loadable
