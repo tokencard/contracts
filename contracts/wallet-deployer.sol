@@ -22,7 +22,6 @@ import "./wallet.sol";
 import "./internals/controllable.sol";
 
 
-
 //// @title Wallet deployer with pre-caching if wallets functionality.
 contract WalletDeployer is Controllable {
 
@@ -63,8 +62,8 @@ contract WalletDeployer is Controllable {
         address walletAddress = cached[cached.length-1];
         cached.length--;
         deployed[owner] = walletAddress;
-        IWallet(walletAddress).initializeSpendLimit(_spendLimit);
-        IWallet(walletAddress).initializeWhitelist(_whitelistedAddresses);
+        Wallet(walletAddress).initializeSpendLimit(_spendLimit);
+        Wallet(walletAddress).initializeWhitelist(_whitelistedAddresses);
         Wallet(walletAddress).transferOwnership(owner);
         emit MigratedWallet(walletAddress, owner);
     }

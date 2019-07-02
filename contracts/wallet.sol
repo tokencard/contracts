@@ -37,11 +37,6 @@ interface ERC165 {
     function supportsInterface(bytes4) external view returns (bool);
 }
 
-/// @title Wallet interface.
-interface IWallet {
-    function initializeWhitelist(address[]) external;
-    function initializeSpendLimit(uint) external;
-}
 
 /// @title Whitelist provides payee-whitelist functionality.
 contract Whitelist is Controllable, Ownable {
@@ -83,11 +78,6 @@ contract Whitelist is Controllable, Ownable {
     /// @dev Getter for pending removal array.
     function pendingWhitelistRemoval() external view returns(address[]) {
         return _pendingWhitelistRemoval;
-    }
-
-    /// @dev Getter for pending addition/removal array hash.
-    function pendingWhitelistHash(address[] _pendingWhitelist) public pure returns(bytes32) {
-        return keccak256(abi.encodePacked(_pendingWhitelist));
     }
 
     /// @dev Add initial addresses to the whitelist.
@@ -198,6 +188,11 @@ contract Whitelist is Controllable, Ownable {
         submittedWhitelistRemoval = false;
         // Emit the cancellation event.
         emit CancelledWhitelistRemoval(msg.sender, _hash);
+    }
+
+    /// @dev Getter for pending addition/removal array hash.
+    function pendingWhitelistHash(address[] _pendingWhitelist) public pure returns(bytes32) {
+        return keccak256(abi.encodePacked(_pendingWhitelist));
     }
 }
 

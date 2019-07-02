@@ -23,7 +23,7 @@ func TestWalletDeployer(t *testing.T) {
 
 var _ = BeforeSuite(func() {
 	TestRig.AddCoverageForContracts(
-		"../../build/Wallet-deployer/combined.json",
+		"../../build/wallet-deployer/combined.json",
 		"../../contracts",
 	)
 })
@@ -40,7 +40,7 @@ var _ = AfterEach(func() {
 
 var _ = AfterSuite(func() {
 	if allPassed {
-		TestRig.ExpectMinimumCoverage("Wallet-deployer.sol", 100.00)
+		TestRig.ExpectMinimumCoverage("wallet-deployer.sol", 100.00)
 		TestRig.PrintGasUsage(os.Stdout)
 	}
 })
