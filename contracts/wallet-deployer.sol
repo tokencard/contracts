@@ -45,12 +45,6 @@ contract WalletDeployer is Controllable {
         spendLimit = _spendLimit;
     }
 
-    function cacheWallet() public {
-        address walletAddress = new Wallet(address(this), true, ens, oracleName, controllerName, spendLimit);
-        cached.push(walletAddress);
-        emit CachedWallet(walletAddress);
-    }
-
     function deployWallet(address owner) external onlyController {
         if (cached.length < 1) {
             cacheWallet();
@@ -78,5 +72,12 @@ contract WalletDeployer is Controllable {
     function cachedWalletCount() external view returns (uint) {
         return cached.length;
     }
+
+    function cacheWallet() public {
+        address walletAddress = new Wallet(address(this), true, ens, oracleName, controllerName, spendLimit);
+        cached.push(walletAddress);
+        emit CachedWallet(walletAddress);
+    }
+
 
 }
