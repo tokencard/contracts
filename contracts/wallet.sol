@@ -725,6 +725,7 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
     /// @dev This function converts to an address
     /// @param _bts bytes
     /// @param _from start position
+    // TODO (daniel): These byte conversion methods could be inside a 'bytes' library instead.
     function _bytesToAddress(bytes memory _bts, uint _from) private pure returns (address) {
         require(_bts.length >= _from + 20, "slicing out of range");
 
