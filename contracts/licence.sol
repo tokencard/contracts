@@ -16,10 +16,10 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-pragma solidity ^0.4.25;
+pragma solidity ^0.5.7;
 
 import "./externals/SafeMath.sol";
-import "./externals/ERC20.sol";
+import "./externals/SafeERC20.sol";
 import "./internals/ownable.sol";
 import "./internals/claimable.sol";
 
@@ -35,6 +35,7 @@ interface ILicence {
 contract Licence is Claimable, Ownable {
 
     using SafeMath for uint256;
+    using SafeERC20 for ERC20;
 
     /*******************/
     /*     Events     */
@@ -58,8 +59,8 @@ contract Licence is Claimable, Ownable {
 
     address private _tknContractAddress = 0xaAAf91D9b90dF800Df4F55c205fd6989c977E73a; // solium-disable-line uppercase
 
-    address private _cryptoFloat;
-    address private _tokenHolder;
+    address payable private _cryptoFloat;
+    address payable private _tokenHolder;
     address private _licenceDAO;
 
     bool private _lockedCryptoFloat;
@@ -83,7 +84,7 @@ contract Licence is Claimable, Ownable {
     /// @param _licence_ is the initial card licence amount. this number is scaled 10 = 1%, 9 = 0.9%
     /// @param _float_ is the address of the multi-sig cryptocurrency float contract.
     /// @param _holder_ is the address of the token holder contract
-    constructor(address _owner_, bool _transferable_, uint _licence_, address _float_, address _holder_, address _tknAddress_) Ownable(_owner_, _transferable_) public {
+    constructor(address payable _owner_, bool _transferable_, uint _licence_, address payable _float_, address payable _holder_, address _tknAddress_) Ownable(_owner_, _transferable_) public {
         _licenceAmountScaled = _licence_;
         _cryptoFloat = _float_;
         _tokenHolder = _holder_;
@@ -94,7 +95,6 @@ contract Licence is Claimable, Ownable {
 
     /// @notice Ether can be deposited from any source, so this contract should be payable by anyone.
     function() external payable {
-        require(msg.data.length == 0, "msg data length should be 0");
         emit Received(msg.sender, msg.value);
     }
 
@@ -154,7 +154,7 @@ contract Licence is Claimable, Ownable {
 
     /// @notice Updates the address of the cyptoFloat.
     /// @param _newFloat This is the new address for the CryptoFloat
-    function updateFloat(address _newFloat) external onlyOwner {
+    function updateFloat(address payable _newFloat) external onlyOwner {
         require(!floatLocked(), "float is locked");
         _cryptoFloat = _newFloat;
         emit UpdatedCryptoFloat(_newFloat);
@@ -162,7 +162,7 @@ contract Licence is Claimable, Ownable {
 
     /// @notice Updates the address of the Holder contract.
     /// @param _newHolder This is the new address for the TokenHolder
-    function updateHolder(address _newHolder) external onlyOwner {
+    function updateHolder(address payable _newHolder) external onlyOwner {
         require(!holderLocked(), "holder contract is locked");
         _tokenHolder = _newHolder;
         emit UpdatedTokenHolder(_newHolder);
@@ -199,14 +199,14 @@ contract Licence is Claimable, Ownable {
         uint loadAmount = _amount;
         // If TKN then no licence to be paid
         if (_asset == _tknContractAddress) {
-            require(ERC20(_asset).transferFrom(msg.sender, _cryptoFloat, loadAmount), "TKN transfer from external account was unsuccessful");
+            ERC20(_asset).safeTransferFrom(msg.sender, _cryptoFloat, loadAmount);
         } else {
             loadAmount = _amount.mul(MAX_AMOUNT_SCALE).div(_licenceAmountScaled + MAX_AMOUNT_SCALE);
             uint licenceAmount = _amount.sub(loadAmount);
 
             if (_asset != address(0)) {
-                require(ERC20(_asset).transferFrom(msg.sender, _tokenHolder, licenceAmount), "ERC20 licenceAmount transfer from external account was unsuccessful");
-                require(ERC20(_asset).transferFrom(msg.sender, _cryptoFloat, loadAmount), "ERC20 token transfer from external account was unsuccessful");
+                ERC20(_asset).safeTransferFrom(msg.sender, _tokenHolder, licenceAmount);
+                ERC20(_asset).safeTransferFrom(msg.sender, _cryptoFloat, loadAmount);
             } else {
                 require(msg.value == _amount, "ETH sent is not equal to amount");
                 _tokenHolder.transfer(licenceAmount);
@@ -220,7 +220,7 @@ contract Licence is Claimable, Ownable {
     }
 
     //// @notice Withdraw tokens from the smart contract to the specified account.
-    function claim(address _to, address _asset, uint _amount) external onlyOwner {
+    function claim(address payable _to, address _asset, uint _amount) external onlyOwner {
         _claim(_to, _asset, _amount);
     }
 

@@ -16,7 +16,7 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-pragma solidity ^0.4.25;
+pragma solidity ^0.5.7;
 
 import "./ownable.sol";
 import "./controllable.sol";
@@ -26,9 +26,9 @@ import "../externals/SafeMath.sol";
 
 /// @title The ITokenWhitelist interface provides access to a whitelist of tokens.
 interface ITokenWhitelist {
-    function getTokenInfo(address) external view returns (string, uint256, uint256, bool, bool, bool, uint256);
-    function getStablecoinInfo() external view returns (string, uint256, uint256, bool, bool, bool, uint256);
-    function tokenAddressArray() external view returns (address[]);
+    function getTokenInfo(address) external view returns (string memory, uint256, uint256, bool, bool, bool, uint256);
+    function getStablecoinInfo() external view returns (string memory, uint256, uint256, bool, bool, bool, uint256);
+    function tokenAddressArray() external view returns (address[] memory);
     function updateTokenRate(address, uint, uint) external;
     function stablecoin() external view returns (address);
 }
@@ -72,7 +72,7 @@ contract TokenWhitelist is ENSResolvable, Controllable, Ownable, Claimable {
     /// @notice Constructor initializes ENSResolvable, Controllable, and Ownable
     /// @param _oracleNameHash_ is the ENS name hash of the Oracle.
     /// @param _stabelcoinAddress_ is the address of the stablecoint used by the wallet
-    constructor(address _ens_, bytes32 _oracleNameHash_, bytes32 _controllerNameHash_, address _owner_, bool _transferable_, address _stabelcoinAddress_) ENSResolvable(_ens_) Controllable(_controllerNameHash_) Ownable(_owner_, _transferable_) public {
+    constructor(address _ens_, bytes32 _oracleNameHash_, bytes32 _controllerNameHash_, address payable _owner_, bool _transferable_, address _stabelcoinAddress_) ENSResolvable(_ens_) Controllable(_controllerNameHash_) Ownable(_owner_, _transferable_) public {
         _oracleNode = _oracleNameHash_;
         _stablecoin = _stabelcoinAddress_;
     }
@@ -84,7 +84,7 @@ contract TokenWhitelist is ENSResolvable, Controllable, Ownable, Claimable {
     /// @param _loadable is a bool that states whether or not a token is loadable to the TokenCard.
     /// @param _burnable is a bool that states whether or not a token is burnable in the TKN Holder Contract.
     /// @param _lastUpdate is a unit representing an ISO datetime e.g. 20180913153211
-    function addTokens(address[] _tokens, bytes32[] _symbols, uint[] _magnitude, bool[] _loadable, bool[] _burnable, uint _lastUpdate) external onlyController {
+    function addTokens(address[] calldata _tokens, bytes32[] calldata _symbols, uint[] calldata _magnitude, bool[] calldata _loadable, bool[] calldata _burnable, uint _lastUpdate) external onlyController {
         // Require that all parameters have the same length.
         require(_tokens.length == _symbols.length && _tokens.length == _magnitude.length && _tokens.length == _loadable.length && _tokens.length == _loadable.length, "parameter lengths do not match");
         // Add each token to the list of supported tokens.
@@ -112,7 +112,7 @@ contract TokenWhitelist is ENSResolvable, Controllable, Ownable, Claimable {
 
     /// @notice Remove ERC20 tokens from the whitelist of tokens.
     /// @param _tokens ERC20 token contract addresses.
-    function removeTokens(address[] _tokens) external onlyController {
+    function removeTokens(address[] calldata _tokens) external onlyController {
         // Delete each token object from the list of supported tokens based on the addresses provided.
         for (uint i = 0; i < _tokens.length; i++) {
             //token must be available, reverts on duplicates as well
@@ -150,7 +150,7 @@ contract TokenWhitelist is ENSResolvable, Controllable, Ownable, Claimable {
     }
 
     //// @notice Withdraw tokens from the smart contract to the specified account.
-    function claim(address _to, address _asset, uint _amount) external onlyOwner {
+    function claim(address payable _to, address _asset, uint _amount) external onlyOwner {
         _claim(_to, _asset, _amount);
     }
 
@@ -163,7 +163,7 @@ contract TokenWhitelist is ENSResolvable, Controllable, Ownable, Claimable {
     /// @return bool whether the token is loadable to the TokenCard
     /// @return bool whether the token is burnable to the TKN Holder Contract
     /// @return uint of the lastUpdated time of the token's exchange rate
-    function getTokenInfo(address _a) external view returns (string, uint256, uint256, bool, bool, bool, uint256) {
+    function getTokenInfo(address _a) external view returns (string memory, uint256, uint256, bool, bool, bool, uint256) {
         Token storage tokenInfo = _tokenInfoMap[_a];
         return (tokenInfo.symbol, tokenInfo.magnitude, tokenInfo.rate, tokenInfo.available, tokenInfo.loadable, tokenInfo.burnable, tokenInfo.lastUpdate);
     }
@@ -176,14 +176,14 @@ contract TokenWhitelist is ENSResolvable, Controllable, Ownable, Claimable {
     /// @return bool whether the token is loadable to the TokenCard
     /// @return bool whether the token is burnable to the TKN Holder Contract
     /// @return uint of the lastUpdated time of the token's exchange rate
-    function getStablecoinInfo() external view returns (string, uint256, uint256, bool, bool, bool, uint256) {
+    function getStablecoinInfo() external view returns (string memory, uint256, uint256, bool, bool, bool, uint256) {
         Token storage stablecoinInfo = _tokenInfoMap[_stablecoin];
         return (stablecoinInfo.symbol, stablecoinInfo.magnitude, stablecoinInfo.rate, stablecoinInfo.available, stablecoinInfo.loadable, stablecoinInfo.burnable, stablecoinInfo.lastUpdate);
     }
 
     /// @notice This returns an array of our whitelisted address
     /// @return address[] of our whitelisted tokens
-    function tokenAddressArray() external view returns (address[]) {
+    function tokenAddressArray() external view returns (address[] memory) {
         return _tokenAddressArray;
     }
 

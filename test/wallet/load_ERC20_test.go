@@ -25,13 +25,8 @@ var _ = Describe("wallet load ERC20", func() {
 		Expect(b.String()).To(Equal("0"))
 	})
 
-	It("the initial balance of the Wallet should be zero", func() {
-		b, e := Backend.BalanceAt(context.Background(), WalletAddress, nil)
-		Expect(e).ToNot(HaveOccurred())
-		Expect(b.String()).To(Equal("0"))
-	})
 
-	When("The Wallet contract is credited with two types of ERC20 tokens and  102 ETH", func() {
+	When("The Wallet contract is credited with two types of ERC20 tokens", func() {
 		BeforeEach(func() {
 			tx, err := ERC20Contract1.Credit(BankAccount.TransactOpts(), WalletAddress, big.NewInt(1000))
 			Expect(err).ToNot(HaveOccurred())
@@ -58,7 +53,7 @@ var _ = Describe("wallet load ERC20", func() {
 			Expect(b.String()).To(Equal("500"))
 		})
 
-		When("the tokens are laodable and the rates have been updated", func() {
+		When("the tokens are loadable and the rates have been updated", func() {
 
 			BeforeEach(func() {
 				tokens := []common.Address{ERC20Contract1Address, ERC20Contract2Address}

@@ -1,4 +1,4 @@
-pragma solidity ^0.4.25;
+pragma solidity ^0.5.7;
 
 /**
  * This method was modified from the GPLv3 solidity code found in this repository
@@ -11,7 +11,7 @@ contract Base64 {
 
     /// @return decoded array of bytes.
     /// @param _encoded base 64 encoded array of bytes.
-    function _base64decode(bytes _encoded) internal pure returns (bytes) {
+    function _base64decode(bytes memory _encoded) internal pure returns (bytes memory) {
         byte v1;
         byte v2;
         byte v3;
@@ -29,27 +29,28 @@ contract Base64 {
               length -= 1;
           }
           uint count = length >> 2 << 2;
-          for (uint i = 0; i < count;) {
-              v1 = BASE64_DECODE_CHAR[uint(_encoded[i++])];
-              v2 = BASE64_DECODE_CHAR[uint(_encoded[i++])];
-              v3 = BASE64_DECODE_CHAR[uint(_encoded[i++])];
-              v4 = BASE64_DECODE_CHAR[uint(_encoded[i++])];
+          uint i;
+          for (i = 0; i < count;) {
+              v1 = BASE64_DECODE_CHAR[uint8(_encoded[i++])];
+              v2 = BASE64_DECODE_CHAR[uint8(_encoded[i++])];
+              v3 = BASE64_DECODE_CHAR[uint8(_encoded[i++])];
+              v4 = BASE64_DECODE_CHAR[uint8(_encoded[i++])];
 
-              result[index++] = (v1 << 2 | v2 >> 4) & 255;
-              result[index++] = (v2 << 4 | v3 >> 2) & 255;
-              result[index++] = (v3 << 6 | v4) & 255;
+              result[index++] = (v1 << 2 | v2 >> 4) & 0xff;
+              result[index++] = (v2 << 4 | v3 >> 2) & 0xff;
+              result[index++] = (v3 << 6 | v4) & 0xff;
           }
           if (length - count == 2) {
-              v1 = BASE64_DECODE_CHAR[uint(_encoded[i++])];
-              v2 = BASE64_DECODE_CHAR[uint(_encoded[i++])];
-              result[index++] = (v1 << 2 | v2 >> 4) & 255;
+              v1 = BASE64_DECODE_CHAR[uint8(_encoded[i++])];
+              v2 = BASE64_DECODE_CHAR[uint8(_encoded[i++])];
+              result[index++] = (v1 << 2 | v2 >> 4) & 0xff;
           } else if (length - count == 3) {
-              v1 = BASE64_DECODE_CHAR[uint(_encoded[i++])];
-              v2 = BASE64_DECODE_CHAR[uint(_encoded[i++])];
-              v3 = BASE64_DECODE_CHAR[uint(_encoded[i++])];
+              v1 = BASE64_DECODE_CHAR[uint8(_encoded[i++])];
+              v2 = BASE64_DECODE_CHAR[uint8(_encoded[i++])];
+              v3 = BASE64_DECODE_CHAR[uint8(_encoded[i++])];
 
-              result[index++] = (v1 << 2 | v2 >> 4) & 255;
-              result[index++] = (v2 << 4 | v3 >> 2) & 255;
+              result[index++] = (v1 << 2 | v2 >> 4) & 0xff;
+              result[index++] = (v2 << 4 | v3 >> 2) & 0xff;
           }
 
         // Set to correct length.

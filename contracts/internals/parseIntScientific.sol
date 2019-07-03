@@ -16,7 +16,7 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-pragma solidity ^0.4.25;
+pragma solidity ^0.5.7;
 
 import "../externals/SafeMath.sol";
 
@@ -26,28 +26,28 @@ contract ParseIntScientific {
 
     using SafeMath for uint256;
 
-    byte constant private _PLUS_ASCII = byte(43); //decimal value of '+'
-    byte constant private _DASH_ASCII = byte(45); //decimal value of '-'
-    byte constant private _DOT_ASCII = byte(46); //decimal value of '.'
-    byte constant private _ZERO_ASCII = byte(48); //decimal value of '0'
-    byte constant private _NINE_ASCII = byte(57); //decimal value of '9'
-    byte constant private _E_ASCII = byte(69); //decimal value of 'E'
-    byte constant private _LOWERCASE_E_ASCII = byte(101); //decimal value of 'e'
+    byte constant private _PLUS_ASCII = byte(uint8(43)); //decimal value of '+'
+    byte constant private _DASH_ASCII = byte(uint8(45)); //decimal value of '-'
+    byte constant private _DOT_ASCII = byte(uint8(46)); //decimal value of '.'
+    byte constant private _ZERO_ASCII = byte(uint8(48)); //decimal value of '0'
+    byte constant private _NINE_ASCII = byte(uint8(57)); //decimal value of '9'
+    byte constant private _E_ASCII = byte(uint8(69)); //decimal value of 'E'
+    byte constant private _LOWERCASE_E_ASCII = byte(uint8(101)); //decimal value of 'e'
 
     /// @notice ParseIntScientific delegates the call to _parseIntScientific(string, uint) with the 2nd argument being 0.
-    function _parseIntScientific(string _inString) internal pure returns (uint) {
+    function _parseIntScientific(string memory _inString) internal pure returns (uint) {
         return _parseIntScientific(_inString, 0);
     }
 
     /// @notice ParseIntScientificWei parses a rate expressed in ETH and returns its wei denomination
-    function _parseIntScientificWei(string _inString) internal pure returns (uint) {
+    function _parseIntScientificWei(string memory _inString) internal pure returns (uint) {
         return _parseIntScientific(_inString, 18);
     }
 
     /// @notice ParseIntScientific parses a JSON standard - floating point number.
     /// @param _inString is input string.
     /// @param _magnitudeMult multiplies the number with 10^_magnitudeMult.
-    function _parseIntScientific(string _inString, uint _magnitudeMult) internal pure returns (uint) {
+    function _parseIntScientific(string memory _inString, uint _magnitudeMult) internal pure returns (uint) {
 
         bytes memory inBytes = bytes(_inString);
         uint mint = 0; // the final uint returned
@@ -60,27 +60,27 @@ contract ParseIntScientific {
         bool exp = false; // indicates if the number being parsed has an exponential representation
         bool minus = false; // indicated if the exponent is negative
         bool plus = false; // indicated if the exponent is positive
-
-        for (uint i = 0; i < inBytes.length; i++) {
+        uint i;
+        for (i = 0; i < inBytes.length; i++) {
             if ((inBytes[i] >= _ZERO_ASCII) && (inBytes[i] <= _NINE_ASCII) && (!exp)) {
                 // 'e' not encountered yet, minting integer part or decimals
                 if (decimals) {
                     // '.' encountered
                     // use safeMath in case there is an overflow
                     mintDec = mintDec.mul(10);
-                    mintDec = mintDec.add(uint(inBytes[i]) - uint(_ZERO_ASCII));
+                    mintDec = mintDec.add(uint8(inBytes[i]) - uint8(_ZERO_ASCII));
                     decMinted++; //keep track of the #decimals
                 } else {
                     // integral part (before '.')
                     integral = true;
                     // use safeMath in case there is an overflow
                     mint = mint.mul(10);
-                    mint = mint.add(uint(inBytes[i]) - uint(_ZERO_ASCII));
+                    mint = mint.add(uint8(inBytes[i]) - uint8(_ZERO_ASCII));
                 }
             } else if ((inBytes[i] >= _ZERO_ASCII) && (inBytes[i] <= _NINE_ASCII) && (exp)) {
                 //exponential notation (e-/+) has been detected, mint the exponent
                 mintExp = mintExp.mul(10);
-                mintExp = mintExp.add(uint(inBytes[i]) - uint(_ZERO_ASCII));
+                mintExp = mintExp.add(uint8(inBytes[i]) - uint8(_ZERO_ASCII));
             } else if (inBytes[i] == _DOT_ASCII) {
                 //an integral part before should always exist before '.'
                 require(integral, "missing integral part");

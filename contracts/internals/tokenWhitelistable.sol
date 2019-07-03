@@ -16,7 +16,7 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-pragma solidity ^0.4.25;
+pragma solidity ^0.5.7;
 
 import "./tokenWhitelist.sol";
 import "../internals/ensResolvable.sol";
@@ -49,7 +49,7 @@ contract TokenWhitelistable is ENSResolvable {
     /// @return bool whether the token is loadable to the TokenCard
     /// @return bool whether the token is burnable to the TKN Holder Contract
     /// @return uint of the lastUpdated time of the token's exchange rate
-    function _getTokenInfo(address _a) internal view returns (string, uint256, uint256, bool, bool, bool, uint256) {
+    function _getTokenInfo(address _a) internal view returns (string memory, uint256, uint256, bool, bool, bool, uint256) {
         return ITokenWhitelist(_ensResolve(_tokenWhitelistNode)).getTokenInfo(_a);
     }
 
@@ -61,13 +61,13 @@ contract TokenWhitelistable is ENSResolvable {
     /// @return bool whether the token is loadable to the TokenCard
     /// @return bool whether the token is burnable to the TKN Holder Contract
     /// @return uint of the lastUpdated time of the token's exchange rate
-    function _getStablecoinInfo() internal view returns (string, uint256, uint256, bool, bool, bool, uint256) {
+    function _getStablecoinInfo() internal view returns (string memory, uint256, uint256, bool, bool, bool, uint256) {
         return ITokenWhitelist(_ensResolve(_tokenWhitelistNode)).getStablecoinInfo();
     }
 
     /// @notice This returns an array of our whitelisted address
     /// @return address[] of our whitelisted tokens
-    function _tokenAddressArray() internal view returns (address[]) {
+    function _tokenAddressArray() internal view returns (address[] memory) {
         return ITokenWhitelist(_ensResolve(_tokenWhitelistNode)).tokenAddressArray();
     }
 
