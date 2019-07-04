@@ -43,15 +43,31 @@ var _ = BeforeEach(func() {
 
 	Expect(err).ToNot(HaveOccurred())
 
-	LicenceAddress, tx, Licence, err = bindings.DeployLicence(BankAccount.TransactOpts(), Backend, Owner.Address(), true, big.NewInt(10), CryptoFloatAddress, TokenHolderAddress, common.HexToAddress("0x0"))
+	LicenceAddress, tx, Licence, err = bindings.DeployLicence(BankAccount.TransactOpts(), Backend, Owner.Address(), true, big.NewInt(10), CryptoFloatAddress, TokenHolderAddress, common.HexToAddress("0xaAAf91D9b90dF800Df4F55c205fd6989c977E73a"))
 	Expect(err).ToNot(HaveOccurred())
 	Backend.Commit()
 	Expect(isSuccessful(tx)).To(BeTrue())
 
 })
 
+var _ = Describe("constructor is called with an out of range licence value", func() {
+		It("should fail", func() {
+			_, tx, _, err := bindings.DeployLicence(BankAccount.TransactOpts(ethertest.WithGasLimit(2000000)), Backend, Owner.Address(), true, big.NewInt(0), CryptoFloatAddress, TokenHolderAddress, common.HexToAddress("0x0"))
+			Expect(err).ToNot(HaveOccurred())
+			Backend.Commit()
+			Expect(isSuccessful(tx)).To(BeFalse())
+		})
+
+		It("should fail", func() {
+			_, tx, _, err := bindings.DeployLicence(BankAccount.TransactOpts(ethertest.WithGasLimit(2000000)), Backend, Owner.Address(), true, big.NewInt(1001), CryptoFloatAddress, TokenHolderAddress, common.HexToAddress("0x0"))
+			Expect(err).ToNot(HaveOccurred())
+			Backend.Commit()
+			Expect(isSuccessful(tx)).To(BeFalse())
+		})
+})
+
 var _ = AfterSuite(func() {
-	TestRig.ExpectMinimumCoverage("licence.sol", 90.00)
+	TestRig.ExpectMinimumCoverage("licence.sol", 98.00)
 	TestRig.PrintGasUsage(os.Stdout)
 })
 

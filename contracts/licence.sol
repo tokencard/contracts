@@ -56,6 +56,7 @@ contract Licence is Claimable, Ownable {
 
     /// @notice This is 100% scaled up by a factor of 10 to give us an extra 1 decimal place of precision
     uint constant public MAX_AMOUNT_SCALE = 1000;
+    uint constant public MIN_AMOUNT_SCALE = 1;
 
     address private _tknContractAddress = 0xaAAf91D9b90dF800Df4F55c205fd6989c977E73a; // solium-disable-line uppercase
 
@@ -85,6 +86,7 @@ contract Licence is Claimable, Ownable {
     /// @param _float_ is the address of the multi-sig cryptocurrency float contract.
     /// @param _holder_ is the address of the token holder contract
     constructor(address payable _owner_, bool _transferable_, uint _licence_, address payable _float_, address payable _holder_, address _tknAddress_) Ownable(_owner_, _transferable_) public {
+        require(MIN_AMOUNT_SCALE <= _licence_ && _licence_ <= MAX_AMOUNT_SCALE, "licence amount out of range");
         _licenceAmountScaled = _licence_;
         _cryptoFloat = _float_;
         _tokenHolder = _holder_;
@@ -185,9 +187,9 @@ contract Licence is Claimable, Ownable {
     }
 
     /// @notice Updates the TKN licence amount
-    /// @param _newAmount is a number between 1 and MAX_AMOUNT_SCALE
+    /// @param _newAmount is a number between MIN_AMOUNT_SCALE (1) and MAX_AMOUNT_SCALE
     function updateLicenceAmount(uint _newAmount) external onlyDAO {
-        require(1 <= _newAmount && _newAmount <= MAX_AMOUNT_SCALE, "licence amount out of range");
+        require(MIN_AMOUNT_SCALE <= _newAmount && _newAmount <= MAX_AMOUNT_SCALE, "licence amount out of range");
         _licenceAmountScaled = _newAmount;
         emit UpdatedLicenceAmount(_newAmount);
     }
