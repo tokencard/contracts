@@ -724,13 +724,14 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
     /// @param _to destination address of the transaction
     /// @param _value ETH amount in wei
     /// @param _data transaction payload binary
-    function _executeCall(address _to, uint256 _value, bytes memory _data) internal returns (bool success) {
-        //check if contract exists
-        require(address(_to).isContract(), "_executeCall: call to non-contract");
+    /// @return success 
+    function _executeCall(address _to, uint256 _value, bytes memory _data) internal returns (bool) {
+        bool success;
         // solium-disable-next-line security/no-inline-assembly
         assembly {
             success := call(gas, _to, _value, add(_data, 0x20), mload(_data), 0, 0)
         }
+        return success;
     }
 
     /// @dev This function converts to an address
