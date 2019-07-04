@@ -9,15 +9,14 @@ import (
 
 func (d *deployer) deployOraclizeResolver() error {
 
-	oraclizeConnectorAddress, _, _, err := mocks.DeployOraclize(d.transactOpts, d.ethClient, d.controllerOwner)
+	oraclizeAddress, tx, _, err := mocks.DeployOraclize(d.transactOpts, d.ethClient, d.controllerOwner)
+	d.waitForAndConfirmTransaction(tx.Hash())
 	if err != nil {
 		return errors.Wrap(err, "while deploying oraclize")
 	}
 
-	d.log.Infof("Oraclize Connector is at %s", oraclizeConnectorAddress.Hex())
-
-	return d.deployContract(oracleName, func() (common.Address, *types.Transaction, error) {
-		contractAddress, tx, _, err := mocks.DeployOraclizeAddrResolver(d.transactOpts, d.ethClient, oraclizeConnectorAddress)
+	return d.deployContract("oraclize-resolver.tokencard.eth", func() (common.Address, *types.Transaction, error) {
+		contractAddress, tx, _, err := mocks.DeployOraclizeAddrResolver(d.transactOpts, d.ethClient, oraclizeAddress)
 		d.oraclizeResolverAddress = contractAddress
 		return contractAddress, tx, err
 	})

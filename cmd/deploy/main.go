@@ -88,6 +88,15 @@ func main() {
 			return err
 		}
 
+		tokens := []string{"TKN", "EOS", "OMG", "BNT", "ZRX"}
+
+		for _, t := range tokens {
+			err = d.deployToken(t)
+			if err != nil {
+				return errors.Wrapf(err, "while deploying %s", t)
+			}
+		}
+
 		err = d.deployWalletDeployer()
 		if err != nil {
 			return err
