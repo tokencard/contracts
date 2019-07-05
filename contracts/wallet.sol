@@ -25,6 +25,7 @@ import "./internals/ensResolvable.sol";
 import "./internals/tokenWhitelistable.sol";
 import "./externals/SafeMath.sol";
 import "./externals/Address.sol";
+import "./externals/ERC20.sol";
 import "./externals/SafeERC20.sol";
 import "./externals/ERC165.sol";
 
@@ -724,7 +725,7 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
     /// @param _to destination address of the transaction
     /// @param _value ETH amount in wei
     /// @param _data transaction payload binary
-    /// @return success 
+    /// @return success
     function _executeCall(address _to, uint256 _value, bytes memory _data) internal returns (bool) {
         bool success;
         // solium-disable-next-line security/no-inline-assembly
@@ -734,10 +735,10 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
         return success;
     }
 
+
     /// @dev This function converts to an address
     /// @param _bts bytes
     /// @param _from start position
-    // TODO (daniel): These byte conversion methods could be inside a 'bytes' library instead.
     function _bytesToAddress(bytes memory _bts, uint _from) private pure returns (address) {
         require(_bts.length >= _from + 20, "slicing out of range");
 

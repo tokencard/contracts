@@ -179,13 +179,13 @@ library strings {
             assembly { b := and(mload(ptr), 0xFF) }
             if (b < 0x80) {
                 ptr += 1;
-            } else if(b < 0xE0) {
+            } else if (b < 0xE0) {
                 ptr += 2;
-            } else if(b < 0xF0) {
+            } else if (b < 0xF0) {
                 ptr += 3;
-            } else if(b < 0xF8) {
+            } else if (b < 0xF8) {
                 ptr += 4;
-            } else if(b < 0xFC) {
+            } else if (b < 0xFC) {
                 ptr += 5;
             } else {
                 ptr += 6;
@@ -228,8 +228,8 @@ library strings {
             if (a != b) {
                 // Mask out irrelevant bytes and check again
                 uint256 mask = uint256(-1); // 0xffff...
-                if(shortest < 32) {
-                  mask = ~(2 ** (8 * (32 - shortest + idx)) - 1);
+                if (shortest < 32) {
+                    mask = ~(2 ** (8 * (32 - shortest + idx)) - 1);
                 }
                 uint256 diff = (a & mask) - (b & mask);
                 if (diff != 0)
@@ -272,9 +272,9 @@ library strings {
         assembly { b := and(mload(sub(mload(add(self, 32)), 31)), 0xFF) }
         if (b < 0x80) {
             l = 1;
-        } else if(b < 0xE0) {
+        } else if (b < 0xE0) {
             l = 2;
-        } else if(b < 0xF0) {
+        } else if (b < 0xF0) {
             l = 3;
         } else {
             l = 4;
@@ -324,10 +324,10 @@ library strings {
         if (b < 0x80) {
             ret = b;
             length = 1;
-        } else if(b < 0xE0) {
+        } else if (b < 0xE0) {
             ret = b & 0x1F;
             length = 2;
-        } else if(b < 0xF0) {
+        } else if (b < 0xF0) {
             ret = b & 0x0F;
             length = 3;
         } else {
@@ -711,14 +711,15 @@ library strings {
             return "";
 
         uint length = self._len * (parts.length - 1);
-        for(uint i = 0; i < parts.length; i++)
+        for (uint i = 0; i < parts.length; i++) {
             length += parts[i]._len;
+        }
 
         string memory ret = new string(length);
         uint retptr;
         assembly { retptr := add(ret, 32) }
 
-        for(uint i = 0; i < parts.length; i++) {
+        for (uint i = 0; i < parts.length; i++) {
             memcpy(retptr, parts[i]._ptr, parts[i]._len);
             retptr += parts[i]._len;
             if (i < parts.length - 1) {

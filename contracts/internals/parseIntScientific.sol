@@ -33,6 +33,7 @@ contract ParseIntScientific {
     byte constant private _NINE_ASCII = byte(uint8(57)); //decimal value of '9'
     byte constant private _E_ASCII = byte(uint8(69)); //decimal value of 'E'
     byte constant private _LOWERCASE_E_ASCII = byte(uint8(101)); //decimal value of 'e'
+    uint constant private _MAX_PARSED_UINT = 2**54; //max value returned in JSON format above which interoperability issues may be raised
 
     /// @notice ParseIntScientific delegates the call to _parseIntScientific(string, uint) with the 2nd argument being 0.
     function _parseIntScientific(string memory _inString) internal pure returns (uint) {
@@ -162,7 +163,7 @@ contract ParseIntScientific {
             mint = mint.mul(10 ** (_magnitudeMult));
             mint = mint.add(mintDec);
         }
-
+        require(mint < _MAX_PARSED_UINT, "number exceeded maximum allowed value for safe json decoding");
         return mint;
     }
 }
