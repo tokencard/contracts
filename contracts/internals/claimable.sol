@@ -16,7 +16,7 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-pragma solidity ^0.5.7;
+pragma solidity ^0.5.10;
 
 import "../externals/ERC20.sol";
 import "../externals/SafeERC20.sol";
@@ -26,7 +26,7 @@ import "../externals/SafeERC20.sol";
 contract Claimable {
 
     using SafeERC20 for ERC20;
-    
+
     event Claimed(address _to, address _asset, uint _amount);
 
     /// @dev This function is used to move tokens sent accidentally to this contract method.
