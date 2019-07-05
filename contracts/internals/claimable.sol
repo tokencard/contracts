@@ -19,11 +19,14 @@
 pragma solidity ^0.5.7;
 
 import "../externals/ERC20.sol";
+import "../externals/SafeERC20.sol";
 
 
 /// @title Claimable, allowing contract to withdraw tokens accidentally sent to itself
 contract Claimable {
 
+    using SafeERC20 for ERC20;
+    
     event Claimed(address _to, address _asset, uint _amount);
 
     /// @dev This function is used to move tokens sent accidentally to this contract method.
@@ -36,7 +39,7 @@ contract Claimable {
         if (_asset == address(0)) {
             _to.transfer(_amount);
         } else {
-            require(ERC20(_asset).transfer(_to, _amount), "ERC20 token transfer was unsuccessful");
+            ERC20(_asset).safeTransfer(_to, _amount);
         }
 
         emit Claimed(_to, _asset, _amount);

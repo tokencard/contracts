@@ -25,7 +25,7 @@ var _ = Describe("load ERC20", func() {
 		Expect(b.String()).To(Equal("0"))
 	})
 
-	When("The RandomAccount is credited with two types of ERC20 tokens", func() {
+	When("The RandomAccount is credited with 1000 NonCompliantERC20 tokens", func() {
 		BeforeEach(func() {
 			tx, err := NonCompliantERC20.Credit(BankAccount.TransactOpts(), RandomAccount.Address(), big.NewInt(1000))
 			Expect(err).ToNot(HaveOccurred())

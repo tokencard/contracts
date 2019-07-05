@@ -9,30 +9,30 @@ import (
     "github.com/tokencard/ethertest"
 )
 
-var _ = Describe("TokenWhitelist claim", func() {
+var _ = Describe("TokenWhitelist NonCompliantERC20 claim", func() {
 
-	It("the initial ERC20 type-1 balance of the TokenWhitelist contract should be zero", func() {
-		b, err := ERC20Contract1.BalanceOf(nil, TokenWhitelistAddress)
+	It("the initial NonCompliantERC20 balance of the TokenWhitelist contract should be zero", func() {
+		b, err := NonCompliantERC20.BalanceOf(nil, TokenWhitelistAddress)
 		Expect(err).ToNot(HaveOccurred())
 		Expect(b.String()).To(Equal("0"))
 	})
 
-	It("the initial ERC20 type-1 balance of the RandomAccount  should be zero", func() {
-		b, err := ERC20Contract1.BalanceOf(nil, RandomAccount.Address())
+	It("the initial NonCompliantERC20 balance of the RandomAccount  should be zero", func() {
+		b, err := NonCompliantERC20.BalanceOf(nil, RandomAccount.Address())
 		Expect(err).ToNot(HaveOccurred())
 		Expect(b.String()).To(Equal("0"))
 	})
 
 	When("The TokenWhitelist contract is credited with 333 of ERC20 type-1 tokens", func() {
 		BeforeEach(func() {
-			tx, err := ERC20Contract1.Credit(BankAccount.TransactOpts(), TokenWhitelistAddress, big.NewInt(333))
+			tx, err := NonCompliantERC20.Credit(BankAccount.TransactOpts(), TokenWhitelistAddress, big.NewInt(333))
 			Expect(err).ToNot(HaveOccurred())
 			Backend.Commit()
 			Expect(isSuccessful(tx)).To(BeTrue())
 		})
 
-		It("should increase the ERC20 type-1 balance of the TokenWhitelist contract by 333", func() {
-			b, err := ERC20Contract1.BalanceOf(nil, TokenWhitelistAddress)
+		It("should increase the NonCompliantERC20 balance of the TokenWhitelist contract by 333", func() {
+			b, err := NonCompliantERC20.BalanceOf(nil, TokenWhitelistAddress)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(b.String()).To(Equal("333"))
 		})
@@ -40,7 +40,7 @@ var _ = Describe("TokenWhitelist claim", func() {
 		When("the TokenWhitelistAddress owner withdraws 222 tokens", func() {
 
 			BeforeEach(func() {
-				tx, err := TokenWhitelist.Claim(Owner.TransactOpts(), RandomAccount.Address(), ERC20Contract1Address, big.NewInt(222))
+				tx, err := TokenWhitelist.Claim(Owner.TransactOpts(), RandomAccount.Address(), NonCompliantERC20Address, big.NewInt(222))
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 				Expect(isSuccessful(tx)).To(BeTrue())
@@ -53,18 +53,18 @@ var _ = Describe("TokenWhitelist claim", func() {
 				evt := it.Event
 				Expect(it.Next()).To(BeFalse())
 				Expect(evt.To).To(Equal(RandomAccount.Address()))
-				Expect(evt.Asset).To(Equal(ERC20Contract1Address))
+				Expect(evt.Asset).To(Equal(NonCompliantERC20Address))
 				Expect(evt.Amount.String()).To(Equal("222"))
 			})
 
-			It("should decrease the ERC20 type-1 balance of the TokenWhitelist contract contract by 222", func() {
-				b, err := ERC20Contract1.BalanceOf(nil, TokenWhitelistAddress)
+			It("should decrease the NonCompliantERC20 balance of the TokenWhitelist contract contract by 222", func() {
+				b, err := NonCompliantERC20.BalanceOf(nil, TokenWhitelistAddress)
 				Expect(err).ToNot(HaveOccurred())
 				Expect(b.String()).To(Equal("111"))
 			})
 
-			It("should increase the ERC20 type-1 balance of the RandomAccount by 222", func() {
-				b, err := ERC20Contract1.BalanceOf(nil, RandomAccount.Address())
+			It("should increase the NonCompliantERC20 balance of the RandomAccount by 222", func() {
+				b, err := NonCompliantERC20.BalanceOf(nil, RandomAccount.Address())
 				Expect(err).ToNot(HaveOccurred())
 				Expect(b.String()).To(Equal("222"))
 			})
@@ -73,7 +73,7 @@ var _ = Describe("TokenWhitelist claim", func() {
 
         When("a random address tries to withdraw", func() {
             It("Should fail", func() {
-    			tx, err := TokenWhitelist.Claim(RandomAccount.TransactOpts(ethertest.WithGasLimit(100000)), RandomAccount.Address(), ERC20Contract1Address, big.NewInt(222))
+    			tx, err := TokenWhitelist.Claim(RandomAccount.TransactOpts(ethertest.WithGasLimit(100000)), RandomAccount.Address(), NonCompliantERC20Address, big.NewInt(222))
     			Expect(err).ToNot(HaveOccurred())
     			Backend.Commit()
     			Expect(isGasExhausted(tx, 100000)).To(BeFalse())
