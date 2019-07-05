@@ -232,7 +232,7 @@ library DailyLimitTrait {
     struct DailyLimit {
         uint value;
         uint available;
-        uint limitDay;
+        uint limitTimestamp;
         uint pending;
         bool set;
     }
@@ -240,7 +240,7 @@ library DailyLimitTrait {
     /// @dev Returns the available daily balance - accounts for daily limit reset.
     /// @return amount of available to spend within the current day in base units.
     function _getAvailableLimit(DailyLimit storage self) internal view returns (uint) {
-        if (now > self.limitDay.add(24 hours)) {
+        if (now > self.limitTimestamp.add(24 hours)) {
             return self.value;
         } else {
             return self.available;
@@ -285,10 +285,9 @@ library DailyLimitTrait {
 
     /// @dev Update available spend limit based on the daily reset.
     function _updateAvailableLimit(DailyLimit storage self) private {
-        if (now > self.limitDay.add(24 hours)) {
-            // Advance the current day by how many days have passed.
-            uint extraDays = now.sub(self.limitDay).div(24 hours);
-            self.limitDay = self.limitDay.add(extraDays.mul(24 hours));
+        if (now > self.limitTimestamp.add(24 hours)) {
+            // Update the current timestamp.
+            self.limitTimestamp = now;
             // Set the available limit to the current spend limit.
             self.available = self.value;
             emit UpdatedAvailableLimit();
@@ -584,7 +583,8 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
     event LoadedTokenCard(address _asset, uint _amount);
     event ExecutedTransaction(address _destination, uint _value, bytes _data);
     event UpdatedAvailableLimit();
-    
+
+    string constant public WALLET_VERSION = "v2.0.0";
     uint constant private _DEFAULT_MAX_STABLECOIN_LOAD_LIMIT = 10000; //10,000 USD
 
     /// @dev Is the registered ENS node identifying the licence contract.

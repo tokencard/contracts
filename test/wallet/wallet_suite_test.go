@@ -36,6 +36,15 @@ var _ = BeforeEach(func() {
 })
 
 var allPassed = true
+var currentVersion = "v2.0.0"
+
+var _ = Describe("Wallet Version", func() {
+    It("should return the current version", func() {
+        v, err := Wallet.WALLETVERSION(nil)
+        Expect(err).ToNot(HaveOccurred())
+        Expect(v).To(Equal(currentVersion))
+    })
+})
 
 var _ = AfterEach(func() {
 	td := CurrentGinkgoTestDescription()
