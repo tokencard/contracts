@@ -227,6 +227,8 @@ contract AddressWhitelist is ControllableOwnable {
 library DailyLimitTrait {
     using SafeMath for uint256;
 
+    event UpdatedAvailableLimit();
+
     struct DailyLimit {
         uint value;
         uint available;
@@ -289,6 +291,7 @@ library DailyLimitTrait {
             self.limitDay = self.limitDay.add(extraDays.mul(24 hours));
             // Set the available limit to the current spend limit.
             self.available = self.value;
+            emit UpdatedAvailableLimit();
         }
     }
 
@@ -580,7 +583,8 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
     event ToppedUpGas(address _sender, address _owner, uint _amount);
     event LoadedTokenCard(address _asset, uint _amount);
     event ExecutedTransaction(address _destination, uint _value, bytes _data);
-
+    event UpdatedAvailableLimit();
+    
     uint constant private _DEFAULT_MAX_STABLECOIN_LOAD_LIMIT = 10000; //10,000 USD
 
     /// @dev Is the registered ENS node identifying the licence contract.
