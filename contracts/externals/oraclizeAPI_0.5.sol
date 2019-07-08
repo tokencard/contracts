@@ -316,8 +316,8 @@ contract usingOraclize {
     }
 
     function oraclize_setNetwork(uint8 _networkID) internal returns (bool _networkSet) {
+      _networkID; // NOTE: Silence the warning and remain backwards compatible
       return oraclize_setNetwork();
-      _networkID; // silence the warning and remain backwards compatible
     }
 
     function oraclize_setNetworkName(string memory _network_name) internal {
@@ -368,14 +368,18 @@ contract usingOraclize {
         }
         return false;
     }
-
+    /**
+     * @dev The following `__callback` functions are just placeholders ideally
+     *      meant to be defined in child contract when proofs are used.
+     *      The function bodies simply silence compiler warnings.
+     */
     function __callback(bytes32 _myid, string memory _result) public {
         __callback(_myid, _result, new bytes(0));
     }
 
     function __callback(bytes32 _myid, string memory _result, bytes memory _proof) public {
-      return;
-      _myid; _result; _proof; // Silence compiler warnings
+      _myid; _result; _proof;
+      oraclize_randomDS_args[bytes32(0)] = bytes32(0);
     }
 
     function oraclize_getPrice(string memory _datasource) oraclizeAPI internal returns (uint _queryPrice) {
@@ -1240,7 +1244,7 @@ contract usingOraclize {
         return oraclize_randomDS_sessionKeysHashVerified[sessionPubkeyHash];
     }
     /*
-     The following function has been written by Alex Beregszaszi (@axic), use it under the terms of the MIT license
+     The following function has been written by Alex Beregszaszi, use it under the terms of the MIT license
     */
     function copyBytes(bytes memory _from, uint _fromOffset, uint _length, bytes memory _to, uint _toOffset) internal pure returns (bytes memory _copiedBytes) {
         uint minLength = _length + _toOffset;
@@ -1258,7 +1262,7 @@ contract usingOraclize {
         return _to;
     }
     /*
-     The following function has been written by Alex Beregszaszi (@axic), use it under the terms of the MIT license
+     The following function has been written by Alex Beregszaszi, use it under the terms of the MIT license
      Duplicate Solidity's ecrecover, but catching the CALL return value
     */
     function safer_ecrecover(bytes32 _hash, uint8 _v, bytes32 _r, bytes32 _s) internal returns (bool _success, address _recoveredAddress) {
@@ -1284,7 +1288,7 @@ contract usingOraclize {
         return (ret, addr);
     }
     /*
-     The following function has been written by Alex Beregszaszi (@axic), use it under the terms of the MIT license
+     The following function has been written by Alex Beregszaszi, use it under the terms of the MIT license
     */
     function ecrecovery(bytes32 _hash, bytes memory _sig) internal returns (bool _success, address _recoveredAddress) {
         bytes32 r;

@@ -1,6 +1,7 @@
-pragma solidity ^0.5.7;
+pragma solidity ^0.5.10;
 
 import "../externals/SafeMath.sol";
+
 
 /// @title NonCompliantToken is a mock ERC20 token that is not compatible with the ERC20 interface.
 contract NonCompliantToken {
@@ -18,7 +19,7 @@ contract NonCompliantToken {
 
     /// @dev Transfer a token. This throws on insufficient balance.
     function transfer(address to, uint amount) public {
-        require(balanceOf[msg.sender] >= amount);
+        require(balanceOf[msg.sender] >= amount, "insufficient balance");
         balanceOf[msg.sender] -= amount;
         balanceOf[to] += amount;
         emit Transfer(msg.sender, to, amount);
