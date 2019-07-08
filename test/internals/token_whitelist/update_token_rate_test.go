@@ -47,14 +47,14 @@ var _ = Describe("updateTokenRate", func() {
 				Expect(isSuccessful(tx)).To(BeTrue())
 			})
 			It("Should update the token rate", func() {
-				symbol, magnitude, rate, available, loadable, burnable, lastUpdate, err := TokenWhitelist.GetTokenInfo(nil, common.HexToAddress("0x1"))
+				symbol, magnitude, rate, available, loadable, redeemable, lastUpdate, err := TokenWhitelist.GetTokenInfo(nil, common.HexToAddress("0x1"))
 				Expect(err).ToNot(HaveOccurred())
 				Expect(symbol).To(Equal("ETH"))
 				Expect(magnitude.String()).To(Equal(DecimalsToMagnitude(big.NewInt(18)).String()))
 				Expect(rate.String()).To(Equal(big.NewInt(555).String()))
 				Expect(available).To(BeTrue())
 				Expect(loadable).To(BeTrue())
-				Expect(burnable).To(BeTrue())
+				Expect(redeemable).To(BeTrue())
 				Expect(lastUpdate.String()).To(Equal(big.NewInt(20180913153211).String()))
 			})
 			It("Should emit a TokenRateUpdate event", func() {

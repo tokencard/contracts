@@ -20,6 +20,10 @@ contract TokenWhitelistableExporter is ENSResolvable, TokenWhitelistable {
         return _tokenAddressArray();
     }
 
+    function redeemableTokens() external view returns (address[] memory) {
+        return _redeemableTokens();
+    }
+
     function updateTokenRate(address _token, uint _rate, uint _updateDate) external {
         return _updateTokenRate(_token, _rate, _updateDate);
     }
@@ -32,8 +36,8 @@ contract TokenWhitelistableExporter is ENSResolvable, TokenWhitelistable {
         return _isTokenAvailable(_a);
     }
 
-    function isTokenBurnable(address _a) external view returns (bool) {
-        return _isTokenBurnable(_a);
+    function isTokenRedeemable(address _a) external view returns (bool) {
+        return _isTokenRedeemable(_a);
     }
 
 }

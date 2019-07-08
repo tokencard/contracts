@@ -97,11 +97,13 @@ var OraclizeConnectorAddress common.Address
 var Oracle *bindings.Oracle
 var OracleAddress common.Address
 
-var TKNBurner *mocks.Token
+var TKNBurner *mocks.BurnerToken
 var TKNBurnerAddress common.Address
 
-var CryptoFloatAddress common.Address
+var TokenHolder *bindings.Holder
 var TokenHolderAddress common.Address
+
+var CryptoFloatAddress common.Address
 
 var Licence *bindings.Licence
 var LicenceAddress common.Address
@@ -465,7 +467,7 @@ func InitializeBackend() error {
 	}
 
 	// Deploy the real TKN contract with burner functionality.
-	TKNBurnerAddress, tx, TKNBurner, err = mocks.DeployToken(Owner.TransactOpts(), Backend)
+	TKNBurnerAddress, tx, TKNBurner, err = mocks.DeployBurnerToken(Owner.TransactOpts(), Backend)
 	if err != nil {
 		return err
 	}
@@ -475,9 +477,19 @@ func InitializeBackend() error {
 		return errors.Wrap(err, "deploying TKN contract")
 	}
 
+    // Deploy the Token holder contract.
+	TokenHolderAddress, tx, TokenHolder, err = bindings.DeployHolder(Controller.TransactOpts(), Backend, Owner.Address(), false, TKNBurnerAddress, ENSRegistryAddress, TokenWhitelistName)
+	if err != nil {
+		return err
+	}
+	Backend.Commit()
+	err = verifyTransaction(tx)
+	if err != nil {
+		return errors.Wrap(err, "deploying holder contract")
+	}
+
 	// Deploy the Token licence contract.
 	CryptoFloatAddress = common.HexToAddress(stringToHashString("CryptoFloatAddress"))
-	TokenHolderAddress = common.HexToAddress(stringToHashString("TokenHolderAddress"))
 	LicenceAddress, tx, Licence, err = bindings.DeployLicence(BankAccount.TransactOpts(), Backend, Owner.Address(), true, big.NewInt(10), CryptoFloatAddress, TokenHolderAddress, common.HexToAddress("0x0"))
 	if err != nil {
 		return err

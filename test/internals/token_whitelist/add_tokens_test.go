@@ -37,29 +37,26 @@ var _ = Describe("addTokens", func() {
 				)
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
-			})
-
-			It("Should succeed", func() {
-				Expect(isSuccessful(tx)).To(BeTrue())
+                Expect(isSuccessful(tx)).To(BeTrue())
 			})
 
 			It("Should update the tokens map", func() {
-				symbol, magnitude, _, available, loadable, burnable, lastUpdate, err := TokenWhitelist.GetTokenInfo(nil, common.HexToAddress("0x0"))
+				symbol, magnitude, _, available, loadable, redeemable, lastUpdate, err := TokenWhitelist.GetTokenInfo(nil, common.HexToAddress("0x0"))
 				Expect(err).ToNot(HaveOccurred())
 				Expect(symbol).To(Equal("BNT"))
 				Expect(magnitude).To(Equal(DecimalsToMagnitude(big.NewInt(18))))
 				Expect(available).To(BeTrue())
 				Expect(loadable).To(BeFalse())
-				Expect(burnable).To(BeTrue())
+				Expect(redeemable).To(BeTrue())
 				Expect(lastUpdate.String()).To(Equal("20180913153211"))
 
-				symbol, magnitude, _, available, loadable, burnable, lastUpdate, err = TokenWhitelist.GetTokenInfo(nil, common.HexToAddress("0x1"))
+				symbol, magnitude, _, available, loadable, redeemable, lastUpdate, err = TokenWhitelist.GetTokenInfo(nil, common.HexToAddress("0x1"))
 				Expect(err).ToNot(HaveOccurred())
 				Expect(symbol).To(Equal("TKN"))
 				Expect(magnitude.String()).To(Equal("100000000"))
 				Expect(available).To(BeTrue())
 				Expect(loadable).To(BeTrue())
-				Expect(burnable).To(BeTrue())
+				Expect(redeemable).To(BeTrue())
 				Expect(lastUpdate.String()).To(Equal("20180913153211"))
 			})
 
@@ -78,6 +75,12 @@ var _ = Describe("addTokens", func() {
 				Expect(evt.Symbol).To(Equal("TKN"))
 				Expect(evt.Magnitude.String()).To(Equal("100000000"))
 			})
+
+            It("Should increase the redeemable counter by 2", func() {
+                cnt, err := TokenWhitelist.RedeemableCounter(nil)
+                Expect(err).ToNot(HaveOccurred())
+                Expect(cnt.String()).To(Equal("2"))
+            })
 
 			Context("When at least one of the added tokens is already supported", func() {
 				It("Should fail", func() {
@@ -105,7 +108,7 @@ var _ = Describe("addTokens", func() {
 			})
 
 			Context("When none of the added tokens is supported", func() {
-				It("Should pass", func() {
+				BeforeEach(func() {
 					var err error
 					tokens := []common.Address{common.HexToAddress("0x4"), common.HexToAddress("0x5")}
 					tx, err = TokenWhitelist.AddTokens(
@@ -128,6 +131,13 @@ var _ = Describe("addTokens", func() {
 					Expect(isGasExhausted(tx, 300000)).To(BeFalse())
 					Expect(isSuccessful(tx)).To(BeTrue())
 				})
+
+
+                It("Should increase the redeemable counter by 2", func() {
+                    cnt, err := TokenWhitelist.RedeemableCounter(nil)
+                    Expect(err).ToNot(HaveOccurred())
+                    Expect(cnt.String()).To(Equal("4"))
+                })
 			})
 
 		})
@@ -177,6 +187,12 @@ var _ = Describe("addTokens", func() {
 				Expect(err).ToNot(HaveOccurred())
 				Expect(it.Next()).To(BeFalse())
 			})
+
+            It("Should not increase the redeemable counter", func() {
+                cnt, err := TokenWhitelist.RedeemableCounter(nil)
+                Expect(err).ToNot(HaveOccurred())
+                Expect(cnt.String()).To(Equal("0"))
+            })
 		})
 
 	})

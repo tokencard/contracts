@@ -29,7 +29,7 @@ var _ = Describe("load TKN", func() {
 	When("one thousand TKN are credited to a random acount", func() {
 
 		BeforeEach(func() {
-			tx, err := TKNBurner.Credit(BankAccount.TransactOpts(), RandomAccount.Address(), big.NewInt(1000))
+			tx, err := TKNBurner.Mint(BankAccount.TransactOpts(), RandomAccount.Address(), big.NewInt(1000))
 			Expect(err).ToNot(HaveOccurred())
 			Backend.Commit()
 			Expect(isSuccessful(tx)).To(BeTrue())
@@ -118,7 +118,7 @@ var _ = Describe("load TKN", func() {
 						Expect(it.Next()).To(BeFalse())
 						Expect(evt.From).To(Equal(RandomAccount.Address()))
 						Expect(evt.To).To(Equal(CryptoFloatAddress))
-						Expect(evt.Amount.String()).To(Equal("444"))
+						Expect(evt.Value.String()).To(Equal("444"))
 					})
 
 					It("should increase the TKN balance of the Float contract by 444", func() {

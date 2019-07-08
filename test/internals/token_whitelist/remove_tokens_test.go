@@ -42,16 +42,11 @@ var _ = Describe("removeTokens", func() {
 
 			Context("When removing a supported token", func() {
 
-				var tx *types.Transaction
 				BeforeEach(func() {
-					var err error
-					tx, err = TokenWhitelist.RemoveTokens(Controller.TransactOpts(), []common.Address{common.HexToAddress("0x2")})
+					tx, err := TokenWhitelist.RemoveTokens(Controller.TransactOpts(), []common.Address{common.HexToAddress("0x2")})
 					Expect(err).ToNot(HaveOccurred())
 					Backend.Commit()
-				})
-
-				It("Should succeed", func() {
-					Expect(isSuccessful(tx)).To(BeTrue())
+                    Expect(isSuccessful(tx)).To(BeTrue())
 				})
 
 				It("Should emit a TokenRemoval event", func() {
@@ -64,37 +59,75 @@ var _ = Describe("removeTokens", func() {
 				})
 
 				It("Should update the tokens map", func() {
-					symbol, magnitude, rate, available, loadable, burnable, lastUpdate, err := TokenWhitelist.GetTokenInfo(nil, common.HexToAddress("0x2"))
+					symbol, magnitude, rate, available, loadable, redeemable, lastUpdate, err := TokenWhitelist.GetTokenInfo(nil, common.HexToAddress("0x2"))
 					Expect(err).ToNot(HaveOccurred())
 					Expect(symbol).To(Equal(""))
 					Expect(magnitude.String()).To(Equal("0"))
 					Expect(rate.String()).To(Equal(big.NewInt(0).String()))
 					Expect(available).To(BeFalse())
 					Expect(loadable).To(BeFalse())
-					Expect(burnable).To(BeFalse())
+					Expect(redeemable).To(BeFalse())
 					Expect(lastUpdate.String()).To(Equal("0"))
 
 					//the other tokens should remain unchanged
-					symbol, magnitude, rate, available, loadable, burnable, lastUpdate, err = TokenWhitelist.GetTokenInfo(nil, common.HexToAddress("0x1"))
+					symbol, magnitude, rate, available, loadable, redeemable, lastUpdate, err = TokenWhitelist.GetTokenInfo(nil, common.HexToAddress("0x1"))
 					Expect(err).ToNot(HaveOccurred())
 					Expect(symbol).To(Equal("OMG"))
 					Expect(magnitude.String()).To(Equal(DecimalsToMagnitude(big.NewInt(18)).String()))
 					Expect(rate.String()).To(Equal(big.NewInt(0).String()))
 					Expect(available).To(BeTrue())
 					Expect(loadable).To(BeTrue())
-					Expect(burnable).To(BeTrue())
+					Expect(redeemable).To(BeTrue())
 					Expect(lastUpdate.String()).To(Equal(big.NewInt(20180913153211).String()))
 
-					symbol, magnitude, rate, available, loadable, burnable, lastUpdate, err = TokenWhitelist.GetTokenInfo(nil, common.HexToAddress("0x3"))
+					symbol, magnitude, rate, available, loadable, redeemable, lastUpdate, err = TokenWhitelist.GetTokenInfo(nil, common.HexToAddress("0x3"))
 					Expect(err).ToNot(HaveOccurred())
 					Expect(symbol).To(Equal("TKN"))
 					Expect(magnitude.String()).To(Equal(DecimalsToMagnitude(big.NewInt(8)).String()))
 					Expect(rate.String()).To(Equal(big.NewInt(0).String()))
 					Expect(available).To(BeTrue())
 					Expect(loadable).To(BeTrue())
-					Expect(burnable).To(BeTrue())
+					Expect(redeemable).To(BeTrue())
 					Expect(lastUpdate.String()).To(Equal(big.NewInt(20180913153211).String()))
 				})
+
+                It("Should decrease the redeemable counter by 1", func() {
+                    cnt, err := TokenWhitelist.RedeemableCounter(nil)
+                    Expect(err).ToNot(HaveOccurred())
+                    Expect(cnt.String()).To(Equal("2"))
+                })
+
+                Context("When removing another supported token", func() {
+
+    				BeforeEach(func() {
+    					tx, err := TokenWhitelist.RemoveTokens(Controller.TransactOpts(), []common.Address{common.HexToAddress("0x3")})
+    					Expect(err).ToNot(HaveOccurred())
+    					Backend.Commit()
+                        Expect(isSuccessful(tx)).To(BeTrue())
+    				})
+
+                    It("Should decrease the redeemable counter by 1", func() {
+                        cnt, err := TokenWhitelist.RedeemableCounter(nil)
+                        Expect(err).ToNot(HaveOccurred())
+                        Expect(cnt.String()).To(Equal("1"))
+                    })
+                })
+
+                Context("When removing an unsupported token", func() {
+
+    				BeforeEach(func() {
+    					tx, err := TokenWhitelist.RemoveTokens(Controller.TransactOpts(ethertest.WithGasLimit(100000)), []common.Address{common.HexToAddress("0x5")})
+    					Expect(err).ToNot(HaveOccurred())
+    					Backend.Commit()
+                        Expect(isSuccessful(tx)).To(BeFalse())
+    				})
+
+                    It("Should NOT decrease the redeemable counter", func() {
+                        cnt, err := TokenWhitelist.RedeemableCounter(nil)
+                        Expect(err).ToNot(HaveOccurred())
+                        Expect(cnt.String()).To(Equal("2"))
+                    })
+                })
 			})
 
 			Context("When removing all supported tokens", func() {
@@ -126,6 +159,12 @@ var _ = Describe("removeTokens", func() {
 					Expect(it.Next()).To(BeFalse())
 					Expect(evt.Token).To(Equal(common.HexToAddress("0x3")))
 				})
+
+                It("Should decrease the redeemable counter down to 0", func() {
+                    cnt, err := TokenWhitelist.RedeemableCounter(nil)
+                    Expect(err).ToNot(HaveOccurred())
+                    Expect(cnt.String()).To(Equal("0"))
+                })
 			})
 
 			Context("When removing all supported tokens but a duplicate is passed", func() {
@@ -169,6 +208,12 @@ var _ = Describe("removeTokens", func() {
 					Expect(err).ToNot(HaveOccurred())
 					Expect(it.Next()).To(BeFalse())
 				})
+
+                It("Should leave the redeemable counter intact", func() {
+                    cnt, err := TokenWhitelist.RedeemableCounter(nil)
+                    Expect(err).ToNot(HaveOccurred())
+                    Expect(cnt.String()).To(Equal("3"))
+                })
 			})
 
 		})

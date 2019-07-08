@@ -80,7 +80,7 @@ contract Licence is Claimable, Ownable {
     }
 
     /// @notice Constructor initializes the card licence contract.
-    /// @param _owner_ is the owner account of the wallet contract.
+    /// @param _owner_ is the owner account of the licence contract.
     /// @param _transferable_ indicates whether the contract ownership can be transferred.
     /// @param _licence_ is the initial card licence amount. this number is scaled 10 = 1%, 9 = 0.9%
     /// @param _float_ is the address of the multi-sig cryptocurrency float contract.

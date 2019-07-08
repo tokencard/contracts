@@ -48,14 +48,14 @@ var _ = Describe("tokenWhitelistable", func() {
 		})
 
 		It("Should update the token mapping", func() {
-			symbol, magnitude, rate, available, loadable, burnable, lastUpdate, err := TokenWhitelistableExporter.GetStablecoinInfo(nil)
+			symbol, magnitude, rate, available, loadable, redeemable, lastUpdate, err := TokenWhitelistableExporter.GetStablecoinInfo(nil)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(symbol).To(Equal("DAI"))
 			Expect(magnitude.String()).To(Equal(DecimalsToMagnitude(big.NewInt(18)).String()))
 			Expect(rate.String()).To(Equal("0"))
 			Expect(available).To(BeTrue())
 			Expect(loadable).To(BeTrue())
-			Expect(burnable).To(BeTrue())
+			Expect(redeemable).To(BeTrue())
 			Expect(lastUpdate.String()).To(Equal(big.NewInt(20180913153211).String()))
 		})
 	})
@@ -77,14 +77,14 @@ var _ = Describe("tokenWhitelistable", func() {
 		})
 
 		It("Should update the token mapping", func() {
-			symbol, magnitude, rate, available, loadable, burnable, lastUpdate, err := TokenWhitelistableExporter.GetTokenInfo(nil, common.HexToAddress("0x1"))
+			symbol, magnitude, rate, available, loadable, redeemable, lastUpdate, err := TokenWhitelistableExporter.GetTokenInfo(nil, common.HexToAddress("0x1"))
 			Expect(err).ToNot(HaveOccurred())
 			Expect(symbol).To(Equal("ETH"))
 			Expect(magnitude.String()).To(Equal(DecimalsToMagnitude(big.NewInt(18)).String()))
 			Expect(rate.String()).To(Equal("0"))
 			Expect(available).To(BeTrue())
 			Expect(loadable).To(BeTrue())
-			Expect(burnable).To(BeTrue())
+			Expect(redeemable).To(BeTrue())
 			Expect(lastUpdate.String()).To(Equal(big.NewInt(20180913153211).String()))
 		})
 
@@ -107,7 +107,7 @@ var _ = Describe("tokenWhitelistable", func() {
 		})
 
 		It("Should return true", func() {
-			ld, err := TokenWhitelistableExporter.IsTokenBurnable(nil, common.HexToAddress("0x1"))
+			ld, err := TokenWhitelistableExporter.IsTokenRedeemable(nil, common.HexToAddress("0x1"))
 			Expect(err).ToNot(HaveOccurred())
 			Expect(ld).To(BeTrue())
 		})
@@ -142,14 +142,14 @@ var _ = Describe("tokenWhitelistable", func() {
 			})
 
 			It("Should update the token rate", func() {
-				symbol, magnitude, rate, available, loadable, burnable, lastUpdate, err := TokenWhitelist.GetTokenInfo(nil, common.HexToAddress("0x1"))
+				symbol, magnitude, rate, available, loadable, redeemable, lastUpdate, err := TokenWhitelist.GetTokenInfo(nil, common.HexToAddress("0x1"))
 				Expect(err).ToNot(HaveOccurred())
 				Expect(symbol).To(Equal("ETH"))
 				Expect(magnitude.String()).To(Equal(DecimalsToMagnitude(big.NewInt(18)).String()))
 				Expect(rate.String()).To(Equal(big.NewInt(555).String()))
 				Expect(available).To(BeTrue())
 				Expect(loadable).To(BeTrue())
-				Expect(burnable).To(BeTrue())
+				Expect(redeemable).To(BeTrue())
 				Expect(lastUpdate.String()).To(Equal(big.NewInt(20180913153211).String()))
 			})
 
@@ -166,5 +166,57 @@ var _ = Describe("tokenWhitelistable", func() {
 		})
 
 	})
+
+    When("3 tokens are added: 2 loadable, 1 redeemable", func() {
+        BeforeEach(func() {
+            var err error
+            tokens := []common.Address{common.HexToAddress("0x0"), common.HexToAddress("0x1"), common.HexToAddress("0x2")}
+            tx, err := TokenWhitelist.AddTokens(
+                Controller.TransactOpts(),
+                tokens,
+                StringsToByte32(
+                    "BNT",
+                    "TKN",
+                    "YAN",
+                ),
+                []*big.Int{
+                    DecimalsToMagnitude(big.NewInt(18)),
+                    DecimalsToMagnitude(big.NewInt(8)),
+                    DecimalsToMagnitude(big.NewInt(18)),
+                },
+                []bool{false, true, true},
+                []bool{false, false, true},
+                big.NewInt(20180913153211),
+            )
+            Expect(err).ToNot(HaveOccurred())
+            Backend.Commit()
+            Expect(isSuccessful(tx)).To(BeTrue())
+        })
+
+        It("Should return 1 redeemable Token", func() {
+			arr, err := TokenWhitelistableExporter.RedeemableTokens(nil)
+			Expect(err).ToNot(HaveOccurred())
+			Expect(arr).To(Equal([]common.Address{common.HexToAddress("0x2")}))
+		})
+
+        It("Should return 1 redeemable Token", func() {
+			arr, err := TokenWhitelist.RedeemableTokens(nil)
+			Expect(err).ToNot(HaveOccurred())
+			Expect(arr).To(Equal([]common.Address{common.HexToAddress("0x2")}))
+		})
+
+        It("Should update the TokenAddressArray", func() {
+			arr, err := TokenWhitelistableExporter.TokenAddressArray(nil)
+            tokens := []common.Address{common.HexToAddress("0x0"), common.HexToAddress("0x1"), common.HexToAddress("0x2")}
+			Expect(err).ToNot(HaveOccurred())
+			Expect(arr).To(Equal(tokens))
+		})
+
+        It("Should increase the redeemable counter by 1", func() {
+            cnt, err := TokenWhitelist.RedeemableCounter(nil)
+            Expect(err).ToNot(HaveOccurred())
+            Expect(cnt.String()).To(Equal("1"))
+        })
+    })
 
 })

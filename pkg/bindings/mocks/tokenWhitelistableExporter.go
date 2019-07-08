@@ -28,10 +28,10 @@ var (
 )
 
 // TokenWhitelistableExporterABI is the input ABI used to generate the binding from.
-const TokenWhitelistableExporterABI = "[{\"constant\":true,\"inputs\":[{\"name\":\"_a\",\"type\":\"address\"}],\"name\":\"isTokenBurnable\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_a\",\"type\":\"address\"}],\"name\":\"isTokenLoadable\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_a\",\"type\":\"address\"}],\"name\":\"getTokenInfo\",\"outputs\":[{\"name\":\"\",\"type\":\"string\"},{\"name\":\"\",\"type\":\"uint256\"},{\"name\":\"\",\"type\":\"uint256\"},{\"name\":\"\",\"type\":\"bool\"},{\"name\":\"\",\"type\":\"bool\"},{\"name\":\"\",\"type\":\"bool\"},{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_a\",\"type\":\"address\"}],\"name\":\"isTokenAvailable\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"getStablecoinInfo\",\"outputs\":[{\"name\":\"\",\"type\":\"string\"},{\"name\":\"\",\"type\":\"uint256\"},{\"name\":\"\",\"type\":\"uint256\"},{\"name\":\"\",\"type\":\"bool\"},{\"name\":\"\",\"type\":\"bool\"},{\"name\":\"\",\"type\":\"bool\"},{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"tokenAddressArray\",\"outputs\":[{\"name\":\"\",\"type\":\"address[]\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"ensRegistry\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"tokenWhitelistNode\",\"outputs\":[{\"name\":\"\",\"type\":\"bytes32\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_token\",\"type\":\"address\"},{\"name\":\"_rate\",\"type\":\"uint256\"},{\"name\":\"_updateDate\",\"type\":\"uint256\"}],\"name\":\"updateTokenRate\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"name\":\"_ens_\",\"type\":\"address\"},{\"name\":\"_tokenWhitelistName_\",\"type\":\"bytes32\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"}]"
+const TokenWhitelistableExporterABI = "[{\"constant\":true,\"inputs\":[{\"name\":\"_a\",\"type\":\"address\"}],\"name\":\"isTokenLoadable\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_a\",\"type\":\"address\"}],\"name\":\"getTokenInfo\",\"outputs\":[{\"name\":\"\",\"type\":\"string\"},{\"name\":\"\",\"type\":\"uint256\"},{\"name\":\"\",\"type\":\"uint256\"},{\"name\":\"\",\"type\":\"bool\"},{\"name\":\"\",\"type\":\"bool\"},{\"name\":\"\",\"type\":\"bool\"},{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_a\",\"type\":\"address\"}],\"name\":\"isTokenAvailable\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"getStablecoinInfo\",\"outputs\":[{\"name\":\"\",\"type\":\"string\"},{\"name\":\"\",\"type\":\"uint256\"},{\"name\":\"\",\"type\":\"uint256\"},{\"name\":\"\",\"type\":\"bool\"},{\"name\":\"\",\"type\":\"bool\"},{\"name\":\"\",\"type\":\"bool\"},{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"tokenAddressArray\",\"outputs\":[{\"name\":\"\",\"type\":\"address[]\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"redeemableTokens\",\"outputs\":[{\"name\":\"\",\"type\":\"address[]\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"ensRegistry\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"tokenWhitelistNode\",\"outputs\":[{\"name\":\"\",\"type\":\"bytes32\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_token\",\"type\":\"address\"},{\"name\":\"_rate\",\"type\":\"uint256\"},{\"name\":\"_updateDate\",\"type\":\"uint256\"}],\"name\":\"updateTokenRate\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_a\",\"type\":\"address\"}],\"name\":\"isTokenRedeemable\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"name\":\"_ens_\",\"type\":\"address\"},{\"name\":\"_tokenWhitelistName_\",\"type\":\"bytes32\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"}]"
 
 // TokenWhitelistableExporterBin is the compiled bytecode used for deploying new contracts.
-const TokenWhitelistableExporterBin = `608060405234801561001057600080fd5b506040516108fb3803806108fb8339818101604052604081101561003357600080fd5b508051602090910151600180546001600160a01b039384166001600160a01b0319918216179182905560008054909116919093161790915560025561087e8061007d6000396000f3fe608060405234801561001057600080fd5b50600436106100935760003560e01c80633efec5e9116100665780633efec5e9146101ee578063443dd2a4146101f65780637d73b2311461024e578063877337b014610272578063d545782e1461028c57610093565b80630cde34b01461009857806317e73794146100d25780631f69565f146100f85780632ff0fcaa146101c8575b600080fd5b6100be600480360360208110156100ae57600080fd5b50356001600160a01b03166102c0565b604080519115158252519081900360200190f35b6100be600480360360208110156100e857600080fd5b50356001600160a01b03166102d1565b61011e6004803603602081101561010e57600080fd5b50356001600160a01b03166102dc565b6040805160208082018990529181018790528515156060820152841515608082015283151560a082015260c0810183905260e08082528951908201528851909182916101008301918b019080838360005b8381101561018757818101518382015260200161016f565b50505050905090810190601f1680156101b45780820380516001836020036101000a031916815260200191505b509850505050505050505060405180910390f35b6100be600480360360208110156101de57600080fd5b50356001600160a01b0316610307565b61011e610312565b6101fe61033b565b60408051602080825283518183015283519192839290830191858101910280838360005b8381101561023a578181015183820152602001610222565b505050509050019250505060405180910390f35b61025661034a565b604080516001600160a01b039092168252519081900360200190f35b61027a610359565b60408051918252519081900360200190f35b6102be600480360360608110156102a257600080fd5b506001600160a01b03813516906020810135906040013561035f565b005b60006102cb8261036f565b92915050565b60006102cb82610388565b60606000806000806000806102f0886103a2565b959e949d50929b5090995097509550909350915050565b60006102cb826104cf565b60606000806000806000806103256104e9565b959d949c50929a50909850965094509092509050565b60606103456105f1565b905090565b6001546001600160a01b031690565b60025490565b61036a8383836106c6565b505050565b60008061037b836103a2565b5098975050505050505050565b600080610394836103a2565b509098975050505050505050565b60606000806000806000806103b8600254610755565b6001600160a01b0316631f69565f896040518263ffffffff1660e01b815260040180826001600160a01b03166001600160a01b0316815260200191505060006040518083038186803b15801561040d57600080fd5b505afa158015610421573d6000803e3d6000fd5b505050506040513d6000823e601f3d908101601f1916820160405260e081101561044a57600080fd5b81019080805164010000000081111561046257600080fd5b8201602081018481111561047557600080fd5b815164010000000081118282018710171561048f57600080fd5b5050602082015160408301516060840151608085015160a086015160c090960151949e50929c50909a509850965090945092505050919395979092949650565b6000806104db836103a2565b509198975050505050505050565b60606000806000806000806104ff600254610755565b6001600160a01b0316633efec5e96040518163ffffffff1660e01b815260040160006040518083038186803b15801561053757600080fd5b505afa15801561054b573d6000803e3d6000fd5b505050506040513d6000823e601f3d908101601f1916820160405260e081101561057457600080fd5b81019080805164010000000081111561058c57600080fd5b8201602081018481111561059f57600080fd5b81516401000000008111828201871017156105b957600080fd5b5050602082015160408301516060840151608085015160a086015160c090960151949f939e50919c509a509850919650945092505050565b60606105fe600254610755565b6001600160a01b031663443dd2a46040518163ffffffff1660e01b815260040160006040518083038186803b15801561063657600080fd5b505afa15801561064a573d6000803e3d6000fd5b505050506040513d6000823e601f3d908101601f19168201604052602081101561067357600080fd5b81019080805164010000000081111561068b57600080fd5b8201602081018481111561069e57600080fd5b81518560208202830111640100000000821117156106bb57600080fd5b509094505050505090565b6106d1600254610755565b6001600160a01b031663d545782e8484846040518463ffffffff1660e01b815260040180846001600160a01b03166001600160a01b031681526020018381526020018281526020019350505050600060405180830381600087803b15801561073857600080fd5b505af115801561074c573d6000803e3d6000fd5b50505050505050565b6000805460408051630178b8bf60e01b81526004810185905290516001600160a01b0390921691630178b8bf91602480820192602092909190829003018186803b1580156107a257600080fd5b505afa1580156107b6573d6000803e3d6000fd5b505050506040513d60208110156107cc57600080fd5b505160408051631d9dabef60e11b81526004810185905290516001600160a01b0390921691633b3b57de91602480820192602092909190829003018186803b15801561081757600080fd5b505afa15801561082b573d6000803e3d6000fd5b505050506040513d602081101561084157600080fd5b50519291505056fea265627a7a72305820fcabb720706b301b88e485a1fcad723e59970c433b5e2a57babfd370c5f7d92c64736f6c634300050a0032`
+const TokenWhitelistableExporterBin = `608060405234801561001057600080fd5b5060405161095d38038061095d8339818101604052604081101561003357600080fd5b508051602090910151600180546001600160a01b039384166001600160a01b031991821617918290556000805490911691909316179091556002556108e08061007d6000396000f3fe608060405234801561001057600080fd5b506004361061009e5760003560e01c806344b049bc1161006657806344b049bc146102335780637d73b2311461023b578063877337b01461025f578063d545782e14610279578063dcc922bc146102ad5761009e565b806317e73794146100a35780631f69565f146100dd5780632ff0fcaa146101ad5780633efec5e9146101d3578063443dd2a4146101db575b600080fd5b6100c9600480360360208110156100b957600080fd5b50356001600160a01b03166102d3565b604080519115158252519081900360200190f35b610103600480360360208110156100f357600080fd5b50356001600160a01b03166102e4565b6040805160208082018990529181018790528515156060820152841515608082015283151560a082015260c0810183905260e08082528951908201528851909182916101008301918b019080838360005b8381101561016c578181015183820152602001610154565b50505050905090810190601f1680156101995780820380516001836020036101000a031916815260200191505b509850505050505050505060405180910390f35b6100c9600480360360208110156101c357600080fd5b50356001600160a01b031661030f565b61010361031a565b6101e3610343565b60408051602080825283518183015283519192839290830191858101910280838360005b8381101561021f578181015183820152602001610207565b505050509050019250505060405180910390f35b6101e3610352565b61024361035c565b604080516001600160a01b039092168252519081900360200190f35b61026761036b565b60408051918252519081900360200190f35b6102ab6004803603606081101561028f57600080fd5b506001600160a01b038135169060208101359060400135610371565b005b6100c9600480360360208110156102c357600080fd5b50356001600160a01b0316610381565b60006102de8261038c565b92915050565b60606000806000806000806102f8886103a6565b959e949d50929b5090995097509550909350915050565b60006102de826104d3565b606060008060008060008061032d6104ed565b959d949c50929a50909850965094509092509050565b606061034d6105f5565b905090565b606061034d6106ca565b6001546001600160a01b031690565b60025490565b61037c83838361070f565b505050565b60006102de8261079e565b600080610398836103a6565b509098975050505050505050565b60606000806000806000806103bc6002546107b7565b6001600160a01b0316631f69565f896040518263ffffffff1660e01b815260040180826001600160a01b03166001600160a01b0316815260200191505060006040518083038186803b15801561041157600080fd5b505afa158015610425573d6000803e3d6000fd5b505050506040513d6000823e601f3d908101601f1916820160405260e081101561044e57600080fd5b81019080805164010000000081111561046657600080fd5b8201602081018481111561047957600080fd5b815164010000000081118282018710171561049357600080fd5b5050602082015160408301516060840151608085015160a086015160c090960151949e50929c50909a509850965090945092505050919395979092949650565b6000806104df836103a6565b509198975050505050505050565b60606000806000806000806105036002546107b7565b6001600160a01b0316633efec5e96040518163ffffffff1660e01b815260040160006040518083038186803b15801561053b57600080fd5b505afa15801561054f573d6000803e3d6000fd5b505050506040513d6000823e601f3d908101601f1916820160405260e081101561057857600080fd5b81019080805164010000000081111561059057600080fd5b820160208101848111156105a357600080fd5b81516401000000008111828201871017156105bd57600080fd5b5050602082015160408301516060840151608085015160a086015160c090960151949f939e50919c509a509850919650945092505050565b60606106026002546107b7565b6001600160a01b031663443dd2a46040518163ffffffff1660e01b815260040160006040518083038186803b15801561063a57600080fd5b505afa15801561064e573d6000803e3d6000fd5b505050506040513d6000823e601f3d908101601f19168201604052602081101561067757600080fd5b81019080805164010000000081111561068f57600080fd5b820160208101848111156106a257600080fd5b81518560208202830111640100000000821117156106bf57600080fd5b509094505050505090565b60606106d76002546107b7565b6001600160a01b03166344b049bc6040518163ffffffff1660e01b815260040160006040518083038186803b15801561063a57600080fd5b61071a6002546107b7565b6001600160a01b031663d545782e8484846040518463ffffffff1660e01b815260040180846001600160a01b03166001600160a01b031681526020018381526020018281526020019350505050600060405180830381600087803b15801561078157600080fd5b505af1158015610795573d6000803e3d6000fd5b50505050505050565b6000806107aa836103a6565b5098975050505050505050565b6000805460408051630178b8bf60e01b81526004810185905290516001600160a01b0390921691630178b8bf91602480820192602092909190829003018186803b15801561080457600080fd5b505afa158015610818573d6000803e3d6000fd5b505050506040513d602081101561082e57600080fd5b505160408051631d9dabef60e11b81526004810185905290516001600160a01b0390921691633b3b57de91602480820192602092909190829003018186803b15801561087957600080fd5b505afa15801561088d573d6000803e3d6000fd5b505050506040513d60208110156108a357600080fd5b50519291505056fea265627a7a72305820d037c0b31f8102d7db8d21d8341099cafc6e65dd2bcb03970df0b2a0d07f9ed264736f6c634300050a0032`
 
 // DeployTokenWhitelistableExporter deploys a new Ethereum contract, binding an instance of TokenWhitelistableExporter to it.
 func DeployTokenWhitelistableExporter(auth *bind.TransactOpts, backend bind.ContractBackend, _ens_ common.Address, _tokenWhitelistName_ [32]byte) (common.Address, *types.Transaction, *TokenWhitelistableExporter, error) {
@@ -320,32 +320,6 @@ func (_TokenWhitelistableExporter *TokenWhitelistableExporterCallerSession) IsTo
 	return _TokenWhitelistableExporter.Contract.IsTokenAvailable(&_TokenWhitelistableExporter.CallOpts, _a)
 }
 
-// IsTokenBurnable is a free data retrieval call binding the contract method 0x0cde34b0.
-//
-// Solidity: function isTokenBurnable(address _a) constant returns(bool)
-func (_TokenWhitelistableExporter *TokenWhitelistableExporterCaller) IsTokenBurnable(opts *bind.CallOpts, _a common.Address) (bool, error) {
-	var (
-		ret0 = new(bool)
-	)
-	out := ret0
-	err := _TokenWhitelistableExporter.contract.Call(opts, out, "isTokenBurnable", _a)
-	return *ret0, err
-}
-
-// IsTokenBurnable is a free data retrieval call binding the contract method 0x0cde34b0.
-//
-// Solidity: function isTokenBurnable(address _a) constant returns(bool)
-func (_TokenWhitelistableExporter *TokenWhitelistableExporterSession) IsTokenBurnable(_a common.Address) (bool, error) {
-	return _TokenWhitelistableExporter.Contract.IsTokenBurnable(&_TokenWhitelistableExporter.CallOpts, _a)
-}
-
-// IsTokenBurnable is a free data retrieval call binding the contract method 0x0cde34b0.
-//
-// Solidity: function isTokenBurnable(address _a) constant returns(bool)
-func (_TokenWhitelistableExporter *TokenWhitelistableExporterCallerSession) IsTokenBurnable(_a common.Address) (bool, error) {
-	return _TokenWhitelistableExporter.Contract.IsTokenBurnable(&_TokenWhitelistableExporter.CallOpts, _a)
-}
-
 // IsTokenLoadable is a free data retrieval call binding the contract method 0x17e73794.
 //
 // Solidity: function isTokenLoadable(address _a) constant returns(bool)
@@ -370,6 +344,58 @@ func (_TokenWhitelistableExporter *TokenWhitelistableExporterSession) IsTokenLoa
 // Solidity: function isTokenLoadable(address _a) constant returns(bool)
 func (_TokenWhitelistableExporter *TokenWhitelistableExporterCallerSession) IsTokenLoadable(_a common.Address) (bool, error) {
 	return _TokenWhitelistableExporter.Contract.IsTokenLoadable(&_TokenWhitelistableExporter.CallOpts, _a)
+}
+
+// IsTokenRedeemable is a free data retrieval call binding the contract method 0xdcc922bc.
+//
+// Solidity: function isTokenRedeemable(address _a) constant returns(bool)
+func (_TokenWhitelistableExporter *TokenWhitelistableExporterCaller) IsTokenRedeemable(opts *bind.CallOpts, _a common.Address) (bool, error) {
+	var (
+		ret0 = new(bool)
+	)
+	out := ret0
+	err := _TokenWhitelistableExporter.contract.Call(opts, out, "isTokenRedeemable", _a)
+	return *ret0, err
+}
+
+// IsTokenRedeemable is a free data retrieval call binding the contract method 0xdcc922bc.
+//
+// Solidity: function isTokenRedeemable(address _a) constant returns(bool)
+func (_TokenWhitelistableExporter *TokenWhitelistableExporterSession) IsTokenRedeemable(_a common.Address) (bool, error) {
+	return _TokenWhitelistableExporter.Contract.IsTokenRedeemable(&_TokenWhitelistableExporter.CallOpts, _a)
+}
+
+// IsTokenRedeemable is a free data retrieval call binding the contract method 0xdcc922bc.
+//
+// Solidity: function isTokenRedeemable(address _a) constant returns(bool)
+func (_TokenWhitelistableExporter *TokenWhitelistableExporterCallerSession) IsTokenRedeemable(_a common.Address) (bool, error) {
+	return _TokenWhitelistableExporter.Contract.IsTokenRedeemable(&_TokenWhitelistableExporter.CallOpts, _a)
+}
+
+// RedeemableTokens is a free data retrieval call binding the contract method 0x44b049bc.
+//
+// Solidity: function redeemableTokens() constant returns(address[])
+func (_TokenWhitelistableExporter *TokenWhitelistableExporterCaller) RedeemableTokens(opts *bind.CallOpts) ([]common.Address, error) {
+	var (
+		ret0 = new([]common.Address)
+	)
+	out := ret0
+	err := _TokenWhitelistableExporter.contract.Call(opts, out, "redeemableTokens")
+	return *ret0, err
+}
+
+// RedeemableTokens is a free data retrieval call binding the contract method 0x44b049bc.
+//
+// Solidity: function redeemableTokens() constant returns(address[])
+func (_TokenWhitelistableExporter *TokenWhitelistableExporterSession) RedeemableTokens() ([]common.Address, error) {
+	return _TokenWhitelistableExporter.Contract.RedeemableTokens(&_TokenWhitelistableExporter.CallOpts)
+}
+
+// RedeemableTokens is a free data retrieval call binding the contract method 0x44b049bc.
+//
+// Solidity: function redeemableTokens() constant returns(address[])
+func (_TokenWhitelistableExporter *TokenWhitelistableExporterCallerSession) RedeemableTokens() ([]common.Address, error) {
+	return _TokenWhitelistableExporter.Contract.RedeemableTokens(&_TokenWhitelistableExporter.CallOpts)
 }
 
 // TokenAddressArray is a free data retrieval call binding the contract method 0x443dd2a4.
