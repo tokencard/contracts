@@ -21,6 +21,7 @@ pragma solidity ^0.5.10;
 import "./licence.sol";
 import "./internals/ownable.sol";
 import "./internals/controllable.sol";
+import "./internals/transferrable.sol";
 import "./internals/ensResolvable.sol";
 import "./internals/tokenWhitelistable.sol";
 import "./externals/SafeMath.sol";
@@ -480,7 +481,7 @@ contract LoadLimit is ControllableOwnable {
 
 
 //// @title Asset store with extra security features.
-contract Vault is AddressWhitelist, SpendLimit, ERC165, TokenWhitelistable {
+contract Vault is AddressWhitelist, SpendLimit, ERC165, Transferrable, TokenWhitelistable {
 
     using SafeMath for uint256;
     using SafeERC20 for ERC20;
@@ -542,11 +543,7 @@ contract Vault is AddressWhitelist, SpendLimit, ERC165, TokenWhitelistable {
             _spendLimit._enforceLimit(etherValue);
         }
         // Transfer token or ether based on the provided address.
-        if (_asset != address(0)) {
-            ERC20(_asset).safeTransfer(_to, _amount);
-        } else {
-            _to.transfer(_amount);
-        }
+        _safeTransfer(_to, _asset, _amount);
         // Emit the transfer event.
         emit Transferred(_to, _asset, _amount);
     }
