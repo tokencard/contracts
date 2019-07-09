@@ -12,9 +12,24 @@ import (
 	"github.com/tokencard/contracts/pkg/bindings"
 	"github.com/tokencard/contracts/pkg/bindings/internals"
 	. "github.com/tokencard/contracts/test/shared"
+    "golang.org/x/crypto/sha3"
 )
 
 const gasLimit = 2000000
+
+func stringToQueryID(url string) [32]byte {
+	var id = [32]byte{}
+	sha := sha3.NewLegacyKeccak256()
+	_, err := sha.Write([]byte(url))
+	Expect(err).ToNot(HaveOccurred())
+
+	idSlice := sha.Sum(nil)
+	Expect(len(idSlice)).To(Equal(32))
+
+	copy(id[:], idSlice)
+
+	return id
+}
 
 func init() {
 	TestRig.AddCoverageForContracts(

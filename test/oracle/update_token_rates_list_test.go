@@ -49,9 +49,13 @@ var _ = Describe("updateRatesList", func() {
 				evt := it.Event
 				Expect(it.Next()).To(BeTrue())
 				Expect(evt.Symbol).To(Equal("BNT"))
+                id := stringToQueryID("https://min-api.cryptocompare.com/data/price?fsym=BNT&tsyms=ETH&sign=true")
+                Expect(evt.QueryID).To(Equal(id))
 				evt = it.Event
 				Expect(it.Next()).To(BeFalse())
-				Expect(evt.Symbol).To(Equal("DGX"))
+                Expect(evt.Symbol).To(Equal("DGX"))
+                id = stringToQueryID("https://min-api.cryptocompare.com/data/price?fsym=DGX&tsyms=ETH&sign=true")
+                Expect(evt.QueryID).To(Equal(id))
 			})
 			It("Should transfer value to oracle contract", func() {
 				b, err := Backend.BalanceAt(context.Background(), OracleAddress, nil)
