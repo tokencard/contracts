@@ -1,21 +1,24 @@
 pragma solidity ^0.5.7;
 
+
 import "./externals/ERC20.sol";
 import "./externals/SafeMath.sol";
-import "./internals/claimable.sol";
+import "./internals/transferrable.sol";
+import "./internals/burner.sol";
 import "./internals/ownable.sol";
 import "./internals/tokenWhitelistable.sol";
-import "./mocks/burnerToken.sol";
 
 
 // A TokenHolder holds token assets for a redeemable token. When the contract
 // calls the burn method, a share of the tokens held by this contract are
 // disbursed to the burner.
-contract Holder is Ownable, Claimable, ENSResolvable, TokenWhitelistable {
+contract Holder is Ownable, Transferrable, ENSResolvable, TokenWhitelistable {
 
     using SafeMath for uint256;
 
     event Received(address _from, uint _amount);
+    event CashAndBurned(address _to, address _asset, uint _amount);
+    event Claimed(address _to, address _asset, uint _amount);
 
     /// @dev Check if the sender is the burner contract
     modifier onlyBurner() {
@@ -51,7 +54,9 @@ contract Holder is Ownable, Claimable, ENSResolvable, TokenWhitelistable {
         for (uint i = 0; i < redeemableAddresses.length; i++) {
             uint redeemableBalance = balance(redeemableAddresses[i]);
             if (redeemableBalance > 0) {
-                _claim(to, redeemableAddresses[i], redeemableBalance.mul(amount).div(supply));
+                uint redeemableAmount = redeemableBalance.mul(amount).div(supply);
+                _safeTransfer(to, redeemableAddresses[i], redeemableAmount);
+                emit CashAndBurned(to, redeemableAddresses[i], redeemableAmount);
             }
         }
         return true;
@@ -63,7 +68,8 @@ contract Holder is Ownable, Claimable, ENSResolvable, TokenWhitelistable {
             require(!_isTokenRedeemable(_nonRedeemableAddresses[i]), "redeemables cannot be claimed");
             uint claimBalance = balance(_nonRedeemableAddresses[i]);
             if (claimBalance > 0) {
-                _claim(_to, _nonRedeemableAddresses[i], claimBalance);
+                _safeTransfer(_to, _nonRedeemableAddresses[i], claimBalance);
+                emit Claimed(_to, _nonRedeemableAddresses[i], claimBalance);
             }
         }
         return true;

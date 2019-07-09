@@ -19,7 +19,7 @@
 pragma solidity ^0.5.10;
 
 import "./internals/controllable.sol";
-import "./internals/claimable.sol";
+import "./internals/transferrable.sol";
 import "./internals/ensResolvable.sol";
 import "./internals/date.sol";
 import "./internals/parseIntScientific.sol";
@@ -30,7 +30,7 @@ import "./externals/base64.sol";
 
 
 /// @title Oracle provides asset exchange rates and conversion functionality.
-contract Oracle is ENSResolvable, usingOraclize, Claimable, Base64, Date, Controllable, ParseIntScientific, TokenWhitelistable {
+contract Oracle is ENSResolvable, usingOraclize, Transferrable, Base64, Date, Controllable, ParseIntScientific, TokenWhitelistable {
     using strings for *;
     using SafeMath for uint256;
 
@@ -47,6 +47,8 @@ contract Oracle is ENSResolvable, usingOraclize, Claimable, Base64, Date, Contro
     event VerifiedProof(bytes _publicKey, string _result);
 
     event SetCryptoComparePublicKey(address _sender, bytes _publicKey);
+
+    event Claimed(address _to, address _asset, uint _amount);
 
     /**********************/
     /*     Constants     */
@@ -108,7 +110,8 @@ contract Oracle is ENSResolvable, usingOraclize, Claimable, Base64, Date, Contro
 
     /// @notice Withdraw tokens from the smart contract to the specified account.
     function claim(address payable _to, address _asset, uint _amount) external onlyController {
-        _claim(_to, _asset, _amount);
+        _safeTransfer(_to, _asset, _amount);
+        emit Claimed(_to, _asset, _amount);
     }
 
     /// @notice Handle Oraclize query callback and verifiy the provided origin proof.
