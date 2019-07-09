@@ -21,7 +21,7 @@ pragma solidity ^0.5.10;
 import "./externals/SafeMath.sol";
 import "./externals/SafeERC20.sol";
 import "./internals/ownable.sol";
-import "./internals/claimable.sol";
+import "./internals/transferrable.sol";
 
 /// @title ILicence interface describes methods for loading a TokenCard and updating licence amount.
 interface ILicence {
@@ -32,7 +32,7 @@ interface ILicence {
 
 /// @title Licence loads the TokenCard and transfers the licence amout to the TKN Holder Contract.
 /// @notice the rest of the amount gets sent to the CryptoFloat
-contract Licence is Claimable, Ownable {
+contract Licence is Transferrable, Ownable {
 
     using SafeMath for uint256;
     using SafeERC20 for ERC20;
@@ -52,7 +52,7 @@ contract Licence is Claimable, Ownable {
     event TransferredToTokenHolder(address _from, address _to, address _asset, uint _amount);
     event TransferredToCryptoFloat(address _from, address _to, address _asset, uint _amount);
 
-    event LogTokenTransfer(address _asset, address _to, uint _amount);
+    event Claimed(address _to, address _asset, uint _amount);
 
     /// @notice This is 100% scaled up by a factor of 10 to give us an extra 1 decimal place of precision
     uint constant public MAX_AMOUNT_SCALE = 1000;
@@ -223,7 +223,8 @@ contract Licence is Claimable, Ownable {
 
     //// @notice Withdraw tokens from the smart contract to the specified account.
     function claim(address payable _to, address _asset, uint _amount) external onlyOwner {
-        _claim(_to, _asset, _amount);
+        _safeTransfer(_to, _asset, _amount);
+        emit Claimed(_to, _asset, _amount);
     }
 
     /// @notice returns whether or not the CryptoFloat address is locked

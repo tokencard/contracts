@@ -20,7 +20,7 @@ pragma solidity ^0.5.10;
 
 import "./ownable.sol";
 import "./controllable.sol";
-import "./claimable.sol";
+import "./transferrable.sol";
 import "../externals/strings.sol";
 import "../externals/SafeMath.sol";
 
@@ -36,7 +36,7 @@ interface ITokenWhitelist {
 
 
 /// @title TokenWhitelist stores a list of tokens used by the Consumer Contract Wallet, the Oracle, the TKN Holder and the TKN Licence Contract
-contract TokenWhitelist is ENSResolvable, Controllable, Ownable, Claimable {
+contract TokenWhitelist is ENSResolvable, Controllable, Ownable, Transferrable {
     using strings for *;
     using SafeMath for uint256;
 
@@ -44,6 +44,8 @@ contract TokenWhitelist is ENSResolvable, Controllable, Ownable, Claimable {
 
     event AddedToken(address _sender, address _token, string _symbol, uint _magnitude, bool _loadable, bool _redeemable);
     event RemovedToken(address _sender, address _token);
+
+    event Claimed(address _to, address _asset, uint _amount);
 
     struct Token {
         string symbol;    // Token symbol
@@ -163,7 +165,8 @@ contract TokenWhitelist is ENSResolvable, Controllable, Ownable, Claimable {
 
     //// @notice Withdraw tokens from the smart contract to the specified account.
     function claim(address payable _to, address _asset, uint _amount) external onlyOwner {
-        _claim(_to, _asset, _amount);
+        _safeTransfer(_to, _asset, _amount);
+        emit Claimed(_to, _asset, _amount);
     }
 
     /// @notice This returns all of the fields for a given token
