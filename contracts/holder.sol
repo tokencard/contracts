@@ -1,11 +1,12 @@
 pragma solidity ^0.5.7;
 
+
 import "./externals/ERC20.sol";
 import "./externals/SafeMath.sol";
 import "./internals/transferrable.sol";
+import "./internals/burner.sol";
 import "./internals/ownable.sol";
 import "./internals/tokenWhitelistable.sol";
-import "./mocks/burnerToken.sol";
 
 
 // A TokenHolder holds token assets for a redeemable token. When the contract
