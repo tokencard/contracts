@@ -15,6 +15,8 @@ contract Holder is Ownable, Claimable, ENSResolvable, TokenWhitelistable {
 
     using SafeMath for uint256;
 
+    event Received(address _from, uint _amount);
+
     /// @dev Check if the sender is the burner contract
     modifier onlyBurner() {
         require (msg.sender == _burner, "burner contract is not the sender");
@@ -33,7 +35,9 @@ contract Holder is Ownable, Claimable, ENSResolvable, TokenWhitelistable {
     }
 
     // Ether may be sent from anywhere.
-    function() external payable {}
+    function() external payable {
+        emit Received(msg.sender, msg.value);
+    }
 
     // Burn handles disbursing a share of tokens to an address.
     function burn(address payable to, uint amount) external onlyBurner returns (bool) {
