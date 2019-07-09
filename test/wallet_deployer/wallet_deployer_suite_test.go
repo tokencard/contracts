@@ -78,17 +78,17 @@ var _ = BeforeEach(func() {
 var _ = Describe("WalletDeployer", func() {
 	When("no Wallets are cached", func() {
 
-        It("should have a default spend limit of 1 ETH", func() {
-            sl, err := WalletDeployer.SpendLimit(nil)
-            Expect(err).ToNot(HaveOccurred())
-            Expect(sl.String()).To(Equal(EthToWei(1).String()))
-        })
+		It("should have a default spend limit of 1 ETH", func() {
+			sl, err := WalletDeployer.DefaultSpendLimit(nil)
+			Expect(err).ToNot(HaveOccurred())
+			Expect(sl.String()).To(Equal(EthToWei(1).String()))
+		})
 
-        It("should point to the right oracle node name", func() {
-            on, err := WalletDeployer.OracleName(nil)
-            Expect(err).ToNot(HaveOccurred())
-            Expect(common.Hash(on)).To(Equal(EnsNode("oracle.tokencard.eth")))
-        })
+		It("should point to the right oracle node name", func() {
+			on, err := WalletDeployer.OracleName(nil)
+			Expect(err).ToNot(HaveOccurred())
+			Expect(common.Hash(on)).To(Equal(EnsNode("oracle.tokencard.eth")))
+		})
 
 		It("should have cached Wallet count 0", func() {
 			ccc, err := WalletDeployer.CachedWalletCount(nil)
@@ -127,7 +127,6 @@ var _ = Describe("WalletDeployer", func() {
 				Expect(err).ToNot(HaveOccurred())
 				Expect(ccc.String()).To(Equal("0"))
 			})
-
 
 			It("should emit CachedWallet event", func() {
 
@@ -257,17 +256,17 @@ var _ = Describe("WalletDeployer", func() {
 					Expect(isSuccessful(tx)).To(BeTrue())
 				})
 
-                It("should lower the spend available to 500 Finney", func() {
-    				av, err := Wallet.SpendAvailable(nil)
-    				Expect(err).ToNot(HaveOccurred())
-    				Expect(av.String()).To(Equal(FinneyToWei(500).String()))
-    			})
+				It("should lower the spend available to 500 Finney", func() {
+					av, err := Wallet.SpendAvailable(nil)
+					Expect(err).ToNot(HaveOccurred())
+					Expect(av.String()).To(Equal(FinneyToWei(500).String()))
+				})
 
-                It("should have a spend limit of 500 Finney", func() {
-    				sl, err := Wallet.SpendLimit(nil)
-    				Expect(err).ToNot(HaveOccurred())
-    				Expect(sl.String()).To(Equal(FinneyToWei(500).String()))
-    			})
+				It("should have a spend limit of 500 Finney", func() {
+					sl, err := Wallet.SpendLimit(nil)
+					Expect(err).ToNot(HaveOccurred())
+					Expect(sl.String()).To(Equal(FinneyToWei(500).String()))
+				})
 			})
 
 			It("should emit DeployedWallet event", func() {

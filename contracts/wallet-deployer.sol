@@ -35,13 +35,13 @@ contract WalletDeployer is Controllable {
     address public ens;
     bytes32 public controllerName;
     bytes32 public oracleName;
-    uint public spendLimit;
+    uint public defaultSpendLimit;
 
     constructor(address _ens, bytes32 _oracleName, bytes32 _controllerName, uint _spendLimit) Controllable(_ens, _controllerName) public {
         ens = _ens;
         controllerName = _controllerName;
         oracleName = _oracleName;
-        spendLimit = _spendLimit;
+        defaultSpendLimit = _spendLimit;
     }
 
     function deployWallet(address owner) external onlyController {
@@ -73,7 +73,7 @@ contract WalletDeployer is Controllable {
     }
 
     function cacheWallet() public {
-        address walletAddress = new Wallet(address(this), true, ens, oracleName, controllerName, spendLimit);
+        address walletAddress = new Wallet(address(this), true, ens, oracleName, controllerName, defaultSpendLimit);
         cached.push(walletAddress);
         emit CachedWallet(walletAddress);
     }
