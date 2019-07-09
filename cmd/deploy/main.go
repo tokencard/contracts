@@ -41,6 +41,16 @@ func main() {
 		return d.deployENS()
 	})
 
+	addCommand(app, "account-nonce", func(d *deployer, args []string) error {
+		d.log.Info("Deploying ENS ...")
+		nonce, err := d.ethClient.PendingNonceAt(d.ctx, common.HexToAddress("0x00442c3994155d098f4ffc2e28f76d810ce9209c"))
+		if err != nil {
+			return errors.Wrap(err, "while getting nonce")
+		}
+		d.log.Infof("Nonce is %d", nonce)
+		return nil
+	})
+
 	addCommand(app, "setup-dev", func(d *deployer, args []string) error {
 
 		ethOwners := []common.Address{
