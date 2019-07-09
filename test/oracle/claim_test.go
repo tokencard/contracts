@@ -28,8 +28,6 @@ var _ = Describe("Oracle claim", func() {
 
 	Context("When the balance of the Oracle contract is increased by sending money through the updateRates function", func() {
 
-		var newbalance *big.Int
-
 		BeforeEach(func() {
 			tokens := []common.Address{common.HexToAddress("0x0"), common.HexToAddress("0x1")}
 			tx, err := TokenWhitelist.AddTokens(
@@ -56,7 +54,7 @@ var _ = Describe("Oracle claim", func() {
 		It("the  balance of the Oracle contract should increase by 2 ETH", func() {
 			b, e := Backend.BalanceAt(context.Background(), OracleAddress, nil)
 			Expect(e).ToNot(HaveOccurred())
-			newbalance = new(big.Int).Sub(EthToWei(2), big.NewInt(2000000)) //10^6 is the mock price of the Oraclize query (x2 queries)
+			newbalance := new(big.Int).Sub(EthToWei(2), big.NewInt(2000000)) //10^6 is the mock price of the Oraclize query (x2 queries)
 			Expect(b.String()).To(Equal(newbalance.String()))
 		})
 
@@ -77,6 +75,7 @@ var _ = Describe("Oracle claim", func() {
 			It("the  balance of the Oracle contract should decrease by 1 ETH", func() {
 				b, e := Backend.BalanceAt(context.Background(), OracleAddress, nil)
 				Expect(e).ToNot(HaveOccurred())
+				newbalance := new(big.Int).Sub(EthToWei(2), big.NewInt(2000000)) //10^6 is the mock price of the Oraclize query (x2 queries)
 				newbalance.Sub(newbalance, EthToWei(1))
 				Expect(b.String()).To(Equal(newbalance.String()))
 			})
