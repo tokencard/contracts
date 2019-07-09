@@ -86,8 +86,6 @@ var _ = Describe("load ETH", func() {
 
 	When("the amount sent is 101 ETH + 1 wei", func() {
 
-		var amount *big.Int
-
 		BeforeEach(func() {
 			v := big.NewInt(1) //value
 			a := big.NewInt(1) //amount
@@ -107,7 +105,7 @@ var _ = Describe("load ETH", func() {
 			Expect(evt.From).To(Equal(RandomAccount.Address()))
 			Expect(evt.To).To(Equal(TokenHolderAddress))
 			Expect(evt.Asset).To(Equal(common.HexToAddress("0x0"))) //represents ETH
-			amount = EthToWei(1)
+			amount := EthToWei(1)
 			amount.Add(amount, big.NewInt(1))
 			Expect(evt.Amount.String()).To(Equal(amount.String()))
 		})
@@ -127,6 +125,8 @@ var _ = Describe("load ETH", func() {
 		It("should increase the ETH balance of the holder contract address by 1 ETH + 1 wei", func() {
 			b, e := Backend.BalanceAt(context.Background(), TokenHolderAddress, nil)
 			Expect(e).ToNot(HaveOccurred())
+			amount := EthToWei(1)
+			amount.Add(amount, big.NewInt(1))
 			Expect(b.String()).To(Equal(amount.String()))
 		})
 
@@ -187,8 +187,6 @@ var _ = Describe("load ETH", func() {
 
 	When("the amount sent is 101 ETH + 9 wei", func() {
 
-		var amount, transferAmount *big.Int
-
 		BeforeEach(func() {
 			v := big.NewInt(9) //value
 			a := big.NewInt(9) //amount
@@ -208,7 +206,7 @@ var _ = Describe("load ETH", func() {
 			Expect(evt.From).To(Equal(RandomAccount.Address()))
 			Expect(evt.To).To(Equal(TokenHolderAddress))
 			Expect(evt.Asset).To(Equal(common.HexToAddress("0x0"))) //represents ETH
-			amount = EthToWei(1)
+			amount := EthToWei(1)
 			amount.Add(amount, big.NewInt(1))
 			Expect(evt.Amount.String()).To(Equal(amount.String()))
 		})
@@ -222,7 +220,7 @@ var _ = Describe("load ETH", func() {
 			Expect(evt.From).To(Equal(RandomAccount.Address()))
 			Expect(evt.To).To(Equal(CryptoFloatAddress))
 			Expect(evt.Asset).To(Equal(common.HexToAddress("0x0"))) //represents ETH
-			transferAmount = EthToWei(100)
+			transferAmount := EthToWei(100)
 			transferAmount.Add(transferAmount, big.NewInt(8))
 			Expect(evt.Amount.String()).To(Equal(transferAmount.String()))
 		})
@@ -230,12 +228,16 @@ var _ = Describe("load ETH", func() {
 		It("should increase the ETH balance of the holder contract address by 1 ETH + 1 wei", func() {
 			b, e := Backend.BalanceAt(context.Background(), TokenHolderAddress, nil)
 			Expect(e).ToNot(HaveOccurred())
+			amount := EthToWei(1)
+			amount.Add(amount, big.NewInt(1))
 			Expect(b.String()).To(Equal(amount.String()))
 		})
 
 		It("should increase the ETH balance of the holder contract address by 100 ETH + 8 wei", func() {
 			b, e := Backend.BalanceAt(context.Background(), CryptoFloatAddress, nil)
 			Expect(e).ToNot(HaveOccurred())
+			transferAmount := EthToWei(100)
+			transferAmount.Add(transferAmount, big.NewInt(8))
 			Expect(b.String()).To(Equal(transferAmount.String()))
 		})
 
