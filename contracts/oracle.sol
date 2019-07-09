@@ -41,7 +41,7 @@ contract Oracle is ENSResolvable, usingOraclize, Claimable, Base64, Date, Contro
 
     event SetGasPrice(address _sender, uint _gasPrice);
 
-    event RequestedUpdate(string _symbol);
+    event RequestedUpdate(string _symbol, bytes32 _queryID);
     event FailedUpdateRequest(string _reason);
 
     event VerifiedProof(bytes _publicKey, string _result);
@@ -193,7 +193,7 @@ contract Oracle is ENSResolvable, usingOraclize, Claimable, Base64, Date, Contro
                 // Store the query ID together with the associated token address.
                 _queryToToken[queryID] = tokenAddresses[i];
                 // Emit the query success event.
-                emit RequestedUpdate(sym.toString());
+                emit RequestedUpdate(sym.toString(), queryID);
             }
         }
     }
@@ -227,7 +227,7 @@ contract Oracle is ENSResolvable, usingOraclize, Claimable, Base64, Date, Contro
                 // Store the query ID together with the associated token address.
                 _queryToToken[queryID] = _tokenList[i];
                 // Emit the query success event.
-                emit RequestedUpdate(symbol.toString());
+                emit RequestedUpdate(symbol.toString(), queryID);
             }
         }
     }
