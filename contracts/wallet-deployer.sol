@@ -27,9 +27,9 @@ import "./internals/controllable.sol";
 /// @notice Allows for pre-fabrication / caching of wallets
 contract WalletDeployer is Controllable {
 
-    event CachedWallet(address wallet);
-    event DeployedWallet(address wallet, address owner);
-    event MigratedWallet(address wallet, address owner);
+    event CachedWallet(address _wallet);
+    event DeployedWallet(address _wallet, address _owner);
+    event MigratedWallet(address _wallet, address _owner, address _oldWallet);
 
     mapping(address => address) public deployed;
     address[] public cached;
@@ -48,26 +48,26 @@ contract WalletDeployer is Controllable {
     }
 
     /// @notice This function is used to deploy a Wallet for a given owner address
-    /// @param owner is the owner address for the new Wallet to be
-    function deployWallet(address owner) external onlyController {
+    /// @param _owner is the owner address for the new Wallet to be
+    function deployWallet(address _owner) external onlyController {
         if (cached.length < 1) {
             cacheWallet();
     	}
 
         address walletAddress = cached[cached.length-1];
         cached.length--;
-        Wallet(walletAddress).transferOwnership(owner);
-        deployed[owner] = walletAddress;
+        Wallet(walletAddress).transferOwnership(_owner);
+        deployed[_owner] = walletAddress;
 
-        emit DeployedWallet(walletAddress, owner);
+        emit DeployedWallet(walletAddress, _owner);
     }
 
     /// @notice This function is used to migrate an owner's security settings from a previous version of the wallet
-    /// @param owner is the owner address for the new Wallet to be
+    /// @param _owner is the owner address for the new Wallet to be
     /// @param _spendLimit is the user's set daily spend limit
     /// @param _topUpLimit is the user's set daily gas top-up limit
     /// @param _whitelistedAddresses is the set of the user's whitelisted addresses
-    function migrateWallet(address owner, uint _spendLimit, uint _topUpLimit, bool _initializedWhitelist, address[] _whitelistedAddresses) external onlyController {
+    function migrateWallet(address _owner, address _oldWallet, uint _spendLimit, uint _topUpLimit, bool _initializedWhitelist, address[] _whitelistedAddresses) external onlyController {
         if (cached.length < 1) {
             cacheWallet();
     	}
@@ -82,10 +82,10 @@ contract WalletDeployer is Controllable {
             Wallet(walletAddress).initializeWhitelist(_whitelistedAddresses);
         }
 
-        Wallet(walletAddress).transferOwnership(owner);
-        deployed[owner] = walletAddress;
+        Wallet(walletAddress).transferOwnership(_owner);
+        deployed[_owner] = walletAddress;
 
-        emit MigratedWallet(walletAddress, owner);
+        emit MigratedWallet(walletAddress, _owner, _oldWallet);
     }
 
     /// @notice returns the number of pre-cached wallets
@@ -97,6 +97,7 @@ contract WalletDeployer is Controllable {
     function cacheWallet() public {
         address walletAddress = new Wallet(address(this), true, ens, oracleName, controllerName, defaultSpendLimit);
         cached.push(walletAddress);
+
         emit CachedWallet(walletAddress);
     }
 }
