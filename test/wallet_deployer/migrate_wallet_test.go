@@ -18,6 +18,23 @@ import (
 
 var _ = Describe("Migrate Wallet", func() {
 
+	When("no contracts are cached and a controller migrates a Wallet with whitelist initialized", func() {
+
+		BeforeEach(func() {
+			tx, err := WalletDeployer.MigrateWallet(Controller.TransactOpts(), Owner.Address(), EthToWei(2), FinneyToWei(1), false, []common.Address{common.HexToAddress("0x1"), common.HexToAddress("0x2")})
+			Expect(err).ToNot(HaveOccurred())
+			Backend.Commit()
+			Expect(isSuccessful(tx)).To(BeTrue())
+		})
+
+		It("should update the initializedWhitelist flag", func() {
+			initialized, err := Wallet.InitializedWhitelist(nil)
+			Expect(err).ToNot(HaveOccurred())
+			Expect(initialized).To(BeFalse())
+		})
+
+	})
+
 	When("no contracts are cached and a controller migrates a Wallet", func() {
 
 		BeforeEach(func() {
