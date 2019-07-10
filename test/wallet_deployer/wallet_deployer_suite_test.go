@@ -1,4 +1,4 @@
-package Wallet_deployer_test
+package wallet_deployer_test
 
 import (
 	"context"
