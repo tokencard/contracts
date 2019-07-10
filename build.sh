@@ -11,6 +11,7 @@ compile_solidity() {
 
 contract_sources=(
   'wallet'
+  'walletDeployer'
   'oracle'
   'licence'
   'holder'
@@ -47,6 +48,7 @@ generate_binding() {
 
 contracts=(
   "wallet/Wallet wallet.go Wallet bindings"
+  "walletDeployer/WalletDeployer walletDeployer.go WalletDeployer bindings"
   "oracle/Oracle oracle.go Oracle bindings"
   "licence/Licence licence.go Licence bindings"
   "holder/Holder holder.go Holder bindings"
