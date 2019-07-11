@@ -76,9 +76,9 @@ contract WalletDeployer is Controllable {
     /// @notice This function is used to migrate an owner's security settings from a previous version of the wallet
     /// @param owner is the owner address for the new Wallet to be
     /// @param _spendLimit is the user's set daily spend limit
-    /// @param _topUpLimit is the user's set daily gas top-up limit
+    /// @param _gasTopUpLimit is the user's set daily gas top-up limit
     /// @param _whitelistedAddresses is the set of the user's whitelisted addresses
-    function migrateWallet(address payable owner, uint _spendLimit, uint _topUpLimit, bool _initializedWhitelist, address[] calldata _whitelistedAddresses) external onlyController {
+    function migrateWallet(address payable owner, bool _initializedSpendLimit, bool _initializedGasTopUpLimit, bool _initializedWhitelist, uint _spendLimit, uint _gasTopUpLimit, address[] calldata _whitelistedAddresses) external onlyController {
         if (cachedWallets.length < 1) {
             cacheWallet();
     	}
@@ -86,14 +86,17 @@ contract WalletDeployer is Controllable {
         Wallet  wallet = cachedWallets[cachedWallets.length-1];
         cachedWallets.pop();
 
-        wallet.setSpendLimit(_spendLimit);
-        wallet.setGasTopUpLimit(_topUpLimit);
-
+        if (_initializedSpendLimit) {
+            wallet.setSpendLimit(_spendLimit);
+        }
+        if (_initializedGasTopUpLimit) {
+            wallet.setGasTopUpLimit(_gasTopUpLimit);
+        }
         if (_initializedWhitelist) {
             wallet.setWhitelist(_whitelistedAddresses);
         }
 
-        Wallet(wallet).transferOwnership(owner, false);
+        wallet.transferOwnership(owner, false);
         deployed[owner] = address(wallet);
 
         emit MigratedWallet(wallet, owner);
