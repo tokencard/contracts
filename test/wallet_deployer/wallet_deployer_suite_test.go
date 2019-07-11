@@ -68,7 +68,7 @@ var _ = BeforeEach(func() {
 	Expect(err).ToNot(HaveOccurred())
 
 	var tx *types.Transaction
-	WalletDeployerAddress, tx, WalletDeployer, err = bindings.DeployWalletDeployer(BankAccount.TransactOpts(), Backend, ENSRegistryAddress, OracleName, ControllerName, EthToWei(1))
+	WalletDeployerAddress, tx, WalletDeployer, err = bindings.DeployWalletDeployer(BankAccount.TransactOpts(), Backend, ENSRegistryAddress, ControllerName, EthToWei(1))
 	Expect(err).ToNot(HaveOccurred())
 	Backend.Commit()
 	Expect(isSuccessful(tx)).To(BeTrue())
@@ -88,6 +88,12 @@ var _ = Describe("WalletDeployer", func() {
 			on, err := WalletDeployer.OracleName(nil)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(common.Hash(on)).To(Equal(EnsNode("oracle.tokencard.eth")))
+		})
+
+        It("should point to the right controller node name", func() {
+			on, err := WalletDeployer.ControllerName(nil)
+			Expect(err).ToNot(HaveOccurred())
+			Expect(common.Hash(on)).To(Equal(EnsNode("controller.tokencard.eth")))
 		})
 
 		It("should have cached Wallet count 0", func() {

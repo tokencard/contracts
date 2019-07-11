@@ -40,11 +40,12 @@ contract WalletDeployer is Controllable {
     uint public defaultSpendLimit;
 
     /// @notice parameters are passed in so that they can be used to construct new instances of the wallet
-    constructor(address _ens, bytes32 _oracleName, bytes32 _controllerName, uint _spendLimit) Controllable(_ens, _controllerName) public {
+    constructor(address _ens, bytes32 _controllerName, uint _spendLimit) Controllable(_ens, _controllerName) public {
         ens = _ens;
         controllerName = _controllerName;
         oracleName = subdomainNodeHash("oracle");
-        require(oracleName == _oracleName, "wrong oracle namehash");
+        controllerName = subdomainNodeHash("controller");
+        require(controllerName == _controllerName, "wrong controller namehash");
         defaultSpendLimit = _spendLimit;
     }
 
