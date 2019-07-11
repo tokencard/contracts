@@ -45,6 +45,28 @@ var _ = Describe("Migrate Wallet", func() {
 			Expect(initialized).To(BeFalse())
 		})
 
+        It("should NOT add the whitelisted addresses to the whitelist", func() {
+            isWhitelisted, err := Wallet.IsWhitelisted(nil, common.HexToAddress("0x1"))
+            Expect(err).ToNot(HaveOccurred())
+            Expect(isWhitelisted).To(BeFalse())
+
+            isWhitelisted, err = Wallet.IsWhitelisted(nil, common.HexToAddress("0x2"))
+            Expect(err).ToNot(HaveOccurred())
+            Expect(isWhitelisted).To(BeFalse())
+        })
+
+        It("should NOT update the spend limit to 2 ETH", func() {
+            sl, err := Wallet.SpendLimit(nil)
+            Expect(err).ToNot(HaveOccurred())
+            Expect(sl.String()).To(Equal(EthToWei(100).String()))
+        })
+
+        It("should NOT update the top up limit to 1 finney", func() {
+            sl, err := Wallet.TopUpLimit(nil)
+            Expect(err).ToNot(HaveOccurred())
+            Expect(sl.String()).To(Equal(FinneyToWei(500).String()))
+        })
+
 	})
 
 	When("no contracts are cached and a controller migrates a Wallet", func() {
