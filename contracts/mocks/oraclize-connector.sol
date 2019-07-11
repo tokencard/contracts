@@ -49,6 +49,6 @@ contract Oraclize {
     }
 
     function randomDS_getSessionPubKeyHash() external view returns(bytes32) {
-      return 0;
+        return 0;
     }
 }

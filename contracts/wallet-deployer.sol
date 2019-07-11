@@ -43,7 +43,8 @@ contract WalletDeployer is Controllable {
     constructor(address _ens, bytes32 _oracleName, bytes32 _controllerName, uint _spendLimit) Controllable(_ens, _controllerName) public {
         ens = _ens;
         controllerName = _controllerName;
-        oracleName = _oracleName;
+        oracleName = subdomainNodeHash("oracle");
+        require(oracleName == _oracleName, "wrong oracle namehash");
         defaultSpendLimit = _spendLimit;
     }
 
@@ -99,5 +100,15 @@ contract WalletDeployer is Controllable {
         cached.push(walletAddress);
 
         emit CachedWallet(walletAddress);
+    }
+
+    function subdomainNodeHash(string memory _label) public pure returns (bytes32) {
+        string memory tokencardLabel = "tokencard";
+        string memory ethLabel = "eth";
+        bytes32 zeroHash;
+        bytes32 node = keccak256(abi.encodePacked(zeroHash, keccak256(bytes(ethLabel))));
+        node = keccak256(abi.encodePacked(node, keccak256(bytes(tokencardLabel))));
+        node = keccak256(abi.encodePacked(node, keccak256(bytes(_label))));
+        return node;
     }
 }
