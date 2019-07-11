@@ -69,7 +69,7 @@ contract WalletDeployer is Controllable {
     /// @param _spendLimit is the user's set daily spend limit
     /// @param _topUpLimit is the user's set daily gas top-up limit
     /// @param _whitelistedAddresses is the set of the user's whitelisted addresses
-    function migrateWallet(address _owner, address _oldWallet, uint _spendLimit, uint _topUpLimit, bool _initializedWhitelist, address[] _whitelistedAddresses) external onlyController {
+    function migrateWallet(address _owner, address _oldWallet, bool _initializedSpendLimit, bool _initializedTopUpLimit, bool _initializedWhitelist, uint _spendLimit, uint _topUpLimit, address[] _whitelistedAddresses) external onlyController {
         if (cached.length < 1) {
             cacheWallet();
     	}
@@ -77,9 +77,12 @@ contract WalletDeployer is Controllable {
         address walletAddress = cached[cached.length-1];
         cached.length--;
 
-        Wallet(walletAddress).initializeSpendLimit(_spendLimit);
-        Wallet(walletAddress).initializeTopUpLimit(_topUpLimit);
-
+        if (_initializedSpendLimit) {
+            Wallet(walletAddress).initializeSpendLimit(_spendLimit);
+        }
+        if (_initializedTopUpLimit) {
+            Wallet(walletAddress).initializeTopUpLimit(_topUpLimit);
+        }
         if (_initializedWhitelist) {
             Wallet(walletAddress).initializeWhitelist(_whitelistedAddresses);
         }
