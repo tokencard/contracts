@@ -66,6 +66,9 @@ contract WalletDeployer is Controllable {
 
     /// @notice This function is used to migrate an owner's security settings from a previous version of the wallet
     /// @param _owner is the owner address for the new Wallet to be
+    /// @param _initializedSpendLimit is boolean to state whether or not spendLimit has been initialized
+    /// @param _initializedTopUpLimit is boolean to state whether or not topUpLImit has been initialized
+    /// @param _initializedWhitelist is boolean to state whether or not the whitelisted addresses has been initialized
     /// @param _spendLimit is the user's set daily spend limit
     /// @param _topUpLimit is the user's set daily gas top-up limit
     /// @param _whitelistedAddresses is the set of the user's whitelisted addresses
