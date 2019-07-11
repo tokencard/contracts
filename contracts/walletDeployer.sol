@@ -26,12 +26,12 @@ import "./internals/ensResolvable.sol";
 contract WalletDeployer is Controllable {
 
     event Received(address _from, uint _value);
-    event CachedWallet(address _wallet);
-    event DeployedWallet(address _wallet, address _owner);
-    event MigratedWallet(address _wallet, address _owner);
+    event CachedWallet(Wallet _wallet);
+    event DeployedWallet(Wallet _wallet, address _owner);
+    event MigratedWallet(Wallet _wallet, address _owner);
 
     mapping(address => address) public deployed;
-    address payable[] public cachedWallets;
+    Wallet[] public cachedWallets;
 
     address public ens;
     bytes32 public tokenWhitelistNameHash;
@@ -55,9 +55,9 @@ contract WalletDeployer is Controllable {
 
     /// @notice This public method allows anyone to pre-cache wallets
     function cacheWallet() public {
-        address payable walletAddress = address(new Wallet(address(this), true, ens, tokenWhitelistNameHash, controllerNameHash, licenceNameHash, defaultSpendLimit));
-        cachedWallets.push(walletAddress);
-        emit CachedWallet(walletAddress);
+        Wallet wallet = new Wallet(address(this), true, ens, tokenWhitelistNameHash, controllerNameHash, licenceNameHash, defaultSpendLimit);
+        cachedWallets.push(wallet);
+        emit CachedWallet(wallet);
     }
 
     /// @notice This function is used to deploy a Wallet for a given owner address
@@ -66,11 +66,11 @@ contract WalletDeployer is Controllable {
         if (cachedWallets.length < 1) {
             cacheWallet();
         }
-        address payable walletAddress = cachedWallets[cachedWallets.length-1];
+        Wallet wallet = cachedWallets[cachedWallets.length-1];
         cachedWallets.pop();
-        Wallet(walletAddress).transferOwnership(owner, false);
-        deployed[owner] = walletAddress;
-        emit DeployedWallet(walletAddress, owner);
+        wallet.transferOwnership(owner, false);
+        deployed[owner] = address(wallet);
+        emit DeployedWallet(wallet, owner);
     }
 
     /// @notice This function is used to migrate an owner's security settings from a previous version of the wallet
@@ -83,20 +83,20 @@ contract WalletDeployer is Controllable {
             cacheWallet();
     	}
 
-        address payable walletAddress = cachedWallets[cachedWallets.length-1];
+        Wallet  wallet = cachedWallets[cachedWallets.length-1];
         cachedWallets.pop();
 
-        Wallet(walletAddress).setSpendLimit(_spendLimit);
-        Wallet(walletAddress).setGasTopUpLimit(_topUpLimit);
+        wallet.setSpendLimit(_spendLimit);
+        wallet.setGasTopUpLimit(_topUpLimit);
 
         if (_initializedWhitelist) {
-            Wallet(walletAddress).setWhitelist(_whitelistedAddresses);
+            wallet.setWhitelist(_whitelistedAddresses);
         }
 
-        Wallet(walletAddress).transferOwnership(owner, false);
-        deployed[owner] = walletAddress;
+        Wallet(wallet).transferOwnership(owner, false);
+        deployed[owner] = address(wallet);
 
-        emit MigratedWallet(walletAddress, owner);
+        emit MigratedWallet(wallet, owner);
     }
 
     /// @notice returns the number of pre-cached wallets
