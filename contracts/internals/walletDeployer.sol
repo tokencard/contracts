@@ -18,12 +18,12 @@
 
 pragma solidity ^0.5.10;
 
-import "./wallet.sol";
-import "./internals/controllable.sol";
-import "./internals/ensResolvable.sol";
+import "../wallet.sol";
+import "./controllable.sol";
+import "./ensResolvable.sol";
 
 //// @title Wallet deployer with pre-caching if wallets functionality.
-contract WalletDeployer is Controllable {
+contract WalletDeployer is ENSResolvable, Controllable {
 
     event Received(address _from, uint _value);
     event CachedWallet(Wallet _wallet);
@@ -47,7 +47,7 @@ contract WalletDeployer is Controllable {
     /// @notice parameters are passed in so that they can be used to construct new instances of the wallet
     constructor(address _ens, bytes32 _controllerNodehash, uint _defaultSpendLimit) ENSResolvable(_ens) Controllable(_controllerNodehash) public {
         ens = _ens;
-        require(controllerNodehash == _controllerNodehash, "wrong controller namehash");
+        require(controllerNodehash == _controllerNodehash, "wrong controller nodehash");
         defaultSpendLimit = _defaultSpendLimit;
     }
 

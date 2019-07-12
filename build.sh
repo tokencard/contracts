@@ -11,7 +11,6 @@ compile_solidity() {
 
 contract_sources=(
   'wallet'
-  'walletDeployer'
   'oracle'
   'licence'
   'holder'
@@ -24,6 +23,7 @@ contract_sources=(
   'internals/controller'
   'internals/tokenWhitelist'
   'internals/parseIntScientific'
+  'internals/walletDeployer'
   'externals/ens/PublicResolver'
 )
 
@@ -48,7 +48,6 @@ generate_binding() {
 
 contracts=(
   "wallet/Wallet wallet.go Wallet bindings"
-  "walletDeployer/WalletDeployer walletDeployer.go WalletDeployer bindings"
   "oracle/Oracle oracle.go Oracle bindings"
   "licence/Licence licence.go Licence bindings"
   "holder/Holder holder.go Holder bindings"
@@ -61,6 +60,7 @@ contracts=(
   "internals/controller/Controller internals/controller.go Controller internals"
   "internals/tokenWhitelist/TokenWhitelist internals/tokenWhitelist.go TokenWhitelist internals"
   "internals/parseIntScientific/ParseIntScientific internals/parseIntScientific.go ParseIntScientific internals"
+  "internals/walletDeployer/WalletDeployer internals/walletDeployer.go WalletDeployer internals"
   "externals/ens/PublicResolver/PublicResolver externals/ens/public-resolver.go PublicResolver ens"
 )
 

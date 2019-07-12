@@ -108,8 +108,8 @@ var CryptoFloatAddress common.Address
 var Licence *bindings.Licence
 var LicenceAddress common.Address
 
-var Wallet *bindings.Wallet
-var WalletAddress common.Address
+// var Wallet *bindings.Wallet
+// var WalletAddress common.Address
 
 var TKN *mocks.Token
 var TKNAddress common.Address
@@ -335,14 +335,14 @@ func InitializeBackend() error {
 		return errors.Wrap(err, "setting ENS 'licence' node owner")
 	}
 
-	tx, err = ENSRegistry.SetSubnodeOwner(BankAccount.TransactOpts(), EnsNode("tokencard.eth"), LabelHash("tokenWhitelist"), BankAccount.Address())
+	tx, err = ENSRegistry.SetSubnodeOwner(BankAccount.TransactOpts(), EnsNode("tokencard.eth"), LabelHash("token-whitelist"), BankAccount.Address())
 	if err != nil {
 		return err
 	}
 	Backend.Commit()
 	err = verifyTransaction(tx)
 	if err != nil {
-		return errors.Wrap(err, "setting ENS 'tokenWhitelist' node owner")
+		return errors.Wrap(err, "setting ENS 'token-whitelist' node owner")
 	}
 
 	ENSResolverAddress, tx, ENSResolver, err = ens.DeployPublicResolver(BankAccount.TransactOpts(), Backend, ENSRegistryAddress)
@@ -616,17 +616,6 @@ func InitializeBackend() error {
 	err = verifyTransaction(tx)
 	if err != nil {
 		return errors.Wrap(err, "updating Stablecoin token rate")
-	}
-
-	// Deploy the Token wallet contract.
-	WalletAddress, tx, Wallet, err = bindings.DeployWallet(BankAccount.TransactOpts(), Backend, Owner.Address(), true, ENSRegistryAddress, TokenWhitelistName, ControllerName, LicenceName, EthToWei(100))
-	if err != nil {
-		return err
-	}
-	Backend.Commit()
-	err = verifyTransaction(tx)
-	if err != nil {
-		return errors.Wrap(err, "deploying wallet contract")
 	}
 
 	return nil
