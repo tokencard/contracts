@@ -132,7 +132,7 @@ var NonCompliantERC20Address common.Address
 var OracleName = EnsNode("oracle.tokencard.eth")
 var ControllerName = EnsNode("controller.tokencard.eth")
 var LicenceName = EnsNode("licence.tokencard.eth")
-var TokenWhitelistName = EnsNode("tokenWhitelist.tokencard.eth")
+var TokenWhitelistName = EnsNode("token-whitelist.tokencard.eth")
 
 var Owner *ethertest.Account
 var Controller *ethertest.Account
