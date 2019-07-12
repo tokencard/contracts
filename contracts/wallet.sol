@@ -80,11 +80,6 @@ contract Whitelist is Controllable, Ownable {
         return _pendingWhitelistRemoval;
     }
 
-    /// @dev Getter for pending addition/removal array hash.
-    function pendingWhitelistHash(address[] _pendingWhitelist) public pure returns(bytes32) {
-        return keccak256(abi.encodePacked(_pendingWhitelist));
-    }
-
     /// @dev Add initial addresses to the whitelist.
     /// @param _addresses are the Ethereum addresses to be whitelisted.
     function initializeWhitelist(address[] _addresses) external onlyOwner hasNoOwnerOrZeroAddress(_addresses) {
@@ -193,6 +188,11 @@ contract Whitelist is Controllable, Ownable {
         submittedWhitelistRemoval = false;
         // Emit the cancellation event.
         emit CancelledWhitelistRemoval(msg.sender, _hash);
+    }
+
+    /// @dev Getter for pending addition/removal array hash.
+    function pendingWhitelistHash(address[] _pendingWhitelist) public pure returns(bytes32) {
+        return keccak256(abi.encodePacked(_pendingWhitelist));
     }
 }
 
