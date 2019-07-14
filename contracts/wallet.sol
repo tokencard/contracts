@@ -488,6 +488,7 @@ contract Vault is AddressWhitelist, SpendLimit, ERC165, Transferrable, TokenWhit
 
     event Received(address _from, uint _amount);
     event Transferred(address _to, address _asset, uint _amount);
+    event BulkTransferred(address _to, address[] _assets);
 
     /// @dev Supported ERC165 interface ID.
     bytes4 private constant _ERC165_INTERFACE_ID = 0x01ffc9a7; // solium-disable-line uppercase
@@ -522,11 +523,39 @@ contract Vault is AddressWhitelist, SpendLimit, ERC165, Transferrable, TokenWhit
         }
     }
 
+    /// @dev Checks for interface support based on ERC165.
+    function supportsInterface(bytes4 interfaceID) external view returns (bool) {
+        return interfaceID == _ERC165_INTERFACE_ID;
+    }
+
+    /// @dev This is a bulk transfer convenience function, used to migrate contracts.
+    /// @notice If any of the transfers fail, this will revert.
+    /// @param _to is the recipient's address, can't be the zero (0x0) address: transfer() will revert.
+    /// @param _assets is an array of addresses of ERC20 tokens or 0x0 for ether.
+    function bulkTransfer(address payable _to, address[] calldata _assets) external onlyOwner {
+        // check to make sure that _assets isn't empty
+        require(_assets.length != 0, "asset array should be non-empty");
+        // This loops through all of the transfers to be made
+        for (uint i = 0; i < _assets.length; i++) {
+            uint amount;
+            // Get amount based on whether eth or erc20
+            if (_assets[i] == address(0)) {
+                amount = address(this).balance;
+            } else {
+                amount = ERC20(_assets[i]).balanceOf(address(this));
+            }
+            // use our safe, daily limit protected transfer
+            transfer(_to, _assets[i], amount);
+        }
+
+        emit BulkTransferred(_to, _assets);
+    }
+
     /// @dev Transfers the specified asset to the recipient's address.
     /// @param _to is the recipient's address.
     /// @param _asset is the address of an ERC20 token or 0x0 for ether.
     /// @param _amount is the amount of assets to be transferred in base units.
-    function transfer(address payable _to, address _asset, uint _amount) external onlyOwner isNotZero(_amount) {
+    function transfer(address payable _to, address _asset, uint _amount) public onlyOwner isNotZero(_amount) {
         // Checks if the _to address is not the zero-address
         require(_to != address(0), "_to address cannot be set to 0x0");
 
@@ -546,11 +575,6 @@ contract Vault is AddressWhitelist, SpendLimit, ERC165, Transferrable, TokenWhit
         _safeTransfer(_to, _asset, _amount);
         // Emit the transfer event.
         emit Transferred(_to, _asset, _amount);
-    }
-
-    /// @dev Checks for interface support based on ERC165.
-    function supportsInterface(bytes4 interfaceID) external view returns (bool) {
-        return interfaceID == _ERC165_INTERFACE_ID;
     }
 
     /// @dev Convert ERC20 token amount to the corresponding ether amount.
