@@ -91,7 +91,7 @@ var TokenWhitelistAddress common.Address
 var OraclizeResolver *mocks.OraclizeAddrResolver
 var OraclizeResolverAddress common.Address
 
-var OraclizeConnector *mocks.Oraclize
+var OraclizeConnector *mocks.OraclizeConnector
 var OraclizeConnectorAddress common.Address
 
 var Oracle *bindings.Oracle
@@ -378,7 +378,7 @@ func InitializeBackend() error {
 		}
 	}
 
-	OraclizeConnectorAddress, tx, OraclizeConnector, err = mocks.DeployOraclize(BankAccount.TransactOpts(), Backend, OraclizeConnectorOwner.Address())
+	OraclizeConnectorAddress, tx, OraclizeConnector, err = mocks.DeployOraclizeConnector(BankAccount.TransactOpts(), Backend, OraclizeConnectorOwner.Address())
 	if err != nil {
 		return err
 	}

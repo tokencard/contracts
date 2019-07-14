@@ -124,7 +124,6 @@ contract Oracle is ENSResolvable, usingOraclize, Transferrable, Base64, Date, Co
         require(msg.sender == oraclize_cbAddress(), "sender is not oraclize");
         // Use the query ID to find the matching token address.
         address token = _queryToToken[_queryID];
-        require(token != address(0), "queryID matches to address 0");
         // Get the corresponding token object.
         ( , , , bool available, , , uint256 lastUpdate) = _getTokenInfo(token);
         require(available, "token must be available");

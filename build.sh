@@ -18,6 +18,7 @@ contract_sources=(
   'mocks/burnerToken'
   'mocks/nonCompliantToken'
   'mocks/base64-exporter'
+  'mocks/oraclize'
   'mocks/parseIntScientific-exporter'
   'mocks/tokenWhitelistableExporter'
   'internals/controller'
@@ -55,6 +56,8 @@ contracts=(
   "mocks/burnerToken/BurnerToken mocks/burnerToken.go BurnerToken mocks"
   "mocks/nonCompliantToken/NonCompliantToken mocks/nonCompliantToken.go NonCompliantToken mocks"
   "mocks/base64-exporter/Base64Exporter mocks/base64-exporter.go Base64Exporter mocks"
+  "mocks/oraclize/OraclizeConnector mocks/oraclizeConnector.go OraclizeConnector mocks"
+  "mocks/oraclize/OraclizeAddrResolver mocks/oraclizeAddrResolver.go OraclizeAddrResolver mocks"
   "mocks/parseIntScientific-exporter/ParseIntScientificExporter mocks/parseIntScientific-exporter.go ParseIntScientificExporter mocks"
   "mocks/tokenWhitelistableExporter/TokenWhitelistableExporter mocks/tokenWhitelistableExporter.go TokenWhitelistableExporter mocks"
   "internals/controller/Controller internals/controller.go Controller internals"
