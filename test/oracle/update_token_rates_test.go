@@ -52,13 +52,13 @@ var _ = Describe("updateRates", func() {
 				evt := it.Event
 				Expect(it.Next()).To(BeTrue())
 				Expect(evt.Symbol).To(Equal("BNT"))
-                id := stringToQueryID("https://min-api.cryptocompare.com/data/price?fsym=BNT&tsyms=ETH&sign=true")
-                Expect(evt.QueryID).To(Equal(id))
+				id := stringToQueryID("https://min-api.cryptocompare.com/data/price?fsym=BNT&tsyms=ETH&sign=true")
+				Expect(evt.QueryID).To(Equal(id))
 				evt = it.Event
 				Expect(it.Next()).To(BeFalse())
 				Expect(evt.Symbol).To(Equal("TKN"))
-                id = stringToQueryID("https://min-api.cryptocompare.com/data/price?fsym=TKN&tsyms=ETH&sign=true")
-                Expect(evt.QueryID).To(Equal(id))
+				id = stringToQueryID("https://min-api.cryptocompare.com/data/price?fsym=TKN&tsyms=ETH&sign=true")
+				Expect(evt.QueryID).To(Equal(id))
 
 			})
 
@@ -154,7 +154,7 @@ var _ = Describe("updateRates", func() {
 				Expect(it.Next()).To(BeTrue())
 				evt := it.Event
 				Expect(it.Next()).To(BeFalse())
-				Expect(evt.Reason).To(Equal("no tokens"))
+				Expect(evt.Reason).To(Equal("empty token list"))
 			})
 		})
 	})

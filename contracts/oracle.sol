@@ -98,7 +98,8 @@ contract Oracle is ENSResolvable, usingOraclize, Transferrable, Base64, Date, Co
     /// @notice Update ERC20 token exchange rates for all supported tokens.
     /// @param _gasLimit the gas limit is passed, this is used for the Oraclize callback
     function updateTokenRates(uint _gasLimit) external payable onlyController {
-        _updateTokenRates(_gasLimit);
+        address[] memory tokenAddresses = _tokenAddressArray();
+        _updateTokenRatesList(_gasLimit, tokenAddresses);
     }
 
     /// @notice Update ERC20 token exchange rates for the list of tokens provided.
@@ -165,39 +166,6 @@ contract Oracle is ENSResolvable, usingOraclize, Transferrable, Base64, Date, Co
         require(body._len == jsonLen - 1, "not json format");
         //ensure that the json is properly terminated with a '}'
         return body.toString();
-    }
-
-    /// @notice Re-usable helper function that performs the Oraclize Query.
-    /// @param _gasLimit the gas limit is passed, this is used for the Oraclize callback
-    function _updateTokenRates(uint _gasLimit) private {
-        address[] memory tokenAddresses = _tokenAddressArray();
-        // Check if there are any existing tokens.
-        if (tokenAddresses.length == 0) {
-            // Emit a query failure event.
-            emit FailedUpdateRequest("no tokens");
-            // Check if the contract has enough Ether to pay for the query.
-        } else if (oraclize_getPrice("URL") * tokenAddresses.length > address(this).balance) {
-            // Emit a query failure event.
-            emit FailedUpdateRequest("insufficient balance");
-        } else {
-            // Set up the cryptocompare API query strings.
-            strings.slice memory apiPrefix = "https://min-api.cryptocompare.com/data/price?fsym=".toSlice();
-            strings.slice memory apiSuffix = "&tsyms=ETH&sign=true".toSlice();
-
-            // Create a new oraclize query for each supported token.
-            for (uint i = 0; i < tokenAddresses.length; i++) {
-                // Store the token symbol used in the query.
-                (string memory symbol, , , , , , ) = _getTokenInfo(tokenAddresses[i]);
-
-                strings.slice memory sym = symbol.toSlice();
-                // Create a new oraclize query from the component strings.
-                bytes32 queryID = oraclize_query("URL", apiPrefix.concat(sym).toSlice().concat(apiSuffix), _gasLimit);
-                // Store the query ID together with the associated token address.
-                _queryToToken[queryID] = tokenAddresses[i];
-                // Emit the query success event.
-                emit RequestedUpdate(sym.toString(), queryID);
-            }
-        }
     }
 
     /// @notice Re-usable helper function that performs the Oraclize Query for a specific list of tokens.
