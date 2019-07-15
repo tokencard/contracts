@@ -76,9 +76,6 @@ func stringToHashString(url string) string {
 	return hex.EncodeToString(idSlice)
 }
 
-var Wallet *bindings.Wallet
-var WalletAddress common.Address
-
 var ENSResolver *ens.PublicResolver
 var ENSResolverAddress common.Address
 
