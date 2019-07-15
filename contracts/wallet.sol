@@ -236,7 +236,7 @@ library DailyLimitTrait {
         uint available;
         uint limitTimestamp;
         uint pending;
-        bool set;
+        bool updateable;
     }
 
     /// @dev Returns the available daily balance - accounts for daily limit reset.
@@ -261,18 +261,18 @@ library DailyLimitTrait {
     /// @param _amount is the daily limit amount in base units.
     function _setLimit(DailyLimit storage self, uint _amount) internal {
         // Require that the spend limit has not been set yet.
-        require(!self.set, "daily limit has already been set");
+        require(!self.updateable, "daily limit not updateable");
         // Modify spend limit based on the provided value.
         _modifyLimit(self, _amount);
         // Flag the operation as set.
-        self.set = true;
+        self.updateable = true;
     }
 
     /// @dev Submit a daily limit update, needs to be confirmed.
     /// @param _amount is the daily limit amount in base units.
     function _submitLimitUpdate(DailyLimit storage self, uint _amount) internal {
         // Require that the spend limit has been set.
-        require(self.set, "limit has not been set");
+        require(self.updateable, "daily limit is still updateable");
         // Assign the provided amount to pending daily limit.
         self.pending = _amount;
     }
@@ -353,8 +353,8 @@ contract SpendLimit is ControllableOwnable {
         return _spendLimit.value;
     }
 
-    function spendLimitSet() external view returns (bool) {
-        return _spendLimit.set;
+    function spendLimitUpdateable() external view returns (bool) {
+        return _spendLimit.updateable;
     }
 
     function spendLimitPending() external view returns (uint) {
@@ -411,8 +411,8 @@ contract GasTopUpLimit is ControllableOwnable {
         return _gasTopUpLimit.value;
     }
 
-    function gasTopUpLimitSet() external view returns (bool) {
-        return _gasTopUpLimit.set;
+    function gasTopUpLimitUpdateable() external view returns (bool) {
+        return _gasTopUpLimit.updateable;
     }
 
     function gasTopUpLimitPending() external view returns (uint) {
@@ -464,8 +464,8 @@ contract LoadLimit is ControllableOwnable {
         return _loadLimit.value;
     }
 
-    function loadLimitSet() external view returns (bool) {
-        return _loadLimit.set;
+    function loadLimitUpdateable() external view returns (bool) {
+        return _loadLimit.updateable;
     }
 
     function loadLimitPending() external view returns (uint) {
@@ -514,8 +514,8 @@ contract Vault is AddressWhitelist, SpendLimit, ERC165, Transferrable, Balanceab
     }
 
     /// @dev Checks for interface support based on ERC165.
-    function supportsInterface(bytes4 interfaceID) external view returns (bool) {
-        return interfaceID == _ERC165_INTERFACE_ID;
+    function supportsInterface(bytes4 _interfaceID) external view returns (bool) {
+        return _interfaceID == _ERC165_INTERFACE_ID;
     }
 
     /// @dev This is a bulk transfer convenience function, used to migrate contracts.
@@ -709,6 +709,8 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
         if (_token == _stablecoin()) {
             return _amount;
         }
+        uint amountToSend = _amount;
+
         //0x0 represents ether
         if (_token != address(0)) {
             //convert to eth first, same as convertToEther()
@@ -718,7 +720,7 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
             require(available, "token is not available");
             require(rate != 0, "token rate is 0");
             // Safely convert the token amount to ether based on the exchange rate.
-            _amount = _amount.mul(rate).div(magnitude);
+            amountToSend = _amount.mul(rate).div(magnitude);
         }
         //_amount now is in ether
         // Get the stablecoin's magnitude and its current rate.
@@ -727,7 +729,7 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
         require(stablecoinAvailable, "token is not available");
         require(stablecoinRate != 0, "stablecoin rate is 0");
         // Safely convert the token amount to stablecoin based on its exchange rate and the stablecoin exchange rate.
-        return _amount.mul(stablecoinMagnitude).div(stablecoinRate);
+        return amountToSend.mul(stablecoinMagnitude).div(stablecoinRate);
     }
 
     /// @dev This calls proxies arbitrary transactions to addresses
