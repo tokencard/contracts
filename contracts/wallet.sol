@@ -261,7 +261,7 @@ library DailyLimitTrait {
     /// @param _amount is the daily limit amount in base units.
     function _setLimit(DailyLimit storage self, uint _amount) internal {
         // Require that the spend limit has not been set yet.
-        require(!self.updateable, "daily limit has already been set");
+        require(!self.updateable, "daily limit not updateable");
         // Modify spend limit based on the provided value.
         _modifyLimit(self, _amount);
         // Flag the operation as set.
@@ -272,7 +272,7 @@ library DailyLimitTrait {
     /// @param _amount is the daily limit amount in base units.
     function _submitLimitUpdate(DailyLimit storage self, uint _amount) internal {
         // Require that the spend limit has been set.
-        require(self.updateable, "limit has not been set");
+        require(self.updateable, "daily limit is still updateable");
         // Assign the provided amount to pending daily limit.
         self.pending = _amount;
     }
