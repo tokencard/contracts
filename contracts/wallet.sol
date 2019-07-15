@@ -514,8 +514,8 @@ contract Vault is AddressWhitelist, SpendLimit, ERC165, Transferrable, Balanceab
     }
 
     /// @dev Checks for interface support based on ERC165.
-    function supportsInterface(bytes4 interfaceID) external view returns (bool) {
-        return interfaceID == _ERC165_INTERFACE_ID;
+    function supportsInterface(bytes4 _interfaceID) external view returns (bool) {
+        return _interfaceID == _ERC165_INTERFACE_ID;
     }
 
     /// @dev This is a bulk transfer convenience function, used to migrate contracts.
@@ -709,6 +709,8 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
         if (_token == _stablecoin()) {
             return _amount;
         }
+        uint amountToSend = _amount;
+
         //0x0 represents ether
         if (_token != address(0)) {
             //convert to eth first, same as convertToEther()
@@ -718,7 +720,7 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
             require(available, "token is not available");
             require(rate != 0, "token rate is 0");
             // Safely convert the token amount to ether based on the exchange rate.
-            _amount = _amount.mul(rate).div(magnitude);
+            amountToSend = _amount.mul(rate).div(magnitude);
         }
         //_amount now is in ether
         // Get the stablecoin's magnitude and its current rate.
@@ -727,7 +729,7 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
         require(stablecoinAvailable, "token is not available");
         require(stablecoinRate != 0, "stablecoin rate is 0");
         // Safely convert the token amount to stablecoin based on its exchange rate and the stablecoin exchange rate.
-        return _amount.mul(stablecoinMagnitude).div(stablecoinRate);
+        return amountToSend.mul(stablecoinMagnitude).div(stablecoinRate);
     }
 
     /// @dev This calls proxies arbitrary transactions to addresses
