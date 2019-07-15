@@ -236,7 +236,7 @@ library DailyLimitTrait {
         uint available;
         uint limitTimestamp;
         uint pending;
-        bool set;
+        bool updateable;
     }
 
     /// @dev Returns the available daily balance - accounts for daily limit reset.
@@ -261,18 +261,18 @@ library DailyLimitTrait {
     /// @param _amount is the daily limit amount in base units.
     function _setLimit(DailyLimit storage self, uint _amount) internal {
         // Require that the spend limit has not been set yet.
-        require(!self.set, "daily limit has already been set");
+        require(!self.updateable, "daily limit has already been set");
         // Modify spend limit based on the provided value.
         _modifyLimit(self, _amount);
         // Flag the operation as set.
-        self.set = true;
+        self.updateable = true;
     }
 
     /// @dev Submit a daily limit update, needs to be confirmed.
     /// @param _amount is the daily limit amount in base units.
     function _submitLimitUpdate(DailyLimit storage self, uint _amount) internal {
         // Require that the spend limit has been set.
-        require(self.set, "limit has not been set");
+        require(self.updateable, "limit has not been set");
         // Assign the provided amount to pending daily limit.
         self.pending = _amount;
     }
@@ -353,8 +353,8 @@ contract SpendLimit is ControllableOwnable {
         return _spendLimit.value;
     }
 
-    function spendLimitSet() external view returns (bool) {
-        return _spendLimit.set;
+    function spendLimitUpdateable() external view returns (bool) {
+        return _spendLimit.updateable;
     }
 
     function spendLimitPending() external view returns (uint) {
@@ -411,8 +411,8 @@ contract GasTopUpLimit is ControllableOwnable {
         return _gasTopUpLimit.value;
     }
 
-    function gasTopUpLimitSet() external view returns (bool) {
-        return _gasTopUpLimit.set;
+    function gasTopUpLimitUpdateable() external view returns (bool) {
+        return _gasTopUpLimit.updateable;
     }
 
     function gasTopUpLimitPending() external view returns (uint) {
@@ -464,8 +464,8 @@ contract LoadLimit is ControllableOwnable {
         return _loadLimit.value;
     }
 
-    function loadLimitSet() external view returns (bool) {
-        return _loadLimit.set;
+    function loadLimitUpdateable() external view returns (bool) {
+        return _loadLimit.updateable;
     }
 
     function loadLimitPending() external view returns (uint) {
