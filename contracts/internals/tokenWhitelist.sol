@@ -42,6 +42,9 @@ contract TokenWhitelist is ENSResolvable, Controllable, Ownable, Transferrable {
 
     event UpdatedTokenRate(address _sender, address _token, uint _rate);
 
+    event UpdatedTokenLoadable(address _sender, address _token, bool _loadable);
+    event UpdatedTokenRedeemable(address _sender, address _token, bool _redeemable);
+
     event AddedToken(address _sender, address _token, string _symbol, uint _magnitude, bool _loadable, bool _redeemable);
     event RemovedToken(address _sender, address _token);
 
@@ -146,6 +149,28 @@ contract TokenWhitelist is ENSResolvable, Controllable, Ownable, Transferrable {
             // Emit token removal event.
             emit RemovedToken(msg.sender, token);
         }
+    }
+
+    /// @notice Toggles whether or not a token is loadable or not
+    function setTokenLoadable(address _token, bool _loadable) external onlyController {
+        // Require that the token exists.
+        require(_tokenInfoMap[_token].available, "token is not available");
+
+        // this sets the loadable flag to the value passed in
+        _tokenInfoMap[_token].loadable = _loadable;
+
+        emit UpdatedTokenLoadable(msg.sender, _token, _loadable);
+    }
+
+    /// @notice Toggles whether or not a token is redeemable or not
+    function setTokenRedeemable(address _token, bool _redeemable) external onlyController {
+        // Require that the token exists.
+        require(_tokenInfoMap[_token].available, "token is not available");
+
+        // this sets the redeemable flag to the value passed in
+        _tokenInfoMap[_token].redeemable = _redeemable;
+
+        emit UpdatedTokenRedeemable(msg.sender, _token, _redeemable);
     }
 
     /// @notice Update ERC20 token exchange rate.
