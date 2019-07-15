@@ -78,7 +78,7 @@ var _ = Describe("Migrate Wallet", func() {
 			Expect(isSuccessful(tx)).To(BeTrue())
 		})
 
-		It("should return new Wallet address", func() {
+		It("should return a new Wallet address", func() {
 			addr, err := WalletDeployer.DeployedWallets(nil, Owner.Address())
 			Expect(err).ToNot(HaveOccurred())
 			Expect(addr).ToNot(Equal(common.HexToAddress("0x0")))
