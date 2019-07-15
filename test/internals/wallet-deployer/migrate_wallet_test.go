@@ -34,13 +34,13 @@ var _ = Describe("Migrate Wallet", func() {
 		})
 
 		It("should NOT set the GasTopUpLimit flag", func() {
-			initialized, err := MigratedWallet.GasTopUpLimitSet(nil)
+			initialized, err := MigratedWallet.GasTopUpLimitUpdateable(nil)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(initialized).To(BeFalse())
 		})
 
 		It("should NOT set the initializedSpendLimit flag", func() {
-			initialized, err := MigratedWallet.SpendLimitSet(nil)
+			initialized, err := MigratedWallet.SpendLimitUpdateable(nil)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(initialized).To(BeFalse())
 		})
@@ -151,7 +151,7 @@ var _ = Describe("Migrate Wallet", func() {
 			})
 
 			It("should update the SpendLimit set flag", func() {
-				initialized, err := MigratedWallet.SpendLimitSet(nil)
+				initialized, err := MigratedWallet.SpendLimitUpdateable(nil)
 				Expect(err).ToNot(HaveOccurred())
 				Expect(initialized).To(BeTrue())
 			})
@@ -173,7 +173,7 @@ var _ = Describe("Migrate Wallet", func() {
 			})
 
 			It("should update the TopUpLimit initializedTopup flag", func() {
-				initialized, err := MigratedWallet.GasTopUpLimitSet(nil)
+				initialized, err := MigratedWallet.GasTopUpLimitUpdateable(nil)
 				Expect(err).ToNot(HaveOccurred())
 				Expect(initialized).To(BeTrue())
 			})
