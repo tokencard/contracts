@@ -55,6 +55,12 @@ var _ = AfterEach(func() {
 	}
 })
 
+var _ = AfterEach(func() {
+	err := Backend.Close()
+	Expect(err).ToNot(HaveOccurred())
+
+})
+
 var WalletDeployerAddress common.Address
 var WalletDeployer *internals.WalletDeployer
 
