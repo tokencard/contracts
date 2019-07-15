@@ -30,9 +30,9 @@ contract Balanceable {
     /// @return balance associated with an address, for any token, in the wei equivalent
     function _balance(address _address, address _asset) public view returns (uint) {
         if (_asset != address(0)) {
-            return ERC20(_asset).balanceOf(address(_address));
+            return ERC20(_asset).balanceOf(_address);
         } else {
-            return address(_address).balance;
+            return _address.balance;
         }
     }
 }
