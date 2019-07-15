@@ -31,12 +31,9 @@ contract WalletDeployer is ENSResolvable, Controllable {
     event MigratedWallet(Wallet _wallet, Wallet _oldWallet, address _owner);
 
     /*****   Constants   *****/
-    bytes32 public constant ethNodehash = keccak256(abi.encodePacked(bytes32(0), keccak256(bytes("eth"))));
-    bytes32 public constant tokencardNodehash = keccak256(abi.encodePacked(ethNodehash, keccak256(bytes("tokencard"))));
-    bytes32 public constant controllerNodehash = keccak256(abi.encodePacked(tokencardNodehash, keccak256(bytes("controller"))));
-    bytes32 public constant licenceNodehash = keccak256(abi.encodePacked(tokencardNodehash, keccak256(bytes("licence"))));
-    bytes32 public constant oracleNodehash = keccak256(abi.encodePacked(tokencardNodehash, keccak256(bytes("oracle"))));
-    bytes32 public constant tokenWhitelistNodehash = keccak256(abi.encodePacked(tokencardNodehash, keccak256(bytes("token-whitelist"))));
+    bytes32 public constant controllerNode = 0x7f2ce995617d2816b426c5c8698c5ec2952f7a34bb10f38326f74933d5893697;
+    bytes32 public constant licenceNode = 0xd0ff8bd67f6e25e4e4b010df582a36a0ee9b78e49afe6cc1cff5dd5a83040330;
+    bytes32 public constant tokenWhitelistNode = 0xe84f90570f13fe09f288f2411ff9cf50da611ed0c7db7f73d48053ffc974d396;
 
     mapping(address => address) public deployedWallets;
     Wallet[] public cachedWallets;
@@ -45,9 +42,8 @@ contract WalletDeployer is ENSResolvable, Controllable {
     uint public defaultSpendLimit;
 
     /// @notice parameters are passed in so that they can be used to construct new instances of the wallet
-    constructor(address _ens, bytes32 _controllerNodehash, uint _defaultSpendLimit) ENSResolvable(_ens) Controllable(_controllerNodehash) public {
+    constructor(address _ens, uint _defaultSpendLimit) ENSResolvable(_ens) Controllable(controllerNode) public {
         ens = _ens;
-        require(controllerNodehash == _controllerNodehash, "wrong controller nodehash");
         defaultSpendLimit = _defaultSpendLimit;
     }
 
@@ -58,7 +54,7 @@ contract WalletDeployer is ENSResolvable, Controllable {
 
     /// @notice This public method allows anyone to pre-cache wallets
     function cacheWallet() public {
-        Wallet wallet = new Wallet(address(this), true, ens, tokenWhitelistNodehash, controllerNodehash, licenceNodehash, defaultSpendLimit);
+        Wallet wallet = new Wallet(address(this), true, ens, tokenWhitelistNode, controllerNode, licenceNode, defaultSpendLimit);
         cachedWallets.push(wallet);
         emit CachedWallet(wallet);
     }
