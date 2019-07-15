@@ -108,9 +108,6 @@ var CryptoFloatAddress common.Address
 var Licence *bindings.Licence
 var LicenceAddress common.Address
 
-// var Wallet *bindings.Wallet
-// var WalletAddress common.Address
-
 var TKN *mocks.Token
 var TKNAddress common.Address
 

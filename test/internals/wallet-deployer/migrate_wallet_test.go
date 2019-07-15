@@ -1,14 +1,7 @@
 package wallet_deployer_test
 
 import (
-	// "context"
-	// "fmt"
-	// "math/big"
-	// "os"
-	// "testing"
-
 	"github.com/ethereum/go-ethereum/common"
-	// "github.com/ethereum/go-ethereum/core/types"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	"github.com/tokencard/contracts/pkg/bindings"
@@ -91,7 +84,7 @@ var _ = Describe("Migrate Wallet", func() {
 			Expect(addr).ToNot(Equal(common.HexToAddress("0x0")))
 		})
 
-		It("should emit MigratedWallet event", func() {
+		It("should emit a MigratedWallet event", func() {
 
 			addr, err := WalletDeployer.DeployedWallets(nil, Owner.Address())
 			Expect(err).ToNot(HaveOccurred())
@@ -100,6 +93,7 @@ var _ = Describe("Migrate Wallet", func() {
 			Expect(err).ToNot(HaveOccurred())
 			Expect(it.Next()).To(BeTrue())
 			Expect(it.Event.Wallet).To(Equal(addr))
+            Expect(it.Event.OldWallet).To(Equal(RandomAccount.Address()))
 			Expect(it.Event.Owner).To(Equal(Owner.Address()))
 		})
 
@@ -241,6 +235,7 @@ var _ = Describe("Migrate Wallet", func() {
 				Expect(err).ToNot(HaveOccurred())
 				Expect(it.Next()).To(BeTrue())
 				Expect(it.Event.Wallet).To(Equal(addr))
+                Expect(it.Event.OldWallet).To(Equal(RandomAccount.Address()))
 				Expect(it.Event.Owner).To(Equal(Owner.Address()))
 			})
 

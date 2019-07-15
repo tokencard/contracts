@@ -39,11 +39,11 @@ var _ = BeforeEach(func() {
 	err := InitializeBackend()
 	Expect(err).ToNot(HaveOccurred())
     // Deploy the Token wallet contract.
-    // var tx *types.Transaction
-	// WalletAddress, tx, Wallet, err = bindings.DeployWallet(BankAccount.TransactOpts(), Backend, Owner.Address(), true, ENSRegistryAddress, TokenWhitelistName, ControllerName, LicenceName, EthToWei(100))
-    // Expect(err).ToNot(HaveOccurred())
-	// Backend.Commit()
-	// Expect(isSuccessful(tx)).To(BeTrue())
+    var tx *types.Transaction
+	WalletAddress, tx, Wallet, err = bindings.DeployWallet(BankAccount.TransactOpts(), Backend, Owner.Address(), true, ENSRegistryAddress, TokenWhitelistName, ControllerName, LicenceName, EthToWei(100))
+    Expect(err).ToNot(HaveOccurred())
+	Backend.Commit()
+	Expect(isSuccessful(tx)).To(BeTrue())
 })
 
 var allPassed = true
