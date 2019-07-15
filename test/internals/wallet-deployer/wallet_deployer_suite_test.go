@@ -110,6 +110,29 @@ var _ = Describe("WalletDeployer", func() {
 			Expect(ccc.String()).To(Equal("0"))
 		})
 
+        When("ETH is sent", func() {
+
+            BeforeEach(func() {
+                BankAccount.MustTransfer(Backend, WalletDeployerAddress, EthToWei(1))
+            })
+
+            It("should receive it (payable)", func() {
+                b, e := Backend.BalanceAt(context.Background(), WalletDeployerAddress, nil)
+                Expect(e).ToNot(HaveOccurred())
+                Expect(b.String()).To(Equal(EthToWei(1).String()))
+            })
+
+            It("Should emit a Received events", func() {
+				it, err := WalletDeployer.FilterReceived(nil)
+				Expect(err).ToNot(HaveOccurred())
+				Expect(it.Next()).To(BeTrue())
+                evt := it.Event
+				Expect(it.Next()).To(BeFalse())
+                Expect(evt.From).To(Equal(BankAccount.Address()))
+                Expect(evt.Value.String()).To(Equal(EthToWei(1).String()))
+            })
+		})
+
 		When("a controller deploys a Wallet", func() {
 			BeforeEach(func() {
 				tx, err := WalletDeployer.DeployWallet(Controller.TransactOpts(), Owner.Address())
