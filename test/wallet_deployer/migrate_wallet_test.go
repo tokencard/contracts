@@ -18,6 +18,8 @@ import (
 
 var _ = Describe("Migrate Wallet", func() {
 
+    var MigratedWallet *bindings.Wallet
+
 	When("no contracts are cached and a controller migrates a Wallet with non-initialized security settings", func() {
 
 		BeforeEach(func() {
@@ -25,44 +27,49 @@ var _ = Describe("Migrate Wallet", func() {
 			Expect(err).ToNot(HaveOccurred())
 			Backend.Commit()
 			Expect(isSuccessful(tx)).To(BeTrue())
+
+            MigratedWalletAddress, err := WalletDeployer.Deployed(nil, Owner.Address())
+            MigratedWallet, err = bindings.NewWallet(MigratedWalletAddress, Backend)
+            Expect(err).ToNot(HaveOccurred())
+
 		})
 
 		It("should NOT set the initializedWhitelist flag", func() {
-			initialized, err := Wallet.InitializedWhitelist(nil)
+			initialized, err := MigratedWallet.InitializedWhitelist(nil)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(initialized).To(BeFalse())
 		})
 
         It("should NOT set the initializedTopUpLimit flag", func() {
-			initialized, err := Wallet.InitializedTopUpLimit(nil)
+			initialized, err := MigratedWallet.InitializedTopUpLimit(nil)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(initialized).To(BeFalse())
 		})
 
         It("should NOT set the initializedSpendLimit flag", func() {
-			initialized, err := Wallet.InitializedSpendLimit(nil)
+			initialized, err := MigratedWallet.InitializedSpendLimit(nil)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(initialized).To(BeFalse())
 		})
 
         It("should NOT add the whitelisted addresses to the whitelist", func() {
-            isWhitelisted, err := Wallet.IsWhitelisted(nil, common.HexToAddress("0x1"))
+            isWhitelisted, err := MigratedWallet.IsWhitelisted(nil, common.HexToAddress("0x1"))
             Expect(err).ToNot(HaveOccurred())
             Expect(isWhitelisted).To(BeFalse())
 
-            isWhitelisted, err = Wallet.IsWhitelisted(nil, common.HexToAddress("0x2"))
+            isWhitelisted, err = MigratedWallet.IsWhitelisted(nil, common.HexToAddress("0x2"))
             Expect(err).ToNot(HaveOccurred())
             Expect(isWhitelisted).To(BeFalse())
         })
 
         It("should NOT update the spend limit to 2 ETH", func() {
-            sl, err := Wallet.SpendLimit(nil)
+            sl, err := MigratedWallet.SpendLimit(nil)
             Expect(err).ToNot(HaveOccurred())
-            Expect(sl.String()).To(Equal(EthToWei(100).String()))
+            Expect(sl.String()).To(Equal(EthToWei(1).String()))
         })
 
         It("should NOT update the top up limit to 1 finney", func() {
-            sl, err := Wallet.TopUpLimit(nil)
+            sl, err := MigratedWallet.TopUpLimit(nil)
             Expect(err).ToNot(HaveOccurred())
             Expect(sl.String()).To(Equal(FinneyToWei(500).String()))
         })
@@ -115,16 +122,14 @@ var _ = Describe("Migrate Wallet", func() {
 
 		When("a new Wallet is migrated", func() {
 
-			var Wallet *bindings.Wallet
-
 			BeforeEach(func() {
-				WalletAddress, err := WalletDeployer.Deployed(nil, Owner.Address())
-				Wallet, err = bindings.NewWallet(WalletAddress, Backend)
+				MigratedWalletAddress, err := WalletDeployer.Deployed(nil, Owner.Address())
+				MigratedWallet, err = bindings.NewWallet(MigratedWalletAddress, Backend)
 				Expect(err).ToNot(HaveOccurred())
 			})
 
 			It("should emit a spend limit set event", func() {
-				it, err := Wallet.FilterSetSpendLimit(nil)
+				it, err := MigratedWallet.FilterSetSpendLimit(nil)
 				Expect(err).ToNot(HaveOccurred())
 				Expect(it.Next()).To(BeTrue())
 				evt := it.Event
@@ -134,31 +139,31 @@ var _ = Describe("Migrate Wallet", func() {
 			})
 
 			It("should keep the spend available to 1 ETH", func() {
-				av, err := Wallet.SpendAvailable(nil)
+				av, err := MigratedWallet.SpendAvailable(nil)
 				Expect(err).ToNot(HaveOccurred())
 				Expect(av.String()).To(Equal(EthToWei(1).String()))
 			})
 
 			It("should update the spend limit to 2 ETH", func() {
-				sl, err := Wallet.SpendLimit(nil)
+				sl, err := MigratedWallet.SpendLimit(nil)
 				Expect(err).ToNot(HaveOccurred())
 				Expect(sl.String()).To(Equal(EthToWei(2).String()))
 			})
 
             It("should update the top up limit to 1 finney", func() {
-				sl, err := Wallet.TopUpLimit(nil)
+				sl, err := MigratedWallet.TopUpLimit(nil)
 				Expect(err).ToNot(HaveOccurred())
 				Expect(sl.String()).To(Equal(FinneyToWei(1).String()))
 			})
 
 			It("should update the SpendLimit initialization flag", func() {
-				initialized, err := Wallet.InitializedSpendLimit(nil)
+				initialized, err := MigratedWallet.InitializedSpendLimit(nil)
 				Expect(err).ToNot(HaveOccurred())
 				Expect(initialized).To(BeTrue())
 			})
 
 			It("should emit a setTopUpLimit event", func() {
-				it, err := Wallet.FilterSetTopUpLimit(nil)
+				it, err := MigratedWallet.FilterSetTopUpLimit(nil)
 				Expect(err).ToNot(HaveOccurred())
 				Expect(it.Next()).To(BeTrue())
 				evt := it.Event
@@ -168,29 +173,29 @@ var _ = Describe("Migrate Wallet", func() {
 			})
 
 			It("should update the Whitelist initializedWhitelist flag", func() {
-				initialized, err := Wallet.InitializedWhitelist(nil)
+				initialized, err := MigratedWallet.InitializedWhitelist(nil)
 				Expect(err).ToNot(HaveOccurred())
 				Expect(initialized).To(BeTrue())
 			})
 
 			It("should update the TopUpLimit initializedTopup flag", func() {
-				initialized, err := Wallet.InitializedTopUpLimit(nil)
+				initialized, err := MigratedWallet.InitializedTopUpLimit(nil)
 				Expect(err).ToNot(HaveOccurred())
 				Expect(initialized).To(BeTrue())
 			})
 
 			It("should add the whitelisted addresses to the whitelist", func() {
-				isWhitelisted, err := Wallet.IsWhitelisted(nil, common.HexToAddress("0x1"))
+				isWhitelisted, err := MigratedWallet.IsWhitelisted(nil, common.HexToAddress("0x1"))
 				Expect(err).ToNot(HaveOccurred())
 				Expect(isWhitelisted).To(BeTrue())
 
-				isWhitelisted, err = Wallet.IsWhitelisted(nil, common.HexToAddress("0x2"))
+				isWhitelisted, err = MigratedWallet.IsWhitelisted(nil, common.HexToAddress("0x2"))
 				Expect(err).ToNot(HaveOccurred())
 				Expect(isWhitelisted).To(BeTrue())
 			})
 
 			It("should emit AddedToWhitelist event", func() {
-				it, err := Wallet.FilterAddedToWhitelist(nil)
+				it, err := MigratedWallet.FilterAddedToWhitelist(nil)
 				Expect(err).ToNot(HaveOccurred())
 				Expect(it.Next()).To(BeTrue())
 				evt := it.Event

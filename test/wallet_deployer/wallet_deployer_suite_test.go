@@ -146,56 +146,41 @@ var _ = Describe("WalletDeployer", func() {
 			})
 
 			When("new Wallet owner sets the spend limit", func() {
-				var Wallet *bindings.Wallet
-				var tx *types.Transaction
+				var NewWallet *bindings.Wallet
 
 				BeforeEach(func() {
-					WalletAddress, err := WalletDeployer.Deployed(nil, Owner.Address())
+					NewWalletAddress, err := WalletDeployer.Deployed(nil, Owner.Address())
 
-					Wallet, err = bindings.NewWallet(WalletAddress, Backend)
+					NewWallet, err = bindings.NewWallet(NewWalletAddress, Backend)
 					Expect(err).ToNot(HaveOccurred())
-
-					tx, err = Wallet.InitializeSpendLimit(Owner.TransactOpts(), EthToWei(1))
-					Expect(err).ToNot(HaveOccurred())
-					Backend.Commit()
 				})
 
 				It("should succeed", func() {
+                    tx, err := NewWallet.InitializeSpendLimit(Owner.TransactOpts(), EthToWei(1))
+					Expect(err).ToNot(HaveOccurred())
+					Backend.Commit()
 					Expect(isSuccessful(tx)).To(BeTrue())
 				})
 			})
 		})
 
 		When("a random account tries to deploy a Wallet", func() {
-
-			var tx *types.Transaction
-
-			BeforeEach(func() {
-				var err error
-				tx, err = WalletDeployer.DeployWallet(RandomAccount.TransactOpts(ethertest.WithGasLimit(5000000)), Owner.Address())
+			It("should fail", func() {
+				tx, err := WalletDeployer.DeployWallet(RandomAccount.TransactOpts(ethertest.WithGasLimit(5000000)), Owner.Address())
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
+                Expect(isSuccessful(tx)).To(BeFalse())
 			})
-
-			It("should fail", func() {
-				Expect(isSuccessful(tx)).To(BeFalse())
-			})
-		})
+        })
 	})
 
 	When("a random account tries to cache a Wallet", func() {
 
-		var tx *types.Transaction
-
-		BeforeEach(func() {
-			var err error
-			tx, err = WalletDeployer.CacheWallet(RandomAccount.TransactOpts(ethertest.WithGasLimit(5000000)))
+		It("should succeed", func() {
+			tx, err := WalletDeployer.CacheWallet(RandomAccount.TransactOpts(ethertest.WithGasLimit(5000000)))
 			Expect(err).ToNot(HaveOccurred())
 			Backend.Commit()
-		})
-
-		It("should succeed", func() {
-			Expect(isSuccessful(tx)).To(BeTrue())
+            Expect(isSuccessful(tx)).To(BeTrue())
 		})
 	})
 
@@ -244,32 +229,28 @@ var _ = Describe("WalletDeployer", func() {
 			})
 
 			When("New Wallet owner sets the spend limit", func() {
-				var Wallet *bindings.Wallet
-				var tx *types.Transaction
+
+				var NewWallet *bindings.Wallet
 
 				BeforeEach(func() {
-					WalletAddress, err := WalletDeployer.Deployed(nil, Owner.Address())
-
-					Wallet, err = bindings.NewWallet(WalletAddress, Backend)
+					NewWalletAddress, err := WalletDeployer.Deployed(nil, Owner.Address())
+					NewWallet, err = bindings.NewWallet(NewWalletAddress, Backend)
 					Expect(err).ToNot(HaveOccurred())
 
-					tx, err = Wallet.InitializeSpendLimit(Owner.TransactOpts(), FinneyToWei(500))
+                    tx, err := NewWallet.InitializeSpendLimit(Owner.TransactOpts(), FinneyToWei(500))
 					Expect(err).ToNot(HaveOccurred())
 					Backend.Commit()
-				})
-
-				It("should succeed", func() {
 					Expect(isSuccessful(tx)).To(BeTrue())
 				})
 
 				It("should lower the spend available to 500 Finney", func() {
-					av, err := Wallet.SpendAvailable(nil)
+					av, err := NewWallet.SpendAvailable(nil)
 					Expect(err).ToNot(HaveOccurred())
 					Expect(av.String()).To(Equal(FinneyToWei(500).String()))
 				})
 
 				It("should have a spend limit of 500 Finney", func() {
-					sl, err := Wallet.SpendLimit(nil)
+					sl, err := NewWallet.SpendLimit(nil)
 					Expect(err).ToNot(HaveOccurred())
 					Expect(sl.String()).To(Equal(FinneyToWei(500).String()))
 				})
