@@ -21,6 +21,7 @@ pragma solidity ^0.5.10;
 import "./licence.sol";
 import "./internals/ownable.sol";
 import "./internals/controllable.sol";
+import "./internals/balanceable.sol";
 import "./internals/transferrable.sol";
 import "./internals/ensResolvable.sol";
 import "./internals/tokenWhitelistable.sol";
@@ -481,7 +482,7 @@ contract LoadLimit is ControllableOwnable {
 
 
 //// @title Asset store with extra security features.
-contract Vault is AddressWhitelist, SpendLimit, ERC165, Transferrable, TokenWhitelistable {
+contract Vault is AddressWhitelist, SpendLimit, ERC165, Transferrable, Balanceable, TokenWhitelistable {
 
     using SafeMath for uint256;
     using SafeERC20 for ERC20;
@@ -512,17 +513,6 @@ contract Vault is AddressWhitelist, SpendLimit, ERC165, Transferrable, TokenWhit
         emit Received(msg.sender, msg.value);
     }
 
-    /// @dev Returns the amount of an asset owned by the contract.
-    /// @param _asset address of an ERC20 token or 0x0 for ether.
-    /// @return balance associated with the wallet address in wei.
-    function balance(address _asset) external view returns (uint) {
-        if (_asset != address(0)) {
-            return ERC20(_asset).balanceOf(address(this));
-        } else {
-            return address(this).balance;
-        }
-    }
-
     /// @dev Checks for interface support based on ERC165.
     function supportsInterface(bytes4 interfaceID) external view returns (bool) {
         return interfaceID == _ERC165_INTERFACE_ID;
@@ -537,13 +527,7 @@ contract Vault is AddressWhitelist, SpendLimit, ERC165, Transferrable, TokenWhit
         require(_assets.length != 0, "asset array should be non-empty");
         // This loops through all of the transfers to be made
         for (uint i = 0; i < _assets.length; i++) {
-            uint amount;
-            // Get amount based on whether eth or erc20
-            if (_assets[i] == address(0)) {
-                amount = address(this).balance;
-            } else {
-                amount = ERC20(_assets[i]).balanceOf(address(this));
-            }
+            uint amount = _balance(address(this), _assets[i]);
             // use our safe, daily limit protected transfer
             transfer(_to, _assets[i], amount);
         }

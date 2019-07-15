@@ -18,7 +18,7 @@ var _ = Describe("fallback", func() {
 		})
 
 		It("should increase the wallet's ETH balance by the same amount", func() {
-			balance, err := Wallet.Balance(nil, common.HexToAddress("0x0"))
+			balance, err := Wallet.Balance(nil, WalletAddress, common.HexToAddress("0x0"))
 			Expect(err).ToNot(HaveOccurred())
 			Expect(balance.String()).To(Equal(FinneyToWei(1).String()))
 		})
@@ -35,10 +35,10 @@ var _ = Describe("fallback", func() {
 	})
 
 	When(" a random person calls a wallet method that doesn't exist", func() {
-        var randomAddress common.Address
+		var randomAddress common.Address
 		BeforeEach(func() {
 			privateKey, err := crypto.GenerateKey()
-            randomAddress = crypto.PubkeyToAddress(privateKey.PublicKey)
+			randomAddress = crypto.PubkeyToAddress(privateKey.PublicKey)
 			Expect(err).ToNot(HaveOccurred())
 			BankAccount.MustTransfer(Backend, randomAddress, EthToWei(1))
 			unsignedTx := types.NewTransaction(0, WalletAddress, FinneyToWei(1), 30000, GweiToWei(20), []byte{0xf8, 0xa8, 0xfd, 0xd6})
@@ -50,13 +50,13 @@ var _ = Describe("fallback", func() {
 			Expect(isSuccessful(signedTx)).To(BeTrue())
 		})
 
-        It("should increase the wallet's ETH balance by one Finney", func() {
-			balance, err := Wallet.Balance(nil, common.HexToAddress("0x0"))
+		It("should increase the wallet's ETH balance by one Finney", func() {
+			balance, err := Wallet.Balance(nil, WalletAddress, common.HexToAddress("0x0"))
 			Expect(err).ToNot(HaveOccurred())
 			Expect(balance.String()).To(Equal(FinneyToWei(1).String()))
 		})
 
-        It("should emit a deposit event", func() {
+		It("should emit a deposit event", func() {
 			it, err := Wallet.FilterReceived(nil)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(it.Next()).To(BeTrue())

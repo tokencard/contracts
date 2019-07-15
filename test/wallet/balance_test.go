@@ -15,7 +15,7 @@ import (
 var _ = Describe("balance", func() {
 	Context("When the contract has no balance", func() {
 		It("should return 0", func() {
-			b, err := Wallet.Balance(nil, common.HexToAddress("0x0"))
+			b, err := Wallet.Balance(nil, WalletAddress, common.HexToAddress("0x0"))
 			Expect(err).ToNot(HaveOccurred())
 			Expect(b.String()).To(Equal("0"))
 		})
@@ -27,7 +27,7 @@ var _ = Describe("balance", func() {
 		})
 
 		It("should return 1 ETH", func() {
-			b, err := Wallet.Balance(nil, common.HexToAddress("0x0"))
+			b, err := Wallet.Balance(nil, WalletAddress, common.HexToAddress("0x0"))
 			Expect(err).ToNot(HaveOccurred())
 			Expect(b.String()).To(Equal(EthToWei(1).String()))
 		})
@@ -53,7 +53,7 @@ var _ = Describe("balance", func() {
 		})
 
 		It("Balance for that token should return 1", func() {
-			b, err := Wallet.Balance(nil, ta)
+			b, err := Wallet.Balance(nil, WalletAddress, ta)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(b.String()).To(Equal("1"))
 		})

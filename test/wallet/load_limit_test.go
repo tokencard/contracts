@@ -24,7 +24,7 @@ var _ = Describe("loadLimit", func() {
 			Expect(err).ToNot(HaveOccurred())
 			Expect(ll.String()).To(Equal(EthToWei(10000).String()))
 
-			Wallet.Balance(nil, common.HexToAddress("0x0"))
+			Wallet.Balance(nil, WalletAddress, common.HexToAddress("0x0"))
 
 			ll, err = Wallet.LoadLimitAvailable(nil)
 			Expect(err).ToNot(HaveOccurred())

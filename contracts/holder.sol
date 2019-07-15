@@ -4,6 +4,7 @@ pragma solidity ^0.5.7;
 import "./externals/ERC20.sol";
 import "./externals/SafeMath.sol";
 import "./internals/transferrable.sol";
+import "./internals/balanceable.sol";
 import "./internals/burner.sol";
 import "./internals/ownable.sol";
 import "./internals/tokenWhitelistable.sol";
@@ -12,7 +13,7 @@ import "./internals/tokenWhitelistable.sol";
 // A TokenHolder holds token assets for a redeemable token. When the contract
 // calls the burn method, a share of the tokens held by this contract are
 // disbursed to the burner.
-contract Holder is Ownable, Transferrable, ENSResolvable, TokenWhitelistable {
+contract Holder is Ownable, Balanceable, Transferrable, ENSResolvable, TokenWhitelistable {
 
     using SafeMath for uint256;
 
@@ -52,7 +53,7 @@ contract Holder is Ownable, Transferrable, ENSResolvable, TokenWhitelistable {
         uint supply = Burner(_burner).currentSupply().add(amount);
         address[] memory redeemableAddresses = _redeemableTokens();
         for (uint i = 0; i < redeemableAddresses.length; i++) {
-            uint redeemableBalance = balance(redeemableAddresses[i]);
+            uint redeemableBalance = _balance(address(this), redeemableAddresses[i]);
             if (redeemableBalance > 0) {
                 uint redeemableAmount = redeemableBalance.mul(amount).div(supply);
                 _safeTransfer(to, redeemableAddresses[i], redeemableAmount);
@@ -66,7 +67,7 @@ contract Holder is Ownable, Transferrable, ENSResolvable, TokenWhitelistable {
         for (uint i = 0; i < _nonRedeemableAddresses.length; i++) {
             //revert if token is redeemable
             require(!_isTokenRedeemable(_nonRedeemableAddresses[i]), "redeemables cannot be claimed");
-            uint claimBalance = balance(_nonRedeemableAddresses[i]);
+            uint claimBalance = _balance(address(this), _nonRedeemableAddresses[i]);
             if (claimBalance > 0) {
                 _safeTransfer(_to, _nonRedeemableAddresses[i], claimBalance);
                 emit Claimed(_to, _nonRedeemableAddresses[i], claimBalance);
@@ -78,15 +79,5 @@ contract Holder is Ownable, Transferrable, ENSResolvable, TokenWhitelistable {
     function burner() external view returns (address) {
         return _burner;
     }
-
-    // Balance returns the amount of a token owned by the contract.
-    function balance(address token) public view returns (uint) {
-        if (token != address(0)) {
-            return ERC20(token).balanceOf(address(this));
-        } else {
-            return address(this).balance;
-        }
-    }
-
 
 }
