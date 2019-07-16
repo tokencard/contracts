@@ -475,7 +475,7 @@ func InitializeBackend() error {
 	}
 
 	// Deploy the Token holder contract.
-	TokenHolderAddress, tx, TokenHolder, err = bindings.DeployHolder(Controller.TransactOpts(), Backend, Owner.Address(), false, TKNBurnerAddress, ENSRegistryAddress, TokenWhitelistName)
+	TokenHolderAddress, tx, TokenHolder, err = bindings.DeployHolder(Controller.TransactOpts(), Backend, Owner.Address(), TKNBurnerAddress, ENSRegistryAddress, TokenWhitelistName)
 	if err != nil {
 		return err
 	}
