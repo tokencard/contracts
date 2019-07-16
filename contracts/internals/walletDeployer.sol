@@ -25,7 +25,6 @@ import "./ensResolvable.sol";
 //// @title Wallet deployer with pre-caching if wallets functionality.
 contract WalletDeployer is ENSResolvable, Controllable {
 
-    event Received(address _from, uint _value);
     event CachedWallet(Wallet _wallet);
     event DeployedWallet(Wallet _wallet, address _owner);
     event MigratedWallet(Wallet _wallet, Wallet _oldWallet, address _owner);
@@ -47,10 +46,8 @@ contract WalletDeployer is ENSResolvable, Controllable {
         defaultSpendLimit = _defaultSpendLimit;
     }
 
-    /// @dev Ether can be deposited from any source, so this contract must be payable by anyone.
-    function() external payable {
-        emit Received(msg.sender, msg.value);
-    }
+    /// @dev This contract must be payable by anyone, as the Wallet Owner needs to be payable
+    function() external payable {}
 
     /// @notice This public method allows anyone to pre-cache wallets
     function cacheWallet() public {

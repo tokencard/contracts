@@ -12,7 +12,7 @@ import (
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	"github.com/tokencard/contracts/pkg/bindings"
-    "github.com/tokencard/contracts/pkg/bindings/internals"
+	"github.com/tokencard/contracts/pkg/bindings/internals"
 	. "github.com/tokencard/contracts/test/shared"
 	"github.com/tokencard/ethertest"
 )
@@ -91,20 +91,19 @@ var _ = Describe("WalletDeployer", func() {
 			Expect(sl.String()).To(Equal(EthToWei(1).String()))
 		})
 
-
 		It("should point to the right tokenwhitelist node name", func() {
 			on, err := WalletDeployer.TokenWhitelistNode(nil)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(common.Hash(on)).To(Equal(EnsNode("token-whitelist.tokencard.eth")))
 		})
 
-        It("should point to the right controller node name", func() {
+		It("should point to the right controller node name", func() {
 			on, err := WalletDeployer.ControllerNode(nil)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(common.Hash(on)).To(Equal(EnsNode("controller.tokencard.eth")))
 		})
 
-        It("should point to the right licence node name", func() {
+		It("should point to the right licence node name", func() {
 			on, err := WalletDeployer.LicenceNode(nil)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(common.Hash(on)).To(Equal(EnsNode("licence.tokencard.eth")))
@@ -116,27 +115,18 @@ var _ = Describe("WalletDeployer", func() {
 			Expect(ccc.String()).To(Equal("0"))
 		})
 
-        When("ETH is sent", func() {
+		When("ETH is sent", func() {
 
-            BeforeEach(func() {
-                BankAccount.MustTransfer(Backend, WalletDeployerAddress, EthToWei(1))
-            })
+			BeforeEach(func() {
+				BankAccount.MustTransfer(Backend, WalletDeployerAddress, EthToWei(1))
+			})
 
-            It("should receive it (payable)", func() {
-                b, e := Backend.BalanceAt(context.Background(), WalletDeployerAddress, nil)
-                Expect(e).ToNot(HaveOccurred())
-                Expect(b.String()).To(Equal(EthToWei(1).String()))
-            })
+			It("should receive it (payable)", func() {
+				b, e := Backend.BalanceAt(context.Background(), WalletDeployerAddress, nil)
+				Expect(e).ToNot(HaveOccurred())
+				Expect(b.String()).To(Equal(EthToWei(1).String()))
+			})
 
-            It("Should emit a Received events", func() {
-				it, err := WalletDeployer.FilterReceived(nil)
-				Expect(err).ToNot(HaveOccurred())
-				Expect(it.Next()).To(BeTrue())
-                evt := it.Event
-				Expect(it.Next()).To(BeFalse())
-                Expect(evt.From).To(Equal(BankAccount.Address()))
-                Expect(evt.Value.String()).To(Equal(EthToWei(1).String()))
-            })
 		})
 
 		When("a controller deploys a Wallet", func() {
@@ -194,7 +184,7 @@ var _ = Describe("WalletDeployer", func() {
 				})
 
 				It("should succeed", func() {
-                    tx, err := NewWallet.SetSpendLimit(Owner.TransactOpts(), EthToWei(1))
+					tx, err := NewWallet.SetSpendLimit(Owner.TransactOpts(), EthToWei(1))
 					Expect(err).ToNot(HaveOccurred())
 					Backend.Commit()
 					Expect(isSuccessful(tx)).To(BeTrue())
@@ -205,7 +195,7 @@ var _ = Describe("WalletDeployer", func() {
 		When("a random account tries to deploy a Wallet", func() {
 
 			It("should fail", func() {
-                tx, err := WalletDeployer.DeployWallet(RandomAccount.TransactOpts(ethertest.WithGasLimit(5000000)), Owner.Address())
+				tx, err := WalletDeployer.DeployWallet(RandomAccount.TransactOpts(ethertest.WithGasLimit(5000000)), Owner.Address())
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 				Expect(isSuccessful(tx)).To(BeFalse())
@@ -215,7 +205,7 @@ var _ = Describe("WalletDeployer", func() {
 
 	When("a random account tries to cache a Wallet", func() {
 		It("should succeed", func() {
-            tx, err := WalletDeployer.CacheWallet(RandomAccount.TransactOpts(ethertest.WithGasLimit(5000000)))
+			tx, err := WalletDeployer.CacheWallet(RandomAccount.TransactOpts(ethertest.WithGasLimit(5000000)))
 			Expect(err).ToNot(HaveOccurred())
 			Backend.Commit()
 			Expect(isSuccessful(tx)).To(BeTrue())
@@ -278,7 +268,7 @@ var _ = Describe("WalletDeployer", func() {
 					tx, err := NewWallet.SetSpendLimit(Owner.TransactOpts(), FinneyToWei(500))
 					Expect(err).ToNot(HaveOccurred())
 					Backend.Commit()
-                    Expect(isSuccessful(tx)).To(BeTrue())
+					Expect(isSuccessful(tx)).To(BeTrue())
 				})
 
 				It("should lower the spend available to 500 Finney", func() {
