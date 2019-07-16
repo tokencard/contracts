@@ -21,10 +21,6 @@ func init() {
 	TestRig.AddCoverageForContracts(
 		"../../build/holder/combined.json",
 		"../../contracts")
-
-	TestRig.AddCoverageForContracts(
-		"../../build/mocks/burnerToken/combined.json",
-		"../../contracts")
 }
 
 func TestHolderSuite(t *testing.T) {
@@ -44,8 +40,7 @@ var _ = BeforeEach(func() {
 })
 
 var _ = AfterSuite(func() {
-	TestRig.ExpectMinimumCoverage("holder.sol", 0.00)
-	TestRig.ExpectMinimumCoverage("mocks/burnerToken.sol", 10.00)
+	TestRig.ExpectMinimumCoverage("holder.sol", 100.00)
 	TestRig.PrintGasUsage(os.Stdout)
 })
 

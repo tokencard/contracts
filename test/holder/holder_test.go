@@ -21,6 +21,12 @@ var _ = Describe("TokenHolder", func() {
 			Expect(isSuccessful(tx)).To(BeFalse())
 			Expect(err).ToNot(HaveOccurred())
 		})
-
 	})
+
+    It("should point to the TKN address", func(){
+            tkn, err := TokenHolder.Burner(nil)
+            Expect(err).ToNot(HaveOccurred())
+            Expect(tkn).To(Equal(TKNBurnerAddress))
+    })
+
 })
