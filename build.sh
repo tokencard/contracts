@@ -17,14 +17,15 @@ contract_sources=(
   'mocks/token'
   'mocks/burnerToken'
   'mocks/nonCompliantToken'
-  'mocks/base64-exporter'
+  'mocks/base64Exporter'
   'mocks/oraclize'
-  'mocks/parseIntScientific-exporter'
+  'mocks/parseIntScientificExporter'
   'mocks/tokenWhitelistableExporter'
   'internals/controller'
   'internals/tokenWhitelist'
   'internals/parseIntScientific'
   'externals/ens/PublicResolver'
+  'externals/ens/ENSRegistry'
 )
 
 for c in "${contract_sources[@]}"
@@ -54,15 +55,16 @@ contracts=(
   "mocks/token/Token mocks/token.go Token mocks"
   "mocks/burnerToken/BurnerToken mocks/burnerToken.go BurnerToken mocks"
   "mocks/nonCompliantToken/NonCompliantToken mocks/nonCompliantToken.go NonCompliantToken mocks"
-  "mocks/base64-exporter/Base64Exporter mocks/base64-exporter.go Base64Exporter mocks"
+  "mocks/base64Exporter/Base64Exporter mocks/base64Exporter.go Base64Exporter mocks"
   "mocks/oraclize/OraclizeConnector mocks/oraclizeConnector.go OraclizeConnector mocks"
   "mocks/oraclize/OraclizeAddrResolver mocks/oraclizeAddrResolver.go OraclizeAddrResolver mocks"
-  "mocks/parseIntScientific-exporter/ParseIntScientificExporter mocks/parseIntScientific-exporter.go ParseIntScientificExporter mocks"
+  "mocks/parseIntScientificExporter/ParseIntScientificExporter mocks/parseIntScientificExporter.go ParseIntScientificExporter mocks"
   "mocks/tokenWhitelistableExporter/TokenWhitelistableExporter mocks/tokenWhitelistableExporter.go TokenWhitelistableExporter mocks"
   "internals/controller/Controller internals/controller.go Controller internals"
   "internals/tokenWhitelist/TokenWhitelist internals/tokenWhitelist.go TokenWhitelist internals"
   "internals/parseIntScientific/ParseIntScientific internals/parseIntScientific.go ParseIntScientific internals"
-  "externals/ens/PublicResolver/PublicResolver externals/ens/public-resolver.go PublicResolver ens"
+  "externals/ens/PublicResolver/PublicResolver externals/ens/PublicResolver.go PublicResolver ens"
+  "externals/ens/ENSRegistry/ENSRegistry externals/ens/ENSRegistry.go ENSRegistry ens"
 )
 
 for c in "${contracts[@]}"
