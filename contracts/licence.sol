@@ -41,8 +41,6 @@ contract Licence is Transferrable, Ownable {
     /*     Events     */
     /*****************/
 
-    event Received(address _from, uint _amount);
-
     event UpdatedLicenceDAO(address _newDAO);
     event UpdatedCryptoFloat(address _newFloat);
     event UpdatedTokenHolder(address _newHolder);
@@ -96,9 +94,7 @@ contract Licence is Transferrable, Ownable {
     }
 
     /// @notice Ether can be deposited from any source, so this contract should be payable by anyone.
-    function() external payable {
-        emit Received(msg.sender, msg.value);
-    }
+    function() external payable {}
 
     /// @notice this allows for people to see the scaled licence amount
     /// @return the scaled licence amount, used to calculate the split when loading.
