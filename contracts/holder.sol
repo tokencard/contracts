@@ -1,5 +1,5 @@
 /**
- *  Holder Contract aka Asset Contract - The Consumer Contract Wallet
+ *  Holder (aka Asset Contract) - The Consumer Contract Wallet
  *  Copyright (C) 2019 The Contract Wallet Company Limited
  *
  *  This program is free software: you can redistribute it and/or modify
@@ -28,7 +28,7 @@ import "./internals/ownable.sol";
 import "./internals/tokenWhitelistable.sol";
 
 
-/// @title TokenHolder holds token assets for the TKN redeemable token.
+/// @title Holder - The TKN Asset Contract
 /// @notice When the TKN contract calls the burn method, a share of the tokens held by this contract are disbursed to the burner.
 contract Holder is Ownable, Balanceable, Transferrable, ENSResolvable, TokenWhitelistable {
 
@@ -63,7 +63,7 @@ contract Holder is Ownable, Balanceable, Transferrable, ENSResolvable, TokenWhit
 
     /// @notice Burn handles disbursing a share of tokens in this contract to a given address.
     /// @param _to The address to disburse to
-    /// @param _amount The amount of TKN that will be burn if this succeeds
+    /// @param _amount The amount of TKN that will be burned if this succeeds
     function burn(address payable _to, uint _amount) external onlyBurner returns (bool) {
         if (_amount == 0) {
             return true;
@@ -83,7 +83,7 @@ contract Holder is Ownable, Balanceable, Transferrable, ENSResolvable, TokenWhit
         return true;
     }
 
-    /// @notice This allows for the only to reclaim the non-redeemableTokens
+    /// @notice This allows for the admin to reclaim the non-redeemableTokens
     /// @param _to this is the address which the reclaimed tokens will be sent to
     /// @param _nonRedeemableAddresses this is the array of tokens to be claimed
     function nonRedeemableTokenClaim(address payable _to, address[] calldata _nonRedeemableAddresses) external onlyOwner returns (bool) {
