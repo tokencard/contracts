@@ -1,3 +1,21 @@
+/**
+ *  Holder (aka Asset Contract) - The Consumer Contract Wallet
+ *  Copyright (C) 2019 The Contract Wallet Company Limited
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 pragma solidity ^0.5.7;
 
 
@@ -10,9 +28,8 @@ import "./internals/ownable.sol";
 import "./internals/tokenWhitelistable.sol";
 
 
-// A TokenHolder holds token assets for a redeemable token. When the contract
-// calls the burn method, a share of the tokens held by this contract are
-// disbursed to the burner.
+/// @title Holder - The TKN Asset Contract
+/// @notice When the TKN contract calls the burn method, a share of the tokens held by this contract are disbursed to the burner.
 contract Holder is Ownable, Balanceable, Transferrable, ENSResolvable, TokenWhitelistable {
 
     using SafeMath for uint256;
@@ -30,39 +47,45 @@ contract Holder is Ownable, Balanceable, Transferrable, ENSResolvable, TokenWhit
     // Burner token which can be burned to redeem shares.
     address private _burner;
 
-    /// @notice Constructor  initializes the holder contract.
-    /// @param _burnerContract is the address of the token contract with burning functionality.
-    /// @param _ens is the address of the ENS registry.
-    /// @param _tokenWhitelistNameHash is the ENS name hash of the Token whitelist.
-    constructor (address payable _owner, bool _transferable, address _burnerContract, address _ens, bytes32 _tokenWhitelistNameHash) Ownable(_owner, _transferable) ENSResolvable(_ens) TokenWhitelistable(_tokenWhitelistNameHash) public {
-        _burner = _burnerContract;
+    /// @notice Constructor initializes the holder contract.
+    /// @param _owner_ is the owner of the deployer
+    /// @param _burnerContract_ is the address of the token contract TKN with burning functionality.
+    /// @param _ens_ is the address of the ENS registry.
+    /// @param _tokenWhitelistNameHash_ is the ENS name hash of the Token whitelist.
+    constructor (address payable _owner_, address _burnerContract_, address _ens_, bytes32 _tokenWhitelistNameHash_) Ownable(_owner_, false) ENSResolvable(_ens_) TokenWhitelistable(_tokenWhitelistNameHash_) public {
+        _burner = _burnerContract_;
     }
 
-    // Ether may be sent from anywhere.
+    /// @notice Ether may be sent from anywhere.
     function() external payable {
         emit Received(msg.sender, msg.value);
     }
 
-    // Burn handles disbursing a share of tokens to an address.
-    function burn(address payable to, uint amount) external onlyBurner returns (bool) {
-        if (amount == 0) {
+    /// @notice Burn handles disbursing a share of tokens in this contract to a given address.
+    /// @param _to The address to disburse to
+    /// @param _amount The amount of TKN that will be burned if this succeeds
+    function burn(address payable _to, uint _amount) external onlyBurner returns (bool) {
+        if (_amount == 0) {
             return true;
         }
-
         // The burner token deducts from the supply before calling.
-        uint supply = Burner(_burner).currentSupply().add(amount);
+        uint supply = Burner(_burner).currentSupply().add(_amount);
         address[] memory redeemableAddresses = _redeemableTokens();
         for (uint i = 0; i < redeemableAddresses.length; i++) {
             uint redeemableBalance = _balance(address(this), redeemableAddresses[i]);
             if (redeemableBalance > 0) {
-                uint redeemableAmount = redeemableBalance.mul(amount).div(supply);
-                _safeTransfer(to, redeemableAddresses[i], redeemableAmount);
-                emit CashAndBurned(to, redeemableAddresses[i], redeemableAmount);
+                uint redeemableAmount = redeemableBalance.mul(_amount).div(supply);
+                _safeTransfer(_to, redeemableAddresses[i], redeemableAmount);
+                emit CashAndBurned(_to, redeemableAddresses[i], redeemableAmount);
             }
         }
+
         return true;
     }
 
+    /// @notice This allows for the admin to reclaim the non-redeemableTokens
+    /// @param _to this is the address which the reclaimed tokens will be sent to
+    /// @param _nonRedeemableAddresses this is the array of tokens to be claimed
     function nonRedeemableTokenClaim(address payable _to, address[] calldata _nonRedeemableAddresses) external onlyOwner returns (bool) {
         for (uint i = 0; i < _nonRedeemableAddresses.length; i++) {
             //revert if token is redeemable
@@ -73,9 +96,12 @@ contract Holder is Ownable, Balanceable, Transferrable, ENSResolvable, TokenWhit
                 emit Claimed(_to, _nonRedeemableAddresses[i], claimBalance);
             }
         }
+
         return true;
     }
 
+    /// @notice Returned the address of the burner contract
+    /// @return the TKN address
     function burner() external view returns (address) {
         return _burner;
     }
