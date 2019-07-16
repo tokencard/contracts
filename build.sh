@@ -65,7 +65,7 @@ contracts=(
   "internals/tokenWhitelist/TokenWhitelist internals/tokenWhitelist.go TokenWhitelist internals"
   "internals/parseIntScientific/ParseIntScientific internals/parseIntScientific.go ParseIntScientific internals"
   "externals/ens/ENSRegistry/ENSRegistry externals/ens/ENSRegistry.go ENSRegistry ens"
-  "externals/ens/PublicResolver/PublicResolver externals/ens/public-resolver.go PublicResolver ens"
+  "externals/ens/PublicResolver/PublicResolver externals/ens/PublicResolver.go PublicResolver ens"
   "internals/walletDeployer/WalletDeployer internals/walletDeployer.go WalletDeployer internals"
 )
 
