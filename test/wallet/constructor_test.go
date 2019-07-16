@@ -24,7 +24,7 @@ var _ = Describe("wallet constructor", func() {
 	When("the stablecoing is removed from the list", func() {
 
 		BeforeEach(func() {
-			tx, err := TokenWhitelist.RemoveTokens(Controller.TransactOpts(), []common.Address{StablecoinAddress})
+			tx, err := TokenWhitelist.RemoveTokens(ControllerAdmin.TransactOpts(), []common.Address{StablecoinAddress})
 			Expect(err).ToNot(HaveOccurred())
 			Backend.Commit()
 			Expect(isSuccessful(tx)).To(BeTrue())

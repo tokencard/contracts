@@ -96,29 +96,29 @@ var _ = Describe("TokenHolder", func() {
 
 				When("The holder contract owns two types of ERC20 tokens and 1 ETH", func() {
 
-                    //add the tokens to the list
+					//add the tokens to the list
 					BeforeEach(func() {
-                        tokens := []common.Address{common.HexToAddress("0x0"), ERC20Contract1Address, ERC20Contract2Address}
-        				tx, err := TokenWhitelist.AddTokens(
-        					Controller.TransactOpts(),
-        					tokens,
-        					StringsToByte32(
-                                "ETH",
-        						"ERC1",
-        						"ERC2",
-        					),
-        					[]*big.Int{
-                                DecimalsToMagnitude(big.NewInt(18)),
-        						DecimalsToMagnitude(big.NewInt(18)),
-        						DecimalsToMagnitude(big.NewInt(18)),
-        					},
-        					[]bool{true, true, true},
-        					[]bool{true, true, true},
-        					big.NewInt(20180913153211),
-        				)
-        				Expect(err).ToNot(HaveOccurred())
-        				Backend.Commit()
-        				Expect(isSuccessful(tx)).To(BeTrue())
+						tokens := []common.Address{common.HexToAddress("0x0"), ERC20Contract1Address, ERC20Contract2Address}
+						tx, err := TokenWhitelist.AddTokens(
+							ControllerAdmin.TransactOpts(),
+							tokens,
+							StringsToByte32(
+								"ETH",
+								"ERC1",
+								"ERC2",
+							),
+							[]*big.Int{
+								DecimalsToMagnitude(big.NewInt(18)),
+								DecimalsToMagnitude(big.NewInt(18)),
+								DecimalsToMagnitude(big.NewInt(18)),
+							},
+							[]bool{true, true, true},
+							[]bool{true, true, true},
+							big.NewInt(20180913153211),
+						)
+						Expect(err).ToNot(HaveOccurred())
+						Backend.Commit()
+						Expect(isSuccessful(tx)).To(BeTrue())
 					})
 
 					BeforeEach(func() {

@@ -173,7 +173,7 @@ var _ = Describe("bulk_transfer", func() {
 						BeforeEach(func() {
 							tokens := []common.Address{ERC20Contract1Address, ERC20Contract2Address}
 							tx, err := TokenWhitelist.AddTokens(
-								Controller.TransactOpts(),
+								ControllerAdmin.TransactOpts(),
 								tokens,
 								StringsToByte32(
 									"ERC1",
@@ -204,7 +204,7 @@ var _ = Describe("bulk_transfer", func() {
 						When("rates are updated with valid rates", func() {
 							BeforeEach(func() {
 								tx, err := TokenWhitelist.UpdateTokenRate(
-									Controller.TransactOpts(),
+									ControllerAdmin.TransactOpts(),
 									ERC20Contract1Address,
 									big.NewInt(2),
 									big.NewInt(20180913153211),
@@ -215,7 +215,7 @@ var _ = Describe("bulk_transfer", func() {
 							})
 							BeforeEach(func() {
 								tx, err := TokenWhitelist.UpdateTokenRate(
-									Controller.TransactOpts(),
+									ControllerAdmin.TransactOpts(),
 									ERC20Contract2Address,
 									big.NewInt(1),
 									big.NewInt(20180913153211),
@@ -253,7 +253,7 @@ var _ = Describe("bulk_transfer", func() {
 						When("rates are updated but the spendLimit is ecxeeded", func() {
 							BeforeEach(func() {
 								tx, err := TokenWhitelist.UpdateTokenRate(
-									Controller.TransactOpts(),
+									ControllerAdmin.TransactOpts(),
 									ERC20Contract1Address,
 									EthToWei(1000000000000000), //10^15
 									big.NewInt(20180913153211),
@@ -264,7 +264,7 @@ var _ = Describe("bulk_transfer", func() {
 							})
 							BeforeEach(func() {
 								tx, err := TokenWhitelist.UpdateTokenRate(
-									Controller.TransactOpts(),
+									ControllerAdmin.TransactOpts(),
 									ERC20Contract2Address,
 									EthToWei(1),
 									big.NewInt(20180913153211),

@@ -18,7 +18,7 @@ var _ = Describe("updateRatesList", func() {
 		BeforeEach(func() {
 			tokens := []common.Address{common.HexToAddress("0x0"), common.HexToAddress("0x1"), common.HexToAddress("0x2")}
 			tx, err := TokenWhitelist.AddTokens(
-				Controller.TransactOpts(),
+				ControllerAdmin.TransactOpts(),
 				tokens,
 				StringsToByte32("BNT", "TKN", "DGX"),
 				[]*big.Int{DecimalsToMagnitude(big.NewInt(18)), DecimalsToMagnitude(big.NewInt(8)), DecimalsToMagnitude(big.NewInt(18))},
@@ -49,13 +49,13 @@ var _ = Describe("updateRatesList", func() {
 				evt := it.Event
 				Expect(it.Next()).To(BeTrue())
 				Expect(evt.Symbol).To(Equal("BNT"))
-                id := stringToQueryID("https://min-api.cryptocompare.com/data/price?fsym=BNT&tsyms=ETH&sign=true")
-                Expect(evt.QueryID).To(Equal(id))
+				id := stringToQueryID("https://min-api.cryptocompare.com/data/price?fsym=BNT&tsyms=ETH&sign=true")
+				Expect(evt.QueryID).To(Equal(id))
 				evt = it.Event
 				Expect(it.Next()).To(BeFalse())
-                Expect(evt.Symbol).To(Equal("DGX"))
-                id = stringToQueryID("https://min-api.cryptocompare.com/data/price?fsym=DGX&tsyms=ETH&sign=true")
-                Expect(evt.QueryID).To(Equal(id))
+				Expect(evt.Symbol).To(Equal("DGX"))
+				id = stringToQueryID("https://min-api.cryptocompare.com/data/price?fsym=DGX&tsyms=ETH&sign=true")
+				Expect(evt.QueryID).To(Equal(id))
 			})
 			It("Should transfer value to oracle contract", func() {
 				b, err := Backend.BalanceAt(context.Background(), OracleAddress, nil)

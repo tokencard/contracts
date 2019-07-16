@@ -24,7 +24,7 @@ var _ = Describe("wallet load eth", func() {
 
 		BeforeEach(func() {
 			tx, err := TokenWhitelist.AddTokens(
-				Controller.TransactOpts(),
+				ControllerAdmin.TransactOpts(),
 				[]common.Address{common.HexToAddress("0x0")},
 				StringsToByte32("ETH"),
 				[]*big.Int{DecimalsToMagnitude(big.NewInt(18))},
@@ -108,7 +108,7 @@ var _ = Describe("wallet load eth", func() {
 		When("ETH (0x0) is added to the token whitelist", func() {
 			BeforeEach(func() {
 				tx, err := TokenWhitelist.AddTokens(
-					Controller.TransactOpts(),
+					ControllerAdmin.TransactOpts(),
 					[]common.Address{common.HexToAddress("0x0")},
 					StringsToByte32("ETH"),
 					[]*big.Int{DecimalsToMagnitude(big.NewInt(18))},
@@ -125,7 +125,7 @@ var _ = Describe("wallet load eth", func() {
 
 				BeforeEach(func() {
 					tx, err := TokenWhitelist.UpdateTokenRate(
-						Controller.TransactOpts(),
+						ControllerAdmin.TransactOpts(),
 						StablecoinAddress,
 						EthToWei(1),
 						big.NewInt(20180913153211),
@@ -193,7 +193,7 @@ var _ = Describe("wallet load eth", func() {
 
 				BeforeEach(func() {
 					tx, err := TokenWhitelist.UpdateTokenRate(
-						Controller.TransactOpts(),
+						ControllerAdmin.TransactOpts(),
 						StablecoinAddress,
 						big.NewInt(int64(0.001*math.Pow10(18))),
 						big.NewInt(20180913153211),

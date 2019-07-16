@@ -32,7 +32,7 @@ var _ = Describe("updateDao", func() {
 
 		BeforeEach(func() {
 			var err error
-			tx, err = Licence.UpdateLicenceDAO(Owner.TransactOpts(), DAO.Address())
+			tx, err = Licence.UpdateLicenceDAO(ControllerAdmin.TransactOpts(), DAO.Address())
 			Expect(err).ToNot(HaveOccurred())
 			Backend.Commit()
 		})
@@ -54,7 +54,7 @@ var _ = Describe("updateDao", func() {
 
 			BeforeEach(func() {
 				var err error
-				tx, err = Licence.UpdateLicenceDAO(Owner.TransactOpts(), common.HexToAddress("0x1"))
+				tx, err = Licence.UpdateLicenceDAO(ControllerAdmin.TransactOpts(), common.HexToAddress("0x1"))
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 			})
@@ -80,7 +80,7 @@ var _ = Describe("updateDao", func() {
 		Context("The DAO is locked after the update", func() {
 
 			BeforeEach(func() {
-				tx, err := Licence.LockLicenceDAO(Owner.TransactOpts())
+				tx, err := Licence.LockLicenceDAO(ControllerAdmin.TransactOpts())
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 				Expect(isSuccessful(tx)).To(BeTrue())
@@ -88,7 +88,7 @@ var _ = Describe("updateDao", func() {
 
 			BeforeEach(func() {
 				var err error
-				tx, err = Licence.UpdateLicenceDAO(Owner.TransactOpts(ethertest.WithGasLimit(100000)), common.HexToAddress("0x1"))
+				tx, err = Licence.UpdateLicenceDAO(ControllerAdmin.TransactOpts(ethertest.WithGasLimit(100000)), common.HexToAddress("0x1"))
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 				Expect(isGasExhausted(tx, 100000)).To(BeFalse())

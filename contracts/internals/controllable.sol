@@ -33,9 +33,15 @@ contract Controllable is ENSResolvable {
         _controllerNode = _controllerNameHash_;
     }
 
-    /// @notice Checks if message sender is the controller.
+    /// @notice Checks if message sender is a controller.
     modifier onlyController() {
         require(_isController(msg.sender), "sender is not a controller");
+        _;
+    }
+
+    /// @notice Checks if message sender is an admin.
+    modifier onlyAdmin() {
+        require(_isAdmin(msg.sender), "sender is not an admin");
         _;
     }
 
@@ -44,9 +50,14 @@ contract Controllable is ENSResolvable {
         return _controllerNode;
     }
 
-    /// @return true if the provided account is the controller.
+    /// @return true if the provided account is a controller.
     function _isController(address _account) internal view returns (bool) {
         return IController(_ensResolve(_controllerNode)).isController(_account);
+    }
+
+    /// @return true if the provided account is an admin.
+    function _isAdmin(address _account) internal view returns (bool) {
+        return IController(_ensResolve(_controllerNode)).isAdmin(_account);
     }
 
 }

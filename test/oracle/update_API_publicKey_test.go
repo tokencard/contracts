@@ -17,7 +17,7 @@ var _ = Describe("updateAPIPublicKey", func() {
 
 		BeforeEach(func() {
 			var err error
-			tx, err = Oracle.UpdateCryptoCompareAPIPublicKey(Controller.TransactOpts(), common.Hex2Bytes("fffffff"))
+			tx, err = Oracle.UpdateCryptoCompareAPIPublicKey(ControllerAdmin.TransactOpts(), common.Hex2Bytes("fffffff"))
 			Expect(err).ToNot(HaveOccurred())
 			Backend.Commit()
 		})

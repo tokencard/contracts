@@ -21,6 +21,8 @@ pragma solidity ^0.5.10;
 import "./externals/SafeMath.sol";
 import "./externals/SafeERC20.sol";
 import "./internals/ownable.sol";
+import "./internals/controllable.sol";
+import "./internals/ensResolvable.sol";
 import "./internals/transferrable.sol";
 
 /// @title ILicence interface describes methods for loading a TokenCard and updating licence amount.
@@ -32,7 +34,7 @@ interface ILicence {
 
 /// @title Licence loads the TokenCard and transfers the licence amout to the TKN Holder Contract.
 /// @notice the rest of the amount gets sent to the CryptoFloat
-contract Licence is Transferrable, Ownable {
+contract Licence is Transferrable, Ownable, ENSResolvable, Controllable {
 
     using SafeMath for uint256;
     using SafeERC20 for ERC20;
@@ -83,7 +85,7 @@ contract Licence is Transferrable, Ownable {
     /// @param _licence_ is the initial card licence amount. this number is scaled 10 = 1%, 9 = 0.9%
     /// @param _float_ is the address of the multi-sig cryptocurrency float contract.
     /// @param _holder_ is the address of the token holder contract
-    constructor(address payable _owner_, bool _transferable_, uint _licence_, address payable _float_, address payable _holder_, address _tknAddress_) Ownable(_owner_, _transferable_) public {
+    constructor(address payable _owner_, bool _transferable_, uint _licence_, address payable _float_, address payable _holder_, address _tknAddress_, address _ens_, bytes32 _controllerNameHash_) ENSResolvable(_ens_) Controllable(_controllerNameHash_) Ownable(_owner_, _transferable_) public {
         require(MIN_AMOUNT_SCALE <= _licence_ && _licence_ <= MAX_AMOUNT_SCALE, "licence amount out of range");
         _licenceAmountScaled = _licence_;
         _cryptoFloat = _float_;
@@ -128,31 +130,31 @@ contract Licence is Transferrable, Ownable {
 
     /// @notice This locks the cryptoFloat address
     /// @dev so that it can no longer be updated
-    function lockFloat() external onlyOwner {
+    function lockFloat() external onlyAdmin {
         _lockedCryptoFloat = true;
     }
 
     /// @notice This locks the TokenHolder address
     /// @dev so that it can no longer be updated
-    function lockHolder() external onlyOwner {
+    function lockHolder() external onlyAdmin {
         _lockedTokenHolder = true;
     }
 
     /// @notice This locks the DAO address
     /// @dev so that it can no longer be updated
-    function lockLicenceDAO() external onlyOwner {
+    function lockLicenceDAO() external onlyAdmin {
         _lockedLicenceDAO = true;
     }
 
     /// @notice This locks the TKN address
     /// @dev so that it can no longer be updated
-    function lockTKNContractAddress() external onlyOwner {
+    function lockTKNContractAddress() external onlyAdmin {
         _lockedTKNContractAddress = true;
     }
 
     /// @notice Updates the address of the cyptoFloat.
     /// @param _newFloat This is the new address for the CryptoFloat
-    function updateFloat(address payable _newFloat) external onlyOwner {
+    function updateFloat(address payable _newFloat) external onlyAdmin {
         require(!floatLocked(), "float is locked");
         _cryptoFloat = _newFloat;
         emit UpdatedCryptoFloat(_newFloat);
@@ -160,7 +162,7 @@ contract Licence is Transferrable, Ownable {
 
     /// @notice Updates the address of the Holder contract.
     /// @param _newHolder This is the new address for the TokenHolder
-    function updateHolder(address payable _newHolder) external onlyOwner {
+    function updateHolder(address payable _newHolder) external onlyAdmin {
         require(!holderLocked(), "holder contract is locked");
         _tokenHolder = _newHolder;
         emit UpdatedTokenHolder(_newHolder);
@@ -168,7 +170,7 @@ contract Licence is Transferrable, Ownable {
 
     /// @notice Updates the address of the DAO contract.
     /// @param _newDAO This is the new address for the Licence DAO
-    function updateLicenceDAO(address _newDAO) external onlyOwner {
+    function updateLicenceDAO(address _newDAO) external onlyAdmin {
         require(!licenceDAOLocked(), "DAO is locked");
         _licenceDAO = _newDAO;
         emit UpdatedLicenceDAO(_newDAO);
@@ -176,7 +178,7 @@ contract Licence is Transferrable, Ownable {
 
     /// @notice Updates the address of the TKN contract.
     /// @param _newTKN This is the new address for the TKN contract
-    function updateTKNContractAddress(address _newTKN) external onlyOwner {
+    function updateTKNContractAddress(address _newTKN) external onlyAdmin {
         require(!tknContractAddressLocked(), "TKN is locked");
         _tknContractAddress = _newTKN;
         emit UpdatedTKNContractAddress(_newTKN);
@@ -218,7 +220,7 @@ contract Licence is Transferrable, Ownable {
     }
 
     //// @notice Withdraw tokens from the smart contract to the specified account.
-    function claim(address payable _to, address _asset, uint _amount) external onlyOwner {
+    function claim(address payable _to, address _asset, uint _amount) external onlyAdmin {
         _safeTransfer(_to, _asset, _amount);
         emit Claimed(_to, _asset, _amount);
     }

@@ -3,8 +3,6 @@ package externals_test
 import (
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	// "fmt"
-
 )
 
 //Golang  tests: https://github.com/golang/go/blob/master/src/encoding/base64/base64_test.go
@@ -68,7 +66,6 @@ var nonCorrupt = []testpair{
 // 	"A=\n",
 // }
 
-
 //JS: https://github.com/mathiasbynens/base64/blob/master/tests/tests.js
 
 var jsValidPairs = []testpair{
@@ -105,7 +102,7 @@ var _ = Describe("base64", func() {
 		})
 
 		for _, p := range pairs {
-			p:=p
+			p := p
 			It("Should succeed", func() {
 				dec, err := Base64Exporter.Base64decode(nil, []byte(p.encoded))
 				Expect(err).ToNot(HaveOccurred())
@@ -114,7 +111,7 @@ var _ = Describe("base64", func() {
 		}
 
 		for _, p := range jsValidPairs {
-			p:=p
+			p := p
 			It("Should succeed", func() {
 				dec, err := Base64Exporter.Base64decode(nil, []byte(p.encoded))
 				Expect(err).ToNot(HaveOccurred())
@@ -123,7 +120,7 @@ var _ = Describe("base64", func() {
 		}
 
 		for _, p := range jsInvalidPairs {
-			p:=p
+			p := p
 			It("Should succeed", func() {
 				_, err := Base64Exporter.Base64decode(nil, []byte(p))
 				Expect(err.Error()).To(ContainSubstring("invalid base64 encoding"))
@@ -149,7 +146,7 @@ var _ = Describe("base64", func() {
 
 	When("there is no corruption", func() {
 		for _, nc := range nonCorrupt {
-			nc:=nc
+			nc := nc
 			It("Should succeed", func() {
 				dec, err := Base64Exporter.Base64decode(nil, []byte(nc.encoded))
 				Expect(err).ToNot(HaveOccurred())

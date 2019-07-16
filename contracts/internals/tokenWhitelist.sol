@@ -80,9 +80,9 @@ contract TokenWhitelist is ENSResolvable, Controllable, Ownable, Transferrable {
         _stablecoin = _stabelcoinAddress_;
     }
 
-    modifier onlyControllerOrOracle() {
+    modifier onlyAdminOrOracle() {
         address oracleAddress = _ensResolve(_oracleNode);
-        require (_isController(msg.sender) || msg.sender == oracleAddress, "either oracle or controller");
+        require (_isAdmin(msg.sender) || msg.sender == oracleAddress, "either oracle or admin");
         _;
     }
 
@@ -93,7 +93,7 @@ contract TokenWhitelist is ENSResolvable, Controllable, Ownable, Transferrable {
     /// @param _loadable is a bool that states whether or not a token is loadable to the TokenCard.
     /// @param _redeemable is a bool that states whether or not a token is redeemable in the TKN Holder Contract.
     /// @param _lastUpdate is a unit representing an ISO datetime e.g. 20180913153211
-    function addTokens(address[] calldata _tokens, bytes32[] calldata _symbols, uint[] calldata _magnitude, bool[] calldata _loadable, bool[] calldata _redeemable, uint _lastUpdate) external onlyController {
+    function addTokens(address[] calldata _tokens, bytes32[] calldata _symbols, uint[] calldata _magnitude, bool[] calldata _loadable, bool[] calldata _redeemable, uint _lastUpdate) external onlyAdmin {
         // Require that all parameters have the same length.
         require(_tokens.length == _symbols.length && _tokens.length == _magnitude.length && _tokens.length == _loadable.length && _tokens.length == _loadable.length, "parameter lengths do not match");
         // Add each token to the list of supported tokens.
@@ -125,7 +125,7 @@ contract TokenWhitelist is ENSResolvable, Controllable, Ownable, Transferrable {
 
     /// @notice Remove ERC20 tokens from the whitelist of tokens.
     /// @param _tokens ERC20 token contract addresses.
-    function removeTokens(address[] calldata _tokens) external onlyController {
+    function removeTokens(address[] calldata _tokens) external onlyAdmin {
         // Delete each token object from the list of supported tokens based on the addresses provided.
         for (uint i = 0; i < _tokens.length; i++) {
             // Store the token address.
@@ -152,7 +152,7 @@ contract TokenWhitelist is ENSResolvable, Controllable, Ownable, Transferrable {
     }
 
     /// @notice Toggles whether or not a token is loadable or not
-    function setTokenLoadable(address _token, bool _loadable) external onlyController {
+    function setTokenLoadable(address _token, bool _loadable) external onlyAdmin {
         // Require that the token exists.
         require(_tokenInfoMap[_token].available, "token is not available");
 
@@ -163,7 +163,7 @@ contract TokenWhitelist is ENSResolvable, Controllable, Ownable, Transferrable {
     }
 
     /// @notice Toggles whether or not a token is redeemable or not
-    function setTokenRedeemable(address _token, bool _redeemable) external onlyController {
+    function setTokenRedeemable(address _token, bool _redeemable) external onlyAdmin {
         // Require that the token exists.
         require(_tokenInfoMap[_token].available, "token is not available");
 
@@ -177,7 +177,7 @@ contract TokenWhitelist is ENSResolvable, Controllable, Ownable, Transferrable {
     /// @param _token ERC20 token contract address.
     /// @param _rate ERC20 token exchange rate in wei.
     /// @param _updateDate date for the token updates. This will be compared to when oracle updates are received.
-    function updateTokenRate(address _token, uint _rate, uint _updateDate) external onlyControllerOrOracle {
+    function updateTokenRate(address _token, uint _rate, uint _updateDate) external onlyAdminOrOracle {
         // Require that the token exists.
         require(_tokenInfoMap[_token].available, "token is not available");
         // Update the token's rate.

@@ -21,7 +21,7 @@ var _ = Describe("addTokens", func() {
 				var err error
 				tokens := []common.Address{common.HexToAddress("0x0"), common.HexToAddress("0x1")}
 				tx, err = TokenWhitelist.AddTokens(
-					Controller.TransactOpts(),
+					ControllerAdmin.TransactOpts(),
 					tokens,
 					StringsToByte32(
 						"BNT",
@@ -37,7 +37,7 @@ var _ = Describe("addTokens", func() {
 				)
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
-                Expect(isSuccessful(tx)).To(BeTrue())
+				Expect(isSuccessful(tx)).To(BeTrue())
 			})
 
 			It("Should update the tokens map", func() {
@@ -76,18 +76,18 @@ var _ = Describe("addTokens", func() {
 				Expect(evt.Magnitude.String()).To(Equal("100000000"))
 			})
 
-            It("Should increase the redeemable counter by 2", func() {
-                cnt, err := TokenWhitelist.RedeemableCounter(nil)
-                Expect(err).ToNot(HaveOccurred())
-                Expect(cnt.String()).To(Equal("2"))
-            })
+			It("Should increase the redeemable counter by 2", func() {
+				cnt, err := TokenWhitelist.RedeemableCounter(nil)
+				Expect(err).ToNot(HaveOccurred())
+				Expect(cnt.String()).To(Equal("2"))
+			})
 
 			Context("When at least one of the added tokens is already supported", func() {
 				It("Should fail", func() {
 					var err error
 					tokens := []common.Address{common.HexToAddress("0x0"), common.HexToAddress("0x2")}
 					tx, err = TokenWhitelist.AddTokens(
-						Controller.TransactOpts(ethertest.WithGasLimit(200000)),
+						ControllerAdmin.TransactOpts(ethertest.WithGasLimit(200000)),
 						tokens, StringsToByte32(
 							"BNT",
 							"OMG",
@@ -112,7 +112,7 @@ var _ = Describe("addTokens", func() {
 					var err error
 					tokens := []common.Address{common.HexToAddress("0x4"), common.HexToAddress("0x5")}
 					tx, err = TokenWhitelist.AddTokens(
-						Controller.TransactOpts(ethertest.WithGasLimit(300000)),
+						ControllerAdmin.TransactOpts(ethertest.WithGasLimit(300000)),
 						tokens,
 						StringsToByte32(
 							"MKR",
@@ -132,12 +132,11 @@ var _ = Describe("addTokens", func() {
 					Expect(isSuccessful(tx)).To(BeTrue())
 				})
 
-
-                It("Should increase the redeemable counter by 2", func() {
-                    cnt, err := TokenWhitelist.RedeemableCounter(nil)
-                    Expect(err).ToNot(HaveOccurred())
-                    Expect(cnt.String()).To(Equal("4"))
-                })
+				It("Should increase the redeemable counter by 2", func() {
+					cnt, err := TokenWhitelist.RedeemableCounter(nil)
+					Expect(err).ToNot(HaveOccurred())
+					Expect(cnt.String()).To(Equal("4"))
+				})
 			})
 
 		})
@@ -146,7 +145,7 @@ var _ = Describe("addTokens", func() {
 			It("Should fail", func() {
 				tokens := []common.Address{common.HexToAddress("0x4"), common.HexToAddress("0x5")}
 				tx, err := TokenWhitelist.AddTokens(
-					Controller.TransactOpts(ethertest.WithGasLimit(300000)),
+					ControllerAdmin.TransactOpts(ethertest.WithGasLimit(300000)),
 					tokens,
 					StringsToByte32(
 						"BNT",
@@ -173,7 +172,7 @@ var _ = Describe("addTokens", func() {
 			var tx *types.Transaction
 			BeforeEach(func() {
 				var err error
-				tx, err = TokenWhitelist.AddTokens(Controller.TransactOpts(), nil, nil, nil, nil, nil, big.NewInt(20180913153211))
+				tx, err = TokenWhitelist.AddTokens(ControllerAdmin.TransactOpts(), nil, nil, nil, nil, nil, big.NewInt(20180913153211))
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 			})
@@ -188,11 +187,11 @@ var _ = Describe("addTokens", func() {
 				Expect(it.Next()).To(BeFalse())
 			})
 
-            It("Should not increase the redeemable counter", func() {
-                cnt, err := TokenWhitelist.RedeemableCounter(nil)
-                Expect(err).ToNot(HaveOccurred())
-                Expect(cnt.String()).To(Equal("0"))
-            })
+			It("Should not increase the redeemable counter", func() {
+				cnt, err := TokenWhitelist.RedeemableCounter(nil)
+				Expect(err).ToNot(HaveOccurred())
+				Expect(cnt.String()).To(Equal("0"))
+			})
 		})
 
 	})

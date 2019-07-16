@@ -57,14 +57,14 @@ var _ = Describe("LicenceClaim", func() {
 		When("the owner withdraws 222 tokens and 1 ETH", func() {
 
 			BeforeEach(func() {
-				tx, err := Licence.Claim(Owner.TransactOpts(), RandomAccount.Address(), ERC20Contract1Address, big.NewInt(222))
+				tx, err := Licence.Claim(ControllerAdmin.TransactOpts(), RandomAccount.Address(), ERC20Contract1Address, big.NewInt(222))
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 				Expect(isSuccessful(tx)).To(BeTrue())
 			})
 
 			BeforeEach(func() {
-				tx, err := Licence.Claim(Owner.TransactOpts(), RandomAccount.Address(), common.HexToAddress("0x0"), EthToWei(1))
+				tx, err := Licence.Claim(ControllerAdmin.TransactOpts(), RandomAccount.Address(), common.HexToAddress("0x0"), EthToWei(1))
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 				Expect(isSuccessful(tx)).To(BeTrue())
