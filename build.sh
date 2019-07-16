@@ -24,6 +24,7 @@ contract_sources=(
   'internals/controller'
   'internals/tokenWhitelist'
   'internals/parseIntScientific'
+  'internals/walletDeployer'
   'externals/ens/PublicResolver'
   'externals/ens/ENSRegistry'
 )
@@ -63,8 +64,9 @@ contracts=(
   "internals/controller/Controller internals/controller.go Controller internals"
   "internals/tokenWhitelist/TokenWhitelist internals/tokenWhitelist.go TokenWhitelist internals"
   "internals/parseIntScientific/ParseIntScientific internals/parseIntScientific.go ParseIntScientific internals"
-  "externals/ens/PublicResolver/PublicResolver externals/ens/PublicResolver.go PublicResolver ens"
   "externals/ens/ENSRegistry/ENSRegistry externals/ens/ENSRegistry.go ENSRegistry ens"
+  "externals/ens/PublicResolver/PublicResolver externals/ens/public-resolver.go PublicResolver ens"
+  "internals/walletDeployer/WalletDeployer internals/walletDeployer.go WalletDeployer internals"
 )
 
 for c in "${contracts[@]}"
