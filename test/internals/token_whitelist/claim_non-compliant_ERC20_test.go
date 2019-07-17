@@ -6,7 +6,7 @@ import (
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	. "github.com/tokencard/contracts/test/shared"
-    "github.com/tokencard/ethertest"
+	"github.com/tokencard/ethertest"
 )
 
 var _ = Describe("TokenWhitelist NonCompliantERC20 claim", func() {
@@ -40,7 +40,7 @@ var _ = Describe("TokenWhitelist NonCompliantERC20 claim", func() {
 		When("the TokenWhitelistAddress owner withdraws 222 tokens", func() {
 
 			BeforeEach(func() {
-				tx, err := TokenWhitelist.Claim(Owner.TransactOpts(), RandomAccount.Address(), NonCompliantERC20Address, big.NewInt(222))
+				tx, err := TokenWhitelist.Claim(ControllerAdmin.TransactOpts(), RandomAccount.Address(), NonCompliantERC20Address, big.NewInt(222))
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 				Expect(isSuccessful(tx)).To(BeTrue())
@@ -71,15 +71,15 @@ var _ = Describe("TokenWhitelist NonCompliantERC20 claim", func() {
 
 		}) //owner withdrawal
 
-        When("a random address tries to withdraw", func() {
-            It("Should fail", func() {
-    			tx, err := TokenWhitelist.Claim(RandomAccount.TransactOpts(ethertest.WithGasLimit(100000)), RandomAccount.Address(), NonCompliantERC20Address, big.NewInt(222))
-    			Expect(err).ToNot(HaveOccurred())
-    			Backend.Commit()
-    			Expect(isGasExhausted(tx, 100000)).To(BeFalse())
-    			Expect(isSuccessful(tx)).To(BeFalse())
-    		})
-        })
+		When("a random address tries to withdraw", func() {
+			It("Should fail", func() {
+				tx, err := TokenWhitelist.Claim(RandomAccount.TransactOpts(ethertest.WithGasLimit(100000)), RandomAccount.Address(), NonCompliantERC20Address, big.NewInt(222))
+				Expect(err).ToNot(HaveOccurred())
+				Backend.Commit()
+				Expect(isGasExhausted(tx, 100000)).To(BeFalse())
+				Expect(isSuccessful(tx)).To(BeFalse())
+			})
+		})
 
 	})
 

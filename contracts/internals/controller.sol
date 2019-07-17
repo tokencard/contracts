@@ -51,8 +51,7 @@ contract Controller is IController, Ownable, Transferrable {
 
     /// @notice Constructor initializes the owner with the provided address.
     /// @param _ownerAddress_ address of the owner.
-    /// @param _transferable_ indicates whether the contract ownership can be transferred.
-    constructor(address payable _ownerAddress_, bool _transferable_) Ownable(_ownerAddress_, _transferable_) public { }
+    constructor(address payable _ownerAddress_) Ownable(_ownerAddress_, false) public {}
 
     /// @notice Checks if message sender is an admin.
     modifier onlyAdmin() {

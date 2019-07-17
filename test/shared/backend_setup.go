@@ -239,7 +239,7 @@ func InitializeBackend() error {
 		return errors.Wrap(err, "deploying Stablecoin token contract")
 	}
 
-	ControllerContractAddress, tx, ControllerContract, err = internals.DeployController(BankAccount.TransactOpts(), Backend, ControllerOwner.Address(), false)
+	ControllerContractAddress, tx, ControllerContract, err = internals.DeployController(BankAccount.TransactOpts(), Backend, ControllerOwner.Address())
 	if err != nil {
 		return err
 	}
@@ -395,7 +395,7 @@ func InitializeBackend() error {
 		return errors.Wrap(err, "deploying Oraclize address resolver")
 	}
 
-	TokenWhitelistAddress, tx, TokenWhitelist, err = internals.DeployTokenWhitelist(BankAccount.TransactOpts(), Backend, ENSRegistryAddress, OracleName, ControllerName, Owner.Address(), true, StablecoinAddress)
+	TokenWhitelistAddress, tx, TokenWhitelist, err = internals.DeployTokenWhitelist(BankAccount.TransactOpts(), Backend, ENSRegistryAddress, OracleName, ControllerName, StablecoinAddress)
 	if err != nil {
 		return err
 	}
@@ -475,7 +475,7 @@ func InitializeBackend() error {
 	}
 
 	// Deploy the Token holder contract.
-	TokenHolderAddress, tx, TokenHolder, err = bindings.DeployHolder(Controller.TransactOpts(), Backend, Owner.Address(), TKNBurnerAddress, ENSRegistryAddress, TokenWhitelistName, ControllerName)
+	TokenHolderAddress, tx, TokenHolder, err = bindings.DeployHolder(Controller.TransactOpts(), Backend, TKNBurnerAddress, ENSRegistryAddress, TokenWhitelistName, ControllerName)
 	if err != nil {
 		return err
 	}
@@ -487,7 +487,7 @@ func InitializeBackend() error {
 
 	// Deploy the Token licence contract.
 	CryptoFloatAddress = common.HexToAddress(stringToHashString("CryptoFloatAddress"))
-	LicenceAddress, tx, Licence, err = bindings.DeployLicence(BankAccount.TransactOpts(), Backend, Owner.Address(), true, big.NewInt(10), CryptoFloatAddress, TokenHolderAddress, common.HexToAddress("0x0"), ENSRegistryAddress, ControllerName)
+	LicenceAddress, tx, Licence, err = bindings.DeployLicence(BankAccount.TransactOpts(), Backend, big.NewInt(10), CryptoFloatAddress, TokenHolderAddress, common.HexToAddress("0x0"), ENSRegistryAddress, ControllerName)
 	if err != nil {
 		return err
 	}

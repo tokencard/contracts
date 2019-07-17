@@ -24,14 +24,13 @@ import "./externals/SafeMath.sol";
 import "./internals/transferrable.sol";
 import "./internals/balanceable.sol";
 import "./internals/burner.sol";
-import "./internals/ownable.sol";
 import "./internals/controllable.sol";
 import "./internals/tokenWhitelistable.sol";
 
 
 /// @title Holder - The TKN Asset Contract
 /// @notice When the TKN contract calls the burn method, a share of the tokens held by this contract are disbursed to the burner.
-contract Holder is Ownable, Balanceable, ENSResolvable, Controllable, Transferrable, TokenWhitelistable {
+contract Holder is Balanceable, ENSResolvable, Controllable, Transferrable, TokenWhitelistable {
 
     using SafeMath for uint256;
 
@@ -49,11 +48,11 @@ contract Holder is Ownable, Balanceable, ENSResolvable, Controllable, Transferra
     address private _burner;
 
     /// @notice Constructor initializes the holder contract.
-    /// @param _owner_ is the owner of the deployer
     /// @param _burnerContract_ is the address of the token contract TKN with burning functionality.
     /// @param _ens_ is the address of the ENS registry.
     /// @param _tokenWhitelistNameHash_ is the ENS name hash of the Token whitelist.
-    constructor (address payable _owner_, address _burnerContract_, address _ens_, bytes32 _tokenWhitelistNameHash_, bytes32 _controllerNameHash_) Ownable(_owner_, false) ENSResolvable(_ens_) Controllable(_controllerNameHash_) TokenWhitelistable(_tokenWhitelistNameHash_) public {
+    /// @param _controllerNameHash_ is the ENS name hash of the Controller
+    constructor (address _burnerContract_, address _ens_, bytes32 _tokenWhitelistNameHash_, bytes32 _controllerNameHash_) ENSResolvable(_ens_) Controllable(_controllerNameHash_) TokenWhitelistable(_tokenWhitelistNameHash_) public {
         _burner = _burnerContract_;
     }
 

@@ -20,7 +20,6 @@ pragma solidity ^0.5.10;
 
 import "./externals/SafeMath.sol";
 import "./externals/SafeERC20.sol";
-import "./internals/ownable.sol";
 import "./internals/controllable.sol";
 import "./internals/ensResolvable.sol";
 import "./internals/transferrable.sol";
@@ -34,7 +33,7 @@ interface ILicence {
 
 /// @title Licence loads the TokenCard and transfers the licence amout to the TKN Holder Contract.
 /// @notice the rest of the amount gets sent to the CryptoFloat
-contract Licence is Transferrable, Ownable, ENSResolvable, Controllable {
+contract Licence is Transferrable, ENSResolvable, Controllable {
 
     using SafeMath for uint256;
     using SafeERC20 for ERC20;
@@ -80,12 +79,13 @@ contract Licence is Transferrable, Ownable, ENSResolvable, Controllable {
     }
 
     /// @notice Constructor initializes the card licence contract.
-    /// @param _owner_ is the owner account of the licence contract.
-    /// @param _transferable_ indicates whether the contract ownership can be transferred.
     /// @param _licence_ is the initial card licence amount. this number is scaled 10 = 1%, 9 = 0.9%
     /// @param _float_ is the address of the multi-sig cryptocurrency float contract.
     /// @param _holder_ is the address of the token holder contract
-    constructor(address payable _owner_, bool _transferable_, uint _licence_, address payable _float_, address payable _holder_, address _tknAddress_, address _ens_, bytes32 _controllerNameHash_) ENSResolvable(_ens_) Controllable(_controllerNameHash_) Ownable(_owner_, _transferable_) public {
+    /// @param _tknAddress_ is the address of the TKN ERC20 contract
+    /// @param _ens_ is the address of the ENS Registry
+    /// @param _controllerNameHash_ is the name hash of the controller
+    constructor(uint _licence_, address payable _float_, address payable _holder_, address _tknAddress_, address _ens_, bytes32 _controllerNameHash_) ENSResolvable(_ens_) Controllable(_controllerNameHash_) public {
         require(MIN_AMOUNT_SCALE <= _licence_ && _licence_ <= MAX_AMOUNT_SCALE, "licence amount out of range");
         _licenceAmountScaled = _licence_;
         _cryptoFloat = _float_;
