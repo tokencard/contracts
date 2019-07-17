@@ -25,7 +25,6 @@ import "./transferrable.sol";
 interface IController {
     function isController(address) external view returns (bool);
     function isAdmin(address) external view returns (bool);
-    function isStopped() external view returns (bool);
 }
 
 
@@ -58,13 +57,27 @@ contract Controller is IController, Ownable, Transferrable {
 
     /// @notice Checks if message sender is an admin.
     modifier onlyAdmin() {
-        require(!isStopped() && isAdmin(msg.sender), "sender is not an admin");
+        require(!isStopped(), "controller is stopped");
+        require(isAdmin(msg.sender), "sender is not an admin");
+        _;
+    }
+
+    /// @notice Check if Owner or Admin
+    modifier onlyAdminOrOwner() {
+        require(!isStopped(), "controller is stopped");
+        require(_isOwner(msg.sender) || isAdmin(msg.sender), "sender is not an admin");
+        _;
+    }
+
+    /// @notice Check if controller is stopped
+    modifier notStopped() {
+        require(!isStopped(), "controller is stopped");
         _;
     }
 
     /// @notice Add a new admin to the list of admins.
     /// @param _account address to add to the list of admins.
-    function addAdmin(address _account) external onlyOwner {
+    function addAdmin(address _account) external onlyOwner notStopped {
         _addAdmin(_account);
     }
 
@@ -81,7 +94,7 @@ contract Controller is IController, Ownable, Transferrable {
 
     /// @notice Add a new controller to the list of controllers.
     /// @param _account address to add to the list of controllers.
-    function addController(address _account) external onlyAdmin {
+    function addController(address _account) external onlyAdmin notStopped {
         _addController(_account);
     }
 
@@ -99,13 +112,13 @@ contract Controller is IController, Ownable, Transferrable {
 
     /// @notice is an address an Admin?
     /// @return true if the provided account is an admin.
-    function isAdmin(address _account) public view returns (bool) {
+    function isAdmin(address _account) public view notStopped returns (bool) {
         return _isAdmin[_account];
     }
 
     /// @notice is an address a Controller?
     /// @return true if the provided account is a controller.
-    function isController(address _account) public view returns (bool) {
+    function isController(address _account) public view notStopped returns (bool) {
         return _isController[_account];
     }
 
@@ -154,7 +167,7 @@ contract Controller is IController, Ownable, Transferrable {
     }
 
     /// @notice stop our controllers and admins from being useable
-    function stop() external onlyAdmin {
+    function stop() external onlyAdminOrOwner {
         _stopped = true;
     }
 
@@ -164,7 +177,7 @@ contract Controller is IController, Ownable, Transferrable {
     }
 
     //// @notice Withdraw tokens from the smart contract to the specified account.
-    function claim(address payable _to, address _asset, uint _amount) external onlyAdmin {
+    function claim(address payable _to, address _asset, uint _amount) external onlyAdmin notStopped {
         _safeTransfer(_to, _asset, _amount);
         emit Claimed(_to, _asset, _amount);
     }
