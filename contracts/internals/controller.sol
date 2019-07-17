@@ -25,6 +25,7 @@ import "./transferrable.sol";
 interface IController {
     function isController(address) external view returns (bool);
     function isAdmin(address) external view returns (bool);
+    function isStopped() external view returns (bool);
 }
 
 
@@ -49,13 +50,15 @@ contract Controller is IController, Ownable, Transferrable {
     mapping (address => bool) private _isController;
     uint private _controllerCount;
 
+    bool private _stopped;
+
     /// @notice Constructor initializes the owner with the provided address.
     /// @param _ownerAddress_ address of the owner.
     constructor(address payable _ownerAddress_) Ownable(_ownerAddress_, false) public {}
 
     /// @notice Checks if message sender is an admin.
     modifier onlyAdmin() {
-        require(isAdmin(msg.sender), "sender is not an admin");
+        require(!isStopped() && isAdmin(msg.sender), "sender is not an admin");
         _;
     }
 
@@ -106,6 +109,12 @@ contract Controller is IController, Ownable, Transferrable {
         return _isController[_account];
     }
 
+    /// @notice this function can be used to see if the controller has been stopped
+    /// @return true is the Controller has been stopped
+    function isStopped() public view returns (bool) {
+        return _stopped;
+    }
+
     /// @notice Internal-only function that adds a new admin.
     function _addAdmin(address _account) private {
         require(!_isAdmin[_account], "provided account is already an admin");
@@ -142,6 +151,16 @@ contract Controller is IController, Ownable, Transferrable {
         _isController[_account] = false;
         _controllerCount--;
         emit RemovedController(msg.sender, _account);
+    }
+
+    /// @notice stop our controllers and admins from being useable
+    function stop() external onlyAdmin {
+        _stopped = true;
+    }
+
+    /// @notice start our controller again
+    function start() external onlyOwner {
+        _stopped = false;
     }
 
     //// @notice Withdraw tokens from the smart contract to the specified account.
