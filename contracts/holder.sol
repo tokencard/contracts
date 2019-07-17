@@ -69,7 +69,7 @@ contract Holder is Balanceable, ENSResolvable, Controllable, Transferrable, Toke
             return true;
         }
         // The burner token deducts from the supply before calling.
-        uint supply = Burner(_burner).currentSupply().add(_amount);
+        uint supply = IBurner(_burner).currentSupply().add(_amount);
         address[] memory redeemableAddresses = _redeemableTokens();
         for (uint i = 0; i < redeemableAddresses.length; i++) {
             uint redeemableBalance = _balance(address(this), redeemableAddresses[i]);
