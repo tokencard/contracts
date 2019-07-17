@@ -85,7 +85,7 @@ var _ = Describe("TokenHolder", func() {
 
 		})
 
-		When("The owner tries to claim a redeemable token or ETH", func() {
+		When("The controller admin tries to claim a redeemable token or ETH", func() {
 			It("should fail", func() {
 				tx, err := TokenHolder.NonRedeemableTokenClaim(ControllerAdmin.TransactOpts(ethertest.WithGasLimit(80000)), Owner.Address(), []common.Address{common.HexToAddress("0x0")})
 				Expect(err).ToNot(HaveOccurred())
@@ -101,7 +101,7 @@ var _ = Describe("TokenHolder", func() {
 			})
 		})
 
-		When("The owner tries to claim all non-redeemable tokens", func() {
+		When("The controller admin tries to claim all non-redeemable tokens", func() {
 			BeforeEach(func() {
 				tx, err := TokenHolder.NonRedeemableTokenClaim(ControllerAdmin.TransactOpts(), Owner.Address(), []common.Address{ERC20Contract2Address, ERC20Contract3Address})
 				Expect(err).ToNot(HaveOccurred())

@@ -54,7 +54,7 @@ var _ = Describe("LicenceClaim", func() {
 			Expect(b.String()).To(Equal(EthToWei(2).String()))
 		})
 
-		When("the owner withdraws 222 tokens and 1 ETH", func() {
+		When("the controller admin withdraws 222 tokens and 1 ETH", func() {
 
 			BeforeEach(func() {
 				tx, err := Licence.Claim(ControllerAdmin.TransactOpts(), RandomAccount.Address(), ERC20Contract1Address, big.NewInt(222))

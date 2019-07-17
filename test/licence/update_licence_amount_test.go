@@ -29,7 +29,7 @@ var _ = Describe("updatedLicenceAmount", func() {
 
 	})
 
-	When("called by the DAO", func() {
+	When("the dao attempts to update the license amount", func() {
 
 		var tx *types.Transaction
 
@@ -92,7 +92,7 @@ var _ = Describe("updatedLicenceAmount", func() {
 		})
 	})
 
-	When("not called by the DAO", func() {
+	When("the license amount not update by the DAO", func() {
 		It("Should fail", func() {
 			tx, err := Licence.UpdateLicenceAmount(ControllerAdmin.TransactOpts(ethertest.WithGasLimit(100000)), big.NewInt(1))
 			Expect(err).ToNot(HaveOccurred())

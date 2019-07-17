@@ -25,7 +25,7 @@ var _ = Describe("updateHolder", func() {
 		})
 	})
 
-	When("called by the owner", func() {
+	When("called by the controller admin", func() {
 
 		var tx *types.Transaction
 

@@ -13,7 +13,7 @@ import (
 
 var _ = Describe("addTokens", func() {
 
-	Context("When called by the controller", func() {
+	Context("When called by the controller admin", func() {
 
 		Context("When the added tokens are not already supported", func() {
 			var tx *types.Transaction

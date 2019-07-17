@@ -25,7 +25,7 @@ var _ = Describe("updateTKN", func() {
 		})
 	})
 
-	When("called by the owner", func() {
+	When("called by the controller admin", func() {
 
 		BeforeEach(func() {
 			var err error

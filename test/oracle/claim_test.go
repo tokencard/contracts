@@ -58,7 +58,7 @@ var _ = Describe("Oracle claim", func() {
 			Expect(b.String()).To(Equal(newbalance.String()))
 		})
 
-		Context("When called by the controller", func() {
+		Context("When called by the controller admin", func() {
 			var tx *types.Transaction
 
 			BeforeEach(func() {
@@ -98,7 +98,7 @@ var _ = Describe("Oracle claim", func() {
 			})
 		})
 
-		Context("When not called by the controller", func() {
+		Context("When not called by the controller admin", func() {
 			It("Should fail", func() {
 				tx, err := Oracle.Claim(RandomAccount.TransactOpts(ethertest.WithGasLimit(100000)), CryptoFloatAddress, common.HexToAddress("0x0"), EthToWei(1))
 				Expect(err).ToNot(HaveOccurred())

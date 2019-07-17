@@ -26,7 +26,7 @@ var _ = Describe("updateDao", func() {
 		})
 	})
 
-	When("called by the owner", func() {
+	When("called by the controller admin", func() {
 
 		var tx *types.Transaction
 

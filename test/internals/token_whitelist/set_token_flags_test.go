@@ -28,7 +28,7 @@ var _ = Describe("setTokenLoadable", func() {
 			Backend.Commit()
 			Expect(isSuccessful(tx)).To(BeTrue())
 		})
-		Context("When called by the controller", func() {
+		Context("When called by the controller admin", func() {
 			var tx *types.Transaction
 
 			BeforeEach(func() {
@@ -64,7 +64,7 @@ var _ = Describe("setTokenLoadable", func() {
 				Expect(evt.Loadable).To(BeFalse())
 			})
 		})
-		Context("When not called by the controller", func() {
+		Context("When not called by the controller admin", func() {
 			It("Should fail", func() {
 				tx, err := TokenWhitelist.SetTokenLoadable(
 					RandomAccount.TransactOpts(ethertest.WithGasLimit(100000)),
@@ -80,7 +80,7 @@ var _ = Describe("setTokenLoadable", func() {
 	})
 
 	Context("When the token is not supported", func() {
-		Context("When called by the controller", func() {
+		Context("When called by the controller admin", func() {
 			It("Should fail", func() {
 				tx, err := TokenWhitelist.SetTokenLoadable(
 					ControllerAdmin.TransactOpts(ethertest.WithGasLimit(100000)),
