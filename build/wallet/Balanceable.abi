@@ -1,1 +1,1 @@
-[{"constant":true,"inputs":[{"name":"_address","type":"address"},{"name":"_asset","type":"address"}],"name":"_balance","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"}]
+[]

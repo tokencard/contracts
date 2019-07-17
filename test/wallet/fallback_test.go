@@ -18,7 +18,7 @@ var _ = Describe("fallback", func() {
 		})
 
 		It("should increase the wallet's ETH balance by the same amount", func() {
-			balance, err := Wallet.Balance(nil, WalletAddress, common.HexToAddress("0x0"))
+			balance, err := Backend.BalanceAt(context.Background(), WalletAddress, nil)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(balance.String()).To(Equal(FinneyToWei(1).String()))
 		})
@@ -51,7 +51,7 @@ var _ = Describe("fallback", func() {
 		})
 
 		It("should increase the wallet's ETH balance by one Finney", func() {
-			balance, err := Wallet.Balance(nil, WalletAddress, common.HexToAddress("0x0"))
+			balance, err := Backend.BalanceAt(context.Background(), WalletAddress, nil)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(balance.String()).To(Equal(FinneyToWei(1).String()))
 		})

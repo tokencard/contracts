@@ -4,7 +4,6 @@ import (
 	"context"
 	"math/big"
 
-	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -14,11 +13,11 @@ import (
 
 var _ = Describe("balance", func() {
 	Context("When the contract has no balance", func() {
-		It("should return 0", func() {
-			b, err := Wallet.Balance(nil, WalletAddress, common.HexToAddress("0x0"))
-			Expect(err).ToNot(HaveOccurred())
-			Expect(b.String()).To(Equal("0"))
-		})
+        It("should return 0", func() {
+            b, e := Backend.BalanceAt(context.Background(), WalletAddress, nil)
+            Expect(e).ToNot(HaveOccurred())
+            Expect(b.String()).To(Equal("0"))
+        })
 	})
 
 	Context("When contract has 1 ETH", func() {
@@ -27,18 +26,17 @@ var _ = Describe("balance", func() {
 		})
 
 		It("should return 1 ETH", func() {
-			b, err := Wallet.Balance(nil, WalletAddress, common.HexToAddress("0x0"))
-			Expect(err).ToNot(HaveOccurred())
-			Expect(b.String()).To(Equal(EthToWei(1).String()))
-		})
+            b, e := Backend.BalanceAt(context.Background(), WalletAddress, nil)
+            Expect(e).ToNot(HaveOccurred())
+            Expect(b.String()).To(Equal(EthToWei(1).String()))
+        })
 	})
 
 	Context("When contract owns one TKN", func() {
 		var t *mocks.Token
-		var ta common.Address
 		BeforeEach(func() {
 			var err error
-			ta, _, t, err = mocks.DeployToken(BankAccount.TransactOpts(), Backend)
+			_, _, t, err = mocks.DeployToken(BankAccount.TransactOpts(), Backend)
 			Expect(err).ToNot(HaveOccurred())
 
 			tx, err := t.Credit(BankAccount.TransactOpts(), WalletAddress, big.NewInt(1))
@@ -52,11 +50,11 @@ var _ = Describe("balance", func() {
 
 		})
 
-		It("Balance for that token should return 1", func() {
-			b, err := Wallet.Balance(nil, WalletAddress, ta)
-			Expect(err).ToNot(HaveOccurred())
-			Expect(b.String()).To(Equal("1"))
-		})
+        It("Balance for that token should return 1", func() {
+            b, err := t.BalanceOf(nil, WalletAddress)
+            Expect(err).ToNot(HaveOccurred())
+            Expect(b.String()).To(Equal("1"))
+        })
 
 	})
 

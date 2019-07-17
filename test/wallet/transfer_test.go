@@ -192,7 +192,7 @@ var _ = Describe("transfer", func() {
 				})
 
 				It("should decrease TKN balance of the wallet", func() {
-					b, err := Wallet.Balance(nil, WalletAddress, TKNAddress)
+                    b, err := TKN.BalanceOf(nil, WalletAddress)
 					Expect(err).ToNot(HaveOccurred())
 					Expect(b.String()).To(Equal("700"))
 				})
@@ -258,7 +258,7 @@ var _ = Describe("transfer", func() {
 				})
 
 				It("should decrease token balance of the wallet", func() {
-					b, err := Wallet.Balance(nil, WalletAddress, ERC20Contract1Address)
+                    b, err := ERC20Contract1.BalanceOf(nil, WalletAddress)
 					Expect(err).ToNot(HaveOccurred())
 					Expect(b.String()).To(Equal("700"))
 				})
@@ -295,7 +295,7 @@ var _ = Describe("transfer", func() {
 					})
 
 					It("should decrease token balance of the wallet", func() {
-						b, err := Wallet.Balance(nil, WalletAddress, NonCompliantERC20Address)
+                        b, err := NonCompliantERC20.BalanceOf(nil, WalletAddress)
 						Expect(err).ToNot(HaveOccurred())
 						Expect(b.String()).To(Equal("700"))
 					})

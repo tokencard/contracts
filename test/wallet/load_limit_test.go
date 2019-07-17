@@ -2,8 +2,7 @@ package wallet_test
 
 import (
 	"time"
-
-	"github.com/ethereum/go-ethereum/common"
+    
 	"github.com/ethereum/go-ethereum/core/types"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -23,8 +22,6 @@ var _ = Describe("loadLimit", func() {
 			ll, err := Wallet.LoadLimitValue(nil)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(ll.String()).To(Equal(EthToWei(10000).String()))
-
-			Wallet.Balance(nil, WalletAddress, common.HexToAddress("0x0"))
 
 			ll, err = Wallet.LoadLimitAvailable(nil)
 			Expect(err).ToNot(HaveOccurred())

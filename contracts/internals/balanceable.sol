@@ -28,7 +28,7 @@ contract Balanceable {
     /// @param _address of which balance we are trying to ascertain
     /// @param _asset is the address of an ERC20 token or 0x0 for ether.
     /// @return balance associated with an address, for any token, in the wei equivalent
-    function _balance(address _address, address _asset) public view returns (uint) {
+    function _balance(address _address, address _asset) internal view returns (uint) {
         if (_asset != address(0)) {
             return ERC20(_asset).balanceOf(_address);
         } else {
