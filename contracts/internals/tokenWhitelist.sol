@@ -18,7 +18,6 @@
 
 pragma solidity ^0.5.10;
 
-import "./ownable.sol";
 import "./controllable.sol";
 import "./transferrable.sol";
 import "../externals/strings.sol";
@@ -36,7 +35,7 @@ interface ITokenWhitelist {
 
 
 /// @title TokenWhitelist stores a list of tokens used by the Consumer Contract Wallet, the Oracle, the TKN Holder and the TKN Licence Contract
-contract TokenWhitelist is ENSResolvable, Controllable, Ownable, Transferrable {
+contract TokenWhitelist is ENSResolvable, Controllable, Transferrable {
     using strings for *;
     using SafeMath for uint256;
 
@@ -72,10 +71,12 @@ contract TokenWhitelist is ENSResolvable, Controllable, Ownable, Transferrable {
     /// @notice is registered ENS node hash identifying the oracle contract.
     bytes32 private _oracleNode;
 
-    /// @notice Constructor initializes ENSResolvable, Controllable, and Ownable
+    /// @notice Constructor initializes ENSResolvable, and Controllable
+    /// @param _ens_ is the ENS registry address
     /// @param _oracleNameHash_ is the ENS name hash of the Oracle.
-    /// @param _stabelcoinAddress_ is the address of the stablecoint used by the wallet
-    constructor(address _ens_, bytes32 _oracleNameHash_, bytes32 _controllerNameHash_, address payable _owner_, bool _transferable_, address _stabelcoinAddress_) ENSResolvable(_ens_) Controllable(_controllerNameHash_) Ownable(_owner_, _transferable_) public {
+    /// @param _controllerNameHash_ is our Controllers name hash.
+    /// @param _stabelcoinAddress_ is the address of the stablecoint used by the wallet for the card load limit
+    constructor(address _ens_, bytes32 _oracleNameHash_, bytes32 _controllerNameHash_, address _stabelcoinAddress_) ENSResolvable(_ens_) Controllable(_controllerNameHash_) public {
         _oracleNode = _oracleNameHash_;
         _stablecoin = _stabelcoinAddress_;
     }
@@ -189,7 +190,7 @@ contract TokenWhitelist is ENSResolvable, Controllable, Ownable, Transferrable {
     }
 
     //// @notice Withdraw tokens from the smart contract to the specified account.
-    function claim(address payable _to, address _asset, uint _amount) external onlyOwner {
+    function claim(address payable _to, address _asset, uint _amount) external onlyAdmin {
         _safeTransfer(_to, _asset, _amount);
         emit Claimed(_to, _asset, _amount);
     }
