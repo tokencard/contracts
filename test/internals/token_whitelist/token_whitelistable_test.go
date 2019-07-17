@@ -34,7 +34,7 @@ var _ = Describe("tokenWhitelistable", func() {
 
 		BeforeEach(func() {
 			tx, err := TokenWhitelist.AddTokens(
-				Controller.TransactOpts(),
+				ControllerAdmin.TransactOpts(),
 				[]common.Address{StablecoinAddress},
 				StringsToByte32("DAI"),
 				[]*big.Int{DecimalsToMagnitude(big.NewInt(18))},
@@ -63,7 +63,7 @@ var _ = Describe("tokenWhitelistable", func() {
 	When("a token is added", func() {
 		BeforeEach(func() {
 			tx, err := TokenWhitelist.AddTokens(
-				Controller.TransactOpts(),
+				ControllerAdmin.TransactOpts(),
 				[]common.Address{common.HexToAddress("0x1")},
 				StringsToByte32("ETH"),
 				[]*big.Int{DecimalsToMagnitude(big.NewInt(18))},
@@ -112,10 +112,10 @@ var _ = Describe("tokenWhitelistable", func() {
 			Expect(ld).To(BeTrue())
 		})
 
-		When("updateRate is called", func() {
+		When("updateRate is called and the datetime is the same", func() {
 			It("Should fail", func() {
 				tx, err := TokenWhitelistableExporter.UpdateTokenRate(
-					Controller.TransactOpts(ethertest.WithGasLimit(100000)),
+					ControllerAdmin.TransactOpts(ethertest.WithGasLimit(100000)),
 					common.HexToAddress("0x1"),
 					big.NewInt(666),
 					big.NewInt(20180913153211),
@@ -127,11 +127,11 @@ var _ = Describe("tokenWhitelistable", func() {
 			})
 		})
 
-		When("called by the controller directly", func() {
+		When("called by the controller admin directly", func() {
 
 			BeforeEach(func() {
 				tx, err := TokenWhitelist.UpdateTokenRate(
-					Controller.TransactOpts(),
+					ControllerAdmin.TransactOpts(),
 					common.HexToAddress("0x1"),
 					big.NewInt(555),
 					big.NewInt(20180913153211),
@@ -159,7 +159,7 @@ var _ = Describe("tokenWhitelistable", func() {
 				Expect(it.Next()).To(BeTrue())
 				evt := it.Event
 				Expect(it.Next()).To(BeFalse())
-				Expect(evt.Sender).To(Equal(Controller.Address()))
+				Expect(evt.Sender).To(Equal(ControllerAdmin.Address()))
 				Expect(evt.Token).To(Equal(common.HexToAddress("0x1")))
 				Expect(evt.Rate.String()).To(Equal(big.NewInt(555).String()))
 			})
@@ -167,56 +167,56 @@ var _ = Describe("tokenWhitelistable", func() {
 
 	})
 
-    When("3 tokens are added: 2 loadable, 1 redeemable", func() {
-        BeforeEach(func() {
-            var err error
-            tokens := []common.Address{common.HexToAddress("0x0"), common.HexToAddress("0x1"), common.HexToAddress("0x2")}
-            tx, err := TokenWhitelist.AddTokens(
-                Controller.TransactOpts(),
-                tokens,
-                StringsToByte32(
-                    "BNT",
-                    "TKN",
-                    "YAN",
-                ),
-                []*big.Int{
-                    DecimalsToMagnitude(big.NewInt(18)),
-                    DecimalsToMagnitude(big.NewInt(8)),
-                    DecimalsToMagnitude(big.NewInt(18)),
-                },
-                []bool{false, true, true},
-                []bool{false, false, true},
-                big.NewInt(20180913153211),
-            )
-            Expect(err).ToNot(HaveOccurred())
-            Backend.Commit()
-            Expect(isSuccessful(tx)).To(BeTrue())
-        })
+	When("3 tokens are added: 2 loadable, 1 redeemable", func() {
+		BeforeEach(func() {
+			var err error
+			tokens := []common.Address{common.HexToAddress("0x0"), common.HexToAddress("0x1"), common.HexToAddress("0x2")}
+			tx, err := TokenWhitelist.AddTokens(
+				ControllerAdmin.TransactOpts(),
+				tokens,
+				StringsToByte32(
+					"BNT",
+					"TKN",
+					"YAN",
+				),
+				[]*big.Int{
+					DecimalsToMagnitude(big.NewInt(18)),
+					DecimalsToMagnitude(big.NewInt(8)),
+					DecimalsToMagnitude(big.NewInt(18)),
+				},
+				[]bool{false, true, true},
+				[]bool{false, false, true},
+				big.NewInt(20180913153211),
+			)
+			Expect(err).ToNot(HaveOccurred())
+			Backend.Commit()
+			Expect(isSuccessful(tx)).To(BeTrue())
+		})
 
-        It("Should return 1 redeemable Token", func() {
+		It("Should return 1 redeemable Token", func() {
 			arr, err := TokenWhitelistableExporter.RedeemableTokens(nil)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(arr).To(Equal([]common.Address{common.HexToAddress("0x2")}))
 		})
 
-        It("Should return 1 redeemable Token", func() {
+		It("Should return 1 redeemable Token", func() {
 			arr, err := TokenWhitelist.RedeemableTokens(nil)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(arr).To(Equal([]common.Address{common.HexToAddress("0x2")}))
 		})
 
-        It("Should update the TokenAddressArray", func() {
+		It("Should update the TokenAddressArray", func() {
 			arr, err := TokenWhitelistableExporter.TokenAddressArray(nil)
-            tokens := []common.Address{common.HexToAddress("0x0"), common.HexToAddress("0x1"), common.HexToAddress("0x2")}
+			tokens := []common.Address{common.HexToAddress("0x0"), common.HexToAddress("0x1"), common.HexToAddress("0x2")}
 			Expect(err).ToNot(HaveOccurred())
 			Expect(arr).To(Equal(tokens))
 		})
 
-        It("Should increase the redeemable counter by 1", func() {
-            cnt, err := TokenWhitelist.RedeemableCounter(nil)
-            Expect(err).ToNot(HaveOccurred())
-            Expect(cnt.String()).To(Equal("1"))
-        })
-    })
+		It("Should increase the redeemable counter by 1", func() {
+			cnt, err := TokenWhitelist.RedeemableCounter(nil)
+			Expect(err).ToNot(HaveOccurred())
+			Expect(cnt.String()).To(Equal("1"))
+		})
+	})
 
 })

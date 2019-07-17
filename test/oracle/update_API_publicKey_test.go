@@ -11,13 +11,13 @@ import (
 
 var _ = Describe("updateAPIPublicKey", func() {
 
-	Context("When called by the controller", func() {
+	Context("When called by the controller admin", func() {
 
 		var tx *types.Transaction
 
 		BeforeEach(func() {
 			var err error
-			tx, err = Oracle.UpdateCryptoCompareAPIPublicKey(Controller.TransactOpts(), common.Hex2Bytes("fffffff"))
+			tx, err = Oracle.UpdateCryptoCompareAPIPublicKey(ControllerAdmin.TransactOpts(), common.Hex2Bytes("fffffff"))
 			Expect(err).ToNot(HaveOccurred())
 			Backend.Commit()
 		})
@@ -36,7 +36,7 @@ var _ = Describe("updateAPIPublicKey", func() {
 		})
 	})
 
-	Context("When not called by the controller", func() {
+	Context("When not called by the controller admin", func() {
 		It("Should fail", func() {
 			tx, err := Oracle.UpdateCryptoCompareAPIPublicKey(RandomAccount.TransactOpts(ethertest.WithGasLimit(100000)), common.Hex2Bytes("fffffff"))
 			Expect(err).ToNot(HaveOccurred())

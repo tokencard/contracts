@@ -25,7 +25,6 @@ var _ = Describe("wallet load ERC20", func() {
 		Expect(b.String()).To(Equal("0"))
 	})
 
-
 	When("The Wallet contract is credited with two types of ERC20 tokens", func() {
 		BeforeEach(func() {
 			tx, err := ERC20Contract1.Credit(BankAccount.TransactOpts(), WalletAddress, big.NewInt(1000))
@@ -58,7 +57,7 @@ var _ = Describe("wallet load ERC20", func() {
 			BeforeEach(func() {
 				tokens := []common.Address{ERC20Contract1Address, ERC20Contract2Address}
 				tx, err := TokenWhitelist.AddTokens(
-					Controller.TransactOpts(),
+					ControllerAdmin.TransactOpts(),
 					tokens,
 					StringsToByte32(
 						"ERC1",
@@ -79,7 +78,7 @@ var _ = Describe("wallet load ERC20", func() {
 
 			BeforeEach(func() {
 				tx, err := TokenWhitelist.UpdateTokenRate(
-					Controller.TransactOpts(),
+					ControllerAdmin.TransactOpts(),
 					ERC20Contract1Address,
 					big.NewInt(555),
 					big.NewInt(20180913153211),
@@ -91,7 +90,7 @@ var _ = Describe("wallet load ERC20", func() {
 
 			BeforeEach(func() {
 				tx, err := TokenWhitelist.UpdateTokenRate(
-					Controller.TransactOpts(),
+					ControllerAdmin.TransactOpts(),
 					ERC20Contract2Address,
 					big.NewInt(555),
 					big.NewInt(20180913153211),
@@ -298,7 +297,7 @@ var _ = Describe("wallet load ERC20", func() {
 					limPlusOneWei.Add(limPlusOneWei, big.NewInt(1))
 
 					tx, err := TokenWhitelist.UpdateTokenRate(
-						Controller.TransactOpts(),
+						ControllerAdmin.TransactOpts(),
 						ERC20Contract1Address,
 						limPlusOneWei,
 						big.NewInt(20180913153211),
@@ -336,7 +335,7 @@ var _ = Describe("wallet load ERC20", func() {
 		When("the token is loadable but the rate has NOT been updated", func() {
 			BeforeEach(func() {
 				tx, err := TokenWhitelist.AddTokens(
-					Controller.TransactOpts(),
+					ControllerAdmin.TransactOpts(),
 					[]common.Address{ERC20Contract1Address},
 					StringsToByte32(
 						"ERC1",

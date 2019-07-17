@@ -29,13 +29,13 @@ var _ = Describe("updatedLicenceAmount", func() {
 
 	})
 
-	When("called by the DAO", func() {
+	When("the dao attempts to update the license amount", func() {
 
 		var tx *types.Transaction
 
 		BeforeEach(func() {
 			var err error
-			tx, err = Licence.UpdateLicenceDAO(Owner.TransactOpts(), DAO.Address())
+			tx, err = Licence.UpdateLicenceDAO(ControllerAdmin.TransactOpts(), DAO.Address())
 			Expect(err).ToNot(HaveOccurred())
 			Backend.Commit()
 			Expect(isSuccessful(tx)).To(BeTrue())
@@ -92,9 +92,9 @@ var _ = Describe("updatedLicenceAmount", func() {
 		})
 	})
 
-	When("not called by the DAO", func() {
+	When("the license amount not update by the DAO", func() {
 		It("Should fail", func() {
-			tx, err := Licence.UpdateLicenceAmount(Owner.TransactOpts(ethertest.WithGasLimit(100000)), big.NewInt(1))
+			tx, err := Licence.UpdateLicenceAmount(ControllerAdmin.TransactOpts(ethertest.WithGasLimit(100000)), big.NewInt(1))
 			Expect(err).ToNot(HaveOccurred())
 			Backend.Commit()
 			Expect(isGasExhausted(tx, 100000)).To(BeFalse())

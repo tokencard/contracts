@@ -21,9 +21,10 @@ pragma solidity ^0.5.10;
 import "./ownable.sol";
 import "./transferrable.sol";
 
-/// @title The IController interface provides access to the isController check.
+/// @title The IController interface provides access to the isController and isAdmin checks.
 interface IController {
     function isController(address) external view returns (bool);
+    function isAdmin(address) external view returns (bool);
 }
 
 
@@ -56,12 +57,6 @@ contract Controller is IController, Ownable, Transferrable {
     /// @notice Checks if message sender is an admin.
     modifier onlyAdmin() {
         require(isAdmin(msg.sender), "sender is not an admin");
-        _;
-    }
-
-    /// @notice Checks if message sender is a controller.
-    modifier onlyController() {
-        require(isController(msg.sender), "sender is not a controller");
         _;
     }
 
@@ -151,7 +146,7 @@ contract Controller is IController, Ownable, Transferrable {
     }
 
     //// @notice Withdraw tokens from the smart contract to the specified account.
-    function claim(address payable _to, address _asset, uint _amount) external onlyOwner {
+    function claim(address payable _to, address _asset, uint _amount) external onlyAdmin {
         _safeTransfer(_to, _asset, _amount);
         emit Claimed(_to, _asset, _amount);
     }

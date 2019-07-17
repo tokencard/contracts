@@ -16,7 +16,7 @@ var _ = Describe("updateTokenRate", func() {
 	Context("When the token is already supported", func() {
 		BeforeEach(func() {
 			tx, err := TokenWhitelist.AddTokens(
-				Controller.TransactOpts(),
+				ControllerAdmin.TransactOpts(),
 				[]common.Address{common.HexToAddress("0x1")},
 				StringsToByte32("ETH"),
 				[]*big.Int{DecimalsToMagnitude(big.NewInt(18))},
@@ -28,13 +28,13 @@ var _ = Describe("updateTokenRate", func() {
 			Backend.Commit()
 			Expect(isSuccessful(tx)).To(BeTrue())
 		})
-		Context("When called by the controller", func() {
+		Context("When called by the controller admin", func() {
 			var tx *types.Transaction
 
 			BeforeEach(func() {
 				var err error
 				tx, err = TokenWhitelist.UpdateTokenRate(
-					Controller.TransactOpts(),
+					ControllerAdmin.TransactOpts(),
 					common.HexToAddress("0x1"),
 					big.NewInt(555),
 					big.NewInt(20180913153211),
@@ -63,7 +63,7 @@ var _ = Describe("updateTokenRate", func() {
 				Expect(it.Next()).To(BeTrue())
 				evt := it.Event
 				Expect(it.Next()).To(BeFalse())
-				Expect(evt.Sender).To(Equal(Controller.Address()))
+				Expect(evt.Sender).To(Equal(ControllerAdmin.Address()))
 				Expect(evt.Token).To(Equal(common.HexToAddress("0x1")))
 				Expect(evt.Rate.String()).To(Equal(big.NewInt(555).String()))
 			})
@@ -85,10 +85,10 @@ var _ = Describe("updateTokenRate", func() {
 	})
 
 	Context("When the token is not supported", func() {
-		Context("When called by the controller", func() {
+		Context("When called by the controller admin", func() {
 			It("Should fail", func() {
 				tx, err := TokenWhitelist.UpdateTokenRate(
-					Controller.TransactOpts(ethertest.WithGasLimit(100000)),
+					ControllerAdmin.TransactOpts(ethertest.WithGasLimit(100000)),
 					common.HexToAddress("0x1"),
 					big.NewInt(666),
 					big.NewInt(20180913153211),

@@ -99,7 +99,7 @@ var _ = Describe("TokenHolder", func() {
 					BeforeEach(func() {
 						tokens := []common.Address{common.HexToAddress("0x0"), ERC20Contract1Address, ERC20Contract2Address, ERC20Contract3Address}
 						tx, err := TokenWhitelist.AddTokens(
-							Controller.TransactOpts(),
+							ControllerAdmin.TransactOpts(),
 							tokens,
 							StringsToByte32(
 								"ETH",

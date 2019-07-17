@@ -7,7 +7,7 @@ import (
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	. "github.com/tokencard/contracts/test/shared"
-    "github.com/tokencard/ethertest"
+	"github.com/tokencard/ethertest"
 )
 
 var _ = Describe("Controller claim", func() {
@@ -44,10 +44,10 @@ var _ = Describe("Controller claim", func() {
 			Expect(b.String()).To(Equal("333"))
 		})
 
-		When("the Controller owner withdraws 222 tokens", func() {
+		When("the Controller admin withdraws 222 tokens", func() {
 
 			BeforeEach(func() {
-				tx, err := ControllerContract.Claim(ControllerOwner.TransactOpts(), RandomAccount.Address(), ERC20Contract1Address, big.NewInt(222))
+				tx, err := ControllerContract.Claim(ControllerAdmin.TransactOpts(), RandomAccount.Address(), ERC20Contract1Address, big.NewInt(222))
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 				Expect(isSuccessful(tx)).To(BeTrue())
@@ -78,25 +78,25 @@ var _ = Describe("Controller claim", func() {
 
 		}) //owner withdrawal
 
-        When("controller Admin tries to withdraw", func() {
-            It("Should fail", func() {
-    			tx, err := ControllerContract.Claim(ControllerAdmin.TransactOpts(ethertest.WithGasLimit(100000)), RandomAccount.Address(), ERC20Contract1Address, big.NewInt(222))
-    			Expect(err).ToNot(HaveOccurred())
-    			Backend.Commit()
-    			Expect(isGasExhausted(tx, 100000)).To(BeFalse())
-    			Expect(isSuccessful(tx)).To(BeFalse())
-    		})
-        })
+		When("controller tries to withdraw", func() {
+			It("Should fail", func() {
+				tx, err := ControllerContract.Claim(Controller.TransactOpts(ethertest.WithGasLimit(100000)), RandomAccount.Address(), ERC20Contract1Address, big.NewInt(222))
+				Expect(err).ToNot(HaveOccurred())
+				Backend.Commit()
+				Expect(isGasExhausted(tx, 100000)).To(BeFalse())
+				Expect(isSuccessful(tx)).To(BeFalse())
+			})
+		})
 
-        When("controller tries to withdraw", func() {
-            It("Should fail", func() {
-    			tx, err := ControllerContract.Claim(Controller.TransactOpts(ethertest.WithGasLimit(100000)), RandomAccount.Address(), ERC20Contract1Address, big.NewInt(222))
-    			Expect(err).ToNot(HaveOccurred())
-    			Backend.Commit()
-    			Expect(isGasExhausted(tx, 100000)).To(BeFalse())
-    			Expect(isSuccessful(tx)).To(BeFalse())
-    		})
-        })
+		When("controller owner tries to withdraw", func() {
+			It("Should fail", func() {
+				tx, err := ControllerContract.Claim(ControllerOwner.TransactOpts(ethertest.WithGasLimit(100000)), RandomAccount.Address(), ERC20Contract1Address, big.NewInt(222))
+				Expect(err).ToNot(HaveOccurred())
+				Backend.Commit()
+				Expect(isGasExhausted(tx, 100000)).To(BeFalse())
+				Expect(isSuccessful(tx)).To(BeFalse())
+			})
+		})
 
 	})
 

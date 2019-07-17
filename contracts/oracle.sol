@@ -83,7 +83,7 @@ contract Oracle is ENSResolvable, usingOraclize, Transferrable, Base64, Date, Co
 
     /// @notice Updates the Crypto Compare public API key.
     /// @param _publicKey new Crypto Compare public API key
-    function updateCryptoCompareAPIPublicKey(bytes calldata _publicKey) external onlyController {
+    function updateCryptoCompareAPIPublicKey(bytes calldata _publicKey) external onlyAdmin {
         cryptoCompareAPIPublicKey = _publicKey;
         emit SetCryptoComparePublicKey(msg.sender, _publicKey);
     }
@@ -109,7 +109,7 @@ contract Oracle is ENSResolvable, usingOraclize, Transferrable, Base64, Date, Co
     }
 
     /// @notice Withdraw tokens from the smart contract to the specified account.
-    function claim(address payable _to, address _asset, uint _amount) external onlyController {
+    function claim(address payable _to, address _asset, uint _amount) external onlyAdmin {
         _safeTransfer(_to, _asset, _amount);
         emit Claimed(_to, _asset, _amount);
     }

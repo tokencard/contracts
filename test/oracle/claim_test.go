@@ -31,7 +31,7 @@ var _ = Describe("Oracle claim", func() {
 		BeforeEach(func() {
 			tokens := []common.Address{common.HexToAddress("0x0"), common.HexToAddress("0x1")}
 			tx, err := TokenWhitelist.AddTokens(
-				Controller.TransactOpts(),
+				ControllerAdmin.TransactOpts(),
 				tokens,
 				StringsToByte32("BNT", "TKN"),
 				[]*big.Int{DecimalsToMagnitude(big.NewInt(18)), DecimalsToMagnitude(big.NewInt(8))},
@@ -58,12 +58,12 @@ var _ = Describe("Oracle claim", func() {
 			Expect(b.String()).To(Equal(newbalance.String()))
 		})
 
-		Context("When called by the controller", func() {
+		Context("When called by the controller admin", func() {
 			var tx *types.Transaction
 
 			BeforeEach(func() {
 				var err error
-				tx, err = Oracle.Claim(Controller.TransactOpts(), CryptoFloatAddress, common.HexToAddress("0x0"), EthToWei(1))
+				tx, err = Oracle.Claim(ControllerAdmin.TransactOpts(), CryptoFloatAddress, common.HexToAddress("0x0"), EthToWei(1))
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 			})
@@ -98,7 +98,7 @@ var _ = Describe("Oracle claim", func() {
 			})
 		})
 
-		Context("When not called by the controller", func() {
+		Context("When not called by the controller admin", func() {
 			It("Should fail", func() {
 				tx, err := Oracle.Claim(RandomAccount.TransactOpts(ethertest.WithGasLimit(100000)), CryptoFloatAddress, common.HexToAddress("0x0"), EthToWei(1))
 				Expect(err).ToNot(HaveOccurred())

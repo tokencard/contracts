@@ -14,7 +14,7 @@ var _ = Describe("load TKN", func() {
 
 	//Update it to show to the TKN contract deployed for testing
 	BeforeEach(func() {
-		tx, err := Licence.UpdateTKNContractAddress(Owner.TransactOpts(), TKNBurnerAddress)
+		tx, err := Licence.UpdateTKNContractAddress(ControllerAdmin.TransactOpts(), TKNBurnerAddress)
 		Expect(err).ToNot(HaveOccurred())
 		Backend.Commit()
 		Expect(isSuccessful(tx)).To(BeTrue())
@@ -59,101 +59,101 @@ var _ = Describe("load TKN", func() {
 
 		})
 
-			When("approval to Licence contract to transfer 444 tokens respectively is given", func() {
+		When("approval to Licence contract to transfer 444 tokens respectively is given", func() {
+
+			BeforeEach(func() {
+				tx, err := TKNBurner.Approve(RandomAccount.TransactOpts(), LicenceAddress, big.NewInt(444))
+				Expect(err).ToNot(HaveOccurred())
+				Backend.Commit()
+				Expect(isSuccessful(tx)).To(BeTrue())
+			})
+
+			It("Should emit 1 Approval event", func() {
+				owner := []common.Address{RandomAccount.Address()}
+				spender := []common.Address{LicenceAddress}
+				it, err := TKNBurner.FilterApproval(nil, owner, spender)
+				Expect(err).ToNot(HaveOccurred())
+				Expect(it.Next()).To(BeTrue())
+				evt := it.Event
+				Expect(it.Next()).To(BeFalse())
+				Expect(evt.Owner).To(Equal(RandomAccount.Address()))
+				Expect(evt.Spender).To(Equal(LicenceAddress))
+				Expect(evt.Value.String()).To(Equal("444"))
+			})
+
+			When("all the approved tokens are transfered ", func() {
 
 				BeforeEach(func() {
-					tx, err := TKNBurner.Approve(RandomAccount.TransactOpts(), LicenceAddress, big.NewInt(444))
+					tx, err := Licence.Load(RandomAccount.TransactOpts(), TKNBurnerAddress, big.NewInt(444))
 					Expect(err).ToNot(HaveOccurred())
 					Backend.Commit()
 					Expect(isSuccessful(tx)).To(BeTrue())
 				})
 
-				It("Should emit 1 Approval event", func() {
-					owner := []common.Address{RandomAccount.Address()}
-					spender := []common.Address{LicenceAddress}
-					it, err := TKNBurner.FilterApproval(nil, owner, spender)
+				It("Should NOT emit a TransferredToTokenHolder event", func() {
+					it, err := Licence.FilterTransferredToTokenHolder(nil)
+					Expect(err).ToNot(HaveOccurred())
+					Expect(it.Next()).To(BeFalse())
+				})
+
+				It("Should emit 1 TransferredToCryptoFloat event", func() {
+					it, err := Licence.FilterTransferredToCryptoFloat(nil)
 					Expect(err).ToNot(HaveOccurred())
 					Expect(it.Next()).To(BeTrue())
 					evt := it.Event
 					Expect(it.Next()).To(BeFalse())
-					Expect(evt.Owner).To(Equal(RandomAccount.Address()))
-					Expect(evt.Spender).To(Equal(LicenceAddress))
+					Expect(evt.From).To(Equal(RandomAccount.Address()))
+					Expect(evt.To).To(Equal(CryptoFloatAddress))
+					Expect(evt.Asset).To(Equal(TKNBurnerAddress))
+					Expect(evt.Amount.String()).To(Equal("444"))
+				})
+
+				It("Should emit 1 TKNBurner Transfer event", func() {
+					from := []common.Address{RandomAccount.Address()}
+					var to []common.Address
+					it, err := TKNBurner.FilterTransfer(nil, from, to)
+					Expect(err).ToNot(HaveOccurred())
+					Expect(it.Next()).To(BeTrue())
+					evt := it.Event
+					Expect(it.Next()).To(BeFalse())
+					Expect(evt.From).To(Equal(RandomAccount.Address()))
+					Expect(evt.To).To(Equal(CryptoFloatAddress))
 					Expect(evt.Value.String()).To(Equal("444"))
 				})
 
-				When("all the approved tokens are transfered ", func() {
+				It("should increase the TKN balance of the Float contract by 444", func() {
+					b, err := TKNBurner.BalanceOf(nil, CryptoFloatAddress)
+					Expect(err).ToNot(HaveOccurred())
+					Expect(b.String()).To(Equal("444"))
+				})
 
-					BeforeEach(func() {
-						tx, err := Licence.Load(RandomAccount.TransactOpts(), TKNBurnerAddress, big.NewInt(444))
-						Expect(err).ToNot(HaveOccurred())
-						Backend.Commit()
-						Expect(isSuccessful(tx)).To(BeTrue())
-					})
+				It("should NOT increase the TKN balance of the Holder contract", func() {
+					b, err := TKNBurner.BalanceOf(nil, TokenHolderAddress)
+					Expect(err).ToNot(HaveOccurred())
+					Expect(b.String()).To(Equal("0"))
+				})
 
-					It("Should NOT emit a TransferredToTokenHolder event", func() {
-						it, err := Licence.FilterTransferredToTokenHolder(nil)
-						Expect(err).ToNot(HaveOccurred())
-						Expect(it.Next()).To(BeFalse())
-					})
+				It("should decrease the TKN balance of the RandomAccount by 444", func() {
+					b, err := TKNBurner.BalanceOf(nil, RandomAccount.Address())
+					Expect(err).ToNot(HaveOccurred())
+					Expect(b.String()).To(Equal("556")) //1000-444
+				})
 
-					It("Should emit 1 TransferredToCryptoFloat event", func() {
-						it, err := Licence.FilterTransferredToCryptoFloat(nil)
-						Expect(err).ToNot(HaveOccurred())
-						Expect(it.Next()).To(BeTrue())
-						evt := it.Event
-						Expect(it.Next()).To(BeFalse())
-						Expect(evt.From).To(Equal(RandomAccount.Address()))
-						Expect(evt.To).To(Equal(CryptoFloatAddress))
-						Expect(evt.Asset).To(Equal(TKNBurnerAddress))
-						Expect(evt.Amount.String()).To(Equal("444"))
-					})
+			}) //equal to approval
 
-					It("Should emit 1 TKNBurner Transfer event", func() {
-						from := []common.Address{RandomAccount.Address()}
-						var to []common.Address
-						it, err := TKNBurner.FilterTransfer(nil, from, to)
-						Expect(err).ToNot(HaveOccurred())
-						Expect(it.Next()).To(BeTrue())
-						evt := it.Event
-						Expect(it.Next()).To(BeFalse())
-						Expect(evt.From).To(Equal(RandomAccount.Address()))
-						Expect(evt.To).To(Equal(CryptoFloatAddress))
-						Expect(evt.Value.String()).To(Equal("444"))
-					})
+			When("more tokens than approved are being transfered ", func() {
 
-					It("should increase the TKN balance of the Float contract by 444", func() {
-						b, err := TKNBurner.BalanceOf(nil, CryptoFloatAddress)
-						Expect(err).ToNot(HaveOccurred())
-						Expect(b.String()).To(Equal("444"))
-					})
+				It("Should revert", func() {
+					tx, err := Licence.Load(RandomAccount.TransactOpts(ethertest.WithGasLimit(100000)), TKNAddress, big.NewInt(555))
+					Expect(err).ToNot(HaveOccurred())
+					Backend.Commit()
+					Expect(isGasExhausted(tx, 100000)).To(BeFalse())
+					Expect(isSuccessful(tx)).To(BeFalse())
+				})
 
-					It("should NOT increase the TKN balance of the Holder contract", func() {
-						b, err := TKNBurner.BalanceOf(nil, TokenHolderAddress)
-						Expect(err).ToNot(HaveOccurred())
-						Expect(b.String()).To(Equal("0"))
-					})
+			}) //more than approved
 
-					It("should decrease the TKN balance of the RandomAccount by 444", func() {
-						b, err := TKNBurner.BalanceOf(nil, RandomAccount.Address())
-						Expect(err).ToNot(HaveOccurred())
-						Expect(b.String()).To(Equal("556")) //1000-444
-					})
-
-				}) //equal to approval
-
-				When("more tokens than approved are being transfered ", func() {
-
-					It("Should revert", func() {
-						tx, err := Licence.Load(RandomAccount.TransactOpts(ethertest.WithGasLimit(100000)), TKNAddress, big.NewInt(555))
-						Expect(err).ToNot(HaveOccurred())
-						Backend.Commit()
-						Expect(isGasExhausted(tx, 100000)).To(BeFalse())
-						Expect(isSuccessful(tx)).To(BeFalse())
-					})
-
-				}) //more than approved
-
-			}) //approval is given
+		}) //approval is given
 	})
 
 })

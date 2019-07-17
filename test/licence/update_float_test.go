@@ -25,13 +25,13 @@ var _ = Describe("updateFloat", func() {
 		})
 	})
 
-	When("called by the owner", func() {
+	When("called by the controller admin", func() {
 
 		var tx *types.Transaction
 
 		BeforeEach(func() {
 			var err error
-			tx, err = Licence.UpdateFloat(Owner.TransactOpts(), TokenHolderAddress)
+			tx, err = Licence.UpdateFloat(ControllerAdmin.TransactOpts(), TokenHolderAddress)
 			Expect(err).ToNot(HaveOccurred())
 			Backend.Commit()
 		})
@@ -53,7 +53,7 @@ var _ = Describe("updateFloat", func() {
 
 			BeforeEach(func() {
 				var err error
-				tx, err = Licence.UpdateFloat(Owner.TransactOpts(), CryptoFloatAddress)
+				tx, err = Licence.UpdateFloat(ControllerAdmin.TransactOpts(), CryptoFloatAddress)
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 			})
@@ -79,7 +79,7 @@ var _ = Describe("updateFloat", func() {
 		Context("CryptoFloat is locked after the update", func() {
 
 			BeforeEach(func() {
-				tx, err := Licence.LockFloat(Owner.TransactOpts())
+				tx, err := Licence.LockFloat(ControllerAdmin.TransactOpts())
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 				Expect(isSuccessful(tx)).To(BeTrue())
@@ -87,7 +87,7 @@ var _ = Describe("updateFloat", func() {
 
 			BeforeEach(func() {
 				var err error
-				tx, err = Licence.UpdateFloat(Owner.TransactOpts(ethertest.WithGasLimit(100000)), CryptoFloatAddress)
+				tx, err = Licence.UpdateFloat(ControllerAdmin.TransactOpts(ethertest.WithGasLimit(100000)), CryptoFloatAddress)
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 				Expect(isGasExhausted(tx, 100000)).To(BeFalse())

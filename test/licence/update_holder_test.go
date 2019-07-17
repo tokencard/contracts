@@ -25,13 +25,13 @@ var _ = Describe("updateHolder", func() {
 		})
 	})
 
-	When("called by the owner", func() {
+	When("called by the controller admin", func() {
 
 		var tx *types.Transaction
 
 		BeforeEach(func() {
 			var err error
-			tx, err = Licence.UpdateHolder(Owner.TransactOpts(), CryptoFloatAddress)
+			tx, err = Licence.UpdateHolder(ControllerAdmin.TransactOpts(), CryptoFloatAddress)
 			Expect(err).ToNot(HaveOccurred())
 			Backend.Commit()
 		})
@@ -53,7 +53,7 @@ var _ = Describe("updateHolder", func() {
 
 			BeforeEach(func() {
 				var err error
-				tx, err = Licence.UpdateHolder(Owner.TransactOpts(), TokenHolderAddress)
+				tx, err = Licence.UpdateHolder(ControllerAdmin.TransactOpts(), TokenHolderAddress)
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 			})
@@ -79,7 +79,7 @@ var _ = Describe("updateHolder", func() {
 		Context("TokenHolder is locked after the update", func() {
 
 			BeforeEach(func() {
-				tx, err := Licence.LockHolder(Owner.TransactOpts())
+				tx, err := Licence.LockHolder(ControllerAdmin.TransactOpts())
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 				Expect(isSuccessful(tx)).To(BeTrue())
@@ -87,7 +87,7 @@ var _ = Describe("updateHolder", func() {
 
 			BeforeEach(func() {
 				var err error
-				tx, err = Licence.UpdateHolder(Owner.TransactOpts(ethertest.WithGasLimit(100000)), TokenHolderAddress)
+				tx, err = Licence.UpdateHolder(ControllerAdmin.TransactOpts(ethertest.WithGasLimit(100000)), TokenHolderAddress)
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 				Expect(isGasExhausted(tx, 100000)).To(BeFalse())

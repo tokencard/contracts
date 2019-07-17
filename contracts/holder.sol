@@ -25,12 +25,13 @@ import "./internals/transferrable.sol";
 import "./internals/balanceable.sol";
 import "./internals/burner.sol";
 import "./internals/ownable.sol";
+import "./internals/controllable.sol";
 import "./internals/tokenWhitelistable.sol";
 
 
 /// @title Holder - The TKN Asset Contract
 /// @notice When the TKN contract calls the burn method, a share of the tokens held by this contract are disbursed to the burner.
-contract Holder is Ownable, Balanceable, Transferrable, ENSResolvable, TokenWhitelistable {
+contract Holder is Ownable, Balanceable, ENSResolvable, Controllable, Transferrable, TokenWhitelistable {
 
     using SafeMath for uint256;
 
@@ -52,7 +53,7 @@ contract Holder is Ownable, Balanceable, Transferrable, ENSResolvable, TokenWhit
     /// @param _burnerContract_ is the address of the token contract TKN with burning functionality.
     /// @param _ens_ is the address of the ENS registry.
     /// @param _tokenWhitelistNameHash_ is the ENS name hash of the Token whitelist.
-    constructor (address payable _owner_, address _burnerContract_, address _ens_, bytes32 _tokenWhitelistNameHash_) Ownable(_owner_, false) ENSResolvable(_ens_) TokenWhitelistable(_tokenWhitelistNameHash_) public {
+    constructor (address payable _owner_, address _burnerContract_, address _ens_, bytes32 _tokenWhitelistNameHash_, bytes32 _controllerNameHash_) Ownable(_owner_, false) ENSResolvable(_ens_) Controllable(_controllerNameHash_) TokenWhitelistable(_tokenWhitelistNameHash_) public {
         _burner = _burnerContract_;
     }
 
@@ -86,7 +87,7 @@ contract Holder is Ownable, Balanceable, Transferrable, ENSResolvable, TokenWhit
     /// @notice This allows for the admin to reclaim the non-redeemableTokens
     /// @param _to this is the address which the reclaimed tokens will be sent to
     /// @param _nonRedeemableAddresses this is the array of tokens to be claimed
-    function nonRedeemableTokenClaim(address payable _to, address[] calldata _nonRedeemableAddresses) external onlyOwner returns (bool) {
+    function nonRedeemableTokenClaim(address payable _to, address[] calldata _nonRedeemableAddresses) external onlyAdmin returns (bool) {
         for (uint i = 0; i < _nonRedeemableAddresses.length; i++) {
             //revert if token is redeemable
             require(!_isTokenRedeemable(_nonRedeemableAddresses[i]), "redeemables cannot be claimed");

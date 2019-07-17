@@ -42,6 +42,18 @@ var _ = Describe("AddController", func() {
 			Expect(evt.Controller).To(Equal(RandomAccount.Address()))
 		})
 
+		It("the new controller to be confirmed as a controller", func() {
+			controller, err := ControllerContract.IsController(nil, RandomAccount.Address())
+			Expect(err).ToNot(HaveOccurred())
+			Expect(controller).To(BeTrue())
+		})
+
+		It("address(0x1) to not be controller", func() {
+			controller, err := ControllerContract.IsController(nil, common.HexToAddress("0x1"))
+			Expect(err).ToNot(HaveOccurred())
+			Expect(controller).To(BeFalse())
+		})
+
 	})
 
 	When("controller Admin calls AddController with it's own address", func() {

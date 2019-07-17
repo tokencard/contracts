@@ -16,7 +16,7 @@ var _ = Describe("setTokenLoadable", func() {
 	Context("When the token is already loadable", func() {
 		BeforeEach(func() {
 			tx, err := TokenWhitelist.AddTokens(
-				Controller.TransactOpts(),
+				ControllerAdmin.TransactOpts(),
 				[]common.Address{common.HexToAddress("0x1")},
 				StringsToByte32("ETH"),
 				[]*big.Int{DecimalsToMagnitude(big.NewInt(18))},
@@ -28,12 +28,12 @@ var _ = Describe("setTokenLoadable", func() {
 			Backend.Commit()
 			Expect(isSuccessful(tx)).To(BeTrue())
 		})
-		Context("When called by the controller", func() {
+		Context("When called by the controller admin", func() {
 			var tx *types.Transaction
 
 			BeforeEach(func() {
 				var err error
-				tx, err = TokenWhitelist.SetTokenLoadable(Controller.TransactOpts(), common.HexToAddress("0x1"), false)
+				tx, err = TokenWhitelist.SetTokenLoadable(ControllerAdmin.TransactOpts(), common.HexToAddress("0x1"), false)
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 			})
@@ -59,12 +59,12 @@ var _ = Describe("setTokenLoadable", func() {
 				Expect(it.Next()).To(BeTrue())
 				evt := it.Event
 				Expect(it.Next()).To(BeFalse())
-				Expect(evt.Sender).To(Equal(Controller.Address()))
+				Expect(evt.Sender).To(Equal(ControllerAdmin.Address()))
 				Expect(evt.Token).To(Equal(common.HexToAddress("0x1")))
 				Expect(evt.Loadable).To(BeFalse())
 			})
 		})
-		Context("When not called by the controller", func() {
+		Context("When not called by the controller admin", func() {
 			It("Should fail", func() {
 				tx, err := TokenWhitelist.SetTokenLoadable(
 					RandomAccount.TransactOpts(ethertest.WithGasLimit(100000)),
@@ -80,10 +80,10 @@ var _ = Describe("setTokenLoadable", func() {
 	})
 
 	Context("When the token is not supported", func() {
-		Context("When called by the controller", func() {
+		Context("When called by the controller admin", func() {
 			It("Should fail", func() {
 				tx, err := TokenWhitelist.SetTokenLoadable(
-					Controller.TransactOpts(ethertest.WithGasLimit(100000)),
+					ControllerAdmin.TransactOpts(ethertest.WithGasLimit(100000)),
 					common.HexToAddress("0x2"),
 					false,
 				)
@@ -116,7 +116,7 @@ var _ = Describe("setTokenRedeemable", func() {
 	Context("When the token is already redeemable", func() {
 		BeforeEach(func() {
 			tx, err := TokenWhitelist.AddTokens(
-				Controller.TransactOpts(),
+				ControllerAdmin.TransactOpts(),
 				[]common.Address{common.HexToAddress("0x1")},
 				StringsToByte32("ETH"),
 				[]*big.Int{DecimalsToMagnitude(big.NewInt(18))},
@@ -128,12 +128,12 @@ var _ = Describe("setTokenRedeemable", func() {
 			Backend.Commit()
 			Expect(isSuccessful(tx)).To(BeTrue())
 		})
-		Context("When called by the controller", func() {
+		Context("When called by the controller admin", func() {
 			var tx *types.Transaction
 
 			BeforeEach(func() {
 				var err error
-				tx, err = TokenWhitelist.SetTokenRedeemable(Controller.TransactOpts(), common.HexToAddress("0x1"), false)
+				tx, err = TokenWhitelist.SetTokenRedeemable(ControllerAdmin.TransactOpts(), common.HexToAddress("0x1"), false)
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 			})
@@ -159,7 +159,7 @@ var _ = Describe("setTokenRedeemable", func() {
 				Expect(it.Next()).To(BeTrue())
 				evt := it.Event
 				Expect(it.Next()).To(BeFalse())
-				Expect(evt.Sender).To(Equal(Controller.Address()))
+				Expect(evt.Sender).To(Equal(ControllerAdmin.Address()))
 				Expect(evt.Token).To(Equal(common.HexToAddress("0x1")))
 				Expect(evt.Redeemable).To(BeFalse())
 			})
@@ -180,10 +180,10 @@ var _ = Describe("setTokenRedeemable", func() {
 	})
 
 	Context("When the token is not supported", func() {
-		Context("When called by the controller", func() {
+		Context("When called by the controller admin", func() {
 			It("Should fail", func() {
 				tx, err := TokenWhitelist.SetTokenRedeemable(
-					Controller.TransactOpts(ethertest.WithGasLimit(100000)),
+					ControllerAdmin.TransactOpts(ethertest.WithGasLimit(100000)),
 					common.HexToAddress("0x2"),
 					false,
 				)

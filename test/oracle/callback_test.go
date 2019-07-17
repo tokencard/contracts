@@ -19,7 +19,7 @@ var _ = Describe("callback", func() {
 		Context("When a token exists and rates update has been requested", func() {
 			BeforeEach(func() {
 				tx, err := TokenWhitelist.AddTokens(
-					Controller.TransactOpts(),
+					ControllerAdmin.TransactOpts(),
 					[]common.Address{common.HexToAddress("0xfe209bdE5CA32fa20E6728A005F26D651FFF5982")},
 					StringsToByte32("TKN"),
 					[]*big.Int{DecimalsToMagnitude(big.NewInt(18))},
@@ -105,7 +105,7 @@ var _ = Describe("callback", func() {
 
 							BeforeEach(func() {
 								var err error
-								tx, err = TokenWhitelist.RemoveTokens(Controller.TransactOpts(), []common.Address{common.HexToAddress("0xfe209bdE5CA32fa20E6728A005F26D651FFF5982")})
+								tx, err = TokenWhitelist.RemoveTokens(ControllerAdmin.TransactOpts(), []common.Address{common.HexToAddress("0xfe209bdE5CA32fa20E6728A005F26D651FFF5982")})
 								Expect(err).ToNot(HaveOccurred())
 								Backend.Commit()
 								Expect(isSuccessful(tx)).To(BeTrue())
@@ -150,7 +150,7 @@ var _ = Describe("callback", func() {
 
 							BeforeEach(func() {
 								//update the public key, needed because we sign our own (misformated) results for the callback
-								tx, err := Oracle.UpdateCryptoCompareAPIPublicKey(Controller.TransactOpts(), common.Hex2Bytes("717580b4c7577ebe0a7c3c21213ffbfa1221d2c1fe455d4897800d86eb65d91f8fb6c2304a54d89ab5c13a690f03dce25f7d46af90f79908d6be8bcdcdf74c22"))
+								tx, err := Oracle.UpdateCryptoCompareAPIPublicKey(ControllerAdmin.TransactOpts(), common.Hex2Bytes("717580b4c7577ebe0a7c3c21213ffbfa1221d2c1fe455d4897800d86eb65d91f8fb6c2304a54d89ab5c13a690f03dce25f7d46af90f79908d6be8bcdcdf74c22"))
 								Expect(err).ToNot(HaveOccurred())
 								Backend.Commit()
 								Expect(isSuccessful(tx)).To(BeTrue())
@@ -205,7 +205,7 @@ var _ = Describe("callback", func() {
 
 							BeforeEach(func() {
 								//update the public key, needed because we sign our own (misformated) results for the callback
-								tx, err := Oracle.UpdateCryptoCompareAPIPublicKey(Controller.TransactOpts(), common.Hex2Bytes("717580b4c7577ebe0a7c3c21213ffbfa1221d2c1fe455d4897800d86eb65d91f8fb6c2304a54d89ab5c13a690f03dce25f7d46af90f79908d6be8bcdcdf74c22"))
+								tx, err := Oracle.UpdateCryptoCompareAPIPublicKey(ControllerAdmin.TransactOpts(), common.Hex2Bytes("717580b4c7577ebe0a7c3c21213ffbfa1221d2c1fe455d4897800d86eb65d91f8fb6c2304a54d89ab5c13a690f03dce25f7d46af90f79908d6be8bcdcdf74c22"))
 								Expect(err).ToNot(HaveOccurred())
 								Backend.Commit()
 								Expect(isSuccessful(tx)).To(BeTrue())
@@ -427,7 +427,7 @@ var _ = Describe("callback", func() {
 							Context("When the signature is valid but the proof is not", func() {
 								BeforeEach(func() {
 									//update the public key, needed because we create our own proofs
-									tx, err := Oracle.UpdateCryptoCompareAPIPublicKey(Controller.TransactOpts(), common.Hex2Bytes("717580b4c7577ebe0a7c3c21213ffbfa1221d2c1fe455d4897800d86eb65d91f8fb6c2304a54d89ab5c13a690f03dce25f7d46af90f79908d6be8bcdcdf74c22"))
+									tx, err := Oracle.UpdateCryptoCompareAPIPublicKey(ControllerAdmin.TransactOpts(), common.Hex2Bytes("717580b4c7577ebe0a7c3c21213ffbfa1221d2c1fe455d4897800d86eb65d91f8fb6c2304a54d89ab5c13a690f03dce25f7d46af90f79908d6be8bcdcdf74c22"))
 									Expect(err).ToNot(HaveOccurred())
 									Backend.Commit()
 									Expect(isSuccessful(tx)).To(BeTrue())
@@ -560,7 +560,7 @@ var _ = Describe("callback", func() {
 					id = stringToQueryID("https://min-api.cryptocompare.com/data/price?fsym=TKN&tsyms=ETH&sign=true")
 				})
 				BeforeEach(func() {
-					tx, err := Oracle.UpdateCryptoCompareAPIPublicKey(Controller.TransactOpts(), common.Hex2Bytes("fffffff"))
+					tx, err := Oracle.UpdateCryptoCompareAPIPublicKey(ControllerAdmin.TransactOpts(), common.Hex2Bytes("fffffff"))
 					Expect(err).ToNot(HaveOccurred())
 					Backend.Commit()
 					Expect(isSuccessful(tx)).To(BeTrue())
@@ -594,7 +594,7 @@ var _ = Describe("callback", func() {
 
 			BeforeEach(func() {
 				tx, err := TokenWhitelist.AddTokens(
-					Controller.TransactOpts(),
+					ControllerAdmin.TransactOpts(),
 					[]common.Address{common.HexToAddress("0xfe209bdE5CA32fa20E6728A005F26D651FFF5982")},
 					StringsToByte32("TKN"),
 					[]*big.Int{DecimalsToMagnitude(big.NewInt(18))},
@@ -635,7 +635,7 @@ var _ = Describe("callback", func() {
 		Context("When a token exists and rates update has been requested", func() {
 			BeforeEach(func() {
 				tx, err := TokenWhitelist.AddTokens(
-					Controller.TransactOpts(),
+					ControllerAdmin.TransactOpts(),
 					[]common.Address{common.HexToAddress("0xfe209bdE5CA32fa20E6728A005F26D651FFF5982")},
 					StringsToByte32("TKN"),
 					[]*big.Int{DecimalsToMagnitude(big.NewInt(8))},

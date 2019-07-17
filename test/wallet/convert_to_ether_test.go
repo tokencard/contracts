@@ -14,7 +14,7 @@ var _ = Describe("convertToEther", func() {
 	Context("When the token is already supported", func() {
 		BeforeEach(func() {
 			tx, err := TokenWhitelist.AddTokens(
-				Controller.TransactOpts(),
+				ControllerAdmin.TransactOpts(),
 				[]common.Address{common.HexToAddress("0xfe209bdE5CA32fa20E6728A005F26D651FFF5982")},
 				StringsToByte32("TKN"),
 				[]*big.Int{DecimalsToMagnitude(big.NewInt(8))},
@@ -35,7 +35,7 @@ var _ = Describe("convertToEther", func() {
 		Context("When exchange rate is NOT 0", func() {
 			BeforeEach(func() {
 				tx, err := TokenWhitelist.UpdateTokenRate(
-					Controller.TransactOpts(),
+					ControllerAdmin.TransactOpts(),
 					common.HexToAddress("0xfe209bdE5CA32fa20E6728A005F26D651FFF5982"),
 					big.NewInt(int64(0.001633*math.Pow10(18))),
 					big.NewInt(20180913153211),
@@ -72,7 +72,7 @@ var _ = Describe("convertToEther", func() {
 
 		BeforeEach(func() {
 			tx, err := TokenWhitelist.AddTokens(
-				Controller.TransactOpts(),
+				ControllerAdmin.TransactOpts(),
 				[]common.Address{common.HexToAddress("0x0")},
 				StringsToByte32("ETH"),
 				[]*big.Int{DecimalsToMagnitude(big.NewInt(18))},
@@ -86,7 +86,7 @@ var _ = Describe("convertToEther", func() {
 		})
 		BeforeEach(func() {
 			tx, err := TokenWhitelist.UpdateTokenRate(
-				Controller.TransactOpts(),
+				ControllerAdmin.TransactOpts(),
 				common.HexToAddress("0x0"),
 				EthToWei(1),
 				big.NewInt(20180913153211),

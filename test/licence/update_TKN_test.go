@@ -25,11 +25,11 @@ var _ = Describe("updateTKN", func() {
 		})
 	})
 
-	When("called by the owner", func() {
+	When("called by the controller admin", func() {
 
 		BeforeEach(func() {
 			var err error
-			tx, err := Licence.UpdateTKNContractAddress(Owner.TransactOpts(), TKNBurnerAddress)
+			tx, err := Licence.UpdateTKNContractAddress(ControllerAdmin.TransactOpts(), TKNBurnerAddress)
 			Expect(err).ToNot(HaveOccurred())
 			Backend.Commit()
 			Expect(isSuccessful(tx)).To(BeTrue())
@@ -47,7 +47,7 @@ var _ = Describe("updateTKN", func() {
 		Context("TKN is not locked after the update", func() {
 
 			BeforeEach(func() {
-				tx, err := Licence.UpdateTKNContractAddress(Owner.TransactOpts(), common.HexToAddress("0x1"))
+				tx, err := Licence.UpdateTKNContractAddress(ControllerAdmin.TransactOpts(), common.HexToAddress("0x1"))
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 				Expect(isSuccessful(tx)).To(BeTrue())
@@ -76,14 +76,14 @@ var _ = Describe("updateTKN", func() {
 		Context("TKN is locked after the update", func() {
 
 			BeforeEach(func() {
-				tx, err := Licence.LockTKNContractAddress(Owner.TransactOpts())
+				tx, err := Licence.LockTKNContractAddress(ControllerAdmin.TransactOpts())
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 				Expect(isSuccessful(tx)).To(BeTrue())
 			})
 
 			BeforeEach(func() {
-				tx, err := Licence.UpdateTKNContractAddress(Owner.TransactOpts(ethertest.WithGasLimit(100000)), common.HexToAddress("0x1"))
+				tx, err := Licence.UpdateTKNContractAddress(ControllerAdmin.TransactOpts(ethertest.WithGasLimit(100000)), common.HexToAddress("0x1"))
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 				Expect(isGasExhausted(tx, 100000)).To(BeFalse())
