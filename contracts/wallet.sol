@@ -753,34 +753,36 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
     function _bytesToAddress(bytes memory _bts, uint _from) private pure returns (address) {
         require(_bts.length >= _from + 20, "slicing out of range");
 
-        uint160 addressUint;
+        bytes20 convertedAddress;
+        uint startByte = _from + 32; //first 32 bytes denote the array length
 
-        for (uint8 i = 0; i < 20; i++) {
-            addressUint *= 256;
-            addressUint += uint8(_bts[_from + i]);
+        assembly {
+            convertedAddress := mload(add(_bts, startByte))
         }
-        return address(addressUint);
+
+        return address(convertedAddress);
     }
 
     /// @dev This function slicing bytes into uint32
     /// @param _bts some bytes
-    /// @param _from  a start position
+    /// @param _from start position
     function _bytesToUint32(bytes memory _bts, uint _from) private pure returns (uint32) {
         require(_bts.length >= _from + 4, "slicing out of range");
 
-        uint32 accum = 0;
+        bytes4 convertedUint32;
+        uint startByte = _from + 32; //first 32 bytes denote the array length
 
-        for (uint8 i = 0; i < 4; i++) {
-            accum *= 256;
-            accum += uint8(_bts[_from + i]);
+        assembly {
+            convertedUint32 := mload(add(_bts, startByte))
         }
 
-        return accum;
+        return uint32(convertedUint32);
+
     }
 
     /// @dev This function slices a uint
     /// @param _bts some bytes
-    /// @param _from  a start position
+    /// @param _from start position
     // credit to https://ethereum.stackexchange.com/questions/51229/how-to-convert-bytes-to-uint-in-solidity
     // and Nick Johnson https://ethereum.stackexchange.com/questions/4170/how-to-convert-a-uint-to-bytes-in-solidity/4177#4177
     function _sliceUint(bytes memory _bts, uint _from) private pure returns (uint) {
