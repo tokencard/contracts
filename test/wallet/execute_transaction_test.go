@@ -99,7 +99,7 @@ var _ = Describe("executeTransaction", func() {
 				})
 
 				It("should decrease TKN balance of the wallet", func() {
-					b, err := Wallet.Balance(nil, WalletAddress, TKNAddress)
+                    b, err := TKN.BalanceOf(nil, WalletAddress)
 					Expect(err).ToNot(HaveOccurred())
 					Expect(b.String()).To(Equal("700"))
 				})
@@ -171,7 +171,7 @@ var _ = Describe("executeTransaction", func() {
 					})
 
 					It("should decrease TKN balance of the wallet", func() {
-						b, err := Wallet.Balance(nil, WalletAddress, TKNAddress)
+						b, err := TKN.BalanceOf(nil, WalletAddress)
 						Expect(err).ToNot(HaveOccurred())
 						Expect(b.String()).To(Equal("700"))
 					})
@@ -204,7 +204,7 @@ var _ = Describe("executeTransaction", func() {
 				})
 
 				It("should not decrease TKN balance of the wallet", func() {
-					b, err := Wallet.Balance(nil, WalletAddress, TKNAddress)
+					b, err := TKN.BalanceOf(nil, WalletAddress)
 					Expect(err).ToNot(HaveOccurred())
 					Expect(b.String()).To(Equal("1000"))
 				})
@@ -244,7 +244,7 @@ var _ = Describe("executeTransaction", func() {
 					})
 
 					It("should not decrease TKN balance of the wallet", func() {
-						b, err := Wallet.Balance(nil, WalletAddress, TKNAddress)
+						b, err := TKN.BalanceOf(nil, WalletAddress)
 						Expect(err).ToNot(HaveOccurred())
 						Expect(b.String()).To(Equal("1000"))
 					})
