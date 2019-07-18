@@ -166,17 +166,10 @@ var _ = Describe("AddController", func() {
 			Backend.Commit()
 		})
 
-		It("should not succeed", func() {
-			Expect(isSuccessful(tx)).To(BeFalse())
+		It("should succeed", func() {
+			Expect(isSuccessful(tx)).To(BeTrue())
 		})
 
-		It("should not exaust gas", func() {
-			Expect(isGasExhausted(tx, gasLimit)).To(BeFalse())
-		})
-
-		It("should fail at the not owner requirenment", func() {
-			Expect(TestRig.LastExecuted()).To(MatchRegexp(`require\(\!isStopped\(\) && isAdmin\(msg.sender\), "sender is not an admin"\);`))
-		})
 	})
 
 	When("controller calls AddController with a random address", func() {
