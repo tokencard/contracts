@@ -18,8 +18,8 @@ var ParseIntScientificExporterAddress common.Address
 
 func init() {
 	TestRig.AddCoverageForContracts(
-		"../../build/mocks/parseIntScientificExporter/combined.json",
-		"../../contracts",
+		"../../../build/mocks/parseIntScientificExporter/combined.json",
+		"../../../contracts",
 	)
 }
 
