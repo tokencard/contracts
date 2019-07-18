@@ -43,11 +43,16 @@ contract Controller is IController, Ownable, Transferrable {
 
     event Claimed(address _to, address _asset, uint _amount);
 
+    event Stopped(address _sender);
+    event Started(address _sender);
+
     mapping (address => bool) private _isAdmin;
     uint private _adminCount;
 
     mapping (address => bool) private _isController;
     uint private _controllerCount;
+
+    bool private _stopped;
 
     /// @notice Constructor initializes the owner with the provided address.
     /// @param _ownerAddress_ address of the owner.
@@ -59,9 +64,21 @@ contract Controller is IController, Ownable, Transferrable {
         _;
     }
 
+    /// @notice Check if Owner or Admin
+    modifier onlyAdminOrOwner() {
+        require(_isOwner(msg.sender) || isAdmin(msg.sender), "sender is not an admin");
+        _;
+    }
+
+    /// @notice Check if controller is stopped
+    modifier notStopped() {
+        require(!isStopped(), "controller is stopped");
+        _;
+    }
+
     /// @notice Add a new admin to the list of admins.
     /// @param _account address to add to the list of admins.
-    function addAdmin(address _account) external onlyOwner {
+    function addAdmin(address _account) external onlyOwner notStopped {
         _addAdmin(_account);
     }
 
@@ -78,13 +95,13 @@ contract Controller is IController, Ownable, Transferrable {
 
     /// @notice Add a new controller to the list of controllers.
     /// @param _account address to add to the list of controllers.
-    function addController(address _account) external onlyAdmin {
+    function addController(address _account) external onlyAdminOrOwner notStopped {
         _addController(_account);
     }
 
     /// @notice Remove a controller from the list of controllers.
     /// @param _account address to remove from the list of controllers.
-    function removeController(address _account) external onlyAdmin {
+    function removeController(address _account) external onlyAdminOrOwner {
         _removeController(_account);
     }
 
@@ -96,14 +113,20 @@ contract Controller is IController, Ownable, Transferrable {
 
     /// @notice is an address an Admin?
     /// @return true if the provided account is an admin.
-    function isAdmin(address _account) public view returns (bool) {
+    function isAdmin(address _account) public view notStopped returns (bool) {
         return _isAdmin[_account];
     }
 
     /// @notice is an address a Controller?
     /// @return true if the provided account is a controller.
-    function isController(address _account) public view returns (bool) {
+    function isController(address _account) public view notStopped returns (bool) {
         return _isController[_account];
+    }
+
+    /// @notice this function can be used to see if the controller has been stopped
+    /// @return true is the Controller has been stopped
+    function isStopped() public view returns (bool) {
+        return _stopped;
     }
 
     /// @notice Internal-only function that adds a new admin.
@@ -144,8 +167,20 @@ contract Controller is IController, Ownable, Transferrable {
         emit RemovedController(msg.sender, _account);
     }
 
+    /// @notice stop our controllers and admins from being useable
+    function stop() external onlyAdminOrOwner {
+        _stopped = true;
+        emit Stopped(msg.sender);
+    }
+
+    /// @notice start our controller again
+    function start() external onlyOwner {
+        _stopped = false;
+        emit Started(msg.sender);
+    }
+
     //// @notice Withdraw tokens from the smart contract to the specified account.
-    function claim(address payable _to, address _asset, uint _amount) external onlyAdmin {
+    function claim(address payable _to, address _asset, uint _amount) external onlyAdmin notStopped {
         _safeTransfer(_to, _asset, _amount);
         emit Claimed(_to, _asset, _amount);
     }
