@@ -1,4 +1,4 @@
-package internals_test
+package parseIntScientific_test
 
 import (
 	"context"
