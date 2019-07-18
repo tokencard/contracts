@@ -193,7 +193,7 @@ var _ = Describe("AddController", func() {
 		})
 
 		It("should fail at the notAdmin requirenment", func() {
-			Expect(TestRig.LastExecuted()).To(MatchRegexp(`require\(\!isStopped\(\) && isAdmin\(msg.sender\), "sender is not an admin"\);`))
+			Expect(TestRig.LastExecuted()).To(MatchRegexp(`require\(\!isOwner\(msg.sender\) || isAdmin\(msg.sender\), "sender is not an admin"\);`))
 		})
 	})
 
