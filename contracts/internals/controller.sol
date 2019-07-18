@@ -43,6 +43,9 @@ contract Controller is IController, Ownable, Transferrable {
 
     event Claimed(address _to, address _asset, uint _amount);
 
+    event Stopped(address _sender);
+    event Started(address _sender);
+
     mapping (address => bool) private _isAdmin;
     uint private _adminCount;
 
@@ -57,14 +60,12 @@ contract Controller is IController, Ownable, Transferrable {
 
     /// @notice Checks if message sender is an admin.
     modifier onlyAdmin() {
-        require(!isStopped(), "controller is stopped");
         require(isAdmin(msg.sender), "sender is not an admin");
         _;
     }
 
     /// @notice Check if Owner or Admin
     modifier onlyAdminOrOwner() {
-        require(!isStopped(), "controller is stopped");
         require(_isOwner(msg.sender) || isAdmin(msg.sender), "sender is not an admin");
         _;
     }
@@ -94,13 +95,13 @@ contract Controller is IController, Ownable, Transferrable {
 
     /// @notice Add a new controller to the list of controllers.
     /// @param _account address to add to the list of controllers.
-    function addController(address _account) external onlyAdmin notStopped {
+    function addController(address _account) external onlyAdminOrOwner notStopped {
         _addController(_account);
     }
 
     /// @notice Remove a controller from the list of controllers.
     /// @param _account address to remove from the list of controllers.
-    function removeController(address _account) external onlyAdmin {
+    function removeController(address _account) external onlyAdminOrOwner {
         _removeController(_account);
     }
 
@@ -169,11 +170,13 @@ contract Controller is IController, Ownable, Transferrable {
     /// @notice stop our controllers and admins from being useable
     function stop() external onlyAdminOrOwner {
         _stopped = true;
+        emit Stopped(msg.sender);
     }
 
     /// @notice start our controller again
     function start() external onlyOwner {
         _stopped = false;
+        emit Started(msg.sender);
     }
 
     //// @notice Withdraw tokens from the smart contract to the specified account.
