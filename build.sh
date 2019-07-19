@@ -22,7 +22,7 @@ contract_sources=(
   'mocks/nonCompliantToken'
   'mocks/base64Exporter'
   'mocks/oraclize'
-  'mocks/BytesUtilsExporter'
+  'mocks/bytesUtilsExporter'
   'mocks/parseIntScientificExporter'
   'mocks/tokenWhitelistableExporter'
   'internals/parseIntScientific'
