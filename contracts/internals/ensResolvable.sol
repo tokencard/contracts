@@ -23,7 +23,7 @@ import "../externals/ens/PublicResolver.sol";
 
 
 ///@title ENSResolvable - Ethereum Name Service Resolver
-///@notice contract should be used to get an address for an ENS nodeHash
+///@notice contract should be used to get an address for an ENS node
 contract ENSResolvable {
     /// @notice _ens is an instance of ENS
     ENS private _ens;
@@ -42,11 +42,11 @@ contract ENSResolvable {
         return _ensRegistry;
     }
 
-    /// @notice helper function used to get the address of a node Hash
-    /// @param _nodeHash of the ENS entry that needs resolving
-    /// @return the address of the said nodeHash
-    function _ensResolve(bytes32 _nodeHash) internal view returns (address) {
-        return PublicResolver(_ens.resolver(_nodeHash)).addr(_nodeHash);
+    /// @notice helper function used to get the address of a node
+    /// @param _node of the ENS entry that needs resolving
+    /// @return the address of the said node
+    function _ensResolve(bytes32 _node) internal view returns (address) {
+        return PublicResolver(_ens.resolver(_node)).addr(_node);
     }
 
 }

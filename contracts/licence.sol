@@ -84,8 +84,8 @@ contract Licence is Transferrable, ENSResolvable, Controllable {
     /// @param _holder_ is the address of the token holder contract
     /// @param _tknAddress_ is the address of the TKN ERC20 contract
     /// @param _ens_ is the address of the ENS Registry
-    /// @param _controllerNameHash_ is the name hash of the controller
-    constructor(uint _licence_, address payable _float_, address payable _holder_, address _tknAddress_, address _ens_, bytes32 _controllerNameHash_) ENSResolvable(_ens_) Controllable(_controllerNameHash_) public {
+    /// @param _controllerNode_ is the ENS node corresponding to the controller
+    constructor(uint _licence_, address payable _float_, address payable _holder_, address _tknAddress_, address _ens_, bytes32 _controllerNode_) ENSResolvable(_ens_) Controllable(_controllerNode_) public {
         require(MIN_AMOUNT_SCALE <= _licence_ && _licence_ <= MAX_AMOUNT_SCALE, "licence amount out of range");
         _licenceAmountScaled = _licence_;
         _cryptoFloat = _float_;

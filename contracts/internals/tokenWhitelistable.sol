@@ -29,13 +29,13 @@ contract TokenWhitelistable is ENSResolvable {
     bytes32 private _tokenWhitelistNode;
 
     /// @notice Constructor initializes the TokenWhitelistable object.
-    /// @param _tokenWhitelistNameHash_ is the ENS name hash of the TokenWhitelist.
-    constructor(bytes32 _tokenWhitelistNameHash_) internal {
-        _tokenWhitelistNode = _tokenWhitelistNameHash_;
+    /// @param _tokenWhitelistNode_ is the ENS node of the TokenWhitelist.
+    constructor(bytes32 _tokenWhitelistNode_) internal {
+        _tokenWhitelistNode = _tokenWhitelistNode_;
     }
 
     /// @notice This shows what TokenWhitelist is being used
-    /// @return the TokenWhitelist's name hash registered in ENS.
+    /// @return TokenWhitelist's node registered in ENS.
     function tokenWhitelistNode() external view returns (bytes32) {
         return _tokenWhitelistNode;
     }
