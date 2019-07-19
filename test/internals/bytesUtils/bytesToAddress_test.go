@@ -8,7 +8,7 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-var _ = FDescribe("BytesUtils", func() {
+var _ = Describe("BytesToAddress", func() {
 
 		When("the length is less than 20 bytes", func() {
 			It("Should revert", func() {
@@ -28,31 +28,38 @@ var _ = FDescribe("BytesUtils", func() {
 			})
 		})
 
-        It("return Address(0)", func() {
+        It("should return Address(0)", func() {
             bytes := common.Hex2Bytes("0000000000000000000000000000000000000000")
 			addr, err := BytesUtilsExporter.BytesToAddress(nil, bytes, big.NewInt(0))
 			Expect(err).ToNot(HaveOccurred())
 			Expect(addr).To(Equal(common.HexToAddress("0x0")))
 		})
 
-		It("return Address(1)", func() {
+		It("should return Address(1)", func() {
             bytes := common.Hex2Bytes("0000000000000000000000000000000000000001")
 			addr, err := BytesUtilsExporter.BytesToAddress(nil, bytes, big.NewInt(0))
 			Expect(err).ToNot(HaveOccurred())
 			Expect(addr).To(Equal(common.HexToAddress("0x1")))
 		})
 
-        It("return the fff...", func() {
+        It("should return Address(1)", func() {
+            bytes := common.Hex2Bytes("ffffffffffffffffffffffffffffffffffffffff0000000000000000000000000000000000000001ffffffffffffff")
+			addr, err := BytesUtilsExporter.BytesToAddress(nil, bytes, big.NewInt(20))
+			Expect(err).ToNot(HaveOccurred())
+			Expect(addr).To(Equal(common.HexToAddress("0x1")))
+		})
+
+        It("should return fff...", func() {
             bytes := common.Hex2Bytes("ffffffffffffffffffffffffffffffffffffffff")
 			addr, err := BytesUtilsExporter.BytesToAddress(nil, bytes, big.NewInt(0))
 			Expect(err).ToNot(HaveOccurred())
 			Expect(addr).To(Equal(common.HexToAddress("0xffffffffffffffffffffffffffffffffffffffff")))
 		})
 
-        It("return the given random address", func() {
+        It("should return the given random address", func() {
             bytes := common.Hex2Bytes("1234567890abcdefabcd0123456789abcdefabcd")
 			addr, err := BytesUtilsExporter.BytesToAddress(nil, bytes, big.NewInt(0))
 			Expect(err).ToNot(HaveOccurred())
-			Expect(addr).To(Equal(common.HexToAddress("0x1234567890abcdefabcd0123456789abcdefabcd")))
+			Expect(addr).To(Equal(common.BytesToAddress(bytes)))
 		})
 })
