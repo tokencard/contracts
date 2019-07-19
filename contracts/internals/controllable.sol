@@ -18,8 +18,8 @@
 
 pragma solidity ^0.5.10;
 
-import "./controller.sol";
-import "../internals/ensResolvable.sol";
+import "../controller.sol";
+import "./ensResolvable.sol";
 
 
 /// @title Controllable implements access control functionality of the Controller found via ENS.
