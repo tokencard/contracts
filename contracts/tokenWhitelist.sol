@@ -18,10 +18,10 @@
 
 pragma solidity ^0.5.10;
 
-import "./controllable.sol";
-import "./transferrable.sol";
-import "../externals/strings.sol";
-import "../externals/SafeMath.sol";
+import "./internals/controllable.sol";
+import "./internals/transferrable.sol";
+import "./externals/strings.sol";
+import "./externals/SafeMath.sol";
 
 /// @title The ITokenWhitelist interface provides access to a whitelist of tokens.
 interface ITokenWhitelist {

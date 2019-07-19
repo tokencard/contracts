@@ -14,6 +14,9 @@ contract_sources=(
   'oracle'
   'licence'
   'holder'
+  'controller'
+  'tokenWhitelist'
+  'walletDeployer'
   'mocks/token'
   'mocks/burnerToken'
   'mocks/nonCompliantToken'
@@ -21,10 +24,7 @@ contract_sources=(
   'mocks/oraclize'
   'mocks/parseIntScientificExporter'
   'mocks/tokenWhitelistableExporter'
-  'internals/controller'
-  'internals/tokenWhitelist'
   'internals/parseIntScientific'
-  'internals/walletDeployer'
   'externals/ens/PublicResolver'
   'externals/ens/ENSRegistry'
 )
@@ -53,6 +53,9 @@ contracts=(
   "oracle/Oracle oracle.go Oracle bindings"
   "licence/Licence licence.go Licence bindings"
   "holder/Holder holder.go Holder bindings"
+  "controller/Controller controller.go Controller bindings"
+  "tokenWhitelist/TokenWhitelist tokenWhitelist.go TokenWhitelist bindings"
+  "walletDeployer/WalletDeployer walletDeployer.go WalletDeployer bindings"
   "mocks/token/Token mocks/token.go Token mocks"
   "mocks/burnerToken/BurnerToken mocks/burnerToken.go BurnerToken mocks"
   "mocks/nonCompliantToken/NonCompliantToken mocks/nonCompliantToken.go NonCompliantToken mocks"
@@ -61,12 +64,10 @@ contracts=(
   "mocks/oraclize/OraclizeAddrResolver mocks/oraclizeAddrResolver.go OraclizeAddrResolver mocks"
   "mocks/parseIntScientificExporter/ParseIntScientificExporter mocks/parseIntScientificExporter.go ParseIntScientificExporter mocks"
   "mocks/tokenWhitelistableExporter/TokenWhitelistableExporter mocks/tokenWhitelistableExporter.go TokenWhitelistableExporter mocks"
-  "internals/controller/Controller internals/controller.go Controller internals"
-  "internals/tokenWhitelist/TokenWhitelist internals/tokenWhitelist.go TokenWhitelist internals"
   "internals/parseIntScientific/ParseIntScientific internals/parseIntScientific.go ParseIntScientific internals"
   "externals/ens/ENSRegistry/ENSRegistry externals/ens/ENSRegistry.go ENSRegistry ens"
   "externals/ens/PublicResolver/PublicResolver externals/ens/PublicResolver.go PublicResolver ens"
-  "internals/walletDeployer/WalletDeployer internals/walletDeployer.go WalletDeployer internals"
+
 )
 
 for c in "${contracts[@]}"

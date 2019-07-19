@@ -18,8 +18,8 @@
 
 pragma solidity ^0.5.10;
 
-import "./ownable.sol";
-import "./transferrable.sol";
+import "./internals/ownable.sol";
+import "./internals/transferrable.sol";
 
 /// @title The IController interface provides access to the isController and isAdmin checks.
 interface IController {

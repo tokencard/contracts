@@ -12,7 +12,6 @@ import (
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	"github.com/tokencard/contracts/pkg/bindings"
-	"github.com/tokencard/contracts/pkg/bindings/internals"
 	. "github.com/tokencard/contracts/test/shared"
 	"github.com/tokencard/ethertest"
 )
@@ -24,8 +23,8 @@ func TestWalletDeployer(t *testing.T) {
 
 var _ = BeforeSuite(func() {
 	TestRig.AddCoverageForContracts(
-		"../../../build/internals/walletDeployer/combined.json",
-		"../../../contracts",
+		"../../build/walletDeployer/combined.json",
+		"../../contracts",
 	)
 })
 
@@ -41,7 +40,7 @@ var _ = AfterEach(func() {
 
 var _ = AfterSuite(func() {
 	if allPassed {
-		TestRig.ExpectMinimumCoverage("internals/walletDeployer.sol", 100.00)
+		TestRig.ExpectMinimumCoverage("walletDeployer.sol", 100.00)
 		TestRig.PrintGasUsage(os.Stdout)
 	}
 })
@@ -62,7 +61,7 @@ var _ = AfterEach(func() {
 })
 
 var WalletDeployerAddress common.Address
-var WalletDeployer *internals.WalletDeployer
+var WalletDeployer *bindings.WalletDeployer
 
 func isSuccessful(tx *types.Transaction) bool {
 	r, err := Backend.TransactionReceipt(context.Background(), tx.Hash())
@@ -74,7 +73,7 @@ var _ = BeforeEach(func() {
 	err := InitializeBackend()
 	Expect(err).ToNot(HaveOccurred())
 	var tx *types.Transaction
-	WalletDeployerAddress, tx, WalletDeployer, err = internals.DeployWalletDeployer(BankAccount.TransactOpts(), Backend, ENSRegistryAddress, EthToWei(1))
+	WalletDeployerAddress, tx, WalletDeployer, err = bindings.DeployWalletDeployer(BankAccount.TransactOpts(), Backend, ENSRegistryAddress, EthToWei(1))
 	Expect(err).ToNot(HaveOccurred())
 	Backend.Commit()
 	Expect(isSuccessful(tx)).To(BeTrue())

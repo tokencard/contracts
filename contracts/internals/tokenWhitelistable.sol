@@ -18,8 +18,8 @@
 
 pragma solidity ^0.5.10;
 
-import "./tokenWhitelist.sol";
-import "../internals/ensResolvable.sol";
+import "../tokenWhitelist.sol";
+import "./ensResolvable.sol";
 
 
 /// @title TokenWhitelistable implements access to the TokenWhitelist located behind ENS.

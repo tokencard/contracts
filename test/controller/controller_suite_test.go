@@ -13,7 +13,7 @@ import (
 )
 
 func init() {
-	TestRig.AddCoverageForContracts("../../../build/internals/controller/combined.json", "../../../contracts")
+	TestRig.AddCoverageForContracts("../../build/controller/combined.json", "../../contracts")
 }
 
 func TestWalletSuite(t *testing.T) {
@@ -41,7 +41,7 @@ var _ = AfterEach(func() {
 
 var _ = AfterSuite(func() {
 	if !someFailed {
-		TestRig.ExpectMinimumCoverage("internals/controller.sol", 100.00)
+		TestRig.ExpectMinimumCoverage("controller.sol", 100.00)
 		TestRig.PrintGasUsage(os.Stdout)
 	}
 })

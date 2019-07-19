@@ -10,7 +10,6 @@ import (
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	"github.com/tokencard/contracts/pkg/bindings"
-	"github.com/tokencard/contracts/pkg/bindings/internals"
 	"github.com/tokencard/contracts/pkg/bindings/mocks"
 	. "github.com/tokencard/contracts/test/shared"
 )
@@ -20,13 +19,13 @@ var TokenWhitelistableExporterAddress common.Address
 
 func init() {
 	TestRig.AddCoverageForContracts(
-		"../../../build/internals/tokenWhitelist/combined.json",
-		"../../../contracts",
+		"../../build/tokenWhitelist/combined.json",
+		"../../contracts",
 	)
 
 	TestRig.AddCoverageForContracts(
-		"../../../build/mocks/tokenWhitelistableExporter/combined.json",
-		"../../../contracts",
+		"../../build/mocks/tokenWhitelistableExporter/combined.json",
+		"../../contracts",
 	)
 }
 
@@ -59,7 +58,7 @@ var _ = BeforeEach(func() {
 		Expect(isSuccessful(tx)).To(BeTrue())
 	}
 
-	TokenWhitelistAddress, tx, TokenWhitelist, err = internals.DeployTokenWhitelist(BankAccount.TransactOpts(), Backend, ENSRegistryAddress, OracleName, ControllerName, StablecoinAddress)
+	TokenWhitelistAddress, tx, TokenWhitelist, err = bindings.DeployTokenWhitelist(BankAccount.TransactOpts(), Backend, ENSRegistryAddress, OracleName, ControllerName, StablecoinAddress)
 	Expect(err).ToNot(HaveOccurred())
 	Backend.Commit()
 	Expect(isSuccessful(tx)).To(BeTrue())
@@ -90,7 +89,7 @@ var _ = AfterEach(func() {
 })
 
 var _ = AfterSuite(func() {
-	TestRig.ExpectMinimumCoverage("internals/tokenWhitelist.sol", 100.0)
+	TestRig.ExpectMinimumCoverage("tokenWhitelist.sol", 100.0)
 	TestRig.ExpectMinimumCoverage("internals/tokenWhitelistable.sol", 100.0)
 	TestRig.PrintGasUsage(os.Stdout)
 })

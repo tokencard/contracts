@@ -18,9 +18,9 @@
 
 pragma solidity ^0.5.10;
 
-import "../wallet.sol";
-import "./controllable.sol";
-import "./ensResolvable.sol";
+import "./wallet.sol";
+import "./internals/controllable.sol";
+import "./internals/ensResolvable.sol";
 
 //// @title Wallet deployer with pre-caching if wallets functionality.
 contract WalletDeployer is ENSResolvable, Controllable {

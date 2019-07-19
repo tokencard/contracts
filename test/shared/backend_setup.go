@@ -18,7 +18,6 @@ import (
 	"github.com/pkg/errors"
 	"github.com/tokencard/contracts/pkg/bindings"
 	"github.com/tokencard/contracts/pkg/bindings/externals/ens"
-	"github.com/tokencard/contracts/pkg/bindings/internals"
 	"github.com/tokencard/contracts/pkg/bindings/mocks"
 	"github.com/tokencard/ethertest"
 	"golang.org/x/crypto/sha3"
@@ -82,10 +81,10 @@ var ENSResolverAddress common.Address
 var ENSRegistryAddress common.Address
 var ENSRegistry *ens.ENSRegistry
 
-var ControllerContract *internals.Controller
+var ControllerContract *bindings.Controller
 var ControllerContractAddress common.Address
 
-var TokenWhitelist *internals.TokenWhitelist
+var TokenWhitelist *bindings.TokenWhitelist
 var TokenWhitelistAddress common.Address
 
 var OraclizeResolver *mocks.OraclizeAddrResolver
@@ -239,7 +238,7 @@ func InitializeBackend() error {
 		return errors.Wrap(err, "deploying Stablecoin token contract")
 	}
 
-	ControllerContractAddress, tx, ControllerContract, err = internals.DeployController(BankAccount.TransactOpts(), Backend, ControllerOwner.Address())
+	ControllerContractAddress, tx, ControllerContract, err = bindings.DeployController(BankAccount.TransactOpts(), Backend, ControllerOwner.Address())
 	if err != nil {
 		return err
 	}
@@ -395,7 +394,7 @@ func InitializeBackend() error {
 		return errors.Wrap(err, "deploying Oraclize address resolver")
 	}
 
-	TokenWhitelistAddress, tx, TokenWhitelist, err = internals.DeployTokenWhitelist(BankAccount.TransactOpts(), Backend, ENSRegistryAddress, OracleName, ControllerName, StablecoinAddress)
+	TokenWhitelistAddress, tx, TokenWhitelist, err = bindings.DeployTokenWhitelist(BankAccount.TransactOpts(), Backend, ENSRegistryAddress, OracleName, ControllerName, StablecoinAddress)
 	if err != nil {
 		return err
 	}
