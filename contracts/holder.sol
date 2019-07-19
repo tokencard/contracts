@@ -16,7 +16,7 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-pragma solidity ^0.5.7;
+pragma solidity ^0.5.10;
 
 
 import "./externals/ERC20.sol";
@@ -50,9 +50,9 @@ contract Holder is Balanceable, ENSResolvable, Controllable, Transferrable, Toke
     /// @notice Constructor initializes the holder contract.
     /// @param _burnerContract_ is the address of the token contract TKN with burning functionality.
     /// @param _ens_ is the address of the ENS registry.
-    /// @param _tokenWhitelistNameHash_ is the ENS name hash of the Token whitelist.
-    /// @param _controllerNameHash_ is the ENS name hash of the Controller
-    constructor (address _burnerContract_, address _ens_, bytes32 _tokenWhitelistNameHash_, bytes32 _controllerNameHash_) ENSResolvable(_ens_) Controllable(_controllerNameHash_) TokenWhitelistable(_tokenWhitelistNameHash_) public {
+    /// @param _tokenWhitelistNode_ is the ENS node of the Token whitelist.
+    /// @param _controllerNode_ is the ENS node of the Controller
+    constructor (address _burnerContract_, address _ens_, bytes32 _tokenWhitelistNode_, bytes32 _controllerNode_) ENSResolvable(_ens_) Controllable(_controllerNode_) TokenWhitelistable(_tokenWhitelistNode_) public {
         _burner = _burnerContract_;
     }
 
