@@ -44,11 +44,11 @@ library BytesUtils {
     function _bytesToUint256(bytes memory _bts, uint _from) internal pure returns (uint) {
         require(_bts.length >= _from + 32, "slicing out of range");
 
-        uint x;
+        uint convertedUint256;
         assembly {
-            x := mload(add(_bts, add(0x20, _from)))
+            convertedUint256 := mload(add(_bts, add(0x20, _from)))
         }
 
-        return x;
+        return convertedUint256;
     }
 }
