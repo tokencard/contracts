@@ -25,6 +25,7 @@ import "./internals/balanceable.sol";
 import "./internals/transferrable.sol";
 import "./internals/ensResolvable.sol";
 import "./internals/tokenWhitelistable.sol";
+import "./internals/bytesUtils.sol";
 import "./externals/SafeMath.sol";
 import "./externals/Address.sol";
 import "./externals/ERC20.sol";
@@ -583,6 +584,7 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
 
     using SafeERC20 for ERC20;
     using Address for address;
+    using BytesUtils for bytes;
 
     event ToppedUpGas(address _sender, address _owner, uint _amount);
     event LoadedTokenCard(address _asset, uint _amount);
@@ -662,15 +664,15 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
             // Check if there exists at least a method signature in the transaction payload
             if (_data.length >= 4) {
                 // Get method signature
-                uint32 signature = _bytesToUint32(_data, 0);
+                uint32 signature = _data._bytesToUint32(0);
 
                 // Check if method is either ERC20 transfer or approve
                 if (signature == _TRANSFER || signature == _APPROVE) {
                     require(_data.length >= 4 + 32 + 32, "invalid transfer / approve transaction data");
-                    uint amount = _sliceUint(_data, 4 + 32);
+                    uint amount = _data._bytesToUint256(4 + 32);
                     // The "toOrSpender" is the '_to' address for a ERC20 transfer or the '_spender; in ERC20 approve
                     // + 12 because address 20 bytes and this is padded to 32
-                    address toOrSpender = _bytesToAddress(_data, 4 + 12);
+                    address toOrSpender = _data._bytesToAddress(4 + 12);
 
                     // Check if the toOrSpender is in the whitelist
                     if (!whitelistMap[toOrSpender]) {
@@ -744,54 +746,6 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
             success := call(gas, _to, _value, add(_data, 0x20), mload(_data), 0, 0)
         }
         return success;
-    }
-
-
-    /// @dev This function converts to an address
-    /// @param _bts bytes
-    /// @param _from start position
-    function _bytesToAddress(bytes memory _bts, uint _from) private pure returns (address) {
-        require(_bts.length >= _from + 20, "slicing out of range");
-
-        uint160 addressUint;
-
-        for (uint8 i = 0; i < 20; i++) {
-            addressUint *= 256;
-            addressUint += uint8(_bts[_from + i]);
-        }
-        return address(addressUint);
-    }
-
-    /// @dev This function slicing bytes into uint32
-    /// @param _bts some bytes
-    /// @param _from  a start position
-    function _bytesToUint32(bytes memory _bts, uint _from) private pure returns (uint32) {
-        require(_bts.length >= _from + 4, "slicing out of range");
-
-        uint32 accum = 0;
-
-        for (uint8 i = 0; i < 4; i++) {
-            accum *= 256;
-            accum += uint8(_bts[_from + i]);
-        }
-
-        return accum;
-    }
-
-    /// @dev This function slices a uint
-    /// @param _bts some bytes
-    /// @param _from  a start position
-    // credit to https://ethereum.stackexchange.com/questions/51229/how-to-convert-bytes-to-uint-in-solidity
-    // and Nick Johnson https://ethereum.stackexchange.com/questions/4170/how-to-convert-a-uint-to-bytes-in-solidity/4177#4177
-    function _sliceUint(bytes memory _bts, uint _from) private pure returns (uint) {
-        require(_bts.length >= _from + 32, "slicing out of range");
-
-        uint x;
-        assembly {
-            x := mload(add(_bts, add(0x20, _from)))
-        }
-
-        return x;
     }
 
 }
