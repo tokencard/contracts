@@ -125,7 +125,7 @@ All of the third-party code we rely on can be found in this folder. The below ta
 | [SafeERC20.sol](https://raw.githubusercontent.com/OpenZeppelin/openzeppelin-contracts/2f9ae975c8bdc5c7f7fa26204896f6c717f07164/contracts/token/ERC20/SafeERC20.sol)    | [MIT](https://github.com/OpenZeppelin/openzeppelin-solidity/blob/master/LICENSE) |
 | base64.sol      | [GPLv3](https://github.com/vcealicu/melonport-price-feed/blob/master/LICENSE) |
 | ENS             | [BSD2](https://github.com/ensdomains/ens/blob/master/LICENSE) |
-| strings.sol     | [Apache v2](https://github.com/Arachnid/solidity-stringutils/blob/master/LICENSE) |
+| [strings.sol](https://github.com/Arachnid/solidity-stringutils/pull/37)     | [Apache v2](https://github.com/Arachnid/solidity-stringutils/blob/master/LICENSE) |
 | [oraclizeAPI](https://raw.githubusercontent.com/provable-things/ethereum-api/d02497b4d84e02a8649af3822950873d305f7659/oraclizeAPI_0.5.sol)     | [MIT](https://github.com/oraclize/ethereum-api/blob/master/LICENSE) |
 | cbor            | [MIT](https://github.com/smartcontractkit/solidity-cborutils/blob/master/LICENSE) |
 | gnosis MulitSig | [GPLv3](https://github.com/gnosis/MultiSigWallet/blob/master/LICENSE) |
