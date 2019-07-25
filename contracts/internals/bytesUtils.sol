@@ -16,7 +16,7 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-pragma solidity ^0.5.10;
+pragma solidity ^0.5.3;
 
 /// @title BytesUtils provides basic byte slicing and casting functionality.
 library BytesUtils {

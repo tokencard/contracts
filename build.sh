@@ -2,7 +2,7 @@
 
 set -e -o pipefail
 
-SOLC="docker run --rm -u `id -u` -v $PWD:/solidity --workdir /solidity/contracts ethereum/solc:0.5.10 --optimize /=/"
+SOLC="docker run --rm -u `id -u` -v $PWD:/solidity --workdir /solidity/contracts ethereum/solc:0.5.3 --optimize /=/"
 
 compile_solidity() {
   echo "compiling ${1}"

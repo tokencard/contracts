@@ -16,7 +16,7 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-pragma solidity ^0.5.10;
+pragma solidity ^0.5.3;
 
 // The BurnerToken interface is the interface to a token contract which
 // provides the total burnable supply for the TokenHolder contract.
