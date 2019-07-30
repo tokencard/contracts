@@ -6,6 +6,7 @@ import (
 	"os"
 	"testing"
 
+	"github.com/Masterminds/semver"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	. "github.com/onsi/ginkgo"
@@ -54,6 +55,13 @@ var _ = Describe("Wallet Version", func() {
 		v, err := Wallet.WALLETVERSION(nil)
 		Expect(err).ToNot(HaveOccurred())
 		Expect(v).To(Equal(currentVersion))
+	})
+
+	It("should be a Semver", func() {
+		v, err := Wallet.WALLETVERSION(nil)
+		Expect(err).ToNot(HaveOccurred())
+		_, err = semver.NewVersion(v)
+		Expect(err).ToNot(HaveOccurred())
 	})
 })
 

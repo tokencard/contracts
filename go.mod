@@ -1,6 +1,7 @@
 module github.com/tokencard/contracts/v2
 
 require (
+	github.com/Masterminds/semver v1.4.2
 	github.com/ethereum/go-ethereum v1.8.27
 	github.com/kr/pretty v0.1.0 // indirect
 	github.com/onsi/ginkgo v1.6.0
