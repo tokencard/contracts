@@ -1,4 +1,4 @@
-module github.com/tokencard/contracts
+module github.com/tokencard/contracts/v2
 
 require (
 	github.com/ethereum/go-ethereum v1.8.27
