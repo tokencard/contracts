@@ -72,8 +72,6 @@ github.com/stretchr/testify v1.3.0 h1:TivCn/peBQ7UY8ooIcPgZFpTNSz0Q2U6UrFlUfqbe0
 github.com/stretchr/testify v1.3.0/go.mod h1:M5WIy9Dh21IEIfnGCwXGc5bZfKNJtfHm1UVUgZn+9EI=
 github.com/syndtr/goleveldb v0.0.0-20180815032940-ae2bd5eed72d h1:4J9HCZVpvDmj2tiKGSTUnb3Ok/9CEQb9oqu9LHKQQpc=
 github.com/syndtr/goleveldb v0.0.0-20180815032940-ae2bd5eed72d/go.mod h1:Z4AUp2Km+PwemOoO/VB5AOx9XSsIItzFjoJlOSiYmn0=
-github.com/tokencard/ethertest v0.7.8 h1:z6ZYyKbB5ZN3s5cOS1aCo+z3nVt2JhoqfjvIA6N80Gs=
-github.com/tokencard/ethertest v0.7.8/go.mod h1:JvnlPIkRL7Ob41/pdAgbBz93sRTMrg1BZv9mHJ43XgY=
 github.com/tokencard/ethertest v0.7.9 h1:iFMN1wPrzHJ8elk4UlujzHUI7gtktcsWuCEo7UjYQ/8=
 github.com/tokencard/ethertest v0.7.9/go.mod h1:JvnlPIkRL7Ob41/pdAgbBz93sRTMrg1BZv9mHJ43XgY=
 golang.org/x/crypto v0.0.0-20190103213133-ff983b9c42bc h1:F5tKCVGp+MUAHhKp5MZtGqAlGX3+oCsiL1Q629FL90M=
