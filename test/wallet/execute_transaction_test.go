@@ -105,7 +105,6 @@ var _ = Describe("executeTransaction", func() {
 				})
 
 				It("should reduce the available daily spend balance", func() {
-
 					av, err := Wallet.SpendLimitAvailable(nil)
 					Expect(err).ToNot(HaveOccurred())
 					Expect(av.String()).To(AlmostEqual("99999999999951010000"))

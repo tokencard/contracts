@@ -597,9 +597,11 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
     /// @dev Is the registered ENS node identifying the licence contract.
     bytes32 private _licenceNode;
 
-    /// @dev these are needed to allow for the executeTransaction method
+    /// @dev these are the methods whitelisted in executeTransaction() for protected tokens
     uint32 private constant _TRANSFER= 0xa9059cbb;
     uint32 private constant _APPROVE = 0x095ea7b3;
+    uint32 private constant _TRANSFER_FROM = 0x23b872dd;
+
 
     /// @dev Constructor initializes the wallet top up limit and the vault contract.
     /// @param _owner_ is the owner account of the wallet contract.
@@ -661,21 +663,33 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
         // This prevents users from accidentally sending Value and Data to a plain old address
         if (_destinationIsContract) {
             require(address(_destination).isContract(), "executeTransaction for a contract: call to non-contract");
-            // Check if there exists at least a method signature in the transaction payload
-            if (_data.length >= 4) {
+            // Check if the destination contract address is in the tokenWhitelist, hence protected
+            if (_isTokenAvailable(_destination)) {
+                // Require that there exist enough bytes for encoding at least a method signature + data in the transaction payload:
+                // 4 (signature) + 32(address) + 32(address or uint256)
+                require(_data.length >= 4 + 32 + 32, "not enough method-encoding bytes");
                 // Get method signature
                 uint32 signature = _data._bytesToUint32(0);
-
-                // Check if method is either ERC20 transfer or approve
-                if (signature == _TRANSFER || signature == _APPROVE) {
-                    require(_data.length >= 4 + 32 + 32, "invalid transfer / approve transaction data");
+                // Check if method is one one of the whitelisted ERC20 transfer or approve
+                require(signature == _TRANSFER || signature == _APPROVE || signature == _TRANSFER_FROM, "unsupported method");
+                //"toOrSpenderOrFrom" is the 1st argument (common type: address) in in ERC20 transfer('_to'), approve ('_spender') or transferFrom ('_from')
+                address toOrSpenderOrFrom = _data._bytesToAddress(4 + 12);
+                if (signature == _TRANSFER_FROM){
+                    // 4 (signature) + 32(address) + 32(address) + 32(uint256)
+                    require(_data.length >= 4 + 32 + 32 + 32, "not enough data for transferFrom");
+                    address to = _data._bytesToAddress(4 + 32 + 12);
+                    uint amount = _data._bytesToUint256(4 + 32 + 32);
+                    // Check if the recipient is in the whitelist
+                    if (!whitelistMap[to]) {
+                        // If the address (of the token contract, e.g) is not in the TokenWhitelist used by
+                        // the convert method, then etherValue will be zero
+                        uint etherValue = convertToEther(_destination, amount);
+                        _spendLimit._enforceLimit(etherValue);
+                    }
+                } else {
                     uint amount = _data._bytesToUint256(4 + 32);
-                    // The "toOrSpender" is the '_to' address for a ERC20 transfer or the '_spender; in ERC20 approve
-                    // + 12 because address 20 bytes and this is padded to 32
-                    address toOrSpender = _data._bytesToAddress(4 + 12);
-
-                    // Check if the toOrSpender is in the whitelist
-                    if (!whitelistMap[toOrSpender]) {
+                    // Check if the recipient is in the whitelist
+                    if (!whitelistMap[toOrSpenderOrFrom]) {
                         // If the address (of the token contract, e.g) is not in the TokenWhitelist used by
                         // the convert method, then etherValue will be zero
                         uint etherValue = convertToEther(_destination, amount);
