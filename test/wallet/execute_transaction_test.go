@@ -134,7 +134,6 @@ var _ = Describe("executeTransaction", func() {
 					Expect(err).ToNot(HaveOccurred())
 					data, err := a.Pack("transfer", RandomAccount.Address(), big.NewInt(300))
 					Expect(err).ToNot(HaveOccurred())
-                    println(len(data))
 					tx, err = Wallet.ExecuteTransaction(Owner.TransactOpts(ethertest.WithGasLimit(100000)), TKNAddress, big.NewInt(0), data[:67], true)
 					Expect(err).ToNot(HaveOccurred())
 					Backend.Commit()
@@ -149,7 +148,6 @@ var _ = Describe("executeTransaction", func() {
 					Expect(err).ToNot(HaveOccurred())
 					data, err := a.Pack("approve", RandomAccount.Address(), big.NewInt(300))
 					Expect(err).ToNot(HaveOccurred())
-                    println(len(data))
 					tx, err = Wallet.ExecuteTransaction(Owner.TransactOpts(ethertest.WithGasLimit(100000)), TKNAddress, big.NewInt(0), data[:36], true)
 					Expect(err).ToNot(HaveOccurred())
 					Backend.Commit()
@@ -164,7 +162,6 @@ var _ = Describe("executeTransaction", func() {
 					Expect(err).ToNot(HaveOccurred())
                     data, err := a.Pack("transferFrom", WalletAddress, Owner.Address(), big.NewInt(300))
 					Expect(err).ToNot(HaveOccurred())
-                    println(len(data))
                     //transferFrom needs 100 bytes: 4(methodID) + 32 (from) + 32 (to) + 32 (value)
 					tx, err = Wallet.ExecuteTransaction(Owner.TransactOpts(ethertest.WithGasLimit(100000)), TKNAddress, big.NewInt(0), data[:99], true)
 					Expect(err).ToNot(HaveOccurred())
@@ -248,13 +245,13 @@ var _ = Describe("executeTransaction", func() {
 
 			When("I approve 300 tokens to a random wallet using 'executeTransaction'", func() {
 
-                var RamdomWallet *bindings.Wallet
-                var RamdomWalletAddress common.Address
+                var RandomWallet *bindings.Wallet
+                var RandomWalletAddress common.Address
 
                 BeforeEach(func() {
                     var tx *types.Transaction
                     var err error
-                    RamdomWalletAddress, tx, RamdomWallet, err = bindings.DeployWallet(BankAccount.TransactOpts(), Backend, RandomAccount.Address(), false, ENSRegistryAddress, TokenWhitelistName, ControllerName, LicenceName, EthToWei(100))
+                    RandomWalletAddress, tx, RandomWallet, err = bindings.DeployWallet(BankAccount.TransactOpts(), Backend, RandomAccount.Address(), false, ENSRegistryAddress, TokenWhitelistName, ControllerName, LicenceName, EthToWei(100))
                 	Expect(err).ToNot(HaveOccurred())
                 	Backend.Commit()
                 	Expect(isSuccessful(tx)).To(BeTrue())
@@ -263,7 +260,7 @@ var _ = Describe("executeTransaction", func() {
 				BeforeEach(func() {
 					a, err := abi.JSON(strings.NewReader(ERC20ABI))
 					Expect(err).ToNot(HaveOccurred())
-					data, err := a.Pack("approve", RamdomWalletAddress, big.NewInt(300))
+					data, err := a.Pack("approve", RandomWalletAddress, big.NewInt(300))
 					Expect(err).ToNot(HaveOccurred())
 
 					tx, err = Wallet.ExecuteTransaction(Owner.TransactOpts(), TKNAddress, big.NewInt(0), data, true)
@@ -273,7 +270,7 @@ var _ = Describe("executeTransaction", func() {
 				})
 
 				It("should not increase the TKN balance of the random wallet", func() {
-					b, err := TKN.BalanceOf(nil, RamdomWalletAddress)
+					b, err := TKN.BalanceOf(nil, RandomWalletAddress)
 					Expect(err).ToNot(HaveOccurred())
 					Expect(b.String()).To(Equal("0"))
 				})
@@ -290,10 +287,10 @@ var _ = Describe("executeTransaction", func() {
 					Expect(av.String()).To(AlmostEqual("99999999999951010000"))
 				})
 
-                When("the approved ramdom wallet 'transfersFrom' all the tokens to a whitelisted destination address using 'executeTransaction'", func() {
+                When("the approved random wallet 'transfersFrom' all the tokens to a whitelisted destination address using 'executeTransaction'", func() {
 
                     BeforeEach(func() {
-    					tx, err := RamdomWallet.SetWhitelist(RandomAccount.TransactOpts(), []common.Address{Owner.Address()})
+    					tx, err := RandomWallet.SetWhitelist(RandomAccount.TransactOpts(), []common.Address{Owner.Address()})
     					Expect(err).ToNot(HaveOccurred())
     					Backend.Commit()
     					Expect(isSuccessful(tx)).To(BeTrue())
@@ -305,7 +302,7 @@ var _ = Describe("executeTransaction", func() {
     					data, err := a.Pack("transferFrom", WalletAddress, Owner.Address(), big.NewInt(300))
     					Expect(err).ToNot(HaveOccurred())
 
-    					tx, err = RamdomWallet.ExecuteTransaction(RandomAccount.TransactOpts(), TKNAddress, big.NewInt(0), data, true)
+    					tx, err = RandomWallet.ExecuteTransaction(RandomAccount.TransactOpts(), TKNAddress, big.NewInt(0), data, true)
     					Expect(err).ToNot(HaveOccurred())
     					Backend.Commit()
     					Expect(isSuccessful(tx)).To(BeTrue())
@@ -324,27 +321,27 @@ var _ = Describe("executeTransaction", func() {
     				})
 
     				It("should NOT reduce the available daily spend balance", func() {
-    					av, err := RamdomWallet.SpendLimitAvailable(nil)
+    					av, err := RandomWallet.SpendLimitAvailable(nil)
     					Expect(err).ToNot(HaveOccurred())
     					Expect(av.String()).To(Equal(EthToWei(100).String()))
     				})
                 })
 
-                When("the approved ramdom wallet 'transfersFrom' all the tokens to itself using 'executeTransaction'", func() {
+                When("the approved random wallet 'transfersFrom' all the tokens to itself using 'executeTransaction'", func() {
                     BeforeEach(func() {
     					a, err := abi.JSON(strings.NewReader(ERC20ABI))
     					Expect(err).ToNot(HaveOccurred())
-    					data, err := a.Pack("transferFrom", WalletAddress, RamdomWalletAddress, big.NewInt(300))
+    					data, err := a.Pack("transferFrom", WalletAddress, RandomWalletAddress, big.NewInt(300))
     					Expect(err).ToNot(HaveOccurred())
 
-    					tx, err = RamdomWallet.ExecuteTransaction(RandomAccount.TransactOpts(), TKNAddress, big.NewInt(0), data, true)
+    					tx, err = RandomWallet.ExecuteTransaction(RandomAccount.TransactOpts(), TKNAddress, big.NewInt(0), data, true)
     					Expect(err).ToNot(HaveOccurred())
     					Backend.Commit()
     					Expect(isSuccessful(tx)).To(BeTrue())
     				})
 
                     It("should increase the TKN balance of the random wallet", func() {
-    					b, err := TKN.BalanceOf(nil, RamdomWalletAddress)
+    					b, err := TKN.BalanceOf(nil, RandomWalletAddress)
     					Expect(err).ToNot(HaveOccurred())
     					Expect(b.String()).To(Equal("300"))
     				})
@@ -356,20 +353,20 @@ var _ = Describe("executeTransaction", func() {
     				})
 
     				It("should reduce the available daily spend balance", func() {
-    					av, err := RamdomWallet.SpendLimitAvailable(nil)
+    					av, err := RandomWallet.SpendLimitAvailable(nil)
     					Expect(err).ToNot(HaveOccurred())
     					Expect(av.String()).To(AlmostEqual("99999999999951010000"))
     				})
                 })
 
-                When("the approved ramdom wallet tries to 'transferFrom' more than the approved ammount to itself using 'executeTransaction'", func() {
+                When("the approved random wallet tries to 'transferFrom' more than the approved ammount to itself using 'executeTransaction'", func() {
                     It("should fail", func() {
     					a, err := abi.JSON(strings.NewReader(ERC20ABI))
     					Expect(err).ToNot(HaveOccurred())
-    					data, err := a.Pack("transferFrom", WalletAddress, RamdomWalletAddress, big.NewInt(301))
+    					data, err := a.Pack("transferFrom", WalletAddress, RandomWalletAddress, big.NewInt(301))
     					Expect(err).ToNot(HaveOccurred())
 
-    					tx, err = RamdomWallet.ExecuteTransaction(RandomAccount.TransactOpts(ethertest.WithGasLimit(500000)), TKNAddress, big.NewInt(0), data, true)
+    					tx, err = RandomWallet.ExecuteTransaction(RandomAccount.TransactOpts(ethertest.WithGasLimit(500000)), TKNAddress, big.NewInt(0), data, true)
     					Expect(err).ToNot(HaveOccurred())
     					Backend.Commit()
     					Expect(isSuccessful(tx)).To(BeFalse())
