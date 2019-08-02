@@ -363,7 +363,7 @@ var _ = Describe("executeTransaction", func() {
     				It("should NOT reduce the available daily spend balance", func() {
     					av, err := RandomWallet.SpendLimitAvailable(nil)
     					Expect(err).ToNot(HaveOccurred())
-    					Expect(av.String()).To(Equal(EthToWei(100).String()))
+    					Expect(av.String()).To(Equal(EthToWei(1).String()))
     				})
                 })
 
