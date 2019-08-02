@@ -12,6 +12,7 @@ import (
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	. "github.com/tokencard/contracts/v2/test/shared"
+    "github.com/tokencard/contracts/v2/pkg/bindings"
 	"github.com/tokencard/ethertest"
 )
 
@@ -111,8 +112,23 @@ var _ = Describe("executeTransaction", func() {
 				})
 			})
 
-			When("I send data (transfer 300 tokens to a random person) using 'executeTransaction' but the destination flag is set incorrectly", func() {
+            When("I try to use an not whitelisted method on a whitelisted/protected token address", func() {
 				It("should fail", func() {
+					a, err := abi.JSON(strings.NewReader(ERC20ABI))
+					Expect(err).ToNot(HaveOccurred())
+					data, err := a.Pack("increasedApproval", RandomAccount.Address(), big.NewInt(300))
+					Expect(err).ToNot(HaveOccurred())
+
+					tx, err = Wallet.ExecuteTransaction(Owner.TransactOpts(ethertest.WithGasLimit(100000)), TKNAddress, big.NewInt(0), data, true)
+					Expect(err).ToNot(HaveOccurred())
+					Backend.Commit()
+					Expect(isSuccessful(tx)).To(BeFalse())
+				})
+
+			})
+
+			When("I send data (transfer 300 tokens to a random account) using 'executeTransaction'", func() {
+				It("should succeed", func() {
 					a, err := abi.JSON(strings.NewReader(ERC20ABI))
 					Expect(err).ToNot(HaveOccurred())
 					data, err := a.Pack("transfer", RandomAccount.Address(), big.NewInt(300))
@@ -126,7 +142,7 @@ var _ = Describe("executeTransaction", func() {
 
 			})
 
-			When("I send data (transfer 300 tokens to a random person) using 'executeTransaction' but the destination is not a contract", func() {
+			When("I send data (transfer 300 tokens to a random person) using 'executeTransaction' but the destination flag is not set to true", func() {
 				It("should fail", func() {
 					a, err := abi.JSON(strings.NewReader(ERC20ABI))
 					Expect(err).ToNot(HaveOccurred())
@@ -183,11 +199,24 @@ var _ = Describe("executeTransaction", func() {
 				})
 			})
 
-			When("I approve 300 tokens to a random person using 'executeTransaction'", func() {
+			When("I approve 300 tokens to a random wallet using 'executeTransaction'", func() {
+
+                var RamdomWallet *bindings.Wallet
+                var RamdomWalletAddress common.Address
+
+                BeforeEach(func() {
+                    var tx *types.Transaction
+                    var err error
+                    RamdomWalletAddress, tx, RamdomWallet, err = bindings.DeployWallet(BankAccount.TransactOpts(), Backend, RandomAccount.Address(), false, ENSRegistryAddress, TokenWhitelistName, ControllerName, LicenceName, EthToWei(100))
+                	Expect(err).ToNot(HaveOccurred())
+                	Backend.Commit()
+                	Expect(isSuccessful(tx)).To(BeTrue())
+                })
+
 				BeforeEach(func() {
 					a, err := abi.JSON(strings.NewReader(ERC20ABI))
 					Expect(err).ToNot(HaveOccurred())
-					data, err := a.Pack("approve", RandomAccount.Address(), big.NewInt(300))
+					data, err := a.Pack("approve", RamdomWalletAddress, big.NewInt(300))
 					Expect(err).ToNot(HaveOccurred())
 
 					tx, err = Wallet.ExecuteTransaction(Owner.TransactOpts(), TKNAddress, big.NewInt(0), data, true)
@@ -196,13 +225,13 @@ var _ = Describe("executeTransaction", func() {
 					Expect(isSuccessful(tx)).To(BeTrue())
 				})
 
-				It("should not increase TKN balance of the random person", func() {
-					b, err := TKN.BalanceOf(nil, RandomAccount.Address())
+				It("should not increase the TKN balance of the random wallet", func() {
+					b, err := TKN.BalanceOf(nil, RamdomWalletAddress)
 					Expect(err).ToNot(HaveOccurred())
 					Expect(b.String()).To(Equal("0"))
 				})
 
-				It("should not decrease TKN balance of the wallet", func() {
+				It("should not decrease the TKN balance of the wallet", func() {
 					b, err := TKN.BalanceOf(nil, WalletAddress)
 					Expect(err).ToNot(HaveOccurred())
 					Expect(b.String()).To(Equal("1000"))
@@ -213,6 +242,92 @@ var _ = Describe("executeTransaction", func() {
 					Expect(err).ToNot(HaveOccurred())
 					Expect(av.String()).To(AlmostEqual("99999999999951010000"))
 				})
+
+                When("the approved ramdom wallet 'transfersFrom' all the tokens to a whitelisted destination address using 'executeTransaction'", func() {
+
+                    BeforeEach(func() {
+    					tx, err := RamdomWallet.SetWhitelist(RandomAccount.TransactOpts(), []common.Address{Owner.Address()})
+    					Expect(err).ToNot(HaveOccurred())
+    					Backend.Commit()
+    					Expect(isSuccessful(tx)).To(BeTrue())
+    				})
+
+                    BeforeEach(func() {
+    					a, err := abi.JSON(strings.NewReader(ERC20ABI))
+    					Expect(err).ToNot(HaveOccurred())
+    					data, err := a.Pack("transferFrom", WalletAddress, Owner.Address(), big.NewInt(300))
+    					Expect(err).ToNot(HaveOccurred())
+
+    					tx, err = RamdomWallet.ExecuteTransaction(RandomAccount.TransactOpts(), TKNAddress, big.NewInt(0), data, true)
+    					Expect(err).ToNot(HaveOccurred())
+    					Backend.Commit()
+    					Expect(isSuccessful(tx)).To(BeTrue())
+    				})
+
+                    It("should increase the TKN balance of the whitelisted destination", func() {
+    					b, err := TKN.BalanceOf(nil, Owner.Address())
+    					Expect(err).ToNot(HaveOccurred())
+    					Expect(b.String()).To(Equal("300"))
+    				})
+
+    				It("should decrease the TKN balance of the wallet", func() {
+    					b, err := TKN.BalanceOf(nil, WalletAddress)
+    					Expect(err).ToNot(HaveOccurred())
+    					Expect(b.String()).To(Equal("700"))
+    				})
+
+    				It("should NOT reduce the available daily spend balance", func() {
+    					av, err := RamdomWallet.SpendLimitAvailable(nil)
+    					Expect(err).ToNot(HaveOccurred())
+    					Expect(av.String()).To(Equal(EthToWei(100).String()))
+    				})
+                })
+
+                When("the approved ramdom wallet 'transfersFrom' all the tokens to itself using 'executeTransaction'", func() {
+                    BeforeEach(func() {
+    					a, err := abi.JSON(strings.NewReader(ERC20ABI))
+    					Expect(err).ToNot(HaveOccurred())
+    					data, err := a.Pack("transferFrom", WalletAddress, RamdomWalletAddress, big.NewInt(300))
+    					Expect(err).ToNot(HaveOccurred())
+
+    					tx, err = RamdomWallet.ExecuteTransaction(RandomAccount.TransactOpts(), TKNAddress, big.NewInt(0), data, true)
+    					Expect(err).ToNot(HaveOccurred())
+    					Backend.Commit()
+    					Expect(isSuccessful(tx)).To(BeTrue())
+    				})
+
+                    It("should increase the TKN balance of the random wallet", func() {
+    					b, err := TKN.BalanceOf(nil, RamdomWalletAddress)
+    					Expect(err).ToNot(HaveOccurred())
+    					Expect(b.String()).To(Equal("300"))
+    				})
+
+    				It("should decrease the TKN balance of the wallet", func() {
+    					b, err := TKN.BalanceOf(nil, WalletAddress)
+    					Expect(err).ToNot(HaveOccurred())
+    					Expect(b.String()).To(Equal("700"))
+    				})
+
+    				It("should reduce the available daily spend balance", func() {
+    					av, err := RamdomWallet.SpendLimitAvailable(nil)
+    					Expect(err).ToNot(HaveOccurred())
+    					Expect(av.String()).To(AlmostEqual("99999999999951010000"))
+    				})
+                })
+
+                When("the approved ramdom wallet tries to 'transferFrom' more than the approved ammount to itself using 'executeTransaction'", func() {
+                    It("should fail", func() {
+    					a, err := abi.JSON(strings.NewReader(ERC20ABI))
+    					Expect(err).ToNot(HaveOccurred())
+    					data, err := a.Pack("transferFrom", WalletAddress, RamdomWalletAddress, big.NewInt(301))
+    					Expect(err).ToNot(HaveOccurred())
+
+    					tx, err = RamdomWallet.ExecuteTransaction(RandomAccount.TransactOpts(ethertest.WithGasLimit(500000)), TKNAddress, big.NewInt(0), data, true)
+    					Expect(err).ToNot(HaveOccurred())
+    					Backend.Commit()
+    					Expect(isSuccessful(tx)).To(BeFalse())
+    				})
+                })
 			})
 
 			When("random person is whitelisted", func() {
@@ -289,6 +404,29 @@ const ERC20ABI = `[
             }
         ],
         "name": "approve",
+        "outputs": [
+            {
+                "name": "",
+                "type": "bool"
+            }
+        ],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "constant": false,
+        "inputs": [
+            {
+                "name": "_spender",
+                "type": "address"
+            },
+            {
+                "name": "_addedValue",
+                "type": "uint256"
+            }
+        ],
+        "name": "increasedApproval",
         "outputs": [
             {
                 "name": "",

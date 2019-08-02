@@ -30,7 +30,7 @@ contract Token {
         if (balanceOf[_from] < _value) return false;
 
         uint allowed = allowance[_from][msg.sender];
-        if (allowed < _value) return false;
+        require(_value <= allowed, "amount exceeds allowance");
 
         balanceOf[_to] = SafeMath.add(balanceOf[_to], _value);
         balanceOf[_from] = SafeMath.sub(balanceOf[_from], _value);
