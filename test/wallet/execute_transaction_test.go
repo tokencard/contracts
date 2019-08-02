@@ -116,13 +116,14 @@ var _ = Describe("executeTransaction", func() {
 				It("should fail", func() {
 					a, err := abi.JSON(strings.NewReader(ERC20ABI))
 					Expect(err).ToNot(HaveOccurred())
-					data, err := a.Pack("increasedApproval", RandomAccount.Address(), big.NewInt(300))
+					data, err := a.Pack("increaseApproval", RandomAccount.Address(), big.NewInt(300))
 					Expect(err).ToNot(HaveOccurred())
 
 					tx, err = Wallet.ExecuteTransaction(Owner.TransactOpts(ethertest.WithGasLimit(100000)), TKNAddress, big.NewInt(0), data, true)
 					Expect(err).ToNot(HaveOccurred())
 					Backend.Commit()
 					Expect(isSuccessful(tx)).To(BeFalse())
+                    Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*"unsupported method"\);`))
 				})
 
 			})
@@ -426,7 +427,7 @@ const ERC20ABI = `[
                 "type": "uint256"
             }
         ],
-        "name": "increasedApproval",
+        "name": "increaseApproval",
         "outputs": [
             {
                 "name": "",
