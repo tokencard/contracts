@@ -59,7 +59,7 @@ var _ = Describe("executeTransaction", func() {
 
 			})
 
-			When("the destination flag is ΝΟΤ set correctly (contract)", func() {
+			When("the destination flag is ΝΟΤ set correctly (contract instead of EOA)", func() {
 				It("should fail", func() {
 					privateKey, err := crypto.GenerateKey()
 					randomAddress = crypto.PubkeyToAddress(privateKey.PublicKey)
@@ -80,7 +80,7 @@ var _ = Describe("executeTransaction", func() {
 				Expect(isSuccessful(tx)).To(BeTrue())
 			})
 
-			When("I transfer 300 tokens to a random person using 'executeTransaction'", func() {
+			When("I transfer 300 tokens to a random account using 'executeTransaction'", func() {
 				BeforeEach(func() {
 					a, err := abi.JSON(strings.NewReader(ERC20ABI))
 					Expect(err).ToNot(HaveOccurred())
@@ -93,7 +93,7 @@ var _ = Describe("executeTransaction", func() {
 					Expect(isSuccessful(tx)).To(BeTrue())
 				})
 
-				It("should increase TKN balance of the random person", func() {
+				It("should increase TKN balance of the random account", func() {
 					b, err := TKN.BalanceOf(nil, RandomAccount.Address())
 					Expect(err).ToNot(HaveOccurred())
 					Expect(b.String()).To(Equal("300"))
@@ -128,7 +128,53 @@ var _ = Describe("executeTransaction", func() {
 
 			})
 
-			When("I send data (transfer 300 tokens to a random account) using 'executeTransaction'", func() {
+            When("I try to use 'transfer' but data (i.e. value is corrupt) is missing", func() {
+				It("should fail", func() {
+					a, err := abi.JSON(strings.NewReader(ERC20ABI))
+					Expect(err).ToNot(HaveOccurred())
+					data, err := a.Pack("transfer", RandomAccount.Address(), big.NewInt(300))
+					Expect(err).ToNot(HaveOccurred())
+                    println(len(data))
+					tx, err = Wallet.ExecuteTransaction(Owner.TransactOpts(ethertest.WithGasLimit(100000)), TKNAddress, big.NewInt(0), data[:67], true)
+					Expect(err).ToNot(HaveOccurred())
+					Backend.Commit()
+					Expect(isSuccessful(tx)).To(BeFalse())
+                    Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*"not enough method-encoding bytes"\);`))
+				})
+			})
+
+            When("I try to use 'approve' but data (i.e. value) is missing", func() {
+				It("should fail", func() {
+					a, err := abi.JSON(strings.NewReader(ERC20ABI))
+					Expect(err).ToNot(HaveOccurred())
+					data, err := a.Pack("approve", RandomAccount.Address(), big.NewInt(300))
+					Expect(err).ToNot(HaveOccurred())
+                    println(len(data))
+					tx, err = Wallet.ExecuteTransaction(Owner.TransactOpts(ethertest.WithGasLimit(100000)), TKNAddress, big.NewInt(0), data[:36], true)
+					Expect(err).ToNot(HaveOccurred())
+					Backend.Commit()
+					Expect(isSuccessful(tx)).To(BeFalse())
+                    Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*"not enough method-encoding bytes"\);`))
+				})
+			})
+
+            When("I try to use 'transferFrom' but data (i.e. value is corrupt) is missing", func() {
+				It("should fail", func() {
+					a, err := abi.JSON(strings.NewReader(ERC20ABI))
+					Expect(err).ToNot(HaveOccurred())
+                    data, err := a.Pack("transferFrom", WalletAddress, Owner.Address(), big.NewInt(300))
+					Expect(err).ToNot(HaveOccurred())
+                    println(len(data))
+                    //transferFrom needs 100 bytes: 4(methodID) + 32 (from) + 32 (to) + 32 (value)
+					tx, err = Wallet.ExecuteTransaction(Owner.TransactOpts(ethertest.WithGasLimit(100000)), TKNAddress, big.NewInt(0), data[:99], true)
+					Expect(err).ToNot(HaveOccurred())
+					Backend.Commit()
+					Expect(isSuccessful(tx)).To(BeFalse())
+                    Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*"not enough data for transferFrom"\);`))
+				})
+			})
+
+			When("I send data (transfer 300 tokens to a random account to an EOA using 'executeTransaction'", func() {
 				It("should succeed", func() {
 					a, err := abi.JSON(strings.NewReader(ERC20ABI))
 					Expect(err).ToNot(HaveOccurred())
@@ -143,7 +189,7 @@ var _ = Describe("executeTransaction", func() {
 
 			})
 
-			When("I send data (transfer 300 tokens to a random person) using 'executeTransaction' but the destination flag is not set to true", func() {
+			When("I send data (transfer 300 tokens to a random account using 'executeTransaction' but the destination flag is not set correctly (isContract = true", func() {
 				It("should fail", func() {
 					a, err := abi.JSON(strings.NewReader(ERC20ABI))
 					Expect(err).ToNot(HaveOccurred())
@@ -158,7 +204,7 @@ var _ = Describe("executeTransaction", func() {
 
 			})
 
-			When("random person is whitelisted", func() {
+			When("random account  is whitelisted", func() {
 				BeforeEach(func() {
 					tx, err := Wallet.SetWhitelist(Owner.TransactOpts(), []common.Address{RandomAccount.Address()})
 					Expect(err).ToNot(HaveOccurred())
@@ -166,7 +212,7 @@ var _ = Describe("executeTransaction", func() {
 					Expect(isSuccessful(tx)).To(BeTrue())
 				})
 
-				When("I transfer 300 tokens to a random person using 'executeTransaction'", func() {
+				When("I transfer 300 tokens to a random account using 'executeTransaction'", func() {
 					BeforeEach(func() {
 
 						a, err := abi.JSON(strings.NewReader(ERC20ABI))
@@ -180,7 +226,7 @@ var _ = Describe("executeTransaction", func() {
 						Expect(isSuccessful(tx)).To(BeTrue())
 					})
 
-					It("should increase TKN balance of the random person", func() {
+					It("should increase TKN balance of the random account", func() {
 						b, err := TKN.BalanceOf(nil, RandomAccount.Address())
 						Expect(err).ToNot(HaveOccurred())
 						Expect(b.String()).To(Equal("300"))
@@ -331,7 +377,7 @@ var _ = Describe("executeTransaction", func() {
                 })
 			})
 
-			When("random person is whitelisted", func() {
+			When("random account is whitelisted", func() {
 				BeforeEach(func() {
 					tx, err := Wallet.SetWhitelist(Owner.TransactOpts(), []common.Address{RandomAccount.Address()})
 					Expect(err).ToNot(HaveOccurred())
@@ -339,7 +385,7 @@ var _ = Describe("executeTransaction", func() {
 					Expect(isSuccessful(tx)).To(BeTrue())
 				})
 
-				When("I approve 300 tokens to a random person using 'executeTransaction'", func() {
+				When("I approve 300 tokens to a random account using 'executeTransaction'", func() {
 					BeforeEach(func() {
 						a, err := abi.JSON(strings.NewReader(ERC20ABI))
 						Expect(err).ToNot(HaveOccurred())
@@ -352,7 +398,7 @@ var _ = Describe("executeTransaction", func() {
 						Expect(isSuccessful(tx)).To(BeTrue())
 					})
 
-					It("should not increase TKN balance of the random person", func() {
+					It("should not increase TKN balance of the random account", func() {
 						b, err := TKN.BalanceOf(nil, RandomAccount.Address())
 						Expect(err).ToNot(HaveOccurred())
 						Expect(b.String()).To(Equal("0"))
