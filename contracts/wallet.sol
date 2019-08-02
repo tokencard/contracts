@@ -25,7 +25,6 @@ import "./internals/balanceable.sol";
 import "./internals/transferrable.sol";
 import "./internals/ensResolvable.sol";
 import "./internals/tokenWhitelistable.sol";
-import "./internals/bytesUtils.sol";
 import "./externals/SafeMath.sol";
 import "./externals/Address.sol";
 import "./externals/ERC20.sol";
@@ -584,7 +583,6 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
 
     using SafeERC20 for ERC20;
     using Address for address;
-    using BytesUtils for bytes;
 
     event ToppedUpGas(address _sender, address _owner, uint _amount);
     event LoadedTokenCard(address _asset, uint _amount);
@@ -596,12 +594,6 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
 
     /// @dev Is the registered ENS node identifying the licence contract.
     bytes32 private _licenceNode;
-
-    /// @dev these are the methods whitelisted in executeTransaction() for protected tokens
-    uint32 private constant _TRANSFER= 0xa9059cbb;
-    uint32 private constant _APPROVE = 0x095ea7b3;
-    uint32 private constant _TRANSFER_FROM = 0x23b872dd;
-
 
     /// @dev Constructor initializes the wallet top up limit and the vault contract.
     /// @param _owner_ is the owner account of the wallet contract.
@@ -665,36 +657,15 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
             require(address(_destination).isContract(), "executeTransaction for a contract: call to non-contract");
             // Check if the destination contract address is in the tokenWhitelist, hence protected
             if (_isTokenAvailable(_destination)) {
-                // Require that there exist enough bytes for encoding at least a method signature + data in the transaction payload:
-                // 4 (signature) + 32(address) + 32(address or uint256)
-                require(_data.length >= 4 + 32 + 32, "not enough method-encoding bytes");
-                // Get method signature
-                uint32 signature = _data._bytesToUint32(0);
-                // Check if method is one one of the whitelisted ERC20 transfer or approve
-                require(signature == _TRANSFER || signature == _APPROVE || signature == _TRANSFER_FROM, "unsupported method");
-                //"toOrSpenderOrFrom" is the 1st argument (common type: address) in in ERC20 transfer('_to'), approve ('_spender') or transferFrom ('_from')
-                address toOrSpenderOrFrom = _data._bytesToAddress(4 + 12);
-                if (signature == _TRANSFER_FROM){
-                    // 4 (signature) + 32(address) + 32(address) + 32(uint256)
-                    require(_data.length >= 4 + 32 + 32 + 32, "not enough data for transferFrom");
-                    address to = _data._bytesToAddress(4 + 32 + 12);
-                    uint amount = _data._bytesToUint256(4 + 32 + 32);
-                    // Check if the recipient is in the whitelist
-                    if (!whitelistMap[to]) {
-                        // If the address (of the token contract, e.g) is not in the TokenWhitelist used by
-                        // the convert method, then etherValue will be zero
-                        uint etherValue = convertToEther(_destination, amount);
-                        _spendLimit._enforceLimit(etherValue);
-                    }
-                } else {
-                    uint amount = _data._bytesToUint256(4 + 32);
-                    // Check if the recipient is in the whitelist
-                    if (!whitelistMap[toOrSpenderOrFrom]) {
-                        // If the address (of the token contract, e.g) is not in the TokenWhitelist used by
-                        // the convert method, then etherValue will be zero
-                        uint etherValue = convertToEther(_destination, amount);
-                        _spendLimit._enforceLimit(etherValue);
-                    }
+                //to is the recipient's address and amount is the value to be transferred
+                address to;
+                uint amount;
+                (to, amount) = _getERC20RecipientAndAmount(_data);
+                if (!whitelistMap[to]) {
+                    // If the address (of the token contract, e.g) is not in the TokenWhitelist used by the convert method...
+                    // ...then etherValue will be zero
+                    uint etherValue = convertToEther(_destination, amount);
+                    _spendLimit._enforceLimit(etherValue);
                 }
             }
         } else {

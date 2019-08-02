@@ -20,6 +20,7 @@ pragma solidity ^0.5.10;
 
 import "./internals/controllable.sol";
 import "./internals/transferrable.sol";
+import "./internals/bytesUtils.sol";
 import "./externals/strings.sol";
 import "./externals/SafeMath.sol";
 
@@ -29,8 +30,10 @@ interface ITokenWhitelist {
     function getStablecoinInfo() external view returns (string memory, uint256, uint256, bool, bool, bool, uint256);
     function tokenAddressArray() external view returns (address[] memory);
     function redeemableTokens() external view returns (address[] memory);
-    function updateTokenRate(address, uint, uint) external;
+    function methodIdWhitelist(uint32) external view returns (bool);
+    function getERC20RecipientAndAmount(bytes calldata) external view returns (address, uint);
     function stablecoin() external view returns (address);
+    function updateTokenRate(address, uint, uint) external;
 }
 
 
@@ -38,6 +41,7 @@ interface ITokenWhitelist {
 contract TokenWhitelist is ENSResolvable, Controllable, Transferrable {
     using strings for *;
     using SafeMath for uint256;
+    using BytesUtils for bytes;
 
     event UpdatedTokenRate(address _sender, address _token, uint _rate);
 
@@ -47,7 +51,15 @@ contract TokenWhitelist is ENSResolvable, Controllable, Transferrable {
     event AddedToken(address _sender, address _token, string _symbol, uint _magnitude, bool _loadable, bool _redeemable);
     event RemovedToken(address _sender, address _token);
 
+    event AddedMethodId(uint32 _methodId);
+    event RemovedMethodId(uint32 _methodId);
+
     event Claimed(address _to, address _asset, uint _amount);
+
+    /// @dev these are the methods whitelisted by default in executeTransaction() for protected tokens
+   uint32 private constant _TRANSFER= 0xa9059cbb; // keccak256(transfer(address,uint256)) => 0xa9059cbb
+   uint32 private constant _APPROVE = 0x095ea7b3; // keccak256(approve(address,uint256)) => 0x095ea7b3
+   uint32 private constant _TRANSFER_FROM = 0x23b872dd; // keccak256(transferFrom(address,address,uint256)) => 0xa9059cbb
 
     struct Token {
         string symbol;    // Token symbol
@@ -60,6 +72,10 @@ contract TokenWhitelist is ENSResolvable, Controllable, Transferrable {
     }
 
     mapping(address => Token) private _tokenInfoMap;
+
+    // @notice specifies whitelisted methodIds for protected tokens in wallet's excuteTranaction() e.g. keccak256(transfer(address,uint256)) => 0xa9059cbb
+    mapping(uint32 => bool) private _methodIdWhitelist;
+
     address[] private _tokenAddressArray;
 
     /// @notice keeping track of how many redeemable tokens are in the tokenWhitelist
@@ -71,14 +87,18 @@ contract TokenWhitelist is ENSResolvable, Controllable, Transferrable {
     /// @notice is registered ENS node identifying the oracle contract.
     bytes32 private _oracleNode;
 
-    /// @notice Constructor initializes ENSResolvable, and Controllable
-    /// @param _ens_ is the ENS registry address
+    /// @notice Constructor initializes ENSResolvable, and Controllable.
+    /// @param _ens_ is the ENS registry address.
     /// @param _oracleNode_ is the ENS node of the Oracle.
     /// @param _controllerNode_ is our Controllers node.
-    /// @param _stabelcoinAddress_ is the address of the stablecoint used by the wallet for the card load limit
+    /// @param _stabelcoinAddress_ is the address of the stablecoint used by the wallet for the card load limit.
     constructor(address _ens_, bytes32 _oracleNode_, bytes32 _controllerNode_, address _stabelcoinAddress_) ENSResolvable(_ens_) Controllable(_controllerNode_) public {
         _oracleNode = _oracleNode_;
         _stablecoin = _stabelcoinAddress_;
+        //a priori standard ERC20 whitelisted methods
+        _methodIdWhitelist[_TRANSFER] = true;
+        _methodIdWhitelist[_APPROVE] = true;
+        _methodIdWhitelist[_TRANSFER_FROM] = true;
     }
 
     modifier onlyAdminOrOracle() {
@@ -93,7 +113,7 @@ contract TokenWhitelist is ENSResolvable, Controllable, Transferrable {
     /// @param _magnitude 10 to the power of number of decimal places used by each ERC20 token.
     /// @param _loadable is a bool that states whether or not a token is loadable to the TokenCard.
     /// @param _redeemable is a bool that states whether or not a token is redeemable in the TKN Holder Contract.
-    /// @param _lastUpdate is a unit representing an ISO datetime e.g. 20180913153211
+    /// @param _lastUpdate is a unit representing an ISO datetime e.g. 20180913153211.
     function addTokens(address[] calldata _tokens, bytes32[] calldata _symbols, uint[] calldata _magnitude, bool[] calldata _loadable, bool[] calldata _redeemable, uint _lastUpdate) external onlyAdmin {
         // Require that all parameters have the same length.
         require(_tokens.length == _symbols.length && _tokens.length == _magnitude.length && _tokens.length == _loadable.length && _tokens.length == _loadable.length, "parameter lengths do not match");
@@ -152,7 +172,56 @@ contract TokenWhitelist is ENSResolvable, Controllable, Transferrable {
         }
     }
 
-    /// @notice Toggles whether or not a token is loadable or not
+    /// @notice Add method signatures(methodIDs) in the whitelist.
+    /// @param _methods method signatures to be added.
+    function addMethodIds(uint32[] calldata _methods) external onlyAdmin {
+        for (uint i = 0; i < _methods.length; i++) {
+            uint32 method = _methods[i];
+            if (!_methodIdWhitelist[method]){
+                _methodIdWhitelist[method] = true;
+                emit AddedMethodId(method);
+            }
+        }
+    }
+
+    /// @notice Remove method signatures(methodIDs) from the whitelist.
+    /// @param _methods method signatures to be removed.
+    function removeMethodIds(uint32[] calldata _methods) external onlyAdmin {
+        for (uint i = 0; i < _methods.length; i++) {
+            uint32 method = _methods[i];
+            if (!_methodIdWhitelist[method]){
+                _methodIdWhitelist[method] = false;
+                emit RemovedMethodId(method);
+            }
+        }
+    }
+
+    /// @notice based on the method it returns the recipient address and amount/value, ERC20 specific.
+    /// @param _data is the transaction payload.
+    function getERC20RecipientAndAmount(bytes calldata _data) external view returns (address, uint) {
+        // Require that there exist enough bytes for encoding at least a method signature + data in the transaction payload:
+        // 4 (signature) + 32(address) + 32(address or uint256)
+        require(_data.length >= 4 + 32 + 32, "not enough method-encoding bytes");
+        // Get method signature
+        uint32 signature = _data._bytesToUint32(0);
+        // Check if method Id is one one of the whitelisted ones
+        require(_methodIdWhitelist[signature], "unsupported method");
+        //to is the recipient's address and amount is the value to be transferred
+        address to;
+        uint amount;
+        if (signature == _TRANSFER_FROM){
+            // 4 (signature) + 32(address) + 32(address) + 32(uint256)
+            require(_data.length >= 4 + 32 + 32 + 32, "not enough data for transferFrom");
+            to = _data._bytesToAddress(4 + 32 + 12);
+            amount = _data._bytesToUint256(4 + 32 + 32);
+        } else {
+            to = _data._bytesToAddress(4 + 12);
+            amount = _data._bytesToUint256(4 + 32);
+        }
+        return (to, amount);
+    }
+
+    /// @notice Toggles whether or not a token is loadable or not.
     function setTokenLoadable(address _token, bool _loadable) external onlyAdmin {
         // Require that the token exists.
         require(_tokenInfoMap[_token].available, "token is not available");
@@ -163,7 +232,7 @@ contract TokenWhitelist is ENSResolvable, Controllable, Transferrable {
         emit UpdatedTokenLoadable(msg.sender, _token, _loadable);
     }
 
-    /// @notice Toggles whether or not a token is redeemable or not
+    /// @notice Toggles whether or not a token is redeemable or not.
     function setTokenRedeemable(address _token, bool _redeemable) external onlyAdmin {
         // Require that the token exists.
         require(_tokenInfoMap[_token].available, "token is not available");
@@ -195,41 +264,41 @@ contract TokenWhitelist is ENSResolvable, Controllable, Transferrable {
         emit Claimed(_to, _asset, _amount);
     }
 
-    /// @notice This returns all of the fields for a given token
-    /// @param _a is the address of a given token
-    /// @return string of the token's symbol
-    /// @return uint of the token's magnitude
-    /// @return uint of the token's exchange rate to ETH
-    /// @return bool whether the token is available
-    /// @return bool whether the token is loadable to the TokenCard
-    /// @return bool whether the token is redeemable to the TKN Holder Contract
-    /// @return uint of the lastUpdated time of the token's exchange rate
+    /// @notice This returns all of the fields for a given token.
+    /// @param _a is the address of a given token.
+    /// @return string of the token's symbol.
+    /// @return uint of the token's magnitude.
+    /// @return uint of the token's exchange rate to ETH.
+    /// @return bool whether the token is available.
+    /// @return bool whether the token is loadable to the TokenCard.
+    /// @return bool whether the token is redeemable to the TKN Holder Contract.
+    /// @return uint of the lastUpdated time of the token's exchange rate.
     function getTokenInfo(address _a) external view returns (string memory, uint256, uint256, bool, bool, bool, uint256) {
         Token storage tokenInfo = _tokenInfoMap[_a];
         return (tokenInfo.symbol, tokenInfo.magnitude, tokenInfo.rate, tokenInfo.available, tokenInfo.loadable, tokenInfo.redeemable, tokenInfo.lastUpdate);
     }
 
-    /// @notice This returns all of the fields for our StableCoin
-    /// @return string of the token's symbol
-    /// @return uint of the token's magnitude
-    /// @return uint of the token's exchange rate to ETH
-    /// @return bool whether the token is available
-    /// @return bool whether the token is loadable to the TokenCard
-    /// @return bool whether the token is redeemable to the TKN Holder Contract
-    /// @return uint of the lastUpdated time of the token's exchange rate
+    /// @notice This returns all of the fields for our StableCoin.
+    /// @return string of the token's symbol.
+    /// @return uint of the token's magnitude.
+    /// @return uint of the token's exchange rate to ETH.
+    /// @return bool whether the token is available.
+    /// @return bool whether the token is loadable to the TokenCard.
+    /// @return bool whether the token is redeemable to the TKN Holder Contract.
+    /// @return uint of the lastUpdated time of the token's exchange rate.
     function getStablecoinInfo() external view returns (string memory, uint256, uint256, bool, bool, bool, uint256) {
         Token storage stablecoinInfo = _tokenInfoMap[_stablecoin];
         return (stablecoinInfo.symbol, stablecoinInfo.magnitude, stablecoinInfo.rate, stablecoinInfo.available, stablecoinInfo.loadable, stablecoinInfo.redeemable, stablecoinInfo.lastUpdate);
     }
 
-    /// @notice This returns an array of all whitelisted token addresses
-    /// @return address[] of whitelisted tokens
+    /// @notice This returns an array of all whitelisted token addresses.
+    /// @return address[] of whitelisted tokens.
     function tokenAddressArray() external view returns (address[] memory) {
         return _tokenAddressArray;
     }
 
-    /// @notice This returns an array of all redeemable token addresses
-    /// @return address[] of redeemable tokens
+    /// @notice This returns an array of all redeemable token addresses.
+    /// @return address[] of redeemable tokens.
     function redeemableTokens() external view returns (address[] memory) {
         address[] memory redeemableAddresses = new address[](_redeemableCounter);
         uint redeemableIndex = 0;
@@ -243,19 +312,26 @@ contract TokenWhitelist is ENSResolvable, Controllable, Transferrable {
         return redeemableAddresses;
     }
 
-    /// @notice This returns the number of redeemable tokens
-    /// @return current # of redeemables
+
+    /// @notice This returns true if a method Id is whitelisted.
+    /// @return true if _methodId is in the methodId whitelist.
+    function methodIdWhitelist(uint32 _methodId) external view returns (bool) {
+        return _methodIdWhitelist[_methodId];
+    }
+
+    /// @notice This returns the number of redeemable tokens.
+    /// @return current # of redeemables.
     function redeemableCounter() external view returns (uint) {
         return _redeemableCounter;
     }
 
-    /// @notice This returns the address of our stablecoin of choice
+    /// @notice This returns the address of our stablecoin of choice.
     /// @return the address of the stablecoin contract.
     function stablecoin() external view returns (address) {
         return _stablecoin;
     }
 
-    /// @notice this returns the node hash of our Oracle
+    /// @notice this returns the node hash of our Oracle.
     /// @return the oracle node registered in ENS.
     function oracleNode() external view returns (bytes32) {
         return _oracleNode;

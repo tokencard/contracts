@@ -149,7 +149,7 @@ var _ = Describe("executeTransaction", func() {
 				})
 			})
 
-            When("I try to use an not whitelisted method on a whitelisted/protected token address", func() {
+            When("I try to use a not whitelisted method on a whitelisted/protected token address", func() {
 				It("should fail", func() {
 					a, err := abi.JSON(strings.NewReader(ERC20ABI))
 					Expect(err).ToNot(HaveOccurred())
@@ -160,7 +160,6 @@ var _ = Describe("executeTransaction", func() {
 					Expect(err).ToNot(HaveOccurred())
 					Backend.Commit()
 					Expect(isSuccessful(tx)).To(BeFalse())
-                    Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*"unsupported method"\);`))
 				})
 
 			})
@@ -175,7 +174,6 @@ var _ = Describe("executeTransaction", func() {
 					Expect(err).ToNot(HaveOccurred())
 					Backend.Commit()
 					Expect(isSuccessful(tx)).To(BeFalse())
-                    Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*"not enough method-encoding bytes"\);`))
 				})
 			})
 
@@ -189,7 +187,6 @@ var _ = Describe("executeTransaction", func() {
 					Expect(err).ToNot(HaveOccurred())
 					Backend.Commit()
 					Expect(isSuccessful(tx)).To(BeFalse())
-                    Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*"not enough method-encoding bytes"\);`))
 				})
 			})
 
@@ -204,7 +201,6 @@ var _ = Describe("executeTransaction", func() {
 					Expect(err).ToNot(HaveOccurred())
 					Backend.Commit()
 					Expect(isSuccessful(tx)).To(BeFalse())
-                    Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*"not enough data for transferFrom"\);`))
 				})
 			})
 
