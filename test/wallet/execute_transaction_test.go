@@ -149,7 +149,7 @@ var _ = Describe("executeTransaction", func() {
 				})
 			})
 
-            When("I try to use a not whitelisted method on a whitelisted/protected token address", func() {
+            When("I try to use a non-whitelisted method on a whitelisted/protected token address", func() {
 				It("should fail", func() {
 					a, err := abi.JSON(strings.NewReader(ERC20ABI))
 					Expect(err).ToNot(HaveOccurred())
@@ -161,7 +161,6 @@ var _ = Describe("executeTransaction", func() {
 					Backend.Commit()
 					Expect(isSuccessful(tx)).To(BeFalse())
 				})
-
 			})
 
             When("I try to use 'transfer' but data (i.e. value is corrupt) is missing", func() {
@@ -234,7 +233,7 @@ var _ = Describe("executeTransaction", func() {
 
 			})
 
-			When("random account  is whitelisted", func() {
+			When("random account is whitelisted", func() {
 				BeforeEach(func() {
 					tx, err := Wallet.SetWhitelist(Owner.TransactOpts(), []common.Address{RandomAccount.Address()})
 					Expect(err).ToNot(HaveOccurred())
