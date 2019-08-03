@@ -57,9 +57,9 @@ contract TokenWhitelist is ENSResolvable, Controllable, Transferrable {
     event Claimed(address _to, address _asset, uint _amount);
 
     /// @dev these are the methods whitelisted by default in executeTransaction() for protected tokens
-   uint32 private constant _TRANSFER= 0xa9059cbb; // keccak256(transfer(address,uint256)) => 0xa9059cbb
-   uint32 private constant _APPROVE = 0x095ea7b3; // keccak256(approve(address,uint256)) => 0x095ea7b3
-   uint32 private constant _TRANSFER_FROM = 0x23b872dd; // keccak256(transferFrom(address,address,uint256)) => 0xa9059cbb
+    uint32 private constant _TRANSFER= 0xa9059cbb; // keccak256(transfer(address,uint256)) => 0xa9059cbb
+    uint32 private constant _APPROVE = 0x095ea7b3; // keccak256(approve(address,uint256)) => 0x095ea7b3
+    uint32 private constant _TRANSFER_FROM = 0x23b872dd; // keccak256(transferFrom(address,address,uint256)) => 0xa9059cbb
 
     struct Token {
         string symbol;    // Token symbol
@@ -189,7 +189,7 @@ contract TokenWhitelist is ENSResolvable, Controllable, Transferrable {
     function removeMethodIds(uint32[] calldata _methods) external onlyAdmin {
         for (uint i = 0; i < _methods.length; i++) {
             uint32 method = _methods[i];
-            if (!_methodIdWhitelist[method]){
+            if (_methodIdWhitelist[method]){
                 _methodIdWhitelist[method] = false;
                 emit RemovedMethodId(method);
             }
