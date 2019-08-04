@@ -12,111 +12,129 @@ import (
 
 var _ = Describe("get the ERC20 Recipient and Amount", func() {
 
-    When("I try to use a non-whitelisted method on a whitelisted/protected token address", func() {
-        It("should fail", func() {
-            a, err := abi.JSON(strings.NewReader(ERC20ABI))
-            Expect(err).ToNot(HaveOccurred())
-            data, err := a.Pack("increaseApproval", RandomAccount.Address(), big.NewInt(300))
-            Expect(err).ToNot(HaveOccurred())
+    When("TKN is 'protected'", func() {
 
-            _, _, err = TokenWhitelistableExporter.GetERC20RecipientAndAmount(nil, data)
-            Expect(err).To(HaveOccurred())
-            Expect(err.Error()).To(ContainSubstring("unsupported method"))
+        BeforeEach(func() {
+            tx, err := TokenWhitelist.AddTokens(
+                ControllerAdmin.TransactOpts(),
+                []common.Address{TKNBurnerAddress},
+                StringsToByte32("TKN"),
+                []*big.Int{DecimalsToMagnitude(big.NewInt(8))},
+                []bool{true},
+                []bool{true},
+                big.NewInt(20180913153211),
+            )
+            Expect(err).ToNot(HaveOccurred())
+            Backend.Commit()
+            Expect(isSuccessful(tx)).To(BeTrue())
         })
-    })
 
-    When("I try to use 'burn' but data (i.e. amount is corrupt) is missing", func() {
-    	It("should fail", func() {
-    		a, err := abi.JSON(strings.NewReader(ERC20ABI))
-    		Expect(err).ToNot(HaveOccurred())
-    		data, err := a.Pack("burn", big.NewInt(300))
-    		Expect(err).ToNot(HaveOccurred())
+        When("I try to use a non-whitelisted method on a whitelisted/protected token address", func() {
+            It("should fail", func() {
+                a, err := abi.JSON(strings.NewReader(ERC20ABI))
+                Expect(err).ToNot(HaveOccurred())
+                data, err := a.Pack("increaseApproval", RandomAccount.Address(), big.NewInt(300))
+                Expect(err).ToNot(HaveOccurred())
 
-            _, _, err = TokenWhitelistableExporter.GetERC20RecipientAndAmount(nil, data[:35])
-            Expect(err).To(HaveOccurred())
-            Expect(err.Error()).To(ContainSubstring("not enough method-encoding bytes"))
+                _, _, err = TokenWhitelistableExporter.GetERC20RecipientAndAmount(nil, TKNBurnerAddress , data)
+                Expect(err).To(HaveOccurred())
+                Expect(err.Error()).To(ContainSubstring("unsupported method"))
+            })
+        })
+
+        When("I try to use 'burn' but data (i.e. amount is corrupt) is missing", func() {
+        	It("should fail", func() {
+        		a, err := abi.JSON(strings.NewReader(ERC20ABI))
+        		Expect(err).ToNot(HaveOccurred())
+        		data, err := a.Pack("burn", big.NewInt(300))
+        		Expect(err).ToNot(HaveOccurred())
+
+                _, _, err = TokenWhitelistableExporter.GetERC20RecipientAndAmount(nil, TKNBurnerAddress, data[:35])
+                Expect(err).To(HaveOccurred())
+                Expect(err.Error()).To(ContainSubstring("not enough method-encoding bytes"))
+        	})
+        })
+
+        When("I try to use 'approve' but only the method signature is sent", func() {
+    		It("should fail", func() {
+    			a, err := abi.JSON(strings.NewReader(ERC20ABI))
+    			Expect(err).ToNot(HaveOccurred())
+    			data, err := a.Pack("approve", RandomAccount.Address(), big.NewInt(300))
+    			Expect(err).ToNot(HaveOccurred())
+
+                _, _, err = TokenWhitelistableExporter.GetERC20RecipientAndAmount(nil, TKNBurnerAddress, data[:4])
+                Expect(err).To(HaveOccurred())
+                Expect(err.Error()).To(ContainSubstring("not enough method-encoding bytes"))
+    		})
+        })
+
+        When("I try to use 'transferFrom' but data (i.e. value is corrupt) is missing", func() {
+    		It("should fail", func() {
+    			a, err := abi.JSON(strings.NewReader(ERC20ABI))
+    			Expect(err).ToNot(HaveOccurred())
+                data, err := a.Pack("transferFrom", RandomAccount.Address(), Owner.Address(), big.NewInt(300))
+    			Expect(err).ToNot(HaveOccurred())
+                //transferFrom needs 100 bytes: 4(methodID) + 32 (from) + 32 (to) + 32 (value)
+                _, _, err = TokenWhitelistableExporter.GetERC20RecipientAndAmount(nil, TKNBurnerAddress, data[:99])
+                Expect(err).To(HaveOccurred())
+                Expect(err.Error()).To(ContainSubstring("not enough data for transferFrom"))
+    		})
     	})
-    })
 
-    When("I try to use 'approve' but only the method signature is sent", func() {
-		It("should fail", func() {
-			a, err := abi.JSON(strings.NewReader(ERC20ABI))
-			Expect(err).ToNot(HaveOccurred())
-			data, err := a.Pack("approve", RandomAccount.Address(), big.NewInt(300))
-			Expect(err).ToNot(HaveOccurred())
+        When("I transfer 300 tokens to a random account", func() {
+            It("should succeed", func() {
+                a, err := abi.JSON(strings.NewReader(ERC20ABI))
+                Expect(err).ToNot(HaveOccurred())
+                data, err := a.Pack("transfer", RandomAccount.Address(), big.NewInt(300))
+                Expect(err).ToNot(HaveOccurred())
 
-            _, _, err = TokenWhitelistableExporter.GetERC20RecipientAndAmount(nil, data[:4])
-            Expect(err).To(HaveOccurred())
-            Expect(err.Error()).To(ContainSubstring("not enough method-encoding bytes"))
-		})
-    })
-
-    When("I try to use 'transferFrom' but data (i.e. value is corrupt) is missing", func() {
-		It("should fail", func() {
-			a, err := abi.JSON(strings.NewReader(ERC20ABI))
-			Expect(err).ToNot(HaveOccurred())
-            data, err := a.Pack("transferFrom", RandomAccount.Address(), Owner.Address(), big.NewInt(300))
-			Expect(err).ToNot(HaveOccurred())
-            //transferFrom needs 100 bytes: 4(methodID) + 32 (from) + 32 (to) + 32 (value)
-            _, _, err = TokenWhitelistableExporter.GetERC20RecipientAndAmount(nil, data[:99])
-            Expect(err).To(HaveOccurred())
-            Expect(err.Error()).To(ContainSubstring("not enough data for transferFrom"))
-		})
-	})
-
-    When("I transfer 300 tokens to a random account", func() {
-        It("should succeed", func() {
-            a, err := abi.JSON(strings.NewReader(ERC20ABI))
-            Expect(err).ToNot(HaveOccurred())
-            data, err := a.Pack("transfer", RandomAccount.Address(), big.NewInt(300))
-            Expect(err).ToNot(HaveOccurred())
-
-            adr, amt, err := TokenWhitelistableExporter.GetERC20RecipientAndAmount(nil, data)
-            Expect(err).ToNot(HaveOccurred())
-            Expect(adr).To(Equal(RandomAccount.Address()))
-            Expect(amt).To(Equal(big.NewInt(300)))
+                adr, amt, err := TokenWhitelistableExporter.GetERC20RecipientAndAmount(nil, TKNBurnerAddress, data)
+                Expect(err).ToNot(HaveOccurred())
+                Expect(adr).To(Equal(RandomAccount.Address()))
+                Expect(amt).To(Equal(big.NewInt(300)))
+            })
         })
-    })
 
-    When("I approve 300 tokens to a random account", func() {
-        It("should succeed", func() {
-            a, err := abi.JSON(strings.NewReader(ERC20ABI))
-            Expect(err).ToNot(HaveOccurred())
-            data, err := a.Pack("approve", RandomAccount.Address(), big.NewInt(300))
-            Expect(err).ToNot(HaveOccurred())
+        When("I approve 300 tokens to a random account", func() {
+            It("should succeed", func() {
+                a, err := abi.JSON(strings.NewReader(ERC20ABI))
+                Expect(err).ToNot(HaveOccurred())
+                data, err := a.Pack("approve", RandomAccount.Address(), big.NewInt(300))
+                Expect(err).ToNot(HaveOccurred())
 
-            adr, amt, err := TokenWhitelistableExporter.GetERC20RecipientAndAmount(nil, data)
-            Expect(err).ToNot(HaveOccurred())
-            Expect(adr).To(Equal(RandomAccount.Address()))
-            Expect(amt).To(Equal(big.NewInt(300)))
+                adr, amt, err := TokenWhitelistableExporter.GetERC20RecipientAndAmount(nil, TKNBurnerAddress, data)
+                Expect(err).ToNot(HaveOccurred())
+                Expect(adr).To(Equal(RandomAccount.Address()))
+                Expect(amt).To(Equal(big.NewInt(300)))
+            })
         })
-    })
 
-    When("I transferFrom from owner to a random account 300 tokens to a random account", func() {
-        It("should succeed", func() {
-            a, err := abi.JSON(strings.NewReader(ERC20ABI))
-            Expect(err).ToNot(HaveOccurred())
-            data, err := a.Pack("transferFrom", Owner.Address(), RandomAccount.Address(), big.NewInt(300))
-            Expect(err).ToNot(HaveOccurred())
+        When("I transferFrom from owner to a random account 300 tokens to a random account", func() {
+            It("should succeed", func() {
+                a, err := abi.JSON(strings.NewReader(ERC20ABI))
+                Expect(err).ToNot(HaveOccurred())
+                data, err := a.Pack("transferFrom", Owner.Address(), RandomAccount.Address(), big.NewInt(300))
+                Expect(err).ToNot(HaveOccurred())
 
-            adr, amt, err := TokenWhitelistableExporter.GetERC20RecipientAndAmount(nil, data)
-            Expect(err).ToNot(HaveOccurred())
-            Expect(adr).To(Equal(RandomAccount.Address()))
-            Expect(amt).To(Equal(big.NewInt(300)))
+                adr, amt, err := TokenWhitelistableExporter.GetERC20RecipientAndAmount(nil, TKNBurnerAddress, data)
+                Expect(err).ToNot(HaveOccurred())
+                Expect(adr).To(Equal(RandomAccount.Address()))
+                Expect(amt).To(Equal(big.NewInt(300)))
+            })
         })
-    })
 
-    When("I burn 300 tokens ", func() {
-        It("should succeed", func() {
-            a, err := abi.JSON(strings.NewReader(ERC20ABI))
-            Expect(err).ToNot(HaveOccurred())
-            data, err := a.Pack("burn", big.NewInt(300))
-            Expect(err).ToNot(HaveOccurred())
+        When("I burn 300 tokens ", func() {
+            It("should succeed", func() {
+                a, err := abi.JSON(strings.NewReader(ERC20ABI))
+                Expect(err).ToNot(HaveOccurred())
+                data, err := a.Pack("burn", big.NewInt(300))
+                Expect(err).ToNot(HaveOccurred())
 
-            adr, amt, err := TokenWhitelistableExporter.GetERC20RecipientAndAmount(nil, data)
-            Expect(err).ToNot(HaveOccurred())
-            Expect(adr).To(Equal(common.HexToAddress("0x0")))
-            Expect(amt).To(Equal(big.NewInt(300)))
+                adr, amt, err := TokenWhitelistableExporter.GetERC20RecipientAndAmount(nil, TKNBurnerAddress, data)
+                Expect(err).ToNot(HaveOccurred())
+                Expect(adr).To(Equal(TKNBurnerAddress))
+                Expect(amt).To(Equal(big.NewInt(300)))
+            })
         })
     })
 

@@ -31,7 +31,7 @@ interface ITokenWhitelist {
     function tokenAddressArray() external view returns (address[] memory);
     function redeemableTokens() external view returns (address[] memory);
     function methodIdWhitelist(uint32) external view returns (bool);
-    function getERC20RecipientAndAmount(bytes calldata) external view returns (address, uint);
+    function getERC20RecipientAndAmount(address, bytes calldata) external view returns (address, uint);
     function stablecoin() external view returns (address);
     function updateTokenRate(address, uint, uint) external;
 }
@@ -53,6 +53,8 @@ contract TokenWhitelist is ENSResolvable, Controllable, Transferrable {
 
     event AddedMethodId(uint32 _methodId);
     event RemovedMethodId(uint32 _methodId);
+    event AddedExclusiveMethod(address _token, uint32 _methodId);
+    event RemovedExclusiveMethod(address _token, uint32 _methodId);
 
     event Claimed(address _to, address _asset, uint _amount);
 
@@ -70,6 +72,7 @@ contract TokenWhitelist is ENSResolvable, Controllable, Transferrable {
         bool loadable;    // Flags if token is loadable to the TokenCard
         bool redeemable;    // Flags if token is redeemable in the TKN Holder contract
         uint lastUpdate;  // Time of the last rate update
+        mapping (uint32 => bool) exclusiveMethods; // extra methods supported for the specific token
     }
 
     mapping(address => Token) private _tokenInfoMap;
@@ -198,20 +201,49 @@ contract TokenWhitelist is ENSResolvable, Controllable, Transferrable {
         }
     }
 
+    /// @notice Add exclusive methods supported for a specific token that are not in the general whitelist.
+    /// @param _token token address.
+    /// @param _methods method signatures to be added.
+    function addExclusiveMethods(address _token, uint32[] calldata _methods) external onlyAdmin {
+        for (uint i = 0; i < _methods.length; i++) {
+            uint32 method = _methods[i];
+            require(_tokenInfoMap[_token].available, "non-existing token");
+            if (!(_methodIdWhitelist[method] || _tokenInfoMap[_token].exclusiveMethods[method])) {
+                _tokenInfoMap[_token].exclusiveMethods[method] = true;
+                emit AddedExclusiveMethod(_token, method);
+            }
+        }
+    }
+
+    /// @notice Remove exclusive methods supported for a specific token.
+    /// @param _token token address.
+    /// @param _methods method signatures to be removed.
+    function removeExclusiveMethods(address _token, uint32[] calldata _methods) external onlyAdmin {
+        for (uint i = 0; i < _methods.length; i++) {
+            uint32 method = _methods[i];
+            require(_tokenInfoMap[_token].available, "non-existing token");
+            if (_tokenInfoMap[_token].exclusiveMethods[method]){
+                _tokenInfoMap[_token].exclusiveMethods[method] = false;
+                emit RemovedExclusiveMethod(_token, method);
+            }
+        }
+    }
+
     /// @notice based on the method it returns the recipient address and amount/value, ERC20 specific.
     /// @param _data is the transaction payload.
-    function getERC20RecipientAndAmount(bytes calldata _data) external view returns (address, uint) {
+    function getERC20RecipientAndAmount(address  _destination, bytes calldata _data) external view returns (address, uint) {
         // Require that there exist enough bytes for encoding at least a method signature + data in the transaction payload:
         // 4 (signature)  + 32(address or uint256)
         require(_data.length >= 4 + 32, "not enough method-encoding bytes");
         // Get the method signature
         uint32 signature = _data._bytesToUint32(0);
-        // Check if method Id is one one of the whitelisted ones
-        require(_methodIdWhitelist[signature], "unsupported method");
+        // Check if method Id is supported
+        require(isERC20MethodSupported(_destination, signature), "unsupported method");
         //to is the recipient's address and amount is the value to be transferred
         address to;
         uint amount;
         if (signature == _BURN){
+            to = _destination;
             amount = _data._bytesToUint256(4);
         } else if (signature == _TRANSFER_FROM){
             // 4 (signature) + 32(address) + 32(address) + 32(uint256)
@@ -319,10 +351,17 @@ contract TokenWhitelist is ENSResolvable, Controllable, Transferrable {
     }
 
 
-    /// @notice This returns true if a method Id is whitelisted.
-    /// @return true if _methodId is in the methodId whitelist.
-    function methodIdWhitelist(uint32 _methodId) external view returns (bool) {
-        return _methodIdWhitelist[_methodId];
+    /// @notice This returns true if a method Id is supported for the specific token.
+    /// @return true if _methodId is supported in general or just for the specific token.
+    function isERC20MethodSupported(address _token, uint32 _methodId) public view returns (bool) {
+        require(_tokenInfoMap[_token].available, "non-existing token");
+        return (_methodIdWhitelist[_methodId] || _tokenInfoMap[_token].exclusiveMethods[_methodId]);
+    }
+
+    /// @notice This returns true if the method is supported for all protected tokens.
+    /// @return true if _methodId is in the method whitelist.
+    function isERC20MethodWhitelisted(uint32 _methodId) external view returns (bool) {
+        return (_methodIdWhitelist[_methodId]);
     }
 
     /// @notice This returns the number of redeemable tokens.

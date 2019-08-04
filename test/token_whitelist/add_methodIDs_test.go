@@ -16,23 +16,19 @@ var _ = Describe("method Ids", func() {
 
             methodID := crypto.Keccak256Hash([]byte("transfer(address,uint256)"))
             methodIdUint32 := binary.BigEndian.Uint32(methodID[:4])
-            wl, err := TokenWhitelist.MethodIdWhitelist(nil, methodIdUint32)
-            Expect(err).ToNot(HaveOccurred())
-            Expect(wl).To(BeTrue())
-
-            wl, err = TokenWhitelistableExporter.IsMethodIdWhitelisted(nil, methodIdUint32)
+            wl, err := TokenWhitelist.IsERC20MethodWhitelisted(nil, methodIdUint32)
             Expect(err).ToNot(HaveOccurred())
             Expect(wl).To(BeTrue())
 
             methodID = crypto.Keccak256Hash([]byte("approve(address,uint256)"))
             methodIdUint32 = binary.BigEndian.Uint32(methodID[:4])
-            wl, err = TokenWhitelist.MethodIdWhitelist(nil, methodIdUint32)
+            wl, err = TokenWhitelist.IsERC20MethodWhitelisted(nil, methodIdUint32)
             Expect(err).ToNot(HaveOccurred())
             Expect(wl).To(BeTrue())
 
             methodID = crypto.Keccak256Hash([]byte("transferFrom(address,address,uint256)"))
             methodIdUint32 = binary.BigEndian.Uint32(methodID[:4])
-            wl, err = TokenWhitelist.MethodIdWhitelist(nil, methodIdUint32)
+            wl, err = TokenWhitelist.IsERC20MethodWhitelisted(nil, methodIdUint32)
             Expect(err).ToNot(HaveOccurred())
             Expect(wl).To(BeTrue())
         })
@@ -60,7 +56,7 @@ var _ = Describe("method Ids", func() {
         It("should add 1 new method", func() {
             methodID := crypto.Keccak256Hash([]byte("increaseApproval(address,uint256)"))
             methodIdUint32 := binary.BigEndian.Uint32(methodID[:4])
-            wl, err := TokenWhitelist.MethodIdWhitelist(nil, methodIdUint32)
+            wl, err := TokenWhitelist.IsERC20MethodWhitelisted(nil, methodIdUint32)
             Expect(err).ToNot(HaveOccurred())
             Expect(wl).To(BeTrue())
         })
@@ -92,13 +88,13 @@ var _ = Describe("method Ids", func() {
             It("should remove 2 methods", func() {
                 methodID := crypto.Keccak256Hash([]byte("increaseApproval(address,uint256)"))
                 methodIdUint32 := binary.BigEndian.Uint32(methodID[:4])
-                wl, err := TokenWhitelist.MethodIdWhitelist(nil, methodIdUint32)
+                wl, err := TokenWhitelist.IsERC20MethodWhitelisted(nil, methodIdUint32)
                 Expect(err).ToNot(HaveOccurred())
                 Expect(wl).To(BeFalse())
 
                 methodID = crypto.Keccak256Hash([]byte("transfer(address,uint256)"))
                 methodIdUint32 = binary.BigEndian.Uint32(methodID[:4])
-                wl, err = TokenWhitelist.MethodIdWhitelist(nil, methodIdUint32)
+                wl, err = TokenWhitelist.IsERC20MethodWhitelisted(nil, methodIdUint32)
                 Expect(err).ToNot(HaveOccurred())
                 Expect(wl).To(BeFalse())
             })

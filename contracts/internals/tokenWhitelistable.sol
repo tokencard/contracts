@@ -85,16 +85,10 @@ contract TokenWhitelistable is ENSResolvable {
         ITokenWhitelist(_ensResolve(_tokenWhitelistNode)).updateTokenRate(_token, _rate, _updateDate);
     }
 
-    /// @notice This returns true if a method Id is whitelisted.
-    /// @return true if _methodId is in the methodId whitelist.
-    function _isMethodIdWhitelisted(uint32 _methodId) internal view returns (bool) {
-        return ITokenWhitelist(_ensResolve(_tokenWhitelistNode)).methodIdWhitelist(_methodId);
-    }
-
     /// @notice based on the method it returns the recipient address and amount/value, ERC20 specific.
     /// @param _data is the transaction payload.
-    function _getERC20RecipientAndAmount(bytes memory _data) internal view returns (address, uint) {
-        return ITokenWhitelist(_ensResolve(_tokenWhitelistNode)).getERC20RecipientAndAmount(_data);
+    function _getERC20RecipientAndAmount(address _destination, bytes memory _data) internal view returns (address, uint) {
+        return ITokenWhitelist(_ensResolve(_tokenWhitelistNode)).getERC20RecipientAndAmount(_destination, _data);
     }
 
     /// @notice Checks whether a token is available.

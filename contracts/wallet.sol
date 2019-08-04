@@ -660,7 +660,7 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
                 //to is the recipient's address and amount is the value to be transferred
                 address to;
                 uint amount;
-                (to, amount) = _getERC20RecipientAndAmount(_data);
+                (to, amount) = _getERC20RecipientAndAmount(_destination, _data);
                 // if return address (to) is the zero address then to = _destination (e.g. burn() method)
                 if (to == address(0)){
                     to = _destination;
