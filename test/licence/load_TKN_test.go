@@ -144,7 +144,7 @@ var _ = Describe("load TKN", func() {
 			When("more tokens than approved are being transfered ", func() {
 
 				It("Should revert", func() {
-					tx, err := Licence.Load(RandomAccount.TransactOpts(ethertest.WithGasLimit(100000)), TKNAddress, big.NewInt(555))
+					tx, err := Licence.Load(RandomAccount.TransactOpts(ethertest.WithGasLimit(100000)), TKNBurnerAddress, big.NewInt(555))
 					Expect(err).ToNot(HaveOccurred())
 					Backend.Commit()
 					Expect(isGasExhausted(tx, 100000)).To(BeFalse())

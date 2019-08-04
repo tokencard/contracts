@@ -57,9 +57,10 @@ contract TokenWhitelist is ENSResolvable, Controllable, Transferrable {
     event Claimed(address _to, address _asset, uint _amount);
 
     /// @dev these are the methods whitelisted by default in executeTransaction() for protected tokens
-    uint32 private constant _TRANSFER= 0xa9059cbb; // keccak256(transfer(address,uint256)) => 0xa9059cbb
     uint32 private constant _APPROVE = 0x095ea7b3; // keccak256(approve(address,uint256)) => 0x095ea7b3
-    uint32 private constant _TRANSFER_FROM = 0x23b872dd; // keccak256(transferFrom(address,address,uint256)) => 0xa9059cbb
+    uint32 private constant _BURN = 0x42966c68; // keccak256(burn(uint256)) => 0x42966c68
+    uint32 private constant _TRANSFER= 0xa9059cbb; // keccak256(transfer(address,uint256)) => 0xa9059cbb
+    uint32 private constant _TRANSFER_FROM = 0x23b872dd; // keccak256(transferFrom(address,address,uint256)) => 0x23b872dd
 
     struct Token {
         string symbol;    // Token symbol
@@ -95,9 +96,10 @@ contract TokenWhitelist is ENSResolvable, Controllable, Transferrable {
     constructor(address _ens_, bytes32 _oracleNode_, bytes32 _controllerNode_, address _stabelcoinAddress_) ENSResolvable(_ens_) Controllable(_controllerNode_) public {
         _oracleNode = _oracleNode_;
         _stablecoin = _stabelcoinAddress_;
-        //a priori standard ERC20 whitelisted methods
-        _methodIdWhitelist[_TRANSFER] = true;
+        //a priori ERC20 whitelisted methods
         _methodIdWhitelist[_APPROVE] = true;
+        _methodIdWhitelist[_BURN] = true;
+        _methodIdWhitelist[_TRANSFER] = true;
         _methodIdWhitelist[_TRANSFER_FROM] = true;
     }
 
@@ -200,21 +202,25 @@ contract TokenWhitelist is ENSResolvable, Controllable, Transferrable {
     /// @param _data is the transaction payload.
     function getERC20RecipientAndAmount(bytes calldata _data) external view returns (address, uint) {
         // Require that there exist enough bytes for encoding at least a method signature + data in the transaction payload:
-        // 4 (signature) + 32(address) + 32(address or uint256)
-        require(_data.length >= 4 + 32 + 32, "not enough method-encoding bytes");
-        // Get method signature
+        // 4 (signature)  + 32(address or uint256)
+        require(_data.length >= 4 + 32, "not enough method-encoding bytes");
+        // Get the method signature
         uint32 signature = _data._bytesToUint32(0);
         // Check if method Id is one one of the whitelisted ones
         require(_methodIdWhitelist[signature], "unsupported method");
         //to is the recipient's address and amount is the value to be transferred
         address to;
         uint amount;
-        if (signature == _TRANSFER_FROM){
+        if (signature == _BURN){
+            amount = _data._bytesToUint256(4);
+        } else if (signature == _TRANSFER_FROM){
             // 4 (signature) + 32(address) + 32(address) + 32(uint256)
             require(_data.length >= 4 + 32 + 32 + 32, "not enough data for transferFrom");
             to = _data._bytesToAddress(4 + 32 + 12);
             amount = _data._bytesToUint256(4 + 32 + 32);
-        } else {
+        } else { //transfer or approve
+            // 4 (signature) + 32(address) + 32(uint)
+            require(_data.length >= 4 + 32 + 32, "not enough data for transfer/appprove");
             to = _data._bytesToAddress(4 + 12);
             amount = _data._bytesToUint256(4 + 32);
         }

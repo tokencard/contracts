@@ -3,6 +3,7 @@ package token_whitelist_test
 import (
 	"math/big"
     "strings"
+    "github.com/ethereum/go-ethereum/common"
     "github.com/ethereum/go-ethereum/accounts/abi"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -24,27 +25,27 @@ var _ = Describe("get the ERC20 Recipient and Amount", func() {
         })
     })
 
-    When("I try to use 'transfer' but data (i.e. value is corrupt) is missing", func() {
+    When("I try to use 'burn' but data (i.e. amount is corrupt) is missing", func() {
     	It("should fail", func() {
     		a, err := abi.JSON(strings.NewReader(ERC20ABI))
     		Expect(err).ToNot(HaveOccurred())
-    		data, err := a.Pack("transfer", RandomAccount.Address(), big.NewInt(300))
+    		data, err := a.Pack("burn", big.NewInt(300))
     		Expect(err).ToNot(HaveOccurred())
 
-            _, _, err = TokenWhitelistableExporter.GetERC20RecipientAndAmount(nil, data[:67])
+            _, _, err = TokenWhitelistableExporter.GetERC20RecipientAndAmount(nil, data[:35])
             Expect(err).To(HaveOccurred())
             Expect(err.Error()).To(ContainSubstring("not enough method-encoding bytes"))
     	})
     })
 
-    When("I try to use 'approve' but data (i.e. value) is missing", func() {
+    When("I try to use 'approve' but only the method signature is sent", func() {
 		It("should fail", func() {
 			a, err := abi.JSON(strings.NewReader(ERC20ABI))
 			Expect(err).ToNot(HaveOccurred())
 			data, err := a.Pack("approve", RandomAccount.Address(), big.NewInt(300))
 			Expect(err).ToNot(HaveOccurred())
 
-            _, _, err = TokenWhitelistableExporter.GetERC20RecipientAndAmount(nil, data[:36])
+            _, _, err = TokenWhitelistableExporter.GetERC20RecipientAndAmount(nil, data[:4])
             Expect(err).To(HaveOccurred())
             Expect(err.Error()).To(ContainSubstring("not enough method-encoding bytes"))
 		})
@@ -105,6 +106,20 @@ var _ = Describe("get the ERC20 Recipient and Amount", func() {
         })
     })
 
+    When("I burn 300 tokens ", func() {
+        It("should succeed", func() {
+            a, err := abi.JSON(strings.NewReader(ERC20ABI))
+            Expect(err).ToNot(HaveOccurred())
+            data, err := a.Pack("burn", big.NewInt(300))
+            Expect(err).ToNot(HaveOccurred())
+
+            adr, amt, err := TokenWhitelistableExporter.GetERC20RecipientAndAmount(nil, data)
+            Expect(err).ToNot(HaveOccurred())
+            Expect(adr).To(Equal(common.HexToAddress("0x0")))
+            Expect(amt).To(Equal(big.NewInt(300)))
+        })
+    })
+
 })
 
 const ERC20ABI = `[
@@ -120,6 +135,25 @@ const ERC20ABI = `[
         ],
         "payable": false,
         "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "constant": false,
+        "inputs": [
+            {
+                "name": "_amount",
+                "type": "uint256"
+            }
+        ],
+        "name": "burn",
+        "outputs": [
+            {
+                "name": "",
+                "type": "bool"
+            }
+        ],
+        "payable": false,
+        "stateMutability": "nonpayable",
         "type": "function"
     },
     {
