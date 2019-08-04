@@ -661,10 +661,6 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
                 address to;
                 uint amount;
                 (to, amount) = _getERC20RecipientAndAmount(_destination, _data);
-                // if return address (to) is the zero address then to = _destination (e.g. burn() method)
-                if (to == address(0)){
-                    to = _destination;
-                }
                 if (!whitelistMap[to]) {
                     // If the address (of the token contract, e.g) is not in the TokenWhitelist used by the convert method...
                     // ...then etherValue will be zero

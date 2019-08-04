@@ -7,7 +7,7 @@ import (
     "github.com/ethereum/go-ethereum/accounts/abi"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	. "github.com/tokencard/contracts/test/shared"
+	. "github.com/tokencard/contracts/v2/test/shared"
 )
 
 var _ = Describe("get the ERC20 Recipient and Amount", func() {

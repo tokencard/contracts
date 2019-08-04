@@ -8,7 +8,7 @@ import (
     "github.com/tokencard/ethertest"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	. "github.com/tokencard/contracts/test/shared"
+	. "github.com/tokencard/contracts/v2/test/shared"
 )
 
 var _ = Describe("exclusive methods Ids", func() {
