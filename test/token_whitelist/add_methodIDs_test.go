@@ -1,7 +1,6 @@
 package token_whitelist_test
 
 import (
-    "encoding/binary"
     "github.com/ethereum/go-ethereum/crypto"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -15,20 +14,21 @@ var _ = Describe("method Ids", func() {
         It("it should have 3 methods (transfer, approve, transferFrom) whitelisted", func() {
 
             methodID := crypto.Keccak256Hash([]byte("transfer(address,uint256)"))
-            methodIdUint32 := binary.BigEndian.Uint32(methodID[:4])
-            wl, err := TokenWhitelist.IsERC20MethodWhitelisted(nil, methodIdUint32)
+            var method [4]byte
+            copy(method[:], methodID[:4])
+            wl, err := TokenWhitelist.IsERC20MethodWhitelisted(nil, method)
             Expect(err).ToNot(HaveOccurred())
             Expect(wl).To(BeTrue())
 
             methodID = crypto.Keccak256Hash([]byte("approve(address,uint256)"))
-            methodIdUint32 = binary.BigEndian.Uint32(methodID[:4])
-            wl, err = TokenWhitelist.IsERC20MethodWhitelisted(nil, methodIdUint32)
+            copy(method[:], methodID[:4])
+            wl, err = TokenWhitelist.IsERC20MethodWhitelisted(nil, method)
             Expect(err).ToNot(HaveOccurred())
             Expect(wl).To(BeTrue())
 
             methodID = crypto.Keccak256Hash([]byte("transferFrom(address,address,uint256)"))
-            methodIdUint32 = binary.BigEndian.Uint32(methodID[:4])
-            wl, err = TokenWhitelist.IsERC20MethodWhitelisted(nil, methodIdUint32)
+            copy(method[:], methodID[:4])
+            wl, err = TokenWhitelist.IsERC20MethodWhitelisted(nil, method)
             Expect(err).ToNot(HaveOccurred())
             Expect(wl).To(BeTrue())
         })
@@ -36,17 +36,17 @@ var _ = Describe("method Ids", func() {
 
     When("the controller admin adds methods (one already existing)", func() {
 
-        var method1 uint32
-        var method2 uint32
+        var method1 [4]byte
+        var method2 [4]byte
 
         BeforeEach(func() {
             methodID := crypto.Keccak256Hash([]byte("transfer(address,uint256)"))
-            method1 = binary.BigEndian.Uint32(methodID[:4])
+            copy(method1[:], methodID[:4])
 
             methodID = crypto.Keccak256Hash([]byte("increaseApproval(address,uint256)"))
-            method2 = binary.BigEndian.Uint32(methodID[:4])
+            copy(method2[:], methodID[:4])
 
-            methods := []uint32{method1, method2}
+            methods := [][4]byte{method1, method2}
             tx, err := TokenWhitelist.AddMethodIds(ControllerAdmin.TransactOpts(), methods)
             Expect(err).ToNot(HaveOccurred())
             Backend.Commit()
@@ -55,8 +55,8 @@ var _ = Describe("method Ids", func() {
 
         It("should add 1 new method", func() {
             methodID := crypto.Keccak256Hash([]byte("increaseApproval(address,uint256)"))
-            methodIdUint32 := binary.BigEndian.Uint32(methodID[:4])
-            wl, err := TokenWhitelist.IsERC20MethodWhitelisted(nil, methodIdUint32)
+            copy(method1[:], methodID[:4])
+            wl, err := TokenWhitelist.IsERC20MethodWhitelisted(nil, method1)
             Expect(err).ToNot(HaveOccurred())
             Expect(wl).To(BeTrue())
         })
@@ -73,12 +73,12 @@ var _ = Describe("method Ids", func() {
         When("the controller admin removes methods", func() {
             BeforeEach(func() {
                 methodID := crypto.Keccak256Hash([]byte("transfer(address,uint256)"))
-                method1 = binary.BigEndian.Uint32(methodID[:4])
+                copy(method1[:], methodID[:4])
 
                 methodID = crypto.Keccak256Hash([]byte("increaseApproval(address,uint256)"))
-                method2 = binary.BigEndian.Uint32(methodID[:4])
+                copy(method2[:], methodID[:4])
 
-                methods := []uint32{method1, method2}
+                methods := [][4]byte{method1, method2}
                 tx, err := TokenWhitelist.RemoveMethodIds(ControllerAdmin.TransactOpts(), methods)
                 Expect(err).ToNot(HaveOccurred())
                 Backend.Commit()
@@ -87,14 +87,14 @@ var _ = Describe("method Ids", func() {
 
             It("should remove 2 methods", func() {
                 methodID := crypto.Keccak256Hash([]byte("increaseApproval(address,uint256)"))
-                methodIdUint32 := binary.BigEndian.Uint32(methodID[:4])
-                wl, err := TokenWhitelist.IsERC20MethodWhitelisted(nil, methodIdUint32)
+                copy(method1[:], methodID[:4])
+                wl, err := TokenWhitelist.IsERC20MethodWhitelisted(nil, method1)
                 Expect(err).ToNot(HaveOccurred())
                 Expect(wl).To(BeFalse())
 
                 methodID = crypto.Keccak256Hash([]byte("transfer(address,uint256)"))
-                methodIdUint32 = binary.BigEndian.Uint32(methodID[:4])
-                wl, err = TokenWhitelist.IsERC20MethodWhitelisted(nil, methodIdUint32)
+                copy(method1[:], methodID[:4])
+                wl, err = TokenWhitelist.IsERC20MethodWhitelisted(nil, method1)
                 Expect(err).ToNot(HaveOccurred())
                 Expect(wl).To(BeFalse())
             })
@@ -115,8 +115,8 @@ var _ = Describe("method Ids", func() {
         When("a non-admin account tries to remove methods", func() {
             It("should fail", func() {
                 methodID := crypto.Keccak256Hash([]byte("transfer(address,uint256)"))
-                method1 := binary.BigEndian.Uint32(methodID[:4])
-                methods := []uint32{method1}
+                copy(method1[:], methodID[:4])
+                methods := [][4]byte{method1}
                 tx, err := TokenWhitelist.RemoveMethodIds(Controller.TransactOpts(ethertest.WithGasLimit(100000)), methods)
                 Expect(err).ToNot(HaveOccurred())
                 Backend.Commit()
@@ -128,8 +128,9 @@ var _ = Describe("method Ids", func() {
     When("a non-admin account tries to add methods", func() {
         It("should fail", func() {
             methodID := crypto.Keccak256Hash([]byte("transfer(address,uint256)"))
-            method1 := binary.BigEndian.Uint32(methodID[:4])
-            methods := []uint32{method1}
+            var method [4]byte
+            copy(method[:], methodID[:4])
+            methods := [][4]byte{method}
             tx, err := TokenWhitelist.AddMethodIds(Controller.TransactOpts(ethertest.WithGasLimit(100000)), methods)
             Expect(err).ToNot(HaveOccurred())
             Backend.Commit()

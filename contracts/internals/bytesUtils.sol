@@ -37,20 +37,20 @@ library BytesUtils {
         return address(convertedAddress);
     }
 
-    /// @dev This function slicing bytes into uint32
+    /// @dev This function slices bytes into bytes4
     /// @param _bts some bytes
     /// @param _from start position
-    function _bytesToUint32(bytes memory _bts, uint _from) internal pure returns (uint32) {
+    function _bytesToBytes4(bytes memory _bts, uint _from) internal pure returns (bytes4) {
         require(_bts.length >= _from + 4, "slicing out of range");
 
-        bytes4 convertedUint32;
+        bytes4 slicedBytes4;
         uint startByte = _from + 32; //first 32 bytes denote the array length
 
         assembly {
-            convertedUint32 := mload(add(_bts, startByte))
+            slicedBytes4 := mload(add(_bts, startByte))
         }
 
-        return uint32(convertedUint32);
+        return slicedBytes4;
 
     }
 
