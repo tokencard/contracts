@@ -177,12 +177,12 @@ contract TokenWhitelist is ENSResolvable, Controllable, Transferrable {
         }
     }
 
-    /// @notice Add method signatures(methodIDs) in the whitelist.
+    /// @notice Add method signatures(methodIDs) to the whitelist.
     /// @param _methods method signatures to be added.
     function addMethodIds(bytes4[] calldata _methods) external onlyAdmin {
         for (uint i = 0; i < _methods.length; i++) {
             bytes4 method = _methods[i];
-            if (!_methodIdWhitelist[method]){
+            if (!_methodIdWhitelist[method]) {
                 _methodIdWhitelist[method] = true;
                 emit AddedMethodId(method);
             }
@@ -194,7 +194,7 @@ contract TokenWhitelist is ENSResolvable, Controllable, Transferrable {
     function removeMethodIds(bytes4[] calldata _methods) external onlyAdmin {
         for (uint i = 0; i < _methods.length; i++) {
             bytes4 method = _methods[i];
-            if (_methodIdWhitelist[method]){
+            if (_methodIdWhitelist[method]) {
                 _methodIdWhitelist[method] = false;
                 emit RemovedMethodId(method);
             }
@@ -243,9 +243,11 @@ contract TokenWhitelist is ENSResolvable, Controllable, Transferrable {
         address to;
         uint amount;
         if (signature == _BURN){
+            // 4 (signature) + 32(uint256)
+            require(_data.length >= 4 + 32, "not enough data for burn");
             to = _destination;
             amount = _data._bytesToUint256(4);
-        } else if (signature == _TRANSFER_FROM){
+        } else if (signature == _TRANSFER_FROM) {
             // 4 (signature) + 32(address) + 32(address) + 32(uint256)
             require(_data.length >= 4 + 32 + 32 + 32, "not enough data for transferFrom");
             to = _data._bytesToAddress(4 + 32 + 12);
