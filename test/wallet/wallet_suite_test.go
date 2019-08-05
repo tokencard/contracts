@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"strings"
 	"testing"
 
 	"github.com/Masterminds/semver"
@@ -48,7 +49,7 @@ var _ = BeforeEach(func() {
 })
 
 var allPassed = true
-var currentVersion = "v2.0.0"
+var currentVersion = "2.0.0"
 
 var _ = Describe("Wallet Version", func() {
 	It("should return the current version", func() {
@@ -62,6 +63,12 @@ var _ = Describe("Wallet Version", func() {
 		Expect(err).ToNot(HaveOccurred())
 		_, err = semver.NewVersion(v)
 		Expect(err).ToNot(HaveOccurred())
+	})
+
+	It("should not start with a v prefix", func() {
+		v, err := Wallet.WALLETVERSION(nil)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(strings.HasPrefix(v, "v")).To(BeFalse())
 	})
 })
 
