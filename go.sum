@@ -1,3 +1,5 @@
+github.com/Masterminds/semver v1.4.2 h1:WBLTQ37jOCzSLtXNdoo8bNM8876KhNqOKvrlGITgsTc=
+github.com/Masterminds/semver v1.4.2/go.mod h1:MB6lktGJrhw8PrUyiEoblNEGEQ+RzHPF078ddwwvV3Y=
 github.com/allegro/bigcache v1.1.1-0.20190116153254-84a0ff3f153c h1:JnxT952szw65TwPg7iz1iYVqEoikvX8mSkSgIhNr0Vo=
 github.com/allegro/bigcache v1.1.1-0.20190116153254-84a0ff3f153c/go.mod h1:Cb/ax3seSYIx7SuZdm2G2xzfwmv3TPSk2ucNfQESPXM=
 github.com/aristanetworks/goarista v0.0.0-20180907105523-ff33da284e76 h1:64W/KrGykPTfDI9xTkZtnjZRYA5p2+c/IuGgjzeWCpI=
