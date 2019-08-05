@@ -9,9 +9,9 @@ import (
 	"github.com/ethereum/go-ethereum/core/types"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	"github.com/tokencard/contracts/pkg/bindings"
-	"github.com/tokencard/contracts/pkg/bindings/mocks"
-	. "github.com/tokencard/contracts/test/shared"
+	"github.com/tokencard/contracts/v2/pkg/bindings"
+	"github.com/tokencard/contracts/v2/pkg/bindings/mocks"
+	. "github.com/tokencard/contracts/v2/test/shared"
 )
 
 var TokenWhitelistableExporter *mocks.TokenWhitelistableExporter

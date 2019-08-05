@@ -8,7 +8,7 @@ import (
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	. "github.com/tokencard/contracts/test/shared"
+	. "github.com/tokencard/contracts/v2/test/shared"
 
 	"github.com/ethereum/go-ethereum/common"
 )
