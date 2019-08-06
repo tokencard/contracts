@@ -651,12 +651,20 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
     /// @param _value ETH amount in wei
     /// @param _data transaction payload binary
     function executeTransaction(address _destination, uint _value, bytes calldata _data, bool _destinationIsContract) external onlyOwner {
+        // If value is send across as a part of this executeTransaction, this will be sent to any payable
+        // destination. As a result enforceLimit if destination is not whitelisted.
+        if (!whitelistMap[_destination]) {
+            _spendLimit._enforceLimit(_value);
+        }
         // Check if the destination is a Contract
         // This prevents users from accidentally sending Value and Data to a plain old address
         if (_destinationIsContract) {
             require(address(_destination).isContract(), "executeTransaction for a contract: call to non-contract");
             // Check if the destination contract address is in the tokenWhitelist, hence protected
             if (_isTokenAvailable(_destination)) {
+                //use callOptionalReturn provided in SafeERC20 in case the ERC20 method
+                // returns flase instead of reverting!
+                ERC20(_destination).callOptionalReturn(_data);
                 //to is the recipient's address and amount is the value to be transferred
                 address to;
                 uint amount;
@@ -667,19 +675,15 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
                     uint etherValue = convertToEther(_destination, amount);
                     _spendLimit._enforceLimit(etherValue);
                 }
+                emit ExecutedTransaction(_destination, _value, _data);
+                return;
             }
         } else {
             require(!address(_destination).isContract(), "executeTransaction for a non-contract: call to contract");
         }
 
-        // If value is send across as a part of this executeTransaction, this will be sent to any payable
-        // destination. As a result enforceLimit if destination is not whitelisted.
-        if (!whitelistMap[_destination]) {
-            _spendLimit._enforceLimit(_value);
-        }
-
-        require(_executeCall(_destination, _value, _data), "executing transaction failed");
-
+        (bool success, ) = _destination.call.value(_value)(_data);
+        require(success, "low-level call failed");
         emit ExecutedTransaction(_destination, _value, _data);
     }
 
@@ -717,20 +721,6 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
         require(stablecoinRate != 0, "stablecoin rate is 0");
         // Safely convert the token amount to stablecoin based on its exchange rate and the stablecoin exchange rate.
         return amountToSend.mul(stablecoinMagnitude).div(stablecoinRate);
-    }
-
-    /// @dev This calls proxies arbitrary transactions to addresses
-    /// @param _to destination address of the transaction
-    /// @param _value ETH amount in wei
-    /// @param _data transaction payload binary
-    /// @return true if the call was successful
-    function _executeCall(address _to, uint256 _value, bytes memory _data) internal returns (bool) {
-        bool success;
-        // solium-disable-next-line security/no-inline-assembly
-        assembly {
-            success := call(gas, _to, _value, add(_data, 0x20), mload(_data), 0, 0)
-        }
-        return success;
     }
 
 }

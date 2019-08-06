@@ -36,7 +36,7 @@ var _ = Describe("executeTransaction", func() {
     				BeforeEach(func() {
     					spendLimit, err = Wallet.SpendLimitAvailable(nil)
     					Expect(err).ToNot(HaveOccurred())
-    					privateKey, err := crypto.GenerateKey()
+    					privateKey, _ := crypto.GenerateKey()
     					randomAddress = crypto.PubkeyToAddress(privateKey.PublicKey)
     					tx, err = Wallet.ExecuteTransaction(Owner.TransactOpts(ethertest.WithGasLimit(100000)), randomAddress, FinneyToWei(500), nil, false)
     					Expect(err).ToNot(HaveOccurred())
@@ -56,7 +56,114 @@ var _ = Describe("executeTransaction", func() {
     					Expect(err).ToNot(HaveOccurred())
     					Expect(sl.String()).To(Equal(spendLimit.String()))
     				})
+
+                    It("should emit an ExecutedTransaction event", func() {
+						it, err := Wallet.FilterExecutedTransaction(nil)
+                        Expect(err).ToNot(HaveOccurred())
+        				Expect(it.Next()).To(BeTrue())
+        				evt := it.Event
+        				Expect(it.Next()).To(BeFalse())
+        				Expect(evt.Destination).To(Equal(randomAddress))
+        				Expect(evt.Value.String()).To(Equal(FinneyToWei(500).String()))
+                        Expect(evt.Data).To(Equal([]uint8{}))
+					})
                 })
+
+                When("I send data ('transfer' tx) to an random EOA using 'executeTransaction'", func() {
+    				BeforeEach(func() {
+    					a, err := abi.JSON(strings.NewReader(ERC20ABI))
+    					Expect(err).ToNot(HaveOccurred())
+                        privateKey, _ := crypto.GenerateKey()
+                        randomAddress = crypto.PubkeyToAddress(privateKey.PublicKey)
+    					data, err := a.Pack("transfer", randomAddress, big.NewInt(300))
+    					Expect(err).ToNot(HaveOccurred())
+
+    					tx, err = Wallet.ExecuteTransaction(Owner.TransactOpts(), randomAddress, FinneyToWei(500), data, false)
+    					Expect(err).ToNot(HaveOccurred())
+    					Backend.Commit()
+    					Expect(isSuccessful(tx)).To(BeTrue())
+    				})
+
+                    It("should increase random EOA's balance by the same amount", func() {
+                        b, e := Backend.BalanceAt(context.Background(), randomAddress, nil)
+                        Expect(e).ToNot(HaveOccurred())
+                        Expect(b.String()).To(Equal(FinneyToWei(500).String()))
+                    })
+
+                    It("should reduce the available daily spend balance", func() {
+                        av, err := Wallet.SpendLimitAvailable(nil)
+    					Expect(err).ToNot(HaveOccurred())
+                        sl, err := Wallet.SpendLimitValue(nil)
+                        Expect(err).ToNot(HaveOccurred())
+                        sl.Sub(sl, FinneyToWei(500))
+    					Expect(av.String()).To(Equal(sl.String()))
+                    })
+
+                    It("should emit an ExecutedTransaction event", func() {
+                        it, err := Wallet.FilterExecutedTransaction(nil)
+                        Expect(err).ToNot(HaveOccurred())
+                        Expect(it.Next()).To(BeTrue())
+                        evt := it.Event
+                        Expect(it.Next()).To(BeFalse())
+                        Expect(evt.Destination).To(Equal(randomAddress))
+                        Expect(evt.Value.String()).To(Equal(FinneyToWei(500).String()))
+                        a, err := abi.JSON(strings.NewReader(ERC20ABI))
+    					Expect(err).ToNot(HaveOccurred())
+                        ed, _ := a.Pack("transfer", randomAddress, big.NewInt(300))
+                        Expect(evt.Data).To(Equal(ed))
+                    })
+    			})
+
+                When("the value sent is more than the daily spend limit", func() {
+    				It("should fail", func() {
+    					privateKey, _ := crypto.GenerateKey()
+    					randomAddress = crypto.PubkeyToAddress(privateKey.PublicKey)
+    					tx, err = Wallet.ExecuteTransaction(Owner.TransactOpts(ethertest.WithGasLimit(100000)), randomAddress, EthToWei(101), nil, false)
+    					Expect(err).ToNot(HaveOccurred())
+    					Backend.Commit()
+    					Expect(isSuccessful(tx)).To(BeFalse())
+    				})
+    			})
+
+                When("the value sent is exactly equal to the daily spend limit", func() {
+    				BeforeEach(func() {
+    					privateKey, _ := crypto.GenerateKey()
+    					randomAddress = crypto.PubkeyToAddress(privateKey.PublicKey)
+    					tx, err = Wallet.ExecuteTransaction(Owner.TransactOpts(), randomAddress, EthToWei(100), nil, false)
+    					Expect(err).ToNot(HaveOccurred())
+    					Backend.Commit()
+    					Expect(isSuccessful(tx)).To(BeTrue())
+    				})
+
+                    It("should increase random EOA's balance by the same amount", func() {
+                        b, e := Backend.BalanceAt(context.Background(), randomAddress, nil)
+                        Expect(e).ToNot(HaveOccurred())
+                        Expect(b.String()).To(Equal(EthToWei(100).String()))
+                    })
+
+                    It("should decrease the wallet's balance by the same amount", func() {
+                        b, e := Backend.BalanceAt(context.Background(), WalletAddress, nil)
+                        Expect(e).ToNot(HaveOccurred())
+                        Expect(b.String()).To(Equal(EthToWei(1).String()))
+                    })
+
+                    It("should reduce the available daily spend balance to 0", func() {
+                        av, err := Wallet.SpendLimitAvailable(nil)
+    					Expect(err).ToNot(HaveOccurred())
+    					Expect(av.String()).To(Equal("0"))
+                    })
+
+                    It("should emit an ExecutedTransaction event", func() {
+                        it, err := Wallet.FilterExecutedTransaction(nil)
+                        Expect(err).ToNot(HaveOccurred())
+                        Expect(it.Next()).To(BeTrue())
+                        evt := it.Event
+                        Expect(it.Next()).To(BeFalse())
+                        Expect(evt.Destination).To(Equal(randomAddress))
+                        Expect(evt.Value.String()).To(Equal(EthToWei(100).String()))
+                        Expect(evt.Data).To(Equal([]uint8{}))
+                    })
+    			})
 
                 When("the destination address is whitelisted", func() {
 
@@ -90,12 +197,23 @@ var _ = Describe("executeTransaction", func() {
     					Expect(err).ToNot(HaveOccurred())
     					Expect(sl.String()).To(Equal(spendLimit.String()))
     				})
+
+                    It("should emit an ExecutedTransaction event", func() {
+						it, err := Wallet.FilterExecutedTransaction(nil)
+                        Expect(err).ToNot(HaveOccurred())
+        				Expect(it.Next()).To(BeTrue())
+        				evt := it.Event
+        				Expect(it.Next()).To(BeFalse())
+        				Expect(evt.Destination).To(Equal(randomAddress))
+        				Expect(evt.Value.String()).To(Equal(FinneyToWei(500).String()))
+                        Expect(evt.Data).To(Equal([]uint8{}))
+					})
                 })
 			})
 
 			When("the destination flag is ΝΟΤ set correctly (contract instead of EOA)", func() {
 				It("should fail", func() {
-					privateKey, err := crypto.GenerateKey()
+					privateKey, _ := crypto.GenerateKey()
 					randomAddress = crypto.PubkeyToAddress(privateKey.PublicKey)
 					tx, err = Wallet.ExecuteTransaction(Owner.TransactOpts(ethertest.WithGasLimit(100000)), randomAddress, FinneyToWei(500), nil, true)
 					Expect(err).ToNot(HaveOccurred())
@@ -155,6 +273,20 @@ var _ = Describe("executeTransaction", func() {
                     av.Sub(av, eth) //subtract converted eth from dailySppendLimit
 					Expect(av.String()).To(Equal(av.String()))
 				})
+
+                It("should emit an ExecutedTransaction event", func() {
+                    it, err := Wallet.FilterExecutedTransaction(nil)
+                    Expect(err).ToNot(HaveOccurred())
+                    Expect(it.Next()).To(BeTrue())
+                    evt := it.Event
+                    Expect(it.Next()).To(BeFalse())
+                    Expect(evt.Destination).To(Equal(TKNBurnerAddress))
+                    Expect(evt.Value.String()).To(Equal("0"))
+                    a, err := abi.JSON(strings.NewReader(ERC20ABI))
+					Expect(err).ToNot(HaveOccurred())
+                    ed, _ := a.Pack("burn", big.NewInt(300))
+                    Expect(evt.Data).To(Equal(ed))
+                })
 			})
 
 			When("I transfer 300 tokens to a random account using 'executeTransaction'", func() {
@@ -190,6 +322,20 @@ var _ = Describe("executeTransaction", func() {
                     av.Sub(av, eth) //subtract converted eth from dailySppendLimit
 					Expect(av.String()).To(Equal(av.String()))
 				})
+
+                It("should emit an ExecutedTransaction event", func() {
+                    it, err := Wallet.FilterExecutedTransaction(nil)
+                    Expect(err).ToNot(HaveOccurred())
+                    Expect(it.Next()).To(BeTrue())
+                    evt := it.Event
+                    Expect(it.Next()).To(BeFalse())
+                    Expect(evt.Destination).To(Equal(TKNBurnerAddress))
+                    Expect(evt.Value.String()).To(Equal("0"))
+                    a, err := abi.JSON(strings.NewReader(ERC20ABI))
+					Expect(err).ToNot(HaveOccurred())
+                    ed, _ := a.Pack("transfer", RandomAccount.Address(), big.NewInt(300))
+                    Expect(evt.Data).To(Equal(ed))
+                })
 			})
 
             When("I try to use a non-whitelisted method on a whitelisted/protected token address", func() {
@@ -244,21 +390,6 @@ var _ = Describe("executeTransaction", func() {
 					Backend.Commit()
 					Expect(isSuccessful(tx)).To(BeFalse())
 				})
-			})
-
-			When("I send data (transfer 300 tokens to a random account to an EOA using 'executeTransaction'", func() {
-				It("should succeed", func() {
-					a, err := abi.JSON(strings.NewReader(ERC20ABI))
-					Expect(err).ToNot(HaveOccurred())
-					data, err := a.Pack("transfer", RandomAccount.Address(), big.NewInt(300))
-					Expect(err).ToNot(HaveOccurred())
-
-					tx, err = Wallet.ExecuteTransaction(Owner.TransactOpts(), RandomAccount.Address(), big.NewInt(0), data, false)
-					Expect(err).ToNot(HaveOccurred())
-					Backend.Commit()
-					Expect(isSuccessful(tx)).To(BeTrue())
-				})
-
 			})
 
 			When("I send data (transfer 300 tokens to a random account using 'executeTransaction' but the destination flag is not set correctly (isContract = true", func() {
@@ -431,10 +562,11 @@ var _ = Describe("executeTransaction", func() {
 				It("should reduce the available daily spend balance", func() {
 					av, err := Wallet.SpendLimitAvailable(nil)
 					Expect(err).ToNot(HaveOccurred())
+                    sl, _ := Wallet.SpendLimitValue(nil)
                     eth, err := Wallet.ConvertToEther(nil, TKNBurnerAddress, big.NewInt(300))
                     Expect(err).ToNot(HaveOccurred())
-                    av.Sub(av, eth) //subtract converted eth from dailySppendLimit
-					Expect(av.String()).To(Equal(av.String()))
+                    sl.Sub(sl, eth) //subtract converted eth from dailySppendLimit
+					Expect(av.String()).To(Equal(sl.String()))
 				})
 
                 When("the approved random wallet 'transfersFrom' all the tokens to a whitelisted destination address using 'executeTransaction'", func() {
@@ -505,10 +637,11 @@ var _ = Describe("executeTransaction", func() {
     				It("should reduce the available daily spend balance", func() {
     					av, err := RandomWallet.SpendLimitAvailable(nil)
     					Expect(err).ToNot(HaveOccurred())
-                        eth, err := Wallet.ConvertToEther(nil, TKNBurnerAddress, big.NewInt(300))
+                        sl, _ := RandomWallet.SpendLimitValue(nil)
+                        eth, err := RandomWallet.ConvertToEther(nil, TKNBurnerAddress, big.NewInt(300))
                         Expect(err).ToNot(HaveOccurred())
-                        av.Sub(av, eth) //subtract converted eth from dailySppendLimit
-    					Expect(av.String()).To(Equal(av.String()))
+                        sl.Sub(sl, eth) //subtract converted eth from dailySppendLimit
+    					Expect(av.String()).To(Equal(sl.String()))
     				})
                 })
 
