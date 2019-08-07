@@ -114,13 +114,13 @@ contract Controller is IController, Ownable, Transferrable {
     /// @notice is an address an Admin?
     /// @return true if the provided account is an admin.
     function isAdmin(address _account) public view notStopped returns (bool) {
-        return _isAdmin[_account];
+        return _isAdmin[_account] || _isOwner(_account);
     }
 
     /// @notice is an address a Controller?
     /// @return true if the provided account is a controller.
     function isController(address _account) public view notStopped returns (bool) {
-        return _isController[_account];
+        return _isController[_account] || _isAdmin[_account] || _isOwner(_account);
     }
 
     /// @notice this function can be used to see if the controller has been stopped

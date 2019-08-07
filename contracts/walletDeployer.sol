@@ -30,9 +30,9 @@ contract WalletDeployer is ENSResolvable, Controllable {
     event MigratedWallet(Wallet _wallet, Wallet _oldWallet, address _owner);
 
     /*****   Constants   *****/
-    bytes32 public constant controllerNode = 0x7f2ce995617d2816b426c5c8698c5ec2952f7a34bb10f38326f74933d5893697;
-    bytes32 public constant licenceNode = 0xd0ff8bd67f6e25e4e4b010df582a36a0ee9b78e49afe6cc1cff5dd5a83040330;
-    bytes32 public constant tokenWhitelistNode = 0xe84f90570f13fe09f288f2411ff9cf50da611ed0c7db7f73d48053ffc974d396;
+    bytes32 public constant controllerNode = 0xc73591e97db6a5a41bfd0f11b91f6d587ff8a0de93ed7d46162760d350ed4e76;
+    bytes32 public constant licenceNode = 0x94db2eba2638cbafbe4342ddcb3f2337e765fd05178ec523309a5d6823691f0d;
+    bytes32 public constant tokenWhitelistNode = 0xca540822cef827c18a68b154255b40af841efe0febe15e3b228f575da678c3b3;
 
     mapping(address => address) public deployedWallets;
     Wallet[] public cachedWallets;
