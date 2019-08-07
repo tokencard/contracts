@@ -31,6 +31,15 @@ var _ = Describe("BytesToBytes4", func() {
 			})
 		})
 
+        When("the there is an overflow and start position wraps around", func() {
+			It("Should revert", func() {
+                bytes := common.Hex2Bytes("0000000000000000000000000000000000000001")
+				_, err := BytesUtilsExporter.BytesToBytes4(nil, bytes, big.NewInt(-4))
+                Expect(err).To(HaveOccurred())
+    			Expect(err.Error()).To(ContainSubstring("SafeMath: addition overflow"))
+			})
+		})
+
         It("should return 0", func() {
             bytes := common.Hex2Bytes("00000000")
 			b4, err := BytesUtilsExporter.BytesToBytes4(nil, bytes, big.NewInt(0))
