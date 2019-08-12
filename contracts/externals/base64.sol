@@ -23,35 +23,39 @@ contract Base64 {
         // base64 encoded strings can't be length 0 and they must be divisble by 4
         require(length > 0  && length % 4 == 0, "invalid base64 encoding");
 
-          if (keccak256(abi.encodePacked(_encoded[length - 2])) == keccak256("=")) {
-              length -= 2;
-          } else if (keccak256(abi.encodePacked(_encoded[length - 1])) == keccak256("=")) {
-              length -= 1;
-          }
-          uint count = length >> 2 << 2;
-          uint i;
-          for (i = 0; i < count;) {
-              v1 = BASE64_DECODE_CHAR[uint8(_encoded[i++])];
-              v2 = BASE64_DECODE_CHAR[uint8(_encoded[i++])];
-              v3 = BASE64_DECODE_CHAR[uint8(_encoded[i++])];
-              v4 = BASE64_DECODE_CHAR[uint8(_encoded[i++])];
+        if (keccak256(abi.encodePacked(_encoded[length - 2])) == keccak256("=")) {
+            length -= 2;
+        } else if (keccak256(abi.encodePacked(_encoded[length - 1])) == keccak256("=")) {
+            length -= 1;
+        }
 
-              result[index++] = (v1 << 2 | v2 >> 4) & 0xff;
-              result[index++] = (v2 << 4 | v3 >> 2) & 0xff;
-              result[index++] = (v3 << 6 | v4) & 0xff;
-          }
-          if (length - count == 2) {
-              v1 = BASE64_DECODE_CHAR[uint8(_encoded[i++])];
-              v2 = BASE64_DECODE_CHAR[uint8(_encoded[i++])];
-              result[index++] = (v1 << 2 | v2 >> 4) & 0xff;
-          } else if (length - count == 3) {
-              v1 = BASE64_DECODE_CHAR[uint8(_encoded[i++])];
-              v2 = BASE64_DECODE_CHAR[uint8(_encoded[i++])];
-              v3 = BASE64_DECODE_CHAR[uint8(_encoded[i++])];
+        uint count = length >> 2 << 2;
+        uint i;
 
-              result[index++] = (v1 << 2 | v2 >> 4) & 0xff;
-              result[index++] = (v2 << 4 | v3 >> 2) & 0xff;
-          }
+        for (i = 0; i < count;) {
+            v1 = BASE64_DECODE_CHAR[uint8(_encoded[i++])];
+            v2 = BASE64_DECODE_CHAR[uint8(_encoded[i++])];
+            v3 = BASE64_DECODE_CHAR[uint8(_encoded[i++])];
+            v4 = BASE64_DECODE_CHAR[uint8(_encoded[i++])];
+
+            result[index++] = (v1 << 2 | v2 >> 4) & 0xff;
+            result[index++] = (v2 << 4 | v3 >> 2) & 0xff;
+            result[index++] = (v3 << 6 | v4) & 0xff;
+        }
+
+        if (length - count == 2) {
+            v1 = BASE64_DECODE_CHAR[uint8(_encoded[i++])];
+            v2 = BASE64_DECODE_CHAR[uint8(_encoded[i++])];
+
+            result[index++] = (v1 << 2 | v2 >> 4) & 0xff;
+        } else if (length - count == 3) {
+            v1 = BASE64_DECODE_CHAR[uint8(_encoded[i++])];
+            v2 = BASE64_DECODE_CHAR[uint8(_encoded[i++])];
+            v3 = BASE64_DECODE_CHAR[uint8(_encoded[i++])];
+
+            result[index++] = (v1 << 2 | v2 >> 4) & 0xff;
+            result[index++] = (v2 << 4 | v3 >> 2) & 0xff;
+        }
 
         // Set to correct length.
         assembly {
