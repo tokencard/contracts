@@ -134,7 +134,7 @@ contract AddressWhitelist is ControllableOwnable {
         for (uint i = 0; i < _pendingWhitelistAddition.length; i++) {
             // check if it doesn't exist already.
             if (!whitelistMap[_pendingWhitelistAddition[i]]) {
-                 // add to the Map and the Array
+                // add to the Map and the Array
                 whitelistMap[_pendingWhitelistAddition[i]] = true;
                 whitelistArray.push(_pendingWhitelistAddition[i]);
             }
@@ -545,7 +545,7 @@ contract Vault is AddressWhitelist, SpendLimit, ERC165, Transferrable, Balanceab
 
         // If address is not whitelisted, take daily limit into account.
         if (!whitelistMap[_to]) {
-            //initialize ether value in case the asset is ETH
+            // initialize ether value in case the asset is ETH
             uint etherValue = _amount;
             // Convert token amount to ether value if asset is an ERC20 token.
             if (_asset != address(0)) {
@@ -627,7 +627,7 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
     /// @param _asset is the address of an ERC20 token or 0x0 for ether.
     /// @param _amount is the amount of assets to be transferred in base units.
     function loadTokenCard(address _asset, uint _amount) external payable onlyOwner {
-        //check if token is allowed to be used for loading the card
+        // check if token is allowed to be used for loading the card
         require(_isTokenLoadable(_asset), "token not loadable");
         // Convert token amount to stablecoin value.
         uint stablecoinValue = convertToStablecoin(_asset, _amount);
@@ -658,7 +658,7 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
         }
         // Check if the destination is a Contract and it is one of our supported tokens
         if (address(_destination).isContract() && _isTokenAvailable(_destination)) {
-            //to is the recipient's address and amount is the value to be transferred
+            // to is the recipient's address and amount is the value to be transferred
             address to;
             uint amount;
             (to, amount) = _getERC20RecipientAndAmount(_destination, _data);
@@ -690,15 +690,15 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
     /// @param _token ERC20 token contract address.
     /// @param _amount amount of token in base units.
     function convertToStablecoin(address _token, uint _amount) public view returns (uint) {
-        //avoid the unnecessary calculations if the token to be loaded is the stablecoin itself
+        // avoid the unnecessary calculations if the token to be loaded is the stablecoin itself
         if (_token == _stablecoin()) {
             return _amount;
         }
         uint amountToSend = _amount;
 
-        //0x0 represents ether
+        // 0x0 represents ether
         if (_token != address(0)) {
-            //convert to eth first, same as convertToEther()
+            // convert to eth first, same as convertToEther()
             // Store the token in memory to save map entry lookup gas.
             (,uint256 magnitude, uint256 rate, bool available, , , ) = _getTokenInfo(_token);
             // require that token both exists in the whitelist and its rate is not zero.
@@ -707,10 +707,10 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
             // Safely convert the token amount to ether based on the exchange rate.
             amountToSend = _amount.mul(rate).div(magnitude);
         }
-        //_amount now is in ether
+        // _amountToSend now is in ether
         // Get the stablecoin's magnitude and its current rate.
         ( ,uint256 stablecoinMagnitude, uint256 stablecoinRate, bool stablecoinAvailable, , , ) = _getStablecoinInfo();
-            // Check if the stablecoin rate is set.
+        // Check if the stablecoin rate is set.
         require(stablecoinAvailable, "token is not available");
         require(stablecoinRate != 0, "stablecoin rate is 0");
         // Safely convert the token amount to stablecoin based on its exchange rate and the stablecoin exchange rate.
