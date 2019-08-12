@@ -25,7 +25,6 @@ import "./internals/balanceable.sol";
 import "./internals/transferrable.sol";
 import "./internals/ensResolvable.sol";
 import "./internals/tokenWhitelistable.sol";
-import "./internals/bytesUtils.sol";
 import "./externals/SafeMath.sol";
 import "./externals/Address.sol";
 import "./externals/ERC20.sol";
@@ -135,7 +134,7 @@ contract AddressWhitelist is ControllableOwnable {
         for (uint i = 0; i < _pendingWhitelistAddition.length; i++) {
             // check if it doesn't exist already.
             if (!whitelistMap[_pendingWhitelistAddition[i]]) {
-                 // add to the Map and the Array
+                // add to the Map and the Array
                 whitelistMap[_pendingWhitelistAddition[i]] = true;
                 whitelistArray.push(_pendingWhitelistAddition[i]);
             }
@@ -546,7 +545,7 @@ contract Vault is AddressWhitelist, SpendLimit, ERC165, Transferrable, Balanceab
 
         // If address is not whitelisted, take daily limit into account.
         if (!whitelistMap[_to]) {
-            //initialize ether value in case the asset is ETH
+            // initialize ether value in case the asset is ETH
             uint etherValue = _amount;
             // Convert token amount to ether value if asset is an ERC20 token.
             if (_asset != address(0)) {
@@ -584,11 +583,10 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
 
     using SafeERC20 for ERC20;
     using Address for address;
-    using BytesUtils for bytes;
 
     event ToppedUpGas(address _sender, address _owner, uint _amount);
     event LoadedTokenCard(address _asset, uint _amount);
-    event ExecutedTransaction(address _destination, uint _value, bytes _data);
+    event ExecutedTransaction(address _destination, uint _value, bytes _data, bytes _returndata);
     event UpdatedAvailableLimit();
 
     string constant public WALLET_VERSION = "2.0.0";
@@ -596,10 +594,6 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
 
     /// @dev Is the registered ENS node identifying the licence contract.
     bytes32 private _licenceNode;
-
-    /// @dev these are needed to allow for the executeTransaction method
-    uint32 private constant _TRANSFER= 0xa9059cbb;
-    uint32 private constant _APPROVE = 0x095ea7b3;
 
     /// @dev Constructor initializes the wallet top up limit and the vault contract.
     /// @param _owner_ is the owner account of the wallet contract.
@@ -633,7 +627,7 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
     /// @param _asset is the address of an ERC20 token or 0x0 for ether.
     /// @param _amount is the amount of assets to be transferred in base units.
     function loadTokenCard(address _asset, uint _amount) external payable onlyOwner {
-        //check if token is allowed to be used for loading the card
+        // check if token is allowed to be used for loading the card
         require(_isTokenLoadable(_asset), "token not loadable");
         // Convert token amount to stablecoin value.
         uint stablecoinValue = convertToStablecoin(_asset, _amount);
@@ -656,46 +650,42 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
     /// @param _destination address of the transaction
     /// @param _value ETH amount in wei
     /// @param _data transaction payload binary
-    function executeTransaction(address _destination, uint _value, bytes calldata _data, bool _destinationIsContract) external onlyOwner {
-        // Check if the destination is a Contract
-        // This prevents users from accidentally sending Value and Data to a plain old address
-        if (_destinationIsContract) {
-            require(address(_destination).isContract(), "executeTransaction for a contract: call to non-contract");
-            // Check if there exists at least a method signature in the transaction payload
-            if (_data.length >= 4) {
-                // Get method signature
-                uint32 signature = _data._bytesToUint32(0);
-
-                // Check if method is either ERC20 transfer or approve
-                if (signature == _TRANSFER || signature == _APPROVE) {
-                    require(_data.length >= 4 + 32 + 32, "invalid transfer / approve transaction data");
-                    uint amount = _data._bytesToUint256(4 + 32);
-                    // The "toOrSpender" is the '_to' address for a ERC20 transfer or the '_spender; in ERC20 approve
-                    // + 12 because address 20 bytes and this is padded to 32
-                    address toOrSpender = _data._bytesToAddress(4 + 12);
-
-                    // Check if the toOrSpender is in the whitelist
-                    if (!whitelistMap[toOrSpender]) {
-                        // If the address (of the token contract, e.g) is not in the TokenWhitelist used by
-                        // the convert method, then etherValue will be zero
-                        uint etherValue = convertToEther(_destination, amount);
-                        _spendLimit._enforceLimit(etherValue);
-                    }
-                }
-            }
-        } else {
-            require(!address(_destination).isContract(), "executeTransaction for a non-contract: call to contract");
-        }
-
+    function executeTransaction(address _destination, uint _value, bytes calldata _data) external onlyOwner returns (bytes memory) {
         // If value is send across as a part of this executeTransaction, this will be sent to any payable
         // destination. As a result enforceLimit if destination is not whitelisted.
         if (!whitelistMap[_destination]) {
             _spendLimit._enforceLimit(_value);
         }
+        // Check if the destination is a Contract and it is one of our supported tokens
+        if (address(_destination).isContract() && _isTokenAvailable(_destination)) {
+            // to is the recipient's address and amount is the value to be transferred
+            address to;
+            uint amount;
+            (to, amount) = _getERC20RecipientAndAmount(_destination, _data);
+            if (!whitelistMap[to]) {
+                // If the address (of the token contract, e.g) is not in the TokenWhitelist used by the convert method...
+                // ...then etherValue will be zero
+                uint etherValue = convertToEther(_destination, amount);
+                _spendLimit._enforceLimit(etherValue);
+            }
+            // use callOptionalReturn provided in SafeERC20 in case the ERC20 method
+            // returns flase instead of reverting!
+            ERC20(_destination).callOptionalReturn(_data);
 
-        require(_executeCall(_destination, _value, _data), "executing transaction failed");
+            // if ERC20 call completes, return a boolean "true" as bytes emulating ERC20
+            bytes memory b = new bytes(32);
+            b[31] = 0x01;
 
-        emit ExecutedTransaction(_destination, _value, _data);
+            emit ExecutedTransaction(_destination, _value, _data, b);
+            return b;
+        }
+
+        (bool success, bytes memory returndata) = _destination.call.value(_value)(_data);
+        require(success, "low-level call failed");
+
+        emit ExecutedTransaction(_destination, _value, _data, returndata);
+        // returns all of the bytes returned by _destination contract
+        return returndata;
     }
 
     /// @return licence contract node registered in ENS.
@@ -707,15 +697,15 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
     /// @param _token ERC20 token contract address.
     /// @param _amount amount of token in base units.
     function convertToStablecoin(address _token, uint _amount) public view returns (uint) {
-        //avoid the unnecessary calculations if the token to be loaded is the stablecoin itself
+        // avoid the unnecessary calculations if the token to be loaded is the stablecoin itself
         if (_token == _stablecoin()) {
             return _amount;
         }
         uint amountToSend = _amount;
 
-        //0x0 represents ether
+        // 0x0 represents ether
         if (_token != address(0)) {
-            //convert to eth first, same as convertToEther()
+            // convert to eth first, same as convertToEther()
             // Store the token in memory to save map entry lookup gas.
             (,uint256 magnitude, uint256 rate, bool available, , , ) = _getTokenInfo(_token);
             // require that token both exists in the whitelist and its rate is not zero.
@@ -724,28 +714,14 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
             // Safely convert the token amount to ether based on the exchange rate.
             amountToSend = _amount.mul(rate).div(magnitude);
         }
-        //_amount now is in ether
+        // _amountToSend now is in ether
         // Get the stablecoin's magnitude and its current rate.
         ( ,uint256 stablecoinMagnitude, uint256 stablecoinRate, bool stablecoinAvailable, , , ) = _getStablecoinInfo();
-            // Check if the stablecoin rate is set.
+        // Check if the stablecoin rate is set.
         require(stablecoinAvailable, "token is not available");
         require(stablecoinRate != 0, "stablecoin rate is 0");
         // Safely convert the token amount to stablecoin based on its exchange rate and the stablecoin exchange rate.
         return amountToSend.mul(stablecoinMagnitude).div(stablecoinRate);
-    }
-
-    /// @dev This calls proxies arbitrary transactions to addresses
-    /// @param _to destination address of the transaction
-    /// @param _value ETH amount in wei
-    /// @param _data transaction payload binary
-    /// @return true if the call was successful
-    function _executeCall(address _to, uint256 _value, bytes memory _data) internal returns (bool) {
-        bool success;
-        // solium-disable-next-line security/no-inline-assembly
-        assembly {
-            success := call(gas, _to, _value, add(_data, 0x20), mload(_data), 0, 0)
-        }
-        return success;
     }
 
 }

@@ -11,9 +11,9 @@ contract BytesUtilsExporter {
         return _bts._bytesToAddress(_from);
     }
 
-    /// @dev export _bytesToUint32() as an external function.
-    function bytesToUint32(bytes calldata _bts, uint _from) external pure returns (uint32) {
-        return _bts._bytesToUint32(_from);
+    /// @dev export _bytesToBytes4() as an external function.
+    function bytesToBytes4(bytes calldata _bts, uint _from) external pure returns (bytes4) {
+        return _bts._bytesToBytes4(_from);
     }
 
     /// @dev export _bytesToUint256() as an external function.

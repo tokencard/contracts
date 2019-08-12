@@ -28,10 +28,10 @@ var (
 )
 
 // BytesUtilsExporterABI is the input ABI used to generate the binding from.
-const BytesUtilsExporterABI = "[{\"constant\":true,\"inputs\":[{\"name\":\"_bts\",\"type\":\"bytes\"},{\"name\":\"_from\",\"type\":\"uint256\"}],\"name\":\"bytesToAddress\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"pure\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_bts\",\"type\":\"bytes\"},{\"name\":\"_from\",\"type\":\"uint256\"}],\"name\":\"bytesToUint256\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"pure\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_bts\",\"type\":\"bytes\"},{\"name\":\"_from\",\"type\":\"uint256\"}],\"name\":\"bytesToUint32\",\"outputs\":[{\"name\":\"\",\"type\":\"uint32\"}],\"payable\":false,\"stateMutability\":\"pure\",\"type\":\"function\"}]"
+const BytesUtilsExporterABI = "[{\"constant\":true,\"inputs\":[{\"name\":\"_bts\",\"type\":\"bytes\"},{\"name\":\"_from\",\"type\":\"uint256\"}],\"name\":\"bytesToAddress\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"pure\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_bts\",\"type\":\"bytes\"},{\"name\":\"_from\",\"type\":\"uint256\"}],\"name\":\"bytesToUint256\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"pure\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_bts\",\"type\":\"bytes\"},{\"name\":\"_from\",\"type\":\"uint256\"}],\"name\":\"bytesToBytes4\",\"outputs\":[{\"name\":\"\",\"type\":\"bytes4\"}],\"payable\":false,\"stateMutability\":\"pure\",\"type\":\"function\"}]"
 
 // BytesUtilsExporterBin is the compiled bytecode used for deploying new contracts.
-const BytesUtilsExporterBin = `608060405234801561001057600080fd5b50610412806100206000396000f3fe608060405234801561001057600080fd5b50600436106100415760003560e01c80630638c0f41461004657806355f94ce0146100d2578063fc96c39614610154575b600080fd5b6100b66004803603604081101561005c57600080fd5b81019060208101813564010000000081111561007757600080fd5b82018360208201111561008957600080fd5b803590602001918460018302840111640100000000831117156100ab57600080fd5b9193509150356101dd565b604080516001600160a01b039092168252519081900360200190f35b610142600480360360408110156100e857600080fd5b81019060208101813564010000000081111561010357600080fd5b82018360208201111561011557600080fd5b8035906020019184600183028401116401000000008311171561013757600080fd5b919350915035610230565b60408051918252519081900360200190f35b6101c46004803603604081101561016a57600080fd5b81019060208101813564010000000081111561018557600080fd5b82018360208201111561019757600080fd5b803590602001918460018302840111640100000000831117156101b957600080fd5b91935091503561027b565b6040805163ffffffff9092168252519081900360200190f35b60006102288285858080601f016020809104026020016040519081016040528093929190818152602001838380828437600092019190915250929392505063ffffffff6102c6169050565b949350505050565b60006102288285858080601f016020809104026020016040519081016040528093929190818152602001838380828437600092019190915250929392505063ffffffff610324169050565b60006102288285858080601f016020809104026020016040519081016040528093929190818152602001838380828437600092019190915250929392505063ffffffff61037f169050565b60008160140183511015610318576040805162461bcd60e51b8152602060048201526014602482015273736c6963696e67206f7574206f662072616e676560601b604482015290519081900360640190fd5b50016020015160601c90565b60008160200183511015610376576040805162461bcd60e51b8152602060048201526014602482015273736c6963696e67206f7574206f662072616e676560601b604482015290519081900360640190fd5b50016020015190565b600081600401835110156103d1576040805162461bcd60e51b8152602060048201526014602482015273736c6963696e67206f7574206f662072616e676560601b604482015290519081900360640190fd5b50016020015160e01c9056fea265627a7a72305820f32cf3cfa3b8121ce79a1672d34c75d95b032d7795471335af516f8bea25b27764736f6c634300050a0032`
+const BytesUtilsExporterBin = `608060405234801561001057600080fd5b50610474806100206000396000f3fe608060405234801561001057600080fd5b50600436106100415760003560e01c80630638c0f41461004657806355f94ce0146100d2578063cbd85c7614610154575b600080fd5b6100b66004803603604081101561005c57600080fd5b81019060208101813564010000000081111561007757600080fd5b82018360208201111561008957600080fd5b803590602001918460018302840111640100000000831117156100ab57600080fd5b9193509150356101e1565b604080516001600160a01b039092168252519081900360200190f35b610142600480360360408110156100e857600080fd5b81019060208101813564010000000081111561010357600080fd5b82018360208201111561011557600080fd5b8035906020019184600183028401116401000000008311171561013757600080fd5b919350915035610234565b60408051918252519081900360200190f35b6101c46004803603604081101561016a57600080fd5b81019060208101813564010000000081111561018557600080fd5b82018360208201111561019757600080fd5b803590602001918460018302840111640100000000831117156101b957600080fd5b91935091503561027f565b604080516001600160e01b03199092168252519081900360200190f35b600061022c8285858080601f016020809104026020016040519081016040528093929190818152602001838380828437600092019190915250929392505063ffffffff6102ca169050565b949350505050565b600061022c8285858080601f016020809104026020016040519081016040528093929190818152602001838380828437600092019190915250929392505063ffffffff61034c169050565b600061022c8285858080601f016020809104026020016040519081016040528093929190818152602001838380828437600092019190915250929392505063ffffffff6103cb169050565b60006102dd82601463ffffffff6103de16565b83511015610329576040805162461bcd60e51b8152602060048201526014602482015273736c6963696e67206f7574206f662072616e676560601b604482015290519081900360640190fd5b60008061033d84602063ffffffff6103de16565b9094015160601c949350505050565b600061035f82602063ffffffff6103de16565b835110156103ab576040805162461bcd60e51b8152602060048201526014602482015273736c6963696e67206f7574206f662072616e676560601b604482015290519081900360640190fd5b6000806103bf84602063ffffffff6103de16565b90940151949350505050565b600061035f82600463ffffffff6103de16565b600082820183811015610438576040805162461bcd60e51b815260206004820152601b60248201527f536166654d6174683a206164646974696f6e206f766572666c6f770000000000604482015290519081900360640190fd5b939250505056fea265627a7a72305820664d1b46cd02a2c87ae587409e835828829c6b2d04d4a1df4952ba5c49ed4a5b64736f6c634300050a0032`
 
 // DeployBytesUtilsExporter deploys a new Ethereum contract, binding an instance of BytesUtilsExporter to it.
 func DeployBytesUtilsExporter(auth *bind.TransactOpts, backend bind.ContractBackend) (common.Address, *types.Transaction, *BytesUtilsExporter, error) {
@@ -214,6 +214,32 @@ func (_BytesUtilsExporter *BytesUtilsExporterCallerSession) BytesToAddress(_bts 
 	return _BytesUtilsExporter.Contract.BytesToAddress(&_BytesUtilsExporter.CallOpts, _bts, _from)
 }
 
+// BytesToBytes4 is a free data retrieval call binding the contract method 0xcbd85c76.
+//
+// Solidity: function bytesToBytes4(bytes _bts, uint256 _from) constant returns(bytes4)
+func (_BytesUtilsExporter *BytesUtilsExporterCaller) BytesToBytes4(opts *bind.CallOpts, _bts []byte, _from *big.Int) ([4]byte, error) {
+	var (
+		ret0 = new([4]byte)
+	)
+	out := ret0
+	err := _BytesUtilsExporter.contract.Call(opts, out, "bytesToBytes4", _bts, _from)
+	return *ret0, err
+}
+
+// BytesToBytes4 is a free data retrieval call binding the contract method 0xcbd85c76.
+//
+// Solidity: function bytesToBytes4(bytes _bts, uint256 _from) constant returns(bytes4)
+func (_BytesUtilsExporter *BytesUtilsExporterSession) BytesToBytes4(_bts []byte, _from *big.Int) ([4]byte, error) {
+	return _BytesUtilsExporter.Contract.BytesToBytes4(&_BytesUtilsExporter.CallOpts, _bts, _from)
+}
+
+// BytesToBytes4 is a free data retrieval call binding the contract method 0xcbd85c76.
+//
+// Solidity: function bytesToBytes4(bytes _bts, uint256 _from) constant returns(bytes4)
+func (_BytesUtilsExporter *BytesUtilsExporterCallerSession) BytesToBytes4(_bts []byte, _from *big.Int) ([4]byte, error) {
+	return _BytesUtilsExporter.Contract.BytesToBytes4(&_BytesUtilsExporter.CallOpts, _bts, _from)
+}
+
 // BytesToUint256 is a free data retrieval call binding the contract method 0x55f94ce0.
 //
 // Solidity: function bytesToUint256(bytes _bts, uint256 _from) constant returns(uint256)
@@ -238,30 +264,4 @@ func (_BytesUtilsExporter *BytesUtilsExporterSession) BytesToUint256(_bts []byte
 // Solidity: function bytesToUint256(bytes _bts, uint256 _from) constant returns(uint256)
 func (_BytesUtilsExporter *BytesUtilsExporterCallerSession) BytesToUint256(_bts []byte, _from *big.Int) (*big.Int, error) {
 	return _BytesUtilsExporter.Contract.BytesToUint256(&_BytesUtilsExporter.CallOpts, _bts, _from)
-}
-
-// BytesToUint32 is a free data retrieval call binding the contract method 0xfc96c396.
-//
-// Solidity: function bytesToUint32(bytes _bts, uint256 _from) constant returns(uint32)
-func (_BytesUtilsExporter *BytesUtilsExporterCaller) BytesToUint32(opts *bind.CallOpts, _bts []byte, _from *big.Int) (uint32, error) {
-	var (
-		ret0 = new(uint32)
-	)
-	out := ret0
-	err := _BytesUtilsExporter.contract.Call(opts, out, "bytesToUint32", _bts, _from)
-	return *ret0, err
-}
-
-// BytesToUint32 is a free data retrieval call binding the contract method 0xfc96c396.
-//
-// Solidity: function bytesToUint32(bytes _bts, uint256 _from) constant returns(uint32)
-func (_BytesUtilsExporter *BytesUtilsExporterSession) BytesToUint32(_bts []byte, _from *big.Int) (uint32, error) {
-	return _BytesUtilsExporter.Contract.BytesToUint32(&_BytesUtilsExporter.CallOpts, _bts, _from)
-}
-
-// BytesToUint32 is a free data retrieval call binding the contract method 0xfc96c396.
-//
-// Solidity: function bytesToUint32(bytes _bts, uint256 _from) constant returns(uint32)
-func (_BytesUtilsExporter *BytesUtilsExporterCallerSession) BytesToUint32(_bts []byte, _from *big.Int) (uint32, error) {
-	return _BytesUtilsExporter.Contract.BytesToUint32(&_BytesUtilsExporter.CallOpts, _bts, _from)
 }

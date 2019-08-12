@@ -28,6 +28,24 @@ var _ = Describe("BytesToAddress", func() {
 			})
 		})
 
+        When("the there is an overflow and start position wraps around in the second addition", func() {
+			It("Should revert", func() {
+                bytes := common.Hex2Bytes("000000000000000000000000000000000000000001")
+				_, err := BytesUtilsExporter.BytesToAddress(nil, bytes, big.NewInt(-20))
+                Expect(err).To(HaveOccurred())
+    			Expect(err.Error()).To(ContainSubstring("SafeMath: addition overflow"))
+			})
+		})
+
+        When("the there is no overflow but the start position is a large number", func() {
+			It("Should revert", func() {
+                bytes := common.Hex2Bytes("000000000000000000000000000000000000000001")
+				_, err := BytesUtilsExporter.BytesToAddress(nil, bytes, big.NewInt(-23))
+                Expect(err).To(HaveOccurred())
+    			Expect(err.Error()).To(ContainSubstring("slicing out of range"))
+			})
+		})
+
         It("should return Address(0)", func() {
             bytes := common.Hex2Bytes("0000000000000000000000000000000000000000")
 			addr, err := BytesUtilsExporter.BytesToAddress(nil, bytes, big.NewInt(0))

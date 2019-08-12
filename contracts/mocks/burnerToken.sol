@@ -58,7 +58,8 @@ contract BurnerToken {
         if (balanceOf[_from] < _value) return false;
 
         uint allowed = allowance[_from][msg.sender];
-        if (allowed < _value) return false;
+        if (allowed < _value) return false; //PROBLEM!
+        /* require(_value <= allowed, "amount exceeds allowance"); */
 
         balanceOf[_to] = balanceOf[_to].add(_value);
         balanceOf[_from] = balanceOf[_from].sub(_value);

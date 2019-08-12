@@ -24,9 +24,10 @@ func init() {
 	)
 
 	TestRig.AddCoverageForContracts(
-		"../../build/mocks/tokenWhitelistableExporter/combined.json",
+		"../../build/internals/tokenWhitelistable/combined.json",
 		"../../contracts",
 	)
+
 }
 
 func TestTokenWhitelistSuite(t *testing.T) {
@@ -89,7 +90,7 @@ var _ = AfterEach(func() {
 })
 
 var _ = AfterSuite(func() {
-	TestRig.ExpectMinimumCoverage("tokenWhitelist.sol", 100.0)
+	TestRig.ExpectMinimumCoverage("tokenWhitelist.sol", 99.32)
 	TestRig.ExpectMinimumCoverage("internals/tokenWhitelistable.sol", 100.0)
 	TestRig.PrintGasUsage(os.Stdout)
 })

@@ -107,9 +107,6 @@ var CryptoFloatAddress common.Address
 var Licence *bindings.Licence
 var LicenceAddress common.Address
 
-var TKN *mocks.Token
-var TKNAddress common.Address
-
 var Stablecoin *mocks.Token
 var StablecoinAddress common.Address
 
@@ -528,18 +525,7 @@ func InitializeBackend() error {
 		return errors.Wrap(err, "crediting controller account with ETH")
 	}
 
-	// Deploy a TKN mock token.
-	TKNAddress, tx, TKN, err = mocks.DeployToken(BankAccount.TransactOpts(), Backend)
-	if err != nil {
-		return err
-	}
-	Backend.Commit()
-	err = verifyTransaction(tx)
-	if err != nil {
-		return errors.Wrap(err, "deploying TKN token contract")
-	}
-
-	// Deploy additional ERC20 mock tokens.
+	// Deploy mock ERC20 tokens.
 	ERC20Contract1Address, tx, ERC20Contract1, err = mocks.DeployToken(BankAccount.TransactOpts(), Backend)
 	if err != nil {
 		return err
@@ -571,7 +557,7 @@ func InitializeBackend() error {
 	}
 
 	// Add the TKN token to the oracle list.
-	tx, err = TokenWhitelist.AddTokens(ControllerAdmin.TransactOpts(), []common.Address{TKNAddress}, StringsToByte32("TKN"), []*big.Int{ExponentiateDecimals(8)}, []bool{true}, []bool{true}, big.NewInt(20180913153211))
+	tx, err = TokenWhitelist.AddTokens(ControllerAdmin.TransactOpts(), []common.Address{TKNBurnerAddress}, StringsToByte32("TKN"), []*big.Int{ExponentiateDecimals(8)}, []bool{true}, []bool{true}, big.NewInt(20180913153211))
 	if err != nil {
 		return err
 	}
@@ -593,7 +579,7 @@ func InitializeBackend() error {
 	}
 
 	// Update the exchange rate of the TKN token.
-	tx, err = TokenWhitelist.UpdateTokenRate(ControllerAdmin.TransactOpts(), TKNAddress, big.NewInt(int64(0.00001633*math.Pow10(18))), big.NewInt(20180913153211))
+	tx, err = TokenWhitelist.UpdateTokenRate(ControllerAdmin.TransactOpts(), TKNBurnerAddress, big.NewInt(int64(0.00001633*math.Pow10(18))), big.NewInt(20180913153211))
 	if err != nil {
 		return err
 	}

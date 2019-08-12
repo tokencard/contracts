@@ -28,6 +28,10 @@ contract TokenWhitelistableExporter is ENSResolvable, TokenWhitelistable {
         return _updateTokenRate(_token, _rate, _updateDate);
     }
 
+    function getERC20RecipientAndAmount(address _destination, bytes calldata _data) external view returns (address, uint) {
+        return _getERC20RecipientAndAmount(_destination, _data);
+    }
+
     function isTokenLoadable(address _a) external view returns (bool) {
         return _isTokenLoadable(_a);
     }
