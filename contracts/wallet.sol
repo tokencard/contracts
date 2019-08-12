@@ -650,7 +650,7 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
     /// @param _destination address of the transaction
     /// @param _value ETH amount in wei
     /// @param _data transaction payload binary
-    function executeTransaction(address _destination, uint _value, bytes calldata _data) external onlyOwner {
+    function executeTransaction(address _destination, uint _value, bytes calldata _data) external onlyOwner returns (bytes memory) {
         // If value is send across as a part of this executeTransaction, this will be sent to any payable
         // destination. As a result enforceLimit if destination is not whitelisted.
         if (!whitelistMap[_destination]) {
@@ -672,13 +672,19 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
             // returns flase instead of reverting!
             ERC20(_destination).callOptionalReturn(_data);
             emit ExecutedTransaction(_destination, _value, _data);
-            return;
+
+            // if ERC20 call completes, return a boolean true as bytes
+            bytes memory b = new bytes(32);
+            assembly { mstore(add(b, 32), 0x1) }
+            return b;
         }
 
-        (bool success, ) = _destination.call.value(_value)(_data);
+        (bool success, bytes memory returndata) = _destination.call.value(_value)(_data);
         require(success, "low-level call failed");
 
         emit ExecutedTransaction(_destination, _value, _data);
+        // returns all of the bytes returned by _destination contract
+        return returndata;
     }
 
     /// @return licence contract node registered in ENS.
