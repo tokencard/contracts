@@ -586,7 +586,7 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
 
     event ToppedUpGas(address _sender, address _owner, uint _amount);
     event LoadedTokenCard(address _asset, uint _amount);
-    event ExecutedTransaction(address _destination, uint _value, bytes _data);
+    event ExecutedTransaction(address _destination, uint _value, bytes _data, bytes _returndata);
     event UpdatedAvailableLimit();
 
     string constant public WALLET_VERSION = "2.0.0";
@@ -671,18 +671,19 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
             // use callOptionalReturn provided in SafeERC20 in case the ERC20 method
             // returns flase instead of reverting!
             ERC20(_destination).callOptionalReturn(_data);
-            emit ExecutedTransaction(_destination, _value, _data);
 
-            // if ERC20 call completes, return a boolean true as bytes
+            // if ERC20 call completes, return a boolean "true" as bytes emulating ERC20
             bytes memory b = new bytes(32);
-            assembly { mstore(add(b, 32), 0x1) }
+            b[31] = 0x01;
+
+            emit ExecutedTransaction(_destination, _value, _data, b);
             return b;
         }
 
         (bool success, bytes memory returndata) = _destination.call.value(_value)(_data);
         require(success, "low-level call failed");
 
-        emit ExecutedTransaction(_destination, _value, _data);
+        emit ExecutedTransaction(_destination, _value, _data, returndata);
         // returns all of the bytes returned by _destination contract
         return returndata;
     }
