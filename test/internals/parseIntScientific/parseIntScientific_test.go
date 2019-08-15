@@ -286,25 +286,25 @@ var _ = Describe("ParseIntScientific", func() {
 
 		When("('100000000000000000000', 0) is passed", func() {
 			It("Should return 100000000000000000000", func() {
-				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "100000000000000000000", big.NewInt(0))
-				Expect(err).To(HaveOccurred())
-				Expect(err.Error()).To(ContainSubstring("number exceeded maximum allowed value for safe json decoding"))
+				res, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "100000000000000000000", big.NewInt(0))
+				Expect(err).ToNot(HaveOccurred())
+				Expect(res.String()).To(Equal("100000000000000000000"))
 			})
 		})
 
 		When("('1e+21', 0) is passed", func() {
 			It("Should return 1000000000000000000000", func() {
-				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "1e+21", big.NewInt(0))
-				Expect(err).To(HaveOccurred())
-				Expect(err.Error()).To(ContainSubstring("number exceeded maximum allowed value for safe json decoding"))
+				res, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "1e+21", big.NewInt(0))
+				Expect(err).ToNot(HaveOccurred())
+				Expect(res.String()).To(Equal("1000000000000000000000"))
 			})
 		})
 
 		When("('999999999999999900000', 0) is passed", func() {
 			It("Should return 999999999999999900000", func() {
-				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "999999999999999900000", big.NewInt(0))
-				Expect(err).To(HaveOccurred())
-				Expect(err.Error()).To(ContainSubstring("number exceeded maximum allowed value for safe json decoding"))
+				res, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "999999999999999900000", big.NewInt(0))
+				Expect(err).ToNot(HaveOccurred())
+                Expect(res.String()).To(Equal("999999999999999900000"))
 			})
 		})
 
@@ -321,6 +321,15 @@ var _ = Describe("ParseIntScientific", func() {
 				res, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "9007199254740993", big.NewInt(0))
 				Expect(err).ToNot(HaveOccurred())
 				Expect(res.String()).To(Equal("9007199254740993"))
+			})
+		})
+
+        When("the integral part is 2^256-1 (max_uint256_value)", func() {
+			It("Should succeed", func() {
+				//input = 2^256, 0 <= uint <=2^256-1
+				res, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "115792089237316195423570985008687907853269984665640564039457584007913129639935", big.NewInt(0))
+				Expect(err).ToNot(HaveOccurred())
+				Expect(res.String()).To(Equal("115792089237316195423570985008687907853269984665640564039457584007913129639935"))
 			})
 		})
 
@@ -706,14 +715,6 @@ var _ = Describe("ParseIntScientific", func() {
 			})
 		})
 
-		When("the integral part is 2^256-1 (max_uint256_value)", func() {
-			It("Should succeed", func() {
-				//input = 2^256, 0 <= uint <=2^256-1
-				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "115792089237316195423570985008687907853269984665640564039457584007913129639935", big.NewInt(0))
-				Expect(err).To(HaveOccurred())
-				Expect(err.Error()).To(ContainSubstring("number exceeded maximum allowed value for safe json decoding"))
-			})
-		})
 
 		When("the integral part is 2^256 and an overflow occurs (max_uint256_value) = 2^256-1)", func() {
 			It("Should revert", func() {
