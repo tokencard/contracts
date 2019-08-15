@@ -145,7 +145,7 @@ All of the third-party code we rely on can be found in this folder. The below ta
 | [ENS Registry](https://raw.githubusercontent.com/ensdomains/ens/aa30b7eae4efdb2089893b7a461c76dbbc011783/contracts/ENSRegistry.sol)            | [BSD2](https://github.com/ensdomains/ens/blob/master/LICENSE) |
 | [strings.sol](https://github.com/Arachnid/solidity-stringutils/pull/37)     | [Apache v2](https://github.com/Arachnid/solidity-stringutils/blob/master/LICENSE) |
 | [oraclizeAPI](https://raw.githubusercontent.com/provable-things/ethereum-api/d02497b4d84e02a8649af3822950873d305f7659/oraclizeAPI_0.5.sol)     | [MIT](https://github.com/oraclize/ethereum-api/blob/master/LICENSE) |
-| gnosis MulitSig | [GPLv3](https://github.com/gnosis/MultiSigWallet/blob/master/LICENSE) |
+| gnosis MultiSig | [GPLv3](https://github.com/gnosis/MultiSigWallet/blob/master/LICENSE) |
 
 
 ## Building contracts
