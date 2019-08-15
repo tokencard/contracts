@@ -118,7 +118,7 @@ func runWithDeployer(fn func(*deployer, []string) error) func(c *cli.Context) er
 
 		if c.IsSet("gas-price") {
 			gasPrice = big.NewInt(c.Int64("gas-price"))
-			gasPrice.Mul(big.NewInt(1000000000))
+			gasPrice.Mul(gasPrice, big.NewInt(1000000000))
 		}
 
 		d := &deployer{
