@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"math/big"
 	"strconv"
 
 	"github.com/ethereum/go-ethereum/common"
@@ -55,10 +56,19 @@ func main() {
 
 		wd, err := bindings.NewWalletDeployer(wda, d.ethClient)
 
+		nonce, err := d.ethClient.PendingNonceAt(d.ctx, wda)
+		if err != nil {
+			return err
+		}
+
 		txHashes := []common.Hash{}
 
 		for i := 0; i < int(numberOfContracts); i++ {
-			tx, err := wd.CacheWallet(d.transactOpts)
+			to := *d.transactOpts
+			to.Nonce = big.NewInt(int64(nonce + uint64(i)))
+			to.GasPrice = d.gasPrice
+
+			tx, err := wd.CacheWallet(&to)
 			if err != nil {
 				return errors.Wrap(err, "while creating cache wallet transaction")
 			}
@@ -126,6 +136,12 @@ func addCommand(app *cli.App, name string, fn func(d *deployer, args []string) e
 				Usage:  "Mnemonic (BIP 39) to derive the key.",
 				EnvVar: "KEY_MNEMONIC",
 				Value:  "",
+			},
+			cli.Int64Flag{
+				Name:   "gas-price",
+				Usage:  "gas price for the transaction (in GWEI)",
+				EnvVar: "GAS_PRICE",
+				Value:  0,
 			},
 			cli.Int64Flag{
 				Name:   "initial-nonce",

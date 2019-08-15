@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"io/ioutil"
+	"math/big"
 	"time"
 
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
@@ -29,6 +30,7 @@ type deployer struct {
 	log                     logrus.FieldLogger
 	controllerOwner         common.Address
 	initialNonce            int64
+	gasPrice                *big.Int
 	ctx                     context.Context
 	oraclizeResolverAddress common.Address
 }
@@ -112,6 +114,13 @@ func runWithDeployer(fn func(*deployer, []string) error) func(c *cli.Context) er
 			return err
 		}
 
+		var gasPrice *big.Int
+
+		if c.IsSet("gas-price") {
+			gasPrice = big.NewInt(c.Int64("gas-price"))
+			gasPrice.Mul(big.NewInt(1000000000))
+		}
+
 		d := &deployer{
 			transactOpts:            txOpt,
 			ens:                     en,
@@ -122,6 +131,7 @@ func runWithDeployer(fn func(*deployer, []string) error) func(c *cli.Context) er
 			log:                     logrus.New(),
 			oraclizeResolverAddress: common.HexToAddress(c.String("oraclize-resolver-address")),
 			initialNonce:            c.Int64("initial-nonce"),
+			gasPrice:                gasPrice,
 		}
 
 		balance, err := ec.BalanceAt(d.ctx, d.transactOpts.From, nil)
