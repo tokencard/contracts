@@ -56,7 +56,7 @@ func main() {
 
 		wd, err := bindings.NewWalletDeployer(wda, d.ethClient)
 
-		nonce, err := d.ethClient.PendingNonceAt(d.ctx, wda)
+		nonce, err := d.ethClient.PendingNonceAt(d.ctx, d.transactOpts.From)
 		if err != nil {
 			return err
 		}
