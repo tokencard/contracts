@@ -23,7 +23,7 @@ const oracleName = "oracle-v2.tokencard.eth"
 const holderName = "holder-v2.tokencard.eth"
 const licenceName = "licence-v2.tokencard.eth"
 const tknName = "TKN.tokencard.eth"
-const WalletDeployerName = "wallet-deployer-v2.tokencard.eth"
+const WalletDeployerName = "wallet-deployer.tokencard.eth"
 const stablecoinName = "DAI.tokencard.eth"
 
 const ENSName = "ENSAddressParam"
