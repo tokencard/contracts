@@ -138,6 +138,8 @@ github.com/tokencard/ethertest v0.7.9 h1:iFMN1wPrzHJ8elk4UlujzHUI7gtktcsWuCEo7Uj
 github.com/tokencard/ethertest v0.7.9/go.mod h1:JvnlPIkRL7Ob41/pdAgbBz93sRTMrg1BZv9mHJ43XgY=
 github.com/tokencard/ethertest v0.8.0 h1:uHW2UR3HtlkvRpD17t/RgstoUtU5pMS8xsS99lUFPSA=
 github.com/tokencard/ethertest v0.8.0/go.mod h1:1GTnshKUCoZACOuj+ak3oc5L6DIfxM+P8Nefml8eA3I=
+github.com/tokencard/ethertest v0.8.1 h1:C4+NPfDQ5g3avQdRU6B7UvT+BHk9EcvKnwIcoO1tll0=
+github.com/tokencard/ethertest v0.8.1/go.mod h1:1GTnshKUCoZACOuj+ak3oc5L6DIfxM+P8Nefml8eA3I=
 github.com/tyler-smith/go-bip39 v1.0.2 h1:+t3w+KwLXO6154GNJY+qUtIxLTmFjfUmpguQT1OlOT8=
 github.com/tyler-smith/go-bip39 v1.0.2/go.mod h1:sJ5fKU0s6JVwZjjcUEX2zFOnvq0ASQ2K9Zr6cf67kNs=
 github.com/wsddn/go-ecdh v0.0.0-20161211032359-48726bab9208 h1:1cngl9mPEoITZG8s8cVcUy5CeIBYhEESkOB7m6Gmkrk=
