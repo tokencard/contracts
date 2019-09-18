@@ -39,7 +39,7 @@ done
 GE_PATH=${PWD}/vendor/github.com/ethereum/go-ethereum
 
 # Generate Go bindings from solidity contracts.
-ABIGEN="docker run --rm -u `id -u` --workdir /go/src/github/tokencard/contracts -e GOPATH=/go -v $GE_PATH:/go/src/github.com/ethereum/go-ethereum -v $PWD:/go/src/github/tokencard/contracts ethereum/client-go:alltools-v1.8.21 abigen"
+ABIGEN="docker run --rm -u `id -u` --workdir /go/src/github/tokencard/contracts -e GOPATH=/go -v $GE_PATH:/go/src/github.com/ethereum/go-ethereum -v $PWD:/go/src/github/tokencard/contracts ethereum/client-go:alltools-v1.9.3 abigen"
 
 generate_binding() {
   contract=$(echo $1 | awk '{print $1}')
