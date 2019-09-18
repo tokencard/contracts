@@ -43,6 +43,15 @@ contract ControllableOwnable is Controllable, Ownable {
     }
 }
 
+/// @title SelfCallableOwnable allows either owner or the contract itself to call its functions
+/// @dev providing an additional modifier to check if Owner or self is calling
+contract SelfCallableOwnable is Ownable {
+    /// @dev Check if the sender is the Owner or self
+    modifier onlyOwnerOrSelf() {
+        require (_isOwner(msg.sender) || msg.sender == address(this), "either owner or self");
+        _;
+    }
+}
 
 /// @title AddressWhitelist provides payee-whitelist functionality.
 /// @dev This contract will allow the user to maintain a whitelist of addresses
@@ -483,7 +492,7 @@ contract LoadLimit is ControllableOwnable {
 
 
 //// @title Asset store with extra security features.
-contract Vault is AddressWhitelist, SpendLimit, ERC165, Transferrable, Balanceable, TokenWhitelistable {
+contract Vault is AddressWhitelist, SpendLimit, ERC165, Transferrable, Balanceable, TokenWhitelistable, SelfCallableOwnable {
 
     using SafeMath for uint256;
     using SafeERC20 for ERC20;
@@ -540,7 +549,7 @@ contract Vault is AddressWhitelist, SpendLimit, ERC165, Transferrable, Balanceab
     /// @param _to is the recipient's address.
     /// @param _asset is the address of an ERC20 token or 0x0 for ether.
     /// @param _amount is the amount of assets to be transferred in base units.
-    function transfer(address payable _to, address _asset, uint _amount) public onlyOwner isNotZero(_amount) {
+    function transfer(address payable _to, address _asset, uint _amount) public onlyOwnerOrSelf isNotZero(_amount) {
         // Checks if the _to address is not the zero-address
         require(_to != address(0), "_to address cannot be set to 0x0");
 
@@ -691,12 +700,14 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
         return returndata;
     }
 
-    function executeRelayedTransaction(bytes calldata data, bytes calldata signature) external onlyController {
-        bytes32 hashedData = keccak256(abi.encodePacked(data));
+    function executeRelayedTransaction(bytes calldata _data, bytes calldata _signature) external onlyController {
+        bytes32 hashedData = keccak256(abi.encodePacked(_data));
 
-        address from = hashedData.toEthSignedMessageHash().recover(signature);
+        address from = hashedData.toEthSignedMessageHash().recover(_signature);
         require(_isOwner(from), "message not signed by the owner");
 
+        (bool success, bytes memory returndata) = address(this).call(_data);
+        require(success, "low-level call failed");
         emit ExecutedRelayedTransaction(from);
     }
 

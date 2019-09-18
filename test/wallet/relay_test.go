@@ -34,6 +34,10 @@ func SignData(data []byte, prv *ecdsa.PrivateKey) ([]byte, error) {
 
 var _ = Describe("relay Tx", func() {
 
+    BeforeEach(func() {
+        BankAccount.MustTransfer(Backend, WalletAddress, EthToWei(1))
+    })
+
 	When("a random acount tries to relay", func() {
         It("should fail", func() {
             a, err := abi.JSON(strings.NewReader(WALLET_ABI))
@@ -56,15 +60,26 @@ var _ = Describe("relay Tx", func() {
 
     When("a controller tries to relay", func() {
         var randomAddress common.Address
+        var privateKey  *ecdsa.PrivateKey
+
+        //transfer ownership to a newly generated daddress
+        BeforeEach(func() {
+            privateKey, _ = crypto.GenerateKey()
+            randomAddress = crypto.PubkeyToAddress(privateKey.PublicKey)
+            tx, err := Wallet.TransferOwnership(Owner.TransactOpts(), randomAddress, false)
+            Expect(err).ToNot(HaveOccurred())
+            Backend.Commit()
+            Expect(isSuccessful(tx)).To(BeTrue())
+
+        })
+
         BeforeEach(func() {
             a, err := abi.JSON(strings.NewReader(WALLET_ABI))
             Expect(err).ToNot(HaveOccurred())
-            privateKey, _ := crypto.GenerateKey()
-            randomAddress = crypto.PubkeyToAddress(privateKey.PublicKey)
             data, err := a.Pack("transfer", randomAddress, common.HexToAddress("0x0"), EthToWei(1))
             Expect(err).ToNot(HaveOccurred())
 
-            signature, err := SignData(data, Owner.PrivKey())
+            signature, err := SignData(data, privateKey)
             Expect(err).ToNot(HaveOccurred())
 
             tx, err := Wallet.ExecuteRelayedTransaction(Controller.TransactOpts(), data, signature)
@@ -73,13 +88,19 @@ var _ = Describe("relay Tx", func() {
             Expect(isSuccessful(tx)).To(BeTrue())
         })
 
+        It("should change the owner", func() {
+            o, err := Wallet.Owner(nil)
+            Expect(err).ToNot(HaveOccurred())
+            Expect(o).To(Equal(randomAddress))
+        })
+
         It("should emit an ExecutedRelayedTransaction event", func() {
             it, err := Wallet.FilterExecutedRelayedTransaction(nil)
             Expect(err).ToNot(HaveOccurred())
             Expect(it.Next()).To(BeTrue())
             evt := it.Event
             Expect(it.Next()).To(BeFalse())
-            Expect(evt.From).To(Equal(Owner.Address()))
+            Expect(evt.From).To(Equal(randomAddress))
         })
 
         It("should decrease the wallet's ETH balance ", func() {
@@ -88,11 +109,11 @@ var _ = Describe("relay Tx", func() {
 			Expect(b.String()).To(Equal("0"))
 		})
 
-        // It("should increase the random address' balance ", func() {
-		// 	b, err := Backend.BalanceAt(context.Background(), randomAddress, nil)
-		// 	Expect(err).ToNot(HaveOccurred())
-		// 	Expect(b.String()).To(Equal(EthToWei(1).String()))
-		// })
+        It("should increase the random address' balance ", func() {
+			b, err := Backend.BalanceAt(context.Background(), randomAddress, nil)
+			Expect(err).ToNot(HaveOccurred())
+			Expect(b.String()).To(Equal(EthToWei(1).String()))
+		})
     })
 })
 
