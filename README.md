@@ -4,7 +4,7 @@ This repository contains the Smart Contracts needed to power the TokenCard, writ
 
 The TokenCard is the world's first non-custodial VISA card, that allows people to hold their own assets, whilst being able to seamlessly move funds to a VISA debit card. 1% of all loads to the TokenCard are sent, by the user themselves, to the TKN Holder contract. This is used to back the TKN contract, aka the Asset Contract.
 
-| [High Level Architecture](https://github.com/tokencard/contracts/blob/master/README.md/#high-level-architecture) | [Security Features](https://github.com/tokencard/contracts/blob/master/README.md/#security-features) | [Solidity Code](https://github.com/tokencard/contracts/blob/master/README.md/#solidity-code-in-the-contracts-folder) | [Running Contract Tests](https://github.com/tokencard/contracts/blob/master/README.md/#running-contract-tests) | [TokenCard Resources](https://github.com/tokencard/contracts/blob/master/README.md/#tokencard-resources) |
+| [High Level Architecture](https://github.com/tokencard/contracts/blob/master/README.md/#high-level-architecture) | [Security Features](https://github.com/tokencard/contracts/blob/master/README.md/#security-features) | [Solidity Code](https://github.com/tokencard/contracts/blob/master/README.md/#solidity-code-in-the-contracts-folder) | [Running Contract Tests](https://github.com/tokencard/contracts/blob/master/README.md/#running-contract-tests) | [Monolith Resources](https://github.com/tokencard/contracts/blob/master/README.md/#monolith-resources) |
 |---|---|---|---|---|
 
 ## Overview
@@ -145,7 +145,7 @@ All of the third-party code we rely on can be found in this folder. The below ta
 | [ENS Registry](https://raw.githubusercontent.com/ensdomains/ens/aa30b7eae4efdb2089893b7a461c76dbbc011783/contracts/ENSRegistry.sol)            | [BSD2](https://github.com/ensdomains/ens/blob/master/LICENSE) |
 | [strings.sol](https://github.com/Arachnid/solidity-stringutils/pull/37)     | [Apache v2](https://github.com/Arachnid/solidity-stringutils/blob/master/LICENSE) |
 | [oraclizeAPI](https://raw.githubusercontent.com/provable-things/ethereum-api/d02497b4d84e02a8649af3822950873d305f7659/oraclizeAPI_0.5.sol)     | [MIT](https://github.com/oraclize/ethereum-api/blob/master/LICENSE) |
-| gnosis MulitSig | [GPLv3](https://github.com/gnosis/MultiSigWallet/blob/master/LICENSE) |
+| gnosis MultiSig | [GPLv3](https://github.com/gnosis/MultiSigWallet/blob/master/LICENSE) |
 
 
 ## Building contracts
@@ -182,7 +182,7 @@ Run tests, excluding coverage (multi-threaded):
 ```sh
 SILENT=true ginkgo -nodes=16 -r -p ./test/...
 ```
-## TokenCard Resources
+## Monolith Resources
 
-[🎮 Discord](https://discord.gg/YrrFpFd) | [🗞️Blog](https://medium.com/tokencard) | [📜 Whitepaper](https://tokencard.io/tokencard_whitepaper.pdf) | [🕸️ Website ](https://tokencard.io/) | [🐦 Twitter](https://twitter.com/tokencard_io/) |
+[🎮 Discord](https://discord.gg/YrrFpFd) | [🗞️Blog](https://medium.com/monolith) | [📜 Whitepaper](https://tokencard.io/tokencard_whitepaper.pdf) | [🕸️ Website ](https://monolith.xyz) | [🐦 Twitter](https://twitter.com/monolith_web3/) |
 |---|---|---|---|---| 
