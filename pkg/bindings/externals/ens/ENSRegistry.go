@@ -31,7 +31,7 @@ var (
 const ENSRegistryABI = "[{\"constant\":true,\"inputs\":[{\"name\":\"node\",\"type\":\"bytes32\"}],\"name\":\"resolver\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"node\",\"type\":\"bytes32\"}],\"name\":\"owner\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"node\",\"type\":\"bytes32\"},{\"name\":\"label\",\"type\":\"bytes32\"},{\"name\":\"owner\",\"type\":\"address\"}],\"name\":\"setSubnodeOwner\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"node\",\"type\":\"bytes32\"},{\"name\":\"ttl\",\"type\":\"uint64\"}],\"name\":\"setTTL\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"node\",\"type\":\"bytes32\"}],\"name\":\"ttl\",\"outputs\":[{\"name\":\"\",\"type\":\"uint64\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"node\",\"type\":\"bytes32\"},{\"name\":\"resolver\",\"type\":\"address\"}],\"name\":\"setResolver\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"node\",\"type\":\"bytes32\"},{\"name\":\"owner\",\"type\":\"address\"}],\"name\":\"setOwner\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"node\",\"type\":\"bytes32\"},{\"indexed\":true,\"name\":\"label\",\"type\":\"bytes32\"},{\"indexed\":false,\"name\":\"owner\",\"type\":\"address\"}],\"name\":\"NewOwner\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"node\",\"type\":\"bytes32\"},{\"indexed\":false,\"name\":\"owner\",\"type\":\"address\"}],\"name\":\"Transfer\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"node\",\"type\":\"bytes32\"},{\"indexed\":false,\"name\":\"resolver\",\"type\":\"address\"}],\"name\":\"NewResolver\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"node\",\"type\":\"bytes32\"},{\"indexed\":false,\"name\":\"ttl\",\"type\":\"uint64\"}],\"name\":\"NewTTL\",\"type\":\"event\"}]"
 
 // ENSRegistryBin is the compiled bytecode used for deploying new contracts.
-const ENSRegistryBin = `608060405234801561001057600080fd5b5060008080526020527fad3228b676f7d3cd4284a5443f17f1962b36e491b30a40b2405849e597ba5fb580546001600160a01b031916331790556104e9806100596000396000f3fe608060405234801561001057600080fd5b506004361061007d5760003560e01c806314ab90381161005b57806314ab90381461010c57806316a25cbd146101395780631896f70a146101735780635b0fc9c31461019f5761007d565b80630178b8bf1461008257806302571be3146100bb57806306ab5923146100d8575b600080fd5b61009f6004803603602081101561009857600080fd5b50356101cb565b604080516001600160a01b039092168252519081900360200190f35b61009f600480360360208110156100d157600080fd5b50356101e9565b61010a600480360360608110156100ee57600080fd5b50803590602081013590604001356001600160a01b0316610204565b005b61010a6004803603604081101561012257600080fd5b508035906020013567ffffffffffffffff166102c1565b6101566004803603602081101561014f57600080fd5b5035610365565b6040805167ffffffffffffffff9092168252519081900360200190f35b61010a6004803603604081101561018957600080fd5b50803590602001356001600160a01b031661038b565b61010a600480360360408110156101b557600080fd5b50803590602001356001600160a01b0316610421565b6000908152602081905260409020600101546001600160a01b031690565b6000908152602081905260409020546001600160a01b031690565b60008381526020819052604090205483906001600160a01b0316331461022957600080fd5b60408051602080820187905281830186905282518083038401815260608301808552815191909201206001600160a01b0386169091529151859187917fce0457fe73731f824cc272376169235128c118b49d344817417c6d108d155e829181900360800190a3600090815260208190526040902080546001600160a01b0319166001600160a01b039390931692909217909155505050565b60008281526020819052604090205482906001600160a01b031633146102e657600080fd5b6040805167ffffffffffffffff84168152905184917f1d4f9bbfc9cab89d66e1a1562f2233ccbf1308cb4f63de2ead5787adddb8fa68919081900360200190a250600091825260208290526040909120600101805467ffffffffffffffff909216600160a01b0267ffffffffffffffff60a01b19909216919091179055565b600090815260208190526040902060010154600160a01b900467ffffffffffffffff1690565b60008281526020819052604090205482906001600160a01b031633146103b057600080fd5b604080516001600160a01b0384168152905184917f335721b01866dc23fbee8b6b2c7b1e14d6f05c28cd35a2c934239f94095602a0919081900360200190a25060009182526020829052604090912060010180546001600160a01b0319166001600160a01b03909216919091179055565b60008281526020819052604090205482906001600160a01b0316331461044657600080fd5b604080516001600160a01b0384168152905184917fd4735d920b0f87494915f556dd9b54c8f309026070caea5c737245152564d266919081900360200190a25060009182526020829052604090912080546001600160a01b0319166001600160a01b0390921691909117905556fea265627a7a72305820d0178aa55c7526bf159a3d0d38f6451c4b738069d422057f63d27111fb10bcb864736f6c634300050a0032`
+var ENSRegistryBin = "0x608060405234801561001057600080fd5b5060008080526020527fad3228b676f7d3cd4284a5443f17f1962b36e491b30a40b2405849e597ba5fb580546001600160a01b031916331790556104e9806100596000396000f3fe608060405234801561001057600080fd5b506004361061007d5760003560e01c806314ab90381161005b57806314ab90381461010c57806316a25cbd146101395780631896f70a146101735780635b0fc9c31461019f5761007d565b80630178b8bf1461008257806302571be3146100bb57806306ab5923146100d8575b600080fd5b61009f6004803603602081101561009857600080fd5b50356101cb565b604080516001600160a01b039092168252519081900360200190f35b61009f600480360360208110156100d157600080fd5b50356101e9565b61010a600480360360608110156100ee57600080fd5b50803590602081013590604001356001600160a01b0316610204565b005b61010a6004803603604081101561012257600080fd5b508035906020013567ffffffffffffffff166102c1565b6101566004803603602081101561014f57600080fd5b5035610365565b6040805167ffffffffffffffff9092168252519081900360200190f35b61010a6004803603604081101561018957600080fd5b50803590602001356001600160a01b031661038b565b61010a600480360360408110156101b557600080fd5b50803590602001356001600160a01b0316610421565b6000908152602081905260409020600101546001600160a01b031690565b6000908152602081905260409020546001600160a01b031690565b60008381526020819052604090205483906001600160a01b0316331461022957600080fd5b60408051602080820187905281830186905282518083038401815260608301808552815191909201206001600160a01b0386169091529151859187917fce0457fe73731f824cc272376169235128c118b49d344817417c6d108d155e829181900360800190a3600090815260208190526040902080546001600160a01b0319166001600160a01b039390931692909217909155505050565b60008281526020819052604090205482906001600160a01b031633146102e657600080fd5b6040805167ffffffffffffffff84168152905184917f1d4f9bbfc9cab89d66e1a1562f2233ccbf1308cb4f63de2ead5787adddb8fa68919081900360200190a250600091825260208290526040909120600101805467ffffffffffffffff909216600160a01b0267ffffffffffffffff60a01b19909216919091179055565b600090815260208190526040902060010154600160a01b900467ffffffffffffffff1690565b60008281526020819052604090205482906001600160a01b031633146103b057600080fd5b604080516001600160a01b0384168152905184917f335721b01866dc23fbee8b6b2c7b1e14d6f05c28cd35a2c934239f94095602a0919081900360200190a25060009182526020829052604090912060010180546001600160a01b0319166001600160a01b03909216919091179055565b60008281526020819052604090205482906001600160a01b0316331461044657600080fd5b604080516001600160a01b0384168152905184917fd4735d920b0f87494915f556dd9b54c8f309026070caea5c737245152564d266919081900360200190a25060009182526020829052604090912080546001600160a01b0319166001600160a01b0390921691909117905556fea265627a7a72305820d0178aa55c7526bf159a3d0d38f6451c4b738069d422057f63d27111fb10bcb864736f6c634300050a0032"
 
 // DeployENSRegistry deploys a new Ethereum contract, binding an instance of ENSRegistry to it.
 func DeployENSRegistry(auth *bind.TransactOpts, backend bind.ContractBackend) (common.Address, *types.Transaction, *ENSRegistry, error) {
@@ -39,6 +39,7 @@ func DeployENSRegistry(auth *bind.TransactOpts, backend bind.ContractBackend) (c
 	if err != nil {
 		return common.Address{}, nil, nil, err
 	}
+
 	address, tx, contract, err := bind.DeployContract(auth, parsed, common.FromHex(ENSRegistryBin), backend)
 	if err != nil {
 		return common.Address{}, nil, nil, err
@@ -492,6 +493,17 @@ func (_ENSRegistry *ENSRegistryFilterer) WatchNewOwner(opts *bind.WatchOpts, sin
 	}), nil
 }
 
+// ParseNewOwner is a log parse operation binding the contract event 0xce0457fe73731f824cc272376169235128c118b49d344817417c6d108d155e82.
+//
+// Solidity: event NewOwner(bytes32 indexed node, bytes32 indexed label, address owner)
+func (_ENSRegistry *ENSRegistryFilterer) ParseNewOwner(log types.Log) (*ENSRegistryNewOwner, error) {
+	event := new(ENSRegistryNewOwner)
+	if err := _ENSRegistry.contract.UnpackLog(event, "NewOwner", log); err != nil {
+		return nil, err
+	}
+	return event, nil
+}
+
 // ENSRegistryNewResolverIterator is returned from FilterNewResolver and is used to iterate over the raw logs and unpacked data for NewResolver events raised by the ENSRegistry contract.
 type ENSRegistryNewResolverIterator struct {
 	Event *ENSRegistryNewResolver // Event containing the contract specifics and raw log
@@ -623,6 +635,17 @@ func (_ENSRegistry *ENSRegistryFilterer) WatchNewResolver(opts *bind.WatchOpts, 
 			}
 		}
 	}), nil
+}
+
+// ParseNewResolver is a log parse operation binding the contract event 0x335721b01866dc23fbee8b6b2c7b1e14d6f05c28cd35a2c934239f94095602a0.
+//
+// Solidity: event NewResolver(bytes32 indexed node, address resolver)
+func (_ENSRegistry *ENSRegistryFilterer) ParseNewResolver(log types.Log) (*ENSRegistryNewResolver, error) {
+	event := new(ENSRegistryNewResolver)
+	if err := _ENSRegistry.contract.UnpackLog(event, "NewResolver", log); err != nil {
+		return nil, err
+	}
+	return event, nil
 }
 
 // ENSRegistryNewTTLIterator is returned from FilterNewTTL and is used to iterate over the raw logs and unpacked data for NewTTL events raised by the ENSRegistry contract.
@@ -758,6 +781,17 @@ func (_ENSRegistry *ENSRegistryFilterer) WatchNewTTL(opts *bind.WatchOpts, sink 
 	}), nil
 }
 
+// ParseNewTTL is a log parse operation binding the contract event 0x1d4f9bbfc9cab89d66e1a1562f2233ccbf1308cb4f63de2ead5787adddb8fa68.
+//
+// Solidity: event NewTTL(bytes32 indexed node, uint64 ttl)
+func (_ENSRegistry *ENSRegistryFilterer) ParseNewTTL(log types.Log) (*ENSRegistryNewTTL, error) {
+	event := new(ENSRegistryNewTTL)
+	if err := _ENSRegistry.contract.UnpackLog(event, "NewTTL", log); err != nil {
+		return nil, err
+	}
+	return event, nil
+}
+
 // ENSRegistryTransferIterator is returned from FilterTransfer and is used to iterate over the raw logs and unpacked data for Transfer events raised by the ENSRegistry contract.
 type ENSRegistryTransferIterator struct {
 	Event *ENSRegistryTransfer // Event containing the contract specifics and raw log
@@ -889,4 +923,15 @@ func (_ENSRegistry *ENSRegistryFilterer) WatchTransfer(opts *bind.WatchOpts, sin
 			}
 		}
 	}), nil
+}
+
+// ParseTransfer is a log parse operation binding the contract event 0xd4735d920b0f87494915f556dd9b54c8f309026070caea5c737245152564d266.
+//
+// Solidity: event Transfer(bytes32 indexed node, address owner)
+func (_ENSRegistry *ENSRegistryFilterer) ParseTransfer(log types.Log) (*ENSRegistryTransfer, error) {
+	event := new(ENSRegistryTransfer)
+	if err := _ENSRegistry.contract.UnpackLog(event, "Transfer", log); err != nil {
+		return nil, err
+	}
+	return event, nil
 }

@@ -30,6 +30,7 @@ import "./externals/Address.sol";
 import "./externals/ERC20.sol";
 import "./externals/SafeERC20.sol";
 import "./externals/ERC165.sol";
+import "./externals/ECDSA.sol";
 
 
 /// @title ControllableOwnable combines Controllable and Ownable
@@ -583,10 +584,12 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
 
     using SafeERC20 for ERC20;
     using Address for address;
+    using ECDSA for bytes32;
 
     event ToppedUpGas(address _sender, address _owner, uint _amount);
     event LoadedTokenCard(address _asset, uint _amount);
     event ExecutedTransaction(address _destination, uint _value, bytes _data, bytes _returndata);
+    event ExecutedRelayedTransaction(address _from);
     event UpdatedAvailableLimit();
 
     string constant public WALLET_VERSION = "2.2.0";
@@ -686,6 +689,15 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
         emit ExecutedTransaction(_destination, _value, _data, returndata);
         // returns all of the bytes returned by _destination contract
         return returndata;
+    }
+
+    function executeRelayedTransaction(bytes calldata data, bytes calldata signature) external onlyController {
+        bytes32 hashedData = keccak256(abi.encodePacked(data));
+
+        address from = hashedData.toEthSignedMessageHash().recover(signature);
+        require(_isOwner(from), "message not signed by the owner");
+
+        emit ExecutedRelayedTransaction(from);
     }
 
     /// @return licence contract node registered in ENS.
