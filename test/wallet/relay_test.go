@@ -57,8 +57,26 @@ var _ = Describe("relay Tx", func() {
         })
     })
 
+    When("a controller tries to relay a transaction signed by a random account", func() {
+        It("should fail", func() {
+            a, err := abi.JSON(strings.NewReader(WALLET_ABI))
+            Expect(err).ToNot(HaveOccurred())
+            privateKey, _ := crypto.GenerateKey()
+            randomAddress := crypto.PubkeyToAddress(privateKey.PublicKey)
+            data, err := a.Pack("transfer", randomAddress, common.HexToAddress("0x0"), EthToWei(1))
+            Expect(err).ToNot(HaveOccurred())
 
-    When("a controller tries to relay", func() {
+            signature, err := SignData(data, privateKey)
+            Expect(err).ToNot(HaveOccurred())
+
+            tx, err := Wallet.ExecuteRelayedTransaction(Controller.TransactOpts(ethertest.WithGasLimit(500000)), data, signature)
+            Expect(err).ToNot(HaveOccurred())
+            Backend.Commit()
+            Expect(isSuccessful(tx)).To(BeFalse())
+        })
+    })
+
+    When("a controller tries to relay an owner signed transaction", func() {
         var randomAddress common.Address
         var privateKey  *ecdsa.PrivateKey
 
