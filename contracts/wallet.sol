@@ -661,11 +661,34 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
 
     }
 
+    function executeTransactions(bytes memory _transactionBatch) public onlyOwner returns (bool) {
+        uint batchLength = _transactionBatch.length;
+        uint i = 32; //the first 32 bytes denote the byte array length
+        address destination; // the final destination address
+        uint value; // the trasanction value
+        uint dataLength; // externall call data length
+        bytes memory data;
+
+        while (i < batchLength) {
+            assembly {
+                destination := shr(0x60, mload(add(_transactionBatch, i)))
+                value := mload(add(_transactionBatch, add(i, 20)))
+                dataLength := mload(add(_transactionBatch, add(i, 52)))
+                data := add(_transactionBatch, add(i, 52))
+            }
+            if (dataLength == 0){
+                data = bytes("");
+            }
+            executeTransaction(destination, value, data);
+            i += 84 + dataLength;
+        }
+        return true;
+    }
     /// @dev This function allows for the owner to send transaction from the Wallet to arbitrary addresses
     /// @param _destination address of the transaction
     /// @param _value ETH amount in wei
     /// @param _data transaction payload binary
-    function executeTransaction(address _destination, uint _value, bytes calldata _data) external onlyOwnerOrSelf returns (bytes memory) {
+    function executeTransaction(address _destination, uint _value, bytes memory _data) public onlyOwnerOrSelf returns (bytes memory) {
         // If value is send across as a part of this executeTransaction, this will be sent to any payable
         // destination. As a result enforceLimit if destination is not whitelisted.
         if (!whitelistMap[_destination]) {
