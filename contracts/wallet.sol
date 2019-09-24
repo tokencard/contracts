@@ -446,7 +446,7 @@ contract LoadLimit is ControllableOwnable, SelfCallableOwnable {
 
     /// @dev Sets a daily card load limit.
     /// @param _amount is the card load amount in current stablecoin base units.
-    function setLoadLimit(uint _amount) external onlyOwner {
+    function setLoadLimit(uint _amount) external onlyOwnerOrSelf {
         require(_MINIMUM_LOAD_LIMIT <= _amount && _amount <= _maximumLoadLimit, "card load amount is outside the min/max range");
         _loadLimit._setLimit(_amount);
         emit SetLoadLimit(msg.sender, _amount);
@@ -661,7 +661,7 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
 
     }
 
-    function executeTransactions(bytes memory _transactionBatch) public onlyOwner returns (bool) {
+    function executeTransactions(bytes memory _transactionBatch) public onlyOwnerOrSelf returns (bool) {
         uint batchLength = _transactionBatch.length;
         uint i = 32; //the first 32 bytes denote the byte array length
         address destination; // the final destination address
@@ -684,6 +684,7 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
         }
         return true;
     }
+
     /// @dev This function allows for the owner to send transaction from the Wallet to arbitrary addresses
     /// @param _destination address of the transaction
     /// @param _value ETH amount in wei
