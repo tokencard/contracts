@@ -123,7 +123,11 @@ var _ = Describe("relay Tx", func() {
             Expect(it.Next()).To(BeTrue())
             evt := it.Event
             Expect(it.Next()).To(BeFalse())
-            Expect(evt.From).To(Equal(randomAddress))
+            a, err := abi.JSON(strings.NewReader(WALLET_ABI))
+            Expect(err).ToNot(HaveOccurred())
+            data, err := a.Pack("transfer", randomAddress, common.HexToAddress("0x0"), EthToWei(1))
+            Expect(evt.Data).To(Equal(data))
+            Expect(evt.Returndata).To(Equal([]byte{}))
         })
 
         It("should decrease the wallet's ETH balance ", func() {
