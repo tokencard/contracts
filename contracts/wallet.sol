@@ -598,7 +598,7 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
     event ToppedUpGas(address _sender, address _owner, uint _amount);
     event LoadedTokenCard(address _asset, uint _amount);
     event ExecutedTransaction(address _destination, uint _value, bytes _data, bytes _returndata);
-    event ExecutedRelayedTransaction(address _from);
+    event ExecutedRelayedTransaction(bytes _data, bytes _returndata);
     event UpdatedAvailableLimit();
 
     string constant public WALLET_VERSION = "2.2.0";
@@ -714,7 +714,7 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
 
         (bool success, bytes memory returndata) = address(this).call(_data);
         require(success, "low-level call failed");
-        emit ExecutedRelayedTransaction(from);
+        emit ExecutedRelayedTransaction(_data, returndata);
     }
 
     /// @return licence contract node registered in ENS.
