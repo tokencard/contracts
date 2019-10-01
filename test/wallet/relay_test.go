@@ -175,29 +175,3 @@ var _ = Describe("relay Tx", func() {
         })
     })
 })
-
-
-const WALLET_ABI = `[
-    {
-        "constant": false,
-        "inputs": [
-            {
-                "name": "_to",
-                "type": "address"
-            },
-            {
-                "name": "_asset",
-                "type": "address"
-            },
-            {
-                "name": "_amount",
-                "type": "uint256"
-            }
-        ],
-        "name": "transfer",
-        "outputs": [],
-        "payable": false,
-        "stateMutability": "nonpayable",
-        "type": "function"
-    }
-]`
