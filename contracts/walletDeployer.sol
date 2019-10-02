@@ -32,12 +32,13 @@ contract WalletDeployer is ENSResolvable, Controllable {
 
     mapping(address => address) public deployedWallets;
 
-    address walletCache;
+    address public walletCache;
 
     /// @notice it needs to know to address of the wallet cache
     constructor(address _ens, address _walletCache) ENSResolvable(_ens) Controllable(controllerNode) public {
         walletCache = _walletCache;
     }
+
     /// @notice This function is used to deploy a Wallet for a given owner address
     /// @param _owner is the owner address for the new Wallet to be
     function deployWallet(address payable _owner) external onlyController {
