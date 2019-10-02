@@ -2,11 +2,11 @@ package wallet_deployer_test
 
 import (
     "math/big"
-    "context"
 	"github.com/ethereum/go-ethereum/common"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	. "github.com/tokencard/contracts/v2/test/shared"
+    "github.com/tokencard/ethertest"
 )
 
 var _ = Describe("Cache Wallet", func() {
@@ -37,28 +37,20 @@ var _ = Describe("Cache Wallet", func() {
 			Expect(common.Hash(on)).To(Equal(EnsNode("licence.tokencard.eth")))
 		})
 
+        It("should point to the right wallet deployer node name", func() {
+			on, err := WalletCache.WalletDeployerNode(nil)
+			Expect(err).ToNot(HaveOccurred())
+			Expect(common.Hash(on)).To(Equal(EnsNode("wallet-deployer.tokencard.eth")))
+		})
+
         It("should have a cached Wallet count of 0", func() {
 			ccc, err := WalletCache.CachedWalletsCount(nil)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(ccc.String()).To(Equal("0"))
 		})
-
-		When("ETH is sent", func() {
-
-			BeforeEach(func() {
-				BankAccount.MustTransfer(Backend, WalletCacheAddress, EthToWei(1))
-			})
-
-			It("should receive it (payable)", func() {
-				b, e := Backend.BalanceAt(context.Background(), WalletCacheAddress, nil)
-				Expect(e).ToNot(HaveOccurred())
-				Expect(b.String()).To(Equal(EthToWei(1).String()))
-			})
-
-		})
     })
 
-	When("no wallets are cached and a random account caches a wallet", func() {
+	FWhen("no wallets are cached and a random account caches a wallet", func() {
 
 		BeforeEach(func() {
 			tx, err := WalletCache.CacheWallet(RandomAccount.TransactOpts())
@@ -126,66 +118,33 @@ var _ = Describe("Cache Wallet", func() {
     			Expect(it.Event.Wallet).To(Equal(addr))
     		})
 
-            When("someone pops", func() {
-                BeforeEach(func() {
-        			tx, err := WalletCache.WalletCachePop(RandomAccount.TransactOpts())
+            When("someone tries to pop", func() {
+                It("should fail", func() {
+        			tx, err := WalletCache.WalletCachePop(Controller.TransactOpts(ethertest.WithGasLimit(6000000)))
         			Expect(err).ToNot(HaveOccurred())
         			Backend.Commit()
-        			Expect(isSuccessful(tx)).To(BeTrue())
-        		})
-
-                It("should have a cached Wallet count of 1", func() {
-        			cwc, err := WalletCache.CachedWalletsCount(nil)
-        			Expect(err).ToNot(HaveOccurred())
-        			Expect(cwc.String()).To(Equal("1"))
+        			Expect(isSuccessful(tx)).To(BeFalse())
         		})
             })
         })
 
-        When("someone pops", func() {
-            BeforeEach(func() {
-    			tx, err := WalletCache.WalletCachePop(RandomAccount.TransactOpts())
-    			Expect(err).ToNot(HaveOccurred())
-    			Backend.Commit()
-    			Expect(isSuccessful(tx)).To(BeTrue())
-    		})
-
-            It("should have a cached Wallet count of 0", func() {
-    			cwc, err := WalletCache.CachedWalletsCount(nil)
-    			Expect(err).ToNot(HaveOccurred())
-    			Expect(cwc.String()).To(Equal("0"))
-    		})
-
-            It("should emit a CachedWallet event", func() {
-    			it, err := WalletCache.FilterCachedWallet(nil)
-    			Expect(err).ToNot(HaveOccurred())
-    			Expect(it.Next()).To(BeTrue())
-                Expect(it.Next()).To(BeFalse())
-    			Expect(it.Event.Wallet).ToNot(Equal(common.HexToAddress("0x0")))
-    		})
+        When("a random account tries to pop", func() {
+            It("should fail", func() {
+                tx, err := WalletCache.WalletCachePop(RandomAccount.TransactOpts(ethertest.WithGasLimit(6000000)))
+                Expect(err).ToNot(HaveOccurred())
+                Backend.Commit()
+                Expect(isSuccessful(tx)).To(BeFalse())
+            })
         })
-	})
+    })
 
-    When("someone pops without having cached a wallet first", func() {
-        BeforeEach(func() {
-            tx, err := WalletCache.WalletCachePop(RandomAccount.TransactOpts())
+    When("someone tries to pop without having cached a wallet first", func() {
+        It("should fail", func() {
+            tx, err := WalletCache.WalletCachePop(RandomAccount.TransactOpts(ethertest.WithGasLimit(6000000)))
             Expect(err).ToNot(HaveOccurred())
             Backend.Commit()
-            Expect(isSuccessful(tx)).To(BeTrue())
+            Expect(isSuccessful(tx)).To(BeFalse())
         })
-
-        It("should have a cached Wallet count of 0", func() {
-            cwc, err := WalletCache.CachedWalletsCount(nil)
-            Expect(err).ToNot(HaveOccurred())
-            Expect(cwc.String()).To(Equal("0"))
-        })
-
-        It("should emit a CachedWallet event", func() {
-			it, err := WalletCache.FilterCachedWallet(nil)
-			Expect(err).ToNot(HaveOccurred())
-			Expect(it.Next()).To(BeTrue())
-            Expect(it.Next()).To(BeFalse())
-		})
     })
 
 })

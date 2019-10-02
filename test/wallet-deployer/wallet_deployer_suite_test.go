@@ -3,16 +3,14 @@ package wallet_deployer_test
 import (
 	"context"
 	"fmt"
-	"math/big"
 	"os"
 	"testing"
-
+    . "github.com/onsi/ginkgo"
+	. "github.com/onsi/gomega"
+    . "github.com/tokencard/contracts/v2/test/shared"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
-	. "github.com/onsi/ginkgo"
-	. "github.com/onsi/gomega"
 	"github.com/tokencard/contracts/v2/pkg/bindings"
-	. "github.com/tokencard/contracts/v2/test/shared"
 	"github.com/tokencard/ethertest"
 )
 
@@ -72,6 +70,8 @@ func isSuccessful(tx *types.Transaction) bool {
 	return r.Status == types.ReceiptStatusSuccessful
 }
 
+var WalletDeployerNode = EnsNode("wallet-deployer.tokencard.eth")
+
 var _ = BeforeEach(func() {
 	err := InitializeBackend()
 	Expect(err).ToNot(HaveOccurred())
@@ -82,55 +82,33 @@ var _ = BeforeEach(func() {
 	Expect(err).ToNot(HaveOccurred())
 	Backend.Commit()
 	Expect(isSuccessful(tx)).To(BeTrue())
+
+    {
+        // set WalletDeployer node owner
+        tx, err = ENSRegistry.SetSubnodeOwner(BankAccount.TransactOpts(), EnsNode("tokencard.eth"), LabelHash("wallet-deployer"), BankAccount.Address())
+        Expect(err).ToNot(HaveOccurred())
+		Backend.Commit()
+		// Register WalletDeployer with ENS
+		tx, err = ENSRegistry.SetResolver(BankAccount.TransactOpts(), WalletDeployerNode, ENSResolverAddress)
+		Expect(err).ToNot(HaveOccurred())
+		Backend.Commit()
+		Expect(isSuccessful(tx)).To(BeTrue())
+		tx, err = ENSResolver.SetAddr(BankAccount.TransactOpts(), WalletDeployerNode, WalletDeployerAddress)
+		Expect(err).ToNot(HaveOccurred())
+		Backend.Commit()
+		Expect(isSuccessful(tx)).To(BeTrue())
+	}
 })
 
-var _ = Describe("WalletDeployer", func() {
+var _ = Describe("Wallet Deployer", func() {
+
+    It("should return walletCache addres", func() {
+        wca, err := WalletDeployer.WalletCache(nil)
+        Expect(err).ToNot(HaveOccurred())
+        Expect(wca).To(Equal(WalletCacheAddress))
+    })
 
 	When("no Wallets are cached", func() {
-
-		It("should have a default spend limit of 1 ETH", func() {
-			sl, err := WalletCache.DefaultSpendLimit(nil)
-			Expect(err).ToNot(HaveOccurred())
-			Expect(sl.String()).To(Equal(EthToWei(1).String()))
-		})
-
-		It("should point to the right tokenwhitelist node name", func() {
-			on, err := WalletCache.TokenWhitelistNode(nil)
-			Expect(err).ToNot(HaveOccurred())
-			Expect(common.Hash(on)).To(Equal(EnsNode("token-whitelist.tokencard.eth")))
-		})
-
-		It("should point to the right controller node name", func() {
-			on, err := WalletCache.ControllerNode(nil)
-			Expect(err).ToNot(HaveOccurred())
-			Expect(common.Hash(on)).To(Equal(EnsNode("controller.tokencard.eth")))
-		})
-
-		It("should point to the right licence node name", func() {
-			on, err := WalletCache.LicenceNode(nil)
-			Expect(err).ToNot(HaveOccurred())
-			Expect(common.Hash(on)).To(Equal(EnsNode("licence.tokencard.eth")))
-		})
-
-		It("should have cached Wallet count 0", func() {
-			ccc, err := WalletCache.CachedWalletsCount(nil)
-			Expect(err).ToNot(HaveOccurred())
-			Expect(ccc.String()).To(Equal("0"))
-		})
-
-		When("ETH is sent", func() {
-
-			BeforeEach(func() {
-				BankAccount.MustTransfer(Backend, WalletCacheAddress, EthToWei(1))
-			})
-
-			It("should receive it (payable)", func() {
-				b, e := Backend.BalanceAt(context.Background(), WalletCacheAddress, nil)
-				Expect(e).ToNot(HaveOccurred())
-				Expect(b.String()).To(Equal(EthToWei(1).String()))
-			})
-
-		})
 
 		When("a controller deploys a Wallet", func() {
 			BeforeEach(func() {
@@ -146,7 +124,7 @@ var _ = Describe("WalletDeployer", func() {
 				Expect(addr).ToNot(Equal(common.HexToAddress("0x0")))
 			})
 
-			It("should emit DeployedWallet event", func() {
+			It("should emit a DeployedWallet event", func() {
 
 				addr, err := WalletDeployer.DeployedWallets(nil, Owner.Address())
 				Expect(err).ToNot(HaveOccurred())
@@ -158,13 +136,13 @@ var _ = Describe("WalletDeployer", func() {
 				Expect(it.Event.Owner).To(Equal(Owner.Address()))
 			})
 
-			It("should have cached Wallet count 0", func() {
+			It("should have a cached Wallet count of 0", func() {
 				ccc, err := WalletCache.CachedWalletsCount(nil)
 				Expect(err).ToNot(HaveOccurred())
 				Expect(ccc.String()).To(Equal("0"))
 			})
 
-			It("should emit CachedWallet event", func() {
+			It("should emit a CachedWallet event", func() {
 
 				addr, err := WalletDeployer.DeployedWallets(nil, Owner.Address())
 				Expect(err).ToNot(HaveOccurred())
@@ -206,43 +184,12 @@ var _ = Describe("WalletDeployer", func() {
 		})
 	})
 
-	When("a random account tries to cache a Wallet", func() {
-		It("should succeed", func() {
-			tx, err := WalletCache.CacheWallet(RandomAccount.TransactOpts(ethertest.WithGasLimit(5000000)))
-			Expect(err).ToNot(HaveOccurred())
-			Backend.Commit()
-			Expect(isSuccessful(tx)).To(BeTrue())
-		})
-	})
-
 	When("one Wallet is cached", func() {
 		BeforeEach(func() {
 			tx, err := WalletCache.CacheWallet(Controller.TransactOpts())
 			Expect(err).ToNot(HaveOccurred())
 			Backend.Commit()
 			Expect(isSuccessful(tx)).To(BeTrue())
-		})
-
-		It("should cache the Wallet", func() {
-			addr, err := WalletCache.CachedWallets(nil, big.NewInt(0))
-			Expect(err).ToNot(HaveOccurred())
-			Expect(addr).ToNot(Equal(common.HexToAddress("0x0")))
-		})
-
-		It("should have cached Wallet count 1", func() {
-			ccc, err := WalletCache.CachedWalletsCount(nil)
-			Expect(err).ToNot(HaveOccurred())
-			Expect(ccc.String()).To(Equal("1"))
-		})
-
-		It("should emit CachedWallet event", func() {
-			addr, err := WalletCache.CachedWallets(nil, big.NewInt(0))
-			Expect(err).ToNot(HaveOccurred())
-
-			it, err := WalletCache.FilterCachedWallet(nil)
-			Expect(err).ToNot(HaveOccurred())
-			Expect(it.Next()).To(BeTrue())
-			Expect(it.Event.Wallet).To(Equal(addr))
 		})
 
 		When("a controller deploys a Wallet", func() {
@@ -287,7 +234,7 @@ var _ = Describe("WalletDeployer", func() {
 				})
 			})
 
-			It("should emit DeployedWallet event", func() {
+			It("should emit a DeployedWallet event", func() {
 
 				addr, err := WalletDeployer.DeployedWallets(nil, Owner.Address())
 				Expect(err).ToNot(HaveOccurred())

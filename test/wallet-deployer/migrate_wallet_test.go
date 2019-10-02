@@ -9,7 +9,7 @@ import (
 	"github.com/tokencard/ethertest"
 )
 
-var _ = Describe("Migrate Wallet", func() {
+var _ = FDescribe("Migrate Wallet", func() {
 
 	var MigratedWallet *bindings.Wallet
 
