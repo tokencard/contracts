@@ -50,7 +50,7 @@ var _ = Describe("Cache Wallet", func() {
 		})
     })
 
-	FWhen("no wallets are cached and a random account caches a wallet", func() {
+	When("no wallets are cached and a random account caches a wallet", func() {
 
 		BeforeEach(func() {
 			tx, err := WalletCache.CacheWallet(RandomAccount.TransactOpts())
