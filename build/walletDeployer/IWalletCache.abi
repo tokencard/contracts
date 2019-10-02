@@ -1,0 +1,1 @@
+[{"constant":false,"inputs":[],"name":"walletCachePop","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"nonpayable","type":"function"}]

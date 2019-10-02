@@ -98,7 +98,7 @@ var _ = Describe("Migrate Wallet", func() {
 		})
 
 		It("should have cached Wallet count 0", func() {
-			ccc, err := WalletDeployer.CachedWalletsCount(nil)
+			ccc, err := WalletCache.CachedWalletsCount(nil)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(ccc.String()).To(Equal("0"))
 		})
@@ -108,7 +108,7 @@ var _ = Describe("Migrate Wallet", func() {
 			addr, err := WalletDeployer.DeployedWallets(nil, Owner.Address())
 			Expect(err).ToNot(HaveOccurred())
 
-			it, err := WalletDeployer.FilterCachedWallet(nil)
+			it, err := WalletCache.FilterCachedWallet(nil)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(it.Next()).To(BeTrue())
 			Expect(it.Event.Wallet).To(Equal(addr))
@@ -212,7 +212,7 @@ var _ = Describe("Migrate Wallet", func() {
 
 	When("one wallet is cached", func() {
 		BeforeEach(func() {
-			tx, err := WalletDeployer.CacheWallet(Controller.TransactOpts())
+			tx, err := WalletCache.CacheWallet(Controller.TransactOpts())
 			Expect(err).ToNot(HaveOccurred())
 			Backend.Commit()
 			Expect(isSuccessful(tx)).To(BeTrue())
@@ -240,7 +240,7 @@ var _ = Describe("Migrate Wallet", func() {
 			})
 
 			It("should have cached Wallet count 0", func() {
-				ccc, err := WalletDeployer.CachedWalletsCount(nil)
+				ccc, err := WalletCache.CachedWalletsCount(nil)
 				Expect(err).ToNot(HaveOccurred())
 				Expect(ccc.String()).To(Equal("0"))
 			})
@@ -250,7 +250,7 @@ var _ = Describe("Migrate Wallet", func() {
 				addr, err := WalletDeployer.DeployedWallets(nil, Owner.Address())
 				Expect(err).ToNot(HaveOccurred())
 
-				it, err := WalletDeployer.FilterCachedWallet(nil)
+				it, err := WalletCache.FilterCachedWallet(nil)
 				Expect(err).ToNot(HaveOccurred())
 				Expect(it.Next()).To(BeTrue())
 				Expect(it.Event.Wallet).To(Equal(addr))
