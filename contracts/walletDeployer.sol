@@ -29,20 +29,18 @@ contract WalletDeployer is ENSResolvable, Controllable {
     event MigratedWallet(Wallet _wallet, Wallet _oldWallet, address _owner);
 
     bytes32 public constant controllerNode = 0x7f2ce995617d2816b426c5c8698c5ec2952f7a34bb10f38326f74933d5893697;
+    bytes32 public constant walletCacheNode = 0x7eee9c3927d17f70ce19de05f73d05dbda3449d450ba9a4c64f24c24bfb9d7ac;
 
     mapping(address => address) public deployedWallets;
 
-    address public walletCache;
-
     /// @notice it needs to know to address of the wallet cache
-    constructor(address _ens, address _walletCache) ENSResolvable(_ens) Controllable(controllerNode) public {
-        walletCache = _walletCache;
+    constructor(address _ens) ENSResolvable(_ens) Controllable(controllerNode) public {
     }
 
     /// @notice This function is used to deploy a Wallet for a given owner address
     /// @param _owner is the owner address for the new Wallet to be
     function deployWallet(address payable _owner) external onlyController {
-        Wallet wallet = IWalletCache(walletCache).walletCachePop();
+        Wallet wallet = IWalletCache(_ensResolve(walletCacheNode)).walletCachePop();
         wallet.transferOwnership(_owner, false);
         deployedWallets[_owner] = address(wallet);
         emit DeployedWallet(wallet, _owner);
@@ -54,7 +52,7 @@ contract WalletDeployer is ENSResolvable, Controllable {
     /// @param _gasTopUpLimit is the user's set daily gas top-up limit
     /// @param _whitelistedAddresses is the set of the user's whitelisted addresses
     function migrateWallet(address payable _owner, Wallet _oldWallet, bool _initializedSpendLimit, bool _initializedGasTopUpLimit, bool _initializedWhitelist, uint _spendLimit, uint _gasTopUpLimit, address[] calldata _whitelistedAddresses) external onlyController {
-        Wallet wallet = IWalletCache(walletCache).walletCachePop();
+        Wallet wallet = IWalletCache(_ensResolve(walletCacheNode)).walletCachePop();
 
         if (_initializedSpendLimit) {
             wallet.setSpendLimit(_spendLimit);

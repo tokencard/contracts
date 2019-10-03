@@ -11,14 +11,14 @@ import (
 
 var _ = Describe("Wallet Deployer", func() {
 
-    It("should return walletCache addres", func() {
-        wca, err := WalletDeployer.WalletCache(nil)
+    It("should point to the right controller node", func() {
+        wcn, err := WalletDeployer.WalletCacheNode(nil)
         Expect(err).ToNot(HaveOccurred())
-        Expect(wca).To(Equal(WalletCacheAddress))
+        Expect(common.Hash(wcn)).To(Equal(EnsNode("wallet-cache.tokencard.eth")))
     })
 
-    It("should point to the right controller name", func() {
-        on, err := WalletCache.LicenceNode(nil)
+    It("should point to the right wallet cache node", func() {
+        on, err := WalletDeployer.ControllerNode(nil)
         Expect(err).ToNot(HaveOccurred())
         Expect(common.Hash(on)).To(Equal(EnsNode("controller.tokencard.eth")))
     })

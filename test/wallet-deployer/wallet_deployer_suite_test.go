@@ -70,6 +70,7 @@ func isSuccessful(tx *types.Transaction) bool {
 }
 
 var WalletDeployerNode = EnsNode("wallet-deployer.tokencard.eth")
+var WalletCacheNode = EnsNode("wallet-cache.tokencard.eth")
 
 var _ = BeforeEach(func() {
 	err := InitializeBackend()
@@ -77,11 +78,12 @@ var _ = BeforeEach(func() {
 	var tx *types.Transaction
 	WalletCacheAddress, tx, WalletCache, err = bindings.DeployWalletCache(BankAccount.TransactOpts(), Backend, ENSRegistryAddress, EthToWei(1))
 	Expect(err).ToNot(HaveOccurred())
-    WalletDeployerAddress, tx, WalletDeployer, err = bindings.DeployWalletDeployer(BankAccount.TransactOpts(), Backend, ENSRegistryAddress, WalletCacheAddress)
+    WalletDeployerAddress, tx, WalletDeployer, err = bindings.DeployWalletDeployer(BankAccount.TransactOpts(), Backend, ENSRegistryAddress)
 	Expect(err).ToNot(HaveOccurred())
 	Backend.Commit()
 	Expect(isSuccessful(tx)).To(BeTrue())
 
+    //Register with ENS
     {
         // set WalletDeployer node owner
         tx, err = ENSRegistry.SetSubnodeOwner(BankAccount.TransactOpts(), EnsNode("tokencard.eth"), LabelHash("wallet-deployer"), BankAccount.Address())
@@ -93,6 +95,21 @@ var _ = BeforeEach(func() {
 		Backend.Commit()
 		Expect(isSuccessful(tx)).To(BeTrue())
 		tx, err = ENSResolver.SetAddr(BankAccount.TransactOpts(), WalletDeployerNode, WalletDeployerAddress)
+		Expect(err).ToNot(HaveOccurred())
+		Backend.Commit()
+		Expect(isSuccessful(tx)).To(BeTrue())
+	}
+    {
+        // set WalletCache node owner
+        tx, err = ENSRegistry.SetSubnodeOwner(BankAccount.TransactOpts(), EnsNode("tokencard.eth"), LabelHash("wallet-cache"), BankAccount.Address())
+        Expect(err).ToNot(HaveOccurred())
+		Backend.Commit()
+		// Register WalletCache with ENS
+		tx, err = ENSRegistry.SetResolver(BankAccount.TransactOpts(), WalletCacheNode, ENSResolverAddress)
+		Expect(err).ToNot(HaveOccurred())
+		Backend.Commit()
+		Expect(isSuccessful(tx)).To(BeTrue())
+		tx, err = ENSResolver.SetAddr(BankAccount.TransactOpts(), WalletCacheNode, WalletCacheAddress)
 		Expect(err).ToNot(HaveOccurred())
 		Backend.Commit()
 		Expect(isSuccessful(tx)).To(BeTrue())
