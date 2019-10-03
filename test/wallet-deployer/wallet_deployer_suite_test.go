@@ -23,6 +23,10 @@ var _ = BeforeSuite(func() {
 		"../../build/walletDeployer/combined.json",
 		"../../contracts",
 	)
+    TestRig.AddCoverageForContracts(
+		"../../build/walletCache/combined.json",
+		"../../contracts",
+	)
 })
 
 var allPassed = true
@@ -38,6 +42,7 @@ var _ = AfterEach(func() {
 var _ = AfterSuite(func() {
 	if allPassed {
 		TestRig.ExpectMinimumCoverage("walletDeployer.sol", 100.00)
+        TestRig.ExpectMinimumCoverage("walletCache.sol", 100.00)
 		TestRig.PrintGasUsage(os.Stdout)
 	}
 })
