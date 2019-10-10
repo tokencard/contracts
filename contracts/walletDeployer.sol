@@ -77,7 +77,7 @@ contract WalletDeployer is ENSResolvable, Controllable {
     function migrateWallet(address payable _owner, Wallet _oldWallet, bool _initializedSpendLimit, bool _initializedGasTopUpLimit, bool _initializedWhitelist, uint _spendLimit, uint _gasTopUpLimit, address[] calldata _whitelistedAddresses) external onlyController {
         if (cachedWallets.length < 1) {
             cacheWallet();
-    	}
+        }
 
         Wallet  wallet = cachedWallets[cachedWallets.length-1];
         cachedWallets.pop();
