@@ -608,7 +608,7 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
     bytes32 private _licenceNode;
 
     /// @dev this is an internal nonce to prevent replay attacks from relayer
-    uint relayNonce;
+    uint public relayNonce;
 
     /// @dev Constructor initializes the wallet top up limit and the vault contract.
     /// @param _owner_ is the owner account of the wallet contract.
