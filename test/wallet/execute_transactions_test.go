@@ -225,5 +225,24 @@ const WALLET_ABI = `[
         "payable": false,
         "stateMutability": "nonpayable",
         "type": "function"
+    },
+    {
+        "constant": false,
+        "inputs": [
+            {
+                "name": "_transactionBatch",
+                "type": "bytes"
+            }
+        ],
+        "name": "executeTransactions",
+        "outputs": [
+            {
+                "name": "",
+                "type": "bool"
+            }
+        ],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
     }
 ]`

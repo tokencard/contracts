@@ -684,7 +684,7 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
                 dataLength := mload(add(_transactionBatch, add(i, 52)))
                 data := add(_transactionBatch, add(i, 52))
             }
-            //if length is 0
+            //if length is 0 ignore the data field
             if (dataLength == 0){
                 data = bytes("");
             }
