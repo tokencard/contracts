@@ -731,7 +731,7 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
         }
 
         (bool success, bytes memory returndata) = _destination.call.value(_value)(_data);
-        require(success, "low-level call failed");
+        require(success, string(returndata));
 
         emit ExecutedTransaction(_destination, _value, _data, returndata);
         // returns all of the bytes returned by _destination contract
@@ -756,7 +756,7 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
 
         // invoke wallet function with an external call
         (bool success, bytes memory returndata) = address(this).call(_data);
-        require(success, "low-level call failed");
+        require(success, string(returndata));
         emit ExecutedRelayedTransaction(_data, returndata);
     }
 
