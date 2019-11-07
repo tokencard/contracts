@@ -9,10 +9,8 @@ import (
     "context"
 
 	"github.com/ethereum/go-ethereum/common"
-    "github.com/ethereum/go-ethereum/core/types"
     "github.com/ethereum/go-ethereum/accounts/abi"
     "github.com/ethereum/go-ethereum/crypto"
-    "github.com/ethereum/go-ethereum"
     "github.com/tokencard/ethertest"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -194,18 +192,7 @@ var _ = Describe("relay Tx", func() {
                 Backend.Commit()
                 Expect(isSuccessful(tx)).To(BeFalse())
 
-                msg, _ := tx.AsMessage(types.HomesteadSigner{})
-
-                calMsg := ethereum.CallMsg {
-                    From: msg.From(),
-                    To: msg.To(),
-                    Gas: msg.Gas(),
-                    GasPrice: msg.GasPrice(),
-                    Value: msg.Value(),
-                    Data: msg.Data(),
-                }
-
-                returnData, _ := Backend.CallContract(context.Background(), calMsg, nil)
+                returnData, _ := ethCall(tx)
                 Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("_to address cannot be set to 0x0"))
             })
 
