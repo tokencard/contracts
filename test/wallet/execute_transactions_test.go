@@ -8,6 +8,7 @@ import (
 	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/crypto"
+    "github.com/tokencard/ethertest"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	. "github.com/tokencard/contracts/v2/test/shared"
@@ -92,6 +93,61 @@ var _ = Describe("executeTransactions", func() {
 				Expect(evt.Data).To(Equal(d))
                 Expect(evt.Returndata).To(Equal(common.Hex2Bytes("0000000000000000000000000000000000000000000000000000000000000001")))
 			})
+        })
+
+        When("I batch 3 transactions and the 3rd one fails (transfer to 0x0 address)", func() {
+
+			var randomAddress common.Address
+
+			BeforeEach(func() {
+
+                privateKey, _ := crypto.GenerateKey()
+				randomAddress = crypto.PubkeyToAddress(privateKey.PublicKey)
+
+                batch := fmt.Sprintf("%s%s%s", randomAddress, abi.U256(EthToWei(1)), abi.U256(big.NewInt(0)))
+
+                a, err := abi.JSON(strings.NewReader(ERC20ABI))
+				Expect(err).ToNot(HaveOccurred())
+				data, err := a.Pack("transfer", randomAddress, big.NewInt(300))
+				Expect(err).ToNot(HaveOccurred())
+                batch = fmt.Sprintf("%s%s%s%s%s", batch, TKNBurnerAddress, abi.U256(big.NewInt(0)), abi.U256(big.NewInt(int64(len(data)))), data)
+
+                a, err = abi.JSON(strings.NewReader(WALLET_ABI))
+                Expect(err).ToNot(HaveOccurred())
+                data, err = a.Pack("transfer", common.HexToAddress("0x0"), common.HexToAddress("0x0"), big.NewInt(0))
+                Expect(err).ToNot(HaveOccurred())
+                batch = fmt.Sprintf("%s%s%s%s%s", batch, WalletAddress, abi.U256(big.NewInt(0)), abi.U256(big.NewInt(int64(len(data)))), data)
+
+				tx, err := Wallet.ExecuteTransactions(Owner.TransactOpts(ethertest.WithGasLimit(1000000)), []byte(batch))
+				Expect(err).ToNot(HaveOccurred())
+				Backend.Commit()
+				Expect(isSuccessful(tx)).To(BeFalse())
+			})
+
+			It("should NOT increase random address' balance", func() {
+				b, e := Backend.BalanceAt(context.Background(), randomAddress, nil)
+				Expect(e).ToNot(HaveOccurred())
+				Expect(b.String()).To(Equal("0"))
+			})
+
+            It("should NOT increase the TKN balance of the random address", func() {
+				b, err := TKNBurner.BalanceOf(nil, randomAddress)
+				Expect(err).ToNot(HaveOccurred())
+				Expect(b.String()).To(Equal("0"))
+			})
+
+            It("should NOT decrease the wallet's balance", func() {
+				b, e := Backend.BalanceAt(context.Background(), WalletAddress, nil)
+				Expect(e).ToNot(HaveOccurred())
+				Expect(b.String()).To(Equal(EthToWei(1).String()))
+			})
+
+            It("should NOT decrease the TKN balance of the wallet", func() {
+				b, err := TKNBurner.BalanceOf(nil, WalletAddress)
+				Expect(err).ToNot(HaveOccurred())
+				Expect(b.String()).To(Equal("300"))
+			})
+
         })
 
         When("I top up gas and set the whitelist", func() {
