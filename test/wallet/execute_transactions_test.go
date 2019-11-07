@@ -8,11 +8,29 @@ import (
 	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/crypto"
+    "github.com/ethereum/go-ethereum/core/types"
+    "github.com/ethereum/go-ethereum"
     "github.com/tokencard/ethertest"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	. "github.com/tokencard/contracts/v2/test/shared"
 )
+
+
+func ethCall(tx *types.Transaction) ([]byte, error) {
+    msg, _ := tx.AsMessage(types.HomesteadSigner{})
+
+    calMsg := ethereum.CallMsg {
+        From: msg.From(),
+        To: msg.To(),
+        Gas: msg.Gas(),
+        GasPrice: msg.GasPrice(),
+        Value: msg.Value(),
+        Data: msg.Data(),
+    }
+
+    return Backend.CallContract(context.Background(), calMsg, nil)
+}
 
 var _ = Describe("executeTransactions", func() {
 
@@ -95,7 +113,7 @@ var _ = Describe("executeTransactions", func() {
 			})
         })
 
-        When("I batch 3 transactions and the 3rd one fails (transfer to 0x0 address)", func() {
+        When("I batch 3 transactions and the 3rd one fails (transfer 0 value)", func() {
 
 			var randomAddress common.Address
 
@@ -122,9 +140,13 @@ var _ = Describe("executeTransactions", func() {
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 				Expect(isSuccessful(tx)).To(BeFalse())
+
+                returnData, _ := ethCall(tx)
+                Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("provided value cannot be zero"))
 			})
 
-			It("should NOT increase random address' balance", func() {
+
+			FIt("should NOT increase random address' balance", func() {
 				b, e := Backend.BalanceAt(context.Background(), randomAddress, nil)
 				Expect(e).ToNot(HaveOccurred())
 				Expect(b.String()).To(Equal("0"))
