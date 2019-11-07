@@ -205,8 +205,7 @@ var _ = Describe("relay Tx", func() {
                     Data: msg.Data(),
                 }
 
-                r, err := Backend.TransactionReceipt(context.Background(), tx.Hash())
-                returnData, _ := Backend.CallContract(context.Background(), calMsg, r.BlockNumber)
+                returnData, _ := Backend.CallContract(context.Background(), calMsg, nil)
                 Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("_to address cannot be set to 0x0"))
             })
 
