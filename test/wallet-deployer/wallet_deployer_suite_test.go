@@ -82,9 +82,9 @@ var _ = BeforeEach(func() {
 	err := InitializeBackend()
 	Expect(err).ToNot(HaveOccurred())
 	var tx *types.Transaction
-	WalletCacheAddress, tx, WalletCache, err = bindings.DeployWalletCache(BankAccount.TransactOpts(), Backend, ENSRegistryAddress, EthToWei(1))
+	WalletCacheAddress, tx, WalletCache, err = bindings.DeployWalletCache(BankAccount.TransactOpts(), Backend, ENSRegistryAddress, EthToWei(1), [32]byte{}, [32]byte{}, [32]byte{}, [32]byte{})
 	Expect(err).ToNot(HaveOccurred())
-	WalletDeployerAddress, tx, WalletDeployer, err = bindings.DeployWalletDeployer(BankAccount.TransactOpts(), Backend, ENSRegistryAddress)
+	WalletDeployerAddress, tx, WalletDeployer, err = bindings.DeployWalletDeployer(BankAccount.TransactOpts(), Backend, ENSRegistryAddress, [32]byte{}, [32]byte{})
 	Expect(err).ToNot(HaveOccurred())
 	Backend.Commit()
 	Expect(isSuccessful(tx)).To(BeTrue())
