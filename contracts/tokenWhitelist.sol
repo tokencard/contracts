@@ -136,7 +136,7 @@ contract TokenWhitelist is ENSResolvable, Controllable, Transferrable {
                 loadable : _loadable[i],
                 redeemable: _redeemable[i],
                 lastUpdate : _lastUpdate
-                });
+            });
             // Add the token address to the address list.
             _tokenAddressArray.push(_tokens[i]);
             //if the token is redeemable increase the redeemableCounter
