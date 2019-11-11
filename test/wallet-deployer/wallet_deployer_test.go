@@ -12,13 +12,13 @@ import (
 var _ = Describe("Wallet Deployer", func() {
 
 	It("should point to the right controller node", func() {
-		wcn, err := WalletDeployer.WALLETCACHENODE(nil)
+		wcn, err := WalletDeployer.WalletCacheNode(nil)
 		Expect(err).ToNot(HaveOccurred())
 		Expect(common.Hash(wcn)).To(Equal(EnsNode("wallet-cache.tokencard.eth")))
 	})
 
 	It("should point to the right wallet cache node", func() {
-		on, err := WalletDeployer.CONTROLLERNODE(nil)
+		on, err := WalletDeployer.ControllerNode(nil)
 		Expect(err).ToNot(HaveOccurred())
 		Expect(common.Hash(on)).To(Equal(EnsNode("controller.tokencard.eth")))
 	})
@@ -80,7 +80,7 @@ var _ = Describe("Wallet Deployer", func() {
 
 				})
 
-				FIt("should succeed", func() {
+				It("should succeed", func() {
 					tx, err := NewWallet.SetSpendLimit(Owner.TransactOpts(), EthToWei(1))
 					Expect(err).ToNot(HaveOccurred())
 					Backend.Commit()

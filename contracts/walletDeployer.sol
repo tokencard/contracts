@@ -28,21 +28,35 @@ contract WalletDeployer is ENSResolvable, Controllable {
     event DeployedWallet(Wallet _wallet, address _owner);
     event MigratedWallet(Wallet _wallet, Wallet _oldWallet, address _owner);
 
-    // CONTROLLER_NODE = controller.tokencard.eth
-    bytes32 public constant CONTROLLER_NODE = 0x7f2ce995617d2816b426c5c8698c5ec2952f7a34bb10f38326f74933d5893697;
-    // walletCacheNode = wallet-cache.tokencard.eth
-    bytes32 public constant WALLET_CACHE_NODE = 0x7eee9c3927d17f70ce19de05f73d05dbda3449d450ba9a4c64f24c24bfb9d7ac;
+    /*****   Constants   *****/
+    // Default values for mainnet ENS
+    // controller.tokencard.eth
+    bytes32 private constant _CONTROLLER_NODE = 0x7f2ce995617d2816b426c5c8698c5ec2952f7a34bb10f38326f74933d5893697;
+    // wallet-cache.tokencard.eth
+    bytes32 private constant _WALLET_CACHE_NODE = 0x7eee9c3927d17f70ce19de05f73d05dbda3449d450ba9a4c64f24c24bfb9d7ac;
+
+    bytes32 public controllerNode = _CONTROLLER_NODE;
+    bytes32 public walletCacheNode = _WALLET_CACHE_NODE;
 
     mapping(address => address) public deployedWallets;
 
     /// @notice it needs to know to address of the wallet cache
-    constructor(address _ens) ENSResolvable(_ens) Controllable(CONTROLLER_NODE) public {
+    /// @dev pass in bytes32 to use the default, production node labels for ENS
+    constructor(address _ens_, bytes32 _controllerNode_, bytes32 _walletCacheNode_) ENSResolvable(_ens_) Controllable(controllerNode) public {
+        // Set controllerNode or use default
+        if (_controllerNode_ != bytes32(0)) {
+            controllerNode = _controllerNode_;
+        }
+        // Set walletCacheNode or use default
+        if (_walletCacheNode_ != bytes32(0)) {
+            walletCacheNode = _walletCacheNode_;
+        }
     }
 
     /// @notice This function is used to deploy a Wallet for a given owner address
     /// @param _owner is the owner address for the new Wallet to be
     function deployWallet(address payable _owner) external onlyController {
-        Wallet wallet = IWalletCache(_ensResolve(WALLET_CACHE_NODE)).walletCachePop();
+        Wallet wallet = IWalletCache(_ensResolve(walletCacheNode)).walletCachePop();
         // This sets the changeableOwner boolean to false, i.e. no more change ownership
         wallet.transferOwnership(_owner, false);
         deployedWallets[_owner] = address(wallet);
@@ -56,7 +70,7 @@ contract WalletDeployer is ENSResolvable, Controllable {
     /// @param _gasTopUpLimit is the user's set daily gas top-up limit
     /// @param _whitelistedAddresses is the set of the user's whitelisted addresses
     function migrateWallet(address payable _owner, Wallet _oldWallet, bool _initializedSpendLimit, bool _initializedGasTopUpLimit, bool _initializedWhitelist, uint _spendLimit, uint _gasTopUpLimit, address[] calldata _whitelistedAddresses) external onlyController {
-        Wallet wallet = IWalletCache(_ensResolve(WALLET_CACHE_NODE)).walletCachePop();
+        Wallet wallet = IWalletCache(_ensResolve(walletCacheNode)).walletCachePop();
 
         // Sets up the security settings as per the _oldWallet 
         if (_initializedSpendLimit) {

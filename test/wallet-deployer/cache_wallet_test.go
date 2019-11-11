@@ -21,25 +21,25 @@ var _ = Describe("Cache Wallet", func() {
 		})
 
 		It("should point to the right tokenwhitelist node name", func() {
-			on, err := WalletCache.TOKENWHITELISTNODE(nil)
+			on, err := WalletCache.TokenWhitelistNode(nil)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(common.Hash(on)).To(Equal(EnsNode("token-whitelist.tokencard.eth")))
 		})
 
 		It("should point to the right controller node name", func() {
-			on, err := WalletCache.CONTROLLERNODE(nil)
+			on, err := WalletCache.ControllerNode(nil)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(common.Hash(on)).To(Equal(EnsNode("controller.tokencard.eth")))
 		})
 
 		It("should point to the right licence node name", func() {
-			on, err := WalletCache.LICENCENODE(nil)
+			on, err := WalletCache.LicenceNode(nil)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(common.Hash(on)).To(Equal(EnsNode("licence.tokencard.eth")))
 		})
 
 		It("should point to the right wallet deployer node name", func() {
-			on, err := WalletCache.WALLETDEPLOYERNODE(nil)
+			on, err := WalletCache.WalletDeployerNode(nil)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(common.Hash(on)).To(Equal(EnsNode("wallet-deployer.tokencard.eth")))
 		})
