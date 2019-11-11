@@ -5,12 +5,13 @@ import (
 	"fmt"
 	"os"
 	"testing"
-    . "github.com/onsi/ginkgo"
-	. "github.com/onsi/gomega"
-    . "github.com/tokencard/contracts/v2/test/shared"
+
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
+	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/gomega"
 	"github.com/tokencard/contracts/v2/pkg/bindings"
+	. "github.com/tokencard/contracts/v2/test/shared"
 )
 
 func TestWalletDeployer(t *testing.T) {
@@ -23,7 +24,7 @@ var _ = BeforeSuite(func() {
 		"../../build/walletDeployer/combined.json",
 		"../../contracts",
 	)
-    TestRig.AddCoverageForContracts(
+	TestRig.AddCoverageForContracts(
 		"../../build/walletCache/combined.json",
 		"../../contracts",
 	)
@@ -42,7 +43,7 @@ var _ = AfterEach(func() {
 var _ = AfterSuite(func() {
 	if allPassed {
 		TestRig.ExpectMinimumCoverage("walletDeployer.sol", 100.00)
-        TestRig.ExpectMinimumCoverage("walletCache.sol", 100.00)
+		TestRig.ExpectMinimumCoverage("walletCache.sol", 100.00)
 		TestRig.PrintGasUsage(os.Stdout)
 	}
 })
@@ -83,16 +84,16 @@ var _ = BeforeEach(func() {
 	var tx *types.Transaction
 	WalletCacheAddress, tx, WalletCache, err = bindings.DeployWalletCache(BankAccount.TransactOpts(), Backend, ENSRegistryAddress, EthToWei(1))
 	Expect(err).ToNot(HaveOccurred())
-    WalletDeployerAddress, tx, WalletDeployer, err = bindings.DeployWalletDeployer(BankAccount.TransactOpts(), Backend, ENSRegistryAddress)
+	WalletDeployerAddress, tx, WalletDeployer, err = bindings.DeployWalletDeployer(BankAccount.TransactOpts(), Backend, ENSRegistryAddress)
 	Expect(err).ToNot(HaveOccurred())
 	Backend.Commit()
 	Expect(isSuccessful(tx)).To(BeTrue())
 
-    //Register with ENS
-    {
-        // set WalletDeployer node owner
-        tx, err = ENSRegistry.SetSubnodeOwner(BankAccount.TransactOpts(), EnsNode("tokencard.eth"), LabelHash("wallet-deployer"), BankAccount.Address())
-        Expect(err).ToNot(HaveOccurred())
+	//Register with ENS
+	{
+		// set WalletDeployer node owner
+		tx, err = ENSRegistry.SetSubnodeOwner(BankAccount.TransactOpts(), EnsNode("tokencard.eth"), LabelHash("wallet-deployer"), BankAccount.Address())
+		Expect(err).ToNot(HaveOccurred())
 		Backend.Commit()
 		// Register WalletDeployer with ENS
 		tx, err = ENSRegistry.SetResolver(BankAccount.TransactOpts(), WalletDeployerNode, ENSResolverAddress)
@@ -104,10 +105,10 @@ var _ = BeforeEach(func() {
 		Backend.Commit()
 		Expect(isSuccessful(tx)).To(BeTrue())
 	}
-    {
-        // set WalletCache node owner
-        tx, err = ENSRegistry.SetSubnodeOwner(BankAccount.TransactOpts(), EnsNode("tokencard.eth"), LabelHash("wallet-cache"), BankAccount.Address())
-        Expect(err).ToNot(HaveOccurred())
+	{
+		// set WalletCache node owner
+		tx, err = ENSRegistry.SetSubnodeOwner(BankAccount.TransactOpts(), EnsNode("tokencard.eth"), LabelHash("wallet-cache"), BankAccount.Address())
+		Expect(err).ToNot(HaveOccurred())
 		Backend.Commit()
 		// Register WalletCache with ENS
 		tx, err = ENSRegistry.SetResolver(BankAccount.TransactOpts(), WalletCacheNode, ENSResolverAddress)

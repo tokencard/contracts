@@ -28,10 +28,10 @@ var (
 )
 
 // WalletDeployerABI is the input ABI used to generate the binding from.
-const WalletDeployerABI = "[{\"constant\":false,\"inputs\":[{\"name\":\"_owner\",\"type\":\"address\"},{\"name\":\"_oldWallet\",\"type\":\"address\"},{\"name\":\"_initializedSpendLimit\",\"type\":\"bool\"},{\"name\":\"_initializedGasTopUpLimit\",\"type\":\"bool\"},{\"name\":\"_initializedWhitelist\",\"type\":\"bool\"},{\"name\":\"_spendLimit\",\"type\":\"uint256\"},{\"name\":\"_gasTopUpLimit\",\"type\":\"uint256\"},{\"name\":\"_whitelistedAddresses\",\"type\":\"address[]\"}],\"name\":\"migrateWallet\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"ensRegistry\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"\",\"type\":\"address\"}],\"name\":\"deployedWallets\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"walletCacheNode\",\"outputs\":[{\"name\":\"\",\"type\":\"bytes32\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_owner\",\"type\":\"address\"}],\"name\":\"deployWallet\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"controllerNode\",\"outputs\":[{\"name\":\"\",\"type\":\"bytes32\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"name\":\"_ens\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_wallet\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_owner\",\"type\":\"address\"}],\"name\":\"DeployedWallet\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_wallet\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_oldWallet\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_owner\",\"type\":\"address\"}],\"name\":\"MigratedWallet\",\"type\":\"event\"}]"
+const WalletDeployerABI = "[{\"constant\":false,\"inputs\":[{\"name\":\"_owner\",\"type\":\"address\"},{\"name\":\"_oldWallet\",\"type\":\"address\"},{\"name\":\"_initializedSpendLimit\",\"type\":\"bool\"},{\"name\":\"_initializedGasTopUpLimit\",\"type\":\"bool\"},{\"name\":\"_initializedWhitelist\",\"type\":\"bool\"},{\"name\":\"_spendLimit\",\"type\":\"uint256\"},{\"name\":\"_gasTopUpLimit\",\"type\":\"uint256\"},{\"name\":\"_whitelistedAddresses\",\"type\":\"address[]\"}],\"name\":\"migrateWallet\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"ensRegistry\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"\",\"type\":\"address\"}],\"name\":\"deployedWallets\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"WALLET_CACHE_NODE\",\"outputs\":[{\"name\":\"\",\"type\":\"bytes32\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"CONTROLLER_NODE\",\"outputs\":[{\"name\":\"\",\"type\":\"bytes32\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_owner\",\"type\":\"address\"}],\"name\":\"deployWallet\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"controllerNode\",\"outputs\":[{\"name\":\"\",\"type\":\"bytes32\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"name\":\"_ens\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_wallet\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_owner\",\"type\":\"address\"}],\"name\":\"DeployedWallet\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"_wallet\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_oldWallet\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_owner\",\"type\":\"address\"}],\"name\":\"MigratedWallet\",\"type\":\"event\"}]"
 
 // WalletDeployerBin is the compiled bytecode used for deploying new contracts.
-var WalletDeployerBin = "0x608060405234801561001057600080fd5b5060405161092f38038061092f8339818101604052602081101561003357600080fd5b5051600180546001600160a01b039283166001600160a01b0319918216179182905560008054909116919092161790557f7f2ce995617d2816b426c5c8698c5ec2952f7a34bb10f38326f74933d5893697600255610899806100966000396000f3fe608060405234801561001057600080fd5b50600436106100625760003560e01c806317ca9305146100675780637d73b2311461011957806380a12c0e1461013d578063a6ede3d414610163578063c8cc2fc21461017d578063e2b4ce97146101a3575b600080fd5b610117600480360361010081101561007e57600080fd5b6001600160a01b03823581169260208101359091169160408201351515916060810135151591608082013515159160a08101359160c08201359190810190610100810160e08201356401000000008111156100d857600080fd5b8201836020820111156100ea57600080fd5b8035906020019184602083028401116401000000008311171561010c57600080fd5b5090925090506101ab565b005b6101216104da565b604080516001600160a01b039092168252519081900360200190f35b6101216004803603602081101561015357600080fd5b50356001600160a01b03166104e9565b61016b610504565b60408051918252519081900360200190f35b6101176004803603602081101561019357600080fd5b50356001600160a01b0316610528565b61016b6106ea565b6101b43361070e565b610205576040805162461bcd60e51b815260206004820152601a60248201527f73656e646572206973206e6f74206120636f6e74726f6c6c6572000000000000604482015290519081900360640190fd5b60006102307f7eee9c3927d17f70ce19de05f73d05dbda3449d450ba9a4c64f24c24bfb9d7ac6107a2565b6001600160a01b031663a4570e516040518163ffffffff1660e01b8152600401602060405180830381600087803b15801561026a57600080fd5b505af115801561027e573d6000803e3d6000fd5b505050506040513d602081101561029457600080fd5b5051905087156102fd57806001600160a01b0316633c672eb7866040518263ffffffff1660e01b815260040180828152602001915050600060405180830381600087803b1580156102e457600080fd5b505af11580156102f8573d6000803e3d6000fd5b505050505b861561036257806001600160a01b0316630f3a85d8856040518263ffffffff1660e01b815260040180828152602001915050600060405180830381600087803b15801561034957600080fd5b505af115801561035d573d6000803e3d6000fd5b505050505b85156103f657806001600160a01b031663f421764884846040518363ffffffff1660e01b815260040180806020018281038252848482818152602001925060200280828437600081840152601f19601f8201169050808301925050509350505050600060405180830381600087803b1580156103dd57600080fd5b505af11580156103f1573d6000803e3d6000fd5b505050505b60408051632c90b94d60e21b81526001600160a01b038c8116600483015260006024830181905292519084169263b242e534926044808201939182900301818387803b15801561044557600080fd5b505af1158015610459573d6000803e3d6000fd5b505050506001600160a01b038a811660008181526003602090815260409182902080546001600160a01b0319168686169081179091558251908152938d169084015282810191909152517f628666dc1e342232638fe725b30d07a00b36d24d32af174fdaea535df6c1eff0916060908290030190a150505050505050505050565b6001546001600160a01b031690565b6003602052600090815260409020546001600160a01b031681565b7f7eee9c3927d17f70ce19de05f73d05dbda3449d450ba9a4c64f24c24bfb9d7ac81565b6105313361070e565b610582576040805162461bcd60e51b815260206004820152601a60248201527f73656e646572206973206e6f74206120636f6e74726f6c6c6572000000000000604482015290519081900360640190fd5b60006105ad7f7eee9c3927d17f70ce19de05f73d05dbda3449d450ba9a4c64f24c24bfb9d7ac6107a2565b6001600160a01b031663a4570e516040518163ffffffff1660e01b8152600401602060405180830381600087803b1580156105e757600080fd5b505af11580156105fb573d6000803e3d6000fd5b505050506040513d602081101561061157600080fd5b505160408051632c90b94d60e21b81526001600160a01b038581166004830152600060248301819052925193945084169263b242e5349260448084019391929182900301818387803b15801561066657600080fd5b505af115801561067a573d6000803e3d6000fd5b5050506001600160a01b0380841660008181526003602090815260409182902080549487166001600160a01b031990951685179055815193845283019190915280517fc02db5f4164f89d90905928336769906e16d79c4a77342126eb647ca9440d0789350918290030190a15050565b7f7f2ce995617d2816b426c5c8698c5ec2952f7a34bb10f38326f74933d589369781565b600061071b6002546107a2565b6001600160a01b031663b429afeb836040518263ffffffff1660e01b815260040180826001600160a01b03166001600160a01b0316815260200191505060206040518083038186803b15801561077057600080fd5b505afa158015610784573d6000803e3d6000fd5b505050506040513d602081101561079a57600080fd5b505192915050565b6000805460408051630178b8bf60e01b81526004810185905290516001600160a01b0390921691630178b8bf91602480820192602092909190829003018186803b1580156107ef57600080fd5b505afa158015610803573d6000803e3d6000fd5b505050506040513d602081101561081957600080fd5b505160408051631d9dabef60e11b81526004810185905290516001600160a01b0390921691633b3b57de91602480820192602092909190829003018186803b15801561077057600080fdfea265627a7a723058208ebc322cd65114474366600622bb4d79cee61bf269b8c0863dcca5a0ea662b8b64736f6c634300050a0032"
+var WalletDeployerBin = "0x608060405234801561001057600080fd5b506040516109583803806109588339818101604052602081101561003357600080fd5b5051600180546001600160a01b039283166001600160a01b0319918216179182905560008054909116919092161790557f7f2ce995617d2816b426c5c8698c5ec2952f7a34bb10f38326f74933d58936976002556108c2806100966000396000f3fe608060405234801561001057600080fd5b506004361061007d5760003560e01c8063a2bf50631161005b578063a2bf50631461017e578063c5a60a3d14610198578063c8cc2fc2146101a0578063e2b4ce97146101c65761007d565b806317ca9305146100825780637d73b2311461013457806380a12c0e14610158575b600080fd5b610132600480360361010081101561009957600080fd5b6001600160a01b03823581169260208101359091169160408201351515916060810135151591608082013515159160a08101359160c08201359190810190610100810160e08201356401000000008111156100f357600080fd5b82018360208201111561010557600080fd5b8035906020019184602083028401116401000000008311171561012757600080fd5b5090925090506101ce565b005b61013c6104fd565b604080516001600160a01b039092168252519081900360200190f35b61013c6004803603602081101561016e57600080fd5b50356001600160a01b031661050c565b610186610527565b60408051918252519081900360200190f35b61018661054b565b610132600480360360208110156101b657600080fd5b50356001600160a01b031661056f565b610186610731565b6101d733610737565b610228576040805162461bcd60e51b815260206004820152601a60248201527f73656e646572206973206e6f74206120636f6e74726f6c6c6572000000000000604482015290519081900360640190fd5b60006102537f7eee9c3927d17f70ce19de05f73d05dbda3449d450ba9a4c64f24c24bfb9d7ac6107cb565b6001600160a01b031663a4570e516040518163ffffffff1660e01b8152600401602060405180830381600087803b15801561028d57600080fd5b505af11580156102a1573d6000803e3d6000fd5b505050506040513d60208110156102b757600080fd5b50519050871561032057806001600160a01b0316633c672eb7866040518263ffffffff1660e01b815260040180828152602001915050600060405180830381600087803b15801561030757600080fd5b505af115801561031b573d6000803e3d6000fd5b505050505b861561038557806001600160a01b0316630f3a85d8856040518263ffffffff1660e01b815260040180828152602001915050600060405180830381600087803b15801561036c57600080fd5b505af1158015610380573d6000803e3d6000fd5b505050505b851561041957806001600160a01b031663f421764884846040518363ffffffff1660e01b815260040180806020018281038252848482818152602001925060200280828437600081840152601f19601f8201169050808301925050509350505050600060405180830381600087803b15801561040057600080fd5b505af1158015610414573d6000803e3d6000fd5b505050505b60408051632c90b94d60e21b81526001600160a01b038c8116600483015260006024830181905292519084169263b242e534926044808201939182900301818387803b15801561046857600080fd5b505af115801561047c573d6000803e3d6000fd5b505050506001600160a01b038a811660008181526003602090815260409182902080546001600160a01b0319168686169081179091558251908152938d169084015282810191909152517f628666dc1e342232638fe725b30d07a00b36d24d32af174fdaea535df6c1eff0916060908290030190a150505050505050505050565b6001546001600160a01b031690565b6003602052600090815260409020546001600160a01b031681565b7f7eee9c3927d17f70ce19de05f73d05dbda3449d450ba9a4c64f24c24bfb9d7ac81565b7f7f2ce995617d2816b426c5c8698c5ec2952f7a34bb10f38326f74933d589369781565b61057833610737565b6105c9576040805162461bcd60e51b815260206004820152601a60248201527f73656e646572206973206e6f74206120636f6e74726f6c6c6572000000000000604482015290519081900360640190fd5b60006105f47f7eee9c3927d17f70ce19de05f73d05dbda3449d450ba9a4c64f24c24bfb9d7ac6107cb565b6001600160a01b031663a4570e516040518163ffffffff1660e01b8152600401602060405180830381600087803b15801561062e57600080fd5b505af1158015610642573d6000803e3d6000fd5b505050506040513d602081101561065857600080fd5b505160408051632c90b94d60e21b81526001600160a01b038581166004830152600060248301819052925193945084169263b242e5349260448084019391929182900301818387803b1580156106ad57600080fd5b505af11580156106c1573d6000803e3d6000fd5b5050506001600160a01b0380841660008181526003602090815260409182902080549487166001600160a01b031990951685179055815193845283019190915280517fc02db5f4164f89d90905928336769906e16d79c4a77342126eb647ca9440d0789350918290030190a15050565b60025490565b60006107446002546107cb565b6001600160a01b031663b429afeb836040518263ffffffff1660e01b815260040180826001600160a01b03166001600160a01b0316815260200191505060206040518083038186803b15801561079957600080fd5b505afa1580156107ad573d6000803e3d6000fd5b505050506040513d60208110156107c357600080fd5b505192915050565b6000805460408051630178b8bf60e01b81526004810185905290516001600160a01b0390921691630178b8bf91602480820192602092909190829003018186803b15801561081857600080fd5b505afa15801561082c573d6000803e3d6000fd5b505050506040513d602081101561084257600080fd5b505160408051631d9dabef60e11b81526004810185905290516001600160a01b0390921691633b3b57de91602480820192602092909190829003018186803b15801561079957600080fdfea265627a7a72305820e07b9f2fffcbcb70281bfbed2e5e77529d779a2f970bb0391b5129f4af8bc3d964736f6c634300050a0032"
 
 // DeployWalletDeployer deploys a new Ethereum contract, binding an instance of WalletDeployer to it.
 func DeployWalletDeployer(auth *bind.TransactOpts, backend bind.ContractBackend, _ens common.Address) (common.Address, *types.Transaction, *WalletDeployer, error) {
@@ -189,6 +189,58 @@ func (_WalletDeployer *WalletDeployerTransactorRaw) Transact(opts *bind.Transact
 	return _WalletDeployer.Contract.contract.Transact(opts, method, params...)
 }
 
+// CONTROLLERNODE is a free data retrieval call binding the contract method 0xc5a60a3d.
+//
+// Solidity: function CONTROLLER_NODE() constant returns(bytes32)
+func (_WalletDeployer *WalletDeployerCaller) CONTROLLERNODE(opts *bind.CallOpts) ([32]byte, error) {
+	var (
+		ret0 = new([32]byte)
+	)
+	out := ret0
+	err := _WalletDeployer.contract.Call(opts, out, "CONTROLLER_NODE")
+	return *ret0, err
+}
+
+// CONTROLLERNODE is a free data retrieval call binding the contract method 0xc5a60a3d.
+//
+// Solidity: function CONTROLLER_NODE() constant returns(bytes32)
+func (_WalletDeployer *WalletDeployerSession) CONTROLLERNODE() ([32]byte, error) {
+	return _WalletDeployer.Contract.CONTROLLERNODE(&_WalletDeployer.CallOpts)
+}
+
+// CONTROLLERNODE is a free data retrieval call binding the contract method 0xc5a60a3d.
+//
+// Solidity: function CONTROLLER_NODE() constant returns(bytes32)
+func (_WalletDeployer *WalletDeployerCallerSession) CONTROLLERNODE() ([32]byte, error) {
+	return _WalletDeployer.Contract.CONTROLLERNODE(&_WalletDeployer.CallOpts)
+}
+
+// WALLETCACHENODE is a free data retrieval call binding the contract method 0xa2bf5063.
+//
+// Solidity: function WALLET_CACHE_NODE() constant returns(bytes32)
+func (_WalletDeployer *WalletDeployerCaller) WALLETCACHENODE(opts *bind.CallOpts) ([32]byte, error) {
+	var (
+		ret0 = new([32]byte)
+	)
+	out := ret0
+	err := _WalletDeployer.contract.Call(opts, out, "WALLET_CACHE_NODE")
+	return *ret0, err
+}
+
+// WALLETCACHENODE is a free data retrieval call binding the contract method 0xa2bf5063.
+//
+// Solidity: function WALLET_CACHE_NODE() constant returns(bytes32)
+func (_WalletDeployer *WalletDeployerSession) WALLETCACHENODE() ([32]byte, error) {
+	return _WalletDeployer.Contract.WALLETCACHENODE(&_WalletDeployer.CallOpts)
+}
+
+// WALLETCACHENODE is a free data retrieval call binding the contract method 0xa2bf5063.
+//
+// Solidity: function WALLET_CACHE_NODE() constant returns(bytes32)
+func (_WalletDeployer *WalletDeployerCallerSession) WALLETCACHENODE() ([32]byte, error) {
+	return _WalletDeployer.Contract.WALLETCACHENODE(&_WalletDeployer.CallOpts)
+}
+
 // ControllerNode is a free data retrieval call binding the contract method 0xe2b4ce97.
 //
 // Solidity: function controllerNode() constant returns(bytes32)
@@ -265,32 +317,6 @@ func (_WalletDeployer *WalletDeployerSession) EnsRegistry() (common.Address, err
 // Solidity: function ensRegistry() constant returns(address)
 func (_WalletDeployer *WalletDeployerCallerSession) EnsRegistry() (common.Address, error) {
 	return _WalletDeployer.Contract.EnsRegistry(&_WalletDeployer.CallOpts)
-}
-
-// WalletCacheNode is a free data retrieval call binding the contract method 0xa6ede3d4.
-//
-// Solidity: function walletCacheNode() constant returns(bytes32)
-func (_WalletDeployer *WalletDeployerCaller) WalletCacheNode(opts *bind.CallOpts) ([32]byte, error) {
-	var (
-		ret0 = new([32]byte)
-	)
-	out := ret0
-	err := _WalletDeployer.contract.Call(opts, out, "walletCacheNode")
-	return *ret0, err
-}
-
-// WalletCacheNode is a free data retrieval call binding the contract method 0xa6ede3d4.
-//
-// Solidity: function walletCacheNode() constant returns(bytes32)
-func (_WalletDeployer *WalletDeployerSession) WalletCacheNode() ([32]byte, error) {
-	return _WalletDeployer.Contract.WalletCacheNode(&_WalletDeployer.CallOpts)
-}
-
-// WalletCacheNode is a free data retrieval call binding the contract method 0xa6ede3d4.
-//
-// Solidity: function walletCacheNode() constant returns(bytes32)
-func (_WalletDeployer *WalletDeployerCallerSession) WalletCacheNode() ([32]byte, error) {
-	return _WalletDeployer.Contract.WalletCacheNode(&_WalletDeployer.CallOpts)
 }
 
 // DeployWallet is a paid mutator transaction binding the contract method 0xc8cc2fc2.

@@ -1,27 +1,27 @@
 package wallet_deployer_test
 
 import (
-    . "github.com/onsi/ginkgo"
-	. "github.com/onsi/gomega"
-    . "github.com/tokencard/contracts/v2/test/shared"
 	"github.com/ethereum/go-ethereum/common"
+	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/gomega"
 	"github.com/tokencard/contracts/v2/pkg/bindings"
+	. "github.com/tokencard/contracts/v2/test/shared"
 	"github.com/tokencard/ethertest"
 )
 
 var _ = Describe("Wallet Deployer", func() {
 
-    It("should point to the right controller node", func() {
-        wcn, err := WalletDeployer.WalletCacheNode(nil)
-        Expect(err).ToNot(HaveOccurred())
-        Expect(common.Hash(wcn)).To(Equal(EnsNode("wallet-cache.tokencard.eth")))
-    })
+	It("should point to the right controller node", func() {
+		wcn, err := WalletDeployer.WALLETCACHENODE(nil)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(common.Hash(wcn)).To(Equal(EnsNode("wallet-cache.tokencard.eth")))
+	})
 
-    It("should point to the right wallet cache node", func() {
-        on, err := WalletDeployer.ControllerNode(nil)
-        Expect(err).ToNot(HaveOccurred())
-        Expect(common.Hash(on)).To(Equal(EnsNode("controller.tokencard.eth")))
-    })
+	It("should point to the right wallet cache node", func() {
+		on, err := WalletDeployer.CONTROLLERNODE(nil)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(common.Hash(on)).To(Equal(EnsNode("controller.tokencard.eth")))
+	})
 
 	When("no Wallets are cached", func() {
 
