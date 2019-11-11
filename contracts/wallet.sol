@@ -608,7 +608,7 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
     bytes32 private _licenceNode;
 
     /// @dev this is an internal nonce to prevent replay attacks from relayer
-    uint relayNonce;
+    uint public relayNonce;
 
     /// @dev Constructor initializes the wallet top up limit and the vault contract.
     /// @param _owner_ is the owner account of the wallet contract.
@@ -661,31 +661,42 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
 
     }
 
+    /// @dev This function allows for the wallet to send a batch of transactions instead of one,
+    ///      it calls executeTransaction() so that the daily limit is enforced.
+    /// @param _transactionBatch data encoding the transactions to be sent,
+    ///        following executeTransaction's format i.e. (destination, value, data)
     function executeTransactions(bytes memory _transactionBatch) public onlyOwnerOrSelf returns (bool) {
         uint batchLength = _transactionBatch.length;
         uint i = 32; //the first 32 bytes denote the byte array length
-        address destination; // the final destination address
-        uint value; // the trasanction value
+        address destination; // destination address
+        uint value; // trasanction value
         uint dataLength; // externall call data length
-        bytes memory data;
+        bytes memory data; // call data
 
         while (i < batchLength) {
             assembly {
-                destination := shr(0x60, mload(add(_transactionBatch, i)))
+                //shift right by 96 bits (256 - 160) to get the destination address (and zero the excessive bytes)
+                destination := shr(96, mload(add(_transactionBatch, i)))
+                //get value: index + 20 bytes (destinnation address)
                 value := mload(add(_transactionBatch, add(i, 20)))
+                //get data: index  + 20 (destination address) + 32 (value) bytes
+                //the first 32 bytes denote the byte array length
                 dataLength := mload(add(_transactionBatch, add(i, 52)))
                 data := add(_transactionBatch, add(i, 52))
             }
+            //if length is 0 ignore the data field
             if (dataLength == 0){
                 data = bytes("");
             }
+            //call executeTransaction(), if one of them reverts then the whole batch reverts.
             executeTransaction(destination, value, data);
+            //index += 20 + 32 + 32 + dataLength
             i += 84 + dataLength;
         }
         return true;
     }
 
-    /// @dev This function allows for the owner to send transaction from the Wallet to arbitrary addresses
+    /// @dev This function allows for the owner to send any transaction from the Wallet to arbitrary addresses
     /// @param _destination address of the transaction
     /// @param _value ETH amount in wei
     /// @param _data transaction payload binary
@@ -707,8 +718,8 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
                 uint etherValue = convertToEther(_destination, amount);
                 _spendLimit._enforceLimit(etherValue);
             }
-            // use callOptionalReturn provided in SafeERC20 in case the ERC20 method
-            // returns flase instead of reverting!
+            // use callOptionalReturn provided in SafeERC20 in case the ERC20 method...
+            // ...returns false instead of reverting!
             ERC20(_destination).callOptionalReturn(_data);
 
             // if ERC20 call completes, return a boolean "true" as bytes emulating ERC20
@@ -720,24 +731,32 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
         }
 
         (bool success, bytes memory returndata) = _destination.call.value(_value)(_data);
-        require(success, "low-level call failed");
+        require(success, string(returndata));
 
         emit ExecutedTransaction(_destination, _value, _data, returndata);
         // returns all of the bytes returned by _destination contract
         return returndata;
     }
 
+    /// @dev This function allows for the controller to relay transactions on the owner's behalf
+    ///      the relayed message has to be signed by the owner.
+    /// @param _nonce only used for relayed transactions, must match the wallet's relayNonce.
+    /// @param _data abi encoded data payload.
+    /// @param _signature signed prefix + data.
     function executeRelayedTransaction(uint _nonce, bytes calldata _data, bytes calldata _signature) external onlyController {
+        // expecting prefixed data indicating relayed transaction
         bytes32 hashedData = keccak256(abi.encodePacked("rlx:", _nonce, _data));
-
+        // expecting an Ethereum Signed Message to protect user from signing an actual Tx
         address from = hashedData.toEthSignedMessageHash().recover(_signature);
+        // verify signer == owner
         require(_isOwner(from), "message not signed by the owner");
-
+        // verify and increase relayNonce to prevent replay attacks from the relayer
         require(_nonce == relayNonce, "Tx replay!");
         relayNonce++;
 
+        // invoke wallet function with an external call
         (bool success, bytes memory returndata) = address(this).call(_data);
-        require(success, "low-level call failed");
+        require(success, string(returndata));
         emit ExecutedRelayedTransaction(_data, returndata);
     }
 

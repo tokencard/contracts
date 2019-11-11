@@ -95,83 +95,108 @@ var _ = Describe("relay Tx", func() {
 
         })
 
-        BeforeEach(func() {
-            a, err := abi.JSON(strings.NewReader(WALLET_ABI))
-            Expect(err).ToNot(HaveOccurred())
-            data, err := a.Pack("transfer", randomAddress, common.HexToAddress("0x0"), EthToWei(1))
-            Expect(err).ToNot(HaveOccurred())
+        When("the call succeeds", func() {
+            BeforeEach(func() {
+                a, err := abi.JSON(strings.NewReader(WALLET_ABI))
+                Expect(err).ToNot(HaveOccurred())
+                data, err := a.Pack("transfer", randomAddress, common.HexToAddress("0x0"), EthToWei(1))
+                Expect(err).ToNot(HaveOccurred())
 
-            nonce := big.NewInt(0)
-            signature, err := SignData(nonce, data, privateKey)
-            Expect(err).ToNot(HaveOccurred())
+                nonce := big.NewInt(0)
+                signature, err := SignData(nonce, data, privateKey)
+                Expect(err).ToNot(HaveOccurred())
 
-            tx, err := Wallet.ExecuteRelayedTransaction(Controller.TransactOpts(), nonce, data, signature)
-            Expect(err).ToNot(HaveOccurred())
-            Backend.Commit()
-            Expect(isSuccessful(tx)).To(BeTrue())
+                tx, err := Wallet.ExecuteRelayedTransaction(Controller.TransactOpts(), nonce, data, signature)
+                Expect(err).ToNot(HaveOccurred())
+                Backend.Commit()
+                Expect(isSuccessful(tx)).To(BeTrue())
+            })
+
+            It("should change the owner", func() {
+                o, err := Wallet.Owner(nil)
+                Expect(err).ToNot(HaveOccurred())
+                Expect(o).To(Equal(randomAddress))
+            })
+
+            It("should emit an ExecutedRelayedTransaction event", func() {
+                it, err := Wallet.FilterExecutedRelayedTransaction(nil)
+                Expect(err).ToNot(HaveOccurred())
+                Expect(it.Next()).To(BeTrue())
+                evt := it.Event
+                Expect(it.Next()).To(BeFalse())
+                a, err := abi.JSON(strings.NewReader(WALLET_ABI))
+                Expect(err).ToNot(HaveOccurred())
+                data, err := a.Pack("transfer", randomAddress, common.HexToAddress("0x0"), EthToWei(1))
+                Expect(evt.Data).To(Equal(data))
+                Expect(evt.Returndata).To(Equal([]byte{}))
+            })
+
+            It("should decrease the wallet's ETH balance ", func() {
+    			b, err := Backend.BalanceAt(context.Background(), WalletAddress, nil)
+    			Expect(err).ToNot(HaveOccurred())
+    			Expect(b.String()).To(Equal(EthToWei(1).String()))
+    		})
+
+            It("should increase the random address' balance ", func() {
+    			b, err := Backend.BalanceAt(context.Background(), randomAddress, nil)
+    			Expect(err).ToNot(HaveOccurred())
+    			Expect(b.String()).To(Equal(EthToWei(1).String()))
+    		})
+
+            It("should fail when trying to replay", func() {
+                a, err := abi.JSON(strings.NewReader(WALLET_ABI))
+                Expect(err).ToNot(HaveOccurred())
+                data, err := a.Pack("transfer", randomAddress, common.HexToAddress("0x0"), EthToWei(1))
+                Expect(err).ToNot(HaveOccurred())
+
+                nonce := big.NewInt(0)
+                signature, err := SignData(nonce, data, privateKey)
+                Expect(err).ToNot(HaveOccurred())
+
+                tx, err := Wallet.ExecuteRelayedTransaction(Controller.TransactOpts(ethertest.WithGasLimit(500000)), nonce, data, signature)
+                Expect(err).ToNot(HaveOccurred())
+                Backend.Commit()
+                Expect(isSuccessful(tx)).To(BeFalse())
+            })
+
+            It("should succeed when increasing the nonce", func() {
+                a, err := abi.JSON(strings.NewReader(WALLET_ABI))
+                Expect(err).ToNot(HaveOccurred())
+                data, err := a.Pack("transfer", randomAddress, common.HexToAddress("0x0"), EthToWei(1))
+                Expect(err).ToNot(HaveOccurred())
+
+                nonce := big.NewInt(1)
+                signature, err := SignData(nonce, data, privateKey)
+                Expect(err).ToNot(HaveOccurred())
+
+                tx, err := Wallet.ExecuteRelayedTransaction(Controller.TransactOpts(), nonce, data, signature)
+                Expect(err).ToNot(HaveOccurred())
+                Backend.Commit()
+                Expect(isSuccessful(tx)).To(BeTrue())
+            })
         })
 
-        It("should change the owner", func() {
-            o, err := Wallet.Owner(nil)
-            Expect(err).ToNot(HaveOccurred())
-            Expect(o).To(Equal(randomAddress))
+        When("the call fails (transfer to 0x0 address)", func() {
+            It("should return the error string emitted by require", func() {
+                a, err := abi.JSON(strings.NewReader(WALLET_ABI))
+                Expect(err).ToNot(HaveOccurred())
+                data, err := a.Pack("transfer", common.HexToAddress("0x0"), common.HexToAddress("0x0"), EthToWei(1))
+                Expect(err).ToNot(HaveOccurred())
+
+                nonce := big.NewInt(0)
+                signature, err := SignData(nonce, data, privateKey)
+                Expect(err).ToNot(HaveOccurred())
+
+                tx, err := Wallet.ExecuteRelayedTransaction(Controller.TransactOpts(ethertest.WithGasLimit(500000)), nonce, data, signature)
+                Expect(err).ToNot(HaveOccurred())
+                Backend.Commit()
+                Expect(isSuccessful(tx)).To(BeFalse())
+
+                returnData, _ := ethCall(tx)
+                Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("_to address cannot be set to 0x0"))
+            })
+
         })
 
-        It("should emit an ExecutedRelayedTransaction event", func() {
-            it, err := Wallet.FilterExecutedRelayedTransaction(nil)
-            Expect(err).ToNot(HaveOccurred())
-            Expect(it.Next()).To(BeTrue())
-            evt := it.Event
-            Expect(it.Next()).To(BeFalse())
-            a, err := abi.JSON(strings.NewReader(WALLET_ABI))
-            Expect(err).ToNot(HaveOccurred())
-            data, err := a.Pack("transfer", randomAddress, common.HexToAddress("0x0"), EthToWei(1))
-            Expect(evt.Data).To(Equal(data))
-            Expect(evt.Returndata).To(Equal([]byte{}))
-        })
-
-        It("should decrease the wallet's ETH balance ", func() {
-			b, err := Backend.BalanceAt(context.Background(), WalletAddress, nil)
-			Expect(err).ToNot(HaveOccurred())
-			Expect(b.String()).To(Equal(EthToWei(1).String()))
-		})
-
-        It("should increase the random address' balance ", func() {
-			b, err := Backend.BalanceAt(context.Background(), randomAddress, nil)
-			Expect(err).ToNot(HaveOccurred())
-			Expect(b.String()).To(Equal(EthToWei(1).String()))
-		})
-
-        It("should fail when trying to replay", func() {
-            a, err := abi.JSON(strings.NewReader(WALLET_ABI))
-            Expect(err).ToNot(HaveOccurred())
-            data, err := a.Pack("transfer", randomAddress, common.HexToAddress("0x0"), EthToWei(1))
-            Expect(err).ToNot(HaveOccurred())
-
-            nonce := big.NewInt(0)
-            signature, err := SignData(nonce, data, privateKey)
-            Expect(err).ToNot(HaveOccurred())
-
-            tx, err := Wallet.ExecuteRelayedTransaction(Controller.TransactOpts(ethertest.WithGasLimit(500000)), nonce, data, signature)
-            Expect(err).ToNot(HaveOccurred())
-            Backend.Commit()
-            Expect(isSuccessful(tx)).To(BeFalse())
-        })
-
-        It("should succeed when increasing the nonce", func() {
-            a, err := abi.JSON(strings.NewReader(WALLET_ABI))
-            Expect(err).ToNot(HaveOccurred())
-            data, err := a.Pack("transfer", randomAddress, common.HexToAddress("0x0"), EthToWei(1))
-            Expect(err).ToNot(HaveOccurred())
-
-            nonce := big.NewInt(1)
-            signature, err := SignData(nonce, data, privateKey)
-            Expect(err).ToNot(HaveOccurred())
-
-            tx, err := Wallet.ExecuteRelayedTransaction(Controller.TransactOpts(), nonce, data, signature)
-            Expect(err).ToNot(HaveOccurred())
-            Backend.Commit()
-            Expect(isSuccessful(tx)).To(BeTrue())
-        })
     })
 })
