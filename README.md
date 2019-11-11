@@ -4,7 +4,7 @@ This repository contains the Smart Contracts needed to power the TokenCard, writ
 
 The TokenCard is the world's first non-custodial VISA card, that allows people to hold their own assets, whilst being able to seamlessly move funds to a VISA debit card. 1% of all loads to the TokenCard are sent, by the user themselves, to the TKN Holder contract. This is used to back the TKN contract, aka the Asset Contract.
 
-| [High Level Architecture](https://github.com/tokencard/contracts/blob/master/README.md/#high-level-architecture) | [Security Features](https://github.com/tokencard/contracts/blob/master/README.md/#security-features) | [Solidity Code](https://github.com/tokencard/contracts/blob/master/README.md/#solidity-code-in-the-contracts-folder) | [Running Contract Tests](https://github.com/tokencard/contracts/blob/master/README.md/#running-contract-tests) | [Monolith Resources](https://github.com/tokencard/contracts/blob/master/README.md/#monolith-resources) |
+| [High Level Architecture](https://github.com/tokencard/contracts/blob/master/README.md/#high-level-architecture) | [Security Features](https://github.com/tokencard/contracts/blob/master/README.md/#security-features) | [Solidity Code](https://github.com/tokencard/contracts/blob/master/README.md/#solidity-code-in-the-contracts-folder) | [Running Contract Tests](https://github.com/tokencard/contracts/blob/master/README.md/#running-contract-tests) | [Resources](https://github.com/tokencard/contracts/blob/master/README.md/#resources) |
 |---|---|---|---|---|
 
 ## Overview
@@ -182,7 +182,8 @@ Run tests, excluding coverage (multi-threaded):
 ```sh
 SILENT=true ginkgo -nodes=16 -r -p ./test/...
 ```
-## Monolith Resources
 
-[🎮 Discord](https://discord.gg/YrrFpFd) | [🗞️Blog](https://medium.com/monolith) | [📜 Whitepaper](https://tokencard.io/tokencard_whitepaper.pdf) | [🕸️ Website ](https://monolith.xyz) | [🐦 Twitter](https://twitter.com/monolith_web3/) |
+## Resources
+
+[🎮 Discord](https://discord.gg/GN6gGEP) | [🗞️Blog](https://medium.com/@Monolith) | [👽 Reddit](https://www.reddit.com/r/Monolith_Web3/) | [🕸️ Website ](https://monolith.xyz/) | [🐦 Twitter](https://twitter.com/monolith_web3) |
 |---|---|---|---|---| 
