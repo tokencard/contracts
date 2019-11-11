@@ -73,13 +73,14 @@ var _ = Describe("Wallet Deployer", func() {
 
 				BeforeEach(func() {
 					NewWalletAddress, err := WalletDeployer.DeployedWallets(nil, Owner.Address())
+					Expect(err).ToNot(HaveOccurred())
 
 					NewWallet, err = bindings.NewWallet(NewWalletAddress, Backend)
 					Expect(err).ToNot(HaveOccurred())
 
 				})
 
-				It("should succeed", func() {
+				FIt("should succeed", func() {
 					tx, err := NewWallet.SetSpendLimit(Owner.TransactOpts(), EthToWei(1))
 					Expect(err).ToNot(HaveOccurred())
 					Backend.Commit()
