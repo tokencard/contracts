@@ -31,8 +31,8 @@ contract WalletDeployer is ENSResolvable, Controllable {
     /*****   Constants   *****/
     // Default values for mainnet ENS
     // wallet-cache.tokencard.eth
-    bytes32 private constant _WALLET_CACHE_NODE = 0x7eee9c3927d17f70ce19de05f73d05dbda3449d450ba9a4c64f24c24bfb9d7ac;
-    bytes32 public walletCacheNode = _WALLET_CACHE_NODE;
+    bytes32 private constant _DEFAULT_WALLET_CACHE_NODE = 0x7eee9c3927d17f70ce19de05f73d05dbda3449d450ba9a4c64f24c24bfb9d7ac;
+    bytes32 public walletCacheNode = _DEFAULT_WALLET_CACHE_NODE;
 
     mapping(address => address) public deployedWallets;
 
@@ -64,7 +64,7 @@ contract WalletDeployer is ENSResolvable, Controllable {
     function migrateWallet(address payable _owner, Wallet _oldWallet, bool _initializedSpendLimit, bool _initializedGasTopUpLimit, bool _initializedWhitelist, uint _spendLimit, uint _gasTopUpLimit, address[] calldata _whitelistedAddresses) external onlyController {
         Wallet wallet = IWalletCache(_ensResolve(walletCacheNode)).walletCachePop();
 
-        // Sets up the security settings as per the _oldWallet 
+        // Sets up the security settings as per the _oldWallet
         if (_initializedSpendLimit) {
             wallet.setSpendLimit(_spendLimit);
         }
