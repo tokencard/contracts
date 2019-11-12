@@ -30,6 +30,7 @@ import "./externals/Address.sol";
 import "./externals/ERC20.sol";
 import "./externals/SafeERC20.sol";
 import "./externals/ERC165.sol";
+import "./externals/ECDSA.sol";
 
 
 /// @title ControllableOwnable combines Controllable and Ownable
@@ -42,11 +43,21 @@ contract ControllableOwnable is Controllable, Ownable {
     }
 }
 
+/// @title SelfCallableOwnable allows either owner or the contract itself to call its functions
+/// @dev providing an additional modifier to check if Owner or self is calling
+/// @dev the "self" here is used for the meta transactions
+contract SelfCallableOwnable is Ownable {
+    /// @dev Check if the sender is the Owner or self
+    modifier onlyOwnerOrSelf() {
+        require (_isOwner(msg.sender) || msg.sender == address(this), "either owner or self");
+        _;
+    }
+}
 
 /// @title AddressWhitelist provides payee-whitelist functionality.
 /// @dev This contract will allow the user to maintain a whitelist of addresses
 /// @dev These addresses will live outside of the various spend limits
-contract AddressWhitelist is ControllableOwnable {
+contract AddressWhitelist is ControllableOwnable, SelfCallableOwnable {
     using SafeMath for uint256;
 
     event AddedToWhitelist(address _sender, address[] _addresses);
@@ -92,7 +103,7 @@ contract AddressWhitelist is ControllableOwnable {
 
     /// @dev Add initial addresses to the whitelist.
     /// @param _addresses are the Ethereum addresses to be whitelisted.
-    function setWhitelist(address[] calldata _addresses) external onlyOwner hasNoOwnerOrZeroAddress(_addresses) {
+    function setWhitelist(address[] calldata _addresses) external onlyOwnerOrSelf hasNoOwnerOrZeroAddress(_addresses) {
         // Require that the whitelist has not been initialized.
         require(!isSetWhitelist, "whitelist has already been initialized");
         // Add each of the provided addresses to the whitelist.
@@ -109,7 +120,7 @@ contract AddressWhitelist is ControllableOwnable {
 
     /// @dev Add addresses to the whitelist.
     /// @param _addresses are the Ethereum addresses to be whitelisted.
-    function submitWhitelistAddition(address[] calldata _addresses) external onlyOwner noActiveSubmission hasNoOwnerOrZeroAddress(_addresses) {
+    function submitWhitelistAddition(address[] calldata _addresses) external onlyOwnerOrSelf noActiveSubmission hasNoOwnerOrZeroAddress(_addresses) {
         // Require that the whitelist has been initialized.
         require(isSetWhitelist, "whitelist has not been initialized");
         // Require this array of addresses not empty
@@ -163,7 +174,7 @@ contract AddressWhitelist is ControllableOwnable {
 
     /// @dev Remove addresses from the whitelist.
     /// @param _addresses are the Ethereum addresses to be removed.
-    function submitWhitelistRemoval(address[] calldata _addresses) external onlyOwner noActiveSubmission {
+    function submitWhitelistRemoval(address[] calldata _addresses) external onlyOwnerOrSelf noActiveSubmission {
         // Require that the whitelist has been initialized.
         require(isSetWhitelist, "whitelist has not been initialized");
         // Require that the array of addresses is not empty
@@ -312,7 +323,7 @@ library DailyLimitTrait {
 
 
 /// @title  it provides daily spend limit functionality.
-contract SpendLimit is ControllableOwnable {
+contract SpendLimit is ControllableOwnable, SelfCallableOwnable {
     event SetSpendLimit(address _sender, uint _amount);
     event SubmittedSpendLimitUpdate(uint _amount);
 
@@ -327,14 +338,14 @@ contract SpendLimit is ControllableOwnable {
 
     /// @dev Sets the initial daily spend (aka transfer) limit for non-whitelisted addresses.
     /// @param _amount is the daily limit amount in wei.
-    function setSpendLimit(uint _amount) external onlyOwner {
+    function setSpendLimit(uint _amount) external onlyOwnerOrSelf {
         _spendLimit._setLimit(_amount);
         emit SetSpendLimit(msg.sender, _amount);
     }
 
     /// @dev Submit a daily transfer limit update for non-whitelisted addresses.
     /// @param _amount is the daily limit amount in wei.
-    function submitSpendLimitUpdate(uint _amount) external onlyOwner {
+    function submitSpendLimitUpdate(uint _amount) external onlyOwnerOrSelf {
         _spendLimit._submitLimitUpdate(_amount);
         emit SubmittedSpendLimitUpdate(_amount);
     }
@@ -364,7 +375,7 @@ contract SpendLimit is ControllableOwnable {
 
 
 //// @title GasTopUpLimit provides daily limit functionality.
-contract GasTopUpLimit is ControllableOwnable {
+contract GasTopUpLimit is ControllableOwnable, SelfCallableOwnable {
 
     event SetGasTopUpLimit(address _sender, uint _amount);
     event SubmittedGasTopUpLimitUpdate(uint _amount);
@@ -383,7 +394,7 @@ contract GasTopUpLimit is ControllableOwnable {
 
     /// @dev Sets the daily gas top up limit.
     /// @param _amount is the gas top up amount in wei.
-    function setGasTopUpLimit(uint _amount) external onlyOwner {
+    function setGasTopUpLimit(uint _amount) external onlyOwnerOrSelf {
         require(_MINIMUM_GAS_TOPUP_LIMIT <= _amount && _amount <= _MAXIMUM_GAS_TOPUP_LIMIT, "gas top up amount is outside the min/max range");
         _gasTopUpLimit._setLimit(_amount);
         emit SetGasTopUpLimit(msg.sender, _amount);
@@ -391,7 +402,7 @@ contract GasTopUpLimit is ControllableOwnable {
 
     /// @dev Submit a daily gas top up limit update.
     /// @param _amount is the daily top up gas limit amount in wei.
-    function submitGasTopUpLimitUpdate(uint _amount) external onlyOwner {
+    function submitGasTopUpLimitUpdate(uint _amount) external onlyOwnerOrSelf {
         require(_MINIMUM_GAS_TOPUP_LIMIT <= _amount && _amount <= _MAXIMUM_GAS_TOPUP_LIMIT, "gas top up amount is outside the min/max range");
         _gasTopUpLimit._submitLimitUpdate(_amount);
         emit SubmittedGasTopUpLimitUpdate(_amount);
@@ -422,7 +433,7 @@ contract GasTopUpLimit is ControllableOwnable {
 
 
 /// @title LoadLimit provides daily load limit functionality.
-contract LoadLimit is ControllableOwnable {
+contract LoadLimit is ControllableOwnable, SelfCallableOwnable {
 
     event SetLoadLimit(address _sender, uint _amount);
     event SubmittedLoadLimitUpdate(uint _amount);
@@ -436,7 +447,7 @@ contract LoadLimit is ControllableOwnable {
 
     /// @dev Sets a daily card load limit.
     /// @param _amount is the card load amount in current stablecoin base units.
-    function setLoadLimit(uint _amount) external onlyOwner {
+    function setLoadLimit(uint _amount) external onlyOwnerOrSelf {
         require(_MINIMUM_LOAD_LIMIT <= _amount && _amount <= _maximumLoadLimit, "card load amount is outside the min/max range");
         _loadLimit._setLimit(_amount);
         emit SetLoadLimit(msg.sender, _amount);
@@ -444,7 +455,7 @@ contract LoadLimit is ControllableOwnable {
 
     /// @dev Submit a daily load limit update.
     /// @param _amount is the daily load limit amount in wei.
-    function submitLoadLimitUpdate(uint _amount) external onlyOwner {
+    function submitLoadLimitUpdate(uint _amount) external onlyOwnerOrSelf {
         require(_MINIMUM_LOAD_LIMIT <= _amount && _amount <= _maximumLoadLimit, "card load amount is outside the min/max range");
         _loadLimit._submitLimitUpdate(_amount);
         emit SubmittedLoadLimitUpdate(_amount);
@@ -522,7 +533,7 @@ contract Vault is AddressWhitelist, SpendLimit, ERC165, Transferrable, Balanceab
     /// @notice If any of the transfers fail, this will revert.
     /// @param _to is the recipient's address, can't be the zero (0x0) address: transfer() will revert.
     /// @param _assets is an array of addresses of ERC20 tokens or 0x0 for ether.
-    function bulkTransfer(address payable _to, address[] calldata _assets) external onlyOwner {
+    function bulkTransfer(address payable _to, address[] calldata _assets) external onlyOwnerOrSelf {
         // check to make sure that _assets isn't empty
         require(_assets.length != 0, "asset array should be non-empty");
         // This loops through all of the transfers to be made
@@ -539,7 +550,7 @@ contract Vault is AddressWhitelist, SpendLimit, ERC165, Transferrable, Balanceab
     /// @param _to is the recipient's address.
     /// @param _asset is the address of an ERC20 token or 0x0 for ether.
     /// @param _amount is the amount of assets to be transferred in base units.
-    function transfer(address payable _to, address _asset, uint _amount) public onlyOwner isNotZero(_amount) {
+    function transfer(address payable _to, address _asset, uint _amount) public onlyOwnerOrSelf isNotZero(_amount) {
         // Checks if the _to address is not the zero-address
         require(_to != address(0), "_to address cannot be set to 0x0");
 
@@ -583,17 +594,22 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
 
     using SafeERC20 for ERC20;
     using Address for address;
+    using ECDSA for bytes32;
 
     event ToppedUpGas(address _sender, address _owner, uint _amount);
     event LoadedTokenCard(address _asset, uint _amount);
     event ExecutedTransaction(address _destination, uint _value, bytes _data, bytes _returndata);
+    event ExecutedRelayedTransaction(bytes _data, bytes _returndata);
     event UpdatedAvailableLimit();
 
-    string constant public WALLET_VERSION = "2.2.0";
+    string constant public WALLET_VERSION = "2.3.0";
     uint constant private _DEFAULT_MAX_STABLECOIN_LOAD_LIMIT = 10000; //10,000 USD
 
     /// @dev Is the registered ENS node identifying the licence contract.
     bytes32 private _licenceNode;
+
+    /// @dev this is an internal nonce to prevent replay attacks from relayer
+    uint public relayNonce;
 
     /// @dev Constructor initializes the wallet top up limit and the vault contract.
     /// @param _owner_ is the owner account of the wallet contract.
@@ -626,7 +642,7 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
     /// @dev the amount send should be inclusive of the percent licence.
     /// @param _asset is the address of an ERC20 token or 0x0 for ether.
     /// @param _amount is the amount of assets to be transferred in base units.
-    function loadTokenCard(address _asset, uint _amount) external payable onlyOwner {
+    function loadTokenCard(address _asset, uint _amount) external payable onlyOwnerOrSelf {
         // check if token is allowed to be used for loading the card
         require(_isTokenLoadable(_asset), "token not loadable");
         // Convert token amount to stablecoin value.
@@ -646,11 +662,46 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
 
     }
 
-    /// @dev This function allows for the owner to send transaction from the Wallet to arbitrary addresses
+    /// @dev This function allows for the wallet to send a batch of transactions instead of one,
+    /// it calls executeTransaction() so that the daily limit is enforced.
+    /// @param _transactionBatch data encoding the transactions to be sent,
+    /// following executeTransaction's format i.e. (destination, value, data)
+    function executeTransactions(bytes memory _transactionBatch) public onlyOwnerOrSelf {
+        uint batchLength = _transactionBatch.length;
+        uint i = 32; //the first 32 bytes denote the byte array length
+        address destination; // destination address
+        uint value; // trasanction value
+        uint dataLength; // externall call data length
+        bytes memory data; // call data
+
+        while (i < batchLength) {
+            assembly {
+                // shift right by 96 bits (256 - 160) to get the destination address (and zero the excessive bytes)
+                destination := shr(96, mload(add(_transactionBatch, i)))
+                // get value: index + 20 bytes (destinnation address)
+                value := mload(add(_transactionBatch, add(i, 20)))
+                // get data: index  + 20 (destination address) + 32 (value) bytes
+                // the first 32 bytes denote the byte array length
+                dataLength := mload(add(_transactionBatch, add(i, 52)))
+                data := add(_transactionBatch, add(i, 52))
+            }
+            // if length is 0 ignore the data field
+            if (dataLength == 0) {
+                data = bytes("");
+            }
+            // call executeTransaction(), if one of them reverts then the whole batch reverts.
+            executeTransaction(destination, value, data);
+            // index += 20 + 32 + 32 + dataLength
+            i += 84 + dataLength;
+        }
+
+    }
+
+    /// @dev This function allows for the owner to send any transaction from the Wallet to arbitrary addresses
     /// @param _destination address of the transaction
     /// @param _value ETH amount in wei
     /// @param _data transaction payload binary
-    function executeTransaction(address _destination, uint _value, bytes calldata _data) external onlyOwner returns (bytes memory) {
+    function executeTransaction(address _destination, uint _value, bytes memory _data) public onlyOwnerOrSelf returns (bytes memory) {
         // If value is send across as a part of this executeTransaction, this will be sent to any payable
         // destination. As a result enforceLimit if destination is not whitelisted.
         if (!whitelistMap[_destination]) {
@@ -663,13 +714,13 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
             uint amount;
             (to, amount) = _getERC20RecipientAndAmount(_destination, _data);
             if (!whitelistMap[to]) {
-                // If the address (of the token contract, e.g) is not in the TokenWhitelist used by the convert method...
-                // ...then etherValue will be zero
+                // If the address (of the token contract, e.g) is not in the TokenWhitelist used by the convert method
+                // then etherValue will be zero
                 uint etherValue = convertToEther(_destination, amount);
                 _spendLimit._enforceLimit(etherValue);
             }
             // use callOptionalReturn provided in SafeERC20 in case the ERC20 method
-            // returns flase instead of reverting!
+            // returns false instead of reverting!
             ERC20(_destination).callOptionalReturn(_data);
 
             // if ERC20 call completes, return a boolean "true" as bytes emulating ERC20
@@ -681,11 +732,34 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
         }
 
         (bool success, bytes memory returndata) = _destination.call.value(_value)(_data);
-        require(success, "low-level call failed");
+        require(success, string(returndata));
 
         emit ExecutedTransaction(_destination, _value, _data, returndata);
         // returns all of the bytes returned by _destination contract
         return returndata;
+    }
+
+    /// @dev This function allows for the controller to relay transactions on the owner's behalf
+    ///      the relayed message has to be signed by the owner.
+    /// @param _nonce only used for relayed transactions, must match the wallet's relayNonce.
+    /// @param _data abi encoded data payload.
+    /// @param _signature signed prefix + data.
+    function executeRelayedTransaction(uint _nonce, bytes calldata _data, bytes calldata _signature) external onlyController {
+        // expecting prefixed data indicating relayed transaction
+        bytes32 hashedData = keccak256(abi.encodePacked("rlx:", _nonce, _data));
+        // expecting an Ethereum Signed Message to protect user from signing an actual Tx
+        address from = hashedData.toEthSignedMessageHash().recover(_signature);
+        // verify signer == owner
+        require(_isOwner(from), "message not signed by the owner");
+        // verify and increase relayNonce to prevent replay attacks from the relayer
+        require(_nonce == relayNonce, "Tx replay!");
+        relayNonce++;
+
+        // invoke wallet function with an external call
+        (bool success, bytes memory returndata) = address(this).call(_data);
+        require(success, string(returndata));
+
+        emit ExecutedRelayedTransaction(_data, returndata);
     }
 
     /// @return licence contract node registered in ENS.
@@ -711,7 +785,7 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
             // require that token both exists in the whitelist and its rate is not zero.
             require(available, "token is not available");
             require(rate != 0, "token rate is 0");
-            // Safely convert the token amount to ether based on the exchange rate.
+            // Safely convert the token amount to ether based on the exchangeonly rate.
             amountToSend = _amount.mul(rate).div(magnitude);
         }
         // _amountToSend now is in ether
