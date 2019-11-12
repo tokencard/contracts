@@ -164,7 +164,7 @@ var _ = Describe("metaTx refund", func() {
 					a, err = abi.JSON(strings.NewReader(WALLET_ABI))
 					data, _ = a.Pack("executeTransactions", []byte(batch))
 					Expect(evt.Data).To(Equal(data))
-					Expect(evt.Returndata).To(Equal(common.Hex2Bytes("0000000000000000000000000000000000000000000000000000000000000001")))
+					Expect(evt.Returndata).To(Equal(common.Hex2Bytes("")))
 				})
 			})
 
