@@ -30,23 +30,15 @@ contract WalletDeployer is ENSResolvable, Controllable {
 
     /*****   Constants   *****/
     // Default values for mainnet ENS
-    // controller.tokencard.eth
-    bytes32 private constant _CONTROLLER_NODE = 0x7f2ce995617d2816b426c5c8698c5ec2952f7a34bb10f38326f74933d5893697;
     // wallet-cache.tokencard.eth
     bytes32 private constant _WALLET_CACHE_NODE = 0x7eee9c3927d17f70ce19de05f73d05dbda3449d450ba9a4c64f24c24bfb9d7ac;
-
-    bytes32 public controllerNode = _CONTROLLER_NODE;
     bytes32 public walletCacheNode = _WALLET_CACHE_NODE;
 
     mapping(address => address) public deployedWallets;
 
     /// @notice it needs to know to address of the wallet cache
-    /// @dev pass in bytes32 to use the default, production node labels for ENS
-    constructor(address _ens_, bytes32 _controllerNode_, bytes32 _walletCacheNode_) ENSResolvable(_ens_) Controllable(controllerNode) public {
-        // Set controllerNode or use default
-        if (_controllerNode_ != bytes32(0)) {
-            controllerNode = _controllerNode_;
-        }
+
+    constructor(address _ens_, bytes32 _controllerNode_, bytes32 _walletCacheNode_) ENSResolvable(_ens_) Controllable(_controllerNode_) public {
         // Set walletCacheNode or use default
         if (_walletCacheNode_ != bytes32(0)) {
             walletCacheNode = _walletCacheNode_;
