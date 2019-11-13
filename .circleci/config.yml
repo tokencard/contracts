@@ -36,18 +36,27 @@ jobs:
 
   mythril:
     docker:
-      - image: mythril/myth:0.19.3
+      - image: mythril/myth:0.21.19
     working_directory: /src
     steps:
       - checkout
       - run:
-          command: myth -x ./contracts/oracle.sol
+          command: myth analyze ./contracts/oracle.sol
           no_output_timeout: 30m
       - run:
-          command: myth -x ./contracts/wallet.sol
+          command: myth analyze ./contracts/wallet.sol
           no_output_timeout: 30m
       - run:
-          command: myth -x ./contracts/licence.sol
+          command: myth analyze ./contracts/licence.sol
+          no_output_timeout: 30m
+      - run:
+          command: myth analyze ./contracts/holder.sol
+          no_output_timeout: 30m
+      - run:
+          command: myth analyze ./contracts/tokenWhitelist.sol
+          no_output_timeout: 30m
+      - run:
+          command: myth analyze ./contracts/walletDeployer.sol
           no_output_timeout: 30m
 
 workflows:
