@@ -42,22 +42,22 @@ jobs:
       - checkout
       - run:
           command: myth analyze ./contracts/oracle.sol
-          no_output_timeout: 30m
+          no_output_timeout: 1h
       - run:
           command: myth analyze ./contracts/wallet.sol
-          no_output_timeout: 30m
+          no_output_timeout: 1h
       - run:
           command: myth analyze ./contracts/licence.sol
-          no_output_timeout: 30m
+          no_output_timeout: 1h
       - run:
           command: myth analyze ./contracts/holder.sol
-          no_output_timeout: 30m
+          no_output_timeout: 1h
       - run:
           command: myth analyze ./contracts/tokenWhitelist.sol
-          no_output_timeout: 30m
+          no_output_timeout: 1h
       - run:
           command: myth analyze ./contracts/walletDeployer.sol
-          no_output_timeout: 30m
+          no_output_timeout: 1h
 
 workflows:
   version: 2
