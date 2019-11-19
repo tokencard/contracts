@@ -73,7 +73,6 @@ contracts=(
   "internals/parseIntScientific/ParseIntScientific internals/parseIntScientific.go ParseIntScientific internals"
   "externals/ens/ENSRegistry/ENSRegistry externals/ens/ENSRegistry.go ENSRegistry ens"
   "externals/ens/PublicResolver/PublicResolver externals/ens/PublicResolver.go PublicResolver ens"
-
 )
 
 for c in "${contracts[@]}"

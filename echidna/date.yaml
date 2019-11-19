@@ -1,0 +1,8 @@
+seqLen: 50
+#shrinkLimit: 100
+testLimit: 20000
+prefix: "echidna_"
+deployer: "0x41414141"
+sender: ["0x42424242", "0x43434343"]
+dashboard: false
+solcArgs: "--allow-paths ." 
