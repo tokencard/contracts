@@ -1,8 +1,8 @@
 package wallet_test
 
 import (
-	"math/big"
 	"errors"
+	"math/big"
 
 	"github.com/ethereum/go-ethereum/common"
 	. "github.com/onsi/ginkgo"
@@ -79,6 +79,29 @@ var _ = Describe("initializeWhitelist", func() {
 			})
 		})
 
+	})
+
+	When("I initialize whitelist with duplicate entries", func() {
+		BeforeEach(func() {
+			tx, err := Wallet.SetWhitelist(Owner.TransactOpts(), []common.Address{common.HexToAddress("0x1"), common.HexToAddress("0x1")})
+			Expect(err).ToNot(HaveOccurred())
+			Backend.Commit()
+			Expect(isSuccessful(tx)).To(BeTrue())
+		})
+
+		It("should only persist 1 item in the array", func() {
+			_, err := Wallet.WhitelistArray(nil, big.NewInt(1))
+			Expect(err).To(HaveOccurred())
+
+			Expect(err).To(MatchError(errors.New("abi: unmarshalling empty output")))
+		})
+
+		It("should only persist 1 item in the array and it should be 0x1", func() {
+			a, err := Wallet.WhitelistArray(nil, big.NewInt(0))
+			Expect(err).ToNot(HaveOccurred())
+
+			Expect(a).To(Equal(common.HexToAddress("0x1")))
+		})
 	})
 
 	When("I initialize whitelist with the 0x0 address", func() {
@@ -399,7 +422,7 @@ var _ = Describe("whitelistRemoval", func() {
 	When("3 addresses are in the whitelist", func() {
 
 		BeforeEach(func() {
-			tx, err := Wallet.SetWhitelist(Owner.TransactOpts(), []common.Address{RandomAccount.Address(),common.HexToAddress("0x1"),common.HexToAddress("0x2")})
+			tx, err := Wallet.SetWhitelist(Owner.TransactOpts(), []common.Address{RandomAccount.Address(), common.HexToAddress("0x1"), common.HexToAddress("0x2")})
 			Expect(err).ToNot(HaveOccurred())
 			Backend.Commit()
 			Expect(isSuccessful(tx)).To(BeTrue())
@@ -507,7 +530,6 @@ var _ = Describe("whitelistRemoval", func() {
 					Expect(ra).To(Equal(common.HexToAddress("0x1")))
 				})
 
-
 				When("I submit the last address for removal and controller confirms", func() {
 
 					BeforeEach(func() {
@@ -546,7 +568,6 @@ var _ = Describe("whitelistRemoval", func() {
 						Expect(err).To(HaveOccurred())
 						Expect(err).To(MatchError(errors.New("abi: unmarshalling empty output")))
 					})
-
 
 				})
 

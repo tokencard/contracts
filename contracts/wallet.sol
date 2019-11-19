@@ -109,7 +109,7 @@ contract AddressWhitelist is ControllableOwnable, SelfCallableOwnable {
         // Add each of the provided addresses to the whitelist.
         for (uint i = 0; i < _addresses.length; i++) {
             // Dedup addresses before writing to the whitelist
-            if (!whitelistMap[_addresses[i]]) { 
+            if (!whitelistMap[_addresses[i]]) {
                 // adds to the whitelist mapping
                 whitelistMap[_addresses[i]] = true;
                 // adds to the whitelist array
