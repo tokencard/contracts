@@ -627,6 +627,11 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
         _licenceNode = _licenceNode_;
     }
 
+    /// @dev This allows the user to cancel a transaction that was unexpectedly delayed by the relayer
+    function increaseRelayNonce() external onlyOwner {
+        relayNonce++;
+    }
+
     /// @dev Refill owner's gas balance, revert if the transaction amount is too large
     /// @param _amount is the amount of ether to transfer to the owner account in wei.
     function topUpGas(uint _amount) external isNotZero(_amount) onlyOwnerOrController {
