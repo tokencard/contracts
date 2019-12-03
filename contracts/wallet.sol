@@ -693,6 +693,9 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
                 dataLength := mload(add(_transactionBatch, add(i, 52)))
                 data := add(_transactionBatch, add(i, 52))
             }
+
+            require(i.add(dataLength) <= _transactionBatch.length, "encoded datalength causes overflow");
+
             // if length is 0 ignore the data field
             if (dataLength == 0) {
                 data = bytes("");
