@@ -236,11 +236,11 @@ var _ = Describe("executeTransactions", func() {
 			})
 		})
 
-        When("there is a mismath between the trusted encoded length and the actual data size", func() {
+        When("the datalength is a maliciously encoded", func() {
 
 			var randomAddress common.Address
 
-			It("should revert if the encoded length is too big", func() {
+			It("should revert if the encoded length is larger than the actual batch size", func() {
 
 				privateKey, _ := crypto.GenerateKey()
 				randomAddress = crypto.PubkeyToAddress(privateKey.PublicKey)
@@ -254,6 +254,22 @@ var _ = Describe("executeTransactions", func() {
 
 				returnData, _ := ethCall(tx)
 				Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("out of bounds access"))
+			})
+
+            It("should revert if there is an index overflow", func() {
+
+				privateKey, _ := crypto.GenerateKey()
+				randomAddress = crypto.PubkeyToAddress(privateKey.PublicKey)
+
+				batch := fmt.Sprintf("%s%s%s", randomAddress, abi.U256(EthToWei(1)), abi.U256(big.NewInt(-1)))
+
+				tx, err := Wallet.ExecuteTransactions(Owner.TransactOpts(ethertest.WithGasLimit(1000000)), []byte(batch))
+				Expect(err).ToNot(HaveOccurred())
+				Backend.Commit()
+				Expect(isSuccessful(tx)).To(BeFalse())
+
+				returnData, _ := ethCall(tx)
+				Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("SafeMath: addition overflow"))
 			})
         })
 

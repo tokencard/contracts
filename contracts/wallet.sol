@@ -696,8 +696,10 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
                 dataLength := mload(add(_transactionBatch, add(i, 52)))
                 data := add(_transactionBatch, add(i, 52))
             }
+            // index += 20 + 32 + 32 + dataLength, reverts in case of overflow
+            i = i.add(dataLength).add(84);
             // revert in case the encoded dataLength is gonna cause an out of bound access
-            require(i.add(dataLength) <= _transactionBatch.length, "out of bounds access");
+            require(i <= _transactionBatch.length, "out of bounds access");
 
             // if length is 0 ignore the data field
             if (dataLength == 0) {
@@ -705,8 +707,6 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
             }
             // call executeTransaction(), if one of them reverts then the whole batch reverts.
             executeTransaction(destination, value, data);
-            // index += 20 + 32 + 32 + dataLength
-            i += 84 + dataLength;
         }
 
     }
