@@ -253,7 +253,28 @@ var _ = Describe("executeTransactions", func() {
 				Expect(isSuccessful(tx)).To(BeFalse())
 
 				returnData, _ := ethCall(tx)
-				Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("encoded datalength causes overflow"))
+				Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("out of bounds access"))
+			})
+        })
+
+        When("there are not enough bytes to encode the executeTransaction inputs", func() {
+
+			var randomAddress common.Address
+
+			It("should revert", func() {
+
+				privateKey, _ := crypto.GenerateKey()
+				randomAddress = crypto.PubkeyToAddress(privateKey.PublicKey)
+
+				batch := fmt.Sprintf("%s%s", randomAddress, abi.U256(EthToWei(1)))
+
+				tx, err := Wallet.ExecuteTransactions(Owner.TransactOpts(ethertest.WithGasLimit(1000000)), []byte(batch))
+				Expect(err).ToNot(HaveOccurred())
+				Backend.Commit()
+				Expect(isSuccessful(tx)).To(BeFalse())
+
+				returnData, _ := ethCall(tx)
+				Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("SafeMath: subtraction overflow"))
 			})
         })
 

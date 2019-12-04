@@ -676,6 +676,7 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
     /// following executeTransaction's format i.e. (destination, value, data)
     function executeTransactions(bytes memory _transactionBatch) public onlyOwnerOrSelf {
         uint batchLength = _transactionBatch.length;
+        uint remainingBytesLength = batchLength;
         uint i = 32; //the first 32 bytes denote the byte array length
         address destination; // destination address
         uint value; // trasanction value
@@ -683,6 +684,8 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
         bytes memory data; // call data
 
         while (i < batchLength) {
+            // there should always be at least 84 bytes remaining: the minimun #bytes required to encode a Tx
+            remainingBytesLength = remainingBytesLength.sub(84);
             assembly {
                 // shift right by 96 bits (256 - 160) to get the destination address (and zero the excessive bytes)
                 destination := shr(96, mload(add(_transactionBatch, i)))
@@ -693,8 +696,8 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
                 dataLength := mload(add(_transactionBatch, add(i, 52)))
                 data := add(_transactionBatch, add(i, 52))
             }
-
-            require(i.add(dataLength) <= _transactionBatch.length, "encoded datalength causes overflow");
+            // revert in case the encoded dataLength is gonna cause an out of bound access
+            require(i.add(dataLength) <= _transactionBatch.length, "out of bounds access");
 
             // if length is 0 ignore the data field
             if (dataLength == 0) {
