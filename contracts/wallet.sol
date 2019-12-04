@@ -675,9 +675,10 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
     /// @param _transactionBatch data encoding the transactions to be sent,
     /// following executeTransaction's format i.e. (destination, value, data)
     function executeTransactions(bytes memory _transactionBatch) public onlyOwnerOrSelf {
-        uint batchLength = _transactionBatch.length;
-        uint remainingBytesLength = batchLength;
-        uint i = 32; //the first 32 bytes denote the byte array length
+        uint batchLength = _transactionBatch.length + 32; // because the index starts from 32
+        uint remainingBytesLength = _transactionBatch.length; // remaining bytes to be processed
+        uint i = 32; //the first 32 bytes denote the byte array length, start from actual data
+
         address destination; // destination address
         uint value; // trasanction value
         uint dataLength; // externall call data length
@@ -699,7 +700,7 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
             // index += 20 + 32 + 32 + dataLength, reverts in case of overflow
             i = i.add(dataLength).add(84);
             // revert in case the encoded dataLength is gonna cause an out of bound access
-            require(i <= _transactionBatch.length, "out of bounds access");
+            require(i <= batchLength, "out of bounds access");
 
             // if length is 0 ignore the data field
             if (dataLength == 0) {
