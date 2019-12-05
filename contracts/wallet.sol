@@ -108,14 +108,17 @@ contract AddressWhitelist is ControllableOwnable, SelfCallableOwnable {
         require(!isSetWhitelist, "whitelist has already been initialized");
         // Add each of the provided addresses to the whitelist.
         for (uint i = 0; i < _addresses.length; i++) {
-            // adds to the whitelist mapping
-            whitelistMap[_addresses[i]] = true;
-            // adds to the whitelist array
-            whitelistArray.push(_addresses[i]);
+            // Dedup addresses before writing to the whitelist
+            if (!whitelistMap[_addresses[i]]) {
+                // adds to the whitelist mapping
+                whitelistMap[_addresses[i]] = true;
+                // adds to the whitelist array
+                whitelistArray.push(_addresses[i]);
+            }
         }
         isSetWhitelist = true;
         // Emit the addition event.
-        emit AddedToWhitelist(msg.sender, _addresses);
+        emit AddedToWhitelist(msg.sender, whitelistArray);
     }
 
     /// @dev Add addresses to the whitelist.
