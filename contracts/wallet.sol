@@ -675,14 +675,18 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
     /// @param _transactionBatch data encoding the transactions to be sent,
     /// following executeTransaction's format i.e. (destination, value, data)
     function executeTransactions(bytes memory _transactionBatch) public onlyOwnerOrSelf {
-        uint batchLength = _transactionBatch.length;
-        uint i = 32; //the first 32 bytes denote the byte array length
+        uint batchLength = _transactionBatch.length + 32; // because the index starts from 32
+        uint remainingBytesLength = _transactionBatch.length; // remaining bytes to be processed
+        uint i = 32; //the first 32 bytes denote the byte array length, start from actual data
+
         address destination; // destination address
         uint value; // trasanction value
         uint dataLength; // externall call data length
         bytes memory data; // call data
 
         while (i < batchLength) {
+            // there should always be at least 84 bytes remaining: the minimun #bytes required to encode a Tx
+            remainingBytesLength = remainingBytesLength.sub(84);
             assembly {
                 // shift right by 96 bits (256 - 160) to get the destination address (and zero the excessive bytes)
                 destination := shr(96, mload(add(_transactionBatch, i)))
@@ -693,14 +697,17 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
                 dataLength := mload(add(_transactionBatch, add(i, 52)))
                 data := add(_transactionBatch, add(i, 52))
             }
+            // index += 20 + 32 + 32 + dataLength, reverts in case of overflow
+            i = i.add(dataLength).add(84);
+            // revert in case the encoded dataLength is gonna cause an out of bound access
+            require(i <= batchLength, "out of bounds access");
+
             // if length is 0 ignore the data field
             if (dataLength == 0) {
                 data = bytes("");
             }
             // call executeTransaction(), if one of them reverts then the whole batch reverts.
             executeTransaction(destination, value, data);
-            // index += 20 + 32 + 32 + dataLength
-            i += 84 + dataLength;
         }
 
     }
