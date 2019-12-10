@@ -607,6 +607,10 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
 
     string constant public WALLET_VERSION = "2.3.0";
     uint constant private _DEFAULT_MAX_STABLECOIN_LOAD_LIMIT = 10000; //10,000 USD
+    // keccak256("isValidSignature(bytes,bytes)") = 20c13b0bc670c284a9f19cdf7a533ca249404190f8dc132aac33e733b965269e
+    bytes4 constant private _EIP_1271 = 0x20c13b0b;
+    // keccak256("isValidSignature(bytes32,bytes)") = 1626ba7e356f5979dd355a3d2bfb43e80420a480c3b854edce286a82d7496869
+    bytes4 constant private _EIP_1654 = 0x1626ba7e;
 
     /// @dev Is the registered ENS node identifying the licence contract.
     bytes32 private _licenceNode;
@@ -754,18 +758,16 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
         return returndata;
     }
 
-    /// @dev This function allows for the controller to relay transactions on the owner's behalf
+    /// @dev This function allows for the controller to relay transactions on the owner's behalf,
     ///      the relayed message has to be signed by the owner.
     /// @param _nonce only used for relayed transactions, must match the wallet's relayNonce.
     /// @param _data abi encoded data payload.
     /// @param _signature signed prefix + data.
     function executeRelayedTransaction(uint _nonce, bytes calldata _data, bytes calldata _signature) external onlyController {
         // expecting prefixed data indicating relayed transaction
-        bytes32 hashedData = keccak256(abi.encodePacked("rlx:", _nonce, _data));
-        // expecting an Ethereum Signed Message to protect user from signing an actual Tx
-        address from = hashedData.toEthSignedMessageHash().recover(_signature);
-        // verify signer == owner
-        require(_isOwner(from), "message not signed by the owner");
+        bytes32 dataHash = keccak256(abi.encodePacked("rlx:", _nonce, _data));
+        // expecting an Ethereum Signed Message to protect user from signing an actual Tx, verify signer == owner
+        require(isValidSignature(dataHash, _signature) == _EIP_1654, "signature not validated");
         // verify and increase relayNonce to prevent replay attacks from the relayer
         require(_nonce == relayNonce, "Tx replay!");
         relayNonce++;
@@ -776,6 +778,28 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
 
         emit ExecutedRelayedTransaction(_data, returndata);
     }
+
+
+    /// @dev Implements EIP-1271: receives the raw data (bytes)
+    ///      https://github.com/ethereum/EIPs/blob/master/EIPS/eip-1271.md
+    /// @param _data Arbitrary length data signed on the behalf of address(this)
+    /// @param _signature Signature byte array associated with _data
+    function isValidSignature(bytes calldata _data, bytes calldata _signature) external view returns (bytes4) {
+        bytes32 dataHash = keccak256(abi.encodePacked(_data));
+        require(isValidSignature(dataHash, _signature) == _EIP_1654, "signature not validated");
+        return _EIP_1271;
+    }
+
+    /// @dev Implements EIP-1654: receives the hashed message(bytes32)
+    ///      https://github.com/ethereum/EIPs/issues/1654.md
+    /// @param _hashedData Hashed data signed on the behalf of address(this)
+    /// @param _signature Signature byte array associated with _dataHash
+    function isValidSignature(bytes32 _hashedData, bytes memory _signature) public view returns (bytes4) {
+        address from = _hashedData.recover(_signature);
+        require(_isOwner(from), "not signed by the owner");
+        return _EIP_1654;
+    }
+
 
     /// @return licence contract node registered in ENS.
     function licenceNode() external view returns (bytes32) {
