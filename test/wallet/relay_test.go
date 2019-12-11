@@ -85,6 +85,8 @@ var _ = Describe("relay Tx", func() {
 			Expect(err).ToNot(HaveOccurred())
 			Backend.Commit()
 			Expect(isSuccessful(tx)).To(BeFalse())
+            returnData, _ := ethCall(tx)
+            Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("not signed by the owner"))
 		})
 	})
 

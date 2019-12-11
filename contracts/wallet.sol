@@ -764,9 +764,10 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
     /// @param _data abi encoded data payload.
     /// @param _signature signed prefix + data.
     function executeRelayedTransaction(uint _nonce, bytes calldata _data, bytes calldata _signature) external onlyController {
-        // expecting prefixed data indicating relayed transaction
-        bytes32 dataHash = keccak256(abi.encodePacked("rlx:", _nonce, _data));
-        // expecting an Ethereum Signed Message to protect user from signing an actual Tx, verify signer == owner
+        // expecting prefixed data ("rlx:") indicating relayed transaction...
+        // ...and an Ethereum Signed Message to protect user from signing an actual Tx
+        bytes32 dataHash = keccak256(abi.encodePacked("rlx:", _nonce, _data)).toEthSignedMessageHash();
+        // verify signature validity i.e. signer == owner
         require(isValidSignature(dataHash, _signature) == _EIP_1654, "signature not validated");
         // verify and increase relayNonce to prevent replay attacks from the relayer
         require(_nonce == relayNonce, "Tx replay!");
