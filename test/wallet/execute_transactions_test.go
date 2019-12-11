@@ -6,31 +6,14 @@ import (
 	"math/big"
 	"strings"
 
-	"github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/crypto"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	. "github.com/tokencard/contracts/v2/test/shared"
 	"github.com/tokencard/ethertest"
 )
-
-func ethCall(tx *types.Transaction) ([]byte, error) {
-	msg, _ := tx.AsMessage(types.HomesteadSigner{})
-
-	calMsg := ethereum.CallMsg{
-		From:     msg.From(),
-		To:       msg.To(),
-		Gas:      msg.Gas(),
-		GasPrice: msg.GasPrice(),
-		Value:    msg.Value(),
-		Data:     msg.Data(),
-	}
-
-	return Backend.CallContract(context.Background(), calMsg, nil)
-}
 
 var _ = Describe("executeTransactions", func() {
 
@@ -142,7 +125,7 @@ var _ = Describe("executeTransactions", func() {
 				Expect(isSuccessful(tx)).To(BeFalse())
 
 				returnData, _ := ethCall(tx)
-				Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("provided value cannot be zero"))
+				Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("value=0"))
 			})
 
 			It("should NOT increase random address' balance", func() {
@@ -253,7 +236,7 @@ var _ = Describe("executeTransactions", func() {
 				Expect(isSuccessful(tx)).To(BeFalse())
 
 				returnData, _ := ethCall(tx)
-				Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("out of bounds access"))
+				Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("out of bounds"))
 			})
 
             It("should revert if there is an index overflow", func() {

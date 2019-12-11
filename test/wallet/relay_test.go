@@ -3,8 +3,6 @@ package wallet_test
 import (
 	"context"
 	"crypto/ecdsa"
-	"errors"
-	"fmt"
 	"math/big"
 	"strings"
 
@@ -16,22 +14,6 @@ import (
 	. "github.com/tokencard/contracts/v2/test/shared"
 	"github.com/tokencard/ethertest"
 )
-
-func SignData(nonce *big.Int, data []byte, prv *ecdsa.PrivateKey) ([]byte, error) {
-	relayMessage := fmt.Sprintf("rlx:%s%s", abi.U256(nonce), data)
-	hash := crypto.Keccak256([]byte(relayMessage))
-	ethMessage := fmt.Sprintf("\x19Ethereum Signed Message:\n%d%s", len(hash), hash)
-	hash = crypto.Keccak256([]byte(ethMessage))
-	sig, err := crypto.Sign(hash, prv)
-	if err != nil {
-		return nil, err
-	}
-	if len(sig) != 65 {
-		return nil, errors.New("invalid sig len")
-	}
-	sig[64] += 27
-	return sig, nil
-}
 
 var _ = Describe("relay Tx", func() {
 
@@ -86,7 +68,7 @@ var _ = Describe("relay Tx", func() {
 			Backend.Commit()
 			Expect(isSuccessful(tx)).To(BeFalse())
             returnData, _ := ethCall(tx)
-            Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("not signed by the owner"))
+            Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("not by owner"))
 		})
 	})
 
@@ -209,7 +191,7 @@ var _ = Describe("relay Tx", func() {
 				Expect(isSuccessful(tx)).To(BeFalse())
 
 				returnData, _ := ethCall(tx)
-				Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("_to address cannot be set to 0x0"))
+				Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("destination=0"))
 			})
 		})
 

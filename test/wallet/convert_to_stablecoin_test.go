@@ -32,7 +32,7 @@ var _ = Describe("convertToStablecoin", func() {
 			It("Should revert", func() {
 				_, err := Wallet.ConvertToStablecoin(nil, common.HexToAddress("0xfe209bdE5CA32fa20E6728A005F26D651FFF5982"), big.NewInt(100))
 				Expect(err).To(HaveOccurred())
-				Expect(err.Error()).To(ContainSubstring("token rate is 0"))
+				Expect(err.Error()).To(ContainSubstring("rate=0"))
 			})
 		})
 
@@ -112,7 +112,7 @@ var _ = Describe("convertToStablecoin", func() {
 		It("Should revert", func() {
 			_, err := Wallet.ConvertToStablecoin(nil, common.HexToAddress("0x1"), big.NewInt(100))
 			Expect(err).To(HaveOccurred())
-			Expect(err.Error()).To(ContainSubstring("token is not available"))
+			Expect(err.Error()).To(ContainSubstring("token not available"))
 		})
 	})
 
@@ -183,7 +183,7 @@ var _ = Describe("convertToStablecoin", func() {
 			It("Should revert", func() {
 				_, err := Wallet.ConvertToStablecoin(nil, common.HexToAddress("0x0"), big.NewInt(100))
 				Expect(err).To(HaveOccurred())
-				Expect(err.Error()).To(ContainSubstring("stablecoin rate is 0"))
+				Expect(err.Error()).To(ContainSubstring("stablecoin rate=0"))
 			})
 
 		})

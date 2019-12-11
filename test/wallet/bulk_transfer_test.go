@@ -198,7 +198,8 @@ var _ = Describe("bulk_transfer", func() {
 								Backend.Commit()
 								Expect(isGasExhausted(tx, 81000)).To(BeFalse())
 								Expect(isSuccessful(tx)).To(BeFalse())
-								Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*require\(rate != 0, "token rate is 0"\);.*`))
+                                returnData, _ := ethCall(tx)
+                				Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("rate=0"))
 							})
 						})
 						When("rates are updated with valid rates", func() {
@@ -280,7 +281,8 @@ var _ = Describe("bulk_transfer", func() {
 									Backend.Commit()
 									Expect(isGasExhausted(tx, 1000000)).To(BeFalse())
 									Expect(isSuccessful(tx)).To(BeFalse())
-									Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*require\(self.available >= _amount, "available has to be greater or equal to use amount"\);`))
+                                    returnData, _ := ethCall(tx)
+                    				Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("available<amount"))
 								})
 							})
 
