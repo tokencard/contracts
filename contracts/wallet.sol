@@ -38,7 +38,7 @@ import "./externals/ECDSA.sol";
 contract ControllableOwnable is Controllable, Ownable {
     /// @dev Check if the sender is the Owner or one of the Controllers
     modifier onlyOwnerOrController() {
-        require (_isOwner(msg.sender) || _isController(msg.sender), "either owner or controller");
+        require (_isOwner(msg.sender) || _isController(msg.sender), "only owner||controller");
         _;
     }
 }
@@ -49,7 +49,7 @@ contract ControllableOwnable is Controllable, Ownable {
 contract SelfCallableOwnable is Ownable {
     /// @dev Check if the sender is the Owner or self
     modifier onlyOwnerOrSelf() {
-        require (_isOwner(msg.sender) || msg.sender == address(this), "either owner or self");
+        require (_isOwner(msg.sender) || msg.sender == address(this), "only owner||self");
         _;
     }
 }
@@ -79,15 +79,15 @@ contract AddressWhitelist is ControllableOwnable, SelfCallableOwnable {
     /// @dev Check if the provided addresses contain the owner or the zero-address address.
     modifier hasNoOwnerOrZeroAddress(address[] memory _addresses) {
         for (uint i = 0; i < _addresses.length; i++) {
-            require(!_isOwner(_addresses[i]), "provided whitelist contains the owner address");
-            require(_addresses[i] != address(0), "provided whitelist contains the zero address");
+            require(!_isOwner(_addresses[i]), "contains owner address");
+            require(_addresses[i] != address(0), "contains 0 address");
         }
         _;
     }
 
     /// @dev Check that neither addition nor removal operations have already been submitted.
     modifier noActiveSubmission() {
-        require(!submittedWhitelistAddition && !submittedWhitelistRemoval, "whitelist operation has already been submitted");
+        require(!submittedWhitelistAddition && !submittedWhitelistRemoval, "whitelist sumbission pending");
         _;
     }
 
@@ -105,7 +105,7 @@ contract AddressWhitelist is ControllableOwnable, SelfCallableOwnable {
     /// @param _addresses are the Ethereum addresses to be whitelisted.
     function setWhitelist(address[] calldata _addresses) external onlyOwnerOrSelf hasNoOwnerOrZeroAddress(_addresses) {
         // Require that the whitelist has not been initialized.
-        require(!isSetWhitelist, "whitelist has already been initialized");
+        require(!isSetWhitelist, "whitelist initialized");
         // Add each of the provided addresses to the whitelist.
         for (uint i = 0; i < _addresses.length; i++) {
             // Dedup addresses before writing to the whitelist
@@ -125,9 +125,9 @@ contract AddressWhitelist is ControllableOwnable, SelfCallableOwnable {
     /// @param _addresses are the Ethereum addresses to be whitelisted.
     function submitWhitelistAddition(address[] calldata _addresses) external onlyOwnerOrSelf noActiveSubmission hasNoOwnerOrZeroAddress(_addresses) {
         // Require that the whitelist has been initialized.
-        require(isSetWhitelist, "whitelist has not been initialized");
+        require(isSetWhitelist, "whitelist not initialized");
         // Require this array of addresses not empty
-        require(_addresses.length > 0, "pending whitelist addition is empty");
+        require(_addresses.length > 0, "empty whitelist");
         // Set the provided addresses to the pending addition addresses.
         _pendingWhitelistAddition = _addresses;
         // Flag the operation as submitted.
@@ -141,9 +141,9 @@ contract AddressWhitelist is ControllableOwnable, SelfCallableOwnable {
     /// @param _hash is the hash of the pending whitelist array, a form of lamport lock
     function confirmWhitelistAddition(bytes32 _hash) external onlyController {
         // Require that the whitelist addition has been submitted.
-        require(submittedWhitelistAddition, "whitelist addition has not been submitted");
+        require(submittedWhitelistAddition, "no pending submission");
         // Require that confirmation hash and the hash of the pending whitelist addition match
-        require(_hash == calculateHash(_pendingWhitelistAddition), "hash of the pending whitelist addition do not match");
+        require(_hash == calculateHash(_pendingWhitelistAddition), "non-matching pending whitelist hash");
         // Whitelist pending addresses.
         for (uint i = 0; i < _pendingWhitelistAddition.length; i++) {
             // check if it doesn't exist already.
@@ -164,9 +164,9 @@ contract AddressWhitelist is ControllableOwnable, SelfCallableOwnable {
     /// @dev Cancel pending whitelist addition.
     function cancelWhitelistAddition(bytes32 _hash) external onlyOwnerOrController {
         // Check if operation has been submitted.
-        require(submittedWhitelistAddition, "whitelist addition has not been submitted");
+        require(submittedWhitelistAddition, "no pending submission");
         // Require that confirmation hash and the hash of the pending whitelist addition match
-        require(_hash == calculateHash(_pendingWhitelistAddition), "hash of the pending whitelist addition does not match");
+        require(_hash == calculateHash(_pendingWhitelistAddition), "non-matching pending whitelist hash");
         // Reset pending addresses.
         delete _pendingWhitelistAddition;
         // Reset the submitted operation flag.
@@ -179,9 +179,9 @@ contract AddressWhitelist is ControllableOwnable, SelfCallableOwnable {
     /// @param _addresses are the Ethereum addresses to be removed.
     function submitWhitelistRemoval(address[] calldata _addresses) external onlyOwnerOrSelf noActiveSubmission {
         // Require that the whitelist has been initialized.
-        require(isSetWhitelist, "whitelist has not been initialized");
+        require(isSetWhitelist, "whitelist not initialized");
         // Require that the array of addresses is not empty
-        require(_addresses.length > 0, "pending whitelist removal is empty");
+        require(_addresses.length > 0, "empty whitelist");
         // Add the provided addresses to the pending addition list.
         _pendingWhitelistRemoval = _addresses;
         // Flag the operation as submitted.
@@ -193,9 +193,9 @@ contract AddressWhitelist is ControllableOwnable, SelfCallableOwnable {
     /// @dev Confirm pending removal of whitelisted addresses.
     function confirmWhitelistRemoval(bytes32 _hash) external onlyController {
         // Require that the pending whitelist is not empty and the operation has been submitted.
-        require(submittedWhitelistRemoval, "whitelist removal has not been submitted");
+        require(submittedWhitelistRemoval, "no pending submission");
         // Require that confirmation hash and the hash of the pending whitelist removal match
-        require(_hash == calculateHash(_pendingWhitelistRemoval), "hash of the pending whitelist removal does not match the confirmed hash");
+        require(_hash == calculateHash(_pendingWhitelistRemoval), "non-matching pending whitelist hash");
         // Remove pending addresses.
         for (uint i = 0; i < _pendingWhitelistRemoval.length; i++) {
             // check if it exists
@@ -221,9 +221,9 @@ contract AddressWhitelist is ControllableOwnable, SelfCallableOwnable {
     /// @dev Cancel pending removal of whitelisted addresses.
     function cancelWhitelistRemoval(bytes32 _hash) external onlyOwnerOrController {
         // Check if operation has been submitted.
-        require(submittedWhitelistRemoval, "whitelist removal has not been submitted");
+        require(submittedWhitelistRemoval, "no pending submission");
         // Require that confirmation hash and the hash of the pending whitelist removal match
-        require(_hash == calculateHash(_pendingWhitelistRemoval), "hash of the pending whitelist removal do not match");
+        require(_hash == calculateHash(_pendingWhitelistRemoval), "non-matching pending whitelist hash");
         // Reset pending addresses.
         delete _pendingWhitelistRemoval;
         // Reset pending addresses.
@@ -267,7 +267,7 @@ library DailyLimitTrait {
     function _enforceLimit(DailyLimit storage self, uint _amount) internal {
         // Account for the spend limit daily reset.
         _updateAvailableLimit(self);
-        require(self.available >= _amount, "available has to be greater or equal to use amount");
+        require(self.available >= _amount, "available<amount");
         self.available = self.available.sub(_amount);
     }
 
@@ -275,7 +275,7 @@ library DailyLimitTrait {
     /// @param _amount is the daily limit amount in base units.
     function _setLimit(DailyLimit storage self, uint _amount) internal {
         // Require that the spend limit has not been set yet.
-        require(!self.updateable, "daily limit not updateable");
+        require(!self.updateable, "limit not updateable");
         // Modify spend limit based on the provided value.
         _modifyLimit(self, _amount);
         // Flag the operation as set.
@@ -286,7 +286,7 @@ library DailyLimitTrait {
     /// @param _amount is the daily limit amount in base units.
     function _submitLimitUpdate(DailyLimit storage self, uint _amount) internal {
         // Require that the spend limit has been set.
-        require(self.updateable, "daily limit is still updateable");
+        require(self.updateable, "limit still updateable");
         // Assign the provided amount to pending daily limit.
         self.pending = _amount;
     }
@@ -294,7 +294,7 @@ library DailyLimitTrait {
     /// @dev Confirm pending set daily limit operation.
     function _confirmLimitUpdate(DailyLimit storage self, uint _amount) internal {
         // Require that pending and confirmed spend limit are the same
-        require(self.pending == _amount, "confirmed and submitted limits dont match");
+        require(self.pending == _amount, "confirmed/submitted limit mismatch");
         // Modify spend limit based on the pending value.
         _modifyLimit(self, self.pending);
     }
@@ -398,7 +398,7 @@ contract GasTopUpLimit is ControllableOwnable, SelfCallableOwnable {
     /// @dev Sets the daily gas top up limit.
     /// @param _amount is the gas top up amount in wei.
     function setGasTopUpLimit(uint _amount) external onlyOwnerOrSelf {
-        require(_MINIMUM_GAS_TOPUP_LIMIT <= _amount && _amount <= _MAXIMUM_GAS_TOPUP_LIMIT, "gas top up amount is outside the min/max range");
+        require(_MINIMUM_GAS_TOPUP_LIMIT <= _amount && _amount <= _MAXIMUM_GAS_TOPUP_LIMIT, "out of range top-up");
         _gasTopUpLimit._setLimit(_amount);
         emit SetGasTopUpLimit(msg.sender, _amount);
     }
@@ -406,7 +406,7 @@ contract GasTopUpLimit is ControllableOwnable, SelfCallableOwnable {
     /// @dev Submit a daily gas top up limit update.
     /// @param _amount is the daily top up gas limit amount in wei.
     function submitGasTopUpLimitUpdate(uint _amount) external onlyOwnerOrSelf {
-        require(_MINIMUM_GAS_TOPUP_LIMIT <= _amount && _amount <= _MAXIMUM_GAS_TOPUP_LIMIT, "gas top up amount is outside the min/max range");
+        require(_MINIMUM_GAS_TOPUP_LIMIT <= _amount && _amount <= _MAXIMUM_GAS_TOPUP_LIMIT, "out of range top-up");
         _gasTopUpLimit._submitLimitUpdate(_amount);
         emit SubmittedGasTopUpLimitUpdate(_amount);
     }
@@ -451,7 +451,7 @@ contract LoadLimit is ControllableOwnable, SelfCallableOwnable {
     /// @dev Sets a daily card load limit.
     /// @param _amount is the card load amount in current stablecoin base units.
     function setLoadLimit(uint _amount) external onlyOwnerOrSelf {
-        require(_MINIMUM_LOAD_LIMIT <= _amount && _amount <= _maximumLoadLimit, "card load amount is outside the min/max range");
+        require(_MINIMUM_LOAD_LIMIT <= _amount && _amount <= _maximumLoadLimit, "out of range load amount");
         _loadLimit._setLimit(_amount);
         emit SetLoadLimit(msg.sender, _amount);
     }
@@ -459,7 +459,7 @@ contract LoadLimit is ControllableOwnable, SelfCallableOwnable {
     /// @dev Submit a daily load limit update.
     /// @param _amount is the daily load limit amount in wei.
     function submitLoadLimitUpdate(uint _amount) external onlyOwnerOrSelf {
-        require(_MINIMUM_LOAD_LIMIT <= _amount && _amount <= _maximumLoadLimit, "card load amount is outside the min/max range");
+        require(_MINIMUM_LOAD_LIMIT <= _amount && _amount <= _maximumLoadLimit, "out of range load amount");
         _loadLimit._submitLimitUpdate(_amount);
         emit SubmittedLoadLimitUpdate(_amount);
     }
@@ -518,7 +518,7 @@ contract Vault is AddressWhitelist, SpendLimit, ERC165, Transferrable, Balanceab
 
     /// @dev Checks if the value is not zero.
     modifier isNotZero(uint _value) {
-        require(_value != 0, "provided value cannot be zero");
+        require(_value != 0, "value=0");
         _;
     }
 
@@ -538,7 +538,7 @@ contract Vault is AddressWhitelist, SpendLimit, ERC165, Transferrable, Balanceab
     /// @param _assets is an array of addresses of ERC20 tokens or 0x0 for ether.
     function bulkTransfer(address payable _to, address[] calldata _assets) external onlyOwnerOrSelf {
         // check to make sure that _assets isn't empty
-        require(_assets.length != 0, "asset array should be non-empty");
+        require(_assets.length != 0, "asset array is empty");
         // This loops through all of the transfers to be made
         for (uint i = 0; i < _assets.length; i++) {
             uint amount = _balance(address(this), _assets[i]);
@@ -555,7 +555,7 @@ contract Vault is AddressWhitelist, SpendLimit, ERC165, Transferrable, Balanceab
     /// @param _amount is the amount of assets to be transferred in base units.
     function transfer(address payable _to, address _asset, uint _amount) public onlyOwnerOrSelf isNotZero(_amount) {
         // Checks if the _to address is not the zero-address
-        require(_to != address(0), "_to address cannot be set to 0x0");
+        require(_to != address(0), "destination=0");
 
         // If address is not whitelisted, take daily limit into account.
         if (!whitelistMap[_to]) {
@@ -583,7 +583,7 @@ contract Vault is AddressWhitelist, SpendLimit, ERC165, Transferrable, Balanceab
         (,uint256 magnitude, uint256 rate, bool available, , , ) = _getTokenInfo(_token);
         // If the token exists require that its rate is not zero.
         if (available) {
-            require(rate != 0, "token rate is 0");
+            require(rate != 0, "rate=0");
             // Safely convert the token amount to ether based on the exchange rate.
             return _amount.mul(rate).div(magnitude);
         }
@@ -629,7 +629,7 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
     constructor(address payable _owner_, bool _transferable_, address _ens_, bytes32 _tokenWhitelistNode_, bytes32 _controllerNode_, bytes32 _licenceNode_, uint _spendLimit_) ENSResolvable(_ens_) Vault(_owner_, _transferable_, _tokenWhitelistNode_, _controllerNode_, _spendLimit_) public {
         // Get the stablecoin's magnitude.
         ( ,uint256 stablecoinMagnitude, , , , , ) = _getStablecoinInfo();
-        require(stablecoinMagnitude > 0, "stablecoin not set");
+        require(stablecoinMagnitude > 0, "no stablecoin");
         _initializeLoadLimit(_DEFAULT_MAX_STABLECOIN_LOAD_LIMIT * stablecoinMagnitude);
         _licenceNode = _licenceNode_;
     }
@@ -704,7 +704,7 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
             // index += 20 + 32 + 32 + dataLength, reverts in case of overflow
             i = i.add(dataLength).add(84);
             // revert in case the encoded dataLength is gonna cause an out of bound access
-            require(i <= batchLength, "out of bounds access");
+            require(i <= batchLength, "out of bounds");
 
             // if length is 0 ignore the data field
             if (dataLength == 0) {
@@ -768,9 +768,9 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
         // ...and an Ethereum Signed Message to protect user from signing an actual Tx
         bytes32 dataHash = keccak256(abi.encodePacked("rlx:", _nonce, _data)).toEthSignedMessageHash();
         // verify signature validity i.e. signer == owner
-        require(isValidSignature(dataHash, _signature) == _EIP_1654, "signature not validated");
+        require(isValidSignature(dataHash, _signature) == _EIP_1654, "sig not valid");
         // verify and increase relayNonce to prevent replay attacks from the relayer
-        require(_nonce == relayNonce, "Tx replay!");
+        require(_nonce == relayNonce, "Tx replay");
         relayNonce++;
 
         // invoke wallet function with an external call
@@ -787,7 +787,7 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
     /// @param _signature Signature byte array associated with _data
     function isValidSignature(bytes calldata _data, bytes calldata _signature) external view returns (bytes4) {
         bytes32 dataHash = keccak256(abi.encodePacked(_data));
-        require(isValidSignature(dataHash, _signature) == _EIP_1654, "signature not validated");
+        require(isValidSignature(dataHash, _signature) == _EIP_1654, "sig not valid");
         return _EIP_1271;
     }
 
@@ -797,7 +797,7 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
     /// @param _signature Signature byte array associated with _dataHash
     function isValidSignature(bytes32 _hashedData, bytes memory _signature) public view returns (bytes4) {
         address from = _hashedData.recover(_signature);
-        require(_isOwner(from), "not signed by the owner");
+        require(_isOwner(from), "not by owner");
         return _EIP_1654;
     }
 
@@ -823,8 +823,8 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
             // Store the token in memory to save map entry lookup gas.
             (,uint256 magnitude, uint256 rate, bool available, , , ) = _getTokenInfo(_token);
             // require that token both exists in the whitelist and its rate is not zero.
-            require(available, "token is not available");
-            require(rate != 0, "token rate is 0");
+            require(available, "token not available");
+            require(rate != 0, "rate=0");
             // Safely convert the token amount to ether based on the exchangeonly rate.
             amountToSend = _amount.mul(rate).div(magnitude);
         }
@@ -832,8 +832,8 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
         // Get the stablecoin's magnitude and its current rate.
         ( ,uint256 stablecoinMagnitude, uint256 stablecoinRate, bool stablecoinAvailable, , , ) = _getStablecoinInfo();
         // Check if the stablecoin rate is set.
-        require(stablecoinAvailable, "token is not available");
-        require(stablecoinRate != 0, "stablecoin rate is 0");
+        require(stablecoinAvailable, "token not available");
+        require(stablecoinRate != 0, "stablecoin rate=0");
         // Safely convert the token amount to stablecoin based on its exchange rate and the stablecoin exchange rate.
         return amountToSend.mul(stablecoinMagnitude).div(stablecoinRate);
     }

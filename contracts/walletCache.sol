@@ -43,7 +43,7 @@ contract WalletCache is ENSResolvable, Controllable {
     bytes32 private constant _DEFAULT_WALLET_DEPLOYER_NODE = 0xd21a61ac2e4de1319ef7c76dd03046ec2e67a92cfc9efb7c28f79a4c323a5b80;
 
     bytes32 public licenceNode = _DEFAULT_LICENCE_NODE;
-    bytes32 public tokenWhitelistNode= _DEFAULT_TOKEN_WHITELIST_NODE;
+    bytes32 public tokenWhitelistNode = _DEFAULT_TOKEN_WHITELIST_NODE;
     bytes32 public walletDeployerNode = _DEFAULT_WALLET_DEPLOYER_NODE;
 
     Wallet[] public cachedWallets;
