@@ -56,6 +56,19 @@ func SignData(nonce *big.Int, data []byte, prv *ecdsa.PrivateKey) ([]byte, error
 	return sig, nil
 }
 
+func SignMsg(msg []byte, prv *ecdsa.PrivateKey) ([]byte, error) {
+	hash := crypto.Keccak256(msg)
+	sig, err := crypto.Sign(hash, prv)
+	if err != nil {
+		return nil, err
+	}
+	if len(sig) != 65 {
+		return nil, errors.New("invalid sig len")
+	}
+	sig[64] += 27
+	return sig, nil
+}
+
 func isGasExhausted(tx *types.Transaction, gasLimit uint64) bool {
 	r, err := Backend.TransactionReceipt(context.Background(), tx.Hash())
 	Expect(err).ToNot(HaveOccurred())

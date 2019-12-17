@@ -21,7 +21,7 @@ var _ = Describe("relay Tx", func() {
 		BankAccount.MustTransfer(Backend, WalletAddress, EthToWei(2))
 	})
 
-    When("a non-owner acount tries to increase the nonce", func() {
+    When("a non-owner account tries to increase the nonce", func() {
 		It("should fail", func() {
             tx, err := Wallet.IncreaseRelayNonce(Controller.TransactOpts(ethertest.WithGasLimit(60000)))
             Expect(err).ToNot(HaveOccurred())
@@ -30,7 +30,7 @@ var _ = Describe("relay Tx", func() {
         })
     })
 
-	When("a random acount tries to relay", func() {
+	When("a random account tries to relay", func() {
 		It("should fail", func() {
 			a, err := abi.JSON(strings.NewReader(WALLET_ABI))
 			Expect(err).ToNot(HaveOccurred())
