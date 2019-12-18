@@ -632,7 +632,7 @@ contract Vault is AddressWhitelist, SpendLimit, ERC165, Transferrable, Balanceab
     /// it calls executeTransaction() so that the daily limit is enforced.
     /// @param _transactionBatch data encoding the transactions to be sent,
     /// following executeTransaction's format i.e. (destination, value, data)
-    function executeTransactions(bytes memory _transactionBatch) public onlyOwnerOrSelf {
+    function batchExecuteTransaction(bytes memory _transactionBatch) public onlyOwnerOrSelf {
         uint batchLength = _transactionBatch.length + 32; // because the index starts from 32
         uint remainingBytesLength = _transactionBatch.length; // remaining bytes to be processed
         uint i = 32; //the first 32 bytes denote the byte array length, start from actual data

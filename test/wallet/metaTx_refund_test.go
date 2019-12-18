@@ -55,7 +55,7 @@ var _ = Describe("metaTx refund", func() {
 
 					a, err := abi.JSON(strings.NewReader(WALLET_ABI))
 					Expect(err).ToNot(HaveOccurred())
-					data, err := a.Pack("executeTransactions", []byte(batch))
+					data, err := a.Pack("batchExecuteTransaction", []byte(batch))
 					Expect(err).ToNot(HaveOccurred())
 
 					nonce := big.NewInt(0)
@@ -96,7 +96,7 @@ var _ = Describe("metaTx refund", func() {
 
 					a, err = abi.JSON(strings.NewReader(WALLET_ABI))
 					Expect(err).ToNot(HaveOccurred())
-					data, err = a.Pack("executeTransactions", []byte(batch))
+					data, err = a.Pack("batchExecuteTransaction", []byte(batch))
 					Expect(err).ToNot(HaveOccurred())
 
 					nonce := big.NewInt(0)
@@ -162,7 +162,7 @@ var _ = Describe("metaTx refund", func() {
 					data, _ = a.Pack("transfer", tokenBank, big.NewInt(10))
 					batch = fmt.Sprintf("%s%s%s%s%s", batch, TKNBurnerAddress, abi.U256(big.NewInt(0)), abi.U256(big.NewInt(int64(len(data)))), data)
 					a, err = abi.JSON(strings.NewReader(WALLET_ABI))
-					data, _ = a.Pack("executeTransactions", []byte(batch))
+					data, _ = a.Pack("batchExecuteTransaction", []byte(batch))
 					Expect(evt.Data).To(Equal(data))
 					Expect(evt.Returndata).To(Equal(common.Hex2Bytes("")))
 				})
