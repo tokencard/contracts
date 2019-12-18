@@ -213,8 +213,8 @@ var _ = Describe("wallet load eth", func() {
 						Backend.Commit()
 						Expect(isGasExhausted(tx, 100000)).To(BeFalse())
 						Expect(isSuccessful(tx)).To(BeFalse())
-                        returnData, _ := ethCall(tx)
-        				Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("available<amount"))
+						returnData, _ := ethCall(tx)
+						Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("available<amount"))
 					})
 				}) //more daily Load limit
 
