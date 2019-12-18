@@ -24,6 +24,7 @@ contract_sources=(
   'mocks/base64Exporter'
   'mocks/oraclize'
   'mocks/bytesUtilsExporter'
+  'mocks/isValidSignatureExporter'
   'mocks/parseIntScientificExporter'
   'mocks/tokenWhitelistableExporter'
   'internals/tokenWhitelistable'
@@ -67,6 +68,7 @@ contracts=(
   "mocks/oraclize/OraclizeConnector mocks/oraclizeConnector.go OraclizeConnector mocks"
   "mocks/oraclize/OraclizeAddrResolver mocks/oraclizeAddrResolver.go OraclizeAddrResolver mocks"
   "mocks/bytesUtilsExporter/BytesUtilsExporter mocks/bytesUtilsExporter.go BytesUtilsExporter mocks"
+  "mocks/isValidSignatureExporter/IsValidSignatureExporter mocks/isValidSignatureExporter.go IsValidSignatureExporter mocks"
   "mocks/parseIntScientificExporter/ParseIntScientificExporter mocks/parseIntScientificExporter.go ParseIntScientificExporter mocks"
   "mocks/tokenWhitelistableExporter/TokenWhitelistableExporter mocks/tokenWhitelistableExporter.go TokenWhitelistableExporter mocks"
   "internals/tokenWhitelistable/TokenWhitelistable internals/tokenWhitelistable.go TokenWhitelistable internals"
