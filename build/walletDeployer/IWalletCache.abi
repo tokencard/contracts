@@ -1,1 +1,1 @@
-[{"constant":false,"inputs":[],"name":"walletCachePop","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"nonpayable","type":"function"}]
+[{"constant":false,"inputs":[],"name":"walletCachePop","outputs":[{"internalType":"contract Wallet","name":"","type":"address"}],"payable":false,"stateMutability":"nonpayable","type":"function"}]
