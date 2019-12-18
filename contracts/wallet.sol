@@ -770,7 +770,7 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
         // verify signature validity i.e. signer == owner
         require(isValidSignature(dataHash, _signature) == _EIP_1654, "sig not valid");
         // verify and increase relayNonce to prevent replay attacks from the relayer
-        require(_nonce == relayNonce, "Tx replay");
+        require(_nonce == relayNonce, "tx replay");
         relayNonce++;
 
         // invoke wallet function with an external call
@@ -787,6 +787,7 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
     /// @param _signature Signature byte array associated with _data
     function isValidSignature(bytes calldata _data, bytes calldata _signature) external view returns (bytes4) {
         bytes32 dataHash = keccak256(abi.encodePacked(_data));
+        // isValidSignature called reverts if not valid.
         require(isValidSignature(dataHash, _signature) == _EIP_1654, "sig not valid");
         return _EIP_1271;
     }
@@ -797,7 +798,7 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
     /// @param _signature Signature byte array associated with _dataHash
     function isValidSignature(bytes32 _hashedData, bytes memory _signature) public view returns (bytes4) {
         address from = _hashedData.recover(_signature);
-        require(_isOwner(from), "not by owner");
+        require(_isOwner(from), "only owner");
         return _EIP_1654;
     }
 
