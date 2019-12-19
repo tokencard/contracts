@@ -26,7 +26,7 @@ var _ = Describe("load TKN", func() {
 		Expect(addr).To(Equal(TKNBurnerAddress))
 	})
 
-	When("one thousand TKN are credited to a random acount", func() {
+	When("one thousand TKN are credited to a random account", func() {
 
 		BeforeEach(func() {
 			tx, err := TKNBurner.Mint(BankAccount.TransactOpts(), RandomAccount.Address(), big.NewInt(1000))

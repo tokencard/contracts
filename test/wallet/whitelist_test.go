@@ -205,7 +205,7 @@ var _ = Describe("whitelistAddition", func() {
 			Expect(submitted).To(BeTrue())
 		})
 
-		It("should add the random acount's address to the pending addition list", func() {
+		It("should add the random account's address to the pending addition list", func() {
 			pending, err := Wallet.PendingWhitelistAddition(nil)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(pending).To(Equal([]common.Address{RandomAccount.Address()}))

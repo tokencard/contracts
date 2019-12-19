@@ -2,22 +2,72 @@ package wallet_test
 
 import (
 	"context"
+    "crypto/ecdsa"
+    "errors"
 	"fmt"
+    "math/big"
 	"os"
 	"strings"
 	"testing"
 
-	"github.com/Masterminds/semver"
-	"github.com/ethereum/go-ethereum/common"
+    "github.com/ethereum/go-ethereum"
+    "github.com/ethereum/go-ethereum/accounts/abi"
+    "github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
-	. "github.com/onsi/ginkgo"
-	. "github.com/onsi/gomega"
+    "github.com/ethereum/go-ethereum/crypto"
+	"github.com/Masterminds/semver"
 	"github.com/tokencard/contracts/v2/pkg/bindings"
 	. "github.com/tokencard/contracts/v2/test/shared"
+    . "github.com/onsi/ginkgo"
+	. "github.com/onsi/gomega"
 )
 
 var Wallet *bindings.Wallet
 var WalletAddress common.Address
+
+func ethCall(tx *types.Transaction) ([]byte, error) {
+	msg, _ := tx.AsMessage(types.HomesteadSigner{})
+
+	calMsg := ethereum.CallMsg{
+		From:     msg.From(),
+		To:       msg.To(),
+		Gas:      msg.Gas(),
+		GasPrice: msg.GasPrice(),
+		Value:    msg.Value(),
+		Data:     msg.Data(),
+	}
+
+	return Backend.CallContract(context.Background(), calMsg, nil)
+}
+
+func SignData(nonce *big.Int, data []byte, prv *ecdsa.PrivateKey) ([]byte, error) {
+	relayMessage := fmt.Sprintf("rlx:%s%s", abi.U256(nonce), data)
+	hash := crypto.Keccak256([]byte(relayMessage))
+	ethMessage := fmt.Sprintf("\x19Ethereum Signed Message:\n%d%s", len(hash), hash)
+	hash = crypto.Keccak256([]byte(ethMessage))
+	sig, err := crypto.Sign(hash, prv)
+	if err != nil {
+		return nil, err
+	}
+	if len(sig) != 65 {
+		return nil, errors.New("invalid sig len")
+	}
+	sig[64] += 27
+	return sig, nil
+}
+
+func SignMsg(msg []byte, prv *ecdsa.PrivateKey) ([]byte, error) {
+	hash := crypto.Keccak256(msg)
+	sig, err := crypto.Sign(hash, prv)
+	if err != nil {
+		return nil, err
+	}
+	if len(sig) != 65 {
+		return nil, errors.New("invalid sig len")
+	}
+	sig[64] += 27
+	return sig, nil
+}
 
 func isGasExhausted(tx *types.Transaction, gasLimit uint64) bool {
 	r, err := Backend.TransactionReceipt(context.Background(), tx.Hash())

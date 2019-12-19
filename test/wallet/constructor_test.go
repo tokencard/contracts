@@ -46,7 +46,8 @@ var _ = Describe("wallet constructor", func() {
 			Backend.Commit()
 			Expect(isGasExhausted(tx, 7000000)).To(BeFalse())
 			Expect(isSuccessful(tx)).To(BeFalse())
-			Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*require\(stablecoinMagnitude > 0, "stablecoin not set"\);`))
+            returnData, _ := ethCall(tx)
+            Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("no stablecoin"))
 		})
 
 	})

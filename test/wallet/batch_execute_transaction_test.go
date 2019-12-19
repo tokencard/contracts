@@ -6,10 +6,8 @@ import (
 	"math/big"
 	"strings"
 
-	"github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/crypto"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -17,22 +15,7 @@ import (
 	"github.com/tokencard/ethertest"
 )
 
-func ethCall(tx *types.Transaction) ([]byte, error) {
-	msg, _ := tx.AsMessage(types.HomesteadSigner{})
-
-	calMsg := ethereum.CallMsg{
-		From:     msg.From(),
-		To:       msg.To(),
-		Gas:      msg.Gas(),
-		GasPrice: msg.GasPrice(),
-		Value:    msg.Value(),
-		Data:     msg.Data(),
-	}
-
-	return Backend.CallContract(context.Background(), calMsg, nil)
-}
-
-var _ = Describe("executeTransactions", func() {
+var _ = Describe("batchExecuteTransaction", func() {
 
 	Context("when the wallet has enough ETH and ERC20 tokens", func() {
 		BeforeEach(func() {
@@ -62,7 +45,7 @@ var _ = Describe("executeTransactions", func() {
 				Expect(err).ToNot(HaveOccurred())
 				batch = fmt.Sprintf("%s%s%s%s%s", batch, TKNBurnerAddress, abi.U256(big.NewInt(0)), abi.U256(big.NewInt(int64(len(data)))), data)
 
-				tx, err := Wallet.ExecuteTransactions(Owner.TransactOpts(), []byte(batch))
+				tx, err := Wallet.BatchExecuteTransaction(Owner.TransactOpts(), []byte(batch))
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 				Expect(isSuccessful(tx)).To(BeTrue())
@@ -136,13 +119,13 @@ var _ = Describe("executeTransactions", func() {
 				Expect(err).ToNot(HaveOccurred())
 				batch = fmt.Sprintf("%s%s%s%s%s", batch, WalletAddress, abi.U256(big.NewInt(0)), abi.U256(big.NewInt(int64(len(data)))), data)
 
-				tx, err := Wallet.ExecuteTransactions(Owner.TransactOpts(ethertest.WithGasLimit(1000000)), []byte(batch))
+				tx, err := Wallet.BatchExecuteTransaction(Owner.TransactOpts(ethertest.WithGasLimit(1000000)), []byte(batch))
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 				Expect(isSuccessful(tx)).To(BeFalse())
 
 				returnData, _ := ethCall(tx)
-				Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("provided value cannot be zero"))
+				Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("value=0"))
 			})
 
 			It("should NOT increase random address' balance", func() {
@@ -185,7 +168,7 @@ var _ = Describe("executeTransactions", func() {
 				Expect(err).ToNot(HaveOccurred())
 				batch = fmt.Sprintf("%s%s%s%s%s", batch, WalletAddress, abi.U256(big.NewInt(0)), abi.U256(big.NewInt(int64(len(data)))), data)
 
-				tx, err := Wallet.ExecuteTransactions(Owner.TransactOpts(), []byte(batch))
+				tx, err := Wallet.BatchExecuteTransaction(Owner.TransactOpts(), []byte(batch))
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 				Expect(isSuccessful(tx)).To(BeTrue())
@@ -236,7 +219,7 @@ var _ = Describe("executeTransactions", func() {
 			})
 		})
 
-        When("the datalength is a maliciously encoded", func() {
+		When("the datalength is a maliciously encoded", func() {
 
 			var randomAddress common.Address
 
@@ -247,23 +230,23 @@ var _ = Describe("executeTransactions", func() {
 
 				batch := fmt.Sprintf("%s%s%s", randomAddress, abi.U256(EthToWei(1)), abi.U256(big.NewInt(99999)))
 
-				tx, err := Wallet.ExecuteTransactions(Owner.TransactOpts(ethertest.WithGasLimit(1000000)), []byte(batch))
+				tx, err := Wallet.BatchExecuteTransaction(Owner.TransactOpts(ethertest.WithGasLimit(1000000)), []byte(batch))
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 				Expect(isSuccessful(tx)).To(BeFalse())
 
 				returnData, _ := ethCall(tx)
-				Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("out of bounds access"))
+				Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("out of bounds"))
 			})
 
-            It("should revert if there is an index overflow", func() {
+			It("should revert if there is an index overflow", func() {
 
 				privateKey, _ := crypto.GenerateKey()
 				randomAddress = crypto.PubkeyToAddress(privateKey.PublicKey)
 
 				batch := fmt.Sprintf("%s%s%s", randomAddress, abi.U256(EthToWei(1)), abi.U256(big.NewInt(-1)))
 
-				tx, err := Wallet.ExecuteTransactions(Owner.TransactOpts(ethertest.WithGasLimit(1000000)), []byte(batch))
+				tx, err := Wallet.BatchExecuteTransaction(Owner.TransactOpts(ethertest.WithGasLimit(1000000)), []byte(batch))
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 				Expect(isSuccessful(tx)).To(BeFalse())
@@ -271,9 +254,9 @@ var _ = Describe("executeTransactions", func() {
 				returnData, _ := ethCall(tx)
 				Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("SafeMath: addition overflow"))
 			})
-        })
+		})
 
-        When("there are not enough bytes to encode the executeTransaction inputs", func() {
+		When("there are not enough bytes to encode the executeTransaction inputs", func() {
 
 			var randomAddress common.Address
 
@@ -284,7 +267,7 @@ var _ = Describe("executeTransactions", func() {
 
 				batch := fmt.Sprintf("%s%s", randomAddress, abi.U256(EthToWei(1)))
 
-				tx, err := Wallet.ExecuteTransactions(Owner.TransactOpts(ethertest.WithGasLimit(1000000)), []byte(batch))
+				tx, err := Wallet.BatchExecuteTransaction(Owner.TransactOpts(ethertest.WithGasLimit(1000000)), []byte(batch))
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 				Expect(isSuccessful(tx)).To(BeFalse())
@@ -292,7 +275,7 @@ var _ = Describe("executeTransactions", func() {
 				returnData, _ := ethCall(tx)
 				Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("SafeMath: subtraction overflow"))
 			})
-        })
+		})
 
 	})
 })
@@ -370,7 +353,7 @@ const WALLET_ABI = `[
                 "type": "bytes"
             }
         ],
-        "name": "executeTransactions",
+        "name": "batchExecuteTransaction",
         "outputs": [
             {
                 "name": "",

@@ -3,8 +3,6 @@ package wallet_test
 import (
 	"context"
 	"crypto/ecdsa"
-	"errors"
-	"fmt"
 	"math/big"
 	"strings"
 
@@ -17,38 +15,22 @@ import (
 	"github.com/tokencard/ethertest"
 )
 
-func SignData(nonce *big.Int, data []byte, prv *ecdsa.PrivateKey) ([]byte, error) {
-	relayMessage := fmt.Sprintf("rlx:%s%s", abi.U256(nonce), data)
-	hash := crypto.Keccak256([]byte(relayMessage))
-	ethMessage := fmt.Sprintf("\x19Ethereum Signed Message:\n%d%s", len(hash), hash)
-	hash = crypto.Keccak256([]byte(ethMessage))
-	sig, err := crypto.Sign(hash, prv)
-	if err != nil {
-		return nil, err
-	}
-	if len(sig) != 65 {
-		return nil, errors.New("invalid sig len")
-	}
-	sig[64] += 27
-	return sig, nil
-}
-
 var _ = Describe("relay Tx", func() {
 
 	BeforeEach(func() {
 		BankAccount.MustTransfer(Backend, WalletAddress, EthToWei(2))
 	})
 
-    When("a non-owner acount tries to increase the nonce", func() {
+	When("a non-owner account tries to increase the nonce", func() {
 		It("should fail", func() {
-            tx, err := Wallet.IncreaseRelayNonce(Controller.TransactOpts(ethertest.WithGasLimit(60000)))
-            Expect(err).ToNot(HaveOccurred())
-            Backend.Commit()
-            Expect(isSuccessful(tx)).To(BeFalse())
-        })
-    })
+			tx, err := Wallet.IncreaseRelayNonce(Controller.TransactOpts(ethertest.WithGasLimit(60000)))
+			Expect(err).ToNot(HaveOccurred())
+			Backend.Commit()
+			Expect(isSuccessful(tx)).To(BeFalse())
+		})
+	})
 
-	When("a random acount tries to relay", func() {
+	When("a random account tries to relay", func() {
 		It("should fail", func() {
 			a, err := abi.JSON(strings.NewReader(WALLET_ABI))
 			Expect(err).ToNot(HaveOccurred())
@@ -85,6 +67,8 @@ var _ = Describe("relay Tx", func() {
 			Expect(err).ToNot(HaveOccurred())
 			Backend.Commit()
 			Expect(isSuccessful(tx)).To(BeFalse())
+			returnData, _ := ethCall(tx)
+			Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("only owner"))
 		})
 	})
 
@@ -101,10 +85,10 @@ var _ = Describe("relay Tx", func() {
 		When("the call succeeds", func() {
 			BeforeEach(func() {
 
-                tx, err := Wallet.TransferOwnership(Owner.TransactOpts(), randomAddress, false)
-    			Expect(err).ToNot(HaveOccurred())
-    			Backend.Commit()
-    			Expect(isSuccessful(tx)).To(BeTrue())
+				tx, err := Wallet.TransferOwnership(Owner.TransactOpts(), randomAddress, false)
+				Expect(err).ToNot(HaveOccurred())
+				Backend.Commit()
+				Expect(isSuccessful(tx)).To(BeTrue())
 
 				a, err := abi.JSON(strings.NewReader(WALLET_ABI))
 				Expect(err).ToNot(HaveOccurred())
@@ -196,10 +180,10 @@ var _ = Describe("relay Tx", func() {
 				signature, err := SignData(nonce, data, privateKey)
 				Expect(err).ToNot(HaveOccurred())
 
-                tx, err := Wallet.TransferOwnership(Owner.TransactOpts(), randomAddress, false)
-    			Expect(err).ToNot(HaveOccurred())
-    			Backend.Commit()
-    			Expect(isSuccessful(tx)).To(BeTrue())
+				tx, err := Wallet.TransferOwnership(Owner.TransactOpts(), randomAddress, false)
+				Expect(err).ToNot(HaveOccurred())
+				Backend.Commit()
+				Expect(isSuccessful(tx)).To(BeTrue())
 
 				tx, err = Wallet.ExecuteRelayedTransaction(Controller.TransactOpts(ethertest.WithGasLimit(500000)), nonce, data, signature)
 				Expect(err).ToNot(HaveOccurred())
@@ -207,12 +191,12 @@ var _ = Describe("relay Tx", func() {
 				Expect(isSuccessful(tx)).To(BeFalse())
 
 				returnData, _ := ethCall(tx)
-				Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("_to address cannot be set to 0x0"))
+				Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("destination=0"))
 			})
 		})
 
-        When("the owner increases the nonce before the relayer relayes the transaction", func() {
-            It("should fail", func() {
+		When("the owner increases the nonce before the relayer relayes the transaction", func() {
+			It("should fail", func() {
 				a, err := abi.JSON(strings.NewReader(WALLET_ABI))
 				Expect(err).ToNot(HaveOccurred())
 				data, err := a.Pack("transfer", common.HexToAddress("0x0"), common.HexToAddress("0x0"), EthToWei(1))
@@ -222,15 +206,15 @@ var _ = Describe("relay Tx", func() {
 				signature, err := SignData(nonce, data, privateKey)
 				Expect(err).ToNot(HaveOccurred())
 
-                tx, err := Wallet.IncreaseRelayNonce(Owner.TransactOpts())
-                Expect(err).ToNot(HaveOccurred())
-                Backend.Commit()
-                Expect(isSuccessful(tx)).To(BeTrue())
+				tx, err := Wallet.IncreaseRelayNonce(Owner.TransactOpts())
+				Expect(err).ToNot(HaveOccurred())
+				Backend.Commit()
+				Expect(isSuccessful(tx)).To(BeTrue())
 
-                tx, err = Wallet.TransferOwnership(Owner.TransactOpts(), randomAddress, false)
-    			Expect(err).ToNot(HaveOccurred())
-    			Backend.Commit()
-    			Expect(isSuccessful(tx)).To(BeTrue())
+				tx, err = Wallet.TransferOwnership(Owner.TransactOpts(), randomAddress, false)
+				Expect(err).ToNot(HaveOccurred())
+				Backend.Commit()
+				Expect(isSuccessful(tx)).To(BeTrue())
 
 				tx, err = Wallet.ExecuteRelayedTransaction(Controller.TransactOpts(ethertest.WithGasLimit(500000)), nonce, data, signature)
 				Expect(err).ToNot(HaveOccurred())
@@ -238,9 +222,9 @@ var _ = Describe("relay Tx", func() {
 				Expect(isSuccessful(tx)).To(BeFalse())
 
 				returnData, _ := ethCall(tx)
-				Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("Tx replay"))
+				Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("tx replay"))
 			})
-        })
+		})
 
 	})
 })
