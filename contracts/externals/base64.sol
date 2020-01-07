@@ -1,4 +1,4 @@
-pragma solidity ^0.5.10;
+pragma solidity ^0.5.15;
 
 /**
  * This method was modified from the GPLv3 solidity code found in this repository

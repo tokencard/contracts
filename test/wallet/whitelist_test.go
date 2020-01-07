@@ -1,7 +1,6 @@
 package wallet_test
 
 import (
-	"errors"
 	"math/big"
 
 	"github.com/ethereum/go-ethereum/common"
@@ -12,6 +11,7 @@ import (
 )
 
 var _ = Describe("initializeWhitelist", func() {
+
 	BeforeEach(func() {
 		tx, err := Wallet.SetSpendLimit(Owner.TransactOpts(), EthToWei(1))
 		Expect(err).ToNot(HaveOccurred())
@@ -92,8 +92,7 @@ var _ = Describe("initializeWhitelist", func() {
 		It("should only persist 1 item in the array", func() {
 			_, err := Wallet.WhitelistArray(nil, big.NewInt(1))
 			Expect(err).To(HaveOccurred())
-
-			Expect(err).To(MatchError(errors.New("abi: unmarshalling empty output")))
+			Expect(err.Error()).To(ContainSubstring("abi: attempting to unmarshall"))
 		})
 
 		It("should only persist 1 item in the array and it should be 0x1", func() {
@@ -566,7 +565,7 @@ var _ = Describe("whitelistRemoval", func() {
 					It("should remove the 0x1 address from the Whitelist Array", func() {
 						_, err := Wallet.WhitelistArray(nil, big.NewInt(1))
 						Expect(err).To(HaveOccurred())
-						Expect(err).To(MatchError(errors.New("abi: unmarshalling empty output")))
+						Expect(err.Error()).To(ContainSubstring("abi: attempting to unmarshall"))
 					})
 
 				})

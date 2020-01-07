@@ -1,1 +1,1 @@
-[{"constant":false,"inputs":[{"name":"x","type":"bytes"}],"name":"f","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"}]
+[{"constant":false,"inputs":[{"internalType":"bytes","name":"x","type":"bytes"}],"name":"f","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"}]

@@ -1,4 +1,4 @@
-pragma solidity ^0.5.10;
+pragma solidity ^0.5.15;
 
 import "contracts/wallet.sol";
 
@@ -34,7 +34,7 @@ contract TEST is EchidnaInterface, SpendLimit {
     function echidna_fixed_owner() public returns (bool) {
         return owner() == echidna_owner;
     }
-    
+
     // spend limit available is bounded by the spend limit value
     function echidna_bounded_spendLimitAvailable() public returns (bool) {
         return this.spendLimitAvailable() <= this.spendLimitValue();

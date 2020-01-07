@@ -1,5 +1,5 @@
 /* This test requires echidna with hevm-0.29 (branch `dev-hevm-0.29`) */
-pragma solidity ^0.5.10;
+pragma solidity ^0.5.15;
 
 contract TEST {
     bytes32 hash;

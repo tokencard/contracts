@@ -28,10 +28,10 @@ var (
 )
 
 // OraclizeAddrResolverABI is the input ABI used to generate the binding from.
-const OraclizeAddrResolverABI = "[{\"constant\":true,\"inputs\":[],\"name\":\"getAddress\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"name\":\"_oraclizedAddress\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"}]"
+const OraclizeAddrResolverABI = "[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_oraclizedAddress\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"constant\":true,\"inputs\":[],\"name\":\"getAddress\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"}]"
 
 // OraclizeAddrResolverBin is the compiled bytecode used for deploying new contracts.
-var OraclizeAddrResolverBin = "0x608060405234801561001057600080fd5b506040516100f73803806100f78339818101604052602081101561003357600080fd5b5051600080546001600160a01b039092166001600160a01b03199092169190911790556093806100646000396000f3fe6080604052348015600f57600080fd5b506004361060285760003560e01c806338cc483114602d575b600080fd5b6033604f565b604080516001600160a01b039092168252519081900360200190f35b6000546001600160a01b03169056fea265627a7a72305820e26a9d52b827fc954af56045e08c8be91530746e86b37971ea60b8ac844e5b2a64736f6c634300050a0032"
+var OraclizeAddrResolverBin = "0x608060405234801561001057600080fd5b506040516100f73803806100f78339818101604052602081101561003357600080fd5b5051600080546001600160a01b039092166001600160a01b03199092169190911790556093806100646000396000f3fe6080604052348015600f57600080fd5b506004361060285760003560e01c806338cc483114602d575b600080fd5b6033604f565b604080516001600160a01b039092168252519081900360200190f35b6000546001600160a01b03169056fea265627a7a723158203584337dfb72aa93fc1c645a2651906455236a5e0dc321cdb44a7eb754ea00a964736f6c634300050f0032"
 
 // DeployOraclizeAddrResolver deploys a new Ethereum contract, binding an instance of OraclizeAddrResolver to it.
 func DeployOraclizeAddrResolver(auth *bind.TransactOpts, backend bind.ContractBackend, _oraclizedAddress common.Address) (common.Address, *types.Transaction, *OraclizeAddrResolver, error) {

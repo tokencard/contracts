@@ -1,7 +1,6 @@
 package parseIntScientific_test
 
 import (
-	"errors"
 	"math/big"
 
 	. "github.com/onsi/ginkgo"
@@ -608,8 +607,7 @@ var _ = Describe("ParseIntScientific", func() {
 			It("Should revert", func() {
 				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "1.0123e", big.NewInt(2))
 				Expect(err).To(HaveOccurred())
-				Expect(err).To(MatchError(errors.New("abi: unmarshalling empty output")))
-
+                Expect(err.Error()).To(ContainSubstring("abi: attempting to unmarshall"))
 			})
 		})
 
@@ -617,7 +615,7 @@ var _ = Describe("ParseIntScientific", func() {
 			It("Should revert", func() {
 				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "1.0123e-", big.NewInt(2))
 				Expect(err).To(HaveOccurred())
-				Expect(err).To(MatchError(errors.New("abi: unmarshalling empty output")))
+				Expect(err.Error()).To(ContainSubstring("abi: attempting to unmarshall"))
 
 			})
 		})
@@ -626,7 +624,7 @@ var _ = Describe("ParseIntScientific", func() {
 			It("Should revert", func() {
 				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "1.0123e+", big.NewInt(2))
 				Expect(err).To(HaveOccurred())
-				Expect(err).To(MatchError(errors.New("abi: unmarshalling empty output")))
+				Expect(err.Error()).To(ContainSubstring("abi: attempting to unmarshall"))
 
 			})
 		})

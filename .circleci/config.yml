@@ -62,7 +62,7 @@ jobs:
             if [[ "${CIRCLE_NODE_INDEX}" == 2 ]]; then
               myth analyze ./holder.sol --execution-timeout=1800
             fi
-          no_output_timeout: 45m 
+          no_output_timeout: 45m
       - run:
           working_directory: contracts
           command: |
@@ -95,38 +95,38 @@ jobs:
           command: solc-select 0.5.10
       - run:
           working_directory: contracts
-          command: | 
-            slither ./wallet.sol || 
-            echo "export FAILED=true" >> $BASH_ENV
-          no_output_timeout: 15m
-      - run:
-          working_directory: contracts
-          command: | 
-            slither ./oracle.sol || 
+          command: |
+            slither ./wallet.sol ||
             echo "export FAILED=true" >> $BASH_ENV
           no_output_timeout: 15m
       - run:
           working_directory: contracts
           command: |
-            slither ./licence.sol || 
+            slither ./oracle.sol ||
             echo "export FAILED=true" >> $BASH_ENV
           no_output_timeout: 15m
       - run:
           working_directory: contracts
-          command: | 
-            slither ./holder.sol || 
-            echo "export FAILED=true" >> $BASH_ENV  
-          no_output_timeout: 15m
-      - run:
-          working_directory: contracts
-          command: | 
-            slither ./tokenWhitelist.sol || 
+          command: |
+            slither ./licence.sol ||
             echo "export FAILED=true" >> $BASH_ENV
           no_output_timeout: 15m
       - run:
           working_directory: contracts
-          command: | 
-            slither ./walletDeployer.sol || 
+          command: |
+            slither ./holder.sol ||
+            echo "export FAILED=true" >> $BASH_ENV
+          no_output_timeout: 15m
+      - run:
+          working_directory: contracts
+          command: |
+            slither ./tokenWhitelist.sol ||
+            echo "export FAILED=true" >> $BASH_ENV
+          no_output_timeout: 15m
+      - run:
+          working_directory: contracts
+          command: |
+            slither ./walletDeployer.sol ||
             echo "export FAILED=true" >> $BASH_ENV
           no_output_timeout: 15m
       - run:
@@ -139,57 +139,57 @@ jobs:
     steps:
       - checkout
       - run:
-          command: solc-select 0.5.10  
+          command: solc-select 0.5.15
       - run:
           command: |
             slither-flat --convert-external contracts/wallet.sol &&
-            echidna-test echidna/addressWhitelist.sol --config echidna/addressWhitelist.yaml TEST || 
+            echidna-test echidna/addressWhitelist.sol --config echidna/addressWhitelist.yaml TEST ||
             echo "export FAILED=true" >> $BASH_ENV
           no_output_timeout: 20m
       - run:
-          command: | 
+          command: |
             slither-flat --convert-external contracts/controller.sol &&
-            echidna-test echidna/controller.sol --config echidna/controller.yaml TEST || 
-            echo "export FAILED=true" >> $BASH_ENV  
-          no_output_timeout: 20m
-      - run:
-          command: | 
-            echidna-test echidna/date.sol --config echidna/date.yaml TEST || 
+            echidna-test echidna/controller.sol --config echidna/controller.yaml TEST ||
             echo "export FAILED=true" >> $BASH_ENV
           no_output_timeout: 20m
       - run:
-          command: | 
-            echidna-test echidna/ecRecover.sol --config echidna/ecRecover.yaml TEST || 
+          command: |
+            echidna-test echidna/date.sol --config echidna/date.yaml TEST ||
             echo "export FAILED=true" >> $BASH_ENV
           no_output_timeout: 20m
       - run:
-          command: | 
-            echidna-test echidna/ecRecover.sol --config echidna/ecRecover.yaml TEST || 
+          command: |
+            echidna-test echidna/ecRecover.sol --config echidna/ecRecover.yaml TEST ||
             echo "export FAILED=true" >> $BASH_ENV
           no_output_timeout: 20m
       - run:
-          command: | 
-            echidna-test echidna/gasTopUpLimit.sol --config echidna/gasTopUpLimit.yaml TEST || 
+          command: |
+            echidna-test echidna/ecRecover.sol --config echidna/ecRecover.yaml TEST ||
             echo "export FAILED=true" >> $BASH_ENV
           no_output_timeout: 20m
       - run:
-          command: | 
-            echidna-test echidna/ownable.sol --config echidna/ownable.yaml TEST || 
+          command: |
+            echidna-test echidna/gasTopUpLimit.sol --config echidna/gasTopUpLimit.yaml TEST ||
             echo "export FAILED=true" >> $BASH_ENV
           no_output_timeout: 20m
       - run:
-          command: | 
-            echidna-test echidna/parseJson.sol --config echidna/parseJson.yaml TEST || 
+          command: |
+            echidna-test echidna/ownable.sol --config echidna/ownable.yaml TEST ||
             echo "export FAILED=true" >> $BASH_ENV
           no_output_timeout: 20m
       - run:
-          command: | 
-            echidna-test echidna/spendLimit.sol --config echidna/spendLimit.yaml TEST || 
+          command: |
+            echidna-test echidna/parseJson.sol --config echidna/parseJson.yaml TEST ||
             echo "export FAILED=true" >> $BASH_ENV
           no_output_timeout: 20m
       - run:
-          command: | 
-            echidna-test echidna/stringProps.sol --config echidna/stringProps.yaml TEST || 
+          command: |
+            echidna-test echidna/spendLimit.sol --config echidna/spendLimit.yaml TEST ||
+            echo "export FAILED=true" >> $BASH_ENV
+          no_output_timeout: 20m
+      - run:
+          command: |
+            echidna-test echidna/stringProps.sol --config echidna/stringProps.yaml TEST ||
             echo "export FAILED=true" >> $BASH_ENV
           no_output_timeout: 20m
       - run:
@@ -217,7 +217,7 @@ workflows:
           filters:
             tags:
               ignore: ""
-      - echidna:
-          filters:
-            tags:
-              ignore: ""
+      # - echidna:
+      #     filters:
+      #       tags:
+      #         ignore: ""

@@ -16,7 +16,7 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-pragma solidity ^0.5.10;
+pragma solidity ^0.5.15;
 
 import "../externals/SafeMath.sol";
 
@@ -69,7 +69,7 @@ library BytesUtils {
 
         uint convertedUint256;
         uint startByte = _from.add(32); //first 32 bytes denote the array length
-        
+
         assembly {
             convertedUint256 := mload(add(_bts, startByte))
         }
