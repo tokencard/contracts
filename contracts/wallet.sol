@@ -592,11 +592,6 @@ contract Vault is AddressWhitelist, SpendLimit, ERC165, Transferrable, Balanceab
         emit ExecutedRelayedTransaction(_data, returndata);
     }
 
-    /// @dev This allows the user to cancel a transaction that was unexpectedly delayed by the relayer
-    function increaseRelayNonce() external onlyOwner {
-        relayNonce++;
-    }
-
     /// @dev Implements EIP-1271: receives the raw data (bytes)
     ///      https://github.com/ethereum/EIPs/blob/master/EIPS/eip-1271.md
     /// @param _data Arbitrary length data signed on the behalf of address(this)
