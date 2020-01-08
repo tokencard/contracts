@@ -1,6 +1,6 @@
 # The Consumer Contract Wallet
 
-This repository contains the Smart Contracts needed to power the TokenCard, written in Solidity, for execution in the EVM.
+This repository contains the Smart Contracts needed to power the Monolith, written in Solidity, for execution in the EVM.
 
 The TokenCard is the world's first non-custodial VISA card, that allows people to hold their own assets, whilst being able to seamlessly move funds to a VISA debit card. 1% of all loads to the TokenCard are sent, by the user themselves, to the TKN Holder contract. This is used to back the TKN contract, aka the Asset Contract.
 
@@ -94,7 +94,7 @@ It should be noted that this codebase makes heavy use of inheritance.
 ### Solidity code in the `/contracts/internals/` folder
 [balanceable.sol](/contracts/internals/balanceable.sol) is an inheritable contract that checks the ETH or ERC20 balance of an address.
 
-[burner.sol](/contracts/internals/burner.sol) defines the Burner interface used for burning TKN for the cash n' burn functionality. 
+[burner.sol](/contracts/internals/burner.sol) defines the Burner interface used for burning TKN for the cash n' burn functionality.
 
 [bytesUtils.sol](/contracts/internals/bytesUtils.sol) includes a set of utils for parsing bytes to things like ints and addresses.
 
@@ -120,7 +120,7 @@ It should be noted that this codebase makes heavy use of inheritance.
 
 [bytesUtilsExporter.sol](/contracts/mocks/bytesUtilsExporter.sol) used to export methods on the bytesUtils contract for testing purposes.
 
-[nonCompliantToken.sol](/contracts/mocks/nonCompliantToken.sol) a version of a non-compliant ERC20 token, used to test the SafeERC20 stuff. 
+[nonCompliantToken.sol](/contracts/mocks/nonCompliantToken.sol) a version of a non-compliant ERC20 token, used to test the SafeERC20 stuff.
 
 [oraclize.sol](/contracts/mocks/oraclize-connector.sol) is a mocked out version of the oraclize, this is for testing purposes only.
 
@@ -186,4 +186,4 @@ SILENT=true ginkgo -nodes=16 -r -p ./test/...
 ## Resources
 
 [🎮 Discord](https://discord.gg/GN6gGEP) | [🗞️Blog](https://medium.com/@Monolith) | [👽 Reddit](https://www.reddit.com/r/Monolith_Web3/) | [🕸️ Website ](https://monolith.xyz/) | [🐦 Twitter](https://twitter.com/monolith_web3) |
-|---|---|---|---|---| 
+|---|---|---|---|---|
