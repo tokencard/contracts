@@ -382,69 +382,6 @@ contract SpendLimit is ControllableOwnable, SelfCallableOwnable {
 }
 
 
-//// @title GasTopUpLimit provides daily limit functionality.
-contract GasTopUpLimit is ControllableOwnable, SelfCallableOwnable {
-
-    event SetGasTopUpLimit(address _sender, uint _amount);
-    event SubmittedGasTopUpLimitUpdate(uint _amount);
-
-    uint constant private _MAXIMUM_GAS_TOPUP_LIMIT = 500 finney;
-    uint constant private _MINIMUM_GAS_TOPUP_LIMIT = 1 finney;
-
-    using DailyLimitTrait for DailyLimitTrait.DailyLimit;
-
-    DailyLimitTrait.DailyLimit internal _gasTopUpLimit;
-
-    /// @dev Constructor initializes the daily gas topup limit in wei.
-    constructor() internal {
-        _gasTopUpLimit = DailyLimitTrait.DailyLimit(_MAXIMUM_GAS_TOPUP_LIMIT, _MAXIMUM_GAS_TOPUP_LIMIT, now, 0, false);
-    }
-
-    /// @dev Confirm pending set top up gas limit operation.
-    function confirmGasTopUpLimitUpdate(uint _amount) external onlyController {
-        _gasTopUpLimit._confirmLimitUpdate(_amount);
-        emit SetGasTopUpLimit(msg.sender, _amount);
-    }
-
-    /// @dev View your available gas top-up limit
-    function gasTopUpLimitAvailable() external view returns (uint) {
-        return _gasTopUpLimit._getAvailableLimit();
-    }
-
-    /// @dev Is there an active gas top-up limit change
-    function gasTopUpLimitPending() external view returns (uint) {
-        return _gasTopUpLimit.pending;
-    }
-
-    /// @dev Has the gas top-up limit been initialised
-    function gasTopUpLimitUpdateable() external view returns (bool) {
-        return _gasTopUpLimit.updateable;
-    }
-
-    /// @dev View how much gas top-up has been spent already
-    function gasTopUpLimitValue() external view returns (uint) {
-        return _gasTopUpLimit.value;
-    }
-
-    /// @dev Sets the daily gas top up limit.
-    /// @param _amount is the gas top up amount in wei.
-    function setGasTopUpLimit(uint _amount) external onlyOwnerOrSelf {
-        require(_MINIMUM_GAS_TOPUP_LIMIT <= _amount && _amount <= _MAXIMUM_GAS_TOPUP_LIMIT, "out of range top-up");
-        _gasTopUpLimit._setLimit(_amount);
-        emit SetGasTopUpLimit(msg.sender, _amount);
-    }
-
-    /// @dev Submit a daily gas top up limit update.
-    /// @param _amount is the daily top up gas limit amount in wei.
-    function submitGasTopUpLimitUpdate(uint _amount) external onlyOwnerOrSelf {
-        require(_MINIMUM_GAS_TOPUP_LIMIT <= _amount && _amount <= _MAXIMUM_GAS_TOPUP_LIMIT, "out of range top-up");
-        _gasTopUpLimit._submitLimitUpdate(_amount);
-        emit SubmittedGasTopUpLimitUpdate(_amount);
-    }
-
-}
-
-
 /// @title LoadLimit provides daily load limit functionality.
 contract LoadLimit is ControllableOwnable, SelfCallableOwnable {
 
@@ -751,13 +688,12 @@ contract Vault is AddressWhitelist, SpendLimit, ERC165, Transferrable, Balanceab
 }
 
 
-//// @title Asset wallet with extra security features, gas top up management and card integration.
-contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
+//// @title Asset wallet with extra security features and card integration.
+contract Wallet is ENSResolvable, Vault, LoadLimit {
 
     using SafeERC20 for ERC20;
 
     event LoadedTokenCard(address _asset, uint _amount);
-    event ToppedUpGas(address _sender, address _owner, uint _amount);
 
     /// This is here because our tests don't inherit events from a library
     event UpdatedAvailableLimit();
@@ -811,17 +747,6 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
 
         emit LoadedTokenCard(_asset, _amount);
 
-    }
-
-    /// @dev Refill owner's gas balance, revert if the transaction amount is too large
-    /// @param _amount is the amount of ether to transfer to the owner account in wei.
-    function topUpGas(uint _amount) external isNotZero(_amount) onlyOwnerOrController {
-        // Check against the daily spent limit and update accordingly, require that the value is under remaining limit.
-        _gasTopUpLimit._enforceLimit(_amount);
-        // Then perform the transfer
-        owner().transfer(_amount);
-        // Emit the gas top up event.
-        emit ToppedUpGas(msg.sender, owner(), _amount);
     }
 
     /// @dev Convert ether or ERC20 token amount to the corresponding stablecoin amount.

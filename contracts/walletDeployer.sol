@@ -59,17 +59,13 @@ contract WalletDeployer is ENSResolvable, Controllable {
     /// @notice This function is used to migrate an owner's security settings from a previous version of the wallet
     /// @param _owner is the owner address for the new Wallet to be
     /// @param _spendLimit is the user's set daily spend limit
-    /// @param _gasTopUpLimit is the user's set daily gas top-up limit
     /// @param _whitelistedAddresses is the set of the user's whitelisted addresses
-    function migrateWallet(address payable _owner, Wallet _oldWallet, bool _initializedSpendLimit, bool _initializedGasTopUpLimit, bool _initializedWhitelist, uint _spendLimit, uint _gasTopUpLimit, address[] calldata _whitelistedAddresses) external onlyController {
+    function migrateWallet(address payable _owner, Wallet _oldWallet, bool _initializedSpendLimit, bool _initializedWhitelist, uint _spendLimit, address[] calldata _whitelistedAddresses) external onlyController {
         Wallet wallet = IWalletCache(_ensResolve(walletCacheNode)).walletCachePop();
 
         // Sets up the security settings as per the _oldWallet
         if (_initializedSpendLimit) {
             wallet.setSpendLimit(_spendLimit);
-        }
-        if (_initializedGasTopUpLimit) {
-            wallet.setGasTopUpLimit(_gasTopUpLimit);
         }
         if (_initializedWhitelist) {
             wallet.setWhitelist(_whitelistedAddresses);
