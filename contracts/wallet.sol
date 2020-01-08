@@ -384,67 +384,6 @@ contract SpendLimit is ControllableOwnable, SelfCallableOwnable {
 }
 
 
-/// @title GasTopUpLimit provides daily limit functionality.
-contract GasTopUpLimit is ControllableOwnable, SelfCallableOwnable {
-    event SetGasTopUpLimit(address _sender, uint256 _amount);
-    event SubmittedGasTopUpLimitUpdate(uint256 _amount);
-
-    uint256 private constant _MAXIMUM_GAS_TOPUP_LIMIT = 500 finney;
-    uint256 private constant _MINIMUM_GAS_TOPUP_LIMIT = 1 finney;
-
-    using DailyLimitTrait for DailyLimitTrait.DailyLimit;
-
-    DailyLimitTrait.DailyLimit internal _gasTopUpLimit;
-
-    /// @dev Constructor initializes the daily gas topup limit in wei.
-    constructor() internal {
-        _gasTopUpLimit = DailyLimitTrait.DailyLimit(_MAXIMUM_GAS_TOPUP_LIMIT, _MAXIMUM_GAS_TOPUP_LIMIT, now, 0, false);
-    }
-
-    /// @dev Confirm pending set top up gas limit operation.
-    function confirmGasTopUpLimitUpdate(uint256 _amount) external onlyController {
-        _gasTopUpLimit._confirmLimitUpdate(_amount);
-        emit SetGasTopUpLimit(msg.sender, _amount);
-    }
-
-    /// @dev View your available gas top-up limit
-    function gasTopUpLimitAvailable() external view returns (uint256) {
-        return _gasTopUpLimit._getAvailableLimit();
-    }
-
-    /// @dev Is there an active gas top-up limit change
-    function gasTopUpLimitPending() external view returns (uint256) {
-        return _gasTopUpLimit.pending;
-    }
-
-    /// @dev Has the gas top-up limit been initialised
-    function gasTopUpLimitControllerConfirmationRequired() external view returns (bool) {
-        return _gasTopUpLimit.controllerConfirmationRequired;
-    }
-
-    /// @dev View how much gas top-up has been spent already
-    function gasTopUpLimitValue() external view returns (uint256) {
-        return _gasTopUpLimit.value;
-    }
-
-    /// @dev Sets the daily gas top up limit.
-    /// @param _amount is the gas top up amount in wei.
-    function setGasTopUpLimit(uint256 _amount) external onlyOwnerOrSelf {
-        require(_MINIMUM_GAS_TOPUP_LIMIT <= _amount && _amount <= _MAXIMUM_GAS_TOPUP_LIMIT, "out of range top-up");
-        _gasTopUpLimit._setLimit(_amount);
-        emit SetGasTopUpLimit(msg.sender, _amount);
-    }
-
-    /// @dev Submit a daily gas top up limit update.
-    /// @param _amount is the daily top up gas limit amount in wei.
-    function submitGasTopUpLimitUpdate(uint256 _amount) external onlyOwnerOrSelf {
-        require(_MINIMUM_GAS_TOPUP_LIMIT <= _amount && _amount <= _MAXIMUM_GAS_TOPUP_LIMIT, "out of range top-up");
-        _gasTopUpLimit._submitLimitUpdate(_amount);
-        emit SubmittedGasTopUpLimitUpdate(_amount);
-    }
-}
-
-
 /// @title LoadLimit provides daily load limit functionality.
 contract LoadLimit is ControllableOwnable, SelfCallableOwnable, TokenWhitelistable {
     event SetLoadLimit(address _sender, uint256 _amount);
@@ -509,7 +448,7 @@ contract LoadLimit is ControllableOwnable, SelfCallableOwnable, TokenWhitelistab
 
 
 /// @title Asset wallet with extra security features, gas top up management and card integration.
-contract Wallet is ENSResolvable, GasTopUpLimit, LoadLimit, AddressWhitelist, SpendLimit, ERC165, Transferrable, Balanceable {
+contract Wallet is ENSResolvable, LoadLimit, AddressWhitelist, SpendLimit, ERC165, Transferrable, Balanceable {
     using Address for address;
     using ECDSA for bytes32;
     using SafeERC20 for ERC20;
@@ -665,17 +604,6 @@ contract Wallet is ENSResolvable, GasTopUpLimit, LoadLimit, AddressWhitelist, Sp
     /// @dev Checks for interface support based on ERC165.
     function supportsInterface(bytes4 _interfaceID) external view returns (bool) {
         return _interfaceID == _ERC165_INTERFACE_ID;
-    }
-
-    /// @dev Refill owner's gas balance, revert if the transaction amount is too large
-    /// @param _amount is the amount of ether to transfer to the owner account in wei.
-    function topUpGas(uint256 _amount) external isNotZero(_amount) onlyOwnerOrController {
-        // Check against the daily spent limit and update accordingly, require that the value is under remaining limit.
-        _gasTopUpLimit._enforceLimit(_amount);
-        // Then perform the transfer
-        owner().transfer(_amount);
-        // Emit the gas top up event.
-        emit ToppedUpGas(msg.sender, owner(), _amount);
     }
 
     /// @dev This function allows for the wallet to send a batch of transactions instead of one,
