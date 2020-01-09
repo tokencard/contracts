@@ -28,7 +28,7 @@ import "./internals/controllable.sol";
 import "./internals/tokenWhitelistable.sol";
 
 
-/// @title Holder - The TKN Asset Contract
+/// @title Holder - The TKN Asset Contract.
 /// @notice When the TKN contract calls the burn method, a share of the tokens held by this contract are disbursed to the burner.
 contract Holder is Balanceable, ENSResolvable, Controllable, Transferrable, TokenWhitelistable {
 
@@ -44,7 +44,7 @@ contract Holder is Balanceable, ENSResolvable, Controllable, Transferrable, Toke
         _;
     }
 
-    // Burner token which can be burned to redeem shares.
+    // Burner token which can be burned to redeem shares
     address private _burner;
 
     /// @notice Constructor initializes the holder contract.
@@ -62,8 +62,8 @@ contract Holder is Balanceable, ENSResolvable, Controllable, Transferrable, Toke
     }
 
     /// @notice Burn handles disbursing a share of tokens in this contract to a given address.
-    /// @param _to The address to disburse to
-    /// @param _amount The amount of TKN that will be burned if this succeeds
+    /// @param _to The address to disburse to.
+    /// @param _amount The amount of TKN that will be burned if this succeeds.
     function burn(address payable _to, uint _amount) external onlyBurner returns (bool) {
         if (_amount == 0) {
             return true;
@@ -83,9 +83,9 @@ contract Holder is Balanceable, ENSResolvable, Controllable, Transferrable, Toke
         return true;
     }
 
-    /// @notice This allows for the admin to reclaim the non-redeemableTokens
-    /// @param _to this is the address which the reclaimed tokens will be sent to
-    /// @param _nonRedeemableAddresses this is the array of tokens to be claimed
+    /// @notice This allows for the admin to reclaim the non-redeemableTokens.
+    /// @param _to this is the address which the reclaimed tokens will be sent to.
+    /// @param _nonRedeemableAddresses this is the array of tokens to be claimed.
     function nonRedeemableTokenClaim(address payable _to, address[] calldata _nonRedeemableAddresses) external onlyAdmin returns (bool) {
         for (uint i = 0; i < _nonRedeemableAddresses.length; i++) {
             //revert if token is redeemable
@@ -100,8 +100,8 @@ contract Holder is Balanceable, ENSResolvable, Controllable, Transferrable, Toke
         return true;
     }
 
-    /// @notice Returned the address of the burner contract
-    /// @return the TKN address
+    /// @notice Returned the address of the burner contract.
+    /// @return the TKN address.
     function burner() external view returns (address) {
         return _burner;
     }
