@@ -100,8 +100,8 @@ contract Holder is Balanceable, ENSResolvable, Controllable, Transferrable, Toke
         return true;
     }
 
-    /// @notice Returned the address of the burner contract
-    /// @return the TKN address
+    /// @notice Returned the address of the burner contract.
+    /// @return the TKN address.
     function burner() external view returns (address) {
         return _burner;
     }
