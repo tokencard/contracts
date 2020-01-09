@@ -1,4 +1,5 @@
 *.abi linguist-generated=true
 *.bin linguist-generated=true
+*.sol linguist-language=Solidity
 combined.json linguist-generated=true
 /pkg/bindings/**/* linguist-generated=true
