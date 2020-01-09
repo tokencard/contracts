@@ -238,216 +238,122 @@ contract AddressWhitelist is ControllableOwnable, SelfCallableOwnable {
     }
 }
 
-/// @title DailyLimitTrait This trait allows for daily limits to be included in other contracts.
-/// This contract will allow for a DailyLimit object to be instantiated and used.
-library DailyLimitTrait {
+/// @title DailyLimit provides daily spend limit functionality.
+contract DailyLimit is ControllableOwnable, SelfCallableOwnable {
     using SafeMath for uint256;
 
-    event UpdatedAvailableLimit();
+    event SetDailyLimit(address _sender, uint _amount);
+    event SubmittedDailyLimitUpdate(uint _amount);
+    event UpdatedAvailableDailyLimit();
 
-    struct DailyLimit {
-        uint value;
-        uint available;
-        uint limitTimestamp;
-        uint pending;
-        bool updateable;
+    uint private _value; // The daily limit amount
+    uint private _available; // The remaining amount available in the current 24-hour window
+    uint private _pending; // The pending new limit value requested in the latest limit update submission
+    uint private _updateTimestamp; // Denotes the time that the available daily limit was last updated
+    bool private _updateable; // Indicates whether the limit is updateable or not
+
+    /// @dev Constructor initializes the daily limit in wei.
+    constructor(uint _limit) internal {
+        _value = _limit;
+        _available = _limit;
+        _updateTimestamp = now;
+        _pending = 0;
+        _updateable = false;
     }
 
     /// @dev Confirm pending set daily limit operation.
-    function _confirmLimitUpdate(DailyLimit storage self, uint _amount) internal {
+    function confirmDailyLimitUpdate(uint _amount) external onlyController {
         // Require that pending and confirmed spend limit are the same
-        require(self.pending == _amount, "confirmed/submitted limit mismatch");
+        require(_pending == _amount, "confirmed/submitted limit mismatch");
         // Modify spend limit based on the pending value.
-        _modifyLimit(self, self.pending);
+        _modifyLimit(_pending);
+        emit SetDailyLimit(msg.sender, _amount);
     }
 
-    /// @dev Use up amount within the daily limit. Will fail if amount is larger than daily limit.
-    function _enforceLimit(DailyLimit storage self, uint _amount) internal {
-        // Account for the spend limit daily reset.
-        _updateAvailableLimit(self);
-        require(self.available >= _amount, "available<amount");
-        self.available = self.available.sub(_amount);
+    /// @dev Is there an active spend limit change
+    function dailyLimitPending() external view returns (uint) {
+        return _pending;
     }
 
-    /// @dev Returns the available daily balance - accounts for daily limit reset.
+    /// @dev Has the spend limit been initialised
+    function dailyLimitUpdateable() external view returns (bool) {
+        return _updateable;
+    }
+
+    /// @dev View the limit value
+    function dailyLimitValue() external view returns (uint) {
+        return _value;
+    }
+
+    /// @dev Returns the available daily limit/balance, accounts for daily limit reset.
     /// @return amount of available to spend within the current day in base units.
-    function _getAvailableLimit(DailyLimit storage self) internal view returns (uint) {
-        if (now > self.limitTimestamp.add(24 hours)) {
-            return self.value;
+    function getAvailableDailyLimit() external view returns (uint) {
+        if (now > _updateTimestamp.add(24 hours)) {
+            return _value;
         } else {
-            return self.available;
+            return _available;
         }
-    }
-
-    /// @dev Modify the spend limit and spend available based on the provided value.
-    /// @dev _amount is the daily limit amount in wei.
-    function _modifyLimit(DailyLimit storage self, uint _amount) private {
-        // Account for the spend limit daily reset.
-        _updateAvailableLimit(self);
-        // Set the daily limit to the provided amount.
-        self.value = _amount;
-        // Lower the available limit if it's higher than the new daily limit.
-        if (self.available > self.value) {
-            self.available = self.value;
-        }
-    }
-
-    /// @dev Set the daily limit.
-    /// @param _amount is the daily limit amount in base units.
-    function _setLimit(DailyLimit storage self, uint _amount) internal {
-        // Require that the spend limit has not been set yet.
-        require(!self.updateable, "limit not updateable");
-        // Modify spend limit based on the provided value.
-        _modifyLimit(self, _amount);
-        // Flag the operation as set.
-        self.updateable = true;
-    }
-
-    /// @dev Submit a daily limit update, needs to be confirmed.
-    /// @param _amount is the daily limit amount in base units.
-    function _submitLimitUpdate(DailyLimit storage self, uint _amount) internal {
-        // Require that the spend limit has been set.
-        require(self.updateable, "limit still updateable");
-        // Assign the provided amount to pending daily limit.
-        self.pending = _amount;
-    }
-
-    /// @dev Update available spend limit based on the daily reset.
-    function _updateAvailableLimit(DailyLimit storage self) private {
-        if (now > self.limitTimestamp.add(24 hours)) {
-            // Update the current timestamp.
-            self.limitTimestamp = now;
-            // Set the available limit to the current spend limit.
-            self.available = self.value;
-            emit UpdatedAvailableLimit();
-        }
-    }
-}
-
-
-/// @title  it provides daily spend limit functionality.
-contract SpendLimit is ControllableOwnable, SelfCallableOwnable {
-
-    event SetSpendLimit(address _sender, uint _amount);
-    event SubmittedSpendLimitUpdate(uint _amount);
-
-    using DailyLimitTrait for DailyLimitTrait.DailyLimit;
-
-    DailyLimitTrait.DailyLimit internal _spendLimit;
-
-    /// @dev Constructor initializes the daily spend limit in wei.
-    constructor(uint _limit_) internal {
-        _spendLimit = DailyLimitTrait.DailyLimit(_limit_, _limit_, now, 0, false);
-    }
-
-    /// @dev Confirm pending set daily limit operation.
-    function confirmSpendLimitUpdate(uint _amount) external onlyController {
-        _spendLimit._confirmLimitUpdate(_amount);
-        emit SetSpendLimit(msg.sender, _amount);
     }
 
     /// @dev Sets the initial daily spend (aka transfer) limit for non-whitelisted addresses.
     /// @param _amount is the daily limit amount in wei.
-    function setSpendLimit(uint _amount) external onlyOwnerOrSelf {
-        _spendLimit._setLimit(_amount);
-        emit SetSpendLimit(msg.sender, _amount);
+    function setDailyLimit(uint _amount) external onlyOwnerOrSelf {
+        // Require that the spend limit has not been set yet.
+        require(!_updateable, "limit not updateable");
+        // Modify spend limit based on the provided value.
+        _modifyLimit(_amount);
+        // Flag the operation as set.
+        _updateable = true;
+        emit SetDailyLimit(msg.sender, _amount);
     }
 
-    /// @dev View your available limit
-    function spendLimitAvailable() external view returns (uint) {
-        return _spendLimit._getAvailableLimit();
-    }
-
-    /// @dev Is there an active spend limit change
-    function spendLimitPending() external view returns (uint) {
-        return _spendLimit.pending;
-    }
-
-    /// @dev Has the spend limit been initialised
-    function spendLimitUpdateable() external view returns (bool) {
-        return _spendLimit.updateable;
-    }
-
-    /// @dev View how much has been spent already
-    function spendLimitValue() external view returns (uint) {
-        return _spendLimit.value;
-    }
 
     /// @dev Submit a daily transfer limit update for non-whitelisted addresses.
     /// @param _amount is the daily limit amount in wei.
-    function submitSpendLimitUpdate(uint _amount) external onlyOwnerOrSelf {
-        _spendLimit._submitLimitUpdate(_amount);
-        emit SubmittedSpendLimitUpdate(_amount);
-    }
-}
-
-
-/// @title LoadLimit provides daily load limit functionality.
-contract LoadLimit is ControllableOwnable, SelfCallableOwnable {
-
-    event SetLoadLimit(address _sender, uint _amount);
-    event SubmittedLoadLimitUpdate(uint _amount);
-
-    uint constant private _MINIMUM_LOAD_LIMIT = 1 finney;
-    uint private _maximumLoadLimit;
-
-    using DailyLimitTrait for DailyLimitTrait.DailyLimit;
-
-    DailyLimitTrait.DailyLimit internal _loadLimit;
-
-    /// @dev Sets a daily card load limit.
-    /// @param _amount is the card load amount in current stablecoin base units.
-    function setLoadLimit(uint _amount) external onlyOwnerOrSelf {
-        require(_MINIMUM_LOAD_LIMIT <= _amount && _amount <= _maximumLoadLimit, "out of range load amount");
-        _loadLimit._setLimit(_amount);
-        emit SetLoadLimit(msg.sender, _amount);
+    function submitDailyLimitUpdate(uint _amount) external onlyOwnerOrSelf {
+        // Require that the spend limit has been set.
+        require(_updateable, "limit still updateable");
+        // Assign the provided amount to pending daily limit.
+        _pending = _amount;
+        emit SubmittedDailyLimitUpdate(_amount);
     }
 
-    /// @dev Submit a daily load limit update.
-    /// @param _amount is the daily load limit amount in wei.
-    function submitLoadLimitUpdate(uint _amount) external onlyOwnerOrSelf {
-        require(_MINIMUM_LOAD_LIMIT <= _amount && _amount <= _maximumLoadLimit, "out of range load amount");
-        _loadLimit._submitLimitUpdate(_amount);
-        emit SubmittedLoadLimitUpdate(_amount);
+    /// @dev Use up amount within the daily limit. Will fail if amount is larger than available limit.
+    function _enforceDailyLimit(uint _amount) internal {
+        // Account for the spend limit daily reset.
+        _updateAvailableDailyLimit();
+        require(_available >= _amount, "available<amount");
+        _available = _available.sub(_amount);
     }
 
-    /// @dev Confirm pending set load limit operation.
-    function confirmLoadLimitUpdate(uint _amount) external onlyController {
-        _loadLimit._confirmLimitUpdate(_amount);
-        emit SetLoadLimit(msg.sender, _amount);
+    /// @dev Modify the spend limit and spend available based on the provided value.
+    /// @dev _amount is the daily limit amount in wei.
+    function _modifyLimit(uint _amount) private {
+        // Account for the spend limit daily reset.
+        _updateAvailableDailyLimit();
+        // Set the daily limit to the provided amount.
+        _value = _amount;
+        // Lower the available limit if it's higher than the new daily limit.
+        if (_available > _value) {
+            _available = _value;
+        }
     }
 
-    /// @dev View your available load limit
-    function loadLimitAvailable() external view returns (uint) {
-        return _loadLimit._getAvailableLimit();
-    }
-
-    /// @dev Is there an active load limit change
-    function loadLimitPending() external view returns (uint) {
-        return _loadLimit.pending;
-    }
-
-    /// @dev Has the load limit been initialised
-    function loadLimitUpdateable() external view returns (bool) {
-        return _loadLimit.updateable;
-    }
-
-    /// @dev View how much laod limit has been spent already
-    function loadLimitValue() external view returns (uint) {
-        return _loadLimit.value;
-    }
-
-    /// @dev initializes the daily load limit.
-    /// @param _maxLimit is the maximum load limit amount in stablecoin base units.
-    function _initializeLoadLimit(uint _maxLimit) internal {
-        _maximumLoadLimit = _maxLimit;
-        _loadLimit = DailyLimitTrait.DailyLimit(_maximumLoadLimit, _maximumLoadLimit, now, 0, false);
+    /// @dev Update available spend limit based on the daily reset.
+    function _updateAvailableDailyLimit() private {
+        if (now > _updateTimestamp.add(24 hours)) {
+            // Update the current timestamp.
+            _updateTimestamp = now;
+            // Set the available limit to the current spend limit.
+            _available = _value;
+            emit UpdatedAvailableDailyLimit();
+        }
     }
 }
 
 
 //// @title Asset store with extra security features.
-contract Vault is AddressWhitelist, SpendLimit, ERC165, Transferrable, Balanceable, TokenWhitelistable {
+contract Vault is AddressWhitelist, DailyLimit, ERC165, Transferrable, Balanceable, TokenWhitelistable {
 
     using Address for address;
     using ECDSA for bytes32;
@@ -477,7 +383,7 @@ contract Vault is AddressWhitelist, SpendLimit, ERC165, Transferrable, Balanceab
     /// @param _tokenWhitelistNode_ is the ENS node of the Token whitelist.
     /// @param _controllerNode_ is the ENS name node of the controller.
     /// @param _spendLimit_ is the initial spend limit.
-    constructor(address payable _owner_, bool _transferable_, bytes32 _tokenWhitelistNode_, bytes32 _controllerNode_, uint _spendLimit_) SpendLimit(_spendLimit_) Ownable(_owner_, _transferable_) Controllable(_controllerNode_) TokenWhitelistable(_tokenWhitelistNode_) public {}
+    constructor(address payable _owner_, bool _transferable_, bytes32 _tokenWhitelistNode_, bytes32 _controllerNode_, uint _spendLimit_) DailyLimit(_spendLimit_) Ownable(_owner_, _transferable_) Controllable(_controllerNode_) TokenWhitelistable(_tokenWhitelistNode_) public {}
 
     /// @dev Checks if the value is not zero.
     modifier isNotZero(uint _value) {
@@ -615,7 +521,7 @@ contract Vault is AddressWhitelist, SpendLimit, ERC165, Transferrable, Balanceab
         // If value is send across as a part of this executeTransaction, this will be sent to any payable
         // destination. As a result enforceLimit if destination is not whitelisted.
         if (!whitelistMap[_destination]) {
-            _spendLimit._enforceLimit(_value);
+            _enforceDailyLimit(_value);
         }
         // Check if the destination is a Contract and it is one of our supported tokens
         if (address(_destination).isContract() && _isTokenAvailable(_destination)) {
@@ -627,7 +533,7 @@ contract Vault is AddressWhitelist, SpendLimit, ERC165, Transferrable, Balanceab
                 // If the address (of the token contract, e.g) is not in the TokenWhitelist used by the convert method
                 // then etherValue will be zero
                 uint etherValue = convertToEther(_destination, amount);
-                _spendLimit._enforceLimit(etherValue);
+                _enforceDailyLimit(etherValue);
             }
             // use callOptionalReturn provided in SafeERC20 in case the ERC20 method
             // returns false instead of reverting!
@@ -677,7 +583,7 @@ contract Vault is AddressWhitelist, SpendLimit, ERC165, Transferrable, Balanceab
             }
             // Check against the daily spent limit and update accordingly
             // Check against the daily spent limit and update accordingly, require that the value is under remaining limit.
-            _spendLimit._enforceLimit(etherValue);
+            _enforceDailyLimit(etherValue);
         }
         // Transfer token or ether based on the provided address.
         _safeTransfer(_to, _asset, _amount);
@@ -689,17 +595,13 @@ contract Vault is AddressWhitelist, SpendLimit, ERC165, Transferrable, Balanceab
 
 
 //// @title Asset wallet with extra security features and card integration.
-contract Wallet is ENSResolvable, Vault, LoadLimit {
+contract Wallet is ENSResolvable, Vault {
 
     using SafeERC20 for ERC20;
 
     event LoadedTokenCard(address _asset, uint _amount);
 
-    /// This is here because our tests don't inherit events from a library
-    event UpdatedAvailableLimit();
-
     string constant public WALLET_VERSION = "2.3.0";
-    uint constant private _DEFAULT_MAX_STABLECOIN_LOAD_LIMIT = 10000; //10,000 USD
 
     /// @dev Is the registered ENS node identifying the licence contract.
     bytes32 private _licenceNode;
@@ -713,10 +615,6 @@ contract Wallet is ENSResolvable, Vault, LoadLimit {
     /// @param _licenceNode_ is the ENS name node of the Licence contract.
     /// @param _spendLimit_ is the initial spend limit.
     constructor(address payable _owner_, bool _transferable_, address _ens_, bytes32 _tokenWhitelistNode_, bytes32 _controllerNode_, bytes32 _licenceNode_, uint _spendLimit_) ENSResolvable(_ens_) Vault(_owner_, _transferable_, _tokenWhitelistNode_, _controllerNode_, _spendLimit_) public {
-        // Get the stablecoin's magnitude.
-        ( ,uint256 stablecoinMagnitude, , , , , ) = _getStablecoinInfo();
-        require(stablecoinMagnitude > 0, "no stablecoin");
-        _initializeLoadLimit(_DEFAULT_MAX_STABLECOIN_LOAD_LIMIT * stablecoinMagnitude);
         _licenceNode = _licenceNode_;
     }
 
@@ -735,7 +633,7 @@ contract Wallet is ENSResolvable, Vault, LoadLimit {
         // Convert token amount to stablecoin value.
         uint stablecoinValue = convertToStablecoin(_asset, _amount);
         // Check against the daily spent limit and update accordingly, require that the value is under remaining limit.
-        _loadLimit._enforceLimit(stablecoinValue);
+        _enforceDailyLimit(stablecoinValue);
         // Get the TKN licenceAddress from ENS
         address licenceAddress = _ensResolve(_licenceNode);
         if (_asset != address(0)) {
