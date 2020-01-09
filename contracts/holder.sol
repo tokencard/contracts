@@ -83,9 +83,9 @@ contract Holder is Balanceable, ENSResolvable, Controllable, Transferrable, Toke
         return true;
     }
 
-    /// @notice This allows for the admin to reclaim the non-redeemableTokens
-    /// @param _to this is the address which the reclaimed tokens will be sent to
-    /// @param _nonRedeemableAddresses this is the array of tokens to be claimed
+    /// @notice This allows for the admin to reclaim the non-redeemableTokens.
+    /// @param _to this is the address which the reclaimed tokens will be sent to.
+    /// @param _nonRedeemableAddresses this is the array of tokens to be claimed.
     function nonRedeemableTokenClaim(address payable _to, address[] calldata _nonRedeemableAddresses) external onlyAdmin returns (bool) {
         for (uint i = 0; i < _nonRedeemableAddresses.length; i++) {
             //revert if token is redeemable
