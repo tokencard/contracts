@@ -33,7 +33,7 @@ var _ = Describe("executeTransaction", func() {
 
 			When("the destination address is not whitelisted", func() {
 				BeforeEach(func() {
-					spendLimit, err = Wallet.SpendLimitAvailable(nil)
+					spendLimit, err = Wallet.DailyLimitAvailable(nil)
 					Expect(err).ToNot(HaveOccurred())
 					privateKey, _ := crypto.GenerateKey()
 					randomAddress = crypto.PubkeyToAddress(privateKey.PublicKey)
@@ -49,9 +49,9 @@ var _ = Describe("executeTransaction", func() {
 					Expect(b.String()).To(Equal(FinneyToWei(500).String()))
 				})
 
-				It("should reduce the available daily spend balance", func() {
+				It("should reduce the available daily balance", func() {
 					spendLimit.Sub(spendLimit, FinneyToWei(500))
-					sl, err := Wallet.SpendLimitAvailable(nil)
+					sl, err := Wallet.DailyLimitAvailable(nil)
 					Expect(err).ToNot(HaveOccurred())
 					Expect(sl.String()).To(Equal(spendLimit.String()))
 				})
@@ -90,10 +90,10 @@ var _ = Describe("executeTransaction", func() {
 					Expect(b.String()).To(Equal(FinneyToWei(500).String()))
 				})
 
-				It("should reduce the available daily spend balance", func() {
-					av, err := Wallet.SpendLimitAvailable(nil)
+				It("should reduce the available daily balance", func() {
+					av, err := Wallet.DailyLimitAvailable(nil)
 					Expect(err).ToNot(HaveOccurred())
-					sl, err := Wallet.SpendLimitValue(nil)
+					sl, err := Wallet.DailyLimitValue(nil)
 					Expect(err).ToNot(HaveOccurred())
 					sl.Sub(sl, FinneyToWei(500))
 					Expect(av.String()).To(Equal(sl.String()))
@@ -115,7 +115,7 @@ var _ = Describe("executeTransaction", func() {
 				})
 			})
 
-			When("the value sent is more than the daily spend limit", func() {
+			When("the value sent is more than the daily limit", func() {
 				It("should fail", func() {
 					privateKey, _ := crypto.GenerateKey()
 					randomAddress = crypto.PubkeyToAddress(privateKey.PublicKey)
@@ -126,7 +126,7 @@ var _ = Describe("executeTransaction", func() {
 				})
 			})
 
-			When("the value sent is exactly equal to the daily spend limit", func() {
+			When("the value sent is exactly equal to the daily limit", func() {
 				BeforeEach(func() {
 					privateKey, _ := crypto.GenerateKey()
 					randomAddress = crypto.PubkeyToAddress(privateKey.PublicKey)
@@ -148,8 +148,8 @@ var _ = Describe("executeTransaction", func() {
 					Expect(b.String()).To(Equal(EthToWei(1).String()))
 				})
 
-				It("should reduce the available daily spend balance to 0", func() {
-					av, err := Wallet.SpendLimitAvailable(nil)
+				It("should reduce the available daily balance to 0", func() {
+					av, err := Wallet.DailyLimitAvailable(nil)
 					Expect(err).ToNot(HaveOccurred())
 					Expect(av.String()).To(Equal("0"))
 				})
@@ -180,7 +180,7 @@ var _ = Describe("executeTransaction", func() {
 				})
 
 				BeforeEach(func() {
-					spendLimit, err = Wallet.SpendLimitAvailable(nil)
+					spendLimit, err = Wallet.DailyLimitAvailable(nil)
 					Expect(err).ToNot(HaveOccurred())
 					tx, err = Wallet.ExecuteTransaction(Owner.TransactOpts(ethertest.WithGasLimit(100000)), randomAddress, FinneyToWei(500), nil)
 					Expect(err).ToNot(HaveOccurred())
@@ -194,8 +194,8 @@ var _ = Describe("executeTransaction", func() {
 					Expect(b.String()).To(Equal(FinneyToWei(500).String()))
 				})
 
-				It("should NOT reduce the available daily spend balance", func() {
-					sl, err := Wallet.SpendLimitAvailable(nil)
+				It("should NOT reduce the available daily balance", func() {
+					sl, err := Wallet.DailyLimitAvailable(nil)
 					Expect(err).ToNot(HaveOccurred())
 					Expect(sl.String()).To(Equal(spendLimit.String()))
 				})
@@ -258,8 +258,8 @@ var _ = Describe("executeTransaction", func() {
 					Expect(b.String()).To(Equal("700"))
 				})
 
-				It("should reduce the available daily spend balance", func() {
-					av, err := Wallet.SpendLimitAvailable(nil)
+				It("should reduce the available daily balance", func() {
+					av, err := Wallet.DailyLimitAvailable(nil)
 					Expect(err).ToNot(HaveOccurred())
 					eth, err := Wallet.ConvertToEther(nil, TKNBurnerAddress, big.NewInt(300))
 					Expect(err).ToNot(HaveOccurred())
@@ -308,8 +308,8 @@ var _ = Describe("executeTransaction", func() {
 					Expect(b.String()).To(Equal("700"))
 				})
 
-				It("should reduce the available daily spend balance", func() {
-					av, err := Wallet.SpendLimitAvailable(nil)
+				It("should reduce the available daily balance", func() {
+					av, err := Wallet.DailyLimitAvailable(nil)
 					Expect(err).ToNot(HaveOccurred())
 					eth, err := Wallet.ConvertToEther(nil, TKNBurnerAddress, big.NewInt(300))
 					Expect(err).ToNot(HaveOccurred())
@@ -420,8 +420,8 @@ var _ = Describe("executeTransaction", func() {
 						Expect(b.String()).To(Equal("1000"))
 					})
 
-					It("should not reduce the available daily spend balance", func() {
-						av, err := Wallet.SpendLimitAvailable(nil)
+					It("should not reduce the available daily balance", func() {
+						av, err := Wallet.DailyLimitAvailable(nil)
 						Expect(err).ToNot(HaveOccurred())
 						Expect(av.String()).To(Equal("100000000000000000000"))
 					})
@@ -453,8 +453,8 @@ var _ = Describe("executeTransaction", func() {
 						Expect(b.String()).To(Equal("700"))
 					})
 
-					It("should not reduce the available daily spend balance", func() {
-						av, err := Wallet.SpendLimitAvailable(nil)
+					It("should not reduce the available daily balance", func() {
+						av, err := Wallet.DailyLimitAvailable(nil)
 						Expect(err).ToNot(HaveOccurred())
 						Expect(av.String()).To(Equal("100000000000000000000"))
 					})
@@ -493,8 +493,8 @@ var _ = Describe("executeTransaction", func() {
 						Expect(b.String()).To(Equal("700"))
 					})
 
-					It("should not reduce the available daily spend balance", func() {
-						av, err := Wallet.SpendLimitAvailable(nil)
+					It("should not reduce the available daily balance", func() {
+						av, err := Wallet.DailyLimitAvailable(nil)
 						Expect(err).ToNot(HaveOccurred())
 						Expect(av.String()).To(Equal("100000000000000000000"))
 					})
@@ -539,10 +539,10 @@ var _ = Describe("executeTransaction", func() {
 					Expect(b.String()).To(Equal("1000"))
 				})
 
-				It("should reduce the available daily spend balance", func() {
-					av, err := Wallet.SpendLimitAvailable(nil)
+				It("should reduce the available daily balance", func() {
+					av, err := Wallet.DailyLimitAvailable(nil)
 					Expect(err).ToNot(HaveOccurred())
-					sl, _ := Wallet.SpendLimitValue(nil)
+					sl, _ := Wallet.DailyLimitValue(nil)
 					eth, err := Wallet.ConvertToEther(nil, TKNBurnerAddress, big.NewInt(300))
 					Expect(err).ToNot(HaveOccurred())
 					sl.Sub(sl, eth) //subtract converted eth from dailySppendLimit
@@ -582,8 +582,8 @@ var _ = Describe("executeTransaction", func() {
 						Expect(b.String()).To(Equal("700"))
 					})
 
-					It("should NOT reduce the available daily spend balance", func() {
-						av, err := RandomWallet.SpendLimitAvailable(nil)
+					It("should NOT reduce the available daily balance", func() {
+						av, err := RandomWallet.DailyLimitAvailable(nil)
 						Expect(err).ToNot(HaveOccurred())
 						Expect(av.String()).To(Equal(EthToWei(1).String()))
 					})
@@ -614,10 +614,10 @@ var _ = Describe("executeTransaction", func() {
 						Expect(b.String()).To(Equal("700"))
 					})
 
-					It("should reduce the available daily spend balance", func() {
-						av, err := RandomWallet.SpendLimitAvailable(nil)
+					It("should reduce the available daily balance", func() {
+						av, err := RandomWallet.DailyLimitAvailable(nil)
 						Expect(err).ToNot(HaveOccurred())
-						sl, _ := RandomWallet.SpendLimitValue(nil)
+						sl, _ := RandomWallet.DailyLimitValue(nil)
 						eth, err := RandomWallet.ConvertToEther(nil, TKNBurnerAddress, big.NewInt(300))
 						Expect(err).ToNot(HaveOccurred())
 						sl.Sub(sl, eth) //subtract converted eth from dailySppendLimit
@@ -676,8 +676,8 @@ var _ = Describe("executeTransaction", func() {
 					Expect(b.String()).To(Equal("700"))
 				})
 
-				It("should NOT reduce the available daily spend balance", func() {
-					av, err := Wallet.SpendLimitAvailable(nil)
+				It("should NOT reduce the available daily balance", func() {
+					av, err := Wallet.DailyLimitAvailable(nil)
 					Expect(err).ToNot(HaveOccurred())
 					Expect(av.String()).To(Equal(EthToWei(100).String()))
 				})

@@ -290,7 +290,12 @@ var _ = Describe("wallet load ERC20", func() {
 			When("a bigger amount than daily Load limit is loaded", func() {
 
 				BeforeEach(func() {
-					//rate is 1 token  => 1 ETH
+
+					limPlusOneWei, err := Wallet.DailyLimitValue(nil)
+					Expect(err).ToNot(HaveOccurred())
+
+					limPlusOneWei.Add(limPlusOneWei, big.NewInt(1))
+
 					tx, err := TokenWhitelist.UpdateTokenRate(
 						ControllerAdmin.TransactOpts(),
 						ERC20Contract1Address,
