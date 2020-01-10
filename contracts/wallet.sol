@@ -55,8 +55,8 @@ contract SelfCallableOwnable is Ownable {
 }
 
 /// @title AddressWhitelist provides payee-whitelist functionality.
-/// @dev This contract will allow the user to maintain a whitelist of addresses
-/// @dev These addresses will live outside of the various spend limits
+/// @dev This contract will allow the user to maintain a whitelist of addresses.
+/// @dev These addresses will live outside of the daily limit.
 contract AddressWhitelist is ControllableOwnable, SelfCallableOwnable {
     using SafeMath for uint256;
 
@@ -263,19 +263,19 @@ contract DailyLimit is ControllableOwnable, SelfCallableOwnable {
 
     /// @dev Confirm pending set daily limit operation.
     function confirmDailyLimitUpdate(uint _amount) external onlyController {
-        // Require that pending and confirmed spend limit are the same
+        // Require that pending and confirmed limits are the same
         require(_pending == _amount, "confirmed/submitted limit mismatch");
-        // Modify spend limit based on the pending value.
+        // Modify daily limit based on the pending value.
         _modifyLimit(_pending);
         emit SetDailyLimit(msg.sender, _amount);
     }
 
-    /// @dev Is there an active spend limit change
+    /// @dev Is there an active daily limit change
     function dailyLimitPending() external view returns (uint) {
         return _pending;
     }
 
-    /// @dev Has the spend limit been initialised
+    /// @dev Has the daily limit been initialised
     function dailyLimitUpdateable() external view returns (bool) {
         return _updateable;
     }
@@ -295,12 +295,12 @@ contract DailyLimit is ControllableOwnable, SelfCallableOwnable {
         }
     }
 
-    /// @dev Sets the initial daily spend (aka transfer) limit for non-whitelisted addresses.
+    /// @dev Sets the initial daily (aka transfer) limit for non-whitelisted addresses.
     /// @param _amount is the daily limit amount in wei.
     function setDailyLimit(uint _amount) external onlyOwnerOrSelf {
-        // Require that the spend limit has not been set yet.
+        // Require that the limit has not been set yet.
         require(!_updateable, "limit not updateable");
-        // Modify spend limit based on the provided value.
+        // Modify the limit based on the provided value.
         _modifyLimit(_amount);
         // Flag the operation as set.
         _updateable = true;
@@ -311,7 +311,7 @@ contract DailyLimit is ControllableOwnable, SelfCallableOwnable {
     /// @dev Submit a daily transfer limit update for non-whitelisted addresses.
     /// @param _amount is the daily limit amount in wei.
     function submitDailyLimitUpdate(uint _amount) external onlyOwnerOrSelf {
-        // Require that the spend limit has been set.
+        // Require that the daily limit has been set.
         require(_updateable, "limit still updateable");
         // Assign the provided amount to pending daily limit.
         _pending = _amount;
@@ -320,16 +320,16 @@ contract DailyLimit is ControllableOwnable, SelfCallableOwnable {
 
     /// @dev Use up amount within the daily limit. Will fail if amount is larger than available limit.
     function _enforceDailyLimit(uint _amount) internal {
-        // Account for the spend limit daily reset.
+        // Account for the limit daily reset.
         _updateAvailableDailyLimit();
         require(_available >= _amount, "available<amount");
         _available = _available.sub(_amount);
     }
 
-    /// @dev Modify the spend limit and spend available based on the provided value.
+    /// @dev Modify the daily limit and spend available based on the provided value.
     /// @dev _amount is the daily limit amount in wei.
     function _modifyLimit(uint _amount) private {
-        // Account for the spend limit daily reset.
+        // Account for the limit daily reset.
         _updateAvailableDailyLimit();
         // Set the daily limit to the provided amount.
         _value = _amount;
@@ -339,12 +339,12 @@ contract DailyLimit is ControllableOwnable, SelfCallableOwnable {
         }
     }
 
-    /// @dev Update available spend limit based on the daily reset.
+    /// @dev Update available limit based on the daily reset.
     function _updateAvailableDailyLimit() private {
         if (now > _updateTimestamp.add(24 hours)) {
             // Update the current timestamp.
             _updateTimestamp = now;
-            // Set the available limit to the current spend limit.
+            // Set the available limit to the current daily limit.
             _available = _value;
             emit UpdatedAvailableDailyLimit();
         }
@@ -377,13 +377,13 @@ contract Vault is AddressWhitelist, DailyLimit, ERC165, Transferrable, Balanceab
     /// @dev this is an internal nonce to prevent replay attacks from relayer
     uint public relayNonce;
 
-    /// @dev Constructor initializes the vault with an owner address and spend limit. It also sets up the controllable and tokenWhitelist contracts with the right name registered in ENS.
+    /// @dev Constructor initializes the vault with an owner address and daily limit. It also sets up the controllable and tokenWhitelist contracts with the right name registered in ENS.
     /// @param _owner_ is the owner account of the wallet contract.
     /// @param _transferable_ indicates whether the contract ownership can be transferred.
     /// @param _tokenWhitelistNode_ is the ENS node of the Token whitelist.
     /// @param _controllerNode_ is the ENS name node of the controller.
-    /// @param _spendLimit_ is the initial spend limit.
-    constructor(address payable _owner_, bool _transferable_, bytes32 _tokenWhitelistNode_, bytes32 _controllerNode_, uint _spendLimit_) DailyLimit(_spendLimit_) Ownable(_owner_, _transferable_) Controllable(_controllerNode_) TokenWhitelistable(_tokenWhitelistNode_) public {}
+    /// @param _dailyLimit_ is the initial daily limit.
+    constructor(address payable _owner_, bool _transferable_, bytes32 _tokenWhitelistNode_, bytes32 _controllerNode_, uint _dailyLimit_) DailyLimit(_dailyLimit_) Ownable(_owner_, _transferable_) Controllable(_controllerNode_) TokenWhitelistable(_tokenWhitelistNode_) public {}
 
     /// @dev Checks if the value is not zero.
     modifier isNotZero(uint _value) {
@@ -613,8 +613,8 @@ contract Wallet is ENSResolvable, Vault {
     /// @param _tokenWhitelistNode_ is the ENS name node of the Token whitelist.
     /// @param _controllerNode_ is the ENS name node of the Controller contract.
     /// @param _licenceNode_ is the ENS name node of the Licence contract.
-    /// @param _spendLimit_ is the initial spend limit.
-    constructor(address payable _owner_, bool _transferable_, address _ens_, bytes32 _tokenWhitelistNode_, bytes32 _controllerNode_, bytes32 _licenceNode_, uint _spendLimit_) ENSResolvable(_ens_) Vault(_owner_, _transferable_, _tokenWhitelistNode_, _controllerNode_, _spendLimit_) public {
+    /// @param _dailyLimit_ is the initial daily limit.
+    constructor(address payable _owner_, bool _transferable_, address _ens_, bytes32 _tokenWhitelistNode_, bytes32 _controllerNode_, bytes32 _licenceNode_, uint _dailyLimit_) ENSResolvable(_ens_) Vault(_owner_, _transferable_, _tokenWhitelistNode_, _controllerNode_, _dailyLimit_) public {
         _licenceNode = _licenceNode_;
     }
 

@@ -49,13 +49,13 @@ contract WalletCache is ENSResolvable, Controllable {
     Wallet[] public cachedWallets;
 
     address public ens;
-    uint public defaultSpendLimit;
+    uint public defaultDailyLimit;
 
     /// @notice parameters are passed in so that they can be used to construct new instances of the wallet
     /// @dev pass in bytes32 to use the default, production node labels for ENS
-    constructor(address _ens_, uint _defaultSpendLimit_, bytes32 _controllerNode_, bytes32 _licenceNode_, bytes32 _tokenWhitelistNode_, bytes32 _walletDeployerNode_) ENSResolvable(_ens_) Controllable(_controllerNode_) public {
+    constructor(address _ens_, uint _defaultDailyLimit_, bytes32 _controllerNode_, bytes32 _licenceNode_, bytes32 _tokenWhitelistNode_, bytes32 _walletDeployerNode_) ENSResolvable(_ens_) Controllable(_controllerNode_) public {
         ens = _ens_;
-        defaultSpendLimit = _defaultSpendLimit_;
+        defaultDailyLimit = _defaultDailyLimit_;
 
         // Set licenceNode or use default
         if (_licenceNode_ != bytes32(0)) {
@@ -80,7 +80,7 @@ contract WalletCache is ENSResolvable, Controllable {
     /// @notice This public method allows anyone to pre-cache wallets
     function cacheWallet() public {
         // the address(uint160()) cast is done as the Wallet owner (1st argument) needs to be payable
-        Wallet wallet = new Wallet(address(uint160(_ensResolve(walletDeployerNode))), true, ens, tokenWhitelistNode, controllerNode(), licenceNode, defaultSpendLimit);
+        Wallet wallet = new Wallet(address(uint160(_ensResolve(walletDeployerNode))), true, ens, tokenWhitelistNode, controllerNode(), licenceNode, defaultDailyLimit);
         cachedWallets.push(wallet);
 
         emit CachedWallet(wallet);

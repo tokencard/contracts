@@ -68,7 +68,7 @@ var _ = Describe("Wallet Deployer", func() {
 				Expect(it.Event.Wallet).To(Equal(addr))
 			})
 
-			When("new Wallet owner sets the spend limit", func() {
+			When("new Wallet owner sets the daily limit", func() {
 				var NewWallet *bindings.Wallet
 
 				BeforeEach(func() {
@@ -122,7 +122,7 @@ var _ = Describe("Wallet Deployer", func() {
 				Expect(addr).ToNot(Equal(common.HexToAddress("0x0")))
 			})
 
-			When("New Wallet owner sets the spend limit", func() {
+			When("New Wallet owner sets the daily limit", func() {
 				var NewWallet *bindings.Wallet
 
 				BeforeEach(func() {
@@ -143,7 +143,7 @@ var _ = Describe("Wallet Deployer", func() {
 					Expect(av.String()).To(Equal(FinneyToWei(500).String()))
 				})
 
-				It("should have a spend limit of 500 Finney", func() {
+				It("should have a daily limit of 500 Finney", func() {
 					sl, err := NewWallet.DailyLimitValue(nil)
 					Expect(err).ToNot(HaveOccurred())
 					Expect(sl.String()).To(Equal(FinneyToWei(500).String()))
