@@ -4,6 +4,7 @@ import (
 	"context"
 	"math"
 	"math/big"
+    "time"
 
 	"github.com/ethereum/go-ethereum/common"
 	. "github.com/onsi/ginkgo"
@@ -19,6 +20,7 @@ var _ = Describe("wallet load eth", func() {
 		Expect(err).ToNot(HaveOccurred())
 		Expect(sa).To(Equal([32]byte(LicenceName)))
 	})
+
 
 	When("the contract has no balance", func() {
 
@@ -88,7 +90,17 @@ var _ = Describe("wallet load eth", func() {
 		Expect(b.String()).To(Equal("0"))
 	})
 
-	When("the wallet has 102 ETH", func() {
+	When("the wallet has 102 ETH and the daily limit is set to 101 ETH", func() {
+
+        BeforeEach(func() {
+            tx, err := Wallet.SetDailyLimit(Owner.TransactOpts(), EthToWei(101))
+            Expect(err).ToNot(HaveOccurred())
+            Backend.Commit()
+            Expect(isSuccessful(tx)).To(BeTrue())
+            //increase the timestam by one day so the new (higher) limit takes effect
+            Backend.AdjustTime(time.Hour*24 + time.Second)
+            Backend.Commit()
+        })
 
 		BeforeEach(func() {
 			RandomAccount.MustTransfer(Backend, WalletAddress, EthToWei(102))
@@ -203,7 +215,7 @@ var _ = Describe("wallet load eth", func() {
 					Expect(isSuccessful(tx)).To(BeTrue())
 				})
 
-				When("a bigger amount than daily Load limit is loaded", func() {
+				When("a bigger amount than daily limit is loaded", func() {
 
 					It("Should revert", func() {
 						limPlusOneWei := EthToWei(10)
@@ -218,7 +230,7 @@ var _ = Describe("wallet load eth", func() {
 					})
 				}) //more daily Load limit
 
-				When("the precise amount of the daily Load limit is loaded", func() {
+				When("the precise amount of the daily limit is loaded", func() {
 
 					It("Should return 10000", func() {
 						value, err := Wallet.ConvertToStablecoin(nil, common.HexToAddress("0x0"), EthToWei(10))
@@ -228,14 +240,7 @@ var _ = Describe("wallet load eth", func() {
 						Expect(value.String()).To(Equal(finalAmount.String()))
 					})
 
-					It("Should succeed", func() {
-						tx, err := Wallet.LoadTokenCard(Owner.TransactOpts(), common.HexToAddress("0x0"), EthToWei(10))
-						Expect(err).ToNot(HaveOccurred())
-						Backend.Commit()
-						Expect(isSuccessful(tx)).To(BeTrue())
-					})
-
-				}) //amount = loadLimit
+				}) //amount = spendLimit
 
 			}) //stablecoin rate is 0.001
 
