@@ -287,7 +287,7 @@ contract DailyLimit is ControllableOwnable, SelfCallableOwnable {
 
     /// @dev Returns the available daily limit/balance, accounts for daily limit reset.
     /// @return amount of available to spend within the current day in base units.
-    function getAvailableDailyLimit() external view returns (uint) {
+    function dailyLimitAvailable() external view returns (uint) {
         if (now > _updateTimestamp.add(24 hours)) {
             return _value;
         } else {

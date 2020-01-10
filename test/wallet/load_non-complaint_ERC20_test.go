@@ -179,12 +179,12 @@ var _ = Describe("wallet load non-compliant ERC20", func() {
 
 			}) //more than owned (and hence can be approved)
 
-			When("a bigger amount than daily Load limit is tried to be loaded", func() {
+			When("a bigger amount than daily limit is tried to be loaded", func() {
 
 				//change the exchange rate to be equal to daily Load limit + 1 wei
 				BeforeEach(func() {
 
-					limPlusOneWei, err := Wallet.LoadLimitValue(nil)
+					limPlusOneWei, err := Wallet.DailyLimitValue(nil)
 					Expect(err).ToNot(HaveOccurred())
 
 					limPlusOneWei.Add(limPlusOneWei, big.NewInt(1))
@@ -211,7 +211,7 @@ var _ = Describe("wallet load non-compliant ERC20", func() {
     				Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("available<amount"))
 				})
 
-			}) //more than daily Load limit
+			}) //more than daily limit
 
 		}) //tokens are loadable and rates have been updated
 

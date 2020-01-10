@@ -34,13 +34,13 @@ var _ = Describe("transfer", func() {
 			})
 
 			It("should reduce available transfer for today by 100 ETH", func() {
-				av, err := Wallet.SpendLimitAvailable(nil)
+				av, err := Wallet.DailyLimitAvailable(nil)
 				Expect(err).ToNot(HaveOccurred())
 				Expect(av.String()).To(Equal("0"))
 			})
 
-			It("should update the spend available to 0", func() {
-				av, err := Wallet.SpendLimitAvailable(nil)
+			It("should update the available amount to 0", func() {
+				av, err := Wallet.DailyLimitAvailable(nil)
 				Expect(err).ToNot(HaveOccurred())
 				Expect(av.String()).To(Equal("0"))
 			})
@@ -61,8 +61,8 @@ var _ = Describe("transfer", func() {
 					Backend.Commit()
 				})
 
-				It("should update the spend available to 100 ETH", func() {
-					av, err := Wallet.SpendLimitAvailable(nil)
+				It("should update the available amount to 100 ETH", func() {
+					av, err := Wallet.DailyLimitAvailable(nil)
 					Expect(err).ToNot(HaveOccurred())
 					Expect(av.String()).To(Equal(EthToWei(100).String()))
 				})
@@ -79,8 +79,8 @@ var _ = Describe("transfer", func() {
 						Expect(isSuccessful(tx)).To(BeTrue())
 					})
 
-					It("should emit UpdatedSpendAvailable event", func() {
-						it, err := Wallet.FilterUpdatedAvailableLimit(nil)
+					It("should emit UpdatedAvailableDailyLimit event", func() {
+						it, err := Wallet.FilterUpdatedAvailableDailyLimit(nil)
 						Expect(err).ToNot(HaveOccurred())
 						Expect(it.Next()).To(BeTrue())
 						_ = it.Event
@@ -88,7 +88,7 @@ var _ = Describe("transfer", func() {
 					})
 
 					It("should reduce available transfer for today by 1 Finney", func() {
-						av, err := Wallet.SpendLimitAvailable(nil)
+						av, err := Wallet.DailyLimitAvailable(nil)
 						Expect(err).ToNot(HaveOccurred())
 						Expect(av.String()).To(Equal("99999000000000000000"))
 					})
@@ -111,7 +111,7 @@ var _ = Describe("transfer", func() {
 			})
 
 			It("should reduce available transfer for today by 1 Finney", func() {
-				av, err := Wallet.SpendLimitAvailable(nil)
+				av, err := Wallet.DailyLimitAvailable(nil)
 				Expect(err).ToNot(HaveOccurred())
 				Expect(av.String()).To(Equal("99999000000000000000"))
 			})
@@ -130,7 +130,7 @@ var _ = Describe("transfer", func() {
 			})
 
 			It("should reduce available transfer for today by 0 Finney", func() {
-				av, err := Wallet.SpendLimitAvailable(nil)
+				av, err := Wallet.DailyLimitAvailable(nil)
 				Expect(err).ToNot(HaveOccurred())
 				Expect(av.String()).To(Equal("100000000000000000000"))
 			})
@@ -197,8 +197,8 @@ var _ = Describe("transfer", func() {
 					Expect(b.String()).To(Equal("700"))
 				})
 
-				It("should reduce the available daily spend balance", func() {
-					av, err := Wallet.SpendLimitAvailable(nil)
+				It("should reduce the available daily balance", func() {
+					av, err := Wallet.DailyLimitAvailable(nil)
 					Expect(err).ToNot(HaveOccurred())
 					Expect(av.String()).To(AlmostEqual("99999999999951010000"))
 				})
@@ -263,8 +263,8 @@ var _ = Describe("transfer", func() {
 					Expect(b.String()).To(Equal("700"))
 				})
 
-				It("should not reduce the available daily spend balance", func() {
-					av, err := Wallet.SpendLimitAvailable(nil)
+				It("should not reduce the available daily balance", func() {
+					av, err := Wallet.DailyLimitAvailable(nil)
 					Expect(err).ToNot(HaveOccurred())
 					Expect(av.String()).To(Equal("100000000000000000000"))
 				})
@@ -300,8 +300,8 @@ var _ = Describe("transfer", func() {
 						Expect(b.String()).To(Equal("700"))
 					})
 
-					It("should not reduce the available daily spend balance", func() {
-						av, err := Wallet.SpendLimitAvailable(nil)
+					It("should not reduce the available daily balance", func() {
+						av, err := Wallet.DailyLimitAvailable(nil)
 						Expect(err).ToNot(HaveOccurred())
 						Expect(av.String()).To(Equal("100000000000000000000"))
 					})

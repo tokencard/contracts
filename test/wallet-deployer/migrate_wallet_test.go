@@ -33,8 +33,8 @@ var _ = Describe("Migrate Wallet", func() {
 			Expect(initialized).To(BeFalse())
 		})
 
-		It("should NOT set the initializedSpendLimit flag", func() {
-			initialized, err := MigratedWallet.SpendLimitUpdateable(nil)
+		It("should NOT set the initializedDailyLimit flag", func() {
+			initialized, err := MigratedWallet.DailyLimitUpdateable(nil)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(initialized).To(BeFalse())
 		})
@@ -49,8 +49,8 @@ var _ = Describe("Migrate Wallet", func() {
 			Expect(isWhitelisted).To(BeFalse())
 		})
 
-		It("should NOT update the spend limit to 2 ETH", func() {
-			sl, err := MigratedWallet.SpendLimitValue(nil)
+		It("should NOT update the daily limit to 2 ETH", func() {
+			sl, err := MigratedWallet.DailyLimitValue(nil)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(sl.String()).To(Equal(EthToWei(1).String()))
 		})
@@ -110,8 +110,8 @@ var _ = Describe("Migrate Wallet", func() {
 				Expect(err).ToNot(HaveOccurred())
 			})
 
-			It("should emit a spend limit set event", func() {
-				it, err := MigratedWallet.FilterSetSpendLimit(nil)
+			It("should emit a daily limit set event", func() {
+				it, err := MigratedWallet.FilterSetDailyLimit(nil)
 				Expect(err).ToNot(HaveOccurred())
 				Expect(it.Next()).To(BeTrue())
 				evt := it.Event
@@ -120,20 +120,20 @@ var _ = Describe("Migrate Wallet", func() {
 				Expect(evt.Amount).To(Equal(EthToWei(2)))
 			})
 
-			It("should keep the available spend Limit  to 1 ETH", func() {
-				av, err := MigratedWallet.SpendLimitAvailable(nil)
+			It("should keep the available amount to 1 ETH", func() {
+				av, err := MigratedWallet.DailyLimitAvailable(nil)
 				Expect(err).ToNot(HaveOccurred())
 				Expect(av.String()).To(Equal(EthToWei(1).String()))
 			})
 
-			It("should update the spend limit to 2 ETH", func() {
-				sl, err := MigratedWallet.SpendLimitValue(nil)
+			It("should update the daily limit to 2 ETH", func() {
+				sl, err := MigratedWallet.DailyLimitValue(nil)
 				Expect(err).ToNot(HaveOccurred())
 				Expect(sl.String()).To(Equal(EthToWei(2).String()))
 			})
 
-			It("should update the SpendLimit set flag", func() {
-				initialized, err := MigratedWallet.SpendLimitUpdateable(nil)
+			It("should update the DailyLimit set flag", func() {
+				initialized, err := MigratedWallet.DailyLimitUpdateable(nil)
 				Expect(err).ToNot(HaveOccurred())
 				Expect(initialized).To(BeTrue())
 			})

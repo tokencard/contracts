@@ -14,7 +14,7 @@ import (
 
 var _ = Describe("bulk_transfer", func() {
 
-	When("the wallet has enough ETH and a spendLimit of 1 ETH", func() {
+	When("the wallet has enough ETH and a DailyLimit of 1 ETH", func() {
 		BeforeEach(func() {
 			BankAccount.MustTransfer(Backend, WalletAddress, EthToWei(1))
 			BankAccount.MustTransfer(Backend, Controller.Address(), EthToWei(1))
@@ -35,14 +35,14 @@ var _ = Describe("bulk_transfer", func() {
 		})
 
 		BeforeEach(func() {
-			tx, err := Wallet.SetSpendLimit(Owner.TransactOpts(), EthToWei(2))
+			tx, err := Wallet.SetDailyLimit(Owner.TransactOpts(), EthToWei(2))
 			Expect(err).ToNot(HaveOccurred())
 			Backend.Commit()
 			Expect(isSuccessful(tx)).To(BeTrue())
 		})
 
-		It("should have a spendLimit of 2 ETH", func() {
-			av, err := Wallet.SpendLimitAvailable(nil)
+		It("should have a DailyLimit of 2 ETH", func() {
+			av, err := Wallet.DailyLimitAvailable(nil)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(av.String()).To(Equal(EthToWei(2).String()))
 		})
@@ -89,9 +89,9 @@ var _ = Describe("bulk_transfer", func() {
 					assets = []common.Address{common.HexToAddress("0x0"), ERC20Contract1Address, ERC20Contract2Address}
 				})
 
-				When("wallet balance <= spendLimit (2ETH) ", func() {
+				When("wallet balance <= DailyLimit (2ETH) ", func() {
 					When("the tokens are not added to the oracle (they are treated as whitelisted)", func() {
-						//Balance is now 2 ETH == spendLimit
+						//Balance is now 2 ETH == DailyLimit
 						BeforeEach(func() {
 							BankAccount.MustTransfer(Backend, WalletAddress, EthToWei(1))
 						})
@@ -249,9 +249,9 @@ var _ = Describe("bulk_transfer", func() {
 								Expect(err).ToNot(HaveOccurred())
 								Expect(b.String()).To(Equal("0"))
 							})
-						}) // valid rates, transfer does not exceed the spendLimit
+						}) // valid rates, transfer does not exceed the DailyLimit
 
-						When("rates are updated but the spendLimit is ecxeeded", func() {
+						When("rates are updated but the DailyLimit is ecxeeded", func() {
 							BeforeEach(func() {
 								tx, err := TokenWhitelist.UpdateTokenRate(
 									ControllerAdmin.TransactOpts(),
