@@ -57,8 +57,8 @@ contract SelfCallableOwnable is Ownable {
 
 
 /// @title AddressWhitelist provides payee-whitelist functionality.
-/// @dev This contract will allow the user to maintain a whitelist of addresses
-/// @dev These addresses will live outside of the various spend limits
+/// @dev This contract will allow the user to maintain a whitelist of addresses.
+/// @dev These addresses will live outside of the daily limit.
 contract AddressWhitelist is ControllableOwnable, SelfCallableOwnable {
     using SafeMath for uint256;
 
@@ -187,7 +187,7 @@ contract AddressWhitelist is ControllableOwnable, SelfCallableOwnable {
     /// @dev Add initial addresses to the whitelist.
     /// @param _addresses are the Ethereum addresses to be whitelisted.
     function setWhitelist(address[] calldata _addresses) external onlyOwnerOrSelf hasNoOwnerOrZeroAddress(_addresses) {
-        // Require that the whitelist has not been initialized.
+        // Require that the whitelist has not been init.
         require(!isSetWhitelist, "whitelist initialized");
         // Add each of the provided addresses to the whitelist.
         for (uint256 i = 0; i < _addresses.length; i++) {
@@ -265,19 +265,19 @@ contract DailyLimit is ControllableOwnable, SelfCallableOwnable, TokenWhitelista
 
     /// @dev Confirm pending set daily limit operation.
     function confirmDailyLimitUpdate(uint _amount) external onlyController {
-        // Require that pending and confirmed spend limit are the same
+        // Require that pending and confirmed limits are the same
         require(_pending == _amount, "confirmed/submitted limit mismatch");
-        // Modify spend limit based on the pending value.
+        // Modify daily limit based on the pending value.
         _modifyLimit(_pending);
         emit SetDailyLimit(msg.sender, _amount);
     }
 
-    /// @dev Is there an active spend limit change
+    /// @dev Is there an active daily limit change
     function dailyLimitPending() external view returns (uint) {
         return _pending;
     }
 
-    /// @dev Has the spend limit been initialised
+    /// @dev Has the spend limit been initialized
     function dailyLimitControllerConfirmationRequired() external view returns (bool) {
         return _controllerConfirmationRequired;
     }
@@ -297,7 +297,7 @@ contract DailyLimit is ControllableOwnable, SelfCallableOwnable, TokenWhitelista
         }
     }
 
-    /// @dev Sets the initial daily spend (aka transfer) limit for non-whitelisted addresses.
+    /// @dev Sets the initial daily (aka transfer) limit for non-whitelisted addresses.
     /// @param _amount is the daily limit amount in wei.
     function setDailyLimit(uint _amount) external onlyOwnerOrSelf {
         // Require that the spend limit has not been set yet.
@@ -322,16 +322,16 @@ contract DailyLimit is ControllableOwnable, SelfCallableOwnable, TokenWhitelista
 
     /// @dev Use up amount within the daily limit. Will fail if amount is larger than available limit.
     function _enforceDailyLimit(uint _amount) internal {
-        // Account for the spend limit daily reset.
+        // Account for the limit daily reset.
         _updateAvailableDailyLimit();
         require(_available >= _amount, "available<amount");
         _available = _available.sub(_amount);
     }
 
-    /// @dev Modify the spend limit and spend available based on the provided value.
+    /// @dev Modify the daily limit and spend available based on the provided value.
     /// @dev _amount is the daily limit amount in wei.
     function _modifyLimit(uint _amount) private {
-        // Account for the spend limit daily reset.
+        // Account for the limit daily reset.
         _updateAvailableDailyLimit();
         // Set the daily limit to the provided amount.
         _value = _amount;
@@ -341,12 +341,12 @@ contract DailyLimit is ControllableOwnable, SelfCallableOwnable, TokenWhitelista
         }
     }
 
-    /// @dev Update available spend limit based on the daily reset.
+    /// @dev Update available limit based on the daily reset.
     function _updateAvailableDailyLimit() private {
         if (now > _updateTimestamp.add(24 hours)) {
             // Update the current timestamp.
             _updateTimestamp = now;
-            // Set the available limit to the current spend limit.
+            // Set the available limit to the current daily limit.
             _available = _value;
             emit UpdatedAvailableDailyLimit();
         }

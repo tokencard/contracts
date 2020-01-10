@@ -49,20 +49,21 @@ contract WalletCache is ENSResolvable, Controllable {
     Wallet[] public cachedWallets;
 
     address public ens;
-    uint256 public defaultSpendLimit;
+    uint public defaultDailyLimit;
 
     /// @notice parameters are passed in so that they can be used to construct new instances of the wallet
     /// @dev pass in bytes32 to use the default, production node labels for ENS
     constructor(
         address _ens_,
-        uint256 _defaultSpendLimit_,
+        uint256 _defaultDailyLimit_,
         bytes32 _controllerNode_,
         bytes32 _licenceNode_,
         bytes32 _tokenWhitelistNode_,
         bytes32 _walletDeployerNode_
     ) public ENSResolvable(_ens_) Controllable(_controllerNode_) {
+
         ens = _ens_;
-        defaultSpendLimit = _defaultSpendLimit_;
+        defaultDailyLimit = _defaultDailyLimit_;
 
         // Set licenceNode or use default
         if (_licenceNode_ != bytes32(0)) {
@@ -93,8 +94,9 @@ contract WalletCache is ENSResolvable, Controllable {
             tokenWhitelistNode,
             controllerNode(),
             licenceNode,
-            defaultSpendLimit
+            defaultDailyLimit
         );
+
         cachedWallets.push(wallet);
 
         emit CachedWallet(wallet);
