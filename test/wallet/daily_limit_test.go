@@ -16,14 +16,14 @@ var _ = Describe("DailyLimit", func() {
 
 	When("the contract just has been deployed", func() {
 
-		It("should have initial daily limit of 2", func() {
+		It("should have initial daily limit of 10000$", func() {
 			ll, err := Wallet.DailyLimitValue(nil)
 			Expect(err).ToNot(HaveOccurred())
-			Expect(ll.String()).To(Equal(EthToWei(100).String()))
+			Expect(ll.String()).To(Equal(EthToWei(10000).String()))
 
 			ll, err = Wallet.DailyLimitAvailable(nil)
 			Expect(err).ToNot(HaveOccurred())
-			Expect(ll.String()).To(Equal(EthToWei(100).String()))
+			Expect(ll.String()).To(Equal(EthToWei(10000).String()))
 		})
 
 	})
