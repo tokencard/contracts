@@ -49,7 +49,7 @@ contract WalletCache is ENSResolvable, Controllable {
     Wallet[] public cachedWallets;
 
     address public ens;
-    uint public defaultDailyLimit;
+    uint public defaultDailyLimit; //in stablecoin absolute value (NOT base units!) e.g. 10K USD
 
     /// @notice parameters are passed in so that they can be used to construct new instances of the wallet
     /// @dev pass in bytes32 to use the default, production node labels for ENS

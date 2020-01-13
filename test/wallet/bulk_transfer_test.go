@@ -14,7 +14,7 @@ import (
 
 var _ = Describe("bulk_transfer", func() {
 
-	When("the wallet has enough ETH and a DailyLimit of 1 ETH", func() {
+	When("the wallet has enough ETH and a DailyLimit of 1000$", func() {
 		BeforeEach(func() {
 			BankAccount.MustTransfer(Backend, WalletAddress, EthToWei(1))
 			BankAccount.MustTransfer(Backend, Controller.Address(), EthToWei(1))
@@ -35,16 +35,16 @@ var _ = Describe("bulk_transfer", func() {
 		})
 
 		BeforeEach(func() {
-			tx, err := Wallet.SetDailyLimit(Owner.TransactOpts(), EthToWei(2))
+			tx, err := Wallet.SetDailyLimit(Owner.TransactOpts(), EthToWei(2000))
 			Expect(err).ToNot(HaveOccurred())
 			Backend.Commit()
 			Expect(isSuccessful(tx)).To(BeTrue())
 		})
 
-		It("should have a DailyLimit of 2 ETH", func() {
+		It("should have a DailyLimit of 2000$", func() {
 			av, err := Wallet.DailyLimitAvailable(nil)
 			Expect(err).ToNot(HaveOccurred())
-			Expect(av.String()).To(Equal(EthToWei(2).String()))
+			Expect(av.String()).To(Equal(EthToWei(2000).String()))
 		})
 
 		It("the balance of the wallet should be 1 eth", func() {
@@ -89,9 +89,9 @@ var _ = Describe("bulk_transfer", func() {
 					assets = []common.Address{common.HexToAddress("0x0"), ERC20Contract1Address, ERC20Contract2Address}
 				})
 
-				When("wallet balance <= DailyLimit (2ETH) ", func() {
-					When("the tokens are not added to the oracle (they are treated as whitelisted)", func() {
-						//Balance is now 2 ETH == DailyLimit
+				When("wallet balance <= DailyLimit", func() {
+					When("the tokens are not in the TokeWhitelist i.e. not available, they are treated as transfering to whitelisted addresses", func() {
+						//Balance is now 2 ETH
 						BeforeEach(func() {
 							BankAccount.MustTransfer(Backend, WalletAddress, EthToWei(1))
 						})
@@ -193,10 +193,9 @@ var _ = Describe("bulk_transfer", func() {
 						})
 						When("rates are not updated (=0)", func() {
 							It("Should revert", func() {
-								tx, err := Wallet.BulkTransfer(Owner.TransactOpts(ethertest.WithGasLimit(81000)), RandomAccount.Address(), assets)
+								tx, err := Wallet.BulkTransfer(Owner.TransactOpts(ethertest.WithGasLimit(1000000)), RandomAccount.Address(), assets)
 								Expect(err).ToNot(HaveOccurred())
 								Backend.Commit()
-								Expect(isGasExhausted(tx, 81000)).To(BeFalse())
 								Expect(isSuccessful(tx)).To(BeFalse())
                                 returnData, _ := ethCall(tx)
                 				Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("rate=0"))
@@ -256,7 +255,7 @@ var _ = Describe("bulk_transfer", func() {
 								tx, err := TokenWhitelist.UpdateTokenRate(
 									ControllerAdmin.TransactOpts(),
 									ERC20Contract1Address,
-									EthToWei(1000000000000000), //10^15
+									EthToWei(100000000000000000), //10^17
 									big.NewInt(20180913153211),
 								)
 								Expect(err).ToNot(HaveOccurred())
@@ -274,12 +273,11 @@ var _ = Describe("bulk_transfer", func() {
 								Backend.Commit()
 								Expect(isSuccessful(tx)).To(BeTrue())
 							})
-							When("the 'sent' address is not whitelisted", func() {
+							When("the destination address is not whitelisted", func() {
 								It("Should revert", func() {
 									tx, err := Wallet.BulkTransfer(Owner.TransactOpts(ethertest.WithGasLimit(1000000)), RandomAccount.Address(), assets)
 									Expect(err).ToNot(HaveOccurred())
 									Backend.Commit()
-									Expect(isGasExhausted(tx, 1000000)).To(BeFalse())
 									Expect(isSuccessful(tx)).To(BeFalse())
                                     returnData, _ := ethCall(tx)
                     				Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("available<amount"))

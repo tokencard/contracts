@@ -14,10 +14,10 @@ var _ = Describe("Cache Wallet", func() {
 
 	When("no Wallets are cached", func() {
 
-		It("should have a default daily limit of 1 ETH", func() {
+		It("should have a default daily limit of 10000 USD", func() {
 			sl, err := WalletCache.DefaultDailyLimit(nil)
 			Expect(err).ToNot(HaveOccurred())
-			Expect(sl.String()).To(Equal(EthToWei(1).String()))
+			Expect(sl.String()).To(Equal(big.NewInt(10000).String()))
 		})
 
 		It("should point to the right tokenwhitelist node name", func() {

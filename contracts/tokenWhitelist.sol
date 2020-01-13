@@ -94,7 +94,7 @@ contract TokenWhitelist is ENSResolvable, Controllable, Transferrable {
     /// @param _ens_ is the ENS registry address.
     /// @param _oracleNode_ is the ENS node of the Oracle.
     /// @param _controllerNode_ is our Controllers node.
-    /// @param _stablecoinAddress_ is the address of the stablecoint used by the wallet for the card load limit.
+    /// @param _stablecoinAddress_ is the address of the stablecoin used by the wallet for the card load limit.
     constructor(address _ens_, bytes32 _oracleNode_, bytes32 _controllerNode_, address _stablecoinAddress_) ENSResolvable(_ens_) Controllable(_controllerNode_) public {
         _oracleNode = _oracleNode_;
         _stablecoin = _stablecoinAddress_;
