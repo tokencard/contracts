@@ -1,12 +1,14 @@
 package wallet_test
 
 import (
+	"math/big"
+	"time"
+
+	"github.com/ethereum/go-ethereum/common"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	. "github.com/tokencard/contracts/v3/test/shared"
 	"github.com/tokencard/ethertest"
-	"math/big"
-	"time"
 )
 
 var _ = Describe("transfer", func() {
@@ -21,7 +23,7 @@ var _ = Describe("transfer", func() {
 			Backend.Commit()
 			Expect(isSuccessful(tx)).To(BeTrue())
 
-			tx, err = Wallet.SetDailyLimit(Owner.TransactOpts(), EthToWei(100))
+			tx, err = Wallet.SubmitDailyLimitUpdate(Owner.TransactOpts(), EthToWei(100))
 			Expect(err).ToNot(HaveOccurred())
 			Backend.Commit()
 			Expect(isSuccessful(tx)).To(BeTrue())

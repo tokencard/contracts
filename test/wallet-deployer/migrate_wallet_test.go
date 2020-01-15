@@ -44,12 +44,6 @@ var _ = Describe("Migrate Wallet", func() {
 			Expect(initialized).To(BeFalse())
 		})
 
-		It("should NOT set the dailyLimitControllerConfirmationRequired flag", func() {
-			initialized, err := MigratedWallet.DailyLimitControllerConfirmationRequired(nil)
-			Expect(err).ToNot(HaveOccurred())
-			Expect(initialized).To(BeFalse())
-		})
-
 		It("should NOT add the whitelisted addresses to the whitelist", func() {
 			isWhitelisted, err := MigratedWallet.WhitelistMap(nil, common.HexToAddress("0x1"))
 			Expect(err).ToNot(HaveOccurred())
@@ -63,12 +57,12 @@ var _ = Describe("Migrate Wallet", func() {
 		It("should NOT update the daily limit", func() {
 			sl, err := MigratedWallet.DailyLimitValue(nil)
 			Expect(err).ToNot(HaveOccurred())
-			Expect(sl.String()).To(Equal(EthToWei(10000).String()))
+			Expect(sl.String()).To(Equal(MweiToWei(10000).String()))
 		})
 
 	})
 
-	When("no wallets are cached and a controller migrates a Wallet and send 1000 wei", func() {
+	When("no wallets are cached and a controller migrates a Wallet and sends 1000 wei", func() {
 
 		var RandomWalletAddress common.Address
 		var RandomOwner common.Address
@@ -83,7 +77,7 @@ var _ = Describe("Migrate Wallet", func() {
 			Backend.Commit()
 			Expect(isSuccessful(tx)).To(BeTrue())
 
-			tx, err := WalletDeployer.MigrateWallet(Controller.TransactOpts(ethertest.WithValue(big.NewInt(1000))), RandomOwner, RandomWalletAddress, true, true, EthToWei(20000), []common.Address{common.HexToAddress("0x1"), common.HexToAddress("0x2")})
+			tx, err := WalletDeployer.MigrateWallet(Controller.TransactOpts(ethertest.WithValue(big.NewInt(1000))), RandomOwner, RandomWalletAddress, true, true, MweiToWei(5000), []common.Address{common.HexToAddress("0x1"), common.HexToAddress("0x2")})
 			Expect(err).ToNot(HaveOccurred())
 			Backend.Commit()
 			Expect(isSuccessful(tx)).To(BeTrue())
@@ -156,25 +150,19 @@ var _ = Describe("Migrate Wallet", func() {
 				evt := it.Event
 				Expect(it.Next()).To(BeFalse())
 				Expect(evt.Sender).To(Equal(WalletDeployerAddress))
-				Expect(evt.Amount).To(Equal(EthToWei(20000)))
+				Expect(evt.Amount).To(Equal(MweiToWei(5000)))
 			})
 
-			It("should keep the available amount to 1K USD", func() {
+			It("should decrease the available amount to 5K USD", func() {
 				av, err := MigratedWallet.DailyLimitAvailable(nil)
 				Expect(err).ToNot(HaveOccurred())
-				Expect(av.String()).To(Equal(EthToWei(10000).String()))
+				Expect(av.String()).To(Equal(MweiToWei(5000).String()))
 			})
 
-			It("should update the daily limit to 2K USD", func() {
+			It("should decre the daily limit to 5K USD", func() {
 				sl, err := MigratedWallet.DailyLimitValue(nil)
 				Expect(err).ToNot(HaveOccurred())
-				Expect(sl.String()).To(Equal(EthToWei(20000).String()))
-			})
-
-			It("should update the dailyLimitControllerConfirmationRequired flag", func() {
-				initialized, err := MigratedWallet.DailyLimitControllerConfirmationRequired(nil)
-				Expect(err).ToNot(HaveOccurred())
-				Expect(initialized).To(BeTrue())
+				Expect(sl.String()).To(Equal(MweiToWei(5000).String()))
 			})
 
 			It("should update the Whitelist initializedWhitelist flag", func() {
