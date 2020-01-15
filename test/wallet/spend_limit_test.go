@@ -8,7 +8,7 @@ import (
 	"github.com/tokencard/ethertest"
 )
 
-var _ = FDescribe("Daily limit", func() {
+var _ = Describe("Daily limit", func() {
 	BeforeEach(func() {
 		BankAccount.MustTransfer(Backend, Controller.Address(), EthToWei(1))
 	})
