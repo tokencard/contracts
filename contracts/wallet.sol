@@ -250,7 +250,6 @@ contract DailyLimit is ControllableOwnable, SelfCallableOwnable {
     uint private _available; // The remaining amount available in the current 24-hour window
     uint private _pending; // The pending new limit value requested in the latest limit update submission
     uint private _updateTimestamp; // Denotes the time that the available daily limit was last updated
-    bool private _updateable; // Indicates whether the limit is updateable or not
 
     /// @dev Confirm pending set daily limit operation.
     function confirmDailyLimitUpdate(uint _amount) external onlyController {
@@ -264,11 +263,6 @@ contract DailyLimit is ControllableOwnable, SelfCallableOwnable {
     /// @dev Is there an active daily limit change
     function dailyLimitPending() external view returns (uint) {
         return _pending;
-    }
-
-    /// @dev Has the daily limit been initialised
-    function dailyLimitUpdateable() external view returns (bool) {
-        return _updateable;
     }
 
     /// @dev View the limit value
@@ -286,27 +280,21 @@ contract DailyLimit is ControllableOwnable, SelfCallableOwnable {
         }
     }
 
-    /// @dev Sets the initial daily (aka transfer) limit for non-whitelisted addresses.
-    /// @param _amount is the daily limit amount in wei.
-    function setDailyLimit(uint _amount) external onlyOwnerOrSelf {
-        // Require that the limit has not been set yet.
-        require(!_updateable, "limit not updateable");
-        // Modify the limit based on the provided value.
-        _modifyLimit(_amount);
-        // Flag the operation as set.
-        _updateable = true;
-        emit SetDailyLimit(msg.sender, _amount);
-    }
-
-
-    /// @dev Submit a daily transfer limit update for non-whitelisted addresses.
-    /// @param _amount is the daily limit amount in wei.
+    /// @dev Submit a daily limit update for non-whitelisted addresses...
+    /// ...if the new limit is below the current onee then it is accepted autimatically...
+    /// ...otherwise 2FA is needed.
+    /// @param _amount is the daily limit amount in stablecoin base units.
     function submitDailyLimitUpdate(uint _amount) external onlyOwnerOrSelf {
-        // Require that the daily limit has been set.
-        require(_updateable, "limit still updateable");
-        // Assign the provided amount to pending daily limit.
-        _pending = _amount;
-        emit SubmittedDailyLimitUpdate(_amount);
+        // if new limit is lower then there is no need for 2FA
+        if (_amount <= _value){
+            _modifyLimit(_amount);
+            emit SetDailyLimit(msg.sender, _amount);
+        }
+        else{
+            // Assign the provided amount to pending daily limit and wait for 2FA confirmation.
+            _pending = _amount;
+            emit SubmittedDailyLimitUpdate(_amount);
+        }
     }
 
     /// @dev Use up amount within the daily limit. Will fail if amount is larger than available limit.
@@ -324,11 +312,10 @@ contract DailyLimit is ControllableOwnable, SelfCallableOwnable {
        _available = _limit;
        _updateTimestamp = now;
        _pending = 0;
-       _updateable = false;
    }
 
     /// @dev Modify the daily limit and spend available based on the provided value.
-    /// @dev _amount is the daily limit amount in wei.
+    /// @dev _amount is the daily limit amount in stablecoin base units.
     function _modifyLimit(uint _amount) private {
         // Account for the limit daily reset.
         _updateAvailableDailyLimit();

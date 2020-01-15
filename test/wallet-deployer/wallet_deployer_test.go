@@ -81,7 +81,7 @@ var _ = Describe("Wallet Deployer", func() {
 				})
 
 				It("should succeed", func() {
-					tx, err := NewWallet.SetDailyLimit(Owner.TransactOpts(), EthToWei(1))
+					tx, err := NewWallet.SubmitDailyLimitUpdate(Owner.TransactOpts(), EthToWei(1))
 					Expect(err).ToNot(HaveOccurred())
 					Backend.Commit()
 					Expect(isSuccessful(tx)).To(BeTrue())
@@ -131,7 +131,7 @@ var _ = Describe("Wallet Deployer", func() {
 					NewWallet, err = bindings.NewWallet(NewWalletAddress, Backend)
 					Expect(err).ToNot(HaveOccurred())
 
-					tx, err := NewWallet.SetDailyLimit(Owner.TransactOpts(), FinneyToWei(500))
+					tx, err := NewWallet.SubmitDailyLimitUpdate(Owner.TransactOpts(), FinneyToWei(500))
 					Expect(err).ToNot(HaveOccurred())
 					Backend.Commit()
 					Expect(isSuccessful(tx)).To(BeTrue())
