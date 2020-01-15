@@ -160,7 +160,7 @@ var _ = Describe("batchExecuteTransaction", func() {
 
 				a, err := abi.JSON(strings.NewReader(WALLET_ABI))
 				Expect(err).ToNot(HaveOccurred())
-				data, err := a.Pack("setDailyLimit", EthToWei(1))
+				data, err := a.Pack("submitDailyLimitUpdate", EthToWei(1))
 				Expect(err).ToNot(HaveOccurred())
 				batch := fmt.Sprintf("%s%s%s%s", WalletAddress, abi.U256(big.NewInt(0)), abi.U256(big.NewInt(int64(len(data)))), data)
 
@@ -206,13 +206,13 @@ var _ = Describe("batchExecuteTransaction", func() {
 				Expect(evt.Amount).To(Equal(EthToWei(1)))
 			})
 
-			It("should lower the available amount to 1 ETH", func() {
+			It("should lower the available amount to 1 $USD", func() {
 				av, err := Wallet.DailyLimitAvailable(nil)
 				Expect(err).ToNot(HaveOccurred())
 				Expect(av.String()).To(Equal(EthToWei(1).String()))
 			})
 
-			It("should have a limit of 1 ETH", func() {
+			It("should have a limit of 1 $USD", func() {
 				sl, err := Wallet.DailyLimitValue(nil)
 				Expect(err).ToNot(HaveOccurred())
 				Expect(sl.String()).To(Equal(EthToWei(1).String()))
@@ -339,7 +339,7 @@ const WALLET_ABI = `[
                 "type": "uint256"
             }
         ],
-        "name": "setDailyLimit",
+        "name": "submitDailyLimitUpdate",
         "outputs": [],
         "payable": false,
         "stateMutability": "nonpayable",
