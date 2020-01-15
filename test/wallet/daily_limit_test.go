@@ -32,10 +32,10 @@ var _ = Describe("DailyLimit", func() {
 
 		When("I submit daily limit of 5 Finney", func() {
 			It("should succeed", func() {
-				tx, err := Wallet.SubmitDailyLimitUpdate(Owner.TransactOpts(ethertest.WithGasLimit(100000)), FinneyToWei(5))
+				tx, err := Wallet.SubmitDailyLimitUpdate(Owner.TransactOpts(), FinneyToWei(5))
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
-                Expect(isSuccessful(tx)).To(BeFalse())
+                Expect(isSuccessful(tx)).To(BeTrue())
 			})
 		})
 
@@ -138,9 +138,9 @@ var _ = Describe("DailyLimit", func() {
 					Expect(ll.String()).To(Equal(EthToWei(10000).String()))
 				})
 
-				When("I submit a second limit of 500 Finney", func() {
+				When("I submit a second limit of 12K $USD", func() {
 					BeforeEach(func() {
-						tx, err := Wallet.SubmitDailyLimitUpdate(Owner.TransactOpts(), FinneyToWei(500))
+						tx, err := Wallet.SubmitDailyLimitUpdate(Owner.TransactOpts(), EthToWei(12000))
 						Expect(err).ToNot(HaveOccurred())
 						Backend.Commit()
 						Expect(isSuccessful(tx)).To(BeTrue())
@@ -148,27 +148,28 @@ var _ = Describe("DailyLimit", func() {
 
 					When("the controller confirms the submitted limit", func() {
 						BeforeEach(func() {
-							tx, err := Wallet.ConfirmDailyLimitUpdate(Controller.TransactOpts(), FinneyToWei(500))
+							tx, err := Wallet.ConfirmDailyLimitUpdate(Controller.TransactOpts(), EthToWei(12000))
 							Expect(err).ToNot(HaveOccurred())
 							Backend.Commit()
 							Expect(isSuccessful(tx)).To(BeTrue())
 						})
 
-						It("should have 1 Finney available for spending", func() {
+						It("should have 10K $USD available for spending", func() {
 							tl, err := Wallet.DailyLimitAvailable(nil)
 							Expect(err).ToNot(HaveOccurred())
-							Expect(tl.String()).To(Equal(FinneyToWei(1).String()))
+							Expect(tl.String()).To(Equal(EthToWei(10000).String()))
 						})
+
 						When("I wait for longer than a day", func() {
 							BeforeEach(func() {
 								Backend.AdjustTime(time.Hour * 25)
 								Backend.Commit()
 							})
 
-							It("should have 500 Finney available for spending", func() {
+							It("should have 12K $USD available for spending", func() {
 								ll, err := Wallet.DailyLimitAvailable(nil)
 								Expect(err).ToNot(HaveOccurred())
-								Expect(ll.String()).To(Equal(FinneyToWei(500).String()))
+								Expect(ll.String()).To(Equal(EthToWei(12000).String()))
 							})
 
 						})
