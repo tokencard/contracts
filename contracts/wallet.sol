@@ -260,6 +260,7 @@ contract DailyLimit is ControllableOwnable, SelfCallableOwnable, TokenWhitelista
         uint limitBaseUnits = _limit * stablecoinMagnitude;
         _value = limitBaseUnits;
         _available = limitBaseUnits;
+        _pending = limitBaseUnits;
         _updateTimestamp = now;
     }
 
@@ -294,18 +295,18 @@ contract DailyLimit is ControllableOwnable, SelfCallableOwnable, TokenWhitelista
 
 
     /// @dev Submit a daily limit update for non-whitelisted addresses...
-    /// ...if the new limit is below the current onee then it is accepted autimatically...
+    /// ...if the new limit is below the current onee then it is accepted automatically...
     /// ...otherwise 2FA is needed.
     /// @param _amount is the daily limit amount in stablecoin base units.
     function submitDailyLimitUpdate(uint _amount) external onlyOwnerOrSelf {
+        // Assign the provided amount to pending daily limit: this prevent the controller from reraising it after having been lowered
+        _pending = _amount;
         // if new limit is lower then there is no need for 2FA
         if (_amount <= _value){
             _modifyLimit(_amount);
             emit SetDailyLimit(msg.sender, _amount);
         }
         else{
-            // Assign the provided amount to pending daily limit and wait for 2FA confirmation.
-            _pending = _amount;
             emit SubmittedDailyLimitUpdate(_amount);
         }
     }
