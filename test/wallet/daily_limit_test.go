@@ -25,6 +25,17 @@ var _ = Describe("DailyLimit", func() {
 			Expect(err).ToNot(HaveOccurred())
 			Expect(ll.String()).To(Equal(EthToWei(10000).String()))
 		})
+
+        FIt("should emit a daily limit set event", func() {
+            it, err := Wallet.FilterInitializedDailyLimit(nil)
+            Expect(err).ToNot(HaveOccurred())
+            Expect(it.Next()).To(BeTrue())
+            evt := it.Event
+            Expect(it.Next()).To(BeFalse())
+            Expect(evt.Amount.String()).To(Equal(EthToWei(10000).String()))
+            initTime := Backend.Blockchain().CurrentHeader().Time + 24*60*60 - 10
+            Expect(evt.NextReset.String()).To(Equal(big.NewInt(int64(initTime)).String()))
+        })
 	})
 
     When("the controller tries to submit a new daily limit", func() {

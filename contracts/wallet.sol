@@ -244,6 +244,7 @@ contract AddressWhitelist is ControllableOwnable, SelfCallableOwnable {
 contract DailyLimit is ControllableOwnable, SelfCallableOwnable, TokenWhitelistable {
     using SafeMath for uint256;
 
+    event InitializedDailyLimit(uint _amount, uint _nextReset);
     event SetDailyLimit(address _sender, uint _amount);
     event SubmittedDailyLimitUpdate(uint _amount);
     event UpdatedAvailableDailyLimit();
