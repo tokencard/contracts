@@ -258,7 +258,6 @@ contract DailyLimit is ControllableOwnable, SelfCallableOwnable {
         require(_pending == _amount, "confirmed/submitted limit mismatch");
         // Modify daily limit based on the pending value.
         _modifyLimit(_pending);
-        emit SetDailyLimit(msg.sender, _amount);
     }
 
     /// @dev Is there an active daily limit change
@@ -291,7 +290,6 @@ contract DailyLimit is ControllableOwnable, SelfCallableOwnable {
         // if new limit is lower then there is no need for 2FA
         if (_amount <= _value){
             _modifyLimit(_amount);
-            emit SetDailyLimit(msg.sender, _amount);
         }
         else{
             emit SubmittedDailyLimitUpdate(_amount);
@@ -319,14 +317,13 @@ contract DailyLimit is ControllableOwnable, SelfCallableOwnable {
     /// @dev Modify the daily limit and spend available based on the provided value.
     /// @dev _amount is the daily limit amount in stablecoin base units.
     function _modifyLimit(uint _amount) private {
-        // Account for the limit daily reset.
-        _updateAvailableDailyLimit();
         // Set the daily limit to the provided amount.
         _value = _amount;
         // Lower the available limit if it's higher than the new daily limit.
         if (_available > _value) {
             _available = _value;
         }
+        emit SetDailyLimit(msg.sender, _amount);
     }
 
     /// @dev Update available limit based on the daily reset.
