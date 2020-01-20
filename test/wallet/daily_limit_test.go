@@ -26,7 +26,7 @@ var _ = Describe("DailyLimit", func() {
 			Expect(ll.String()).To(Equal(EthToWei(10000).String()))
 		})
 
-        It("should emit a daily limit set event", func() {
+        It("should emit a InitializedDailyLimit event", func() {
             it, err := Wallet.FilterInitializedDailyLimit(nil)
             Expect(err).ToNot(HaveOccurred())
             Expect(it.Next()).To(BeTrue())
@@ -68,15 +68,6 @@ var _ = Describe("DailyLimit", func() {
 
 	Describe("Changing daily limit", func() {
 
-		When("I submit daily limit of 5 Finney", func() {
-			It("should succeed", func() {
-				tx, err := Wallet.SubmitDailyLimitUpdate(Owner.TransactOpts(), FinneyToWei(5))
-				Expect(err).ToNot(HaveOccurred())
-				Backend.Commit()
-                Expect(isSuccessful(tx)).To(BeTrue())
-			})
-		})
-
 
         When("Owner sets the DailyLimit to 1000 $USD", func() {
 			BeforeEach(func() {
@@ -86,6 +77,17 @@ var _ = Describe("DailyLimit", func() {
 				Expect(isSuccessful(tx)).To(BeTrue())
 			})
 
+            It("should emit a UpdatedAvailableDailyLimit event", func() {
+                it, err := Wallet.FilterUpdatedAvailableDailyLimit(nil)
+                Expect(err).ToNot(HaveOccurred())
+                Expect(it.Next()).To(BeTrue())
+                evt := it.Event
+                Expect(it.Next()).To(BeFalse())
+                Expect(evt.Amount.String()).To(Equal(EthToWei(1000).String()))
+                initTime := Backend.Blockchain().CurrentHeader().Time + 24*60*60 - 20
+                Expect(evt.NextReset.String()).To(Equal(big.NewInt(int64(initTime)).String()))
+            })
+
 			It("should emit a daily limit set event", func() {
 				it, err := Wallet.FilterSetDailyLimit(nil)
 				Expect(err).ToNot(HaveOccurred())
@@ -93,7 +95,7 @@ var _ = Describe("DailyLimit", func() {
 				evt := it.Event
 				Expect(it.Next()).To(BeFalse())
 				Expect(evt.Sender).To(Equal(Owner.Address()))
-				Expect(evt.Amount).To(Equal(EthToWei(1000)))
+				Expect(evt.Amount.String()).To(Equal(EthToWei(1000).String()))
 			})
 
 			It("should lower the available amount to 1000 $USD", func() {
@@ -135,6 +137,18 @@ var _ = Describe("DailyLimit", func() {
                     Expect(err).ToNot(HaveOccurred())
                     Backend.Commit()
                     Expect(isSuccessful(tx)).To(BeTrue())
+                })
+
+                It("should emit a UpdatedAvailableDailyLimit event", func() {
+                    it, err := Wallet.FilterUpdatedAvailableDailyLimit(nil)
+                    Expect(err).ToNot(HaveOccurred())
+                    Expect(it.Next()).To(BeTrue())
+                    Expect(it.Next()).To(BeTrue())
+                    evt := it.Event
+                    Expect(it.Next()).To(BeFalse())
+                    Expect(evt.Amount.String()).To(Equal(EthToWei(999).String()))
+                    initTime := Backend.Blockchain().CurrentHeader().Time + 24*60*60 - 40
+                    Expect(evt.NextReset.String()).To(Equal(big.NewInt(int64(initTime)).String()))
                 })
 
                 It("should have 9999 available", func() {
