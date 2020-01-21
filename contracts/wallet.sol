@@ -318,14 +318,20 @@ contract DailyLimit is ControllableOwnable, SelfCallableOwnable {
     /// @dev Modify the daily limit and spend available based on the provided value.
     /// @dev _amount is the daily limit amount in stablecoin base units.
     function _modifyLimit(uint _amount) private {
-        // Set the daily limit to the provided amount.
-        _value = _amount;
-        // Lower the available limit if it's higher than the new daily limit.
-        if (_available > _value) {
-            _available = _value;
+        // Decrease the available amount if the new limit is lower than it
+        if (_amount < _available) {
+            _available = _amount;
             emit UpdatedAvailableDailyLimit(_available, _resetTimestamp);
         }
-        emit SetDailyLimit(msg.sender, _amount);
+        // Increase the available amount if the new limit is higher than the current limit and reset the 24-hour window
+        if (_amount > _value) {
+            _available = _amount;
+            _resetTimestamp = now.add(24 hours);
+            emit UpdatedAvailableDailyLimit(_available, _resetTimestamp);
+        }
+        // Set the daily limit to the provided amount.
+        _value = _amount;
+        emit SetDailyLimit(msg.sender, _value);
     }
 
     /// @dev Update available limit based on the daily reset.
