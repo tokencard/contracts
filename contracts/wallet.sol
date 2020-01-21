@@ -270,8 +270,15 @@ contract DailyLimit is ControllableOwnable, SelfCallableOwnable, TokenWhitelista
     function confirmDailyLimitUpdate(uint _amount) external onlyController {
         // Require that pending and confirmed limits are the same
         require(_pending == _amount, "confirmed/submitted limit mismatch");
-        // Modify daily limit based on the pending value.
-        _modifyLimit(_pending);
+        // The new limit should be always higher then the current one otherwise no 2FA would be needed
+        require(_amount > _value, "limit should be greater than current one");
+        // Increase the available amount...
+        _available = _amount;
+        // ...and reset the 24-hour window
+        _resetTimestamp = now.add(24 hours);
+        emit UpdatedAvailableDailyLimit(_available, _resetTimestamp);
+        // Set daily limit based on the pending value.
+        _setLimit(_pending);
     }
 
     /// @dev Is there an active daily limit change
@@ -304,7 +311,12 @@ contract DailyLimit is ControllableOwnable, SelfCallableOwnable, TokenWhitelista
         _pending = _amount;
         // if new limit is lower then there is no need for 2FA
         if (_amount <= _value){
-            _modifyLimit(_amount);
+            // Decrease the available amount if the new limit is lower than it
+            if (_amount < _available) {
+                _available = _amount;
+                emit UpdatedAvailableDailyLimit(_available, _resetTimestamp);
+            }
+            _setLimit(_amount);
         }
         else{
             emit SubmittedDailyLimitUpdate(_amount);
@@ -322,18 +334,7 @@ contract DailyLimit is ControllableOwnable, SelfCallableOwnable, TokenWhitelista
 
     /// @dev Modify the daily limit and spend available based on the provided value.
     /// @dev _amount is the daily limit amount in stablecoin base units.
-    function _modifyLimit(uint _amount) private {
-        // Decrease the available amount if the new limit is lower than it
-        if (_amount < _available) {
-            _available = _amount;
-            emit UpdatedAvailableDailyLimit(_available, _resetTimestamp);
-        }
-        // Increase the available amount if the new limit is higher than the current limit and reset the 24-hour window
-        if (_amount > _value) {
-            _available = _amount;
-            _resetTimestamp = now.add(24 hours);
-            emit UpdatedAvailableDailyLimit(_available, _resetTimestamp);
-        }
+    function _setLimit(uint _amount) private {
         // Set the daily limit to the provided amount.
         _value = _amount;
         emit SetDailyLimit(msg.sender, _value);
