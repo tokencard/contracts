@@ -249,9 +249,9 @@ contract DailyLimit is ControllableOwnable, SelfCallableOwnable, TokenWhitelista
     event SubmittedDailyLimitUpdate(uint _amount);
     event UpdatedAvailableDailyLimit(uint _amount, uint _nextReset);
 
-    uint private _value; // The daily limit amount.
-    uint private _available; // The remaining amount available in the current 24-hour window.
-    uint private _pending; // The pending new limit value requested in the latest limit update submission.
+    uint private _dailyLimit; // The daily limit amount.
+    uint private _available; // The remaining amount available for spending in the current 24-hour window.
+    uint private _pendingLimit; // The pending new limit value requested in the latest limit update submission.
     uint private _resetTimestamp; // Denotes the future timestamp when the available daily limit is due to reset again.
 
     /// @dev Constructor initializes the daily limit in wei.
@@ -259,9 +259,9 @@ contract DailyLimit is ControllableOwnable, SelfCallableOwnable, TokenWhitelista
         (, uint256 stablecoinMagnitude, , , , , ) = _getStablecoinInfo();
         require(stablecoinMagnitude > 0, "no stablecoin");
         uint limitBaseUnits = _limit * stablecoinMagnitude;
-        _value = limitBaseUnits;
+        _dailyLimit = limitBaseUnits;
         _available = limitBaseUnits;
-        _pending = limitBaseUnits;
+        _pendingLimit = limitBaseUnits;
         _resetTimestamp = now.add(24 hours);
         emit UpdatedAvailableDailyLimit(limitBaseUnits, _resetTimestamp);
     }
@@ -269,33 +269,33 @@ contract DailyLimit is ControllableOwnable, SelfCallableOwnable, TokenWhitelista
     /// @dev Confirm pending set daily limit operation.
     function confirmDailyLimitUpdate(uint _amount) external onlyController {
         // Require that pending and confirmed limits are the same
-        require(_pending == _amount, "confirmed/submitted limit mismatch");
+        require(_pendingLimit == _amount, "confirmed/submitted limit mismatch");
         // The new limit should be always higher then the current one otherwise no 2FA would be needed
-        require(_amount > _value, "limit should be greater than current one");
+        require(_amount > _dailyLimit, "limit should be greater than current one");
         // Increase the available amount...
         _available = _amount;
         // ...and reset the 24-hour window
         _resetTimestamp = now.add(24 hours);
         emit UpdatedAvailableDailyLimit(_available, _resetTimestamp);
         // Set daily limit based on the pending value.
-        _setLimit(_pending);
+        _setLimit(_pendingLimit);
     }
 
     /// @dev Is there an active daily limit change
     function dailyLimitPending() external view returns (uint) {
-        return _pending;
+        return _pendingLimit;
     }
 
     /// @dev View the limit value
     function dailyLimitValue() external view returns (uint) {
-        return _value;
+        return _dailyLimit;
     }
 
     /// @dev Returns the available daily limit/balance, accounts for daily limit reset.
     /// @return amount of available to spend within the current day in base units.
     function dailyLimitAvailable() external view returns (uint) {
         if (now > _resetTimestamp) {
-            return _value;
+            return _dailyLimit;
         } else {
             return _available;
         }
@@ -308,9 +308,9 @@ contract DailyLimit is ControllableOwnable, SelfCallableOwnable, TokenWhitelista
     /// @param _amount is the daily limit amount in stablecoin base units.
     function submitDailyLimitUpdate(uint _amount) external onlyOwnerOrSelf {
         // Assign the provided amount to pending daily limit: this prevent the controller from reraising it after having been lowered
-        _pending = _amount;
+        _pendingLimit = _amount;
         // if new limit is lower then there is no need for 2FA
-        if (_amount <= _value){
+        if (_amount <= _dailyLimit){
             // Decrease the available amount if the new limit is lower than it
             if (_amount < _available) {
                 _available = _amount;
@@ -336,8 +336,8 @@ contract DailyLimit is ControllableOwnable, SelfCallableOwnable, TokenWhitelista
     /// @dev _amount is the daily limit amount in stablecoin base units.
     function _setLimit(uint _amount) private {
         // Set the daily limit to the provided amount.
-        _value = _amount;
-        emit SetDailyLimit(msg.sender, _value);
+        _dailyLimit = _amount;
+        emit SetDailyLimit(msg.sender, _dailyLimit);
     }
 
     /// @dev Update available limit based on the daily reset.
@@ -346,7 +346,7 @@ contract DailyLimit is ControllableOwnable, SelfCallableOwnable, TokenWhitelista
             // Update the current timestamp.
             _resetTimestamp = now.add(24 hours);
             // Set the available limit to the current daily limit.
-            _available = _value;
+            _available = _dailyLimit;
         }
     }
 }
