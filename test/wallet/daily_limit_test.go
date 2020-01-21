@@ -158,30 +158,15 @@ var _ = Describe("DailyLimit", func() {
                 })
 
                 When("the controller tries to confirm with amount=1000$", func() {
-                    BeforeEach(func() {
-                        tx, err := Wallet.ConfirmDailyLimitUpdate(Controller.TransactOpts(), EthToWei(1000))
+                    It("should fail", func() {
+                        tx, err := Wallet.ConfirmDailyLimitUpdate(Controller.TransactOpts(ethertest.WithGasLimit(65000)), EthToWei(1000))
     					Expect(err).ToNot(HaveOccurred())
     					Backend.Commit()
-    					Expect(isSuccessful(tx)).To(BeTrue())
+    					Expect(isSuccessful(tx)).To(BeFalse())
+                        returnData, _ := ethCall(tx)
+            			Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("limit should be greater than current one"))
                     })
 
-                    It("should not modify the avaiable amount", func() {
-        				av, err := Wallet.DailyLimitAvailable(nil)
-        				Expect(err).ToNot(HaveOccurred())
-        				Expect(av.String()).To(Equal(EthToWei(999).String()))
-        			})
-
-        			It("should not modify the limit", func() {
-        				sl, err := Wallet.DailyLimitValue(nil)
-        				Expect(err).ToNot(HaveOccurred())
-        				Expect(sl.String()).To(Equal(EthToWei(1000).String()))
-        			})
-
-                    It("should not modify the pending limit", func() {
-        				ptl, err := Wallet.DailyLimitPending(nil)
-        				Expect(err).ToNot(HaveOccurred())
-        				Expect(ptl.String()).To(Equal(EthToWei(1000).String()))
-        			})
                 })
             })
 		})
@@ -257,6 +242,8 @@ var _ = Describe("DailyLimit", func() {
 					Expect(err).ToNot(HaveOccurred())
 					Backend.Commit()
 					Expect(isSuccessful(tx)).To(BeFalse())
+                    returnData, _ := ethCall(tx)
+                    Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("confirmed/submitted limit mismatch"))
 				})
 			})
 
@@ -285,6 +272,17 @@ var _ = Describe("DailyLimit", func() {
                     Expect(evt.NextReset.String()).To(Equal(big.NewInt(int64(initTime)).String()))
                 })
 
+                When("the controller tries to re-confirm", func() {
+                    It("should fail", func() {
+                        tx, err := Wallet.ConfirmDailyLimitUpdate(Controller.TransactOpts(ethertest.WithGasLimit(65000)), EthToWei(11000))
+    					Expect(err).ToNot(HaveOccurred())
+    					Backend.Commit()
+    					Expect(isSuccessful(tx)).To(BeFalse())
+                        returnData, _ := ethCall(tx)
+            			Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("limit should be greater than current one"))
+                    })
+                })
+
 				When("I submit a second limit of 12K $USD", func() {
 					BeforeEach(func() {
 						tx, err := Wallet.SubmitDailyLimitUpdate(Owner.TransactOpts(), EthToWei(12000))
@@ -301,7 +299,7 @@ var _ = Describe("DailyLimit", func() {
 							Expect(isSuccessful(tx)).To(BeTrue())
 						})
 
-						It("should have 10K $USD available for spending", func() {
+						It("should have 12K $USD available for spending", func() {
 							tl, err := Wallet.DailyLimitAvailable(nil)
 							Expect(err).ToNot(HaveOccurred())
 							Expect(tl.String()).To(Equal(EthToWei(12000).String()))
