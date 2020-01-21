@@ -268,11 +268,22 @@ var _ = Describe("DailyLimit", func() {
 					Expect(isSuccessful(tx)).To(BeTrue())
 				})
 
-				It("should have 10K $USD available", func() {
+				It("should have 11K $USD available", func() {
 					ll, err := Wallet.DailyLimitAvailable(nil)
 					Expect(err).ToNot(HaveOccurred())
-					Expect(ll.String()).To(Equal(EthToWei(10000).String()))
+					Expect(ll.String()).To(Equal(EthToWei(11000).String()))
 				})
+
+                It("should emit a UpdatedAvailableDailyLimit event", func() {
+                    it, err := Wallet.FilterUpdatedAvailableDailyLimit(nil)
+                    Expect(err).ToNot(HaveOccurred())
+                    Expect(it.Next()).To(BeTrue())
+                    evt := it.Event
+                    Expect(it.Next()).To(BeFalse())
+                    Expect(evt.Amount.String()).To(Equal(EthToWei(11000).String()))
+                    initTime := Backend.Blockchain().CurrentHeader().Time + 24*60*60
+                    Expect(evt.NextReset.String()).To(Equal(big.NewInt(int64(initTime)).String()))
+                })
 
 				When("I submit a second limit of 12K $USD", func() {
 					BeforeEach(func() {
@@ -293,8 +304,20 @@ var _ = Describe("DailyLimit", func() {
 						It("should have 10K $USD available for spending", func() {
 							tl, err := Wallet.DailyLimitAvailable(nil)
 							Expect(err).ToNot(HaveOccurred())
-							Expect(tl.String()).To(Equal(EthToWei(10000).String()))
+							Expect(tl.String()).To(Equal(EthToWei(12000).String()))
 						})
+
+                        It("should emit a UpdatedAvailableDailyLimit event", func() {
+                            it, err := Wallet.FilterUpdatedAvailableDailyLimit(nil)
+                            Expect(err).ToNot(HaveOccurred())
+                            Expect(it.Next()).To(BeTrue())
+                            Expect(it.Next()).To(BeTrue())
+                            evt := it.Event
+                            Expect(it.Next()).To(BeFalse())
+                            Expect(evt.Amount.String()).To(Equal(EthToWei(12000).String()))
+                            initTime := Backend.Blockchain().CurrentHeader().Time + 24*60*60
+                            Expect(evt.NextReset.String()).To(Equal(big.NewInt(int64(initTime)).String()))
+                        })
 
                         When("I wait for 24 hours", func() {
             				BeforeEach(func() {
