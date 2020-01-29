@@ -11,7 +11,6 @@ import (
 	"testing"
 
 	"github.com/Masterminds/semver"
-	"github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
@@ -24,21 +23,6 @@ import (
 
 var Wallet *bindings.Wallet
 var WalletAddress common.Address
-
-func ethCall(tx *types.Transaction) ([]byte, error) {
-	msg, _ := tx.AsMessage(types.HomesteadSigner{})
-
-	calMsg := ethereum.CallMsg{
-		From:     msg.From(),
-		To:       msg.To(),
-		Gas:      msg.Gas(),
-		GasPrice: msg.GasPrice(),
-		Value:    msg.Value(),
-		Data:     msg.Data(),
-	}
-
-	return Backend.CallContract(context.Background(), calMsg, nil)
-}
 
 func SignData(nonce *big.Int, data []byte, prv *ecdsa.PrivateKey) ([]byte, error) {
 	relayMessage := fmt.Sprintf("rlx:%s%s", abi.U256(nonce), data)

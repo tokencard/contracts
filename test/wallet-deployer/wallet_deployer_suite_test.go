@@ -3,9 +3,9 @@ package wallet_deployer_test
 import (
 	"context"
 	"fmt"
+	"math/big"
 	"os"
 	"testing"
-    "math/big"
 
 	"github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/common"

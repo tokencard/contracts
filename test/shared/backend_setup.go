@@ -25,6 +25,7 @@ import (
 
 var ErrFailedTransaction = errors.New("transaction failed")
 
+
 func EthToWei(amount int) *big.Int {
 	r := big.NewInt(1000000000000000000)
 	return r.Mul(r, big.NewInt(int64(amount)))

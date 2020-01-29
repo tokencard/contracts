@@ -6,6 +6,7 @@ import (
 	"os"
 	"testing"
 
+    "github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/core/types"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -59,6 +60,21 @@ var _ = AfterEach(func() {
 		fmt.Fprintln(GinkgoWriter, TestRig.LastExecuted())
 	}
 })
+
+func ethCall(tx *types.Transaction) ([]byte, error) {
+	msg, _ := tx.AsMessage(types.HomesteadSigner{})
+
+	calMsg := ethereum.CallMsg{
+		From:     msg.From(),
+		To:       msg.To(),
+		Gas:      msg.Gas(),
+		GasPrice: msg.GasPrice(),
+		Value:    msg.Value(),
+		Data:     msg.Data(),
+	}
+
+	return Backend.CallContract(context.Background(), calMsg, nil)
+}
 
 func isGasExhausted(tx *types.Transaction, gasLimit uint64) bool {
 	r, err := Backend.TransactionReceipt(context.Background(), tx.Hash())
