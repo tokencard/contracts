@@ -33,48 +33,23 @@ import "./externals/ERC165.sol";
 import "./externals/ECDSA.sol";
 
 
-/// @title ControllableOwnable combines Controllable and Ownable
-/// @dev providing an additional modifier to check if Owner or Controller
-contract ControllableOwnable is Controllable, Ownable {
-    /// @dev Check if the sender is the Owner or one of the Controllers
-    modifier onlyOwnerOrController() {
-        require(_isOwner(msg.sender) || _isController(msg.sender), "only owner||controller");
-        _;
-    }
-}
-
-
-/// @title SelfCallableOwnable allows either owner or the contract itself to call its functions
-/// @dev providing an additional modifier to check if Owner or self is calling
-/// @dev the "self" here is used for the meta transactions
-contract SelfCallableOwnable is Ownable {
-    /// @dev Check if the sender is the Owner or self
-    modifier onlyOwnerOrSelf() {
-        require(_isOwner(msg.sender) || msg.sender == address(this), "only owner||self");
-        _;
-    }
-}
 
 contract NonCustodial2FA is Controllable, Ownable {
 
     event SetOptOption(address _sender, bool _optOption);
     event SetPersonal2FA(address _sender, address _p2FA);
 
-    bool optOut;
-    address personal2FA;
+    bool public optOut;
+    address public personal2FA;
 
     modifier only2FA() {
         if (optOut){
             require(msg.sender == personal2FA, "sender is not personal 2FA");
         }
-        require(_isController(msg.sender), "sender is not a controller");
+        else{
+            require(_isController(msg.sender), "sender is not a controller");
+        }
         _;
-    }
-
-    function setPersonal2FA(address _p2FA) external onlyOwner {
-        require(_p2FA != address(0), "2FA cannot be set to zero");
-        personal2FA = _p2FA;
-        emit SetPersonal2FA(msg.sender, _p2FA);
     }
 
     function setOptOption(bool _optOption) external onlyOwner {
@@ -83,12 +58,48 @@ contract NonCustodial2FA is Controllable, Ownable {
         emit SetOptOption(msg.sender, _optOption);
     }
 
+    function setPersonal2FA(address _p2FA) external onlyOwner {
+        require(_p2FA != address(0), "2FA cannot be set to zero");
+        personal2FA = _p2FA;
+        emit SetPersonal2FA(msg.sender, _p2FA);
+    }
+
+    function _is2FA(address _sender) internal view returns (bool) {
+        if (optOut){
+            return (_sender == personal2FA);
+        }
+        else {
+            return _isController(_sender);
+        }
+    }
+}
+
+
+/// @title Ownable2FA combines NonCustodial2FA and Ownable
+/// @dev providing an additional modifier to check if Owner or 2FA
+contract Ownable2FA is NonCustodial2FA {
+    /// @dev Check if the sender is the Owner or 2FA
+    modifier onlyOwnerOr2FA() {
+        require (_isOwner(msg.sender) || _is2FA(msg.sender), "only owner or 2FA");
+        _;
+    }
+}
+
+/// @title SelfCallableOwnable allows either owner or the contract itself to call its functions
+/// @dev providing an additional modifier to check if Owner or self is calling
+/// @dev the "self" here is used for the meta transactions
+contract SelfCallableOwnable is Ownable {
+    /// @dev Check if the sender is the Owner or self
+    modifier onlyOwnerOrSelf() {
+        require (_isOwner(msg.sender) || msg.sender == address(this), "only owner||self");
+        _;
+    }
 }
 
 /// @title AddressWhitelist provides payee-whitelist functionality.
 /// @dev This contract will allow the user to maintain a whitelist of addresses.
 /// @dev These addresses will live outside of the daily limit.
-contract AddressWhitelist is NonCustodial2FA, ControllableOwnable, SelfCallableOwnable {
+contract AddressWhitelist is NonCustodial2FA, Ownable2FA, SelfCallableOwnable {
     using SafeMath for uint256;
 
     event AddedToWhitelist(address _sender, address[] _addresses);
@@ -123,7 +134,7 @@ contract AddressWhitelist is NonCustodial2FA, ControllableOwnable, SelfCallableO
     }
 
     /// @dev Cancel pending whitelist addition.
-    function cancelWhitelistAddition(bytes32 _hash) external onlyOwnerOrController {
+    function cancelWhitelistAddition(bytes32 _hash) external onlyOwnerOr2FA {
         // Check if operation has been submitted.
         require(submittedWhitelistAddition, "no pending submission");
         // Require that confirmation hash and the hash of the pending whitelist addition match
@@ -137,7 +148,7 @@ contract AddressWhitelist is NonCustodial2FA, ControllableOwnable, SelfCallableO
     }
 
     /// @dev Cancel pending removal of whitelisted addresses.
-    function cancelWhitelistRemoval(bytes32 _hash) external onlyOwnerOrController {
+    function cancelWhitelistRemoval(bytes32 _hash) external onlyOwnerOr2FA {
         // Check if operation has been submitted.
         require(submittedWhitelistRemoval, "no pending submission");
         // Require that confirmation hash and the hash of the pending whitelist removal match
@@ -270,7 +281,7 @@ contract AddressWhitelist is NonCustodial2FA, ControllableOwnable, SelfCallableO
 }
 
 /// @title DailyLimit provides daily spend limit functionality.
-contract DailyLimit is NonCustodial2FA, ControllableOwnable, SelfCallableOwnable, TokenWhitelistable {
+contract DailyLimit is NonCustodial2FA, Ownable2FA, SelfCallableOwnable, TokenWhitelistable {
     using SafeMath for uint256;
 
     event InitializedDailyLimit(uint _amount, uint _nextReset);
