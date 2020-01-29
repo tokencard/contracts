@@ -3,10 +3,10 @@ package controller_test
 import (
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
+    "github.com/tokencard/ethertest"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	. "github.com/tokencard/contracts/v2/test/shared"
-	"github.com/tokencard/ethertest"
 )
 
 var _ = Describe("addAdmin", func() {
@@ -47,27 +47,15 @@ var _ = Describe("addAdmin", func() {
 
 	When("controller owner calls AddAdmin with it's own address", func() {
 
-		var tx *types.Transaction
-		const gasLimit = 100000
-
-		BeforeEach(func() {
-			var err error
-			tx, err = ControllerContract.AddAdmin(ControllerOwner.TransactOpts(ethertest.WithGasLimit(gasLimit)), ControllerOwner.Address())
+		It("should fail", func() {
+			tx, err := ControllerContract.AddAdmin(ControllerOwner.TransactOpts(ethertest.WithGasLimit(100000)), ControllerOwner.Address())
 			Expect(err).ToNot(HaveOccurred())
 			Backend.Commit()
+            Expect(isSuccessful(tx)).To(BeFalse())
+            returnData, _ := ethCall(tx)
+            Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("provided account is already the owner"))
 		})
 
-		It("should not succeed", func() {
-			Expect(isSuccessful(tx)).To(BeFalse())
-		})
-
-		It("should not exaust gas", func() {
-			Expect(isGasExhausted(tx, gasLimit)).To(BeFalse())
-		})
-
-		It("should fail at the already owner requirenment", func() {
-			Expect(TestRig.LastExecuted()).To(MatchRegexp(`require\(!_isOwner\(_account\), "provided account is already the owner"\);`))
-		})
 	})
 
 	When("controller owner calls AddAdmin with controller's address", func() {
@@ -147,52 +135,31 @@ var _ = Describe("addAdmin", func() {
 
 	When("admin calls AddAdmin with a random address", func() {
 
-		var tx *types.Transaction
-		const gasLimit = 100000
-
-		BeforeEach(func() {
-			var err error
-			tx, err = ControllerContract.AddAdmin(ControllerAdmin.TransactOpts(ethertest.WithGasLimit(gasLimit)), RandomAccount.Address())
+		It("should fail", func() {
+			tx, err := ControllerContract.AddAdmin(ControllerAdmin.TransactOpts(ethertest.WithGasLimit(60000)), RandomAccount.Address())
 			Expect(err).ToNot(HaveOccurred())
 			Backend.Commit()
+            Expect(isSuccessful(tx)).To(BeFalse())
+            returnData, _ := ethCall(tx)
+            Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("sender is not owner"))
 		})
 
-		It("should not succeed", func() {
-			Expect(isSuccessful(tx)).To(BeFalse())
-		})
 
-		It("should not exaust gas", func() {
-			Expect(isGasExhausted(tx, gasLimit)).To(BeFalse())
-		})
-
-		It("should fail at the not owner requirenment", func() {
-			Expect(TestRig.LastExecuted()).To(MatchRegexp(`require\(_isOwner\(msg.sender\), "sender is not an owner"\);`))
-		})
 	})
 
 	When("controller calls AddAdmin with a random address", func() {
 
-		var tx *types.Transaction
-		const gasLimit = 100000
 
-		BeforeEach(func() {
+		It("should fail", func() {
 			var err error
-			tx, err = ControllerContract.AddAdmin(Controller.TransactOpts(ethertest.WithGasLimit(gasLimit)), RandomAccount.Address())
+			tx, err := ControllerContract.AddAdmin(Controller.TransactOpts(ethertest.WithGasLimit(100000)), RandomAccount.Address())
 			Expect(err).ToNot(HaveOccurred())
 			Backend.Commit()
+            Expect(isSuccessful(tx)).To(BeFalse())
+            returnData, _ := ethCall(tx)
+            Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("sender is not owner"))
 		})
 
-		It("should not succeed", func() {
-			Expect(isSuccessful(tx)).To(BeFalse())
-		})
-
-		It("should not exaust gas", func() {
-			Expect(isGasExhausted(tx, gasLimit)).To(BeFalse())
-		})
-
-		It("should fail at the not owner requirenment", func() {
-			Expect(TestRig.LastExecuted()).To(MatchRegexp(`require\(_isOwner\(msg.sender\), "sender is not an owner"\);`))
-		})
 	})
 
 })
