@@ -249,13 +249,13 @@ var _ = Describe("whitelistAddition", func() {
 			})
 		})
 
-		When("the controller confirms the adding to the whitelist", func() {
+		When("the controller confirms the addition to the whitelist", func() {
 			BeforeEach(func() {
 				pwl, err := Wallet.PendingWhitelistAddition(nil)
 				Expect(err).ToNot(HaveOccurred())
 				hash, err := Wallet.CalculateHash(nil, pwl)
 				Expect(err).ToNot(HaveOccurred())
-				tx, err := Wallet.ConfirmWhitelistAddition(Controller.TransactOpts(ethertest.WithGasLimit(500000)), hash)
+				tx, err := Wallet.ConfirmWhitelistAddition(Controller.TransactOpts(), hash)
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 				Expect(isSuccessful(tx)).To(BeTrue())

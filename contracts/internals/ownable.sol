@@ -43,7 +43,7 @@ contract Ownable {
 
     /// @notice Reverts if called by any account other than the owner.
     modifier onlyOwner() {
-        require(_isOwner(msg.sender), "sender is not an owner");
+        require(_isOwner(msg.sender), "sender is not owner");
         _;
     }
 
