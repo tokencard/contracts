@@ -26,7 +26,7 @@ import "./internals/controllable.sol";
 contract WalletDeployer is ENSResolvable, Controllable {
 
     event DeployedWallet(Wallet _wallet, address _owner);
-    event MigratedWallet(Wallet _wallet, Wallet _oldWallet, address _owner);
+    event MigratedWallet(Wallet _wallet, Wallet _oldWallet, address _owner, uint256 _paid);
 
     /*****   Constants   *****/
     // Default values for mainnet ENS
@@ -61,7 +61,10 @@ contract WalletDeployer is ENSResolvable, Controllable {
     /// @param _spendLimit is the user's set daily spend limit
     /// @param _gasTopUpLimit is the user's set daily gas top-up limit
     /// @param _whitelistedAddresses is the set of the user's whitelisted addresses
-    function migrateWallet(address payable _owner, Wallet _oldWallet, bool _initializedSpendLimit, bool _initializedGasTopUpLimit, bool _initializedWhitelist, uint _spendLimit, uint _gasTopUpLimit, address[] calldata _whitelistedAddresses) external onlyController {
+    function migrateWallet(address payable _owner, Wallet _oldWallet, bool _initializedSpendLimit, bool _initializedGasTopUpLimit, bool _initializedWhitelist, uint _spendLimit, uint _gasTopUpLimit, address[] calldata _whitelistedAddresses) external onlyController payable {
+        require(deployedWallets[_owner] == address(0x0), "wallet already deployed for owner");
+        require(_oldWallet.owner() == _owner, "owner mismatch");
+
         Wallet wallet = IWalletCache(_ensResolve(walletCacheNode)).walletCachePop();
 
         // Sets up the security settings as per the _oldWallet
@@ -78,7 +81,10 @@ contract WalletDeployer is ENSResolvable, Controllable {
         wallet.transferOwnership(_owner, false);
         deployedWallets[_owner] = address(wallet);
 
-        emit MigratedWallet(wallet, _oldWallet, _owner);
-    }
+        if (msg.value > 0) {
+            _owner.transfer(msg.value);
+        }
 
+        emit MigratedWallet(wallet, _oldWallet, _owner, msg.value);
+    }
 }
