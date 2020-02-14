@@ -6,13 +6,29 @@ import (
 	"os"
 	"testing"
 
+    "github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
+    "github.com/tokencard/contracts/v2/pkg/bindings"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	"github.com/tokencard/contracts/v2/pkg/bindings"
 	. "github.com/tokencard/contracts/v2/test/shared"
 )
+
+func ethCall(tx *types.Transaction) ([]byte, error) {
+	msg, _ := tx.AsMessage(types.HomesteadSigner{})
+
+	calMsg := ethereum.CallMsg{
+		From:     msg.From(),
+		To:       msg.To(),
+		Gas:      msg.Gas(),
+		GasPrice: msg.GasPrice(),
+		Value:    msg.Value(),
+		Data:     msg.Data(),
+	}
+
+	return Backend.CallContract(context.Background(), calMsg, nil)
+}
 
 func TestWalletDeployer(t *testing.T) {
 	RegisterFailHandler(Fail)
