@@ -38,7 +38,7 @@ import "./externals/ECDSA.sol";
 /// @dev 2FA is needed to confirm changes to the security settings in the wallet.
 contract OptOutableMonolith2FA is Controllable, Ownable {
 
-    event SetMonolith2FA(address _sender); 
+    event SetMonolith2FA(address _sender);
     event SetPersonal2FA(address _sender, address _p2FA);
 
     bool public monolith2FA;
@@ -66,7 +66,7 @@ contract OptOutableMonolith2FA is Controllable, Ownable {
 
     /// @dev set Monolith to be the 2FA
     function setMonolith2FA() external onlyOwner {
-        require(!monolith2FA, "monolith2FA enabled");
+        require(!monolith2FA, "monolith2FA already enabled");
 
         monolith2FA = true;
         personal2FA = address(0);
