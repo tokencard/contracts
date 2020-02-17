@@ -35,57 +35,67 @@ import "./internals/ownable.sol";
 import "./internals/tokenWhitelistable.sol";
 import "./internals/transferrable.sol";
 
+/// @title OptOutableMonolith2FA is used a configurable 2FA.
+/// @dev This provides the various modifiers and utility functions needed for 2FA.
+/// @dev 2FA is needed to confirm changes to the security settings in the wallet.
+contract OptOutableMonolith2FA is Controllable, Ownable {
 
-contract NonCustodial2FA is Controllable, Ownable {
-
-    event SetOptOption(address _sender, bool _optOption);
+    event SetMonolith2FA(address _sender); 
     event SetPersonal2FA(address _sender, address _p2FA);
 
-    bool public optOut;
+    bool public monolith2FA;
     address public personal2FA;
 
+    constructor() public {
+        monolith2FA = true;
+    }
+
+    // @dev This modifier ensures that a method is only accessible to 2nd factor
     modifier only2FA() {
-        if (optOut){
-            require(msg.sender == personal2FA, "sender is not personal 2FA");
-        }
-        else{
+        if (monolith2FA) {
             require(_isController(msg.sender), "sender is not a controller");
+        } else {
+            require(msg.sender == personal2FA, "sender is not personal 2FA");
         }
         _;
     }
 
-    function setOptOption(bool _optOption) external onlyOwner {
-        require(optOut != _optOption, "no change in opt options");
-        optOut = _optOption;
-        emit SetOptOption(msg.sender, _optOption);
-    }
-
-    function setPersonal2FA(address _p2FA) external onlyOwner {
-        require(_p2FA != address(0), "2FA cannot be set to zero");
-        personal2FA = _p2FA;
-        emit SetPersonal2FA(msg.sender, _p2FA);
-    }
-
-    function _is2FA(address _sender) internal view returns (bool) {
-        if (optOut){
-            return (_sender == personal2FA);
-        }
-        else {
-            return _isController(_sender);
-        }
-    }
-}
-
-
-/// @title Ownable2FA combines NonCustodial2FA and Ownable
-/// @dev providing an additional modifier to check if Owner or 2FA
-contract Ownable2FA is NonCustodial2FA {
     /// @dev Check if the sender is the Owner or 2FA
     modifier onlyOwnerOr2FA() {
         require (_isOwner(msg.sender) || _is2FA(msg.sender), "only owner or 2FA");
         _;
     }
+
+    /// @dev set Monolith to be the 2FA
+    function setMonolith2FA() external onlyOwner {
+        require(!monolith2FA, "monolith2FA enabled");
+
+        monolith2FA = true;
+        personal2FA = address(0);
+
+        emit SetMonolith2FA(msg.sender);
+    }
+
+    /// @dev set personal 2FA to the address the user provided
+    function setPersonal2FA(address _p2FA) external onlyOwner {
+        require(_p2FA != address(0), "2FA cannot be set to zero");
+
+        personal2FA = _p2FA;
+        monolith2FA = false;
+
+        emit SetPersonal2FA(msg.sender, _p2FA);
+    }
+
+    /// @dev utiliy function to check whether or not an address is valid 2FA'er
+    function _is2FA(address _sender) private view returns (bool) {
+        if (monolith2FA) {
+            return _isController(_sender);
+        } else {
+            return (_sender == personal2FA);
+        }
+    }
 }
+
 
 /// @title SelfCallableOwnable allows either owner or the contract itself to call its functions
 /// @dev providing an additional modifier to check if Owner or self is calling
@@ -101,7 +111,7 @@ contract SelfCallableOwnable is Ownable {
 /// @title AddressWhitelist provides payee-whitelist functionality.
 /// @dev This contract will allow the user to maintain a whitelist of addresses.
 /// @dev These addresses will live outside of the daily limit.
-contract AddressWhitelist is NonCustodial2FA, Ownable2FA, SelfCallableOwnable {
+contract AddressWhitelist is OptOutableMonolith2FA, SelfCallableOwnable {
     using SafeMath for uint256;
 
     event AddedToWhitelist(address _sender, address[] _addresses);
@@ -283,7 +293,7 @@ contract AddressWhitelist is NonCustodial2FA, Ownable2FA, SelfCallableOwnable {
 }
 
 /// @title DailyLimit provides daily spend limit functionality.
-contract DailyLimit is NonCustodial2FA, Ownable2FA, SelfCallableOwnable, TokenWhitelistable {
+contract DailyLimit is OptOutableMonolith2FA, SelfCallableOwnable, TokenWhitelistable {
     using SafeMath for uint256;
 
     event InitializedDailyLimit(uint _amount, uint _nextReset);
