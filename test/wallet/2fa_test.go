@@ -8,7 +8,7 @@ import (
 	"github.com/tokencard/ethertest"
 )
 
-var _ = FDescribe("2FA", func() {
+var _ = Describe("2FA", func() {
 
 	It("should be true", func() {
 		oo, err := Wallet.Monolith2FA(nil)
