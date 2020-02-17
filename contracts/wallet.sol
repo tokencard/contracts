@@ -522,6 +522,7 @@ contract Vault is AddressWhitelist, SpendLimit, ERC165, Transferrable, Balanceab
     event ExecutedTransaction(address _destination, uint _value, bytes _data, bytes _returndata);
     event Received(address _from, uint _amount);
     event Transferred(address _to, address _asset, uint _amount);
+    event IncreasedRelayNonce(address _sender, uint _currentNonce);
 
     // keccak256("isValidSignature(bytes,bytes)") = 20c13b0bc670c284a9f19cdf7a533ca249404190f8dc132aac33e733b965269e
     bytes4 constant private _EIP_1271 = 0x20c13b0b;
@@ -583,7 +584,7 @@ contract Vault is AddressWhitelist, SpendLimit, ERC165, Transferrable, Balanceab
         require(isValidSignature(dataHash, _signature) == _EIP_1654, "sig not valid");
         // verify and increase relayNonce to prevent replay attacks from the relayer
         require(_nonce == relayNonce, "tx replay");
-        relayNonce++;
+        _increaseRelayNonce();
 
         // invoke wallet function with an external call
         (bool success, bytes memory returndata) = address(this).call(_data);
@@ -594,7 +595,14 @@ contract Vault is AddressWhitelist, SpendLimit, ERC165, Transferrable, Balanceab
 
     /// @dev This allows the user to cancel a transaction that was unexpectedly delayed by the relayer
     function increaseRelayNonce() external onlyOwner {
+        _increaseRelayNonce();
+    }
+
+    /// @dev This bumps the relayNonce and emits an event accordingly
+    function _increaseRelayNonce() internal {
         relayNonce++;
+
+        emit IncreasedRelayNonce(msg.sender, relayNonce);
     }
 
     /// @dev Implements EIP-1271: receives the raw data (bytes)

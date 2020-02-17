@@ -111,6 +111,16 @@ var _ = Describe("relay Tx", func() {
 				Expect(o).To(Equal(randomAddress))
 			})
 
+            It("should emit an IncreasedRelayNonce event", func() {
+				it, err := Wallet.FilterIncreasedRelayNonce(nil)
+				Expect(err).ToNot(HaveOccurred())
+				Expect(it.Next()).To(BeTrue())
+				evt := it.Event
+				Expect(it.Next()).To(BeFalse())
+				Expect(evt.Sender).To(Equal(Controller.Address()))
+				Expect(evt.CurrentNonce.String()).To(Equal("1"))
+			})
+
 			It("should emit an ExecutedRelayedTransaction event", func() {
 				it, err := Wallet.FilterExecutedRelayedTransaction(nil)
 				Expect(err).ToNot(HaveOccurred())
@@ -196,7 +206,7 @@ var _ = Describe("relay Tx", func() {
 		})
 
 		When("the owner increases the nonce before the relayer relayes the transaction", func() {
-			It("should fail", func() {
+			BeforeEach(func() {
 				a, err := abi.JSON(strings.NewReader(WALLET_ABI))
 				Expect(err).ToNot(HaveOccurred())
 				data, err := a.Pack("transfer", common.HexToAddress("0x0"), common.HexToAddress("0x0"), EthToWei(1))
@@ -211,18 +221,37 @@ var _ = Describe("relay Tx", func() {
 				Backend.Commit()
 				Expect(isSuccessful(tx)).To(BeTrue())
 
+                tx, err = Wallet.IncreaseRelayNonce(Owner.TransactOpts())
+				Expect(err).ToNot(HaveOccurred())
+				Backend.Commit()
+				Expect(isSuccessful(tx)).To(BeTrue())
+
 				tx, err = Wallet.TransferOwnership(Owner.TransactOpts(), randomAddress, false)
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 				Expect(isSuccessful(tx)).To(BeTrue())
 
-				tx, err = Wallet.ExecuteRelayedTransaction(Controller.TransactOpts(ethertest.WithGasLimit(500000)), nonce, data, signature)
+                tx, err = Wallet.ExecuteRelayedTransaction(Controller.TransactOpts(ethertest.WithGasLimit(500000)), nonce, data, signature)
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 				Expect(isSuccessful(tx)).To(BeFalse())
 
 				returnData, _ := ethCall(tx)
 				Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("tx replay"))
+            })
+
+            It("should emit an IncreasedRelayNonce event", func() {
+				it, err := Wallet.FilterIncreasedRelayNonce(nil)
+				Expect(err).ToNot(HaveOccurred())
+				Expect(it.Next()).To(BeTrue())
+				evt := it.Event
+				Expect(evt.Sender).To(Equal(Owner.Address()))
+				Expect(evt.CurrentNonce.String()).To(Equal("1"))
+                Expect(it.Next()).To(BeTrue())
+                evt = it.Event
+                Expect(it.Next()).To(BeFalse())
+				Expect(evt.Sender).To(Equal(Owner.Address()))
+				Expect(evt.CurrentNonce.String()).To(Equal("2"))
 			})
 		})
 
