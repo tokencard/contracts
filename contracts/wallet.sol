@@ -484,12 +484,22 @@ contract Wallet is ENSResolvable, AddressWhitelist, DailyLimit, ERC165, Transfer
         emit BulkTransferred(_to, _assets);
     }
 
+    /// FOR GASLESS
+    function executeRelayedTransaction(uint256 _nonce, bytes calldata _data, bytes calldata _signature) external onlyController {
+        return _executeRelayedTransaction(_nonce,  _data, _signature, false);
+    }
+
+    /// BYPASS Functionality
+    function executeRelayedBypassTransaction(uint256 _nonce, bytes calldata _data, bytes calldata _signature) external only2FA {
+        return _executeRelayedBTransaction(_nonce,  _data,  _signature, true);
+    }
+
     /// @dev This function allows for the controller to relay transactions on the owner's behalf,
     /// the relayed message has to be signed by the owner.
     /// @param _nonce only used for relayed transactions, must match the wallet's relayNonce.
     /// @param _data abi encoded data payload.
     /// @param _signature signed prefix + data.
-    function executeRelayedTransaction(uint _nonce, bytes calldata _data, bytes calldata _signature) external only2FA {
+    function _executeRelayedTransaction(uint256 _nonce, bytes memory _data, bytes memory _signature, bool bypass) internal {
         // expecting prefixed data ("rlx:") indicating relayed transaction...
         // ...and an Ethereum Signed Message to protect user from signing an actual Tx
         bytes32 dataHash = keccak256(abi.encodePacked("rlx:", _nonce, _data)).toEthSignedMessageHash();
@@ -500,7 +510,9 @@ contract Wallet is ENSResolvable, AddressWhitelist, DailyLimit, ERC165, Transfer
         _increaseRelayNonce();
 
         // invoke wallet function with an external call
-        (bool success, bytes memory returndata) = address(this).call(_data);
+        // TODO (bool success, bytes memory returndata) = address(this).call(_data);
+        (bool success, bytes memory returndata) = batchExecute(_data, bypass);
+        
         require(success, string(returndata));
 
         emit ExecutedRelayedTransaction(_data, returndata);
@@ -599,7 +611,11 @@ contract Wallet is ENSResolvable, AddressWhitelist, DailyLimit, ERC165, Transfer
                 data = bytes("");
             }
             // call executeTransaction(), if one of them reverts then the whole batch reverts.
-            executeTransaction(destination, value, data);
+            if bypass {
+                executeTransactionBypass(destination, value, data);
+            } else {
+                executeTransaction(destination, value, data);
+            }
         }
     }
 
@@ -637,13 +653,31 @@ contract Wallet is ENSResolvable, AddressWhitelist, DailyLimit, ERC165, Transfer
         return amountToSend.mul(stablecoinMagnitude).div(stablecoinRate);
     }
 
+    function executeTransactionBypass(address _destination, uint _value, bytes memory _data) internal (bytes memory) {
+        _executeTransaction(_destination, _value, memory _data, true);
+    }
+
+    function executeTransaction(address _destination, uint _value, bytes memory _data) public onlyOwnerOrSelf returns (bytes memory) {
+        _executeTransaction(_destination, _value, memory _data, false);
+    }
+
     /// @dev This function allows for the owner to send any transaction from the Wallet to arbitrary addresses
     /// @param _destination address of the transaction
     /// @param _value ETH amount in wei
     /// @param _data transaction payload binary
+<<<<<<< HEAD
     function executeTransaction(address _destination, uint256 _value, bytes memory _data) public onlyOwnerOrSelf returns (bytes memory) {
+||||||| constructed merge base
+    function executeTransaction(address _destination, uint _value, bytes memory _data) public onlyOwnerOrSelf returns (bytes memory) {
+=======
+    function _executeTransaction(address _destination, uint _value, bytes memory _data, bool bypass) internal (bytes memory) {
+>>>>>>> This is an idea for yannis ...
         // If value is send across as a part of this executeTransaction, this will be sent to any payable
         // destination. As a result enforceLimit if destination is not whitelisted.
+        // TODO Need to figure this out 
+        if bypass == false then DO NOT ALLOW calls to executeTransactionBypass
+            //maybe is executtionTransactionBypass isn't callable by 'Self' then we are OK !
+
         if (!whitelistMap[_destination]) {
             _enforceDailyLimit(_value);
         }
@@ -653,7 +687,7 @@ contract Wallet is ENSResolvable, AddressWhitelist, DailyLimit, ERC165, Transfer
             address to;
             uint256 amount;
             (to, amount) = _getERC20RecipientAndAmount(_destination, _data);
-            if (!whitelistMap[to]) {
+            if (!whitelistMap[to] && !bypass) {
                 // Convert token amount to stablecoin value.
                 // If the address (of the token contract) is not in the TokenWhitelist used by the convert method...
                 // ...then stablecoinValue will be zero
