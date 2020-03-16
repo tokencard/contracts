@@ -493,7 +493,10 @@ contract Vault is AddressWhitelist, DailyLimit, ERC165, Transferrable, Balanceab
         require(_nonce == relayNonce, "tx replay");
         relayNonce++;
 
-        _batchExecuteTransaction(_data, _bypass);
+        // TO DO: an "if(_bypass) {bypass = _bypass}  should be less expensive
+        bypass = _bypass;
+        _batchExecuteTransaction(_data);
+        bypass = false;
 
         emit ExecutedRelayedTransaction(_data, _bypass);
     }
@@ -523,7 +526,7 @@ contract Vault is AddressWhitelist, DailyLimit, ERC165, Transferrable, Balanceab
     /// it calls executeTransaction() so that the daily limit is enforced.
     /// @param _transactionBatch data encoding the transactions to be sent,
     /// following executeTransaction's format i.e. (destination, value, data)
-    function _batchExecuteTransaction(bytes memory _transactionBatch, bool _bypass) private {
+    function _batchExecuteTransaction(bytes memory _transactionBatch) private {
         uint batchLength = _transactionBatch.length + 32; // because the index starts from 32
         uint remainingBytesLength = _transactionBatch.length; // remaining bytes to be processed
         uint i = 32; //the first 32 bytes denote the byte array length, start from actual data
@@ -550,17 +553,15 @@ contract Vault is AddressWhitelist, DailyLimit, ERC165, Transferrable, Balanceab
             i = i.add(dataLength).add(84);
             // revert in case the encoded dataLength is gonna cause an out of bound access
             require(i <= batchLength, "out of bounds");
-
+            
             // if length is 0 ignore the data field
             if (dataLength == 0) {
                 data = bytes("");
             }
+
             // call executeTransaction(), if one of them reverts then the whole batch reverts.
-            if (_bypass) {
-                _executeTransaction(destination, value, data, true);
-            } else {
-                _executeTransaction(destination, value, data, false);
-            }
+            _executeTransaction(destination, value, data);
+
         }
 
     }
@@ -599,28 +600,20 @@ contract Vault is AddressWhitelist, DailyLimit, ERC165, Transferrable, Balanceab
         return amountToSend.mul(stablecoinMagnitude).div(stablecoinRate);
     }
 
-    function executeTransactionBypass(address _destination, uint _value, bytes calldata _data) external only2FA returns (bytes memory) {
-        _executeTransaction(_destination, _value, _data, true);
-    }
-
     function executeTransaction(address _destination, uint _value, bytes calldata _data) external onlyOwner returns (bytes memory) {
-        _executeTransaction(_destination, _value, _data, false);
+        _executeTransaction(_destination, _value, _data);
     }
 
     /// @dev This function allows for the owner to send any transaction from the Wallet to arbitrary addresses
     /// @param _destination address of the transaction
     /// @param _value ETH amount in wei
     /// @param _data transaction payload binary
-    function _executeTransaction(address _destination, uint _value, bytes memory _data, bool _bypass) private returns (bytes memory) {
+    function _executeTransaction(address _destination, uint _value, bytes memory _data) private returns (bytes memory) {
         // If value is send across as a part of this executeTransaction, this will be sent to any payable
         // destination. As a result enforceLimit if destination is not whitelisted.
 
-        // TODO Need to figure this out 
-        //if bypass == false then DO NOT ALLOW calls to executeTransactionBypass
-        //no problem the other calls are external and they should be only2FA
 
-
-        if (!whitelistMap[_destination] && !_bypass) {
+        if (!whitelistMap[_destination] && !bypass) {
             _enforceDailyLimit(_value);
         }
         // Check if the destination is a Contract and it is one of our supported tokens
@@ -629,7 +622,7 @@ contract Vault is AddressWhitelist, DailyLimit, ERC165, Transferrable, Balanceab
             address to;
             uint amount;
             (to, amount) = _getERC20RecipientAndAmount(_destination, _data);
-            if (!whitelistMap[to] && !_bypass) {
+            if (!whitelistMap[to] && !bypass) {
                 // Convert token amount to stablecoin value.
                 // If the address (of the token contract) is not in the TokenWhitelist used by the convert method...
                 // ...then stablecoinValue will be zero
@@ -648,12 +641,8 @@ contract Vault is AddressWhitelist, DailyLimit, ERC165, Transferrable, Balanceab
             return b;
         }
 
-        // set storage (global) bypass in case transfer() or loadTokenCard() is called
-        bypass = _bypass;
         (bool success, bytes memory returndata) = _destination.call.value(_value)(_data);
         require(success, string(returndata));
-        //reset storage (global) bypass
-        bypass = false;
 
         emit ExecutedTransaction(_destination, _value, _data, returndata);
         // returns all of the bytes returned by _destination contract
