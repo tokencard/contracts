@@ -37,7 +37,7 @@ jobs:
 
   mythril:
     docker:
-      - image: mythril/myth:0.21.19
+      - image: mythril/myth:latest
     working_directory: /tmp/contracts
     parallelism: 6
     steps:
@@ -46,89 +46,90 @@ jobs:
           working_directory: contracts
           command: |
             if [[ "${CIRCLE_NODE_INDEX}" == 0 ]]; then
-              myth analyze ./oracle.sol --execution-timeout=1800
+              myth analyze --solv=0.5.15 ./oracle.sol --execution-timeout=900
             fi
-          no_output_timeout: 45m
+          no_output_timeout: 20m
       - run:
           working_directory: contracts
           command: |
             if [[ "${CIRCLE_NODE_INDEX}" == 1 ]]; then
-              myth analyze ./wallet.sol --execution-timeout=1800
+              myth analyze --solv=0.5.15 ./wallet.sol --execution-timeout=900
             fi
-          no_output_timeout: 45m
+          no_output_timeout: 20m
       - run:
           working_directory: contracts
           command: |
             if [[ "${CIRCLE_NODE_INDEX}" == 2 ]]; then
-              myth analyze ./holder.sol --execution-timeout=1800
+              myth analyze --solv=0.5.15 ./holder.sol --execution-timeout=900
             fi
-          no_output_timeout: 45m
+          no_output_timeout: 20m
       - run:
           working_directory: contracts
           command: |
             if [[ "${CIRCLE_NODE_INDEX}" == 3 ]]; then
-              myth analyze ./licence.sol --execution-timeout=1800
+              myth analyze --solv=0.5.15 ./licence.sol --execution-timeout=900
             fi
-          no_output_timeout: 45m
+          no_output_timeout: 20m
       - run:
           working_directory: contracts
           command: |
             if [[ "${CIRCLE_NODE_INDEX}" == 4 ]]; then
-              myth analyze ./tokenWhitelist.sol --execution-timeout=1800
+              myth analyze --solv=0.5.15 ./tokenWhitelist.sol --execution-timeout=900
             fi
-          no_output_timeout: 45m
+          no_output_timeout: 20m
       - run:
           working_directory: contracts
           command: |
             if [[ "${CIRCLE_NODE_INDEX}" == 5 ]]; then
-              myth analyze ./walletDeployer.sol --execution-timeout=1800
+              myth analyze --solv=0.5.15 ./walletDeployer.sol --execution-timeout=900
             fi
-          no_output_timeout: 45m
+          no_output_timeout: 20m
 
   slither:
     docker:
       - image: trailofbits/eth-security-toolbox:latest
     working_directory: /tmp/contracts
     steps:
+      - run: sudo -n apt-get update && sudo -n apt-get install -y openssh-client
       - checkout
       - run:
-          command: solc-select 0.5.10
+          command: solc-select 0.5.15
       - run:
-          working_directory: contracts
+          working_directory: slither
           command: |
-            slither ./wallet.sol ||
+            slither ../contracts/wallet.sol ||
             echo "export FAILED=true" >> $BASH_ENV
-          no_output_timeout: 15m
+          no_output_timeout: 5m
       - run:
-          working_directory: contracts
+          working_directory: slither
           command: |
-            slither ./oracle.sol ||
+            slither ../contracts/oracle.sol ||
             echo "export FAILED=true" >> $BASH_ENV
-          no_output_timeout: 15m
+          no_output_timeout: 5m
       - run:
-          working_directory: contracts
+          working_directory: slither
           command: |
-            slither ./licence.sol ||
+            slither ../contracts/licence.sol ||
             echo "export FAILED=true" >> $BASH_ENV
-          no_output_timeout: 15m
+          no_output_timeout: 5m
       - run:
-          working_directory: contracts
+          working_directory: slither
           command: |
-            slither ./holder.sol ||
+            slither ../contracts/holder.sol ||
             echo "export FAILED=true" >> $BASH_ENV
-          no_output_timeout: 15m
+          no_output_timeout: 5m
       - run:
-          working_directory: contracts
+          working_directory: slither
           command: |
-            slither ./tokenWhitelist.sol ||
+            slither ../contracts/tokenWhitelist.sol ||
             echo "export FAILED=true" >> $BASH_ENV
-          no_output_timeout: 15m
+          no_output_timeout: 5m
       - run:
-          working_directory: contracts
+          working_directory: slither
           command: |
-            slither ./walletDeployer.sol ||
+            slither ../contracts/walletDeployer.sol ||
             echo "export FAILED=true" >> $BASH_ENV
-          no_output_timeout: 15m
+          no_output_timeout: 5m
       - run:
           command: test ! $FAILED
 
@@ -213,11 +214,11 @@ workflows:
           filters:
             tags:
               ignore: ""
-      # - slither:
-      #     filters:
-      #       tags:
-      #         ignore: ""
-      # - echidna:
-      #     filters:
-      #       tags:
-      #         ignore: ""
+      - slither:
+          filters:
+            tags:
+              ignore: ""
+ # - echidna:
+ #     filters:
+ #       tags:
+ #         ignore: ""
