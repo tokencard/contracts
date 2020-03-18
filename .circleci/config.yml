@@ -213,10 +213,10 @@ workflows:
           filters:
             tags:
               ignore: ""
-      - slither:
-          filters:
-            tags:
-              ignore: ""
+      # - slither:
+      #     filters:
+      #       tags:
+      #         ignore: ""
       # - echidna:
       #     filters:
       #       tags:
