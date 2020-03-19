@@ -49,11 +49,10 @@ contract WalletDeployer is ENSResolvable, Controllable {
     /// @param _owner is the owner address for the new Wallet to be
     function deployWallet(address payable _owner) external onlyController {
         Wallet wallet = IWalletCache(_ensResolve(walletCacheNode)).walletCachePop();
+        emit DeployedWallet(wallet, _owner);
         // This sets the changeableOwner boolean to false, i.e. no more change ownership
         wallet.transferOwnership(_owner, false);
         deployedWallets[_owner] = address(wallet);
-
-        emit DeployedWallet(wallet, _owner);
     }
 
     /// @notice This function is used to migrate an owner's security settings from a previous version of the wallet
@@ -66,6 +65,7 @@ contract WalletDeployer is ENSResolvable, Controllable {
         require(_oldWallet.owner() == _owner, "owner mismatch");
 
         Wallet wallet = IWalletCache(_ensResolve(walletCacheNode)).walletCachePop();
+        emit MigratedWallet(wallet, _oldWallet, _owner, msg.value);
 
         // Sets up the security settings as per the _oldWallet
         if (_initializedSpendLimit) {
@@ -84,7 +84,5 @@ contract WalletDeployer is ENSResolvable, Controllable {
         if (msg.value > 0) {
             _owner.transfer(msg.value);
         }
-
-        emit MigratedWallet(wallet, _oldWallet, _owner, msg.value);
     }
 }
