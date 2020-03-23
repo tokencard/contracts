@@ -2,9 +2,9 @@
 
 Steps to hide output for checks that are known to be unnecessary.
 
-Run trail of bits security toolbox and mount the contracts directory:
+Run trail of bits security toolbox and mount the contracts directory, you need to make sure that the path is an absolute path, e.g.
 
-    docker run -v ./contracts:/contracts -it trailofbits/eth-security-toolbox:latest
+    docker run -v $GOPATH/src/github.com/tokencard/contracts:/contracts -it trailofbits/eth-security-toolbox:latest
 
 Set the solidity compiler to the same version as used in the contracts (e.g.):
 
