@@ -62,7 +62,7 @@ contract WalletDeployer is ENSResolvable, Controllable {
     /// @param _spendLimit is the user's set daily spend limit
     /// @param _gasTopUpLimit is the user's set daily gas top-up limit
     /// @param _whitelistedAddresses is the set of the user's whitelisted addresses
-    function migrateWallet(address payable _owner, Wallet _oldWallet, bool _initializedSpendLimit, bool _initializedGasTopUpLimit, bool _initializedWhitelist, uint _spendLimit, uint _gasTopUpLimit, address[] calldata _whitelistedAddresses) external onlyController payable {
+    function migrateWallet(address payable _owner, Wallet _oldWallet, bool _initializedSpendLimit, bool _initializedGasTopUpLimit, bool _initializedLoadLimit, bool _initializedWhitelist, uint _spendLimit, uint _gasTopUpLimit, uint _loadLimit, address[] calldata _whitelistedAddresses) external onlyController payable {
         require(deployedWallets[_owner] == address(0x0), "wallet already deployed for owner");
         require(_oldWallet.owner() == _owner, "owner mismatch");
 
@@ -77,6 +77,9 @@ contract WalletDeployer is ENSResolvable, Controllable {
         }
         if (_initializedGasTopUpLimit) {
             wallet.setGasTopUpLimit(_gasTopUpLimit);
+        }
+         if (_initializedLoadLimit) {
+            wallet.setLoadLimit(_loadLimit);
         }
         if (_initializedWhitelist) {
             wallet.setWhitelist(_whitelistedAddresses);
