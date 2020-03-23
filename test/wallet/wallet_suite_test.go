@@ -16,8 +16,8 @@ import (
 	"github.com/ethereum/go-ethereum/core/types"
     "github.com/ethereum/go-ethereum/crypto"
 	"github.com/Masterminds/semver"
-	"github.com/tokencard/contracts/v2/pkg/bindings"
-	. "github.com/tokencard/contracts/v2/test/shared"
+	"github.com/tokencard/contracts/v3/pkg/bindings"
+	. "github.com/tokencard/contracts/v3/test/shared"
     . "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )

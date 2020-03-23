@@ -3,7 +3,7 @@ package controller_test
 import (
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	. "github.com/tokencard/contracts/v2/test/shared"
+	. "github.com/tokencard/contracts/v3/test/shared"
 	"github.com/tokencard/ethertest"
 )
 
