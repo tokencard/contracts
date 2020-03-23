@@ -382,7 +382,7 @@ contract SpendLimit is ControllableOwnable, SelfCallableOwnable {
 }
 
 
-//// @title GasTopUpLimit provides daily limit functionality.
+/// @title GasTopUpLimit provides daily limit functionality.
 contract GasTopUpLimit is ControllableOwnable, SelfCallableOwnable {
 
     event SetGasTopUpLimit(address _sender, uint _amount);
@@ -450,7 +450,6 @@ contract LoadLimit is ControllableOwnable, SelfCallableOwnable {
     event SetLoadLimit(address _sender, uint _amount);
     event SubmittedLoadLimitUpdate(uint _amount);
 
-    uint constant private _MINIMUM_LOAD_LIMIT = 1 finney;
     uint private _maximumLoadLimit;
 
     using DailyLimitTrait for DailyLimitTrait.DailyLimit;
@@ -460,7 +459,7 @@ contract LoadLimit is ControllableOwnable, SelfCallableOwnable {
     /// @dev Sets a daily card load limit.
     /// @param _amount is the card load amount in current stablecoin base units.
     function setLoadLimit(uint _amount) external onlyOwnerOrSelf {
-        require(_MINIMUM_LOAD_LIMIT <= _amount && _amount <= _maximumLoadLimit, "out of range load amount");
+        require(_amount <= _maximumLoadLimit, "out of range load amount");
         _loadLimit._setLimit(_amount);
         emit SetLoadLimit(msg.sender, _amount);
     }
@@ -468,7 +467,7 @@ contract LoadLimit is ControllableOwnable, SelfCallableOwnable {
     /// @dev Submit a daily load limit update.
     /// @param _amount is the daily load limit amount in wei.
     function submitLoadLimitUpdate(uint _amount) external onlyOwnerOrSelf {
-        require(_MINIMUM_LOAD_LIMIT <= _amount && _amount <= _maximumLoadLimit, "out of range load amount");
+        require(_amount <= _maximumLoadLimit, "out of range load amount");
         _loadLimit._submitLimitUpdate(_amount);
         emit SubmittedLoadLimitUpdate(_amount);
     }
@@ -508,7 +507,7 @@ contract LoadLimit is ControllableOwnable, SelfCallableOwnable {
 }
 
 
-//// @title Asset store with extra security features.
+/// @title Asset store with extra security features.
 contract Vault is AddressWhitelist, SpendLimit, ERC165, Transferrable, Balanceable, TokenWhitelistable {
 
     using Address for address;
@@ -756,7 +755,7 @@ contract Vault is AddressWhitelist, SpendLimit, ERC165, Transferrable, Balanceab
 }
 
 
-//// @title Asset wallet with extra security features, gas top up management and card integration.
+/// @title Asset wallet with extra security features, gas top up management and card integration.
 contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
 
     using SafeERC20 for ERC20;
@@ -768,7 +767,7 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
     event UpdatedAvailableLimit();
 
     string constant public WALLET_VERSION = "3.1.0";
-    uint constant private _DEFAULT_MAX_STABLECOIN_LOAD_LIMIT = 10000; //10,000 USD
+    uint constant private _MAXIMUM_STABLECOIN_LOAD_LIMIT = 10000; // 10,000 USD
 
     /// @dev Is the registered ENS node identifying the licence contract.
     bytes32 private _licenceNode;
@@ -785,7 +784,7 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
         // Get the stablecoin's magnitude.
         ( ,uint256 stablecoinMagnitude, , , , , ) = _getStablecoinInfo();
         require(stablecoinMagnitude > 0, "no stablecoin");
-        _initializeLoadLimit(_DEFAULT_MAX_STABLECOIN_LOAD_LIMIT * stablecoinMagnitude);
+        _initializeLoadLimit(_MAXIMUM_STABLECOIN_LOAD_LIMIT * stablecoinMagnitude);
         _licenceNode = _licenceNode_;
     }
 

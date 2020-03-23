@@ -207,29 +207,28 @@ var _ = Describe("wallet load eth", func() {
 
 					It("Should revert", func() {
 						limPlusOneWei := EthToWei(10)
-						limPlusOneWei.Add(limPlusOneWei, big.NewInt(1)) // 10 ETH * 1000 + 1= 10,001 stablecoins
-						tx, err := Wallet.LoadTokenCard(Owner.TransactOpts(ethertest.WithGasLimit(100000)), common.HexToAddress("0x0"), limPlusOneWei)
+						limPlusOneWei.Add(limPlusOneWei, GweiToWei(1)) // 10 ETH * 1000 + 1= 10,001 stablecoins
+						tx, err := Wallet.LoadTokenCard(Owner.TransactOpts(ethertest.WithGasLimit(200000)), common.HexToAddress("0x0"), limPlusOneWei)
 						Expect(err).ToNot(HaveOccurred())
 						Backend.Commit()
-						Expect(isGasExhausted(tx, 100000)).To(BeFalse())
 						Expect(isSuccessful(tx)).To(BeFalse())
 						returnData, _ := ethCall(tx)
 						Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("available<amount"))
 					})
 				}) //more daily Load limit
 
-				When("the precise amount of the daily Load limit is loaded", func() {
+				When("the MAX amount of the daily Load limit is loaded", func() {
 
-					It("Should return 10000", func() {
+					It("Should return 10K USD", func() {
 						value, err := Wallet.ConvertToStablecoin(nil, common.HexToAddress("0x0"), EthToWei(10))
 						Expect(err).ToNot(HaveOccurred())
-						finalAmount := EthToWei(10)
+						finalAmount := MweiToWei(10)
 						finalAmount.Mul(finalAmount, big.NewInt(1000))
 						Expect(value.String()).To(Equal(finalAmount.String()))
 					})
 
 					It("Should succeed", func() {
-						tx, err := Wallet.LoadTokenCard(Owner.TransactOpts(), common.HexToAddress("0x0"), EthToWei(10))
+						tx, err := Wallet.LoadTokenCard(Owner.TransactOpts(), common.HexToAddress("0x0"), GweiToWei(10))
 						Expect(err).ToNot(HaveOccurred())
 						Backend.Commit()
 						Expect(isSuccessful(tx)).To(BeTrue())

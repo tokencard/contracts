@@ -2,6 +2,7 @@ package wallet_test
 
 import (
 	"context"
+	"math"
 	"math/big"
 
 	"github.com/ethereum/go-ethereum/common"
@@ -286,20 +287,25 @@ var _ = Describe("wallet load ERC20", func() {
 
 			}) //more than owned (and hence can be approved)
 
-			When("a bigger amount than daily Load limit is tried to be loaded", func() {
+			When("a bigger amount than daily Load limit is loaded", func() {
 
-				//change the exchange rate to be equal to daily Load limit + 1 wei
 				BeforeEach(func() {
-
-					limPlusOneWei, err := Wallet.LoadLimitValue(nil)
-					Expect(err).ToNot(HaveOccurred())
-
-					limPlusOneWei.Add(limPlusOneWei, big.NewInt(1))
-
+					//rate is 1 token  => 1 ETH
 					tx, err := TokenWhitelist.UpdateTokenRate(
 						ControllerAdmin.TransactOpts(),
 						ERC20Contract1Address,
-						limPlusOneWei,
+						big.NewInt(int64(math.Pow10(18))),
+						big.NewInt(20180913153211),
+					)
+					Expect(err).ToNot(HaveOccurred())
+					Backend.Commit()
+					Expect(isSuccessful(tx)).To(BeTrue())
+
+					// stablecoin rate is 10-6
+					tx, err = TokenWhitelist.UpdateTokenRate(
+						ControllerAdmin.TransactOpts(),
+						StablecoinAddress,
+						big.NewInt(int64(0.001*math.Pow10(18))),
 						big.NewInt(20180913153211),
 					)
 					Expect(err).ToNot(HaveOccurred())
@@ -308,14 +314,12 @@ var _ = Describe("wallet load ERC20", func() {
 				})
 
 				It("Should revert", func() {
-					//1 token  = 101 eth + 1 wei => it should exceed the daily limit, 1 token =  1*magnitude (10^18)
-					tx, err := Wallet.LoadTokenCard(Owner.TransactOpts(ethertest.WithGasLimit(100000)), ERC20Contract1Address, EthToWei(1))
+					tx, err := Wallet.LoadTokenCard(Owner.TransactOpts(ethertest.WithGasLimit(200000)), ERC20Contract1Address, EthToWei(1000))
 					Expect(err).ToNot(HaveOccurred())
 					Backend.Commit()
-					Expect(isGasExhausted(tx, 100000)).To(BeFalse())
 					Expect(isSuccessful(tx)).To(BeFalse())
-                    returnData, _ := ethCall(tx)
-    				Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("available<amount"))
+					returnData, _ := ethCall(tx)
+					Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("available<amount"))
 				})
 
 			}) //more than daily Load limit
@@ -359,8 +363,8 @@ var _ = Describe("wallet load ERC20", func() {
 				Backend.Commit()
 				Expect(isGasExhausted(tx, 100000)).To(BeFalse())
 				Expect(isSuccessful(tx)).To(BeFalse())
-                returnData, _ := ethCall(tx)
-                Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("rate=0"))
+				returnData, _ := ethCall(tx)
+				Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("rate=0"))
 			})
 
 		}) //the token is loadable but the rate has NOT been updated
