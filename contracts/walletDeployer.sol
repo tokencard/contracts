@@ -78,7 +78,7 @@ contract WalletDeployer is ENSResolvable, Controllable {
         if (_initializedGasTopUpLimit) {
             wallet.setGasTopUpLimit(_gasTopUpLimit);
         }
-         if (_initializedLoadLimit) {
+        if (_initializedLoadLimit) {
             wallet.setLoadLimit(_loadLimit);
         }
         if (_initializedWhitelist) {
