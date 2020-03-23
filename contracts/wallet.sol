@@ -770,7 +770,7 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
     /// This is here because our tests don't inherit events from a library
     event UpdatedAvailableLimit();
 
-    string constant public WALLET_VERSION = "2.3.0";
+    string constant public WALLET_VERSION = "3.1.0";
     uint constant private _DEFAULT_MAX_STABLECOIN_LOAD_LIMIT = 10000; //10,000 USD
 
     /// @dev Is the registered ENS node identifying the licence contract.
