@@ -60,13 +60,13 @@ contract Controller is IController, Ownable, Transferrable {
 
     /// @notice Checks if message sender is an admin.
     modifier onlyAdmin() {
-        require(isAdmin(msg.sender), "sender is not an admin");
+        require(_isAdmin[msg.sender], "sender is not an admin");
         _;
     }
 
     /// @notice Check if Owner or Admin
     modifier onlyAdminOrOwner() {
-        require(_isOwner(msg.sender) || isAdmin(msg.sender), "sender is not an admin");
+        require(_isOwner(msg.sender) || _isAdmin[msg.sender], "sender is not an admin");
         _;
     }
 
@@ -113,13 +113,13 @@ contract Controller is IController, Ownable, Transferrable {
 
     /// @notice is an address an Admin?
     /// @return true if the provided account is an admin.
-    function isAdmin(address _account) public view notStopped returns (bool) {
+    function isAdmin(address _account) external view notStopped returns (bool) {
         return _isAdmin[_account];
     }
 
     /// @notice is an address a Controller?
     /// @return true if the provided account is a controller.
-    function isController(address _account) public view notStopped returns (bool) {
+    function isController(address _account) external view notStopped returns (bool) {
         return _isController[_account];
     }
 

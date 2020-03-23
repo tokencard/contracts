@@ -441,7 +441,6 @@ contract GasTopUpLimit is ControllableOwnable, SelfCallableOwnable {
         _gasTopUpLimit._submitLimitUpdate(_amount);
         emit SubmittedGasTopUpLimitUpdate(_amount);
     }
-
 }
 
 
@@ -675,7 +674,6 @@ contract Vault is AddressWhitelist, SpendLimit, ERC165, Transferrable, Balanceab
             // call executeTransaction(), if one of them reverts then the whole batch reverts.
             executeTransaction(destination, value, data);
         }
-
     }
 
     /// @dev This function allows for the owner to send any transaction from the Wallet to arbitrary addresses
@@ -755,7 +753,6 @@ contract Vault is AddressWhitelist, SpendLimit, ERC165, Transferrable, Balanceab
         // Emit the transfer event.
         emit Transferred(_to, _asset, _amount);
     }
-
 }
 
 
@@ -818,7 +815,6 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
         }
 
         emit LoadedTokenCard(_asset, _amount);
-
     }
 
     /// @dev Refill owner's gas balance, revert if the transaction amount is too large
