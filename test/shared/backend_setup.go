@@ -16,9 +16,9 @@ import (
 	. "github.com/onsi/gomega"
 	gtypes "github.com/onsi/gomega/types"
 	"github.com/pkg/errors"
-	"github.com/tokencard/contracts/v2/pkg/bindings"
-	"github.com/tokencard/contracts/v2/pkg/bindings/externals/ens"
-	"github.com/tokencard/contracts/v2/pkg/bindings/mocks"
+	"github.com/tokencard/contracts/v3/pkg/bindings"
+	"github.com/tokencard/contracts/v3/pkg/bindings/externals/ens"
+	"github.com/tokencard/contracts/v3/pkg/bindings/mocks"
 	"github.com/tokencard/ethertest"
 	"golang.org/x/crypto/sha3"
 )

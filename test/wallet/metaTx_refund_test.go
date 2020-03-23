@@ -12,7 +12,7 @@ import (
 	"github.com/ethereum/go-ethereum/crypto"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	. "github.com/tokencard/contracts/v2/test/shared"
+	. "github.com/tokencard/contracts/v3/test/shared"
 )
 
 var _ = Describe("metaTx refund", func() {
