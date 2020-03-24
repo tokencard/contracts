@@ -92,7 +92,7 @@ var _ = Describe("spendAvailable", func() {
 			})
 
 			It("should update the set flag", func() {
-				initialized, err := Wallet.SpendLimitUpdateable(nil)
+				initialized, err := Wallet.SpendLimitOwnerUpdateable(nil)
 				Expect(err).ToNot(HaveOccurred())
 				Expect(initialized).To(BeTrue())
 			})
