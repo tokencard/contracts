@@ -2,46 +2,42 @@ pragma solidity ^0.5.15;
 
 import "crytic-export/flattening/Controller.sol";
 
-contract EchidnaInterface{
-    address payable internal echidna_owner = address(0x41414141);
-    address internal echidna_controller_1 = address(0x424242421);
-    address internal echidna_controller_2 = address(0x424242422);
-    address internal echidna_attacker = address(0x43434343);
+
+contract Echidna {
+    address payable internal echidna_deployer = address(0x1);
+    address internal echidna_controller1 = address(0x2);
+    address internal echidna_controller2 = address(0x3);
+    address internal echidna_attacker = address(0x4);
 }
 
-contract TEST is EchidnaInterface, Controller {
 
-    constructor() Controller(echidna_owner)  public {
-        addController(echidna_controller_1);
-        addController(echidna_controller_2);
+contract TEST is Echidna, Controller {
+    constructor() public Controller(echidna_deployer) {
+        addController(echidna_controller1);
+        addController(echidna_controller2);
     }
 
-    function isOwner(address x) internal view returns (bool) {
-        return owner() == x;
+    function echidna_nonTransferableOwner() public view returns (bool) {
+        return _isOwner(echidna_deployer);
     }
 
-    function echidna_nontransferable_owner() public view returns (bool) {
-        return isOwner(echidna_owner);
-    }
-
-    function echidna_no_admin_controller() public view returns (bool) {
+    function echidna_noAdminRole() public view returns (bool) {
         return this.controllerCount() == 2 && this.adminCount() == 0;
     }
 
-    function echidna_owner_unique_rol() public view returns (bool) {
-        return isOwner(echidna_owner) && !isAdmin(echidna_owner) && !isController(echidna_owner);
+    function echidna_ownerUniqueRole() public view returns (bool) {
+        return _isOwner(echidna_deployer) && !isAdmin(echidna_deployer) && !isController(echidna_deployer);
     }
 
-    function echidna_controller_1_unique_rol() public view returns (bool) {
-        return !isOwner(echidna_controller_1) && !isAdmin(echidna_controller_1) && isController(echidna_controller_1);
+    function echidna_controller1UniqueRole() public view returns (bool) {
+        return !_isOwner(echidna_controller1) && !isAdmin(echidna_controller1) && isController(echidna_controller1);
     }
 
-    function echidna_controller_2_unique_rol() public view returns (bool) {
-        return !isOwner(echidna_controller_2) && !isAdmin(echidna_controller_2) && isController(echidna_controller_2);
+    function echidna_controller2UniqueRole() public view returns (bool) {
+        return !_isOwner(echidna_controller2) && !isAdmin(echidna_controller2) && isController(echidna_controller2);
     }
 
-    function echidna_attacker_no_rol() public view returns (bool) {
-        return !isOwner(echidna_attacker) && !isAdmin(echidna_attacker) && !isController(echidna_attacker);
+    function echidna_attackerNoRole() public view returns (bool) {
+        return !_isOwner(echidna_attacker) && !isAdmin(echidna_attacker) && !isController(echidna_attacker);
     }
-
 }
