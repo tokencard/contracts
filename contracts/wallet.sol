@@ -250,7 +250,7 @@ library DailyLimitTrait {
         uint available;
         uint limitTimestamp;
         uint pending;
-        bool updateable;
+        bool controllerConfirmationRequired;
     }
 
     /// @dev Confirm pending set daily limit operation.
@@ -296,18 +296,18 @@ library DailyLimitTrait {
     /// @param _amount is the daily limit amount in base units.
     function _setLimit(DailyLimit storage self, uint _amount) internal {
         // Require that the spend limit has not been set yet.
-        require(!self.updateable, "limit not updateable");
+        require(!self.controllerConfirmationRequired, "limit already set");
         // Modify spend limit based on the provided value.
         _modifyLimit(self, _amount);
         // Flag the operation as set.
-        self.updateable = true;
+        self.controllerConfirmationRequired = true;
     }
 
     /// @dev Submit a daily limit update, needs to be confirmed.
     /// @param _amount is the daily limit amount in base units.
     function _submitLimitUpdate(DailyLimit storage self, uint _amount) internal {
         // Require that the spend limit has been set.
-        require(self.updateable, "limit still updateable");
+        require(self.controllerConfirmationRequired, "limit hasn't been set yet");
         // Assign the provided amount to pending daily limit.
         self.pending = _amount;
     }
@@ -364,8 +364,8 @@ contract SpendLimit is ControllableOwnable, SelfCallableOwnable {
     }
 
     /// @dev Has the spend limit been initialised
-    function spendLimitUpdateable() external view returns (bool) {
-        return _spendLimit.updateable;
+    function spendLimitControllerConfirmationRequired() external view returns (bool) {
+        return _spendLimit.controllerConfirmationRequired;
     }
 
     /// @dev View how much has been spent already
@@ -417,8 +417,8 @@ contract GasTopUpLimit is ControllableOwnable, SelfCallableOwnable {
     }
 
     /// @dev Has the gas top-up limit been initialised
-    function gasTopUpLimitUpdateable() external view returns (bool) {
-        return _gasTopUpLimit.updateable;
+    function gasTopUpLimitControllerConfirmationRequired() external view returns (bool) {
+        return _gasTopUpLimit.controllerConfirmationRequired;
     }
 
     /// @dev View how much gas top-up has been spent already
@@ -490,8 +490,8 @@ contract LoadLimit is ControllableOwnable, SelfCallableOwnable {
     }
 
     /// @dev Has the load limit been initialised
-    function loadLimitUpdateable() external view returns (bool) {
-        return _loadLimit.updateable;
+    function loadLimitControllerConfirmationRequired() external view returns (bool) {
+        return _loadLimit.controllerConfirmationRequired;
     }
 
     /// @dev View how much laod limit has been spent already

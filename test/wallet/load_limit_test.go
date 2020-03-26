@@ -2,7 +2,7 @@ package wallet_test
 
 import (
 	"time"
-    
+
 	"github.com/ethereum/go-ethereum/core/types"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -67,7 +67,7 @@ var _ = Describe("loadLimit", func() {
 			})
 
 			It("should update the set flag", func() {
-				set, err := Wallet.LoadLimitUpdateable(nil)
+				set, err := Wallet.LoadLimitControllerConfirmationRequired(nil)
 				Expect(err).ToNot(HaveOccurred())
 				Expect(set).To(BeTrue())
 			})

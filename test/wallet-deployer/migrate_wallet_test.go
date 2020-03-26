@@ -45,19 +45,19 @@ var _ = Describe("Migrate Wallet", func() {
 		})
 
 		It("should NOT make the GasTopUpLimit updateable", func() {
-			initialized, err := MigratedWallet.GasTopUpLimitUpdateable(nil)
+			initialized, err := MigratedWallet.GasTopUpLimitControllerConfirmationRequired(nil)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(initialized).To(BeFalse())
 		})
 
 		It("should NOT make SpendLimit updateable", func() {
-			initialized, err := MigratedWallet.SpendLimitUpdateable(nil)
+			initialized, err := MigratedWallet.SpendLimitControllerConfirmationRequired(nil)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(initialized).To(BeFalse())
 		})
 
 		It("should NOT make LoadLimit updateable", func() {
-			initialized, err := MigratedWallet.LoadLimitUpdateable(nil)
+			initialized, err := MigratedWallet.LoadLimitControllerConfirmationRequired(nil)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(initialized).To(BeFalse())
 		})
@@ -196,7 +196,7 @@ var _ = Describe("Migrate Wallet", func() {
 			})
 
 			It("should make SpendLimit updateable", func() {
-				initialized, err := MigratedWallet.SpendLimitUpdateable(nil)
+				initialized, err := MigratedWallet.SpendLimitControllerConfirmationRequired(nil)
 				Expect(err).ToNot(HaveOccurred())
 				Expect(initialized).To(BeTrue())
 			})
@@ -214,7 +214,7 @@ var _ = Describe("Migrate Wallet", func() {
 			})
 
 			It("should make GasToUpLimit updateable", func() {
-				initialized, err := MigratedWallet.GasTopUpLimitUpdateable(nil)
+				initialized, err := MigratedWallet.GasTopUpLimitControllerConfirmationRequired(nil)
 				Expect(err).ToNot(HaveOccurred())
 				Expect(initialized).To(BeTrue())
 			})
@@ -230,7 +230,7 @@ var _ = Describe("Migrate Wallet", func() {
 			})
 
 			It("should make LoadLimit updateable", func() {
-				initialized, err := MigratedWallet.LoadLimitUpdateable(nil)
+				initialized, err := MigratedWallet.LoadLimitControllerConfirmationRequired(nil)
 				Expect(err).ToNot(HaveOccurred())
 				Expect(initialized).To(BeTrue())
 			})
@@ -264,7 +264,7 @@ var _ = Describe("Migrate Wallet", func() {
 			})
 
 			It("should update the TopUpLimit initializedTopup flag", func() {
-				initialized, err := MigratedWallet.GasTopUpLimitUpdateable(nil)
+				initialized, err := MigratedWallet.GasTopUpLimitControllerConfirmationRequired(nil)
 				Expect(err).ToNot(HaveOccurred())
 				Expect(initialized).To(BeTrue())
 			})
