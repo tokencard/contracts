@@ -75,7 +75,7 @@ var _ = Describe("GasTopUpLimit", func() {
 			})
 
 			It("should update the set flag", func() {
-				initialized, err := Wallet.GasTopUpLimitOwnerUpdateable(nil)
+				initialized, err := Wallet.GasTopUpLimitControllerConfirmationRequired(nil)
 				Expect(err).ToNot(HaveOccurred())
 				Expect(initialized).To(BeTrue())
 			})

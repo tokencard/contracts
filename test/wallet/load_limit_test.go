@@ -67,7 +67,7 @@ var _ = Describe("loadLimit", func() {
 			})
 
 			It("should update the set flag", func() {
-				set, err := Wallet.LoadLimitOwnerUpdateable(nil)
+				set, err := Wallet.LoadLimitControllerConfirmationRequired(nil)
 				Expect(err).ToNot(HaveOccurred())
 				Expect(set).To(BeTrue())
 			})
