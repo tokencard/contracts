@@ -46,44 +46,44 @@ jobs:
           working_directory: contracts
           command: |
             if [[ "${CIRCLE_NODE_INDEX}" == 0 ]]; then
-              myth analyze --solv=0.5.15 ./oracle.sol --execution-timeout=850
+              myth analyze --solv=0.5.15 ./oracle.sol --execution-timeout=800
             fi
-          no_output_timeout: 15m
+          no_output_timeout: 20m
       - run:
           working_directory: contracts
           command: |
             if [[ "${CIRCLE_NODE_INDEX}" == 1 ]]; then
-              myth analyze --solv=0.5.15 ./wallet.sol --execution-timeout=850
+              myth analyze --solv=0.5.15 ./wallet.sol --execution-timeout=800
             fi
-          no_output_timeout: 15m
+          no_output_timeout: 20m
       - run:
           working_directory: contracts
           command: |
             if [[ "${CIRCLE_NODE_INDEX}" == 2 ]]; then
-              myth analyze --solv=0.5.15 ./holder.sol --execution-timeout=850
+              myth analyze --solv=0.5.15 ./holder.sol --execution-timeout=800
             fi
-          no_output_timeout: 15m
+          no_output_timeout: 20m
       - run:
           working_directory: contracts
           command: |
             if [[ "${CIRCLE_NODE_INDEX}" == 3 ]]; then
-              myth analyze --solv=0.5.15 ./licence.sol --execution-timeout=850
+              myth analyze --solv=0.5.15 ./licence.sol --execution-timeout=800
             fi
-          no_output_timeout: 15m
+          no_output_timeout: 20m
       - run:
           working_directory: contracts
           command: |
             if [[ "${CIRCLE_NODE_INDEX}" == 4 ]]; then
-              myth analyze --solv=0.5.15 ./tokenWhitelist.sol --execution-timeout=850
+              myth analyze --solv=0.5.15 ./tokenWhitelist.sol --execution-timeout=800
             fi
-          no_output_timeout: 15m
+          no_output_timeout: 20m
       - run:
           working_directory: contracts
           command: |
             if [[ "${CIRCLE_NODE_INDEX}" == 5 ]]; then
-              myth analyze --solv=0.5.15 ./walletDeployer.sol --execution-timeout=850
+              myth analyze --solv=0.5.15 ./walletDeployer.sol --execution-timeout=800
             fi
-          no_output_timeout: 15m
+          no_output_timeout: 20m
 
   slither:
     docker:
