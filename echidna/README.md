@@ -1,34 +1,48 @@
-# Echidna tests for TokenCard contracts
+# Properties
 
-This directory contains some properties for testing TokenCard contracts where three users are defined:
+This directory contains some properties for testing Solidity contracts where multiple users are defined:
 
-* `echidna_owner`: the owner of the contract only used to execute the contract constructor
-* `echidna_attack`: an unprivileged user, used to execute the randomly generated transactions
-* `echidna_user`: another unprivileged user, also used to execute randomly generated transactions in cases where multiple users are necessary
+- `echidna_deployer`: Deployer address used to execute the contract constructor.
 
-We test a variety of properties, such as:
-* Whitelist addition and removal operations properly modify the whitelist
-* The owner of a contract cannot be changed.
-* Spending limits are properly bounded by the spend limit values
-* Spending limits do in fact reset daily
-* Differential testing of the different interger parsing functions produce identical results
+- `echidna_owner`: Address of the user that owns an ownable contract.
+
+- `echidna_controller`: Controller address assigned to a controllable contract.
+
+- `echidna_attacker`: An unprivileged user, used to execute the randomly generated transactions.
+
+# Configuration
+
+Individual tests can be configured using yaml configuration files.
+
+A full list of test configuration options can be found here: [default.yaml](https://github.com/crytic/echidna/blob/master/examples/solidity/basic/default.yaml)
 
 # Instructions
 
-1. Uncompress this file in the root of [TokenCard's contract repository](https://github.com/tokencard/contracts). We tested this example with version [2.0.0](https://github.com/tokencard/contracts/commit/b99b7d1670f9ad7b90335e8391fe63fd7e20de9b).
-2. Install the latest revision of [Echidna](https://github.com/crytic/echidna/#installation). Note that `ecRecover.sol` requires the `dev-hevm-0.29` branch of Echidna to run.
-3. Execute `echidna-test` with one of the `*.sol` files and its corresponding `*.yaml` config file. For example, an invocation with `spendLimit.sol` would look like:
+Normally the echidna tests run in CircleCI but they can also be invoked locally for development purposes.
 
-``` 
-$ echidna-test spendLimit.sol --config spendLimit.yaml TEST
-...
+Run trail of bits security toolbox and mount the contracts directory, you need to make sure that the path is an absolute path:
 
-Analyzing contract: spendLimit.sol:TEST
-echidna_fixed_spendLimitValue: passed! 🎉
-echidna_bounded_spendLimitAvailable: passed! 🎉
-echidna_fixed_owner: passed! 🎉
-echidna_daily_spendLimitAvailable: passed! 🎉
+    docker run -v $GOPATH/src/github.com/tokencard/contracts:/contracts -it trailofbits/eth-security-toolbox:latest
 
-Unique instructions: 900
-Unique codehashes: 1
-```
+Run `echidna-test` command on each test contract:
+
+    echidna-test echidna/spendLimit.sol --config=echidna/spendLimit.yaml --contract=TEST
+
+    Analyzing contract: spendLimit.sol:TEST
+    echidna_fixed_spendLimitValue: passed!
+    echidna_bounded_spendLimitAvailable: passed!
+    echidna_fixed_owner: passed!
+    echidna_daily_spendLimitAvailable: passed!
+
+    Unique instructions: 900
+    Unique codehashes: 1
+
+# Tools
+
+Sometimes it's necessary to convert external functions in a contract to public functions so that they can be called inside the derived TEST contract.
+
+For this it's advisable to use the `slither-flat` command like so:
+
+    slither-flat --convert-external contracts/wallet.sol
+
+This will create a new flattened contract at `critic-export/flattening/Wallet.sol` which can then be imported in the test file as `import "crytic-export/flattening/Wallet.sol";`.

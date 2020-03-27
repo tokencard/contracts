@@ -1,0 +1,9 @@
+{
+    "detectors_to_exclude": "assembly,low-level-calls,pragma,naming-convention,solc-version",
+    "exclude_informational": false,
+    "exclude_low": false,
+    "exclude_medium": false,
+    "exclude_high": false,
+    "disable_color": false,
+    "filter_paths": "../contracts/externals"
+}

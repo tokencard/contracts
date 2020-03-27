@@ -1,19 +1,18 @@
 pragma solidity ^0.5.15;
 
-import "contracts/licence.sol";
+import "contracts/internals/ownable.sol";
 
-contract EchidnaInterface{
-    address internal echidna_owner = address(0x41414141);
-    address payable internal echidna_user = address(0x42424242);
-    address internal echidna_attacker = address(0x43434343);
+
+contract Echidna {
+    address payable internal echidna_deployer = address(0x1);
+    address payable internal echidna_owner = address(0x2);
 }
 
-contract TEST is EchidnaInterface, Controller {
 
-    constructor() Controller(echidna_user) public {}
+contract TEST is Echidna, Ownable {
+    constructor() public Ownable(echidna_owner, false) {}
 
-    function echidna_nontransferable_owner() public returns (bool) {
-        return owner() == echidna_user;
+    function echidna_nonTransferableOwner() public returns (bool) {
+        return _isOwner(echidna_owner);
     }
-
 }

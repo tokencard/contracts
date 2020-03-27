@@ -1,7 +1,8 @@
-seqLen: 50
+timeout: 1200
 testLimit: 20000
 prefix: "echidna_"
-deployer: "0x41414141"
-sender: ["0x42424242", "0x43434343"]
+deployer: "0x1"
+sender: ["0x2"]
 dashboard: false
+coverage: true
 solcArgs: "--allow-paths ."
