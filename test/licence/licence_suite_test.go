@@ -67,7 +67,7 @@ var _ = Describe("constructor is called with an out of range licence value", fun
 })
 
 var _ = AfterSuite(func() {
-	TestRig.ExpectMinimumCoverage("licence.sol", 98.00)
+	TestRig.ExpectMinimumCoverage("licence.sol", 97.90)
 	TestRig.PrintGasUsage(os.Stdout)
 })
 
