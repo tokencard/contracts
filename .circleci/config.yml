@@ -46,44 +46,44 @@ jobs:
           working_directory: contracts
           command: |
             if [[ "${CIRCLE_NODE_INDEX}" == 0 ]]; then
-              myth analyze --solv=0.5.15 ./oracle.sol --execution-timeout=900
+              myth analyze --solv=0.5.15 ./oracle.sol --execution-timeout=600
             fi
-          no_output_timeout: 20m
+          no_output_timeout: 15m
       - run:
           working_directory: contracts
           command: |
             if [[ "${CIRCLE_NODE_INDEX}" == 1 ]]; then
-              myth analyze --solv=0.5.15 ./wallet.sol --execution-timeout=900
+              myth analyze --solv=0.5.15 ./wallet.sol --execution-timeout=600
             fi
-          no_output_timeout: 20m
+          no_output_timeout: 15m
       - run:
           working_directory: contracts
           command: |
             if [[ "${CIRCLE_NODE_INDEX}" == 2 ]]; then
-              myth analyze --solv=0.5.15 ./holder.sol --execution-timeout=900
+              myth analyze --solv=0.5.15 ./holder.sol --execution-timeout=600
             fi
-          no_output_timeout: 20m
+          no_output_timeout: 15m
       - run:
           working_directory: contracts
           command: |
             if [[ "${CIRCLE_NODE_INDEX}" == 3 ]]; then
-              myth analyze --solv=0.5.15 ./licence.sol --execution-timeout=900
+              myth analyze --solv=0.5.15 ./licence.sol --execution-timeout=600
             fi
-          no_output_timeout: 20m
+          no_output_timeout: 15m
       - run:
           working_directory: contracts
           command: |
             if [[ "${CIRCLE_NODE_INDEX}" == 4 ]]; then
-              myth analyze --solv=0.5.15 ./tokenWhitelist.sol --execution-timeout=900
+              myth analyze --solv=0.5.15 ./tokenWhitelist.sol --execution-timeout=600
             fi
-          no_output_timeout: 20m
+          no_output_timeout: 15m
       - run:
           working_directory: contracts
           command: |
             if [[ "${CIRCLE_NODE_INDEX}" == 5 ]]; then
-              myth analyze --solv=0.5.15 ./walletDeployer.sol --execution-timeout=900
+              myth analyze --solv=0.5.15 ./walletDeployer.sol --execution-timeout=600
             fi
-          no_output_timeout: 20m
+          no_output_timeout: 15m
 
   slither:
     docker:
@@ -98,42 +98,42 @@ jobs:
           working_directory: slither
           command: |
             if [[ "${CIRCLE_NODE_INDEX}" == 0 ]]; then
-                slither --exclude=assembly,low-level-calls,pragma,naming-convention,solc-version ../contracts/wallet.sol
+                slither ../contracts/wallet.sol
             fi
           no_output_timeout: 5m
       - run:
           working_directory: slither
           command: |
             if [[ "${CIRCLE_NODE_INDEX}" == 1 ]]; then
-                slither --exclude=assembly,low-level-calls,pragma,naming-convention,solc-version ../contracts/oracle.sol
+                slither ../contracts/oracle.sol
             fi
           no_output_timeout: 5m
       - run:
           working_directory: slither
           command: |
             if [[ "${CIRCLE_NODE_INDEX}" == 2 ]]; then
-                slither --exclude=assembly,low-level-calls,pragma,naming-convention,solc-version ../contracts/licence.sol
+                slither ../contracts/licence.sol
             fi
           no_output_timeout: 5m
       - run:
           working_directory: slither
           command: |
             if [[ "${CIRCLE_NODE_INDEX}" == 3 ]]; then
-                slither --exclude=assembly,low-level-calls,pragma,naming-convention,solc-version ../contracts/holder.sol
+                slither ../contracts/holder.sol
             fi
           no_output_timeout: 5m
       - run:
           working_directory: slither
           command: |
             if [[ "${CIRCLE_NODE_INDEX}" == 4 ]]; then
-                slither --exclude=assembly,low-level-calls,pragma,naming-convention,solc-version ../contracts/tokenWhitelist.sol
+                slither ../contracts/tokenWhitelist.sol
             fi
           no_output_timeout: 5m
       - run:
           working_directory: slither
           command: |
             if [[ "${CIRCLE_NODE_INDEX}" == 5 ]]; then
-                slither --exclude=assembly,low-level-calls,pragma,naming-convention,solc-version ../contracts/walletDeployer.sol
+                slither ../contracts/walletDeployer.sol
             fi
           no_output_timeout: 5m
 
