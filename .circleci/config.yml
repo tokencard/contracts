@@ -24,8 +24,8 @@ jobs:
             - "vendor"
 
   build_check:
-    docker:
-      - image: quay.io/token/go-build:v0.3.7
+    machine:
+      image: ubuntu-1604:201903-01      
     working_directory: /home/circleci/github.com/tokencard/contracts
     steps:
       - checkout
