@@ -24,7 +24,6 @@ import "./ensResolvable.sol";
 
 /// @title TokenWhitelistable implements access to the TokenWhitelist located behind ENS.
 contract TokenWhitelistable is ENSResolvable {
-
     /// @notice Is the registered ENS node identifying the tokenWhitelist contract
     bytes32 private _tokenWhitelistNode;
 
@@ -81,34 +80,34 @@ contract TokenWhitelistable is ENSResolvable {
     /// @param _token ERC20 token contract address.
     /// @param _rate ERC20 token exchange rate in wei.
     /// @param _updateDate date for the token updates. This will be compared to when oracle updates are received.
-    function _updateTokenRate(address _token, uint _rate, uint _updateDate) internal {
+    function _updateTokenRate(address _token, uint256 _rate, uint256 _updateDate) internal {
         ITokenWhitelist(_ensResolve(_tokenWhitelistNode)).updateTokenRate(_token, _rate, _updateDate);
     }
 
     /// @notice based on the method it returns the recipient address and amount/value, ERC20 specific.
     /// @param _data is the transaction payload.
-    function _getERC20RecipientAndAmount(address _destination, bytes memory _data) internal view returns (address, uint) {
+    function _getERC20RecipientAndAmount(address _destination, bytes memory _data) internal view returns (address, uint256) {
         return ITokenWhitelist(_ensResolve(_tokenWhitelistNode)).getERC20RecipientAndAmount(_destination, _data);
     }
 
     /// @notice Checks whether a token is available.
     /// @return bool available or not.
     function _isTokenAvailable(address _a) internal view returns (bool) {
-        ( , , , bool available, , , ) = _getTokenInfo(_a);
+        (, , , bool available, , , ) = _getTokenInfo(_a);
         return available;
     }
 
     /// @notice Checks whether a token is redeemable.
     /// @return bool redeemable or not.
     function _isTokenRedeemable(address _a) internal view returns (bool) {
-        ( , , , , , bool redeemable, ) = _getTokenInfo(_a);
+        (, , , , , bool redeemable, ) = _getTokenInfo(_a);
         return redeemable;
     }
 
     /// @notice Checks whether a token is loadable.
     /// @return bool loadable or not.
     function _isTokenLoadable(address _a) internal view returns (bool) {
-        ( , , , , bool loadable, , ) = _getTokenInfo(_a);
+        (, , , , bool loadable, , ) = _getTokenInfo(_a);
         return loadable;
     }
 
@@ -117,5 +116,4 @@ contract TokenWhitelistable is ENSResolvable {
     function _stablecoin() internal view returns (address) {
         return ITokenWhitelist(_ensResolve(_tokenWhitelistNode)).stablecoin();
     }
-
 }

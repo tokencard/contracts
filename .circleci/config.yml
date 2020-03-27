@@ -24,8 +24,8 @@ jobs:
             - "vendor"
 
   build_check:
-    machine:
-      image: ubuntu-1604:201903-01
+    docker:
+      - image: quay.io/token/go-build:v0.3.7
     working_directory: /home/circleci/github.com/tokencard/contracts
     steps:
       - checkout
@@ -34,6 +34,16 @@ jobs:
             - vendor-{{ checksum "go.sum" }}
       - run: ./build.sh
       - run: '[[ -z $(git status -uno --porcelain) ]] || (git status ; echo "Please run ./build.sh before committing changes!"; exit 1)'
+
+  format_check:
+    docker:
+      - image: quay.io/token/go-build:v0.3.7
+    working_directory: /home/circleci/github.com/tokencard/contracts
+    steps:
+      - checkout
+      - run: apk add -U nodejs npm
+      - run: npm install --save-dev prettier@2.0.2 prettier-plugin-solidity@1.0.0-alpha.47
+      - run: npx prettier --list-different --plugin=prettier-plugin-solidity {contracts,contracts/mocks,contracts/internals}/*.sol
 
   mythril:
     docker:
@@ -195,6 +205,10 @@ workflows:
       - build_check:
           requires:
             - build_test
+          filters:
+            tags:
+              ignore: ""
+      - format_check:
           filters:
             tags:
               ignore: ""

@@ -24,16 +24,24 @@ import "./internals/bytesUtils.sol";
 import "./externals/strings.sol";
 import "./externals/SafeMath.sol";
 
+
 /// @title The ITokenWhitelist interface provides access to a whitelist of tokens.
 interface ITokenWhitelist {
     function getTokenInfo(address) external view returns (string memory, uint256, uint256, bool, bool, bool, uint256);
+
     function getStablecoinInfo() external view returns (string memory, uint256, uint256, bool, bool, bool, uint256);
+
     function tokenAddressArray() external view returns (address[] memory);
+
     function redeemableTokens() external view returns (address[] memory);
+
     function methodIdWhitelist(bytes4) external view returns (bool);
-    function getERC20RecipientAndAmount(address, bytes calldata) external view returns (address, uint);
+
+    function getERC20RecipientAndAmount(address, bytes calldata) external view returns (address, uint256);
+
     function stablecoin() external view returns (address);
-    function updateTokenRate(address, uint, uint) external;
+
+    function updateTokenRate(address, uint256, uint256) external;
 }
 
 
@@ -43,12 +51,12 @@ contract TokenWhitelist is ENSResolvable, Controllable, Transferrable {
     using SafeMath for uint256;
     using BytesUtils for bytes;
 
-    event UpdatedTokenRate(address _sender, address _token, uint _rate);
+    event UpdatedTokenRate(address _sender, address _token, uint256 _rate);
 
     event UpdatedTokenLoadable(address _sender, address _token, bool _loadable);
     event UpdatedTokenRedeemable(address _sender, address _token, bool _redeemable);
 
-    event AddedToken(address _sender, address _token, string _symbol, uint _magnitude, bool _loadable, bool _redeemable);
+    event AddedToken(address _sender, address _token, string _symbol, uint256 _magnitude, bool _loadable, bool _redeemable);
     event RemovedToken(address _sender, address _token);
 
     event AddedMethodId(bytes4 _methodId);
@@ -56,22 +64,22 @@ contract TokenWhitelist is ENSResolvable, Controllable, Transferrable {
     event AddedExclusiveMethod(address _token, bytes4 _methodId);
     event RemovedExclusiveMethod(address _token, bytes4 _methodId);
 
-    event Claimed(address _to, address _asset, uint _amount);
+    event Claimed(address _to, address _asset, uint256 _amount);
 
     /// @dev these are the methods whitelisted by default in executeTransaction() for protected tokens
     bytes4 private constant _APPROVE = 0x095ea7b3; // keccak256(approve(address,uint256)) => 0x095ea7b3
     bytes4 private constant _BURN = 0x42966c68; // keccak256(burn(uint256)) => 0x42966c68
-    bytes4 private constant _TRANSFER= 0xa9059cbb; // keccak256(transfer(address,uint256)) => 0xa9059cbb
+    bytes4 private constant _TRANSFER = 0xa9059cbb; // keccak256(transfer(address,uint256)) => 0xa9059cbb
     bytes4 private constant _TRANSFER_FROM = 0x23b872dd; // keccak256(transferFrom(address,address,uint256)) => 0x23b872dd
 
     struct Token {
-        string symbol;    // Token symbol
-        uint magnitude;   // 10^decimals
-        uint rate;        // Token exchange rate in wei
-        bool available;   // Flags if the token is available or not
-        bool loadable;    // Flags if token is loadable to the TokenCard
-        bool redeemable;    // Flags if token is redeemable in the TKN Holder contract
-        uint lastUpdate;  // Time of the last rate update
+        string symbol; // Token symbol
+        uint256 magnitude; // 10^decimals
+        uint256 rate; // Token exchange rate in wei
+        bool available; // Flags if the token is available or not
+        bool loadable; // Flags if token is loadable to the TokenCard
+        bool redeemable; // Flags if token is redeemable in the TKN Holder contract
+        uint256 lastUpdate; // Time of the last rate update
     }
 
     mapping(address => Token) private _tokenInfoMap;
@@ -82,7 +90,7 @@ contract TokenWhitelist is ENSResolvable, Controllable, Transferrable {
     address[] private _tokenAddressArray;
 
     /// @notice keeping track of how many redeemable tokens are in the tokenWhitelist
-    uint private _redeemableCounter;
+    uint256 private _redeemableCounter;
 
     /// @notice Address of the stablecoin.
     address private _stablecoin;
@@ -95,7 +103,11 @@ contract TokenWhitelist is ENSResolvable, Controllable, Transferrable {
     /// @param _oracleNode_ is the ENS node of the Oracle.
     /// @param _controllerNode_ is our Controllers node.
     /// @param _stablecoinAddress_ is the address of the stablecoint used by the wallet for the card load limit.
-    constructor(address _ens_, bytes32 _oracleNode_, bytes32 _controllerNode_, address _stablecoinAddress_) ENSResolvable(_ens_) Controllable(_controllerNode_) public {
+    constructor(address _ens_, bytes32 _oracleNode_, bytes32 _controllerNode_, address _stablecoinAddress_)
+        public
+        ENSResolvable(_ens_)
+        Controllable(_controllerNode_)
+    {
         _oracleNode = _oracleNode_;
         _stablecoin = _stablecoinAddress_;
         //a priori ERC20 whitelisted methods
@@ -107,7 +119,7 @@ contract TokenWhitelist is ENSResolvable, Controllable, Transferrable {
 
     modifier onlyAdminOrOracle() {
         address oracleAddress = _ensResolve(_oracleNode);
-        require (_isAdmin(msg.sender) || msg.sender == oracleAddress, "either oracle or admin");
+        require(_isAdmin(msg.sender) || msg.sender == oracleAddress, "either oracle or admin");
         _;
     }
 
@@ -118,29 +130,42 @@ contract TokenWhitelist is ENSResolvable, Controllable, Transferrable {
     /// @param _loadable is a bool that states whether or not a token is loadable to the TokenCard.
     /// @param _redeemable is a bool that states whether or not a token is redeemable in the TKN Holder Contract.
     /// @param _lastUpdate is a unit representing an ISO datetime e.g. 20180913153211.
-    function addTokens(address[] calldata _tokens, bytes32[] calldata _symbols, uint[] calldata _magnitude, bool[] calldata _loadable, bool[] calldata _redeemable, uint _lastUpdate) external onlyAdmin {
+    function addTokens(
+        address[] calldata _tokens,
+        bytes32[] calldata _symbols,
+        uint256[] calldata _magnitude,
+        bool[] calldata _loadable,
+        bool[] calldata _redeemable,
+        uint256 _lastUpdate
+    ) external onlyAdmin {
         // Require that all parameters have the same length.
-        require(_tokens.length == _symbols.length && _tokens.length == _magnitude.length && _tokens.length == _loadable.length && _tokens.length == _loadable.length, "parameter lengths do not match");
+        require(
+            _tokens.length == _symbols.length &&
+                _tokens.length == _magnitude.length &&
+                _tokens.length == _loadable.length &&
+                _tokens.length == _loadable.length,
+            "parameter lengths do not match"
+        );
         // Add each token to the list of supported tokens.
-        for (uint i = 0; i < _tokens.length; i++) {
+        for (uint256 i = 0; i < _tokens.length; i++) {
             // Require that the token isn't already available.
             require(!_tokenInfoMap[_tokens[i]].available, "token already available");
             // Store the intermediate values.
             string memory symbol = _symbols[i].toSliceB32().toString();
             // Add the token to the token list.
             _tokenInfoMap[_tokens[i]] = Token({
-                symbol : symbol,
-                magnitude : _magnitude[i],
-                rate : 0,
-                available : true,
-                loadable : _loadable[i],
+                symbol: symbol,
+                magnitude: _magnitude[i],
+                rate: 0,
+                available: true,
+                loadable: _loadable[i],
                 redeemable: _redeemable[i],
-                lastUpdate : _lastUpdate
+                lastUpdate: _lastUpdate
             });
             // Add the token address to the address list.
             _tokenAddressArray.push(_tokens[i]);
             //if the token is redeemable increase the redeemableCounter
-            if (_redeemable[i]){
+            if (_redeemable[i]) {
                 _redeemableCounter = _redeemableCounter.add(1);
             }
             // Emit token addition event.
@@ -152,19 +177,19 @@ contract TokenWhitelist is ENSResolvable, Controllable, Transferrable {
     /// @param _tokens ERC20 token contract addresses.
     function removeTokens(address[] calldata _tokens) external onlyAdmin {
         // Delete each token object from the list of supported tokens based on the addresses provided.
-        for (uint i = 0; i < _tokens.length; i++) {
+        for (uint256 i = 0; i < _tokens.length; i++) {
             // Store the token address.
             address token = _tokens[i];
             //token must be available, reverts on duplicates as well
             require(_tokenInfoMap[token].available, "token is not available");
             //if the token is redeemable decrease the redeemableCounter
-            if (_tokenInfoMap[token].redeemable){
+            if (_tokenInfoMap[token].redeemable) {
                 _redeemableCounter = _redeemableCounter.sub(1);
             }
             // Delete the token object.
             delete _tokenInfoMap[token];
             // Remove the token address from the address list.
-            for (uint j = 0; j < _tokenAddressArray.length.sub(1); j++) {
+            for (uint256 j = 0; j < _tokenAddressArray.length.sub(1); j++) {
                 if (_tokenAddressArray[j] == token) {
                     _tokenAddressArray[j] = _tokenAddressArray[_tokenAddressArray.length.sub(1)];
                     break;
@@ -178,7 +203,7 @@ contract TokenWhitelist is ENSResolvable, Controllable, Transferrable {
 
     /// @notice based on the method it returns the recipient address and amount/value, ERC20 specific.
     /// @param _data is the transaction payload.
-    function getERC20RecipientAndAmount(address _token, bytes calldata _data) external view returns (address, uint) {
+    function getERC20RecipientAndAmount(address _token, bytes calldata _data) external view returns (address, uint256) {
         // Require that there exist enough bytes for encoding at least a method signature + data in the transaction payload:
         // 4 (signature)  + 32(address or uint256)
         require(_data.length >= 4 + 32, "not enough method-encoding bytes");
@@ -193,8 +218,9 @@ contract TokenWhitelist is ENSResolvable, Controllable, Transferrable {
         } else if (signature == _TRANSFER_FROM) {
             // 4 (signature) + 32(address) + 32(address) + 32(uint256)
             require(_data.length >= 4 + 32 + 32 + 32, "not enough data for transferFrom");
-            return ( _data._bytesToAddress(4 + 32 + 12), _data._bytesToUint256(4 + 32 + 32));
-        } else { //transfer or approve
+            return (_data._bytesToAddress(4 + 32 + 12), _data._bytesToUint256(4 + 32 + 32));
+        } else {
+            //transfer or approve
             // 4 (signature) + 32(address) + 32(uint)
             require(_data.length >= 4 + 32 + 32, "not enough data for transfer/appprove");
             return (_data._bytesToAddress(4 + 12), _data._bytesToUint256(4 + 32));
@@ -227,7 +253,7 @@ contract TokenWhitelist is ENSResolvable, Controllable, Transferrable {
     /// @param _token ERC20 token contract address.
     /// @param _rate ERC20 token exchange rate in wei.
     /// @param _updateDate date for the token updates. This will be compared to when oracle updates are received.
-    function updateTokenRate(address _token, uint _rate, uint _updateDate) external onlyAdminOrOracle {
+    function updateTokenRate(address _token, uint256 _rate, uint256 _updateDate) external onlyAdminOrOracle {
         // Require that the token exists.
         require(_tokenInfoMap[_token].available, "token is not available");
         // Update the token's rate.
@@ -239,7 +265,7 @@ contract TokenWhitelist is ENSResolvable, Controllable, Transferrable {
     }
 
     //// @notice Withdraw tokens from the smart contract to the specified account.
-    function claim(address payable _to, address _asset, uint _amount) external onlyAdmin {
+    function claim(address payable _to, address _asset, uint256 _amount) external onlyAdmin {
         _safeTransfer(_to, _asset, _amount);
         emit Claimed(_to, _asset, _amount);
     }
@@ -268,7 +294,15 @@ contract TokenWhitelist is ENSResolvable, Controllable, Transferrable {
     /// @return uint of the lastUpdated time of the token's exchange rate.
     function getStablecoinInfo() external view returns (string memory, uint256, uint256, bool, bool, bool, uint256) {
         Token storage stablecoinInfo = _tokenInfoMap[_stablecoin];
-        return (stablecoinInfo.symbol, stablecoinInfo.magnitude, stablecoinInfo.rate, stablecoinInfo.available, stablecoinInfo.loadable, stablecoinInfo.redeemable, stablecoinInfo.lastUpdate);
+        return (
+            stablecoinInfo.symbol,
+            stablecoinInfo.magnitude,
+            stablecoinInfo.rate,
+            stablecoinInfo.available,
+            stablecoinInfo.loadable,
+            stablecoinInfo.redeemable,
+            stablecoinInfo.lastUpdate
+        );
     }
 
     /// @notice This returns an array of all whitelisted token addresses.
@@ -281,17 +315,16 @@ contract TokenWhitelist is ENSResolvable, Controllable, Transferrable {
     /// @return address[] of redeemable tokens.
     function redeemableTokens() external view returns (address[] memory) {
         address[] memory redeemableAddresses = new address[](_redeemableCounter);
-        uint redeemableIndex = 0;
-        for (uint i = 0; i < _tokenAddressArray.length; i++) {
+        uint256 redeemableIndex = 0;
+        for (uint256 i = 0; i < _tokenAddressArray.length; i++) {
             address token = _tokenAddressArray[i];
-            if (_tokenInfoMap[token].redeemable){
+            if (_tokenInfoMap[token].redeemable) {
                 redeemableAddresses[redeemableIndex] = token;
                 redeemableIndex += 1;
             }
         }
         return redeemableAddresses;
     }
-
 
     /// @notice This returns true if a method Id is supported for the specific token.
     /// @return true if _methodId is supported in general or just for the specific token.
@@ -308,7 +341,7 @@ contract TokenWhitelist is ENSResolvable, Controllable, Transferrable {
 
     /// @notice This returns the number of redeemable tokens.
     /// @return current # of redeemables.
-    function redeemableCounter() external view returns (uint) {
+    function redeemableCounter() external view returns (uint256) {
         return _redeemableCounter;
     }
 

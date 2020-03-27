@@ -25,12 +25,12 @@ import "./internals/controllable.sol";
 
 /// @title IWalletCache interface describes a method for poping an already cached wallet
 interface IWalletCache {
-    function walletCachePop() external returns(Wallet);
+    function walletCachePop() external returns (Wallet);
 }
+
 
 //// @title Wallet cache with wallet pre-caching functionality.
 contract WalletCache is ENSResolvable, Controllable {
-
     event CachedWallet(Wallet _wallet);
 
     /*****   Constants   *****/
@@ -49,11 +49,18 @@ contract WalletCache is ENSResolvable, Controllable {
     Wallet[] public cachedWallets;
 
     address public ens;
-    uint public defaultSpendLimit;
+    uint256 public defaultSpendLimit;
 
     /// @notice parameters are passed in so that they can be used to construct new instances of the wallet
     /// @dev pass in bytes32 to use the default, production node labels for ENS
-    constructor(address _ens_, uint _defaultSpendLimit_, bytes32 _controllerNode_, bytes32 _licenceNode_, bytes32 _tokenWhitelistNode_, bytes32 _walletDeployerNode_) ENSResolvable(_ens_) Controllable(_controllerNode_) public {
+    constructor(
+        address _ens_,
+        uint256 _defaultSpendLimit_,
+        bytes32 _controllerNode_,
+        bytes32 _licenceNode_,
+        bytes32 _tokenWhitelistNode_,
+        bytes32 _walletDeployerNode_
+    ) public ENSResolvable(_ens_) Controllable(_controllerNode_) {
         ens = _ens_;
         defaultSpendLimit = _defaultSpendLimit_;
 
@@ -69,7 +76,6 @@ contract WalletCache is ENSResolvable, Controllable {
         if (_walletDeployerNode_ != bytes32(0)) {
             walletDeployerNode = _walletDeployerNode_;
         }
-
     }
 
     modifier onlyWalletDeployer() {
@@ -80,7 +86,15 @@ contract WalletCache is ENSResolvable, Controllable {
     /// @notice This public method allows anyone to pre-cache wallets
     function cacheWallet() public {
         // the address(uint160()) cast is done as the Wallet owner (1st argument) needs to be payable
-        Wallet wallet = new Wallet(address(uint160(_ensResolve(walletDeployerNode))), true, ens, tokenWhitelistNode, controllerNode(), licenceNode, defaultSpendLimit);
+        Wallet wallet = new Wallet(
+            address(uint160(_ensResolve(walletDeployerNode))),
+            true,
+            ens,
+            tokenWhitelistNode,
+            controllerNode(),
+            licenceNode,
+            defaultSpendLimit
+        );
         cachedWallets.push(wallet);
 
         emit CachedWallet(wallet);
@@ -92,15 +106,14 @@ contract WalletCache is ENSResolvable, Controllable {
             cacheWallet();
         }
 
-        Wallet wallet = cachedWallets[cachedWallets.length-1];
+        Wallet wallet = cachedWallets[cachedWallets.length - 1];
         cachedWallets.pop();
 
         return wallet;
     }
 
     /// @notice returns the number of pre-cached wallets
-    function cachedWalletsCount() external view returns (uint) {
+    function cachedWalletsCount() external view returns (uint256) {
         return cachedWallets.length;
     }
-
 }

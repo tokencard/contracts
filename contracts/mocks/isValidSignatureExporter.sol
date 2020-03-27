@@ -2,12 +2,13 @@ pragma solidity ^0.5.15;
 
 import "../wallet.sol";
 
+
 interface IWallet {
-    function isValidSignature(bytes calldata, bytes calldata) external view returns(bytes4);
+    function isValidSignature(bytes calldata, bytes calldata) external view returns (bytes4);
 }
 
-contract IsValidSignatureExporter {
 
+contract IsValidSignatureExporter {
     address walletAddress;
 
     constructor(address _wallet) public {
@@ -18,5 +19,4 @@ contract IsValidSignatureExporter {
     function isValidSignature(bytes calldata _data, bytes calldata _signature) external view returns (bytes4) {
         return IWallet(walletAddress).isValidSignature(_data, _signature);
     }
-
 }

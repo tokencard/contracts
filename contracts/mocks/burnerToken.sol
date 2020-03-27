@@ -2,26 +2,27 @@ pragma solidity ^0.5.15;
 
 import "../externals/SafeMath.sol";
 
+
 interface TokenHolder {
-    function burn(address, uint ) external returns (bool);
+    function burn(address, uint256) external returns (bool);
 }
 
-contract BurnerToken {
 
+contract BurnerToken {
     using SafeMath for uint256;
 
-    event Transfer(address indexed from, address indexed to, uint value);
-    event Approval(address indexed owner, address indexed spender, uint value);
+    event Transfer(address indexed from, address indexed to, uint256 value);
+    event Approval(address indexed owner, address indexed spender, uint256 value);
 
-    uint public currentSupply;
+    uint256 public currentSupply;
 
     address public owner;
     string public name;
     uint8 public decimals;
     string public symbol;
 
-    mapping(address => uint) public balanceOf;
-    mapping(address => mapping (address => uint)) public allowance;
+    mapping(address => uint256) public balanceOf;
+    mapping(address => mapping(address => uint256)) public allowance;
 
     //Holds accumulated dividend tokens other than TKN
     TokenHolder public tokenholder;
@@ -33,17 +34,17 @@ contract BurnerToken {
         symbol = "TKN";
     }
 
-    function totalSupply() external view returns(uint) {
+    function totalSupply() external view returns (uint256) {
         return currentSupply;
     }
 
-    function mint(address addr, uint amount) external {
+    function mint(address addr, uint256 amount) external {
         balanceOf[addr] = balanceOf[addr].add(amount);
         currentSupply = currentSupply.add(amount);
         emit Transfer(address(0), addr, amount);
     }
 
-    function transfer(address _to, uint _value) external returns (bool success) {
+    function transfer(address _to, uint256 _value) external returns (bool success) {
         if (balanceOf[msg.sender] < _value) return false;
         if (_to == address(0)) return false;
 
@@ -53,11 +54,11 @@ contract BurnerToken {
         return true;
     }
 
-    function transferFrom(address _from, address _to, uint _value) external returns (bool success) {
+    function transferFrom(address _from, address _to, uint256 _value) external returns (bool success) {
         if (_to == address(0)) return false;
         if (balanceOf[_from] < _value) return false;
 
-        uint allowed = allowance[_from][msg.sender];
+        uint256 allowed = allowance[_from][msg.sender];
         if (allowed < _value) return false; //PROBLEM!
         /* require(_value <= allowed, "amount exceeds allowance"); */
 
@@ -68,7 +69,7 @@ contract BurnerToken {
         return true;
     }
 
-    function approve(address _spender, uint _value) external returns (bool success) {
+    function approve(address _spender, uint256 _value) external returns (bool success) {
         //require user to set to zero before resetting to nonzero
         if ((_value != 0) && (allowance[msg.sender][_spender] != 0)) {
             return false;
@@ -79,15 +80,15 @@ contract BurnerToken {
         return true;
     }
 
-    function increaseApproval (address _spender, uint _addedValue) external returns (bool success) {
-        uint oldValue = allowance[msg.sender][_spender];
+    function increaseApproval(address _spender, uint256 _addedValue) external returns (bool success) {
+        uint256 oldValue = allowance[msg.sender][_spender];
         allowance[msg.sender][_spender] = oldValue.add(_addedValue);
         emit Approval(msg.sender, _spender, allowance[msg.sender][_spender]);
         return true;
     }
 
-    function decreaseApproval (address _spender, uint _subtractedValue) external returns (bool success) {
-        uint oldValue = allowance[msg.sender][_spender];
+    function decreaseApproval(address _spender, uint256 _subtractedValue) external returns (bool success) {
+        uint256 oldValue = allowance[msg.sender][_spender];
         if (_subtractedValue > oldValue) {
             allowance[msg.sender][_spender] = 0;
         } else {
@@ -101,11 +102,11 @@ contract BurnerToken {
         tokenholder = TokenHolder(_th);
     }
 
-    function burn(uint _amount) public returns (bool result)  {
+    function burn(uint256 _amount) public returns (bool result) {
         if (_amount > balanceOf[msg.sender]) return false;
 
         balanceOf[msg.sender] = balanceOf[msg.sender].sub(_amount);
-        currentSupply  = currentSupply.sub(_amount);
+        currentSupply = currentSupply.sub(_amount);
         result = tokenholder.burn(msg.sender, _amount);
         if (!result) revert();
         emit Transfer(msg.sender, address(0), _amount);

@@ -22,19 +22,18 @@ pragma solidity ^0.5.15;
 /// @title Date provides redimentary date parsing functionality.
 /// @notice This method parses months found in an ISO date to a number
 contract Date {
-
-    bytes32 constant private _JANUARY = keccak256("Jan");
-    bytes32 constant private _FEBRUARY = keccak256("Feb");
-    bytes32 constant private _MARCH = keccak256("Mar");
-    bytes32 constant private _APRIL = keccak256("Apr");
-    bytes32 constant private _MAY = keccak256("May");
-    bytes32 constant private _JUNE = keccak256("Jun");
-    bytes32 constant private _JULY = keccak256("Jul");
-    bytes32 constant private _AUGUST = keccak256("Aug");
-    bytes32 constant private _SEPTEMBER = keccak256("Sep");
-    bytes32 constant private _OCTOBER = keccak256("Oct");
-    bytes32 constant private _NOVEMBER = keccak256("Nov");
-    bytes32 constant private _DECEMBER = keccak256("Dec");
+    bytes32 private constant _JANUARY = keccak256("Jan");
+    bytes32 private constant _FEBRUARY = keccak256("Feb");
+    bytes32 private constant _MARCH = keccak256("Mar");
+    bytes32 private constant _APRIL = keccak256("Apr");
+    bytes32 private constant _MAY = keccak256("May");
+    bytes32 private constant _JUNE = keccak256("Jun");
+    bytes32 private constant _JULY = keccak256("Jul");
+    bytes32 private constant _AUGUST = keccak256("Aug");
+    bytes32 private constant _SEPTEMBER = keccak256("Sep");
+    bytes32 private constant _OCTOBER = keccak256("Oct");
+    bytes32 private constant _NOVEMBER = keccak256("Nov");
+    bytes32 private constant _DECEMBER = keccak256("Dec");
 
     /// @return the number of the month based on its name.
     /// @param _month the first three letters of a month's name e.g. "Jan".

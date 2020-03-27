@@ -20,20 +20,19 @@ pragma solidity ^0.5.15;
 
 import "../externals/SafeMath.sol";
 
+
 /// @title BytesUtils provides basic byte slicing and casting functionality.
 library BytesUtils {
-
     using SafeMath for uint256;
 
     /// @dev This function converts to an address
     /// @param _bts bytes
     /// @param _from start position
-    function _bytesToAddress(bytes memory _bts, uint _from) internal pure returns (address) {
-
+    function _bytesToAddress(bytes memory _bts, uint256 _from) internal pure returns (address) {
         require(_bts.length >= _from.add(20), "slicing out of range");
 
         bytes20 convertedAddress;
-        uint startByte = _from.add(32); //first 32 bytes denote the array length
+        uint256 startByte = _from.add(32); //first 32 bytes denote the array length
 
         assembly {
             convertedAddress := mload(add(_bts, startByte))
@@ -45,18 +44,17 @@ library BytesUtils {
     /// @dev This function slices bytes into bytes4
     /// @param _bts some bytes
     /// @param _from start position
-    function _bytesToBytes4(bytes memory _bts, uint _from) internal pure returns (bytes4) {
+    function _bytesToBytes4(bytes memory _bts, uint256 _from) internal pure returns (bytes4) {
         require(_bts.length >= _from.add(4), "slicing out of range");
 
         bytes4 slicedBytes4;
-        uint startByte = _from.add(32); //first 32 bytes denote the array length
+        uint256 startByte = _from.add(32); //first 32 bytes denote the array length
 
         assembly {
             slicedBytes4 := mload(add(_bts, startByte))
         }
 
         return slicedBytes4;
-
     }
 
     /// @dev This function slices a uint
@@ -64,11 +62,11 @@ library BytesUtils {
     /// @param _from start position
     // credit to https://ethereum.stackexchange.com/questions/51229/how-to-convert-bytes-to-uint-in-solidity
     // and Nick Johnson https://ethereum.stackexchange.com/questions/4170/how-to-convert-a-uint-to-bytes-in-solidity/4177#4177
-    function _bytesToUint256(bytes memory _bts, uint _from) internal pure returns (uint) {
+    function _bytesToUint256(bytes memory _bts, uint256 _from) internal pure returns (uint256) {
         require(_bts.length >= _from.add(32), "slicing out of range");
 
-        uint convertedUint256;
-        uint startByte = _from.add(32); //first 32 bytes denote the array length
+        uint256 convertedUint256;
+        uint256 startByte = _from.add(32); //first 32 bytes denote the array length
 
         assembly {
             convertedUint256 := mload(add(_bts, startByte))

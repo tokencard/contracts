@@ -21,9 +21,11 @@ pragma solidity ^0.5.15;
 import "./internals/ownable.sol";
 import "./internals/transferrable.sol";
 
+
 /// @title The IController interface provides access to the isController and isAdmin checks.
 interface IController {
     function isController(address) external view returns (bool);
+
     function isAdmin(address) external view returns (bool);
 }
 
@@ -34,29 +36,28 @@ interface IController {
 /// @dev Admins and can the Controllers
 /// @dev Controllers are used by the application.
 contract Controller is IController, Ownable, Transferrable {
-
     event AddedController(address _sender, address _controller);
     event RemovedController(address _sender, address _controller);
 
     event AddedAdmin(address _sender, address _admin);
     event RemovedAdmin(address _sender, address _admin);
 
-    event Claimed(address _to, address _asset, uint _amount);
+    event Claimed(address _to, address _asset, uint256 _amount);
 
     event Stopped(address _sender);
     event Started(address _sender);
 
-    mapping (address => bool) private _isAdmin;
-    uint private _adminCount;
+    mapping(address => bool) private _isAdmin;
+    uint256 private _adminCount;
 
-    mapping (address => bool) private _isController;
-    uint private _controllerCount;
+    mapping(address => bool) private _isController;
+    uint256 private _controllerCount;
 
     bool private _stopped;
 
     /// @notice Constructor initializes the owner with the provided address.
     /// @param _ownerAddress_ address of the owner.
-    constructor(address payable _ownerAddress_) Ownable(_ownerAddress_, false) public {}
+    constructor(address payable _ownerAddress_) public Ownable(_ownerAddress_, false) {}
 
     /// @notice Checks if message sender is an admin.
     modifier onlyAdmin() {
@@ -89,7 +90,7 @@ contract Controller is IController, Ownable, Transferrable {
     }
 
     /// @return the current number of admins.
-    function adminCount() external view returns (uint) {
+    function adminCount() external view returns (uint256) {
         return _adminCount;
     }
 
@@ -107,7 +108,7 @@ contract Controller is IController, Ownable, Transferrable {
 
     /// @notice count the Controllers
     /// @return the current number of controllers.
-    function controllerCount() external view returns (uint) {
+    function controllerCount() external view returns (uint256) {
         return _controllerCount;
     }
 
@@ -180,7 +181,7 @@ contract Controller is IController, Ownable, Transferrable {
     }
 
     //// @notice Withdraw tokens from the smart contract to the specified account.
-    function claim(address payable _to, address _asset, uint _amount) external onlyAdmin notStopped {
+    function claim(address payable _to, address _asset, uint256 _amount) external onlyAdmin notStopped {
         _safeTransfer(_to, _asset, _amount);
         emit Claimed(_to, _asset, _amount);
     }

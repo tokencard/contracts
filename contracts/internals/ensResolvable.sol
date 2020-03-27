@@ -48,5 +48,4 @@ contract ENSResolvable {
     function _ensResolve(bytes32 _node) internal view returns (address) {
         return PublicResolver(_ens.resolver(_node)).addr(_node);
     }
-
 }
