@@ -24,7 +24,6 @@ import "./ensResolvable.sol";
 
 /// @title Controllable implements access control functionality of the Controller found via ENS.
 contract Controllable is ENSResolvable {
-
     // Default values for mainnet ENS
     // controller.tokencard.eth
     bytes32 private constant _DEFAULT_CONTROLLER_NODE = 0x7f2ce995617d2816b426c5c8698c5ec2952f7a34bb10f38326f74933d5893697;
@@ -68,5 +67,4 @@ contract Controllable is ENSResolvable {
     function _isAdmin(address _account) internal view returns (bool) {
         return IController(_ensResolve(_controllerNode)).isAdmin(_account);
     }
-
 }

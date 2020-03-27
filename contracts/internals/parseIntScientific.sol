@@ -23,44 +23,42 @@ import "../externals/SafeMath.sol";
 
 /// @title ParseIntScientific provides floating point in scientific notation (e.g. e-5) parsing functionality.
 contract ParseIntScientific {
-
     using SafeMath for uint256;
 
-    byte constant private _PLUS_ASCII = byte(uint8(43)); //decimal value of '+'
-    byte constant private _DASH_ASCII = byte(uint8(45)); //decimal value of '-'
-    byte constant private _DOT_ASCII = byte(uint8(46)); //decimal value of '.'
-    byte constant private _ZERO_ASCII = byte(uint8(48)); //decimal value of '0'
-    byte constant private _NINE_ASCII = byte(uint8(57)); //decimal value of '9'
-    byte constant private _E_ASCII = byte(uint8(69)); //decimal value of 'E'
-    byte constant private _LOWERCASE_E_ASCII = byte(uint8(101)); //decimal value of 'e'
+    bytes1 private constant _PLUS_ASCII = bytes1(uint8(43)); //decimal value of '+'
+    bytes1 private constant _DASH_ASCII = bytes1(uint8(45)); //decimal value of '-'
+    bytes1 private constant _DOT_ASCII = bytes1(uint8(46)); //decimal value of '.'
+    bytes1 private constant _ZERO_ASCII = bytes1(uint8(48)); //decimal value of '0'
+    bytes1 private constant _NINE_ASCII = bytes1(uint8(57)); //decimal value of '9'
+    bytes1 private constant _E_ASCII = bytes1(uint8(69)); //decimal value of 'E'
+    bytes1 private constant _LOWERCASE_E_ASCII = bytes1(uint8(101)); //decimal value of 'e'
 
     /// @notice ParseIntScientific delegates the call to _parseIntScientific(string, uint) with the 2nd argument being 0.
-    function _parseIntScientific(string memory _inString) internal pure returns (uint) {
+    function _parseIntScientific(string memory _inString) internal pure returns (uint256) {
         return _parseIntScientific(_inString, 0);
     }
 
     /// @notice ParseIntScientificWei parses a rate expressed in ETH and returns its wei denomination
-    function _parseIntScientificWei(string memory _inString) internal pure returns (uint) {
+    function _parseIntScientificWei(string memory _inString) internal pure returns (uint256) {
         return _parseIntScientific(_inString, 18);
     }
 
     /// @notice ParseIntScientific parses a JSON standard - floating point number.
     /// @param _inString is input string.
     /// @param _magnitudeMult multiplies the number with 10^_magnitudeMult.
-    function _parseIntScientific(string memory _inString, uint _magnitudeMult) internal pure returns (uint) {
-
+    function _parseIntScientific(string memory _inString, uint256 _magnitudeMult) internal pure returns (uint256) {
         bytes memory inBytes = bytes(_inString);
-        uint mint = 0; // the final uint returned
-        uint mintDec = 0; // the uint following the decimal point
-        uint mintExp = 0; // the exponent
-        uint decMinted = 0; // how many decimals were 'minted'.
-        uint expIndex = 0; // the position in the byte array that 'e' was found (if found)
+        uint256 mint = 0; // the final uint returned
+        uint256 mintDec = 0; // the uint following the decimal point
+        uint256 mintExp = 0; // the exponent
+        uint256 decMinted = 0; // how many decimals were 'minted'.
+        uint256 expIndex = 0; // the position in the byte array that 'e' was found (if found)
         bool integral = false; // indicates the existence of the integral part, it should always exist (even if 0) e.g. 'e+1'  or '.1' is not valid
         bool decimals = false; // indicates a decimal number, set to true if '.' is found
         bool exp = false; // indicates if the number being parsed has an exponential representation
         bool minus = false; // indicated if the exponent is negative
         bool plus = false; // indicated if the exponent is positive
-        uint i;
+        uint256 i;
         for (i = 0; i < inBytes.length; i++) {
             if ((inBytes[i] >= _ZERO_ASCII) && (inBytes[i] <= _NINE_ASCII) && (!exp)) {
                 // 'e' not encountered yet, minting integer part or decimals
@@ -127,9 +125,8 @@ contract ParseIntScientific {
                 // the (negative) exponent is bigger than the given parameter for "shifting left".
                 // use integer division to reduce the precision.
                 require(mintExp - _magnitudeMult < 78, "exponent > 77"); //
-                mint /= 10 ** (mintExp - _magnitudeMult);
+                mint /= 10**(mintExp - _magnitudeMult);
                 return mint;
-
             } else {
                 // the (negative) exponent is smaller than the given parameter for "shifting left".
                 //no need for underflow check
@@ -146,20 +143,20 @@ contract ParseIntScientific {
             // shift number and add the decimals at the end
             // include decimals if present in the original input
             require(decMinted < 78, "more than 77 decimal digits parsed"); //
-            mint = mint.mul(10 ** (decMinted));
+            mint = mint.mul(10**(decMinted));
             mint = mint.add(mintDec);
             //// add zeros at the end if the decimals were fewer than #_magnitudeMult
             require(_magnitudeMult - decMinted < 78, "exponent > 77"); //
-            mint = mint.mul(10 ** (_magnitudeMult - decMinted));
+            mint = mint.mul(10**(_magnitudeMult - decMinted));
         } else {
             // the decimals are more than the #_magnitudeMult shifts
             // use only the ones needed, discard the rest
             decMinted -= _magnitudeMult;
             require(decMinted < 78, "more than 77 decimal digits parsed"); //
-            mintDec /= 10 ** (decMinted);
+            mintDec /= 10**(decMinted);
             // shift number and add the decimals at the end
             require(_magnitudeMult < 78, "more than 77 decimal digits parsed"); //
-            mint = mint.mul(10 ** (_magnitudeMult));
+            mint = mint.mul(10**(_magnitudeMult));
             mint = mint.add(mintDec);
         }
         return mint;

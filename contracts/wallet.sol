@@ -38,10 +38,11 @@ import "./externals/ECDSA.sol";
 contract ControllableOwnable is Controllable, Ownable {
     /// @dev Check if the sender is the Owner or one of the Controllers
     modifier onlyOwnerOrController() {
-        require (_isOwner(msg.sender) || _isController(msg.sender), "only owner||controller");
+        require(_isOwner(msg.sender) || _isController(msg.sender), "only owner||controller");
         _;
     }
 }
+
 
 /// @title SelfCallableOwnable allows either owner or the contract itself to call its functions
 /// @dev providing an additional modifier to check if Owner or self is calling
@@ -49,10 +50,11 @@ contract ControllableOwnable is Controllable, Ownable {
 contract SelfCallableOwnable is Ownable {
     /// @dev Check if the sender is the Owner or self
     modifier onlyOwnerOrSelf() {
-        require (_isOwner(msg.sender) || msg.sender == address(this), "only owner||self");
+        require(_isOwner(msg.sender) || msg.sender == address(this), "only owner||self");
         _;
     }
 }
+
 
 /// @title AddressWhitelist provides payee-whitelist functionality.
 /// @dev This contract will allow the user to maintain a whitelist of addresses
@@ -78,7 +80,7 @@ contract AddressWhitelist is ControllableOwnable, SelfCallableOwnable {
 
     /// @dev Check if the provided addresses contain the owner or the zero-address address.
     modifier hasNoOwnerOrZeroAddress(address[] memory _addresses) {
-        for (uint i = 0; i < _addresses.length; i++) {
+        for (uint256 i = 0; i < _addresses.length; i++) {
             require(!_isOwner(_addresses[i]), "contains owner address");
             require(_addresses[i] != address(0), "contains 0 address");
         }
@@ -128,7 +130,7 @@ contract AddressWhitelist is ControllableOwnable, SelfCallableOwnable {
         // Require that confirmation hash and the hash of the pending whitelist addition match
         require(_hash == calculateHash(_pendingWhitelistAddition), "non-matching pending whitelist hash");
         // Whitelist pending addresses.
-        for (uint i = 0; i < _pendingWhitelistAddition.length; i++) {
+        for (uint256 i = 0; i < _pendingWhitelistAddition.length; i++) {
             // check if it doesn't exist already.
             if (!whitelistMap[_pendingWhitelistAddition[i]]) {
                 // add to the Map and the Array
@@ -151,11 +153,11 @@ contract AddressWhitelist is ControllableOwnable, SelfCallableOwnable {
         // Require that confirmation hash and the hash of the pending whitelist removal match
         require(_hash == calculateHash(_pendingWhitelistRemoval), "non-matching pending whitelist hash");
         // Remove pending addresses.
-        for (uint i = 0; i < _pendingWhitelistRemoval.length; i++) {
+        for (uint256 i = 0; i < _pendingWhitelistRemoval.length; i++) {
             // check if it exists
             if (whitelistMap[_pendingWhitelistRemoval[i]]) {
                 whitelistMap[_pendingWhitelistRemoval[i]] = false;
-                for (uint j = 0; j < whitelistArray.length.sub(1); j++) {
+                for (uint256 j = 0; j < whitelistArray.length.sub(1); j++) {
                     if (whitelistArray[j] == _pendingWhitelistRemoval[i]) {
                         whitelistArray[j] = whitelistArray[whitelistArray.length - 1];
                         break;
@@ -188,7 +190,7 @@ contract AddressWhitelist is ControllableOwnable, SelfCallableOwnable {
         // Require that the whitelist has not been initialized.
         require(!isSetWhitelist, "whitelist initialized");
         // Add each of the provided addresses to the whitelist.
-        for (uint i = 0; i < _addresses.length; i++) {
+        for (uint256 i = 0; i < _addresses.length; i++) {
             // Dedup addresses before writing to the whitelist
             if (!whitelistMap[_addresses[i]]) {
                 // adds to the whitelist mapping
@@ -238,6 +240,7 @@ contract AddressWhitelist is ControllableOwnable, SelfCallableOwnable {
     }
 }
 
+
 /// @title DailyLimitTrait This trait allows for daily limits to be included in other contracts.
 /// This contract will allow for a DailyLimit object to be instantiated and used.
 library DailyLimitTrait {
@@ -246,15 +249,15 @@ library DailyLimitTrait {
     event UpdatedAvailableLimit();
 
     struct DailyLimit {
-        uint value;
-        uint available;
-        uint limitTimestamp;
-        uint pending;
+        uint256 value;
+        uint256 available;
+        uint256 limitTimestamp;
+        uint256 pending;
         bool controllerConfirmationRequired;
     }
 
     /// @dev Confirm pending set daily limit operation.
-    function _confirmLimitUpdate(DailyLimit storage self, uint _amount) internal {
+    function _confirmLimitUpdate(DailyLimit storage self, uint256 _amount) internal {
         // Require that pending and confirmed spend limit are the same
         require(self.pending == _amount, "confirmed/submitted limit mismatch");
         // Modify spend limit based on the pending value.
@@ -262,7 +265,7 @@ library DailyLimitTrait {
     }
 
     /// @dev Use up amount within the daily limit. Will fail if amount is larger than daily limit.
-    function _enforceLimit(DailyLimit storage self, uint _amount) internal {
+    function _enforceLimit(DailyLimit storage self, uint256 _amount) internal {
         // Account for the spend limit daily reset.
         _updateAvailableLimit(self);
         require(self.available >= _amount, "available<amount");
@@ -271,7 +274,7 @@ library DailyLimitTrait {
 
     /// @dev Returns the available daily balance - accounts for daily limit reset.
     /// @return amount of available to spend within the current day in base units.
-    function _getAvailableLimit(DailyLimit storage self) internal view returns (uint) {
+    function _getAvailableLimit(DailyLimit storage self) internal view returns (uint256) {
         if (now > self.limitTimestamp.add(24 hours)) {
             return self.value;
         } else {
@@ -281,7 +284,7 @@ library DailyLimitTrait {
 
     /// @dev Modify the spend limit and spend available based on the provided value.
     /// @dev _amount is the daily limit amount in wei.
-    function _modifyLimit(DailyLimit storage self, uint _amount) private {
+    function _modifyLimit(DailyLimit storage self, uint256 _amount) private {
         // Account for the spend limit daily reset.
         _updateAvailableLimit(self);
         // Set the daily limit to the provided amount.
@@ -294,7 +297,7 @@ library DailyLimitTrait {
 
     /// @dev Set the daily limit.
     /// @param _amount is the daily limit amount in base units.
-    function _setLimit(DailyLimit storage self, uint _amount) internal {
+    function _setLimit(DailyLimit storage self, uint256 _amount) internal {
         // Require that the spend limit has not been set yet.
         require(!self.controllerConfirmationRequired, "limit already set");
         // Modify spend limit based on the provided value.
@@ -305,7 +308,7 @@ library DailyLimitTrait {
 
     /// @dev Submit a daily limit update, needs to be confirmed.
     /// @param _amount is the daily limit amount in base units.
-    function _submitLimitUpdate(DailyLimit storage self, uint _amount) internal {
+    function _submitLimitUpdate(DailyLimit storage self, uint256 _amount) internal {
         // Require that the spend limit has been set.
         require(self.controllerConfirmationRequired, "limit hasn't been set yet");
         // Assign the provided amount to pending daily limit.
@@ -327,39 +330,38 @@ library DailyLimitTrait {
 
 /// @title  it provides daily spend limit functionality.
 contract SpendLimit is ControllableOwnable, SelfCallableOwnable {
-
-    event SetSpendLimit(address _sender, uint _amount);
-    event SubmittedSpendLimitUpdate(uint _amount);
+    event SetSpendLimit(address _sender, uint256 _amount);
+    event SubmittedSpendLimitUpdate(uint256 _amount);
 
     using DailyLimitTrait for DailyLimitTrait.DailyLimit;
 
     DailyLimitTrait.DailyLimit internal _spendLimit;
 
     /// @dev Constructor initializes the daily spend limit in wei.
-    constructor(uint _limit_) internal {
+    constructor(uint256 _limit_) internal {
         _spendLimit = DailyLimitTrait.DailyLimit(_limit_, _limit_, now, 0, false);
     }
 
     /// @dev Confirm pending set daily limit operation.
-    function confirmSpendLimitUpdate(uint _amount) external onlyController {
+    function confirmSpendLimitUpdate(uint256 _amount) external onlyController {
         _spendLimit._confirmLimitUpdate(_amount);
         emit SetSpendLimit(msg.sender, _amount);
     }
 
     /// @dev Sets the initial daily spend (aka transfer) limit for non-whitelisted addresses.
     /// @param _amount is the daily limit amount in wei.
-    function setSpendLimit(uint _amount) external onlyOwnerOrSelf {
+    function setSpendLimit(uint256 _amount) external onlyOwnerOrSelf {
         _spendLimit._setLimit(_amount);
         emit SetSpendLimit(msg.sender, _amount);
     }
 
     /// @dev View your available limit
-    function spendLimitAvailable() external view returns (uint) {
+    function spendLimitAvailable() external view returns (uint256) {
         return _spendLimit._getAvailableLimit();
     }
 
     /// @dev Is there an active spend limit change
-    function spendLimitPending() external view returns (uint) {
+    function spendLimitPending() external view returns (uint256) {
         return _spendLimit.pending;
     }
 
@@ -369,13 +371,13 @@ contract SpendLimit is ControllableOwnable, SelfCallableOwnable {
     }
 
     /// @dev View how much has been spent already
-    function spendLimitValue() external view returns (uint) {
+    function spendLimitValue() external view returns (uint256) {
         return _spendLimit.value;
     }
 
     /// @dev Submit a daily transfer limit update for non-whitelisted addresses.
     /// @param _amount is the daily limit amount in wei.
-    function submitSpendLimitUpdate(uint _amount) external onlyOwnerOrSelf {
+    function submitSpendLimitUpdate(uint256 _amount) external onlyOwnerOrSelf {
         _spendLimit._submitLimitUpdate(_amount);
         emit SubmittedSpendLimitUpdate(_amount);
     }
@@ -384,12 +386,11 @@ contract SpendLimit is ControllableOwnable, SelfCallableOwnable {
 
 /// @title GasTopUpLimit provides daily limit functionality.
 contract GasTopUpLimit is ControllableOwnable, SelfCallableOwnable {
+    event SetGasTopUpLimit(address _sender, uint256 _amount);
+    event SubmittedGasTopUpLimitUpdate(uint256 _amount);
 
-    event SetGasTopUpLimit(address _sender, uint _amount);
-    event SubmittedGasTopUpLimitUpdate(uint _amount);
-
-    uint constant private _MAXIMUM_GAS_TOPUP_LIMIT = 500 finney;
-    uint constant private _MINIMUM_GAS_TOPUP_LIMIT = 1 finney;
+    uint256 private constant _MAXIMUM_GAS_TOPUP_LIMIT = 500 finney;
+    uint256 private constant _MINIMUM_GAS_TOPUP_LIMIT = 1 finney;
 
     using DailyLimitTrait for DailyLimitTrait.DailyLimit;
 
@@ -401,18 +402,18 @@ contract GasTopUpLimit is ControllableOwnable, SelfCallableOwnable {
     }
 
     /// @dev Confirm pending set top up gas limit operation.
-    function confirmGasTopUpLimitUpdate(uint _amount) external onlyController {
+    function confirmGasTopUpLimitUpdate(uint256 _amount) external onlyController {
         _gasTopUpLimit._confirmLimitUpdate(_amount);
         emit SetGasTopUpLimit(msg.sender, _amount);
     }
 
     /// @dev View your available gas top-up limit
-    function gasTopUpLimitAvailable() external view returns (uint) {
+    function gasTopUpLimitAvailable() external view returns (uint256) {
         return _gasTopUpLimit._getAvailableLimit();
     }
 
     /// @dev Is there an active gas top-up limit change
-    function gasTopUpLimitPending() external view returns (uint) {
+    function gasTopUpLimitPending() external view returns (uint256) {
         return _gasTopUpLimit.pending;
     }
 
@@ -422,13 +423,13 @@ contract GasTopUpLimit is ControllableOwnable, SelfCallableOwnable {
     }
 
     /// @dev View how much gas top-up has been spent already
-    function gasTopUpLimitValue() external view returns (uint) {
+    function gasTopUpLimitValue() external view returns (uint256) {
         return _gasTopUpLimit.value;
     }
 
     /// @dev Sets the daily gas top up limit.
     /// @param _amount is the gas top up amount in wei.
-    function setGasTopUpLimit(uint _amount) external onlyOwnerOrSelf {
+    function setGasTopUpLimit(uint256 _amount) external onlyOwnerOrSelf {
         require(_MINIMUM_GAS_TOPUP_LIMIT <= _amount && _amount <= _MAXIMUM_GAS_TOPUP_LIMIT, "out of range top-up");
         _gasTopUpLimit._setLimit(_amount);
         emit SetGasTopUpLimit(msg.sender, _amount);
@@ -436,7 +437,7 @@ contract GasTopUpLimit is ControllableOwnable, SelfCallableOwnable {
 
     /// @dev Submit a daily gas top up limit update.
     /// @param _amount is the daily top up gas limit amount in wei.
-    function submitGasTopUpLimitUpdate(uint _amount) external onlyOwnerOrSelf {
+    function submitGasTopUpLimitUpdate(uint256 _amount) external onlyOwnerOrSelf {
         require(_MINIMUM_GAS_TOPUP_LIMIT <= _amount && _amount <= _MAXIMUM_GAS_TOPUP_LIMIT, "out of range top-up");
         _gasTopUpLimit._submitLimitUpdate(_amount);
         emit SubmittedGasTopUpLimitUpdate(_amount);
@@ -446,11 +447,10 @@ contract GasTopUpLimit is ControllableOwnable, SelfCallableOwnable {
 
 /// @title LoadLimit provides daily load limit functionality.
 contract LoadLimit is ControllableOwnable, SelfCallableOwnable {
+    event SetLoadLimit(address _sender, uint256 _amount);
+    event SubmittedLoadLimitUpdate(uint256 _amount);
 
-    event SetLoadLimit(address _sender, uint _amount);
-    event SubmittedLoadLimitUpdate(uint _amount);
-
-    uint private _maximumLoadLimit;
+    uint256 private _maximumLoadLimit;
 
     using DailyLimitTrait for DailyLimitTrait.DailyLimit;
 
@@ -458,7 +458,7 @@ contract LoadLimit is ControllableOwnable, SelfCallableOwnable {
 
     /// @dev Sets a daily card load limit.
     /// @param _amount is the card load amount in current stablecoin base units.
-    function setLoadLimit(uint _amount) external onlyOwnerOrSelf {
+    function setLoadLimit(uint256 _amount) external onlyOwnerOrSelf {
         require(_amount <= _maximumLoadLimit, "out of range load amount");
         _loadLimit._setLimit(_amount);
         emit SetLoadLimit(msg.sender, _amount);
@@ -466,25 +466,25 @@ contract LoadLimit is ControllableOwnable, SelfCallableOwnable {
 
     /// @dev Submit a daily load limit update.
     /// @param _amount is the daily load limit amount in wei.
-    function submitLoadLimitUpdate(uint _amount) external onlyOwnerOrSelf {
+    function submitLoadLimitUpdate(uint256 _amount) external onlyOwnerOrSelf {
         require(_amount <= _maximumLoadLimit, "out of range load amount");
         _loadLimit._submitLimitUpdate(_amount);
         emit SubmittedLoadLimitUpdate(_amount);
     }
 
     /// @dev Confirm pending set load limit operation.
-    function confirmLoadLimitUpdate(uint _amount) external onlyController {
+    function confirmLoadLimitUpdate(uint256 _amount) external onlyController {
         _loadLimit._confirmLimitUpdate(_amount);
         emit SetLoadLimit(msg.sender, _amount);
     }
 
     /// @dev View your available load limit
-    function loadLimitAvailable() external view returns (uint) {
+    function loadLimitAvailable() external view returns (uint256) {
         return _loadLimit._getAvailableLimit();
     }
 
     /// @dev Is there an active load limit change
-    function loadLimitPending() external view returns (uint) {
+    function loadLimitPending() external view returns (uint256) {
         return _loadLimit.pending;
     }
 
@@ -494,13 +494,13 @@ contract LoadLimit is ControllableOwnable, SelfCallableOwnable {
     }
 
     /// @dev View how much laod limit has been spent already
-    function loadLimitValue() external view returns (uint) {
+    function loadLimitValue() external view returns (uint256) {
         return _loadLimit.value;
     }
 
     /// @dev initializes the daily load limit.
     /// @param _maxLimit is the maximum load limit amount in stablecoin base units.
-    function _initializeLoadLimit(uint _maxLimit) internal {
+    function _initializeLoadLimit(uint256 _maxLimit) internal {
         _maximumLoadLimit = _maxLimit;
         _loadLimit = DailyLimitTrait.DailyLimit(_maximumLoadLimit, _maximumLoadLimit, now, 0, false);
     }
@@ -509,7 +509,6 @@ contract LoadLimit is ControllableOwnable, SelfCallableOwnable {
 
 /// @title Asset store with extra security features.
 contract Vault is AddressWhitelist, SpendLimit, ERC165, Transferrable, Balanceable, TokenWhitelistable {
-
     using Address for address;
     using ECDSA for bytes32;
     using SafeERC20 for ERC20;
@@ -517,21 +516,21 @@ contract Vault is AddressWhitelist, SpendLimit, ERC165, Transferrable, Balanceab
 
     event BulkTransferred(address _to, address[] _assets);
     event ExecutedRelayedTransaction(bytes _data, bytes _returndata);
-    event ExecutedTransaction(address _destination, uint _value, bytes _data, bytes _returndata);
-    event Received(address _from, uint _amount);
-    event Transferred(address _to, address _asset, uint _amount);
-    event IncreasedRelayNonce(address _sender, uint _currentNonce);
+    event ExecutedTransaction(address _destination, uint256 _value, bytes _data, bytes _returndata);
+    event Received(address _from, uint256 _amount);
+    event Transferred(address _to, address _asset, uint256 _amount);
+    event IncreasedRelayNonce(address _sender, uint256 _currentNonce);
 
     // keccak256("isValidSignature(bytes,bytes)") = 20c13b0bc670c284a9f19cdf7a533ca249404190f8dc132aac33e733b965269e
-    bytes4 constant private _EIP_1271 = 0x20c13b0b;
+    bytes4 private constant _EIP_1271 = 0x20c13b0b;
     // keccak256("isValidSignature(bytes32,bytes)") = 1626ba7e356f5979dd355a3d2bfb43e80420a480c3b854edce286a82d7496869
-    bytes4 constant private _EIP_1654 = 0x1626ba7e;
+    bytes4 private constant _EIP_1654 = 0x1626ba7e;
 
     /// @dev Supported ERC165 interface ID.
     bytes4 private constant _ERC165_INTERFACE_ID = 0x01ffc9a7; // solium-disable-line uppercase
 
     /// @dev this is an internal nonce to prevent replay attacks from relayer
-    uint public relayNonce;
+    uint256 public relayNonce;
 
     /// @dev Constructor initializes the vault with an owner address and spend limit. It also sets up the controllable and tokenWhitelist contracts with the right name registered in ENS.
     /// @param _owner_ is the owner account of the wallet contract.
@@ -539,10 +538,16 @@ contract Vault is AddressWhitelist, SpendLimit, ERC165, Transferrable, Balanceab
     /// @param _tokenWhitelistNode_ is the ENS node of the Token whitelist.
     /// @param _controllerNode_ is the ENS name node of the controller.
     /// @param _spendLimit_ is the initial spend limit.
-    constructor(address payable _owner_, bool _transferable_, bytes32 _tokenWhitelistNode_, bytes32 _controllerNode_, uint _spendLimit_) SpendLimit(_spendLimit_) Ownable(_owner_, _transferable_) Controllable(_controllerNode_) TokenWhitelistable(_tokenWhitelistNode_) public {}
+    constructor(address payable _owner_, bool _transferable_, bytes32 _tokenWhitelistNode_, bytes32 _controllerNode_, uint256 _spendLimit_)
+        public
+        SpendLimit(_spendLimit_)
+        Ownable(_owner_, _transferable_)
+        Controllable(_controllerNode_)
+        TokenWhitelistable(_tokenWhitelistNode_)
+    {}
 
     /// @dev Checks if the value is not zero.
-    modifier isNotZero(uint _value) {
+    modifier isNotZero(uint256 _value) {
         require(_value != 0, "value=0");
         _;
     }
@@ -560,8 +565,8 @@ contract Vault is AddressWhitelist, SpendLimit, ERC165, Transferrable, Balanceab
         // check to make sure that _assets isn't empty
         require(_assets.length != 0, "asset array is empty");
         // This loops through all of the transfers to be made
-        for (uint i = 0; i < _assets.length; i++) {
-            uint amount = _balance(address(this), _assets[i]);
+        for (uint256 i = 0; i < _assets.length; i++) {
+            uint256 amount = _balance(address(this), _assets[i]);
             // use our safe, daily limit protected transfer
             transfer(_to, _assets[i], amount);
         }
@@ -574,7 +579,7 @@ contract Vault is AddressWhitelist, SpendLimit, ERC165, Transferrable, Balanceab
     /// @param _nonce only used for relayed transactions, must match the wallet's relayNonce.
     /// @param _data abi encoded data payload.
     /// @param _signature signed prefix + data.
-    function executeRelayedTransaction(uint _nonce, bytes calldata _data, bytes calldata _signature) external onlyController {
+    function executeRelayedTransaction(uint256 _nonce, bytes calldata _data, bytes calldata _signature) external onlyController {
         // expecting prefixed data ("rlx:") indicating relayed transaction...
         // ...and an Ethereum Signed Message to protect user from signing an actual Tx
         bytes32 dataHash = keccak256(abi.encodePacked("rlx:", _nonce, _data)).toEthSignedMessageHash();
@@ -622,9 +627,9 @@ contract Vault is AddressWhitelist, SpendLimit, ERC165, Transferrable, Balanceab
     /// @dev Convert ERC20 token amount to the corresponding ether amount.
     /// @param _token ERC20 token contract address.
     /// @param _amount amount of token in base units.
-    function convertToEther(address _token, uint _amount) public view returns (uint) {
+    function convertToEther(address _token, uint256 _amount) public view returns (uint256) {
         // Store the token in memory to save map entry lookup gas.
-        (,uint256 magnitude, uint256 rate, bool available, , , ) = _getTokenInfo(_token);
+        (, uint256 magnitude, uint256 rate, bool available, , , ) = _getTokenInfo(_token);
         // If the token exists require that its rate is not zero.
         if (available) {
             require(rate != 0, "rate=0");
@@ -639,13 +644,13 @@ contract Vault is AddressWhitelist, SpendLimit, ERC165, Transferrable, Balanceab
     /// @param _transactionBatch data encoding the transactions to be sent,
     /// following executeTransaction's format i.e. (destination, value, data)
     function batchExecuteTransaction(bytes memory _transactionBatch) public onlyOwnerOrSelf {
-        uint batchLength = _transactionBatch.length + 32; // because the pos starts from 32
-        uint remainingBytesLength = _transactionBatch.length; // remaining bytes to be processed
-        uint pos = 32; //the first 32 bytes denote the byte array length, start from actual data
+        uint256 batchLength = _transactionBatch.length + 32; // because the pos starts from 32
+        uint256 remainingBytesLength = _transactionBatch.length; // remaining bytes to be processed
+        uint256 pos = 32; //the first 32 bytes denote the byte array length, start from actual data
 
         address destination; // destination address
-        uint value; // trasanction value
-        uint dataLength; // externall call data length
+        uint256 value; // trasanction value
+        uint256 dataLength; // externall call data length
         bytes memory data; // call data
 
         while (pos < batchLength) {
@@ -679,7 +684,7 @@ contract Vault is AddressWhitelist, SpendLimit, ERC165, Transferrable, Balanceab
     /// @param _destination address of the transaction
     /// @param _value ETH amount in wei
     /// @param _data transaction payload binary
-    function executeTransaction(address _destination, uint _value, bytes memory _data) public onlyOwnerOrSelf returns (bytes memory) {
+    function executeTransaction(address _destination, uint256 _value, bytes memory _data) public onlyOwnerOrSelf returns (bytes memory) {
         // If value is send across as a part of this executeTransaction, this will be sent to any payable
         // destination. As a result enforceLimit if destination is not whitelisted.
         if (!whitelistMap[_destination]) {
@@ -689,12 +694,12 @@ contract Vault is AddressWhitelist, SpendLimit, ERC165, Transferrable, Balanceab
         if (address(_destination).isContract() && _isTokenAvailable(_destination)) {
             // to is the recipient's address and amount is the value to be transferred
             address to;
-            uint amount;
+            uint256 amount;
             (to, amount) = _getERC20RecipientAndAmount(_destination, _data);
             if (!whitelistMap[to]) {
                 // If the address (of the token contract, e.g) is not in the TokenWhitelist used by the convert method
                 // then etherValue will be zero
-                uint etherValue = convertToEther(_destination, amount);
+                uint256 etherValue = convertToEther(_destination, amount);
                 _spendLimit._enforceLimit(etherValue);
             }
             // use callOptionalReturn provided in SafeERC20 in case the ERC20 method
@@ -731,14 +736,14 @@ contract Vault is AddressWhitelist, SpendLimit, ERC165, Transferrable, Balanceab
     /// @param _to is the recipient's address.
     /// @param _asset is the address of an ERC20 token or 0x0 for ether.
     /// @param _amount is the amount of assets to be transferred in base units.
-    function transfer(address payable _to, address _asset, uint _amount) public onlyOwnerOrSelf isNotZero(_amount) {
+    function transfer(address payable _to, address _asset, uint256 _amount) public onlyOwnerOrSelf isNotZero(_amount) {
         // Checks if the _to address is not the zero-address
         require(_to != address(0), "destination=0");
 
         // If address is not whitelisted, take daily limit into account.
         if (!whitelistMap[_to]) {
             // initialize ether value in case the asset is ETH
-            uint etherValue = _amount;
+            uint256 etherValue = _amount;
             // Convert token amount to ether value if asset is an ERC20 token.
             if (_asset != address(0)) {
                 etherValue = convertToEther(_asset, _amount);
@@ -757,17 +762,16 @@ contract Vault is AddressWhitelist, SpendLimit, ERC165, Transferrable, Balanceab
 
 /// @title Asset wallet with extra security features, gas top up management and card integration.
 contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
-
     using SafeERC20 for ERC20;
 
-    event LoadedTokenCard(address _asset, uint _amount);
-    event ToppedUpGas(address _sender, address _owner, uint _amount);
+    event LoadedTokenCard(address _asset, uint256 _amount);
+    event ToppedUpGas(address _sender, address _owner, uint256 _amount);
 
     /// This is here because our tests don't inherit events from a library
     event UpdatedAvailableLimit();
 
-    string constant public WALLET_VERSION = "3.1.0";
-    uint constant private _MAXIMUM_STABLECOIN_LOAD_LIMIT = 10000; // 10,000 USD
+    string public constant WALLET_VERSION = "3.1.0";
+    uint256 private constant _MAXIMUM_STABLECOIN_LOAD_LIMIT = 10000; // 10,000 USD
 
     /// @dev Is the registered ENS node identifying the licence contract.
     bytes32 private _licenceNode;
@@ -780,9 +784,17 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
     /// @param _controllerNode_ is the ENS name node of the Controller contract.
     /// @param _licenceNode_ is the ENS name node of the Licence contract.
     /// @param _spendLimit_ is the initial spend limit.
-    constructor(address payable _owner_, bool _transferable_, address _ens_, bytes32 _tokenWhitelistNode_, bytes32 _controllerNode_, bytes32 _licenceNode_, uint _spendLimit_) ENSResolvable(_ens_) Vault(_owner_, _transferable_, _tokenWhitelistNode_, _controllerNode_, _spendLimit_) public {
+    constructor(
+        address payable _owner_,
+        bool _transferable_,
+        address _ens_,
+        bytes32 _tokenWhitelistNode_,
+        bytes32 _controllerNode_,
+        bytes32 _licenceNode_,
+        uint256 _spendLimit_
+    ) public ENSResolvable(_ens_) Vault(_owner_, _transferable_, _tokenWhitelistNode_, _controllerNode_, _spendLimit_) {
         // Get the stablecoin's magnitude.
-        ( ,uint256 stablecoinMagnitude, , , , , ) = _getStablecoinInfo();
+        (, uint256 stablecoinMagnitude, , , , , ) = _getStablecoinInfo();
         require(stablecoinMagnitude > 0, "no stablecoin");
         _initializeLoadLimit(_MAXIMUM_STABLECOIN_LOAD_LIMIT * stablecoinMagnitude);
         _licenceNode = _licenceNode_;
@@ -797,11 +809,11 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
     /// @dev the amount send should be inclusive of the percent licence.
     /// @param _asset is the address of an ERC20 token or 0x0 for ether.
     /// @param _amount is the amount of assets to be transferred in base units.
-    function loadTokenCard(address _asset, uint _amount) external payable onlyOwnerOrSelf {
+    function loadTokenCard(address _asset, uint256 _amount) external payable onlyOwnerOrSelf {
         // check if token is allowed to be used for loading the card
         require(_isTokenLoadable(_asset), "token not loadable");
         // Convert token amount to stablecoin value.
-        uint stablecoinValue = convertToStablecoin(_asset, _amount);
+        uint256 stablecoinValue = convertToStablecoin(_asset, _amount);
         // Check against the daily spent limit and update accordingly, require that the value is under remaining limit.
         _loadLimit._enforceLimit(stablecoinValue);
         // Get the TKN licenceAddress from ENS
@@ -818,7 +830,7 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
 
     /// @dev Refill owner's gas balance, revert if the transaction amount is too large
     /// @param _amount is the amount of ether to transfer to the owner account in wei.
-    function topUpGas(uint _amount) external isNotZero(_amount) onlyOwnerOrController {
+    function topUpGas(uint256 _amount) external isNotZero(_amount) onlyOwnerOrController {
         // Check against the daily spent limit and update accordingly, require that the value is under remaining limit.
         _gasTopUpLimit._enforceLimit(_amount);
         // Then perform the transfer
@@ -830,18 +842,18 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
     /// @dev Convert ether or ERC20 token amount to the corresponding stablecoin amount.
     /// @param _token ERC20 token contract address.
     /// @param _amount amount of token in base units.
-    function convertToStablecoin(address _token, uint _amount) public view returns (uint) {
+    function convertToStablecoin(address _token, uint256 _amount) public view returns (uint256) {
         // avoid the unnecessary calculations if the token to be loaded is the stablecoin itself
         if (_token == _stablecoin()) {
             return _amount;
         }
-        uint amountToSend = _amount;
+        uint256 amountToSend = _amount;
 
         // 0x0 represents ether
         if (_token != address(0)) {
             // convert to eth first, same as convertToEther()
             // Store the token in memory to save map entry lookup gas.
-            (,uint256 magnitude, uint256 rate, bool available, , , ) = _getTokenInfo(_token);
+            (, uint256 magnitude, uint256 rate, bool available, , , ) = _getTokenInfo(_token);
             // require that token both exists in the whitelist and its rate is not zero.
             require(available, "token not available");
             require(rate != 0, "rate=0");
@@ -850,7 +862,7 @@ contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
         }
         // _amountToSend now is in ether
         // Get the stablecoin's magnitude and its current rate.
-        ( ,uint256 stablecoinMagnitude, uint256 stablecoinRate, bool stablecoinAvailable, , , ) = _getStablecoinInfo();
+        (, uint256 stablecoinMagnitude, uint256 stablecoinRate, bool stablecoinAvailable, , , ) = _getStablecoinInfo();
         // Check if the stablecoin rate is set.
         require(stablecoinAvailable, "token not available");
         require(stablecoinRate != 0, "stablecoin rate=0");

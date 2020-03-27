@@ -25,7 +25,7 @@ jobs:
 
   build_check:
     machine:
-      image: ubuntu-1604:201903-01
+      image: ubuntu-1604:201903-01      
     working_directory: /home/circleci/github.com/tokencard/contracts
     steps:
       - checkout
@@ -35,9 +35,19 @@ jobs:
       - run: ./build.sh
       - run: '[[ -z $(git status -uno --porcelain) ]] || (git status ; echo "Please run ./build.sh before committing changes!"; exit 1)'
 
+  format_check:
+    docker:
+      - image: node@sha256:d2734cb9a3b16e1103b27bca3f9db410cf6834a11302d1b5304c1d8627fb9732
+    working_directory: /home/circleci/github.com/tokencard/contracts
+    steps:
+      - run: apk add -U git openssh-client ca-certificates
+      - checkout
+      - run: npm install --no-package-lock prettier@2.0.2 prettier-plugin-solidity@1.0.0-alpha.47
+      - run: npx prettier --list-different --plugin=prettier-plugin-solidity {contracts,contracts/mocks,contracts/internals}/*.sol
+
   mythril:
     docker:
-      - image: mythril/myth:latest
+      - image: mythril/myth@sha256:75605a2a7e848e416f471a67159d6812feaa45e03ddd352aac588e505d68e5c5
     working_directory: /tmp/contracts
     parallelism: 6
     steps:
@@ -87,7 +97,7 @@ jobs:
 
   slither:
     docker:
-      - image: trailofbits/eth-security-toolbox:latest
+      - image: trailofbits/eth-security-toolbox@sha256:3fb96e2d9de772f5e97f1c3c650c8a3d28660f8a64a60b76269da1ac19b86a28
     working_directory: /tmp/contracts
     parallelism: 6
     steps:
@@ -139,7 +149,7 @@ jobs:
 
   echidna:
     docker:
-      - image: trailofbits/eth-security-toolbox:latest
+      - image: trailofbits/eth-security-toolbox@sha256:3fb96e2d9de772f5e97f1c3c650c8a3d28660f8a64a60b76269da1ac19b86a28
     working_directory: /tmp/contracts
     parallelism: 6
     steps:
@@ -195,6 +205,10 @@ workflows:
       - build_check:
           requires:
             - build_test
+          filters:
+            tags:
+              ignore: ""
+      - format_check:
           filters:
             tags:
               ignore: ""

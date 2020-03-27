@@ -34,12 +34,11 @@ contract Oracle is ENSResolvable, usingOraclize, Transferrable, Base64, Date, Co
     using strings for *;
     using SafeMath for uint256;
 
-
     /*******************/
     /*     Events     */
     /*****************/
 
-    event SetGasPrice(address _sender, uint _gasPrice);
+    event SetGasPrice(address _sender, uint256 _gasPrice);
 
     event RequestedUpdate(string _symbol, bytes32 _queryID);
     event FailedUpdateRequest(string _reason);
@@ -48,23 +47,23 @@ contract Oracle is ENSResolvable, usingOraclize, Transferrable, Base64, Date, Co
 
     event SetCryptoComparePublicKey(address _sender, bytes _publicKey);
 
-    event Claimed(address _to, address _asset, uint _amount);
+    event Claimed(address _to, address _asset, uint256 _amount);
 
     /**********************/
     /*     Constants     */
     /********************/
 
-    uint constant private _PROOF_LEN = 165;
-    uint constant private _ECDSA_SIG_LEN = 65;
-    uint constant private _ENCODING_BYTES = 2;
-    uint constant private _HEADERS_LEN = _PROOF_LEN - 2 * _ENCODING_BYTES - _ECDSA_SIG_LEN; // 2 bytes encoding headers length + 2 for signature.
-    uint constant private _DIGEST_BASE64_LEN = 44; //base64 encoding of the SHA256 hash (32-bytes) of the result: fixed length.
-    uint constant private _DIGEST_OFFSET = _HEADERS_LEN - _DIGEST_BASE64_LEN; // the starting position of the result hash in the headers string.
+    uint256 private constant _PROOF_LEN = 165;
+    uint256 private constant _ECDSA_SIG_LEN = 65;
+    uint256 private constant _ENCODING_BYTES = 2;
+    uint256 private constant _HEADERS_LEN = _PROOF_LEN - 2 * _ENCODING_BYTES - _ECDSA_SIG_LEN; // 2 bytes encoding headers length + 2 for signature.
+    uint256 private constant _DIGEST_BASE64_LEN = 44; //base64 encoding of the SHA256 hash (32-bytes) of the result: fixed length.
+    uint256 private constant _DIGEST_OFFSET = _HEADERS_LEN - _DIGEST_BASE64_LEN; // the starting position of the result hash in the headers string.
 
-    uint constant private _MAX_BYTE_SIZE = 256; //for calculating length encoding
+    uint256 private constant _MAX_BYTE_SIZE = 256; //for calculating length encoding
 
     // This is how the cryptocompare json begins
-    bytes32 constant private _PREFIX_HASH = keccak256("{\"ETH\":");
+    bytes32 private constant _PREFIX_HASH = keccak256('{"ETH":');
 
     bytes public cryptoCompareAPIPublicKey;
     mapping(bytes32 => address) private _queryToToken;
@@ -74,7 +73,12 @@ contract Oracle is ENSResolvable, usingOraclize, Transferrable, Base64, Date, Co
     /// @param _ens_ is the address of the ENS.
     /// @param _controllerNode_ is the ENS node corresponding to the Controller.
     /// @param _tokenWhitelistNode_ is the ENS corresponding to the Token Whitelist.
-    constructor(address _resolver_, address _ens_, bytes32 _controllerNode_, bytes32 _tokenWhitelistNode_) ENSResolvable(_ens_) Controllable(_controllerNode_) TokenWhitelistable(_tokenWhitelistNode_) public {
+    constructor(address _resolver_, address _ens_, bytes32 _controllerNode_, bytes32 _tokenWhitelistNode_)
+        public
+        ENSResolvable(_ens_)
+        Controllable(_controllerNode_)
+        TokenWhitelistable(_tokenWhitelistNode_)
+    {
         cryptoCompareAPIPublicKey = hex"a0f4f688350018ad1b9785991c0bde5f704b005dc79972b114dbed4a615a983710bfc647ebe5a320daa28771dce6a2d104f5efa2e4a85ba3760b76d46f8571ca";
         OAR = OraclizeAddrResolverI(_resolver_);
         oraclize_setCustomGasPrice(10000000000);
@@ -90,26 +94,26 @@ contract Oracle is ENSResolvable, usingOraclize, Transferrable, Base64, Date, Co
 
     /// @notice Sets the gas price used by Oraclize query.
     /// @param _gasPrice in wei for Oraclize
-    function setCustomGasPrice(uint _gasPrice) external onlyController {
+    function setCustomGasPrice(uint256 _gasPrice) external onlyController {
         oraclize_setCustomGasPrice(_gasPrice);
         emit SetGasPrice(msg.sender, _gasPrice);
     }
 
     /// @notice Update ERC20 token exchange rates for all supported tokens.
     /// @param _gasLimit the gas limit is passed, this is used for the Oraclize callback
-    function updateTokenRates(uint _gasLimit) external payable onlyController {
+    function updateTokenRates(uint256 _gasLimit) external payable onlyController {
         _updateTokenRates(_gasLimit);
     }
 
     /// @notice Update ERC20 token exchange rates for the list of tokens provided.
     /// @param _gasLimit the gas limit is passed, this is used for the Oraclize callback
     /// @param _tokenList the list of tokens that need to be updated
-    function updateTokenRatesList(uint _gasLimit, address[] calldata _tokenList) external payable onlyController {
+    function updateTokenRatesList(uint256 _gasLimit, address[] calldata _tokenList) external payable onlyController {
         _updateTokenRatesList(_gasLimit, _tokenList);
     }
 
     /// @notice Withdraw tokens from the smart contract to the specified account.
-    function claim(address payable _to, address _asset, uint _amount) external onlyAdmin {
+    function claim(address payable _to, address _asset, uint256 _amount) external onlyAdmin {
         _safeTransfer(_to, _asset, _amount);
         emit Claimed(_to, _asset, _amount);
     }
@@ -125,11 +129,11 @@ contract Oracle is ENSResolvable, usingOraclize, Transferrable, Base64, Date, Co
         // Use the query ID to find the matching token address.
         address token = _queryToToken[_queryID];
         // Get the corresponding token object.
-        ( , , , bool available, , , uint256 lastUpdate) = _getTokenInfo(token);
+        (, , , bool available, , , uint256 lastUpdate) = _getTokenInfo(token);
         require(available, "token must be available");
 
         bool valid;
-        uint timestamp;
+        uint256 timestamp;
         (valid, timestamp) = _verifyProof(_result, _proof, cryptoCompareAPIPublicKey, lastUpdate);
 
         // Require that the proof is valid.
@@ -148,8 +152,7 @@ contract Oracle is ENSResolvable, usingOraclize, Transferrable, Base64, Date, Co
     /// @notice Extracts JSON rate value from the response object.
     /// @param _json body of the JSON response from the CryptoCompare API.
     function parseRate(string memory _json) internal pure returns (string memory) {
-
-        uint jsonLen = abi.encodePacked(_json).length;
+        uint256 jsonLen = abi.encodePacked(_json).length;
         //{"ETH":}.length = 8, assuming a (maximum of) 18 digit prevision
         require(jsonLen > 8 && jsonLen <= 28, "misformatted input");
 
@@ -169,7 +172,7 @@ contract Oracle is ENSResolvable, usingOraclize, Transferrable, Base64, Date, Co
 
     /// @notice Re-usable helper function that performs the Oraclize Query.
     /// @param _gasLimit the gas limit is passed, this is used for the Oraclize callback
-    function _updateTokenRates(uint _gasLimit) private {
+    function _updateTokenRates(uint256 _gasLimit) private {
         address[] memory tokenAddresses = _tokenAddressArray();
         // Check if there are any existing tokens.
         if (tokenAddresses.length == 0) {
@@ -185,7 +188,7 @@ contract Oracle is ENSResolvable, usingOraclize, Transferrable, Base64, Date, Co
             strings.slice memory apiSuffix = "&tsyms=ETH&sign=true".toSlice();
 
             // Create a new oraclize query for each supported token.
-            for (uint i = 0; i < tokenAddresses.length; i++) {
+            for (uint256 i = 0; i < tokenAddresses.length; i++) {
                 // Store the token symbol used in the query.
                 (string memory symbol, , , , , , ) = _getTokenInfo(tokenAddresses[i]);
 
@@ -203,12 +206,12 @@ contract Oracle is ENSResolvable, usingOraclize, Transferrable, Base64, Date, Co
     /// @notice Re-usable helper function that performs the Oraclize Query for a specific list of tokens.
     /// @param _gasLimit the gas limit is passed, this is used for the Oraclize callback.
     /// @param _tokenList the list of tokens that need to be updated.
-    function _updateTokenRatesList(uint _gasLimit, address[] memory _tokenList) private {
+    function _updateTokenRatesList(uint256 _gasLimit, address[] memory _tokenList) private {
         // Check if there are any existing tokens.
         if (_tokenList.length == 0) {
             // Emit a query failure event.
             emit FailedUpdateRequest("empty token list");
-        // Check if the contract has enough Ether to pay for the query.
+            // Check if the contract has enough Ether to pay for the query.
         } else if (oraclize_getPrice("URL") * _tokenList.length > address(this).balance) {
             // Emit a query failure event.
             emit FailedUpdateRequest("insufficient balance");
@@ -218,9 +221,9 @@ contract Oracle is ENSResolvable, usingOraclize, Transferrable, Base64, Date, Co
             strings.slice memory apiSuffix = "&tsyms=ETH&sign=true".toSlice();
 
             // Create a new oraclize query for each supported token.
-            for (uint i = 0; i < _tokenList.length; i++) {
+            for (uint256 i = 0; i < _tokenList.length; i++) {
                 //token must exist, revert if it doesn't
-                (string memory tokenSymbol, , , bool available , , , ) = _getTokenInfo(_tokenList[i]);
+                (string memory tokenSymbol, , , bool available, , , ) = _getTokenInfo(_tokenList[i]);
                 require(available, "token must be available");
                 // Store the token symbol used in the query.
                 strings.slice memory symbol = tokenSymbol.toSlice();
@@ -239,15 +242,14 @@ contract Oracle is ENSResolvable, usingOraclize, Transferrable, Base64, Date, Co
     /// @param _proof origin proof from cryptocompare.
     /// @param _publicKey cryptocompare public key.
     /// @param _lastUpdate timestamp of the last time the requested token was updated.
-    function _verifyProof(string memory _result, bytes memory _proof, bytes memory _publicKey, uint _lastUpdate) private returns (bool, uint) {
-
+    function _verifyProof(string memory _result, bytes memory _proof, bytes memory _publicKey, uint256 _lastUpdate) private returns (bool, uint256) {
         // expecting fixed length proofs
         if (_proof.length != _PROOF_LEN) {
             revert("invalid proof length");
         }
 
         // proof should be 65 bytes long: R (32 bytes) + S (32 bytes) + v (1 byte)
-        if (uint(uint8(_proof[1])) != _ECDSA_SIG_LEN) {
+        if (uint256(uint8(_proof[1])) != _ECDSA_SIG_LEN) {
             revert("invalid signature length");
         }
 
@@ -256,7 +258,10 @@ contract Oracle is ENSResolvable, usingOraclize, Transferrable, Base64, Date, Co
         signature = copyBytes(_proof, 2, _ECDSA_SIG_LEN, signature, 0);
 
         // Extract the headers, big endian encoding of headers length
-        if (uint(uint8(_proof[_ENCODING_BYTES + _ECDSA_SIG_LEN])) * _MAX_BYTE_SIZE + uint(uint8(_proof[_ENCODING_BYTES + _ECDSA_SIG_LEN + 1])) != _HEADERS_LEN) {
+        if (
+            uint256(uint8(_proof[_ENCODING_BYTES + _ECDSA_SIG_LEN])) * _MAX_BYTE_SIZE + uint256(uint8(_proof[_ENCODING_BYTES + _ECDSA_SIG_LEN + 1])) !=
+            _HEADERS_LEN
+        ) {
             revert("invalid headers length");
         }
 
@@ -274,7 +279,7 @@ contract Oracle is ENSResolvable, usingOraclize, Transferrable, Base64, Date, Co
         dateHeader = copyBytes(headers, 11, 20, dateHeader, 0);
 
         bool dateValid;
-        uint timestamp;
+        uint256 timestamp;
         (dateValid, timestamp) = _verifyDate(string(dateHeader), _lastUpdate);
 
         // Check whether the date returned is valid or not
@@ -310,8 +315,7 @@ contract Oracle is ENSResolvable, usingOraclize, Transferrable, Base64, Date, Co
     /// @notice Verify the signed HTTP date header.
     /// @param _dateHeader extracted date string e.g. Wed, 12 Sep 2018 15:18:14 GMT.
     /// @param _lastUpdate timestamp of the last time the requested token was updated.
-    function _verifyDate(string memory _dateHeader, uint _lastUpdate) private pure returns (bool, uint) {
-
+    function _verifyDate(string memory _dateHeader, uint256 _lastUpdate) private pure returns (bool, uint256) {
         // called by verifyProof(), _dateHeader is always a string of length = 20
         assert(abi.encodePacked(_dateHeader).length == 20);
 
@@ -320,27 +324,26 @@ contract Oracle is ENSResolvable, usingOraclize, Transferrable, Base64, Date, Co
         strings.slice memory timeDelimiter = ":".toSlice();
         strings.slice memory dateDelimiter = " ".toSlice();
 
-        uint day = _parseIntScientific(date.split(dateDelimiter).toString());
+        uint256 day = _parseIntScientific(date.split(dateDelimiter).toString());
         require(day > 0 && day < 32, "day error");
 
-        uint month = _monthToNumber(date.split(dateDelimiter).toString());
+        uint256 month = _monthToNumber(date.split(dateDelimiter).toString());
         require(month > 0 && month < 13, "month error");
 
-        uint year = _parseIntScientific(date.split(dateDelimiter).toString());
+        uint256 year = _parseIntScientific(date.split(dateDelimiter).toString());
         require(year > 2017 && year < 3000, "year error");
 
-        uint hour = _parseIntScientific(date.split(timeDelimiter).toString());
+        uint256 hour = _parseIntScientific(date.split(timeDelimiter).toString());
         require(hour < 25, "hour error");
 
-        uint minute = _parseIntScientific(date.split(timeDelimiter).toString());
+        uint256 minute = _parseIntScientific(date.split(timeDelimiter).toString());
         require(minute < 60, "minute error");
 
-        uint second = _parseIntScientific(date.split(timeDelimiter).toString());
+        uint256 second = _parseIntScientific(date.split(timeDelimiter).toString());
         require(second < 60, "second error");
 
-        uint timestamp = year * (10 ** 10) + month * (10 ** 8) + day * (10 ** 6) + hour * (10 ** 4) + minute * (10 ** 2) + second;
+        uint256 timestamp = year * (10**10) + month * (10**8) + day * (10**6) + hour * (10**4) + minute * (10**2) + second;
 
         return (timestamp > _lastUpdate, timestamp);
     }
-
 }
