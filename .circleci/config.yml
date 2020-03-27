@@ -40,6 +40,7 @@ jobs:
       - image: node@sha256:d2734cb9a3b16e1103b27bca3f9db410cf6834a11302d1b5304c1d8627fb9732
     working_directory: /home/circleci/github.com/tokencard/contracts
     steps:
+      - run: apk add -U openssh-client ca-certificates
       - checkout
       - run: npm install --no-package-lock prettier@2.0.2 prettier-plugin-solidity@1.0.0-alpha.47
       - run: npx prettier --list-different --plugin=prettier-plugin-solidity {contracts,contracts/mocks,contracts/internals}/*.sol
