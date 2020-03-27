@@ -23,9 +23,7 @@ contract TEST is Echidna, GasTopUpLimit {
 
     // Uses the hevm `warp` cheatcode to increment the block.timestamp by 24 hours + 1
     function increaseDayNow() public {
-        hevm_cheatcode.call(
-            abi.encodeWithSignature("warp(uint256)", now + 2 days)
-        );
+        hevm_cheatcode.call(abi.encodeWithSignature("warp(uint256)", now + 2 days));
     }
 
     function echidna_DailyGasTopUpLimitAvailable() public returns (bool) {

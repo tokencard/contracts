@@ -39,9 +39,7 @@ contract TEST is Echidna, AddressWhitelist {
         }
 
         uint256 length_before = whitelistArray.length;
-        this.confirmWhitelistAddition(
-            calculateHash(pendingWhitelistAddition())
-        );
+        this.confirmWhitelistAddition(calculateHash(pendingWhitelistAddition()));
         uint256 length_after = whitelistArray.length;
         return (length_before <= length_after);
     }
@@ -55,9 +53,7 @@ contract TEST is Echidna, AddressWhitelist {
             added_addresses.push(pendingWhitelistAddition()[i]);
         }
 
-        this.confirmWhitelistAddition(
-            calculateHash(pendingWhitelistAddition())
-        );
+        this.confirmWhitelistAddition(calculateHash(pendingWhitelistAddition()));
 
         bool checked_addresses = true;
         for (uint256 i = 0; i < added_addresses.length; i++) {

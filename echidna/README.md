@@ -1,6 +1,6 @@
 # Properties
 
-This directory contains some properties for testing Solidity contracts where three users are defined:
+This directory contains some properties for testing Solidity contracts where multiple users are defined:
 
 - `echidna_deployer`: Deployer address used to execute the contract constructor.
 
