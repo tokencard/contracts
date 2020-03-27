@@ -2,24 +2,24 @@ package wallet_test
 
 import (
 	"context"
-    "crypto/ecdsa"
-    "errors"
+	"crypto/ecdsa"
+	"errors"
 	"fmt"
-    "math/big"
+	"math/big"
 	"os"
 	"strings"
 	"testing"
 
-    "github.com/ethereum/go-ethereum"
-    "github.com/ethereum/go-ethereum/accounts/abi"
-    "github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/core/types"
-    "github.com/ethereum/go-ethereum/crypto"
 	"github.com/Masterminds/semver"
+	"github.com/ethereum/go-ethereum"
+	"github.com/ethereum/go-ethereum/accounts/abi"
+	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/core/types"
+	"github.com/ethereum/go-ethereum/crypto"
+	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/gomega"
 	"github.com/tokencard/contracts/v3/pkg/bindings"
 	. "github.com/tokencard/contracts/v3/test/shared"
-    . "github.com/onsi/ginkgo"
-	. "github.com/onsi/gomega"
 )
 
 var Wallet *bindings.Wallet

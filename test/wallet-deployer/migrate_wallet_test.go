@@ -84,10 +84,10 @@ var _ = Describe("Migrate Wallet", func() {
 			Expect(sl.String()).To(Equal(FinneyToWei(500).String()))
 		})
 
-		It("should NOT update the loadLimit to 1 DAI", func() {
+		It("should NOT increase the loadLimit", func() {
 			sl, err := MigratedWallet.LoadLimitValue(nil)
 			Expect(err).ToNot(HaveOccurred())
-			Expect(sl.String()).To(Equal(EthToWei(10000).String()))
+			Expect(sl.String()).To(Equal(GweiToWei(10).String()))
 		})
 
 	})
@@ -107,7 +107,7 @@ var _ = Describe("Migrate Wallet", func() {
 			Backend.Commit()
 			Expect(isSuccessful(tx)).To(BeTrue())
 
-			tx, err = WalletDeployer.MigrateWallet(Controller.TransactOpts(ethertest.WithValue(big.NewInt(1000))), RandomOwner, RandomWalletAddress, true, true, true, true, EthToWei(2), FinneyToWei(1), EthToWei(1000), []common.Address{common.HexToAddress("0x1"), common.HexToAddress("0x2")})
+			tx, err = WalletDeployer.MigrateWallet(Controller.TransactOpts(ethertest.WithValue(big.NewInt(1000))), RandomOwner, RandomWalletAddress, true, true, true, true, EthToWei(2), FinneyToWei(1), GweiToWei(1), []common.Address{common.HexToAddress("0x1"), common.HexToAddress("0x2")})
 			Expect(err).ToNot(HaveOccurred())
 			Backend.Commit()
 			Expect(isSuccessful(tx)).To(BeTrue())
@@ -242,19 +242,19 @@ var _ = Describe("Migrate Wallet", func() {
 				evt := it.Event
 				Expect(it.Next()).To(BeFalse())
 				Expect(evt.Sender).To(Equal(WalletDeployerAddress))
-				Expect(evt.Amount).To(Equal(EthToWei(1000)))
+				Expect(evt.Amount).To(Equal(GweiToWei(1)))
 			})
 
-			It("should decrease the available loadLimit to 1000 DAI", func() {
+			It("should decrease the available loadLimit to 1000 USD", func() {
 				av, err := MigratedWallet.LoadLimitAvailable(nil)
 				Expect(err).ToNot(HaveOccurred())
-				Expect(av.String()).To(Equal(EthToWei(1000).String()))
+				Expect(av.String()).To(Equal(GweiToWei(1).String()))
 			})
 
-			It("should decrease the loadLimit to 1000 DAI", func() {
+			It("should decrease the loadLimit to 1000 USD", func() {
 				sl, err := MigratedWallet.LoadLimitValue(nil)
 				Expect(err).ToNot(HaveOccurred())
-				Expect(sl.String()).To(Equal(EthToWei(1000).String()))
+				Expect(sl.String()).To(Equal(GweiToWei(1).String()))
 			})
 
 			It("should update the Whitelist initializedWhitelist flag", func() {

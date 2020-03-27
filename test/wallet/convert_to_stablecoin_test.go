@@ -72,11 +72,11 @@ var _ = Describe("convertToStablecoin", func() {
 				})
 
 				When("overflow does not occur", func() {
-					It("Should return 0.1(amount)*0.1(rate)/0.1(stablecoin rate)*10^18(in wei)", func() {
+					It("Should return 0.1(amount)*0.1(rate)/0.1(stablecoin rate)*10^6(in Mwei)", func() {
 						value, err := Wallet.ConvertToStablecoin(nil, common.HexToAddress("0xfe209bdE5CA32fa20E6728A005F26D651FFF5982"), big.NewInt(int64(0.1*math.Pow10(8))))
 						Expect(err).ToNot(HaveOccurred())
-						finalAmount := EthToWei(1)
-						finalAmount.Div(finalAmount, big.NewInt(10)) //the final amount should be 0.1*0.1*10*1ETH => 1/10 ETH
+						finalAmount := MweiToWei(1)
+						finalAmount.Div(finalAmount, big.NewInt(10)) //the final amount should be 0.1*0.1*10*1USDC => 1/10 MweiToWei , USDC decimals = 6
 						Expect(value.String()).To(Equal(finalAmount.String()))
 					})
 				})
@@ -95,10 +95,10 @@ var _ = Describe("convertToStablecoin", func() {
 					Expect(isSuccessful(tx)).To(BeTrue())
 				})
 
-				It("Should return 0.1(amount)*5.09(rate)/0.1(stablecoin rate)*10^18(in wei)", func() {
+				It("Should return 0.1(amount)*5.09(rate)/0.1(stablecoin rate)*10^6(in Mwei)", func() {
 					value, err := Wallet.ConvertToStablecoin(nil, common.HexToAddress("0xfe209bdE5CA32fa20E6728A005F26D651FFF5982"), big.NewInt(int64(0.1*math.Pow10(8))))
 					Expect(err).ToNot(HaveOccurred())
-					finalAmount := EthToWei(509)
+					finalAmount := MweiToWei(509)
 					finalAmount.Div(finalAmount, big.NewInt(100)) //the final amount should be 0.1*5.09*10*1ETH => 5.09 ETH => 509/100
 					Expect(value.String()).To(Equal(finalAmount.String()))
 				})
@@ -158,10 +158,10 @@ var _ = Describe("convertToStablecoin", func() {
 				Expect(isSuccessful(tx)).To(BeTrue())
 			})
 
-			It("Should return 0.1(amount)/0.001(stablecoin rate)*10^18(in wei)", func() {
+			It("Should return 0.1(amount)/0.001(stablecoin rate)*10^6(in Mwei)", func() {
 				value, err := Wallet.ConvertToStablecoin(nil, common.HexToAddress("0x0"), big.NewInt(int64(0.1*math.Pow10(18))))
 				Expect(err).ToNot(HaveOccurred())
-				finalAmount := EthToWei(1)
+				finalAmount := MweiToWei(1)
 				finalAmount.Mul(finalAmount, big.NewInt(100)) //the final amount should be 0.1*1000*1ETH => 1*100 ETH
 				Expect(value.String()).To(Equal(finalAmount.String()))
 			})

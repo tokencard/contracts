@@ -15,7 +15,7 @@ var _ = Describe("wallet constructor", func() {
 		It("Should update the tokens map", func() {
 			symbol, _, _, available, loadable, _, _, err := TokenWhitelist.GetTokenInfo(nil, StablecoinAddress)
 			Expect(err).ToNot(HaveOccurred())
-			Expect(symbol).To(Equal("DAI"))
+			Expect(symbol).To(Equal("USDC"))
 			Expect(available).To(BeTrue())
 			Expect(loadable).To(BeTrue())
 		})
@@ -46,8 +46,8 @@ var _ = Describe("wallet constructor", func() {
 			Backend.Commit()
 			Expect(isGasExhausted(tx, 7000000)).To(BeFalse())
 			Expect(isSuccessful(tx)).To(BeFalse())
-            returnData, _ := ethCall(tx)
-            Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("no stablecoin"))
+			returnData, _ := ethCall(tx)
+			Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("no stablecoin"))
 		})
 
 	})
