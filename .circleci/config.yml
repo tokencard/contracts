@@ -47,7 +47,7 @@ jobs:
 
   mythril:
     docker:
-      - image: mythril/myth:latest
+      - image: mythril/myth@sha256:75605a2a7e848e416f471a67159d6812feaa45e03ddd352aac588e505d68e5c5
     working_directory: /tmp/contracts
     parallelism: 6
     steps:
@@ -97,7 +97,7 @@ jobs:
 
   slither:
     docker:
-      - image: trailofbits/eth-security-toolbox:latest
+      - image: trailofbits/eth-security-toolbox@sha256:3fb96e2d9de772f5e97f1c3c650c8a3d28660f8a64a60b76269da1ac19b86a28
     working_directory: /tmp/contracts
     parallelism: 6
     steps:
@@ -149,7 +149,7 @@ jobs:
 
   echidna:
     docker:
-      - image: trailofbits/eth-security-toolbox:latest
+      - image: trailofbits/eth-security-toolbox@sha256:3fb96e2d9de772f5e97f1c3c650c8a3d28660f8a64a60b76269da1ac19b86a28
     working_directory: /tmp/contracts
     parallelism: 6
     steps:
