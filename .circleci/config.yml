@@ -98,42 +98,42 @@ jobs:
           working_directory: slither
           command: |
             if [[ "${CIRCLE_NODE_INDEX}" == 0 ]]; then
-                slither ../contracts/wallet.sol
+                slither --exclude=assembly,low-level-calls ../contracts/wallet.sol
             fi
           no_output_timeout: 5m
       - run:
           working_directory: slither
           command: |
             if [[ "${CIRCLE_NODE_INDEX}" == 1 ]]; then
-                slither ../contracts/oracle.sol
+                slither --exclude=assembly,low-level-calls ../contracts/oracle.sol
             fi
           no_output_timeout: 5m
       - run:
           working_directory: slither
           command: |
             if [[ "${CIRCLE_NODE_INDEX}" == 2 ]]; then
-                slither ../contracts/licence.sol
+                slither --exclude=assembly,low-level-calls ../contracts/licence.sol
             fi
           no_output_timeout: 5m
       - run:
           working_directory: slither
           command: |
             if [[ "${CIRCLE_NODE_INDEX}" == 3 ]]; then
-                slither ../contracts/holder.sol
+                slither --exclude=assembly,low-level-calls ../contracts/holder.sol
             fi
           no_output_timeout: 5m
       - run:
           working_directory: slither
           command: |
             if [[ "${CIRCLE_NODE_INDEX}" == 4 ]]; then
-                slither ../contracts/tokenWhitelist.sol
+                slither --exclude=assembly,low-level-calls ../contracts/tokenWhitelist.sol
             fi
           no_output_timeout: 5m
       - run:
           working_directory: slither
           command: |
             if [[ "${CIRCLE_NODE_INDEX}" == 5 ]]; then
-                slither ../contracts/walletDeployer.sol
+                slither --exclude=assembly,low-level-calls ../contracts/walletDeployer.sol
             fi
           no_output_timeout: 5m
 
