@@ -27,11 +27,13 @@
 */
 
 pragma solidity ^0.5.0;
+pragma experimental ABIEncoderV2;
 
 import "./ENS.sol";
 import "./profiles/ABIResolver.sol";
 import "./profiles/AddrResolver.sol";
 import "./profiles/ContentHashResolver.sol";
+import "./profiles/DNSResolver.sol";
 import "./profiles/InterfaceResolver.sol";
 import "./profiles/NameResolver.sol";
 import "./profiles/PubkeyResolver.sol";
@@ -41,7 +43,7 @@ import "./profiles/TextResolver.sol";
  * A simple resolver anyone can use; only allows the owner of a node to set its
  * address.
  */
-contract PublicResolver is ABIResolver, AddrResolver, ContentHashResolver, InterfaceResolver, NameResolver, PubkeyResolver, TextResolver {
+contract PublicResolver is ABIResolver, AddrResolver, ContentHashResolver, DNSResolver, InterfaceResolver, NameResolver, PubkeyResolver, TextResolver {
     ENS ens;
 
     /**
@@ -78,5 +80,15 @@ contract PublicResolver is ABIResolver, AddrResolver, ContentHashResolver, Inter
     function isAuthorised(bytes32 node) internal view returns(bool) {
         address owner = ens.owner(node);
         return owner == msg.sender || authorisations[node][owner][msg.sender];
+    }
+
+    function multicall(bytes[] calldata data) external returns(bytes[] memory results) {
+        results = new bytes[](data.length);
+        for(uint i = 0; i < data.length; i++) {
+            (bool success, bytes memory result) = address(this).delegatecall(data[i]);
+            require(success);
+            results[i] = result;
+        }
+        return results;
     }
 }
