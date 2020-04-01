@@ -2,11 +2,12 @@ package wallet_deployer_test
 
 import (
 	"math/big"
-    "github.com/ethereum/go-ethereum/common"
-    "github.com/tokencard/ethertest"
+
+	"github.com/ethereum/go-ethereum/common"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	. "github.com/tokencard/contracts/v3/test/shared"
+	"github.com/tokencard/ethertest"
 )
 
 var _ = Describe("Cache Wallet", func() {
@@ -40,7 +41,7 @@ var _ = Describe("Cache Wallet", func() {
 		It("should point to the right wallet deployer node name", func() {
 			on, err := WalletCache.WalletDeployerNode(nil)
 			Expect(err).ToNot(HaveOccurred())
-			Expect(common.Hash(on)).To(Equal(EnsNode("wallet-deployer.tokencard.eth")))
+			Expect(common.Hash(on)).To(Equal(EnsNode("wallet-deployer.v3.tokencard.eth")))
 		})
 
 		It("should have a cached Wallet count of 0", func() {

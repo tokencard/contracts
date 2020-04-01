@@ -30,8 +30,8 @@ contract WalletDeployer is ENSResolvable, Controllable {
 
     /*****   Constants   *****/
     // Default values for mainnet ENS
-    // wallet-cache.tokencard.eth
-    bytes32 private constant _DEFAULT_WALLET_CACHE_NODE = 0x7eee9c3927d17f70ce19de05f73d05dbda3449d450ba9a4c64f24c24bfb9d7ac;
+    // wallet-cache.v3.tokencard.eth
+    bytes32 private constant _DEFAULT_WALLET_CACHE_NODE = 0xaf553cb0d77690819f9d6fbaa04416e1fdcfa01b2a9a833c7a11e6ae0bc1be88;
     bytes32 public walletCacheNode = _DEFAULT_WALLET_CACHE_NODE;
 
     mapping(address => address) public deployedWallets;

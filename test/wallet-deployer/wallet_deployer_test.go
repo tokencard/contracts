@@ -14,7 +14,7 @@ var _ = Describe("Wallet Deployer", func() {
 	It("should point to the right controller node", func() {
 		wcn, err := WalletDeployer.WalletCacheNode(nil)
 		Expect(err).ToNot(HaveOccurred())
-		Expect(common.Hash(wcn)).To(Equal(EnsNode("wallet-cache.tokencard.eth")))
+		Expect(common.Hash(wcn)).To(Equal(EnsNode("wallet-cache.v3.tokencard.eth")))
 	})
 
 	It("should point to the right wallet cache node", func() {
