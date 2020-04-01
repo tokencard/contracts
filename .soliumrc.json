@@ -4,17 +4,8 @@
     "security"
   ],
   "rules": {
-    "quotes": [
-      "error",
-      "double"
-    ],
-    "indentation": [
-      "error",
-      4
-    ],
-    "linebreak-style": [
-      "error",
-      "unix"
-    ]
+    "no-empty-blocks": ["off"],
+    "no-inline-assembly": ["off"],
+    "no-block-members": ["off"]
   }
 }
