@@ -16,21 +16,21 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-pragma solidity ^0.5.17;
+pragma solidity ^0.6.0;
 
-import "./licence.sol";
-import "./internals/ownable.sol";
-import "./internals/controllable.sol";
-import "./internals/balanceable.sol";
-import "./internals/transferrable.sol";
-import "./internals/ensResolvable.sol";
-import "./internals/tokenWhitelistable.sol";
-import "./externals/SafeMath.sol";
-import "./externals/Address.sol";
-import "./externals/ERC20.sol";
-import "./externals/SafeERC20.sol";
-import "./externals/ERC165.sol";
 import "./externals/ECDSA.sol";
+import "./interfaces/IERC20.sol";
+import "./interfaces/IERC165.sol";
+import "./interfaces/ILicence.sol";
+import "./tmp_0_6/balanceable.sol";
+import "./tmp_0_6/controllable.sol";
+import "./tmp_0_6/ensResolvable.sol";
+import "./tmp_0_6/ownable.sol";
+import "./tmp_0_6/tokenWhitelistable.sol";
+import "./tmp_0_6/transferrable.sol";
+import "./tmp_0_6/SafeMath.sol";
+import "./tmp_0_6/Address.sol";
+import "./tmp_0_6/SafeERC20.sol";
 
 
 
@@ -224,7 +224,7 @@ contract AddressWhitelist is SelfCallableOwnable, OptOutableMonolith2FA {
                         break;
                     }
                 }
-                whitelistArray.length--;
+                whitelistArray.pop();
             }
         }
         // Emit the removal event.
@@ -418,7 +418,7 @@ contract Wallet is ENSResolvable, AddressWhitelist, DailyLimit, ERC165, Transfer
 
     using Address for address;
     using ECDSA for bytes32;
-    using SafeERC20 for ERC20;
+    using SafeERC20 for IERC20;
     using SafeMath for uint256;
 
     event BulkTransferred(address _to, address[] _assets);
@@ -474,7 +474,7 @@ contract Wallet is ENSResolvable, AddressWhitelist, DailyLimit, ERC165, Transfer
     }
 
     /// @dev Ether can be deposited from any source, so this contract must be payable by anyone.
-    function() external payable {
+    receive() external payable {
         emit Received(msg.sender, msg.value);
     }
 
@@ -583,7 +583,7 @@ contract Wallet is ENSResolvable, AddressWhitelist, DailyLimit, ERC165, Transfer
     }
 
     /// @dev Checks for interface support based on ERC165.
-    function supportsInterface(bytes4 _interfaceID) external view returns (bool) {
+    function supportsInterface(bytes4 _interfaceID) external override view returns (bool) {
         return _interfaceID == _ERC165_INTERFACE_ID;
     }
 
@@ -695,7 +695,7 @@ contract Wallet is ENSResolvable, AddressWhitelist, DailyLimit, ERC165, Transfer
             }
             // use callOptionalReturn provided in SafeERC20 in case the ERC20 method
             // returns false instead of reverting!
-            ERC20(_destination).callOptionalReturn(_data);
+            IERC20(_destination)._callOptionalReturn(_data);
 
             // if ERC20 call completes, return a boolean "true" as bytes emulating ERC20
             bytes memory b = new bytes(32);
@@ -705,7 +705,7 @@ contract Wallet is ENSResolvable, AddressWhitelist, DailyLimit, ERC165, Transfer
             return b;
         }
 
-        (bool success, bytes memory returndata) = _destination.call.value(_value)(_data);
+        (bool success, bytes memory returndata) = _destination.call{value: _value}(_data);
         require(success, string(returndata));
 
         emit ExecutedTransaction(_destination, _value, _data, returndata);
