@@ -39,8 +39,8 @@ contract WalletCache is ENSResolvable, Controllable {
     bytes32 private constant _DEFAULT_LICENCE_NODE = 0xd0ff8bd67f6e25e4e4b010df582a36a0ee9b78e49afe6cc1cff5dd5a83040330;
     // token-whitelist.tokencard.eth
     bytes32 private constant _DEFAULT_TOKEN_WHITELIST_NODE = 0xe84f90570f13fe09f288f2411ff9cf50da611ed0c7db7f73d48053ffc974d396;
-    // wallet-deployer.tokencard.eth
-    bytes32 private constant _DEFAULT_WALLET_DEPLOYER_NODE = 0xd21a61ac2e4de1319ef7c76dd03046ec2e67a92cfc9efb7c28f79a4c323a5b80;
+    // wallet-deployer.v3.tokencard.eth
+    bytes32 private constant _DEFAULT_WALLET_DEPLOYER_NODE = 0x1d0c0adbe6addd93659446311e0767a56b67d41ef38f0cb66dcf7560d28a5a38;
 
     bytes32 public licenceNode = _DEFAULT_LICENCE_NODE;
     bytes32 public tokenWhitelistNode = _DEFAULT_TOKEN_WHITELIST_NODE;
