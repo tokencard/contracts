@@ -1,6 +1,6 @@
 pragma solidity ^0.5.15;
 
-import "crytic-export/flattening/Wallet.sol";
+import "contracts/wallet.sol";
 
 
 contract Echidna {

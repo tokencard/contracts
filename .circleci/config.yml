@@ -156,7 +156,6 @@ jobs:
       - run: sudo -n apt-get update && sudo -n apt-get install -y openssh-client
       - checkout
       - run: solc-select 0.5.15
-      - run: find contracts -maxdepth 1 -type f -name '*.sol' -exec slither-flat --convert-external {} \;
       - run:
           command: |
             if [[ "${CIRCLE_NODE_INDEX}" == 0 ]]; then

@@ -36,13 +36,3 @@ Run `echidna-test` command on each test contract:
 
     Unique instructions: 900
     Unique codehashes: 1
-
-# Tools
-
-Sometimes it's necessary to convert external functions in a contract to public functions so that they can be called inside the derived TEST contract.
-
-For this it's advisable to use the `slither-flat` command like so:
-
-    slither-flat --convert-external contracts/wallet.sol
-
-This will create a new flattened contract at `critic-export/flattening/Wallet.sol` which can then be imported in the test file as `import "crytic-export/flattening/Wallet.sol";`.
