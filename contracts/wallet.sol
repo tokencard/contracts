@@ -507,7 +507,6 @@ contract LoadLimit is ControllableOwnable, SelfCallableOwnable {
 }
 
 
-
 /// @title Asset wallet with extra security features, gas top up management and card integration.
 contract Wallet is ENSResolvable, GasTopUpLimit, LoadLimit, AddressWhitelist, SpendLimit, ERC165, Transferrable, Balanceable, TokenWhitelistable {
     using Address for address;
@@ -558,14 +557,15 @@ contract Wallet is ENSResolvable, GasTopUpLimit, LoadLimit, AddressWhitelist, Sp
         bytes32 _tokenWhitelistNode_,
         bytes32 _controllerNode_,
         bytes32 _licenceNode_,
-        uint256 _spendLimit_)
-        public 
+        uint256 _spendLimit_
+    )
+        public
         ENSResolvable(_ens_)
         SpendLimit(_spendLimit_)
         Ownable(_owner_, _transferable_)
         Controllable(_controllerNode_)
         TokenWhitelistable(_tokenWhitelistNode_)
-      {
+    {
         // Get the stablecoin's magnitude.
         (, uint256 stablecoinMagnitude, , , , , ) = _getStablecoinInfo();
         require(stablecoinMagnitude > 0, "no stablecoin");
@@ -573,7 +573,6 @@ contract Wallet is ENSResolvable, GasTopUpLimit, LoadLimit, AddressWhitelist, Sp
         _licenceNode = _licenceNode_;
     }
 
-    
     /// @dev Checks if the value is not zero.
     modifier isNotZero(uint256 _value) {
         require(_value != 0, "value=0");
@@ -647,7 +646,7 @@ contract Wallet is ENSResolvable, GasTopUpLimit, LoadLimit, AddressWhitelist, Sp
         return _EIP_1271;
     }
 
-     /// @return licence contract node registered in ENS.
+    /// @return licence contract node registered in ENS.
     function licenceNode() external view returns (bytes32) {
         return _licenceNode;
     }
@@ -731,7 +730,7 @@ contract Wallet is ENSResolvable, GasTopUpLimit, LoadLimit, AddressWhitelist, Sp
             executeTransaction(destination, value, data);
         }
     }
-    
+
     /// @dev Convert ERC20 token amount to the corresponding ether amount.
     /// @param _token ERC20 token contract address.
     /// @param _amount amount of token in base units.
@@ -747,7 +746,7 @@ contract Wallet is ENSResolvable, GasTopUpLimit, LoadLimit, AddressWhitelist, Sp
         return 0;
     }
 
-     /// @dev Convert ether or ERC20 token amount to the corresponding stablecoin amount.
+    /// @dev Convert ether or ERC20 token amount to the corresponding stablecoin amount.
     /// @param _token ERC20 token contract address.
     /// @param _amount amount of token in base units.
     function convertToStablecoin(address _token, uint256 _amount) public view returns (uint256) {
