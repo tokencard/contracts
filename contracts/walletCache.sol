@@ -16,11 +16,11 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-pragma solidity ^0.5.17;
+pragma solidity ^0.6.0;
 
 import "./wallet.sol";
-import "./internals/ensResolvable.sol";
-import "./internals/controllable.sol";
+import "./tmp_0_6/ensResolvable.sol";
+import "./tmp_0_6/controllable.sol";
 
 
 /// @title IWalletCache interface describes a method for poping an already cached wallet

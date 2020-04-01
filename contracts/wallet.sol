@@ -16,26 +16,26 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-pragma solidity ^0.5.17;
+pragma solidity ^0.6.0;
 
-import "./licence.sol";
-import "./internals/ownable.sol";
-import "./internals/controllable.sol";
-import "./internals/balanceable.sol";
-import "./internals/transferrable.sol";
-import "./internals/ensResolvable.sol";
-import "./internals/tokenWhitelistable.sol";
-import "./externals/SafeMath.sol";
-import "./externals/Address.sol";
-import "./externals/ERC20.sol";
-import "./externals/SafeERC20.sol";
-import "./externals/ERC165.sol";
 import "./externals/ECDSA.sol";
+import "./interfaces/IERC20.sol";
+import "./interfaces/IERC165.sol";
+import "./interfaces/ILicence.sol";
+import "./tmp_0_6/balanceable.sol";
+import "./tmp_0_6/controllable.sol";
+import "./tmp_0_6/ensResolvable.sol";
+import "./tmp_0_6/ownable.sol";
+import "./tmp_0_6/tokenWhitelistable.sol";
+import "./tmp_0_6/transferrable.sol";
+import "./tmp_0_6/SafeMath.sol";
+import "./tmp_0_6/Address.sol";
+import "./tmp_0_6/SafeERC20.sol";
 
 
 /// @title ControllableOwnable combines Controllable and Ownable
 /// @dev providing an additional modifier to check if Owner or Controller
-contract ControllableOwnable is Controllable, Ownable {
+abstract contract ControllableOwnable is Controllable, Ownable {
     /// @dev Check if the sender is the Owner or one of the Controllers
     modifier onlyOwnerOrController() {
         require(_isOwner(msg.sender) || _isController(msg.sender), "only owner||controller");
@@ -47,7 +47,7 @@ contract ControllableOwnable is Controllable, Ownable {
 /// @title SelfCallableOwnable allows either owner or the contract itself to call its functions
 /// @dev providing an additional modifier to check if Owner or self is calling
 /// @dev the "self" here is used for the meta transactions
-contract SelfCallableOwnable is Ownable {
+abstract contract SelfCallableOwnable is Ownable {
     /// @dev Check if the sender is the Owner or self
     modifier onlyOwnerOrSelf() {
         require(_isOwner(msg.sender) || msg.sender == address(this), "only owner||self");
@@ -59,7 +59,7 @@ contract SelfCallableOwnable is Ownable {
 /// @title AddressWhitelist provides payee-whitelist functionality.
 /// @dev This contract will allow the user to maintain a whitelist of addresses
 /// @dev These addresses will live outside of the various spend limits
-contract AddressWhitelist is ControllableOwnable, SelfCallableOwnable {
+abstract contract AddressWhitelist is ControllableOwnable, SelfCallableOwnable {
     using SafeMath for uint256;
 
     event AddedToWhitelist(address _sender, address[] _addresses);
@@ -163,7 +163,7 @@ contract AddressWhitelist is ControllableOwnable, SelfCallableOwnable {
                         break;
                     }
                 }
-                whitelistArray.length--;
+                whitelistArray.pop();
             }
         }
         // Emit the removal event.
@@ -329,7 +329,7 @@ library DailyLimitTrait {
 
 
 /// @title  it provides daily spend limit functionality.
-contract SpendLimit is ControllableOwnable, SelfCallableOwnable {
+abstract contract SpendLimit is ControllableOwnable, SelfCallableOwnable {
     event SetSpendLimit(address _sender, uint256 _amount);
     event SubmittedSpendLimitUpdate(uint256 _amount);
 
@@ -385,7 +385,7 @@ contract SpendLimit is ControllableOwnable, SelfCallableOwnable {
 
 
 /// @title GasTopUpLimit provides daily limit functionality.
-contract GasTopUpLimit is ControllableOwnable, SelfCallableOwnable {
+abstract contract GasTopUpLimit is ControllableOwnable, SelfCallableOwnable {
     event SetGasTopUpLimit(address _sender, uint256 _amount);
     event SubmittedGasTopUpLimitUpdate(uint256 _amount);
 
@@ -446,7 +446,7 @@ contract GasTopUpLimit is ControllableOwnable, SelfCallableOwnable {
 
 
 /// @title LoadLimit provides daily load limit functionality.
-contract LoadLimit is ControllableOwnable, SelfCallableOwnable, TokenWhitelistable {
+abstract contract LoadLimit is ControllableOwnable, SelfCallableOwnable, TokenWhitelistable {
     event SetLoadLimit(address _sender, uint256 _amount);
     event SubmittedLoadLimitUpdate(uint256 _amount);
 
@@ -512,7 +512,7 @@ contract LoadLimit is ControllableOwnable, SelfCallableOwnable, TokenWhitelistab
 contract Wallet is ENSResolvable, GasTopUpLimit, LoadLimit, AddressWhitelist, SpendLimit, ERC165, Transferrable, Balanceable {
     using Address for address;
     using ECDSA for bytes32;
-    using SafeERC20 for ERC20;
+    using SafeERC20 for IERC20;
     using SafeMath for uint256;
 
     event BulkTransferred(address _to, address[] _assets);
@@ -568,7 +568,7 @@ contract Wallet is ENSResolvable, GasTopUpLimit, LoadLimit, AddressWhitelist, Sp
     }
 
     /// @dev Ether can be deposited from any source, so this contract must be payable by anyone.
-    function() external payable {
+    receive() external payable {
         emit Received(msg.sender, msg.value);
     }
 
@@ -663,7 +663,7 @@ contract Wallet is ENSResolvable, GasTopUpLimit, LoadLimit, AddressWhitelist, Sp
     }
 
     /// @dev Checks for interface support based on ERC165.
-    function supportsInterface(bytes4 _interfaceID) external view returns (bool) {
+    function supportsInterface(bytes4 _interfaceID) external override view returns (bool) {
         return _interfaceID == _ERC165_INTERFACE_ID;
     }
 
@@ -789,7 +789,7 @@ contract Wallet is ENSResolvable, GasTopUpLimit, LoadLimit, AddressWhitelist, Sp
             }
             // use callOptionalReturn provided in SafeERC20 in case the ERC20 method
             // returns false instead of reverting!
-            ERC20(_destination).callOptionalReturn(_data);
+            IERC20(_destination)._callOptionalReturn(_data);
 
             // if ERC20 call completes, return a boolean "true" as bytes emulating ERC20
             bytes memory b = new bytes(32);
@@ -799,7 +799,7 @@ contract Wallet is ENSResolvable, GasTopUpLimit, LoadLimit, AddressWhitelist, Sp
             return b;
         }
 
-        (bool success, bytes memory returndata) = _destination.call.value(_value)(_data);
+        (bool success, bytes memory returndata) = _destination.call{value: _value}(_data);
         require(success, string(returndata));
 
         emit ExecutedTransaction(_destination, _value, _data, returndata);

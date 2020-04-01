@@ -2,38 +2,47 @@
 
 set -e -o pipefail
 
-SOLC="docker run --rm -u `id -u` -v $PWD:/solidity --workdir /solidity/contracts ethereum/solc:0.5.17 --optimize /=/"
+SOLC_0_6="docker run --rm -u `id -u` -v $PWD:/solidity --workdir /solidity/contracts ethereum/solc:0.6.4 --optimize /=/"
+SOLC_0_5="docker run --rm -u `id -u` -v $PWD:/solidity --workdir /solidity/contracts ethereum/solc:0.5.17 --optimize /=/"
 
 compile_solidity() {
-  echo "compiling ${1}"
-  ${SOLC} --overwrite --bin --abi ${1}.sol -o /solidity/build/${1} --combined-json bin-runtime,srcmap-runtime,ast,srcmap,bin
+  echo "compiling ${2}"
+  ${1} --overwrite --bin --abi ${2}.sol -o /solidity/build/${2} --combined-json bin-runtime,srcmap-runtime,ast,srcmap,bin
 }
 
-contract_sources=(
+contracts_0_6=(
   'wallet'
-  'oracle'
-  'licence'
-  'holder'
-  'controller'
-  'tokenWhitelist'
-  'walletDeployer'
   'walletCache'
-  'mocks/token'
-  'mocks/burnerToken'
-  'mocks/nonCompliantToken'
-  'mocks/base64Exporter'
-  'mocks/oraclize'
-  'mocks/bytesUtilsExporter'
+  'walletDeployer'
   'mocks/isValidSignatureExporter'
-  'mocks/parseIntScientificExporter'
-  'mocks/tokenWhitelistableExporter'
-  'externals/ens/PublicResolver'
-  'externals/ens/ENSRegistry'
 )
 
-for c in "${contract_sources[@]}"
+contracts_0_5=(
+  'controller'
+  'holder'
+  'licence'
+  'oracle'
+  'tokenWhitelist'
+  'mocks/base64Exporter'
+  'mocks/burnerToken'
+  'mocks/bytesUtilsExporter'
+  'mocks/nonCompliantToken'
+  'mocks/oraclize'
+  'mocks/parseIntScientificExporter'
+  'mocks/token'
+  'mocks/tokenWhitelistableExporter'
+  'externals/ens/ENSRegistry'
+  'externals/ens/PublicResolver'
+)
+
+for c in "${contracts_0_6[@]}"
 do
-    compile_solidity $c
+    compile_solidity "${SOLC_0_6}" $c
+done
+
+for c in "${contracts_0_5[@]}"
+do
+    compile_solidity "${SOLC_0_5}" $c
 done
 
 GE_PATH=${PWD}/vendor/github.com/ethereum/go-ethereum
@@ -51,23 +60,23 @@ generate_binding() {
 }
 
 contracts=(
-  "wallet/Wallet wallet.go Wallet bindings"
-  "oracle/Oracle oracle.go Oracle bindings"
-  "licence/Licence licence.go Licence bindings"
-  "holder/Holder holder.go Holder bindings"
   "controller/Controller controller.go Controller bindings"
+  "holder/Holder holder.go Holder bindings"
+  "licence/Licence licence.go Licence bindings"
+  "oracle/Oracle oracle.go Oracle bindings"
   "tokenWhitelist/TokenWhitelist tokenWhitelist.go TokenWhitelist bindings"
-  "walletDeployer/WalletDeployer walletDeployer.go WalletDeployer bindings"
+  "wallet/Wallet wallet.go Wallet bindings"
   "walletCache/WalletCache walletCache.go WalletCache bindings"
-  "mocks/token/Token mocks/token.go Token mocks"
-  "mocks/burnerToken/BurnerToken mocks/burnerToken.go BurnerToken mocks"
-  "mocks/nonCompliantToken/NonCompliantToken mocks/nonCompliantToken.go NonCompliantToken mocks"
+  "walletDeployer/WalletDeployer walletDeployer.go WalletDeployer bindings"
   "mocks/base64Exporter/Base64Exporter mocks/base64Exporter.go Base64Exporter mocks"
-  "mocks/oraclize/OraclizeConnector mocks/oraclizeConnector.go OraclizeConnector mocks"
-  "mocks/oraclize/OraclizeAddrResolver mocks/oraclizeAddrResolver.go OraclizeAddrResolver mocks"
+  "mocks/burnerToken/BurnerToken mocks/burnerToken.go BurnerToken mocks"
   "mocks/bytesUtilsExporter/BytesUtilsExporter mocks/bytesUtilsExporter.go BytesUtilsExporter mocks"
   "mocks/isValidSignatureExporter/IsValidSignatureExporter mocks/isValidSignatureExporter.go IsValidSignatureExporter mocks"
+  "mocks/nonCompliantToken/NonCompliantToken mocks/nonCompliantToken.go NonCompliantToken mocks"
+  "mocks/oraclize/OraclizeAddrResolver mocks/oraclizeAddrResolver.go OraclizeAddrResolver mocks"
+  "mocks/oraclize/OraclizeConnector mocks/oraclizeConnector.go OraclizeConnector mocks"
   "mocks/parseIntScientificExporter/ParseIntScientificExporter mocks/parseIntScientificExporter.go ParseIntScientificExporter mocks"
+  "mocks/token/Token mocks/token.go Token mocks"
   "mocks/tokenWhitelistableExporter/TokenWhitelistableExporter mocks/tokenWhitelistableExporter.go TokenWhitelistableExporter mocks"
   "externals/ens/ENSRegistry/ENSRegistry externals/ens/ENSRegistry.go ENSRegistry ens"
   "externals/ens/PublicResolver/PublicResolver externals/ens/PublicResolver.go PublicResolver ens"

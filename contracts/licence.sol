@@ -25,14 +25,6 @@ import "./internals/ensResolvable.sol";
 import "./internals/transferrable.sol";
 
 
-/// @title ILicence interface describes methods for loading a TokenCard and updating licence amount.
-interface ILicence {
-    function load(address, uint256) external payable;
-
-    function updateLicenceAmount(uint256) external;
-}
-
-
 /// @title Licence loads the TokenCard and transfers the licence amout to the TKN Holder Contract.
 /// @notice the rest of the amount gets sent to the CryptoFloat
 contract Licence is Transferrable, ENSResolvable, Controllable {
