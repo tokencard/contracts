@@ -1,4 +1,4 @@
-timeout: 1200
+timeout: 800
 testLimit: 20000
 prefix: "echidna_"
 deployer: "0x1"

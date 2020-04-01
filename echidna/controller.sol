@@ -1,6 +1,6 @@
 pragma solidity ^0.5.15;
 
-import "crytic-export/flattening/Controller.sol";
+import "contracts/controller.sol";
 
 
 contract Echidna {
@@ -13,8 +13,8 @@ contract Echidna {
 
 contract TEST is Echidna, Controller {
     constructor() public Controller(echidna_deployer) {
-        addController(echidna_controller1);
-        addController(echidna_controller2);
+        this.addController(echidna_controller1);
+        this.addController(echidna_controller2);
     }
 
     function echidna_nonTransferableOwner() public view returns (bool) {
@@ -26,18 +26,18 @@ contract TEST is Echidna, Controller {
     }
 
     function echidna_ownerUniqueRole() public view returns (bool) {
-        return _isOwner(echidna_deployer) && !isAdmin(echidna_deployer) && !isController(echidna_deployer);
+        return _isOwner(echidna_deployer) && !this.isAdmin(echidna_deployer) && !this.isController(echidna_deployer);
     }
 
     function echidna_controller1UniqueRole() public view returns (bool) {
-        return !_isOwner(echidna_controller1) && !isAdmin(echidna_controller1) && isController(echidna_controller1);
+        return !_isOwner(echidna_controller1) && !this.isAdmin(echidna_controller1) && this.isController(echidna_controller1);
     }
 
     function echidna_controller2UniqueRole() public view returns (bool) {
-        return !_isOwner(echidna_controller2) && !isAdmin(echidna_controller2) && isController(echidna_controller2);
+        return !_isOwner(echidna_controller2) && !this.isAdmin(echidna_controller2) && this.isController(echidna_controller2);
     }
 
     function echidna_attackerNoRole() public view returns (bool) {
-        return !_isOwner(echidna_attacker) && !isAdmin(echidna_attacker) && !isController(echidna_attacker);
+        return !_isOwner(echidna_attacker) && !this.isAdmin(echidna_attacker) && !this.isController(echidna_attacker);
     }
 }
