@@ -40,24 +40,16 @@ contract TEST is Echidna, Date, ParseIntScientific {
         uint256 month = _monthToNumber(date.split(dateDelimiter).toString());
         require(month > 0 && month < 13, "month error");
 
-        uint256 year = _parseIntScientific(
-            date.split(dateDelimiter).toString()
-        );
+        uint256 year = _parseIntScientific(date.split(dateDelimiter).toString());
         require(year > 2017 && year < 3000, "year error");
 
-        uint256 hour = _parseIntScientific(
-            date.split(timeDelimiter).toString()
-        );
+        uint256 hour = _parseIntScientific(date.split(timeDelimiter).toString());
         require(hour < 25, "hour error");
 
-        uint256 minute = _parseIntScientific(
-            date.split(timeDelimiter).toString()
-        );
+        uint256 minute = _parseIntScientific(date.split(timeDelimiter).toString());
         require(minute < 60, "minute error");
 
-        uint256 second = _parseIntScientific(
-            date.split(timeDelimiter).toString()
-        );
+        uint256 second = _parseIntScientific(date.split(timeDelimiter).toString());
         require(second < 60, "second error");
 
         uint256 timestamp = year * (10**10) + month * (10**8) + day * (10**6) + hour * (10**4) + minute * (10**2) + second;
