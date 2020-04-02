@@ -25,7 +25,6 @@ import "../externals/ens/PublicResolver.sol";
 ///@title ENSResolvable - Ethereum Name Service Resolver
 ///@notice contract should be used to get an address for an ENS node
 contract ENSResolvable {
-
     /// @notice _ensRegistry points to the ENS registry smart contract.
     address private _ensRegistry;
 
