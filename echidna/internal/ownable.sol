@@ -12,7 +12,7 @@ contract Echidna {
 contract TEST is Echidna, Ownable {
     constructor() public Ownable(echidna_owner, false) {}
 
-    function echidna_nonTransferableOwner() public returns (bool) {
+    function echidna_nonTransferableOwner() public view returns (bool) {
         return _isOwner(echidna_owner);
     }
 }
