@@ -6,12 +6,12 @@ import (
 	"os"
 	"testing"
 
-    "github.com/ethereum/go-ethereum"
+	"github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
-    "github.com/tokencard/contracts/v3/pkg/bindings"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
+	"github.com/tokencard/contracts/v3/pkg/bindings"
 	. "github.com/tokencard/contracts/v3/test/shared"
 )
 
@@ -91,8 +91,8 @@ func isSuccessful(tx *types.Transaction) bool {
 	return r.Status == types.ReceiptStatusSuccessful
 }
 
-var WalletDeployerNode = EnsNode("wallet-deployer.tokencard.eth")
-var WalletCacheNode = EnsNode("wallet-cache.tokencard.eth")
+var WalletDeployerNode = EnsNode("wallet-deployer.v3.tokencard.eth")
+var WalletCacheNode = EnsNode("wallet-cache.v3.tokencard.eth")
 
 var _ = BeforeEach(func() {
 	err := InitializeBackend()
@@ -108,7 +108,10 @@ var _ = BeforeEach(func() {
 	//Register with ENS
 	{
 		// set WalletDeployer node owner
-		tx, err = ENSRegistry.SetSubnodeOwner(BankAccount.TransactOpts(), EnsNode("tokencard.eth"), LabelHash("wallet-deployer"), BankAccount.Address())
+		tx, err = ENSRegistry.SetSubnodeOwner(BankAccount.TransactOpts(), EnsNode("tokencard.eth"), LabelHash("v3"), BankAccount.Address())
+		Expect(err).ToNot(HaveOccurred())
+		Backend.Commit()
+		tx, err = ENSRegistry.SetSubnodeOwner(BankAccount.TransactOpts(), EnsNode("v3.tokencard.eth"), LabelHash("wallet-deployer"), BankAccount.Address())
 		Expect(err).ToNot(HaveOccurred())
 		Backend.Commit()
 		// Register WalletDeployer with ENS
@@ -123,7 +126,10 @@ var _ = BeforeEach(func() {
 	}
 	{
 		// set WalletCache node owner
-		tx, err = ENSRegistry.SetSubnodeOwner(BankAccount.TransactOpts(), EnsNode("tokencard.eth"), LabelHash("wallet-cache"), BankAccount.Address())
+		tx, err = ENSRegistry.SetSubnodeOwner(BankAccount.TransactOpts(), EnsNode("tokencard.eth"), LabelHash("v3"), BankAccount.Address())
+		Expect(err).ToNot(HaveOccurred())
+		Backend.Commit()
+		tx, err = ENSRegistry.SetSubnodeOwner(BankAccount.TransactOpts(), EnsNode("v3.tokencard.eth"), LabelHash("wallet-cache"), BankAccount.Address())
 		Expect(err).ToNot(HaveOccurred())
 		Backend.Commit()
 		// Register WalletCache with ENS

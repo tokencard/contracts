@@ -5,7 +5,7 @@ import "../ResolverBase.sol";
 contract TextResolver is ResolverBase {
     bytes4 constant private TEXT_INTERFACE_ID = 0x59d1d43c;
 
-    event TextChanged(bytes32 indexed node, string indexedKey, string key);
+    event TextChanged(bytes32 indexed node, string indexed indexedKey, string key);
 
     mapping(bytes32=>mapping(string=>string)) texts;
 
