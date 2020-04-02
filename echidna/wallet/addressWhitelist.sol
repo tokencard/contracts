@@ -1,6 +1,6 @@
 pragma solidity ^0.5.15;
 
-import "contracts/wallet.sol";
+import "crytic-export/flattening/Wallet.sol";
 
 
 contract Echidna {
@@ -39,7 +39,7 @@ contract TEST is Echidna, AddressWhitelist {
         }
 
         uint256 length_before = whitelistArray.length;
-        this.confirmWhitelistAddition(calculateHash(this.pendingWhitelistAddition()));
+        confirmWhitelistAddition(calculateHash(pendingWhitelistAddition()));
         uint256 length_after = whitelistArray.length;
         return (length_before <= length_after);
     }
@@ -49,11 +49,11 @@ contract TEST is Echidna, AddressWhitelist {
             return true;
         }
 
-        for (uint256 i = 0; i < this.pendingWhitelistAddition().length; i++) {
-            added_addresses.push(this.pendingWhitelistAddition()[i]);
+        for (uint256 i = 0; i < pendingWhitelistAddition().length; i++) {
+            added_addresses.push(pendingWhitelistAddition()[i]);
         }
 
-        this.confirmWhitelistAddition(calculateHash(this.pendingWhitelistAddition()));
+        confirmWhitelistAddition(calculateHash(pendingWhitelistAddition()));
 
         bool checked_addresses = true;
         for (uint256 i = 0; i < added_addresses.length; i++) {
@@ -69,7 +69,7 @@ contract TEST is Echidna, AddressWhitelist {
         }
 
         uint256 length_before = whitelistArray.length;
-        this.confirmWhitelistRemoval(calculateHash(this.pendingWhitelistRemoval()));
+        confirmWhitelistRemoval(calculateHash(pendingWhitelistRemoval()));
         uint256 length_after = whitelistArray.length;
         return (length_before >= length_after);
     }
@@ -79,11 +79,11 @@ contract TEST is Echidna, AddressWhitelist {
             return true;
         }
 
-        for (uint256 i = 0; i < this.pendingWhitelistRemoval().length; i++) {
-            removed_addresses.push(this.pendingWhitelistRemoval()[i]);
+        for (uint256 i = 0; i < pendingWhitelistRemoval().length; i++) {
+            removed_addresses.push(pendingWhitelistRemoval()[i]);
         }
 
-        this.confirmWhitelistRemoval(calculateHash(this.pendingWhitelistRemoval()));
+        confirmWhitelistRemoval(calculateHash(pendingWhitelistRemoval()));
 
         bool checked_addresses = true;
         for (uint256 i = 0; i < removed_addresses.length; i++) {

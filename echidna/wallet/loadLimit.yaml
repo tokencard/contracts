@@ -2,7 +2,9 @@ timeout: 800
 testLimit: 100000
 prefix: "echidna_"
 deployer: "0x1"
-sender: ["0x2"]
-dashboard: true
+sender: ["0x2", "0x3"]
+dashboard: false
 coverage: true
 solcArgs: "--allow-paths ."
+maxTimeDelay: 0
+maxBlockDelay: 0

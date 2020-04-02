@@ -1,6 +1,6 @@
 pragma solidity ^0.5.15;
 
-import "contracts/wallet.sol";
+import "crytic-export/flattening/Wallet.sol";
 
 
 contract Echidna {
@@ -28,10 +28,10 @@ contract TEST is Echidna, GasTopUpLimit {
 
     function echidna_DailyGasTopUpLimitAvailable() public returns (bool) {
         increaseDayNow();
-        return this.gasTopUpLimitAvailable() <= initialLimit;
+        return gasTopUpLimitAvailable() <= initialLimit;
     }
 
-    function echidna_ConstantGasTopUpLimitAvailable() public returns (bool) {
-        return this.gasTopUpLimitAvailable() <= initialLimit;
+    function echidna_ConstantGasTopUpLimitAvailable() public view returns (bool) {
+        return gasTopUpLimitAvailable() <= initialLimit;
     }
 }

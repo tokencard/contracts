@@ -151,48 +151,60 @@ jobs:
     docker:
       - image: trailofbits/eth-security-toolbox@sha256:3fb96e2d9de772f5e97f1c3c650c8a3d28660f8a64a60b76269da1ac19b86a28
     working_directory: /tmp/contracts
-    parallelism: 6
+    parallelism: 8
     steps:
       - run: sudo -n apt-get update && sudo -n apt-get install -y openssh-client
       - checkout
       - run: solc-select 0.5.17
+      - run: find contracts -type f -name '*.sol' -exec slither-flat --convert-external {} \;
       - run:
           command: |
             if [[ "${CIRCLE_NODE_INDEX}" == 0 ]]; then
-                echidna-test echidna/wallet/addressWhitelist.sol --config=echidna/wallet/addressWhitelist.yaml --contract=TEST
-            fi
-          no_output_timeout: 15m
-      - run:
-          command: |
-            if [[ "${CIRCLE_NODE_INDEX}" == 5 ]]; then
-                echidna-test echidna/wallet/spendLimit.sol --config=echidna/wallet/spendLimit.yaml --contract=TEST
-            fi
-          no_output_timeout: 15m
-      - run:
-          command: |
-            if [[ "${CIRCLE_NODE_INDEX}" == 3 ]]; then
-                echidna-test echidna/wallet/gasTopUpLimit.sol --config=echidna/wallet/gasTopUpLimit.yaml --contract=TEST
+                echidna-test echidna/wallet/wallet.sol --config=echidna/wallet/wallet.yaml --contract=TEST
             fi
           no_output_timeout: 15m
       - run:
           command: |
             if [[ "${CIRCLE_NODE_INDEX}" == 1 ]]; then
-                echidna-test echidna/controller/controller.sol --config=echidna/controller/controller.yaml --contract=TEST 
+                echidna-test echidna/wallet/vault.sol --config=echidna/wallet/vault.yaml --contract=TEST
+            fi
+          no_output_timeout: 15m                
+      - run:
+          command: |
+            if [[ "${CIRCLE_NODE_INDEX}" == 2 ]]; then
+                echidna-test echidna/wallet/addressWhitelist.sol --config=echidna/wallet/addressWhitelist.yaml --contract=TEST
             fi
           no_output_timeout: 15m
       - run:
           command: |
-            if [[ "${CIRCLE_NODE_INDEX}" == 2 ]]; then
-                echidna-test echidna/oracle/date.sol --config=echidna/oracle/date.yaml --contract=TEST
+            if [[ "${CIRCLE_NODE_INDEX}" == 3 ]]; then
+                echidna-test echidna/wallet/spendLimit.sol --config=echidna/wallet/spendLimit.yaml --contract=TEST
             fi
           no_output_timeout: 15m
       - run:
           command: |
             if [[ "${CIRCLE_NODE_INDEX}" == 4 ]]; then
-                echidna-test echidna/internal/ownable.sol --config=echidna/internal/ownable.yaml --contract=TEST
+                echidna-test echidna/wallet/gasTopUpLimit.sol --config=echidna/wallet/gasTopUpLimit.yaml --contract=TEST
             fi
           no_output_timeout: 15m
-
+      - run:
+          command: |
+            if [[ "${CIRCLE_NODE_INDEX}" == 5 ]]; then
+                echidna-test echidna/wallet/loadLimit.sol --config=echidna/wallet/loadLimit.yaml --contract=TEST
+            fi
+          no_output_timeout: 15m
+      - run:
+          command: |
+            if [[ "${CIRCLE_NODE_INDEX}" == 6 ]]; then
+                echidna-test echidna/controller/controller.sol --config=echidna/controller/controller.yaml --contract=TEST 
+            fi
+          no_output_timeout: 15m
+      - run:
+          command: |
+            if [[ "${CIRCLE_NODE_INDEX}" == 7 ]]; then
+                echidna-test echidna/internals/ownable.sol --config=echidna/internals/ownable.yaml --contract=TEST
+            fi
+          no_output_timeout: 15m
 
 workflows:
   version: 2

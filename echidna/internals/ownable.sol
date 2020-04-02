@@ -1,6 +1,6 @@
 pragma solidity ^0.5.15;
 
-import "contracts/internals/ownable.sol";
+import "crytic-export/flattening/Ownable.sol";
 
 
 contract Echidna {
@@ -11,6 +11,10 @@ contract Echidna {
 
 contract TEST is Echidna, Ownable {
     constructor() public Ownable(echidna_owner, false) {}
+
+    function echidna_nonTransferable() public view returns (bool) {
+        return !isTransferable();
+    }
 
     function echidna_nonTransferableOwner() public view returns (bool) {
         return _isOwner(echidna_owner);

@@ -4,8 +4,24 @@
     "security"
   ],
   "rules": {
-    "no-empty-blocks": ["off"],
-    "no-inline-assembly": ["off"],
-    "no-block-members": ["off"]
+    "no-empty-blocks": [
+      "off"
+    ],
+    "no-block-members": [
+      "off"
+    ],
+    "max-len": 280,
+    "indentation": [
+      "off"
+    ],
+    "security/no-inline-assembly": [
+      "off"
+    ],
+    "security/no-low-level-calls": [
+      "off"
+    ],
+    "security/no-call-value": [
+      "off"
+    ]
   }
 }

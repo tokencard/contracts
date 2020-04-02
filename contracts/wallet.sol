@@ -590,7 +590,7 @@ contract Wallet is ENSResolvable, GasTopUpLimit, LoadLimit, AddressWhitelist, Sp
     }
 
     /// @dev This function allows for the controller to relay transactions on the owner's behalf,
-    ///      the relayed message has to be signed by the owner.
+    /// the relayed message has to be signed by the owner.
     /// @param _nonce only used for relayed transactions, must match the wallet's relayNonce.
     /// @param _data abi encoded data payload.
     /// @param _signature signed prefix + data.
@@ -808,7 +808,7 @@ contract Wallet is ENSResolvable, GasTopUpLimit, LoadLimit, AddressWhitelist, Sp
     }
 
     /// @dev Implements EIP-1654: receives the hashed message(bytes32)
-    ///      https://github.com/ethereum/EIPs/issues/1654.md
+    /// https://github.com/ethereum/EIPs/issues/1654.md
     /// @param _hashedData Hashed data signed on the behalf of address(this)
     /// @param _signature Signature byte array associated with _dataHash
     function isValidSignature(bytes32 _hashedData, bytes memory _signature) public view returns (bytes4) {
