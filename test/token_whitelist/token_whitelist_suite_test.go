@@ -24,10 +24,9 @@ func init() {
 	)
 
 	TestRig.AddCoverageForContracts(
-		"../../build/internals/tokenWhitelistable/combined.json",
+		"../../build/mocks/tokenWhitelistableExporter/combined.json",
 		"../../contracts",
 	)
-
 }
 
 func TestTokenWhitelistSuite(t *testing.T) {
