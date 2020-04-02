@@ -507,8 +507,8 @@ contract LoadLimit is ControllableOwnable, SelfCallableOwnable {
 }
 
 
-/// @title Asset store with extra security features.
-contract Vault is AddressWhitelist, SpendLimit, ERC165, Transferrable, Balanceable, TokenWhitelistable {
+/// @title Asset wallet with extra security features, gas top up management and card integration.
+contract Wallet is ENSResolvable, GasTopUpLimit, LoadLimit, AddressWhitelist, SpendLimit, ERC165, Transferrable, Balanceable, TokenWhitelistable {
     using Address for address;
     using ECDSA for bytes32;
     using SafeERC20 for ERC20;
@@ -517,9 +517,14 @@ contract Vault is AddressWhitelist, SpendLimit, ERC165, Transferrable, Balanceab
     event BulkTransferred(address _to, address[] _assets);
     event ExecutedRelayedTransaction(bytes _data, bytes _returndata);
     event ExecutedTransaction(address _destination, uint256 _value, bytes _data, bytes _returndata);
-    event Received(address _from, uint256 _amount);
-    event Transferred(address _to, address _asset, uint256 _amount);
     event IncreasedRelayNonce(address _sender, uint256 _currentNonce);
+    event LoadedTokenCard(address _asset, uint256 _amount);
+    event Received(address _from, uint256 _amount);
+    event ToppedUpGas(address _sender, address _owner, uint256 _amount);
+    event Transferred(address _to, address _asset, uint256 _amount);
+    event UpdatedAvailableLimit(); // This is here because our tests don't inherit events from a library
+
+    string public constant WALLET_VERSION = "3.1.1";
 
     // keccak256("isValidSignature(bytes,bytes)") = 20c13b0bc670c284a9f19cdf7a533ca249404190f8dc132aac33e733b965269e
     bytes4 private constant _EIP_1271 = 0x20c13b0b;
@@ -529,22 +534,44 @@ contract Vault is AddressWhitelist, SpendLimit, ERC165, Transferrable, Balanceab
     /// @dev Supported ERC165 interface ID.
     bytes4 private constant _ERC165_INTERFACE_ID = 0x01ffc9a7; // solium-disable-line uppercase
 
+    uint256 private constant _MAXIMUM_STABLECOIN_LOAD_LIMIT = 10000; // 10,000 USD
+
     /// @dev this is an internal nonce to prevent replay attacks from relayer
     uint256 public relayNonce;
 
-    /// @dev Constructor initializes the vault with an owner address and spend limit. It also sets up the controllable and tokenWhitelist contracts with the right name registered in ENS.
+    /// @dev Is the registered ENS node identifying the licence contract.
+    bytes32 private _licenceNode;
+
+    /// @dev Constructor initializes the wallet top up limit and the vault contract.
     /// @param _owner_ is the owner account of the wallet contract.
     /// @param _transferable_ indicates whether the contract ownership can be transferred.
-    /// @param _tokenWhitelistNode_ is the ENS node of the Token whitelist.
-    /// @param _controllerNode_ is the ENS name node of the controller.
+    /// @param _ens_ is the address of the ENS registry.
+    /// @param _tokenWhitelistNode_ is the ENS name node of the Token whitelist.
+    /// @param _controllerNode_ is the ENS name node of the Controller contract.
+    /// @param _licenceNode_ is the ENS name node of the Licence contract.
     /// @param _spendLimit_ is the initial spend limit.
-    constructor(address payable _owner_, bool _transferable_, bytes32 _tokenWhitelistNode_, bytes32 _controllerNode_, uint256 _spendLimit_)
+    constructor(
+        address payable _owner_,
+        bool _transferable_,
+        address _ens_,
+        bytes32 _tokenWhitelistNode_,
+        bytes32 _controllerNode_,
+        bytes32 _licenceNode_,
+        uint256 _spendLimit_
+    )
         public
+        ENSResolvable(_ens_)
         SpendLimit(_spendLimit_)
         Ownable(_owner_, _transferable_)
         Controllable(_controllerNode_)
         TokenWhitelistable(_tokenWhitelistNode_)
-    {}
+    {
+        // Get the stablecoin's magnitude.
+        (, uint256 stablecoinMagnitude, , , , , ) = _getStablecoinInfo();
+        require(stablecoinMagnitude > 0, "no stablecoin");
+        _initializeLoadLimit(_MAXIMUM_STABLECOIN_LOAD_LIMIT * stablecoinMagnitude);
+        _licenceNode = _licenceNode_;
+    }
 
     /// @dev Checks if the value is not zero.
     modifier isNotZero(uint256 _value) {
@@ -619,24 +646,48 @@ contract Vault is AddressWhitelist, SpendLimit, ERC165, Transferrable, Balanceab
         return _EIP_1271;
     }
 
+    /// @return licence contract node registered in ENS.
+    function licenceNode() external view returns (bytes32) {
+        return _licenceNode;
+    }
+
+    /// @dev Load a token card with the specified asset amount.
+    /// @dev the amount send should be inclusive of the percent licence.
+    /// @param _asset is the address of an ERC20 token or 0x0 for ether.
+    /// @param _amount is the amount of assets to be transferred in base units.
+    function loadTokenCard(address _asset, uint256 _amount) external payable onlyOwnerOrSelf {
+        // check if token is allowed to be used for loading the card
+        require(_isTokenLoadable(_asset), "token not loadable");
+        // Convert token amount to stablecoin value.
+        uint256 stablecoinValue = convertToStablecoin(_asset, _amount);
+        // Check against the daily spent limit and update accordingly, require that the value is under remaining limit.
+        _loadLimit._enforceLimit(stablecoinValue);
+        // Get the TKN licenceAddress from ENS
+        address licenceAddress = _ensResolve(_licenceNode);
+        if (_asset != address(0)) {
+            ERC20(_asset).safeApprove(licenceAddress, _amount);
+            ILicence(licenceAddress).load(_asset, _amount);
+        } else {
+            ILicence(licenceAddress).load.value(_amount)(_asset, _amount);
+        }
+
+        emit LoadedTokenCard(_asset, _amount);
+    }
+
     /// @dev Checks for interface support based on ERC165.
     function supportsInterface(bytes4 _interfaceID) external view returns (bool) {
         return _interfaceID == _ERC165_INTERFACE_ID;
     }
 
-    /// @dev Convert ERC20 token amount to the corresponding ether amount.
-    /// @param _token ERC20 token contract address.
-    /// @param _amount amount of token in base units.
-    function convertToEther(address _token, uint256 _amount) public view returns (uint256) {
-        // Store the token in memory to save map entry lookup gas.
-        (, uint256 magnitude, uint256 rate, bool available, , , ) = _getTokenInfo(_token);
-        // If the token exists require that its rate is not zero.
-        if (available) {
-            require(rate != 0, "rate=0");
-            // Safely convert the token amount to ether based on the exchange rate.
-            return _amount.mul(rate).div(magnitude);
-        }
-        return 0;
+    /// @dev Refill owner's gas balance, revert if the transaction amount is too large
+    /// @param _amount is the amount of ether to transfer to the owner account in wei.
+    function topUpGas(uint256 _amount) external isNotZero(_amount) onlyOwnerOrController {
+        // Check against the daily spent limit and update accordingly, require that the value is under remaining limit.
+        _gasTopUpLimit._enforceLimit(_amount);
+        // Then perform the transfer
+        owner().transfer(_amount);
+        // Emit the gas top up event.
+        emit ToppedUpGas(msg.sender, owner(), _amount);
     }
 
     /// @dev This function allows for the wallet to send a batch of transactions instead of one,
@@ -678,6 +729,52 @@ contract Vault is AddressWhitelist, SpendLimit, ERC165, Transferrable, Balanceab
             // call executeTransaction(), if one of them reverts then the whole batch reverts.
             executeTransaction(destination, value, data);
         }
+    }
+
+    /// @dev Convert ERC20 token amount to the corresponding ether amount.
+    /// @param _token ERC20 token contract address.
+    /// @param _amount amount of token in base units.
+    function convertToEther(address _token, uint256 _amount) public view returns (uint256) {
+        // Store the token in memory to save map entry lookup gas.
+        (, uint256 magnitude, uint256 rate, bool available, , , ) = _getTokenInfo(_token);
+        // If the token exists require that its rate is not zero.
+        if (available) {
+            require(rate != 0, "rate=0");
+            // Safely convert the token amount to ether based on the exchange rate.
+            return _amount.mul(rate).div(magnitude);
+        }
+        return 0;
+    }
+
+    /// @dev Convert ether or ERC20 token amount to the corresponding stablecoin amount.
+    /// @param _token ERC20 token contract address.
+    /// @param _amount amount of token in base units.
+    function convertToStablecoin(address _token, uint256 _amount) public view returns (uint256) {
+        // avoid the unnecessary calculations if the token to be loaded is the stablecoin itself
+        if (_token == _stablecoin()) {
+            return _amount;
+        }
+        uint256 amountToSend = _amount;
+
+        // 0x0 represents ether
+        if (_token != address(0)) {
+            // convert to eth first, same as convertToEther()
+            // Store the token in memory to save map entry lookup gas.
+            (, uint256 magnitude, uint256 rate, bool available, , , ) = _getTokenInfo(_token);
+            // require that token both exists in the whitelist and its rate is not zero.
+            require(available, "token not available");
+            require(rate != 0, "rate=0");
+            // Safely convert the token amount to ether based on the exchangeonly rate.
+            amountToSend = _amount.mul(rate).div(magnitude);
+        }
+        // _amountToSend now is in ether
+        // Get the stablecoin's magnitude and its current rate.
+        (, uint256 stablecoinMagnitude, uint256 stablecoinRate, bool stablecoinAvailable, , , ) = _getStablecoinInfo();
+        // Check if the stablecoin rate is set.
+        require(stablecoinAvailable, "token not available");
+        require(stablecoinRate != 0, "stablecoin rate=0");
+        // Safely convert the token amount to stablecoin based on its exchange rate and the stablecoin exchange rate.
+        return amountToSend.mul(stablecoinMagnitude).div(stablecoinRate);
     }
 
     /// @dev This function allows for the owner to send any transaction from the Wallet to arbitrary addresses
@@ -756,117 +853,5 @@ contract Vault is AddressWhitelist, SpendLimit, ERC165, Transferrable, Balanceab
         _safeTransfer(_to, _asset, _amount);
         // Emit the transfer event.
         emit Transferred(_to, _asset, _amount);
-    }
-}
-
-
-/// @title Asset wallet with extra security features, gas top up management and card integration.
-contract Wallet is ENSResolvable, Vault, GasTopUpLimit, LoadLimit {
-    using SafeERC20 for ERC20;
-
-    event LoadedTokenCard(address _asset, uint256 _amount);
-    event ToppedUpGas(address _sender, address _owner, uint256 _amount);
-
-    /// This is here because our tests don't inherit events from a library
-    event UpdatedAvailableLimit();
-
-    string public constant WALLET_VERSION = "3.1.0";
-    uint256 private constant _MAXIMUM_STABLECOIN_LOAD_LIMIT = 10000; // 10,000 USD
-
-    /// @dev Is the registered ENS node identifying the licence contract.
-    bytes32 private _licenceNode;
-
-    /// @dev Constructor initializes the wallet top up limit and the vault contract.
-    /// @param _owner_ is the owner account of the wallet contract.
-    /// @param _transferable_ indicates whether the contract ownership can be transferred.
-    /// @param _ens_ is the address of the ENS registry.
-    /// @param _tokenWhitelistNode_ is the ENS name node of the Token whitelist.
-    /// @param _controllerNode_ is the ENS name node of the Controller contract.
-    /// @param _licenceNode_ is the ENS name node of the Licence contract.
-    /// @param _spendLimit_ is the initial spend limit.
-    constructor(
-        address payable _owner_,
-        bool _transferable_,
-        address _ens_,
-        bytes32 _tokenWhitelistNode_,
-        bytes32 _controllerNode_,
-        bytes32 _licenceNode_,
-        uint256 _spendLimit_
-    ) public ENSResolvable(_ens_) Vault(_owner_, _transferable_, _tokenWhitelistNode_, _controllerNode_, _spendLimit_) {
-        // Get the stablecoin's magnitude.
-        (, uint256 stablecoinMagnitude, , , , , ) = _getStablecoinInfo();
-        require(stablecoinMagnitude > 0, "no stablecoin");
-        _initializeLoadLimit(_MAXIMUM_STABLECOIN_LOAD_LIMIT * stablecoinMagnitude);
-        _licenceNode = _licenceNode_;
-    }
-
-    /// @return licence contract node registered in ENS.
-    function licenceNode() external view returns (bytes32) {
-        return _licenceNode;
-    }
-
-    /// @dev Load a token card with the specified asset amount.
-    /// @dev the amount send should be inclusive of the percent licence.
-    /// @param _asset is the address of an ERC20 token or 0x0 for ether.
-    /// @param _amount is the amount of assets to be transferred in base units.
-    function loadTokenCard(address _asset, uint256 _amount) external payable onlyOwnerOrSelf {
-        // check if token is allowed to be used for loading the card
-        require(_isTokenLoadable(_asset), "token not loadable");
-        // Convert token amount to stablecoin value.
-        uint256 stablecoinValue = convertToStablecoin(_asset, _amount);
-        // Check against the daily spent limit and update accordingly, require that the value is under remaining limit.
-        _loadLimit._enforceLimit(stablecoinValue);
-        // Get the TKN licenceAddress from ENS
-        address licenceAddress = _ensResolve(_licenceNode);
-        if (_asset != address(0)) {
-            ERC20(_asset).safeApprove(licenceAddress, _amount);
-            ILicence(licenceAddress).load(_asset, _amount);
-        } else {
-            ILicence(licenceAddress).load.value(_amount)(_asset, _amount);
-        }
-
-        emit LoadedTokenCard(_asset, _amount);
-    }
-
-    /// @dev Refill owner's gas balance, revert if the transaction amount is too large
-    /// @param _amount is the amount of ether to transfer to the owner account in wei.
-    function topUpGas(uint256 _amount) external isNotZero(_amount) onlyOwnerOrController {
-        // Check against the daily spent limit and update accordingly, require that the value is under remaining limit.
-        _gasTopUpLimit._enforceLimit(_amount);
-        // Then perform the transfer
-        owner().transfer(_amount);
-        // Emit the gas top up event.
-        emit ToppedUpGas(msg.sender, owner(), _amount);
-    }
-
-    /// @dev Convert ether or ERC20 token amount to the corresponding stablecoin amount.
-    /// @param _token ERC20 token contract address.
-    /// @param _amount amount of token in base units.
-    function convertToStablecoin(address _token, uint256 _amount) public view returns (uint256) {
-        // avoid the unnecessary calculations if the token to be loaded is the stablecoin itself
-        if (_token == _stablecoin()) {
-            return _amount;
-        }
-        uint256 amountToSend = _amount;
-
-        // 0x0 represents ether
-        if (_token != address(0)) {
-            // convert to eth first, same as convertToEther()
-            // Store the token in memory to save map entry lookup gas.
-            (, uint256 magnitude, uint256 rate, bool available, , , ) = _getTokenInfo(_token);
-            // require that token both exists in the whitelist and its rate is not zero.
-            require(available, "token not available");
-            require(rate != 0, "rate=0");
-            // Safely convert the token amount to ether based on the exchangeonly rate.
-            amountToSend = _amount.mul(rate).div(magnitude);
-        }
-        // _amountToSend now is in ether
-        // Get the stablecoin's magnitude and its current rate.
-        (, uint256 stablecoinMagnitude, uint256 stablecoinRate, bool stablecoinAvailable, , , ) = _getStablecoinInfo();
-        // Check if the stablecoin rate is set.
-        require(stablecoinAvailable, "token not available");
-        require(stablecoinRate != 0, "stablecoin rate=0");
-        // Safely convert the token amount to stablecoin based on its exchange rate and the stablecoin exchange rate.
-        return amountToSend.mul(stablecoinMagnitude).div(stablecoinRate);
     }
 }
