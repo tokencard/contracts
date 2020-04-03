@@ -509,7 +509,7 @@ abstract contract LoadLimit is ControllableOwnable, SelfCallableOwnable, TokenWh
 
 
 /// @title Asset wallet with extra security features, gas top up management and card integration.
-contract Wallet is ENSResolvable, GasTopUpLimit, LoadLimit, AddressWhitelist, SpendLimit, ERC165, Transferrable, Balanceable {
+contract Wallet is ENSResolvable, GasTopUpLimit, LoadLimit, AddressWhitelist, SpendLimit, IERC165, Transferrable, Balanceable {
     using Address for address;
     using ECDSA for bytes32;
     using SafeERC20 for IERC20;
@@ -541,7 +541,7 @@ contract Wallet is ENSResolvable, GasTopUpLimit, LoadLimit, AddressWhitelist, Sp
     /// @dev Is the registered ENS node identifying the licence contract.
     bytes32 private _licenceNode;
 
-    /// @dev Constructor initializes the wallet top up limit and the vault contract.
+    /// @dev Constructor initializes limits and the wallet contract.
     /// @param _owner_ is the owner account of the wallet contract.
     /// @param _transferable_ indicates whether the contract ownership can be transferred.
     /// @param _ens_ is the address of the ENS registry.
@@ -653,10 +653,10 @@ contract Wallet is ENSResolvable, GasTopUpLimit, LoadLimit, AddressWhitelist, Sp
         // Get the TKN licenceAddress from ENS
         address licenceAddress = _ensResolve(_licenceNode);
         if (_asset != address(0)) {
-            ERC20(_asset).safeApprove(licenceAddress, _amount);
+            IERC20(_asset).safeApprove(licenceAddress, _amount);
             ILicence(licenceAddress).load(_asset, _amount);
         } else {
-            ILicence(licenceAddress).load.value(_amount)(_asset, _amount);
+            ILicence(licenceAddress).load{value: _amount}(_asset, _amount);
         }
 
         emit LoadedTokenCard(_asset, _amount);
