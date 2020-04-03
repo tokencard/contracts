@@ -16,18 +16,11 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-pragma solidity ^0.5.17;
+pragma solidity ^0.6.0;
 
-import "./internals/ownable.sol";
-import "./internals/transferrable.sol";
-
-
-/// @title The IController interface provides access to the isController and isAdmin checks.
-interface IController {
-    function isController(address) external view returns (bool);
-
-    function isAdmin(address) external view returns (bool);
-}
+import "../interfaces/IController.sol";
+import "./tmp_0_6/ownable.sol";
+import "./tmp_0_6/transferrable.sol";
 
 
 /// @title Controller stores a list of controller addresses that can be used for authentication in other contracts.
@@ -114,13 +107,13 @@ contract Controller is IController, Ownable, Transferrable {
 
     /// @notice is an address an Admin?
     /// @return true if the provided account is an admin.
-    function isAdmin(address _account) external view notStopped returns (bool) {
+    function isAdmin(address _account) external override view notStopped returns (bool) {
         return _isAdmin[_account];
     }
 
     /// @notice is an address a Controller?
     /// @return true if the provided account is a controller.
-    function isController(address _account) external view notStopped returns (bool) {
+    function isController(address _account) external override view notStopped returns (bool) {
         return _isController[_account];
     }
 

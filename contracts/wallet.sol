@@ -22,15 +22,15 @@ import "./externals/ECDSA.sol";
 import "./interfaces/IERC20.sol";
 import "./interfaces/IERC165.sol";
 import "./interfaces/ILicence.sol";
+import "./tmp_0_6/Address.sol";
 import "./tmp_0_6/balanceable.sol";
 import "./tmp_0_6/controllable.sol";
 import "./tmp_0_6/ensResolvable.sol";
 import "./tmp_0_6/ownable.sol";
+import "./tmp_0_6/SafeERC20.sol";
+import "./tmp_0_6/SafeMath.sol";
 import "./tmp_0_6/tokenWhitelistable.sol";
 import "./tmp_0_6/transferrable.sol";
-import "./tmp_0_6/SafeMath.sol";
-import "./tmp_0_6/Address.sol";
-import "./tmp_0_6/SafeERC20.sol";
 
 
 /// @title ControllableOwnable combines Controllable and Ownable

@@ -18,7 +18,7 @@
 
 pragma solidity ^0.5.17;
 
-import "../controller.sol";
+import "../interfaces/IController.sol";
 import "./ensResolvable.sol";
 
 
