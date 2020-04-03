@@ -39,7 +39,7 @@ import "./internals/transferrable.sol";
 /// @title SelfCallableOwnable allows either owner or the contract itself to call its functions
 /// @dev providing an additional modifier to check if Owner or self is calling
 /// @dev the "self" here is used for the meta transactions
-contract SelfCallableOwnable is Ownable {
+abstract contract SelfCallableOwnable is Ownable {
 
     /// @dev Check if the sender is the Owner or self
     modifier onlySelf() {
@@ -57,7 +57,7 @@ contract SelfCallableOwnable is Ownable {
 /// @title OptOutableMonolith2FA is used a configurable 2FA.
 /// @dev This provides the various modifiers and utility functions needed for 2FA.
 /// @dev 2FA is needed to confirm changes to the security settings in the wallet.
-contract OptOutableMonolith2FA is Controllable, SelfCallableOwnable {
+abstract contract OptOutableMonolith2FA is Controllable, SelfCallableOwnable {
 
     event SetMonolith2FA(address _sender);
     event SetPersonal2FA(address _sender, address _p2FA);
@@ -122,7 +122,7 @@ contract OptOutableMonolith2FA is Controllable, SelfCallableOwnable {
 /// @title AddressWhitelist provides payee-whitelist functionality.
 /// @dev This contract will allow the user to maintain a whitelist of addresses.
 /// @dev These addresses will live outside of the daily limit.
-contract AddressWhitelist is SelfCallableOwnable, OptOutableMonolith2FA {
+abstract contract AddressWhitelist is SelfCallableOwnable, OptOutableMonolith2FA {
     using SafeMath for uint256;
 
     event AddedToWhitelist(address _sender, address[] _addresses);
@@ -304,7 +304,7 @@ contract AddressWhitelist is SelfCallableOwnable, OptOutableMonolith2FA {
 }
 
 /// @title DailyLimit provides daily spend limit functionality.
-contract DailyLimit is SelfCallableOwnable, OptOutableMonolith2FA, TokenWhitelistable{
+abstract contract DailyLimit is SelfCallableOwnable, OptOutableMonolith2FA, TokenWhitelistable {
     using SafeMath for uint256;
 
     event InitializedDailyLimit(uint _amount, uint _nextReset);
@@ -423,7 +423,7 @@ contract DailyLimit is SelfCallableOwnable, OptOutableMonolith2FA, TokenWhitelis
 }
 
 /// @title Asset wallet with extra security features and card integration.
-contract Wallet is ENSResolvable, AddressWhitelist, DailyLimit, ERC165, Transferrable, Balanceable {
+contract Wallet is ENSResolvable, AddressWhitelist, DailyLimit, IERC165, Transferrable, Balanceable {
 
     using Address for address;
     using ECDSA for bytes32;
@@ -455,7 +455,7 @@ contract Wallet is ENSResolvable, AddressWhitelist, DailyLimit, ERC165, Transfer
     /// @dev Is the registered ENS node identifying the licence contract.
     bytes32 private _licenceNode;
 
-    /// @dev Constructor initializes the vault with an owner address and daily limit. It also sets up the controllable and tokenWhitelist contracts with the right name registered in ENS.
+    /// @dev Constructor initializes the wallet with an owner address and daily limit. It also sets up the controllable and tokenWhitelist contracts with the right name registered in ENS.
     /// @param _owner_ is the owner account of the wallet contract.
     /// @param _transferable_ indicates whether the contract ownership can be transferred.
     /// @param _ens_ is the address of the ENS registry.
