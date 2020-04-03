@@ -16,38 +16,31 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-pragma solidity ^0.5.17;
+pragma solidity ^0.6.0;
 
-import "./internals/controllable.sol";
-import "./internals/transferrable.sol";
-import "./internals/ensResolvable.sol";
+import "./externals/base64.sol";
 import "./internals/date.sol";
 import "./internals/parseIntScientific.sol";
-import "./internals/tokenWhitelistable.sol";
-import "./externals/SafeMath.sol";
-import "./externals/oraclizeAPI_0.5.sol";
-import "./externals/base64.sol";
+import "./tmp_0_6/controllable.sol";
+import "./tmp_0_6/ensResolvable.sol";
+import "./tmp_0_6/SafeMath.sol";
+import "./tmp_0_6/strings.sol";
+import "./tmp_0_6/tokenWhitelistable.sol";
+import "./tmp_0_6/transferrable.sol";
 
 
 /// @title Oracle provides asset exchange rates and conversion functionality.
-contract Oracle is ENSResolvable, usingOraclize, Transferrable, Base64, Date, Controllable, ParseIntScientific, TokenWhitelistable {
-    using strings for *;
+contract Oracle is ENSResolvable, Transferrable, Base64, Date, Controllable, ParseIntScientific, TokenWhitelistable {
     using SafeMath for uint256;
-
+    using strings for *;
+    
     /*******************/
     /*     Events     */
     /*****************/
 
-    event SetGasPrice(address _sender, uint256 _gasPrice);
-
-    event RequestedUpdate(string _symbol, bytes32 _queryID);
-    event FailedUpdateRequest(string _reason);
-
-    event VerifiedProof(bytes _publicKey, string _result);
-
-    event SetCryptoComparePublicKey(address _sender, bytes _publicKey);
-
     event Claimed(address _to, address _asset, uint256 _amount);
+    event SetCryptoComparePublicKey(address _sender, bytes _publicKey);
+    event VerifiedProof(bytes _publicKey, string _result);
 
     /**********************/
     /*     Constants     */
@@ -66,23 +59,19 @@ contract Oracle is ENSResolvable, usingOraclize, Transferrable, Base64, Date, Co
     bytes32 private constant _PREFIX_HASH = keccak256('{"ETH":');
 
     bytes public cryptoCompareAPIPublicKey;
-    mapping(bytes32 => address) private _queryToToken;
+
 
     /// @notice Construct the oracle with multiple controllers, address resolver and custom gas price.
-    /// @param _resolver_ is the address of the oraclize resolver
     /// @param _ens_ is the address of the ENS.
     /// @param _controllerNode_ is the ENS node corresponding to the Controller.
     /// @param _tokenWhitelistNode_ is the ENS corresponding to the Token Whitelist.
-    constructor(address _resolver_, address _ens_, bytes32 _controllerNode_, bytes32 _tokenWhitelistNode_)
+    constructor(address _ens_, bytes32 _controllerNode_, bytes32 _tokenWhitelistNode_)
         public
         ENSResolvable(_ens_)
         Controllable(_controllerNode_)
         TokenWhitelistable(_tokenWhitelistNode_)
     {
         cryptoCompareAPIPublicKey = hex"a0f4f688350018ad1b9785991c0bde5f704b005dc79972b114dbed4a615a983710bfc647ebe5a320daa28771dce6a2d104f5efa2e4a85ba3760b76d46f8571ca";
-        OAR = OraclizeAddrResolverI(_resolver_);
-        oraclize_setCustomGasPrice(10000000000);
-        oraclize_setProof(proofType_Native);
     }
 
     /// @notice Updates the Crypto Compare public API key.
@@ -92,44 +81,19 @@ contract Oracle is ENSResolvable, usingOraclize, Transferrable, Base64, Date, Co
         emit SetCryptoComparePublicKey(msg.sender, _publicKey);
     }
 
-    /// @notice Sets the gas price used by Oraclize query.
-    /// @param _gasPrice in wei for Oraclize
-    function setCustomGasPrice(uint256 _gasPrice) external onlyController {
-        oraclize_setCustomGasPrice(_gasPrice);
-        emit SetGasPrice(msg.sender, _gasPrice);
-    }
-
-    /// @notice Update ERC20 token exchange rates for all supported tokens.
-    /// @param _gasLimit the gas limit is passed, this is used for the Oraclize callback
-    function updateTokenRates(uint256 _gasLimit) external payable onlyController {
-        _updateTokenRates(_gasLimit);
-    }
-
-    /// @notice Update ERC20 token exchange rates for the list of tokens provided.
-    /// @param _gasLimit the gas limit is passed, this is used for the Oraclize callback
-    /// @param _tokenList the list of tokens that need to be updated
-    function updateTokenRatesList(uint256 _gasLimit, address[] calldata _tokenList) external payable onlyController {
-        _updateTokenRatesList(_gasLimit, _tokenList);
-    }
-
     /// @notice Withdraw tokens from the smart contract to the specified account.
     function claim(address payable _to, address _asset, uint256 _amount) external onlyAdmin {
         _safeTransfer(_to, _asset, _amount);
         emit Claimed(_to, _asset, _amount);
     }
 
-    /// @notice Handle Oraclize query callback and verifiy the provided origin proof.
-    /// @param _queryID Oraclize query ID.
+    /// @notice Handle the off-chain oracle call and verifiy the provided origin proof.
     /// @param _result query result in JSON format.
-    /// @param _proof origin proof from crypto compare.
+    /// @param _proof origin proof from CryptoCompare.
     // solium-disable-next-line mixedcase
-    function __callback(bytes32 _queryID, string memory _result, bytes memory _proof) public {
-        // Require that the caller is the Oraclize contract.
-        require(msg.sender == oraclize_cbAddress(), "sender is not oraclize");
-        // Use the query ID to find the matching token address.
-        address token = _queryToToken[_queryID];
+    function __callback(address _token, string calldata _result, bytes calldata _proof) external {
         // Get the corresponding token object.
-        (, , , bool available, , , uint256 lastUpdate) = _getTokenInfo(token);
+        (, , , bool available, , , uint256 lastUpdate) = _getTokenInfo(_token);
         require(available, "token must be available");
 
         bool valid;
@@ -142,10 +106,8 @@ contract Oracle is ENSResolvable, usingOraclize, Transferrable, Base64, Date, Co
             uint256 parsedRate = _parseIntScientificWei(parseRate(_result));
             // Set the update time of the token rate.
             uint256 parsedLastUpdate = timestamp;
-            // Remove query from the list.
-            delete _queryToToken[_queryID];
 
-            _updateTokenRate(token, parsedRate, parsedLastUpdate);
+            _updateTokenRate(_token, parsedRate, parsedLastUpdate);
         }
     }
 
@@ -170,71 +132,95 @@ contract Oracle is ENSResolvable, usingOraclize, Transferrable, Base64, Date, Co
         return body.toString();
     }
 
-    /// @notice Re-usable helper function that performs the Oraclize Query.
-    /// @param _gasLimit the gas limit is passed, this is used for the Oraclize callback
-    function _updateTokenRates(uint256 _gasLimit) private {
-        address[] memory tokenAddresses = _tokenAddressArray();
-        // Check if there are any existing tokens.
-        if (tokenAddresses.length == 0) {
-            // Emit a query failure event.
-            emit FailedUpdateRequest("no tokens");
-            // Check if the contract has enough Ether to pay for the query.
-        } else if (oraclize_getPrice("URL") * tokenAddresses.length > address(this).balance) {
-            // Emit a query failure event.
-            emit FailedUpdateRequest("insufficient balance");
-        } else {
-            // Set up the cryptocompare API query strings.
-            strings.slice memory apiPrefix = "https://min-api.cryptocompare.com/data/price?fsym=".toSlice();
-            strings.slice memory apiSuffix = "&tsyms=ETH&sign=true".toSlice();
-
-            // Create a new oraclize query for each supported token.
-            for (uint256 i = 0; i < tokenAddresses.length; i++) {
-                // Store the token symbol used in the query.
-                (string memory symbol, , , , , , ) = _getTokenInfo(tokenAddresses[i]);
-
-                strings.slice memory sym = symbol.toSlice();
-                // Create a new oraclize query from the component strings.
-                bytes32 queryID = oraclize_query("URL", apiPrefix.concat(sym).toSlice().concat(apiSuffix), _gasLimit);
-                // Store the query ID together with the associated token address.
-                _queryToToken[queryID] = tokenAddresses[i];
-                // Emit the query success event.
-                emit RequestedUpdate(sym.toString(), queryID);
+     /*
+     The following function has been written by Alex Beregszaszi, use it under the terms of the MIT license
+    */
+    function copyBytes(bytes memory _from, uint _fromOffset, uint _length, bytes memory _to, uint _toOffset) internal pure returns (bytes memory _copiedBytes) {
+        uint minLength = _length + _toOffset;
+        require(_to.length >= minLength); // Buffer too small. Should be a better way?
+        uint i = 32 + _fromOffset; // NOTE: the offset 32 is added to skip the `size` field of both bytes variables
+        uint j = 32 + _toOffset;
+        while (i < (32 + _fromOffset + _length)) {
+            assembly {
+                let tmp := mload(add(_from, i))
+                mstore(add(_to, j), tmp)
             }
+            i += 32;
+            j += 32;
         }
+        return _to;
     }
 
-    /// @notice Re-usable helper function that performs the Oraclize Query for a specific list of tokens.
-    /// @param _gasLimit the gas limit is passed, this is used for the Oraclize callback.
-    /// @param _tokenList the list of tokens that need to be updated.
-    function _updateTokenRatesList(uint256 _gasLimit, address[] memory _tokenList) private {
-        // Check if there are any existing tokens.
-        if (_tokenList.length == 0) {
-            // Emit a query failure event.
-            emit FailedUpdateRequest("empty token list");
-            // Check if the contract has enough Ether to pay for the query.
-        } else if (oraclize_getPrice("URL") * _tokenList.length > address(this).balance) {
-            // Emit a query failure event.
-            emit FailedUpdateRequest("insufficient balance");
-        } else {
-            // Set up the cryptocompare API query strings.
-            strings.slice memory apiPrefix = "https://min-api.cryptocompare.com/data/price?fsym=".toSlice();
-            strings.slice memory apiSuffix = "&tsyms=ETH&sign=true".toSlice();
-
-            // Create a new oraclize query for each supported token.
-            for (uint256 i = 0; i < _tokenList.length; i++) {
-                //token must exist, revert if it doesn't
-                (string memory tokenSymbol, , , bool available, , , ) = _getTokenInfo(_tokenList[i]);
-                require(available, "token must be available");
-                // Store the token symbol used in the query.
-                strings.slice memory symbol = tokenSymbol.toSlice();
-                // Create a new oraclize query from the component strings.
-                bytes32 queryID = oraclize_query("URL", apiPrefix.concat(symbol).toSlice().concat(apiSuffix), _gasLimit);
-                // Store the query ID together with the associated token address.
-                _queryToToken[queryID] = _tokenList[i];
-                // Emit the query success event.
-                emit RequestedUpdate(symbol.toString(), queryID);
-            }
+     /*
+     The following function has been written by Alex Beregszaszi, use it under the terms of the MIT license
+     Duplicate Solidity's ecrecover, but catching the CALL return value
+    */
+    function safer_ecrecover(bytes32 _hash, uint8 _v, bytes32 _r, bytes32 _s) internal returns (bool _success, address _recoveredAddress) {
+        /*
+         We do our own memory management here. Solidity uses memory offset
+         0x40 to store the current end of memory. We write past it (as
+         writes are memory extensions), but don't update the offset so
+         Solidity will reuse it. The memory used here is only needed for
+         this context.
+         FIXME: inline assembly can't access return values
+        */
+        bool ret;
+        address addr;
+        assembly {
+            let size := mload(0x40)
+            mstore(size, _hash)
+            mstore(add(size, 32), _v)
+            mstore(add(size, 64), _r)
+            mstore(add(size, 96), _s)
+            ret := call(3000, 1, 0, size, 128, size, 32) // NOTE: we can reuse the request memory because we deal with the return code.
+            addr := mload(size)
         }
+        return (ret, addr);
+    }
+    /*
+     The following function has been written by Alex Beregszaszi, use it under the terms of the MIT license
+    */
+    function ecrecovery(bytes32 _hash, bytes memory _sig) internal returns (bool _success, address _recoveredAddress) {
+        bytes32 r;
+        bytes32 s;
+        uint8 v;
+        if (_sig.length != 65) {
+            return (false, address(0));
+        }
+        /*
+         The signature format is a compact form of:
+           {bytes32 r}{bytes32 s}{uint8 v}
+         Compact means, uint8 is not padded to 32 bytes.
+        */
+        assembly {
+            r := mload(add(_sig, 32))
+            s := mload(add(_sig, 64))
+            /*
+             Here we are loading the last 32 bytes. We exploit the fact that
+             'mload' will pad with zeroes if we overread.
+             There is no 'mload8' to do this, but that would be nicer.
+            */
+            v := byte(0, mload(add(_sig, 96)))
+            /*
+              Alternative solution:
+              'byte' is not working due to the Solidity parser, so lets
+              use the second best option, 'and'
+              v := and(mload(add(_sig, 65)), 255)
+            */
+        }
+        /*
+         albeit non-transactional signatures are not specified by the YP, one would expect it
+         to match the YP range of [27, 28]
+         geth uses [0, 1] and some clients have followed. This might change, see:
+         https://github.com/ethereum/go-ethereum/issues/2053
+        */
+        if (v < 27) {
+            v += 27;
+        }
+        if (v != 27 && v != 28) {
+            return (false, address(0));
+        }
+        return safer_ecrecover(_hash, v, r, s);
     }
 
     /// @notice Verify the origin proof returned by the cryptocompare API.

@@ -14,21 +14,20 @@ contracts_0_6=(
   'controller'
   'holder'
   'licence'
+  'oracle'
   'wallet'
   'walletCache'
   'walletDeployer'
+  'mocks/base64Exporter'
   'mocks/isValidSignatureExporter'
+  'mocks/parseIntScientificExporter'
 )
 
 contracts_0_5=(
-  'oracle'
   'tokenWhitelist'
-  'mocks/base64Exporter'
   'mocks/burnerToken'
   'mocks/bytesUtilsExporter'
   'mocks/nonCompliantToken'
-  'mocks/oraclize'
-  'mocks/parseIntScientificExporter'
   'mocks/token'
   'mocks/tokenWhitelistableExporter'
   'externals/ens/ENSRegistry'
@@ -72,8 +71,6 @@ contracts=(
   "mocks/bytesUtilsExporter/BytesUtilsExporter mocks/bytesUtilsExporter.go BytesUtilsExporter mocks"
   "mocks/isValidSignatureExporter/IsValidSignatureExporter mocks/isValidSignatureExporter.go IsValidSignatureExporter mocks"
   "mocks/nonCompliantToken/NonCompliantToken mocks/nonCompliantToken.go NonCompliantToken mocks"
-  "mocks/oraclize/OraclizeAddrResolver mocks/oraclizeAddrResolver.go OraclizeAddrResolver mocks"
-  "mocks/oraclize/OraclizeConnector mocks/oraclizeConnector.go OraclizeConnector mocks"
   "mocks/parseIntScientificExporter/ParseIntScientificExporter mocks/parseIntScientificExporter.go ParseIntScientificExporter mocks"
   "mocks/token/Token mocks/token.go Token mocks"
   "mocks/tokenWhitelistableExporter/TokenWhitelistableExporter mocks/tokenWhitelistableExporter.go TokenWhitelistableExporter mocks"
