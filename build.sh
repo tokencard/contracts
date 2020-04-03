@@ -11,6 +11,9 @@ compile_solidity() {
 }
 
 contracts_0_6=(
+  'controller'
+  'holder'
+  'licence'
   'wallet'
   'walletCache'
   'walletDeployer'
@@ -18,9 +21,6 @@ contracts_0_6=(
 )
 
 contracts_0_5=(
-  'controller'
-  'holder'
-  'licence'
   'oracle'
   'tokenWhitelist'
   'mocks/base64Exporter'

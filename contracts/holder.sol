@@ -16,15 +16,15 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-pragma solidity ^0.5.17;
+pragma solidity ^0.6.0;
 
-import "./externals/ERC20.sol";
-import "./externals/SafeMath.sol";
-import "./internals/transferrable.sol";
-import "./internals/balanceable.sol";
-import "./internals/burner.sol";
-import "./internals/controllable.sol";
-import "./internals/tokenWhitelistable.sol";
+import "./interfaces/IERC20.sol";
+import "./interfaces/IBurner.sol";
+import "./tmp_0_6/balanceable.sol";
+import "./tmp_0_6/controllable.sol";
+import "./tmp_0_6/SafeMath.sol";
+import "./tmp_0_6/tokenWhitelistable.sol";
+import "./tmp_0_6/transferrable.sol";
 
 
 /// @title Holder - The TKN Asset Contract
@@ -60,7 +60,7 @@ contract Holder is Balanceable, ENSResolvable, Controllable, Transferrable, Toke
     }
 
     /// @notice Ether may be sent from anywhere.
-    function() external payable {
+    receive() external payable {
         emit Received(msg.sender, msg.value);
     }
 

@@ -16,20 +16,19 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-pragma solidity ^0.5.17;
+pragma solidity ^0.6.0;
 
-import "./externals/SafeMath.sol";
-import "./externals/SafeERC20.sol";
-import "./internals/controllable.sol";
-import "./internals/ensResolvable.sol";
-import "./internals/transferrable.sol";
-
+import "./tmp_0_6/controllable.sol";
+import "./tmp_0_6/ensResolvable.sol";
+import "./tmp_0_6/SafeERC20.sol";
+import "./tmp_0_6/SafeMath.sol";
+import "./tmp_0_6/transferrable.sol";
 
 /// @title Licence loads the TokenCard and transfers the licence amout to the TKN Holder Contract.
 /// @notice the rest of the amount gets sent to the CryptoFloat
 contract Licence is Transferrable, ENSResolvable, Controllable {
     using SafeMath for uint256;
-    using SafeERC20 for ERC20;
+    using SafeERC20 for IERC20;
 
     /*******************/
     /*     Events     */
@@ -92,8 +91,8 @@ contract Licence is Transferrable, ENSResolvable, Controllable {
         }
     }
 
-    /// @notice Ether can be deposited from any source, so this contract should be payable by anyone.
-    function() external payable {}
+    /// @notice Ether can be received from any source, so this contract should be payable by anyone.
+    receive() external payable {}
 
     /// @notice this allows for people to see the scaled licence amount
     /// @return the scaled licence amount, used to calculate the split when loading.
@@ -196,14 +195,14 @@ contract Licence is Transferrable, ENSResolvable, Controllable {
         uint256 loadAmount = _amount;
         // If TKN then no licence to be paid
         if (_asset == _tknContractAddress) {
-            ERC20(_asset).safeTransferFrom(msg.sender, _cryptoFloat, loadAmount);
+            IERC20(_asset).safeTransferFrom(msg.sender, _cryptoFloat, loadAmount);
         } else {
             loadAmount = _amount.mul(MAX_AMOUNT_SCALE).div(_licenceAmountScaled + MAX_AMOUNT_SCALE);
             uint256 licenceAmount = _amount.sub(loadAmount);
 
             if (_asset != address(0)) {
-                ERC20(_asset).safeTransferFrom(msg.sender, _tokenHolder, licenceAmount);
-                ERC20(_asset).safeTransferFrom(msg.sender, _cryptoFloat, loadAmount);
+                IERC20(_asset).safeTransferFrom(msg.sender, _tokenHolder, licenceAmount);
+                IERC20(_asset).safeTransferFrom(msg.sender, _cryptoFloat, loadAmount);
             } else {
                 require(msg.value == _amount, "ETH sent is not equal to amount");
                 _tokenHolder.transfer(licenceAmount);
