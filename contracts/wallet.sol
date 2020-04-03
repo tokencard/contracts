@@ -446,15 +446,23 @@ contract GasTopUpLimit is ControllableOwnable, SelfCallableOwnable {
 
 
 /// @title LoadLimit provides daily load limit functionality.
-contract LoadLimit is ControllableOwnable, SelfCallableOwnable {
+contract LoadLimit is ControllableOwnable, SelfCallableOwnable, TokenWhitelistable {
     event SetLoadLimit(address _sender, uint256 _amount);
     event SubmittedLoadLimitUpdate(uint256 _amount);
 
+    uint256 private constant _MAXIMUM_STABLECOIN_LOAD_LIMIT = 10000; // USD
     uint256 private _maximumLoadLimit;
 
     using DailyLimitTrait for DailyLimitTrait.DailyLimit;
 
     DailyLimitTrait.DailyLimit internal _loadLimit;
+
+    constructor(bytes32 _tokenWhitelistNode_) internal TokenWhitelistable(_tokenWhitelistNode_) {
+        (, uint256 stablecoinMagnitude, , , , , ) = _getStablecoinInfo();
+        require(stablecoinMagnitude > 0, "no stablecoin");
+        _maximumLoadLimit = _MAXIMUM_STABLECOIN_LOAD_LIMIT * stablecoinMagnitude;
+        _loadLimit = DailyLimitTrait.DailyLimit(_maximumLoadLimit, _maximumLoadLimit, now, 0, false);
+    }
 
     /// @dev Sets a daily card load limit.
     /// @param _amount is the card load amount in current stablecoin base units.
@@ -497,18 +505,11 @@ contract LoadLimit is ControllableOwnable, SelfCallableOwnable {
     function loadLimitValue() external view returns (uint256) {
         return _loadLimit.value;
     }
-
-    /// @dev initializes the daily load limit.
-    /// @param _maxLimit is the maximum load limit amount in stablecoin base units.
-    function _initializeLoadLimit(uint256 _maxLimit) internal {
-        _maximumLoadLimit = _maxLimit;
-        _loadLimit = DailyLimitTrait.DailyLimit(_maximumLoadLimit, _maximumLoadLimit, now, 0, false);
-    }
 }
 
 
 /// @title Asset wallet with extra security features, gas top up management and card integration.
-contract Wallet is ENSResolvable, GasTopUpLimit, LoadLimit, AddressWhitelist, SpendLimit, ERC165, Transferrable, Balanceable, TokenWhitelistable {
+contract Wallet is ENSResolvable, GasTopUpLimit, LoadLimit, AddressWhitelist, SpendLimit, ERC165, Transferrable, Balanceable {
     using Address for address;
     using ECDSA for bytes32;
     using SafeERC20 for ERC20;
@@ -534,8 +535,6 @@ contract Wallet is ENSResolvable, GasTopUpLimit, LoadLimit, AddressWhitelist, Sp
     /// @dev Supported ERC165 interface ID.
     bytes4 private constant _ERC165_INTERFACE_ID = 0x01ffc9a7; // solium-disable-line uppercase
 
-    uint256 private constant _MAXIMUM_STABLECOIN_LOAD_LIMIT = 10000; // 10,000 USD
-
     /// @dev this is an internal nonce to prevent replay attacks from relayer
     uint256 public relayNonce;
 
@@ -558,18 +557,7 @@ contract Wallet is ENSResolvable, GasTopUpLimit, LoadLimit, AddressWhitelist, Sp
         bytes32 _controllerNode_,
         bytes32 _licenceNode_,
         uint256 _spendLimit_
-    )
-        public
-        ENSResolvable(_ens_)
-        SpendLimit(_spendLimit_)
-        Ownable(_owner_, _transferable_)
-        Controllable(_controllerNode_)
-        TokenWhitelistable(_tokenWhitelistNode_)
-    {
-        // Get the stablecoin's magnitude.
-        (, uint256 stablecoinMagnitude, , , , , ) = _getStablecoinInfo();
-        require(stablecoinMagnitude > 0, "no stablecoin");
-        _initializeLoadLimit(_MAXIMUM_STABLECOIN_LOAD_LIMIT * stablecoinMagnitude);
+    ) public ENSResolvable(_ens_) SpendLimit(_spendLimit_) Ownable(_owner_, _transferable_) Controllable(_controllerNode_) LoadLimit(_tokenWhitelistNode_) {
         _licenceNode = _licenceNode_;
     }
 
