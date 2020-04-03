@@ -4,8 +4,8 @@ import "crytic-export/flattening/Controllable.sol";
 
 
 contract Echidna {
-    address payable internal echidna_deployer = address(0x1);
-    address payable internal echidna_owner = address(0x2);
+    address payable internal echidnaDeployer = address(0x1);
+    address payable internal echidnaOwner = address(0x2);
 }
 
 
@@ -14,7 +14,7 @@ contract TEST is Echidna, Controllable {
 
     constructor() public Controllable(bytes32(0)) {}
 
-    function echidna_controllerNode() public view returns (bool) {
+    function echidnaControllerNode() public view returns (bool) {
         return controllerNode() == _DEFAULT_CONTROLLER_NODE;
     }
 }

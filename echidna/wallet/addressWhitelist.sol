@@ -4,20 +4,21 @@ import "crytic-export/flattening/Wallet.sol";
 
 
 contract Echidna {
-    address internal echidna_deployer = address(0x1);
-    address payable internal echidna_owner = address(0x2);
-    address payable internal echidna_attacker = address(0x3);
+    address internal echidnaDeployer = address(0x1);
+    address payable internal echidnaOwner = address(0x2);
+    address payable internal echidnaAttacker = address(0x3);
+    address internal echidnaRecipient = address(0x4);
 }
 
 
 contract TEST is Echidna, AddressWhitelist {
-    address[] added_addresses;
-    address[] removed_addresses;
 
-    constructor() public Ownable(echidna_owner, false) Controllable(bytes32(0x0)) ENSResolvable(address(0x0)) {}
+    constructor() public Ownable(echidnaOwner, false) Controllable(bytes32(0x0)) ENSResolvable(address(0x0)) {
+        isSetWhitelist = true;
+    }
 
     modifier onlyController() {
-        require(msg.sender == echidna_owner || msg.sender == address(this), "");
+        require(msg.sender == msg.sender, "");
         _;
     }
 
@@ -37,59 +38,59 @@ contract TEST is Echidna, AddressWhitelist {
         if (!submittedWhitelistAddition) {
             return true;
         }
-
-        uint256 length_before = whitelistArray.length;
-        confirmWhitelistAddition(calculateHash(pendingWhitelistAddition()));
-        uint256 length_after = whitelistArray.length;
-        return (length_before <= length_after);
+        uint256 lengthBefore = whitelistArray.length;
+        address[] memory pendingWhitelist = pendingWhitelistAddition();
+        confirmWhitelistAddition(calculateHash(pendingWhitelist));
+        uint256 lengthAfter = whitelistArray.length;
+        return (lengthBefore <= lengthAfter);
     }
 
     function echidna_whitelistAdditionMap() public returns (bool) {
         if (!submittedWhitelistAddition) {
             return true;
         }
-
-        for (uint256 i = 0; i < pendingWhitelistAddition().length; i++) {
-            added_addresses.push(pendingWhitelistAddition()[i]);
+        address[] memory pendingWhitelist = pendingWhitelistAddition();
+        address[] memory addedAddresses = new address[](pendingWhitelist.length);
+        for (uint256 i = 0; i < pendingWhitelist.length; i++) {
+            addedAddresses[i] = pendingWhitelist[i];
         }
-
-        confirmWhitelistAddition(calculateHash(pendingWhitelistAddition()));
-
-        bool checked_addresses = true;
-        for (uint256 i = 0; i < added_addresses.length; i++) {
-            checked_addresses = checked_addresses && whitelistMap[added_addresses[i]];
+        confirmWhitelistAddition(calculateHash(pendingWhitelist));
+        bool missingAddress = false;
+        for (uint256 i = 0; i < addedAddresses.length; i++) {
+            if (!whitelistMap[addedAddresses[i]]) {
+                missingAddress = true;
+            }
         }
-
-        return checked_addresses;
+        return !missingAddress;
     }
 
     function echidna_whitelistRemovalLength() public returns (bool) {
         if (!submittedWhitelistRemoval) {
             return true;
         }
-
-        uint256 length_before = whitelistArray.length;
-        confirmWhitelistRemoval(calculateHash(pendingWhitelistRemoval()));
-        uint256 length_after = whitelistArray.length;
-        return (length_before >= length_after);
+        uint256 lengthBefore = whitelistArray.length;
+        address[] memory pendingRemoval = pendingWhitelistRemoval();
+        confirmWhitelistRemoval(calculateHash(pendingRemoval));
+        uint256 lengthAfter = whitelistArray.length;
+        return (lengthBefore >= lengthAfter);
     }
 
     function echidna_whitelistRemovalMap() public returns (bool) {
         if (!submittedWhitelistRemoval) {
             return true;
         }
-
-        for (uint256 i = 0; i < pendingWhitelistRemoval().length; i++) {
-            removed_addresses.push(pendingWhitelistRemoval()[i]);
+        address[] memory pendingRemoval = pendingWhitelistRemoval();
+        address[] memory removedAddresses = new address[](pendingRemoval.length);
+        for (uint256 i = 0; i < pendingRemoval.length; i++) {
+            removedAddresses[i] = pendingRemoval[i];
         }
-
-        confirmWhitelistRemoval(calculateHash(pendingWhitelistRemoval()));
-
-        bool checked_addresses = true;
-        for (uint256 i = 0; i < removed_addresses.length; i++) {
-            checked_addresses = checked_addresses && !whitelistMap[removed_addresses[i]];
+        confirmWhitelistRemoval(calculateHash(pendingRemoval));
+        bool addressNotRemoved = false;
+        for (uint256 i = 0; i < removedAddresses.length; i++) {
+            if (whitelistMap[removedAddresses[i]]) {
+                addressNotRemoved = true;
+            }
         }
-
-        return checked_addresses;
+        return !addressNotRemoved;
     }
 }

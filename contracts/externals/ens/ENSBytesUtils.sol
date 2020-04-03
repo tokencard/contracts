@@ -15,7 +15,6 @@ library ENSBytesUtils {
         }
     }
 
-
     /*
     * @dev Returns a positive number if `other` comes lexicographically after
     *      `self`, a negative number if it comes before, or zero if the
