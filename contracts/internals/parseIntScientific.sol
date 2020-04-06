@@ -18,7 +18,7 @@
 
 pragma solidity ^0.6.0;
 
-import "../tmp_0_6/SafeMath.sol";
+import "../externals/SafeMath.sol";
 
 
 /// @title ParseIntScientific provides floating point in scientific notation (e.g. e-5) parsing functionality.

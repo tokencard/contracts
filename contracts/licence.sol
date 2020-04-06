@@ -18,11 +18,11 @@
 
 pragma solidity ^0.6.0;
 
-import "./tmp_0_6/controllable.sol";
-import "./tmp_0_6/ensResolvable.sol";
-import "./tmp_0_6/SafeERC20.sol";
-import "./tmp_0_6/SafeMath.sol";
-import "./tmp_0_6/transferrable.sol";
+import "./externals/SafeERC20.sol";
+import "./externals/SafeMath.sol";
+import "./internals/controllable.sol";
+import "./internals/ensResolvable.sol";
+import "./internals/transferrable.sol";
 
 /// @title Licence loads the TokenCard and transfers the licence amout to the TKN Holder Contract.
 /// @notice the rest of the amount gets sent to the CryptoFloat

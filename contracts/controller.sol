@@ -18,9 +18,9 @@
 
 pragma solidity ^0.6.0;
 
-import "../interfaces/IController.sol";
-import "./tmp_0_6/ownable.sol";
-import "./tmp_0_6/transferrable.sol";
+import "./interfaces/IController.sol";
+import "./internals/ownable.sol";
+import "./internals/transferrable.sol";
 
 
 /// @title Controller stores a list of controller addresses that can be used for authentication in other contracts.

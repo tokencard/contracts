@@ -16,21 +16,25 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-pragma solidity ^0.5.17;
+pragma solidity ^0.6.0;
 
-import "../externals/ens/ENS.sol";
-import "../externals/ens/PublicResolver.sol";
+import "../interfaces/IENS.sol";
+import "../interfaces/IPublicResolver.sol";
 
 
 ///@title ENSResolvable - Ethereum Name Service Resolver
 ///@notice contract should be used to get an address for an ENS node
 contract ENSResolvable {
+    /// @notice _ens is an instance of ENS
+    IENS private _ens;
+
     /// @notice _ensRegistry points to the ENS registry smart contract.
     address private _ensRegistry;
 
     /// @param _ensReg_ is the ENS registry used
     constructor(address _ensReg_) internal {
         _ensRegistry = _ensReg_;
+        _ens = IENS(_ensRegistry);
     }
 
     /// @notice this is used to that one can observe which ENS registry is being used
@@ -42,6 +46,6 @@ contract ENSResolvable {
     /// @param _node of the ENS entry that needs resolving
     /// @return the address of the said node
     function _ensResolve(bytes32 _node) internal view returns (address) {
-        return PublicResolver(ENS(_ensRegistry).resolver(_node)).addr(_node);
+        return IPublicResolver(_ens.resolver(_node)).addr(_node);
     }
 }

@@ -16,14 +16,14 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-pragma solidity ^0.5.17;
+pragma solidity ^0.6.0;
 
-import "../interfaces/IController.sol";
 import "./ensResolvable.sol";
+import "../interfaces/IController.sol";
 
 
 /// @title Controllable implements access control functionality of the Controller found via ENS.
-contract Controllable is ENSResolvable {
+abstract contract Controllable is ENSResolvable {
     // Default values for mainnet ENS
     // controller.tokencard.eth
     bytes32 private constant _DEFAULT_CONTROLLER_NODE = 0x7f2ce995617d2816b426c5c8698c5ec2952f7a34bb10f38326f74933d5893697;

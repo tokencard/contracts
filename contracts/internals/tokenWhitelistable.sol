@@ -16,14 +16,14 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-pragma solidity ^0.5.17;
+pragma solidity ^0.6.0;
 
-import "../tokenWhitelist.sol";
 import "./ensResolvable.sol";
+import "../interfaces/ITokenWhitelist.sol";
 
 
 /// @title TokenWhitelistable implements access to the TokenWhitelist located behind ENS.
-contract TokenWhitelistable is ENSResolvable {
+abstract contract TokenWhitelistable is ENSResolvable {
     /// @notice Is the registered ENS node identifying the tokenWhitelist contract
     bytes32 private _tokenWhitelistNode;
 
