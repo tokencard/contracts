@@ -11,15 +11,14 @@ contract Echidna {
 
 
 contract TEST is Echidna, LoadLimit {
-    uint256 initialLimit = 10000 * 1000000;
+    uint256 initialLimit = 10000000000;
 
-    constructor() public Ownable(echidnaOwner, false) Controllable(bytes32(0x0)) ENSResolvable(address(0x0)) {
-        // This simulates calling to setLoadLimit (which is an external function)
-        _loadLimit._setLimit(initialLimit);
+    constructor() public LoadLimit(bytes32(0x0)) Ownable(echidnaOwner, false) Controllable(bytes32(0x0)) ENSResolvable(address(0x0)) {
+        _loadLimit = DailyLimitTrait.DailyLimit(initialLimit, initialLimit, now, 0, false);
     }
 
-    // This function is used to simulate the user spending, so anyone can call it
-    function spend(uint256 _amount) public {
+    // This function is used to simulate the user loading a card, so anyone can call it
+    function load(uint256 _amount) public {
         _loadLimit._enforceLimit(_amount);
     }
 
@@ -46,7 +45,7 @@ contract TEST is Echidna, LoadLimit {
     // After a day, your limit available should reset.
     function echidna_dailyLoadLimitAvailable() public returns (bool) {
         increaseDayNow();
-        spend(0);
+        load(0);
         return loadLimitAvailable() == loadLimitValue();
     }
 }
