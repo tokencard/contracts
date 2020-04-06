@@ -1,7 +1,7 @@
 pragma solidity ^0.6.0;
 
-import "../tmp_0_6/ensResolvable.sol";
-import "../tmp_0_6/tokenWhitelistable.sol";
+import "../internals/ensResolvable.sol";
+import "../internals/tokenWhitelistable.sol";
 
 
 contract TokenWhitelistableExporter is ENSResolvable, TokenWhitelistable {

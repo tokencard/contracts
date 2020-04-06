@@ -16,7 +16,7 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-pragma solidity ^0.5.17;
+pragma solidity ^0.6.0;
 
 
 /// @title Ownable has an owner address and provides basic authorization control functions.

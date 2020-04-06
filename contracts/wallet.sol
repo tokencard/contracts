@@ -18,19 +18,19 @@
 
 pragma solidity ^0.6.0;
 
+import "./externals/Address.sol";
 import "./externals/ECDSA.sol";
+import "./externals/SafeERC20.sol";
+import "./externals/SafeMath.sol";
 import "./interfaces/IERC20.sol";
 import "./interfaces/IERC165.sol";
 import "./interfaces/ILicence.sol";
-import "./tmp_0_6/Address.sol";
-import "./tmp_0_6/balanceable.sol";
-import "./tmp_0_6/controllable.sol";
-import "./tmp_0_6/ensResolvable.sol";
-import "./tmp_0_6/ownable.sol";
-import "./tmp_0_6/SafeERC20.sol";
-import "./tmp_0_6/SafeMath.sol";
-import "./tmp_0_6/tokenWhitelistable.sol";
-import "./tmp_0_6/transferrable.sol";
+import "./internals/balanceable.sol";
+import "./internals/controllable.sol";
+import "./internals/ensResolvable.sol";
+import "./internals/ownable.sol";
+import "./internals/tokenWhitelistable.sol";
+import "./internals/transferrable.sol";
 
 
 /// @title ControllableOwnable combines Controllable and Ownable

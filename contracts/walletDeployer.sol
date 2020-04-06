@@ -18,9 +18,9 @@
 
 pragma solidity ^0.6.0;
 
+import "./internals/controllable.sol";
 import "./wallet.sol";
 import "./walletCache.sol";
-import "./tmp_0_6/controllable.sol";
 
 
 //// @title Wallet deployer with pre-caching if wallets functionality.

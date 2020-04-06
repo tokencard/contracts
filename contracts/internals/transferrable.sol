@@ -16,15 +16,15 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-pragma solidity ^0.5.17;
+pragma solidity ^0.6.0;
 
-import "../externals/ERC20.sol";
 import "../externals/SafeERC20.sol";
+import "../interfaces/IERC20.sol";
 
 
 /// @title SafeTransfer, allowing contract to withdraw tokens accidentally sent to itself
-contract Transferrable {
-    using SafeERC20 for ERC20;
+abstract contract Transferrable {
+    using SafeERC20 for IERC20;
 
     /// @dev This function is used to move tokens sent accidentally to this contract method.
     /// @dev The owner can chose the new destination address
@@ -36,7 +36,7 @@ contract Transferrable {
         if (_asset == address(0)) {
             _to.transfer(_amount);
         } else {
-            ERC20(_asset).safeTransfer(_to, _amount);
+            IERC20(_asset).safeTransfer(_to, _amount);
         }
     }
 }

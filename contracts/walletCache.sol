@@ -18,9 +18,9 @@
 
 pragma solidity ^0.6.0;
 
+import "./internals/controllable.sol";
+import "./internals/ensResolvable.sol";
 import "./wallet.sol";
-import "./tmp_0_6/ensResolvable.sol";
-import "./tmp_0_6/controllable.sol";
 
 
 /// @title IWalletCache interface describes a method for poping an already cached wallet

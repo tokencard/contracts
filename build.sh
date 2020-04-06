@@ -21,15 +21,15 @@ contracts_0_6=(
   'walletDeployer'
   'mocks/base64Exporter'
   'mocks/bytesUtilsExporter'
+  'mocks/burnerToken'
   'mocks/isValidSignatureExporter'
+  'mocks/nonCompliantToken'
   'mocks/parseIntScientificExporter'
+  'mocks/token'
   'mocks/tokenWhitelistableExporter'
 )
 
 contracts_0_5=(
-  'mocks/burnerToken'
-  'mocks/nonCompliantToken'
-  'mocks/token'
   'externals/ens/ENSRegistry'
   'externals/ens/PublicResolver'
 )

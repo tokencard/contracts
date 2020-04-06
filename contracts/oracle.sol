@@ -19,14 +19,14 @@
 pragma solidity ^0.6.0;
 
 import "./externals/base64.sol";
+import "./externals/SafeMath.sol";
+import "./externals/strings.sol";
+import "./internals/controllable.sol";
 import "./internals/date.sol";
+import "./internals/ensResolvable.sol";
 import "./internals/parseIntScientific.sol";
-import "./tmp_0_6/controllable.sol";
-import "./tmp_0_6/ensResolvable.sol";
-import "./tmp_0_6/SafeMath.sol";
-import "./tmp_0_6/strings.sol";
-import "./tmp_0_6/tokenWhitelistable.sol";
-import "./tmp_0_6/transferrable.sol";
+import "./internals/tokenWhitelistable.sol";
+import "./internals/transferrable.sol";
 
 
 /// @title Oracle provides asset exchange rates and conversion functionality.
