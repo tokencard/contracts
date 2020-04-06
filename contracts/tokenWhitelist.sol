@@ -16,14 +16,14 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-pragma solidity ^0.5.17;
+pragma solidity ^0.6.0;
 
-import "./internals/controllable.sol";
-import "./internals/transferrable.sol";
+
 import "./internals/bytesUtils.sol";
-import "./externals/strings.sol";
-import "./externals/SafeMath.sol";
-
+import "./tmp_0_6/controllable.sol";
+import "./tmp_0_6/SafeMath.sol";
+import "./tmp_0_6/strings.sol";
+import "./tmp_0_6/transferrable.sol";
 
 /// @title The ITokenWhitelist interface provides access to a whitelist of tokens.
 interface ITokenWhitelist {
@@ -195,7 +195,7 @@ contract TokenWhitelist is ENSResolvable, Controllable, Transferrable {
                     break;
                 }
             }
-            _tokenAddressArray.length--;
+            _tokenAddressArray.pop();
             // Emit token removal event.
             emit RemovedToken(msg.sender, token);
         }
