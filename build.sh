@@ -15,21 +15,21 @@ contracts_0_6=(
   'holder'
   'licence'
   'oracle'
+  'tokenWhitelist'
   'wallet'
   'walletCache'
   'walletDeployer'
   'mocks/base64Exporter'
+  'mocks/bytesUtilsExporter'
   'mocks/isValidSignatureExporter'
   'mocks/parseIntScientificExporter'
+  'mocks/tokenWhitelistableExporter'
 )
 
 contracts_0_5=(
-  'tokenWhitelist'
   'mocks/burnerToken'
-  'mocks/bytesUtilsExporter'
   'mocks/nonCompliantToken'
   'mocks/token'
-  'mocks/tokenWhitelistableExporter'
   'externals/ens/ENSRegistry'
   'externals/ens/PublicResolver'
 )
