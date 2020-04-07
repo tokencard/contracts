@@ -26,12 +26,12 @@ contract TEST is Echidna, GasTopUpLimit {
         hevmCheatcode.call(abi.encodeWithSignature("warp(uint256)", now + 2 days));
     }
 
-    function echidna_DailyGasTopUpLimitAvailable() public returns (bool) {
+    function echidna_dailyGasTopUpLimitAvailable() public returns (bool) {
         increaseDayNow();
         return gasTopUpLimitAvailable() <= initialLimit;
     }
 
-    function echidna_ConstantGasTopUpLimitAvailable() public view returns (bool) {
+    function echidna_constantGasTopUpLimitAvailable() public view returns (bool) {
         return gasTopUpLimitAvailable() <= initialLimit;
     }
 }

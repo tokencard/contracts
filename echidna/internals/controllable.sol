@@ -14,7 +14,7 @@ contract TEST is Echidna, Controllable {
 
     constructor() public Controllable(bytes32(0)) {}
 
-    function echidnaControllerNode() public view returns (bool) {
+    function echidna_controllerNode() public view returns (bool) {
         return controllerNode() == _DEFAULT_CONTROLLER_NODE;
     }
 }

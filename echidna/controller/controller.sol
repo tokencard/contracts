@@ -25,19 +25,19 @@ contract TEST is Echidna, Controller {
         return controllerCount() == 2 && adminCount() == 0;
     }
 
-    function echidnaOwnerUniqueRole() public view returns (bool) {
+    function echidna_ownerUniqueRole() public view returns (bool) {
         return _isOwner(echidnaDeployer) && !isAdmin(echidnaDeployer) && !isController(echidnaDeployer);
     }
 
-    function echidnaController1UniqueRole() public view returns (bool) {
+    function echidna_controller1UniqueRole() public view returns (bool) {
         return !_isOwner(echidnaController1) && !isAdmin(echidnaController1) && isController(echidnaController1);
     }
 
-    function echidnaController2UniqueRole() public view returns (bool) {
+    function echidna_controller2UniqueRole() public view returns (bool) {
         return !_isOwner(echidnaController2) && !isAdmin(echidnaController2) && isController(echidnaController2);
     }
 
-    function echidnaAttackerNoRole() public view returns (bool) {
+    function echidna_attackerNoRole() public view returns (bool) {
         return !_isOwner(echidnaAttacker) && !isAdmin(echidnaAttacker) && !isController(echidnaAttacker);
     }
 }
