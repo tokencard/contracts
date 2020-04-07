@@ -2,7 +2,7 @@
 
 set -e -o pipefail
 
-SOLC="docker run --rm -u `id -u` -v $PWD:/solidity --workdir /solidity/contracts ethereum/solc:0.5.15 --optimize /=/"
+SOLC="docker run --rm -u `id -u` -v $PWD:/solidity --workdir /solidity/contracts ethereum/solc:0.5.17 --optimize /=/"
 
 compile_solidity() {
   echo "compiling ${1}"
@@ -27,8 +27,6 @@ contract_sources=(
   'mocks/isValidSignatureExporter'
   'mocks/parseIntScientificExporter'
   'mocks/tokenWhitelistableExporter'
-  'internals/tokenWhitelistable'
-  'internals/parseIntScientific'
   'externals/ens/PublicResolver'
   'externals/ens/ENSRegistry'
 )
@@ -71,8 +69,6 @@ contracts=(
   "mocks/isValidSignatureExporter/IsValidSignatureExporter mocks/isValidSignatureExporter.go IsValidSignatureExporter mocks"
   "mocks/parseIntScientificExporter/ParseIntScientificExporter mocks/parseIntScientificExporter.go ParseIntScientificExporter mocks"
   "mocks/tokenWhitelistableExporter/TokenWhitelistableExporter mocks/tokenWhitelistableExporter.go TokenWhitelistableExporter mocks"
-  "internals/tokenWhitelistable/TokenWhitelistable internals/tokenWhitelistable.go TokenWhitelistable internals"
-  "internals/parseIntScientific/ParseIntScientific internals/parseIntScientific.go ParseIntScientific internals"
   "externals/ens/ENSRegistry/ENSRegistry externals/ens/ENSRegistry.go ENSRegistry ens"
   "externals/ens/PublicResolver/PublicResolver externals/ens/PublicResolver.go PublicResolver ens"
 )
