@@ -105,45 +105,45 @@ jobs:
       - checkout
       - run: solc-select 0.5.17
       - run:
-          working_directory: slither
+          working_directory: tools/slither
           command: |
             if [[ "${CIRCLE_NODE_INDEX}" == 0 ]]; then
-                slither ../contracts/wallet.sol
+                slither ../../contracts/wallet.sol
             fi
           no_output_timeout: 5m
       - run:
-          working_directory: slither
+          working_directory: tools/slither
           command: |
             if [[ "${CIRCLE_NODE_INDEX}" == 1 ]]; then
-                slither ../contracts/oracle.sol
+                slither ../../contracts/oracle.sol
             fi
           no_output_timeout: 5m
       - run:
-          working_directory: slither
+          working_directory: tools/slither
           command: |
             if [[ "${CIRCLE_NODE_INDEX}" == 2 ]]; then
-                slither ../contracts/licence.sol
+                slither ../../contracts/licence.sol
             fi
           no_output_timeout: 5m
       - run:
-          working_directory: slither
+          working_directory: tools/slither
           command: |
             if [[ "${CIRCLE_NODE_INDEX}" == 3 ]]; then
-                slither ../contracts/holder.sol
+                slither ../../contracts/holder.sol
             fi
           no_output_timeout: 5m
       - run:
-          working_directory: slither
+          working_directory: tools/slither
           command: |
             if [[ "${CIRCLE_NODE_INDEX}" == 4 ]]; then
-                slither ../contracts/tokenWhitelist.sol
+                slither ../../contracts/tokenWhitelist.sol
             fi
           no_output_timeout: 5m
       - run:
-          working_directory: slither
+          working_directory: tools/slither
           command: |
             if [[ "${CIRCLE_NODE_INDEX}" == 5 ]]; then
-                slither ../contracts/walletDeployer.sol
+                slither ../../contracts/walletDeployer.sol
             fi
           no_output_timeout: 5m
 
@@ -158,45 +158,53 @@ jobs:
       - run: solc-select 0.5.17
       - run: find contracts -type f -name '*.sol' -exec slither-flat --convert-external {} \;
       - run:
+          working_directory: tools/echidna
           command: |
             if [[ "${CIRCLE_NODE_INDEX}" == 0 ]]; then
-                echidna-test echidna/wallet/wallet.sol --config=echidna/wallet/wallet.yaml --contract=TEST
+                echidna-test wallet/wallet.sol --config=wallet/wallet.yaml --contract=TEST
             fi
           no_output_timeout: 15m              
       - run:
+          working_directory: tools/echidna
           command: |
             if [[ "${CIRCLE_NODE_INDEX}" == 1 ]]; then
-                echidna-test echidna/wallet/addressWhitelist.sol --config=echidna/wallet/addressWhitelist.yaml --contract=TEST
+                echidna-test wallet/addressWhitelist.sol --config=wallet/addressWhitelist.yaml --contract=TEST
             fi
           no_output_timeout: 15m
       - run:
+          working_directory: tools/echidna
           command: |
             if [[ "${CIRCLE_NODE_INDEX}" == 2 ]]; then
-                echidna-test echidna/wallet/spendLimit.sol --config=echidna/wallet/spendLimit.yaml --contract=TEST
+                echidna-test wallet/spendLimit.sol --config=wallet/spendLimit.yaml --contract=TEST
             fi
           no_output_timeout: 15m
       - run:
+          working_directory: tools/echidna
           command: |
             if [[ "${CIRCLE_NODE_INDEX}" == 3 ]]; then
-                echidna-test echidna/wallet/gasTopUpLimit.sol --config=echidna/wallet/gasTopUpLimit.yaml --contract=TEST
+                echidna-test wallet/gasTopUpLimit.sol --config=wallet/gasTopUpLimit.yaml --contract=TEST
             fi
           no_output_timeout: 15m
       - run:
+          working_directory: tools/echidna
           command: |
+            cd tools &&
             if [[ "${CIRCLE_NODE_INDEX}" == 4 ]]; then
-                echidna-test echidna/wallet/loadLimit.sol --config=echidna/wallet/loadLimit.yaml --contract=TEST
+                echidna-test wallet/loadLimit.sol --config=wallet/loadLimit.yaml --contract=TEST
             fi
           no_output_timeout: 15m
       - run:
+          working_directory: tools/echidna
           command: |
             if [[ "${CIRCLE_NODE_INDEX}" == 5 ]]; then
-                echidna-test echidna/controller/controller.sol --config=echidna/controller/controller.yaml --contract=TEST 
+                echidna-test controller/controller.sol --config=controller/controller.yaml --contract=TEST 
             fi
           no_output_timeout: 15m
       - run:
+          working_directory: tools/echidna
           command: |
             if [[ "${CIRCLE_NODE_INDEX}" == 6 ]]; then
-                echidna-test echidna/internals/ownable.sol --config=echidna/internals/ownable.yaml --contract=TEST
+                echidna-test internals/ownable.sol --config=internals/ownable.yaml --contract=TEST
             fi
           no_output_timeout: 15m
 
