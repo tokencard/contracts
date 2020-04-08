@@ -165,37 +165,37 @@ jobs:
           no_output_timeout: 15m              
       - run:
           command: |
-            if [[ "${CIRCLE_NODE_INDEX}" == 2 ]]; then
+            if [[ "${CIRCLE_NODE_INDEX}" == 1 ]]; then
                 echidna-test echidna/wallet/addressWhitelist.sol --config=echidna/wallet/addressWhitelist.yaml --contract=TEST
             fi
           no_output_timeout: 15m
       - run:
           command: |
-            if [[ "${CIRCLE_NODE_INDEX}" == 3 ]]; then
+            if [[ "${CIRCLE_NODE_INDEX}" == 2 ]]; then
                 echidna-test echidna/wallet/spendLimit.sol --config=echidna/wallet/spendLimit.yaml --contract=TEST
             fi
           no_output_timeout: 15m
       - run:
           command: |
-            if [[ "${CIRCLE_NODE_INDEX}" == 4 ]]; then
+            if [[ "${CIRCLE_NODE_INDEX}" == 3 ]]; then
                 echidna-test echidna/wallet/gasTopUpLimit.sol --config=echidna/wallet/gasTopUpLimit.yaml --contract=TEST
             fi
           no_output_timeout: 15m
       - run:
           command: |
-            if [[ "${CIRCLE_NODE_INDEX}" == 5 ]]; then
+            if [[ "${CIRCLE_NODE_INDEX}" == 4 ]]; then
                 echidna-test echidna/wallet/loadLimit.sol --config=echidna/wallet/loadLimit.yaml --contract=TEST
             fi
           no_output_timeout: 15m
       - run:
           command: |
-            if [[ "${CIRCLE_NODE_INDEX}" == 6 ]]; then
+            if [[ "${CIRCLE_NODE_INDEX}" == 5 ]]; then
                 echidna-test echidna/controller/controller.sol --config=echidna/controller/controller.yaml --contract=TEST 
             fi
           no_output_timeout: 15m
       - run:
           command: |
-            if [[ "${CIRCLE_NODE_INDEX}" == 7 ]]; then
+            if [[ "${CIRCLE_NODE_INDEX}" == 6 ]]; then
                 echidna-test echidna/internals/ownable.sol --config=echidna/internals/ownable.yaml --contract=TEST
             fi
           no_output_timeout: 15m
