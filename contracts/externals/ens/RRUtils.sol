@@ -1,14 +1,12 @@
 pragma solidity >0.4.23;
 
 import "./ENSBytesUtils.sol";
-import "./ENSBuffer.sol";
 
 /**
 * @dev RRUtils is a library that provides utilities for parsing DNS resource records.
 */
 library RRUtils {
     using ENSBytesUtils for *;
-    using ENSBuffer for *;
 
     /**
     * @dev Returns the number of bytes in the DNS name at 'offset' in 'self'.

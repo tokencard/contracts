@@ -4,17 +4,24 @@
     "security"
   ],
   "rules": {
-    "quotes": [
-      "error",
-      "double"
+    "no-empty-blocks": [
+      "off"
     ],
+    "no-block-members": [
+      "off"
+    ],
+    "max-len": 280,
     "indentation": [
-      "error",
-      4
+      "off"
     ],
-    "linebreak-style": [
-      "error",
-      "unix"
+    "security/no-inline-assembly": [
+      "off"
+    ],
+    "security/no-low-level-calls": [
+      "off"
+    ],
+    "security/no-call-value": [
+      "off"
     ]
   }
 }

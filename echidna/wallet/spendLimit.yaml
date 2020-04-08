@@ -1,5 +1,5 @@
 timeout: 800
-testLimit: 20000
+testLimit: 100000
 prefix: "echidna_"
 deployer: "0x1"
 sender: ["0x2", "0x3"]
