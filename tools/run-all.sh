@@ -1,48 +1,44 @@
 #!/bin/bash
 
-# Development script which runs all validation tools in order.
-
-set -e
-
 if [ ! -d "tools" ]; then 
 	echo "error: script needs to be run from project root './tools/run-all.sh'"
 	exit 1
 fi
 
-echo "========================"
-echo "Formatting contracts (prettier) ..."
-echo "========================"
+read -p "Would you like to format the contracts using 'prettier' (< 10 sec) [Y/n] " answer
+case $answer in 
+	[Nn]) echo "Skipping ...";;
+	*) ./tools/prettier/format.sh;;
+esac
 
-./tools/prettier/format.sh
+read -p "Would you like to flatten the contracts using 'slither-flat' (< 1 min) [Y/n] " answer
+case $answer in 
+	[Nn]) echo "Skipping ...";;
+	*) ./tools/slither/flatten.sh;;
+esac
 
-echo "========================"
-echo "Flattening contracts (slither) ..."
-echo "========================"
+read -p "Would you like to perform static analysis using 'slither' (< 5 min) [Y/n] " answer
+case $answer in 
+	[Nn]) echo "Skipping ...";;
+	*) ./tools/slither/slither.sh;;
+esac
 
-./tools/slither/flatten.sh
+read -p "Would you like to perform symbolic execution using 'manticore' (< 10 min) [Y/n] " answer
+case $answer in 
+	[Nn]) echo "Skipping ...";;
+	*) ./tools/manticore/manticore.sh;;
+esac
 
-echo "========================================"
-echo "Performing static analysis (slither) ..."
-echo "========================================"
+read -p "Would you like to perform security analysis using 'mythril' (< 30 min) [Y/n] " answer
+case $answer in 
+	[Nn]) echo "Skipping ...";;
+	*) ./tools/mythril/mythril.sh;;
+esac
 
-./tools/slither/slither.sh
-
-echo "============================================"
-echo "Performing symbolic analysis (manticore) ..."
-echo "============================================"
-
-./tools/manticore/manticore.sh
-
-echo "=========================================="
-echo "Performing security analysis (mythril) ..."
-echo "=========================================="
-
-./tools/mythril/mythril.sh
-
-echo "================================"
-echo "Running fuzz tests (echidna) ..."
-echo "================================"
-
-./tools/echidna/echidna.sh
+read -p "Would you like to run the fuzz tests using 'echidna' (< 30 min) [Y/n] " answer
+case $answer in 
+	[Nn]) echo "Skipping ...";;
+	*) ./tools/echidna/echidna.sh;;
+esac
 
 
