@@ -156,31 +156,44 @@ To build all contracts and generate corresponding Go bindings:
 ./build.sh
 ```
 
-## Running contract tests
-
-### Dependencies
+## Running contract unit tests
 
 - go version >1.11 is required.
 - go modules (experimental in go 1.11) are needed. `export GO111MODULE=on`
 
-### Running
-
-Get dependencies:
-
 ```sh
-go mod vendor
+go modules download
 ```
 
-Run tests, including coverage (single threaded):
+To test the contracts using the `go` command run:
 
 ```sh
 go test -v ./test/...
 ```
 
-Run tests, excluding coverage (multi-threaded):
+To test the contracts using the `ginkgo` command run:
 
 ```sh
 SILENT=true ginkgo -nodes=16 -r -p ./test/...
+```
+
+## Running validation tools
+
+To run all validation tools locally using Docker run:
+
+```sh
+./tools/run-all.sh
+```
+
+To run a specific validation tool, use the provided scripts:
+
+```sh
+./tools/prettier/format.sh
+./tools/slither/flatten.sh
+./tools/slither/slither.sh
+./tools/echidna/echidna.sh
+./tools/mythril/mythril.sh
+./tools/manticore/manticore.sh
 ```
 
 ## Resources
