@@ -49,7 +49,7 @@ jobs:
     docker:
       - image: mythril/myth@sha256:75605a2a7e848e416f471a67159d6812feaa45e03ddd352aac588e505d68e5c5
     working_directory: /tmp/contracts
-    parallelism: 6
+    parallelism: 7
     steps:
       - checkout
       - run:
@@ -94,6 +94,13 @@ jobs:
               myth analyze --solv=0.5.17 ./walletDeployer.sol --execution-timeout=800
             fi
           no_output_timeout: 20m
+      - run:
+          working_directory: contracts
+          command: |
+            if [[ "${CIRCLE_NODE_INDEX}" == 6 ]]; then
+              myth analyze --solv=0.5.17 ./controller.sol --execution-timeout=800
+            fi
+          no_output_timeout: 20m          
 
   slither:
     docker:

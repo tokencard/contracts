@@ -33,8 +33,16 @@ echo "============================================"
 
 ./tools/manticore/manticore.sh
 
+echo "=========================================="
+echo "Performing security analysis (mythril) ..."
+echo "=========================================="
+
+./tools/mythril/mythril.sh
+
 echo "================================"
 echo "Running fuzz tests (echidna) ..."
 echo "================================"
 
 ./tools/echidna/echidna.sh
+
+
