@@ -42,7 +42,7 @@ jobs:
     steps:
       - run: apk add -U git openssh-client ca-certificates
       - checkout
-      - run: npm install --no-package-lock prettier@2.0.2 prettier-plugin-solidity@1.0.0
+      - run: npm install --no-package-lock prettier@2.0.2 prettier-plugin-solidity@1.0.0-alpha.47
       - run: npx prettier --list-different --plugin=prettier-plugin-solidity {contracts,contracts/mocks,contracts/internals,echidna}/*.sol
 
   mythril:
@@ -165,53 +165,46 @@ jobs:
       - run: solc-select 0.5.17
       - run: find contracts -type f -name '*.sol' -exec slither-flat --convert-external {} \;
       - run:
-          working_directory: tools/echidna
           command: |
             if [[ "${CIRCLE_NODE_INDEX}" == 0 ]]; then
-                echidna-test wallet/wallet.sol --config=wallet/wallet.yaml --contract=TEST
+                echidna-test tools/echidna/wallet/wallet.sol --config=tools/echidna/wallet/wallet.yaml --contract=TEST
             fi
           no_output_timeout: 15m              
       - run:
-          working_directory: tools/echidna
           command: |
             if [[ "${CIRCLE_NODE_INDEX}" == 1 ]]; then
-                echidna-test wallet/addressWhitelist.sol --config=wallet/addressWhitelist.yaml --contract=TEST
+                echidna-test tools/echidna/wallet/addressWhitelist.sol --config=tools/echidna/wallet/addressWhitelist.yaml --contract=TEST
             fi
           no_output_timeout: 15m
       - run:
-          working_directory: tools/echidna
           command: |
             if [[ "${CIRCLE_NODE_INDEX}" == 2 ]]; then
-                echidna-test wallet/spendLimit.sol --config=wallet/spendLimit.yaml --contract=TEST
+                echidna-test tools/echidna/wallet/spendLimit.sol --config=tools/echidna/wallet/spendLimit.yaml --contract=TEST
             fi
           no_output_timeout: 15m
       - run:
-          working_directory: tools/echidna
           command: |
             if [[ "${CIRCLE_NODE_INDEX}" == 3 ]]; then
-                echidna-test wallet/gasTopUpLimit.sol --config=wallet/gasTopUpLimit.yaml --contract=TEST
+                echidna-test tools/echidna/wallet/gasTopUpLimit.sol --config=tools/echidna/wallet/gasTopUpLimit.yaml --contract=TEST
             fi
           no_output_timeout: 15m
       - run:
-          working_directory: tools/echidna
           command: |
             cd tools &&
             if [[ "${CIRCLE_NODE_INDEX}" == 4 ]]; then
-                echidna-test wallet/loadLimit.sol --config=wallet/loadLimit.yaml --contract=TEST
+                echidna-test tools/echidna/wallet/loadLimit.sol --config=tools/echidna/wallet/loadLimit.yaml --contract=TEST
             fi
           no_output_timeout: 15m
       - run:
-          working_directory: tools/echidna
           command: |
             if [[ "${CIRCLE_NODE_INDEX}" == 5 ]]; then
-                echidna-test controller/controller.sol --config=controller/controller.yaml --contract=TEST 
+                echidna-test tools/echidna/controller/controller.sol --config=tools/echidna/controller/controller.yaml --contract=TEST 
             fi
           no_output_timeout: 15m
       - run:
-          working_directory: tools/echidna
           command: |
             if [[ "${CIRCLE_NODE_INDEX}" == 6 ]]; then
-                echidna-test internals/ownable.sol --config=internals/ownable.yaml --contract=TEST
+                echidna-test tools/echidna/internals/ownable.sol --config=tools/echidna/internals/ownable.yaml --contract=TEST
             fi
           no_output_timeout: 15m
 
