@@ -189,6 +189,110 @@ func (_Holder *HolderTransactorRaw) Transact(opts *bind.TransactOpts, method str
 	return _Holder.Contract.contract.Transact(opts, method, params...)
 }
 
+// Burner is a free data retrieval call binding the contract method 0x27810b6e.
+//
+// Solidity: function burner() constant returns(address)
+func (_Holder *HolderCaller) Burner(opts *bind.CallOpts) (common.Address, error) {
+	var (
+		ret0 = new(common.Address)
+	)
+	out := ret0
+	err := _Holder.contract.Call(opts, out, "burner")
+	return *ret0, err
+}
+
+// Burner is a free data retrieval call binding the contract method 0x27810b6e.
+//
+// Solidity: function burner() constant returns(address)
+func (_Holder *HolderSession) Burner() (common.Address, error) {
+	return _Holder.Contract.Burner(&_Holder.CallOpts)
+}
+
+// Burner is a free data retrieval call binding the contract method 0x27810b6e.
+//
+// Solidity: function burner() constant returns(address)
+func (_Holder *HolderCallerSession) Burner() (common.Address, error) {
+	return _Holder.Contract.Burner(&_Holder.CallOpts)
+}
+
+// ControllerNode is a free data retrieval call binding the contract method 0xe2b4ce97.
+//
+// Solidity: function controllerNode() constant returns(bytes32)
+func (_Holder *HolderCaller) ControllerNode(opts *bind.CallOpts) ([32]byte, error) {
+	var (
+		ret0 = new([32]byte)
+	)
+	out := ret0
+	err := _Holder.contract.Call(opts, out, "controllerNode")
+	return *ret0, err
+}
+
+// ControllerNode is a free data retrieval call binding the contract method 0xe2b4ce97.
+//
+// Solidity: function controllerNode() constant returns(bytes32)
+func (_Holder *HolderSession) ControllerNode() ([32]byte, error) {
+	return _Holder.Contract.ControllerNode(&_Holder.CallOpts)
+}
+
+// ControllerNode is a free data retrieval call binding the contract method 0xe2b4ce97.
+//
+// Solidity: function controllerNode() constant returns(bytes32)
+func (_Holder *HolderCallerSession) ControllerNode() ([32]byte, error) {
+	return _Holder.Contract.ControllerNode(&_Holder.CallOpts)
+}
+
+// EnsRegistry is a free data retrieval call binding the contract method 0x7d73b231.
+//
+// Solidity: function ensRegistry() constant returns(address)
+func (_Holder *HolderCaller) EnsRegistry(opts *bind.CallOpts) (common.Address, error) {
+	var (
+		ret0 = new(common.Address)
+	)
+	out := ret0
+	err := _Holder.contract.Call(opts, out, "ensRegistry")
+	return *ret0, err
+}
+
+// EnsRegistry is a free data retrieval call binding the contract method 0x7d73b231.
+//
+// Solidity: function ensRegistry() constant returns(address)
+func (_Holder *HolderSession) EnsRegistry() (common.Address, error) {
+	return _Holder.Contract.EnsRegistry(&_Holder.CallOpts)
+}
+
+// EnsRegistry is a free data retrieval call binding the contract method 0x7d73b231.
+//
+// Solidity: function ensRegistry() constant returns(address)
+func (_Holder *HolderCallerSession) EnsRegistry() (common.Address, error) {
+	return _Holder.Contract.EnsRegistry(&_Holder.CallOpts)
+}
+
+// TokenWhitelistNode is a free data retrieval call binding the contract method 0x877337b0.
+//
+// Solidity: function tokenWhitelistNode() constant returns(bytes32)
+func (_Holder *HolderCaller) TokenWhitelistNode(opts *bind.CallOpts) ([32]byte, error) {
+	var (
+		ret0 = new([32]byte)
+	)
+	out := ret0
+	err := _Holder.contract.Call(opts, out, "tokenWhitelistNode")
+	return *ret0, err
+}
+
+// TokenWhitelistNode is a free data retrieval call binding the contract method 0x877337b0.
+//
+// Solidity: function tokenWhitelistNode() constant returns(bytes32)
+func (_Holder *HolderSession) TokenWhitelistNode() ([32]byte, error) {
+	return _Holder.Contract.TokenWhitelistNode(&_Holder.CallOpts)
+}
+
+// TokenWhitelistNode is a free data retrieval call binding the contract method 0x877337b0.
+//
+// Solidity: function tokenWhitelistNode() constant returns(bytes32)
+func (_Holder *HolderCallerSession) TokenWhitelistNode() ([32]byte, error) {
+	return _Holder.Contract.TokenWhitelistNode(&_Holder.CallOpts)
+}
+
 // Burn is a paid mutator transaction binding the contract method 0x9dc29fac.
 //
 // Solidity: function burn(address _to, uint256 _amount) returns(bool)
@@ -210,69 +314,6 @@ func (_Holder *HolderTransactorSession) Burn(_to common.Address, _amount *big.In
 	return _Holder.Contract.Burn(&_Holder.TransactOpts, _to, _amount)
 }
 
-// Burner is a paid mutator transaction binding the contract method 0x27810b6e.
-//
-// Solidity: function burner() returns(address)
-func (_Holder *HolderTransactor) Burner(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return _Holder.contract.Transact(opts, "burner")
-}
-
-// Burner is a paid mutator transaction binding the contract method 0x27810b6e.
-//
-// Solidity: function burner() returns(address)
-func (_Holder *HolderSession) Burner() (*types.Transaction, error) {
-	return _Holder.Contract.Burner(&_Holder.TransactOpts)
-}
-
-// Burner is a paid mutator transaction binding the contract method 0x27810b6e.
-//
-// Solidity: function burner() returns(address)
-func (_Holder *HolderTransactorSession) Burner() (*types.Transaction, error) {
-	return _Holder.Contract.Burner(&_Holder.TransactOpts)
-}
-
-// ControllerNode is a paid mutator transaction binding the contract method 0xe2b4ce97.
-//
-// Solidity: function controllerNode() returns(bytes32)
-func (_Holder *HolderTransactor) ControllerNode(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return _Holder.contract.Transact(opts, "controllerNode")
-}
-
-// ControllerNode is a paid mutator transaction binding the contract method 0xe2b4ce97.
-//
-// Solidity: function controllerNode() returns(bytes32)
-func (_Holder *HolderSession) ControllerNode() (*types.Transaction, error) {
-	return _Holder.Contract.ControllerNode(&_Holder.TransactOpts)
-}
-
-// ControllerNode is a paid mutator transaction binding the contract method 0xe2b4ce97.
-//
-// Solidity: function controllerNode() returns(bytes32)
-func (_Holder *HolderTransactorSession) ControllerNode() (*types.Transaction, error) {
-	return _Holder.Contract.ControllerNode(&_Holder.TransactOpts)
-}
-
-// EnsRegistry is a paid mutator transaction binding the contract method 0x7d73b231.
-//
-// Solidity: function ensRegistry() returns(address)
-func (_Holder *HolderTransactor) EnsRegistry(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return _Holder.contract.Transact(opts, "ensRegistry")
-}
-
-// EnsRegistry is a paid mutator transaction binding the contract method 0x7d73b231.
-//
-// Solidity: function ensRegistry() returns(address)
-func (_Holder *HolderSession) EnsRegistry() (*types.Transaction, error) {
-	return _Holder.Contract.EnsRegistry(&_Holder.TransactOpts)
-}
-
-// EnsRegistry is a paid mutator transaction binding the contract method 0x7d73b231.
-//
-// Solidity: function ensRegistry() returns(address)
-func (_Holder *HolderTransactorSession) EnsRegistry() (*types.Transaction, error) {
-	return _Holder.Contract.EnsRegistry(&_Holder.TransactOpts)
-}
-
 // NonRedeemableTokenClaim is a paid mutator transaction binding the contract method 0x40f6a70f.
 //
 // Solidity: function nonRedeemableTokenClaim(address _to, address[] _nonRedeemableAddresses) returns(bool)
@@ -292,27 +333,6 @@ func (_Holder *HolderSession) NonRedeemableTokenClaim(_to common.Address, _nonRe
 // Solidity: function nonRedeemableTokenClaim(address _to, address[] _nonRedeemableAddresses) returns(bool)
 func (_Holder *HolderTransactorSession) NonRedeemableTokenClaim(_to common.Address, _nonRedeemableAddresses []common.Address) (*types.Transaction, error) {
 	return _Holder.Contract.NonRedeemableTokenClaim(&_Holder.TransactOpts, _to, _nonRedeemableAddresses)
-}
-
-// TokenWhitelistNode is a paid mutator transaction binding the contract method 0x877337b0.
-//
-// Solidity: function tokenWhitelistNode() returns(bytes32)
-func (_Holder *HolderTransactor) TokenWhitelistNode(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return _Holder.contract.Transact(opts, "tokenWhitelistNode")
-}
-
-// TokenWhitelistNode is a paid mutator transaction binding the contract method 0x877337b0.
-//
-// Solidity: function tokenWhitelistNode() returns(bytes32)
-func (_Holder *HolderSession) TokenWhitelistNode() (*types.Transaction, error) {
-	return _Holder.Contract.TokenWhitelistNode(&_Holder.TransactOpts)
-}
-
-// TokenWhitelistNode is a paid mutator transaction binding the contract method 0x877337b0.
-//
-// Solidity: function tokenWhitelistNode() returns(bytes32)
-func (_Holder *HolderTransactorSession) TokenWhitelistNode() (*types.Transaction, error) {
-	return _Holder.Contract.TokenWhitelistNode(&_Holder.TransactOpts)
 }
 
 // HolderCashAndBurnedIterator is returned from FilterCashAndBurned and is used to iterate over the raw logs and unpacked data for CashAndBurned events raised by the Holder contract.

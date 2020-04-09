@@ -189,25 +189,108 @@ func (_WalletDeployer *WalletDeployerTransactorRaw) Transact(opts *bind.Transact
 	return _WalletDeployer.Contract.contract.Transact(opts, method, params...)
 }
 
-// ControllerNode is a paid mutator transaction binding the contract method 0xe2b4ce97.
+// ControllerNode is a free data retrieval call binding the contract method 0xe2b4ce97.
 //
-// Solidity: function controllerNode() returns(bytes32)
-func (_WalletDeployer *WalletDeployerTransactor) ControllerNode(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return _WalletDeployer.contract.Transact(opts, "controllerNode")
+// Solidity: function controllerNode() constant returns(bytes32)
+func (_WalletDeployer *WalletDeployerCaller) ControllerNode(opts *bind.CallOpts) ([32]byte, error) {
+	var (
+		ret0 = new([32]byte)
+	)
+	out := ret0
+	err := _WalletDeployer.contract.Call(opts, out, "controllerNode")
+	return *ret0, err
 }
 
-// ControllerNode is a paid mutator transaction binding the contract method 0xe2b4ce97.
+// ControllerNode is a free data retrieval call binding the contract method 0xe2b4ce97.
 //
-// Solidity: function controllerNode() returns(bytes32)
-func (_WalletDeployer *WalletDeployerSession) ControllerNode() (*types.Transaction, error) {
-	return _WalletDeployer.Contract.ControllerNode(&_WalletDeployer.TransactOpts)
+// Solidity: function controllerNode() constant returns(bytes32)
+func (_WalletDeployer *WalletDeployerSession) ControllerNode() ([32]byte, error) {
+	return _WalletDeployer.Contract.ControllerNode(&_WalletDeployer.CallOpts)
 }
 
-// ControllerNode is a paid mutator transaction binding the contract method 0xe2b4ce97.
+// ControllerNode is a free data retrieval call binding the contract method 0xe2b4ce97.
 //
-// Solidity: function controllerNode() returns(bytes32)
-func (_WalletDeployer *WalletDeployerTransactorSession) ControllerNode() (*types.Transaction, error) {
-	return _WalletDeployer.Contract.ControllerNode(&_WalletDeployer.TransactOpts)
+// Solidity: function controllerNode() constant returns(bytes32)
+func (_WalletDeployer *WalletDeployerCallerSession) ControllerNode() ([32]byte, error) {
+	return _WalletDeployer.Contract.ControllerNode(&_WalletDeployer.CallOpts)
+}
+
+// DeployedWallets is a free data retrieval call binding the contract method 0x80a12c0e.
+//
+// Solidity: function deployedWallets(address ) constant returns(address)
+func (_WalletDeployer *WalletDeployerCaller) DeployedWallets(opts *bind.CallOpts, arg0 common.Address) (common.Address, error) {
+	var (
+		ret0 = new(common.Address)
+	)
+	out := ret0
+	err := _WalletDeployer.contract.Call(opts, out, "deployedWallets", arg0)
+	return *ret0, err
+}
+
+// DeployedWallets is a free data retrieval call binding the contract method 0x80a12c0e.
+//
+// Solidity: function deployedWallets(address ) constant returns(address)
+func (_WalletDeployer *WalletDeployerSession) DeployedWallets(arg0 common.Address) (common.Address, error) {
+	return _WalletDeployer.Contract.DeployedWallets(&_WalletDeployer.CallOpts, arg0)
+}
+
+// DeployedWallets is a free data retrieval call binding the contract method 0x80a12c0e.
+//
+// Solidity: function deployedWallets(address ) constant returns(address)
+func (_WalletDeployer *WalletDeployerCallerSession) DeployedWallets(arg0 common.Address) (common.Address, error) {
+	return _WalletDeployer.Contract.DeployedWallets(&_WalletDeployer.CallOpts, arg0)
+}
+
+// EnsRegistry is a free data retrieval call binding the contract method 0x7d73b231.
+//
+// Solidity: function ensRegistry() constant returns(address)
+func (_WalletDeployer *WalletDeployerCaller) EnsRegistry(opts *bind.CallOpts) (common.Address, error) {
+	var (
+		ret0 = new(common.Address)
+	)
+	out := ret0
+	err := _WalletDeployer.contract.Call(opts, out, "ensRegistry")
+	return *ret0, err
+}
+
+// EnsRegistry is a free data retrieval call binding the contract method 0x7d73b231.
+//
+// Solidity: function ensRegistry() constant returns(address)
+func (_WalletDeployer *WalletDeployerSession) EnsRegistry() (common.Address, error) {
+	return _WalletDeployer.Contract.EnsRegistry(&_WalletDeployer.CallOpts)
+}
+
+// EnsRegistry is a free data retrieval call binding the contract method 0x7d73b231.
+//
+// Solidity: function ensRegistry() constant returns(address)
+func (_WalletDeployer *WalletDeployerCallerSession) EnsRegistry() (common.Address, error) {
+	return _WalletDeployer.Contract.EnsRegistry(&_WalletDeployer.CallOpts)
+}
+
+// WalletCacheNode is a free data retrieval call binding the contract method 0xa6ede3d4.
+//
+// Solidity: function walletCacheNode() constant returns(bytes32)
+func (_WalletDeployer *WalletDeployerCaller) WalletCacheNode(opts *bind.CallOpts) ([32]byte, error) {
+	var (
+		ret0 = new([32]byte)
+	)
+	out := ret0
+	err := _WalletDeployer.contract.Call(opts, out, "walletCacheNode")
+	return *ret0, err
+}
+
+// WalletCacheNode is a free data retrieval call binding the contract method 0xa6ede3d4.
+//
+// Solidity: function walletCacheNode() constant returns(bytes32)
+func (_WalletDeployer *WalletDeployerSession) WalletCacheNode() ([32]byte, error) {
+	return _WalletDeployer.Contract.WalletCacheNode(&_WalletDeployer.CallOpts)
+}
+
+// WalletCacheNode is a free data retrieval call binding the contract method 0xa6ede3d4.
+//
+// Solidity: function walletCacheNode() constant returns(bytes32)
+func (_WalletDeployer *WalletDeployerCallerSession) WalletCacheNode() ([32]byte, error) {
+	return _WalletDeployer.Contract.WalletCacheNode(&_WalletDeployer.CallOpts)
 }
 
 // DeployWallet is a paid mutator transaction binding the contract method 0xc8cc2fc2.
@@ -231,48 +314,6 @@ func (_WalletDeployer *WalletDeployerTransactorSession) DeployWallet(_owner comm
 	return _WalletDeployer.Contract.DeployWallet(&_WalletDeployer.TransactOpts, _owner)
 }
 
-// DeployedWallets is a paid mutator transaction binding the contract method 0x80a12c0e.
-//
-// Solidity: function deployedWallets(address ) returns(address)
-func (_WalletDeployer *WalletDeployerTransactor) DeployedWallets(opts *bind.TransactOpts, arg0 common.Address) (*types.Transaction, error) {
-	return _WalletDeployer.contract.Transact(opts, "deployedWallets", arg0)
-}
-
-// DeployedWallets is a paid mutator transaction binding the contract method 0x80a12c0e.
-//
-// Solidity: function deployedWallets(address ) returns(address)
-func (_WalletDeployer *WalletDeployerSession) DeployedWallets(arg0 common.Address) (*types.Transaction, error) {
-	return _WalletDeployer.Contract.DeployedWallets(&_WalletDeployer.TransactOpts, arg0)
-}
-
-// DeployedWallets is a paid mutator transaction binding the contract method 0x80a12c0e.
-//
-// Solidity: function deployedWallets(address ) returns(address)
-func (_WalletDeployer *WalletDeployerTransactorSession) DeployedWallets(arg0 common.Address) (*types.Transaction, error) {
-	return _WalletDeployer.Contract.DeployedWallets(&_WalletDeployer.TransactOpts, arg0)
-}
-
-// EnsRegistry is a paid mutator transaction binding the contract method 0x7d73b231.
-//
-// Solidity: function ensRegistry() returns(address)
-func (_WalletDeployer *WalletDeployerTransactor) EnsRegistry(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return _WalletDeployer.contract.Transact(opts, "ensRegistry")
-}
-
-// EnsRegistry is a paid mutator transaction binding the contract method 0x7d73b231.
-//
-// Solidity: function ensRegistry() returns(address)
-func (_WalletDeployer *WalletDeployerSession) EnsRegistry() (*types.Transaction, error) {
-	return _WalletDeployer.Contract.EnsRegistry(&_WalletDeployer.TransactOpts)
-}
-
-// EnsRegistry is a paid mutator transaction binding the contract method 0x7d73b231.
-//
-// Solidity: function ensRegistry() returns(address)
-func (_WalletDeployer *WalletDeployerTransactorSession) EnsRegistry() (*types.Transaction, error) {
-	return _WalletDeployer.Contract.EnsRegistry(&_WalletDeployer.TransactOpts)
-}
-
 // MigrateWallet is a paid mutator transaction binding the contract method 0x8d682ef7.
 //
 // Solidity: function migrateWallet(address _owner, address _oldWallet, bool _initializedSpendLimit, bool _initializedGasTopUpLimit, bool _initializedLoadLimit, bool _initializedWhitelist, uint256 _spendLimit, uint256 _gasTopUpLimit, uint256 _loadLimit, address[] _whitelistedAddresses) returns()
@@ -292,27 +333,6 @@ func (_WalletDeployer *WalletDeployerSession) MigrateWallet(_owner common.Addres
 // Solidity: function migrateWallet(address _owner, address _oldWallet, bool _initializedSpendLimit, bool _initializedGasTopUpLimit, bool _initializedLoadLimit, bool _initializedWhitelist, uint256 _spendLimit, uint256 _gasTopUpLimit, uint256 _loadLimit, address[] _whitelistedAddresses) returns()
 func (_WalletDeployer *WalletDeployerTransactorSession) MigrateWallet(_owner common.Address, _oldWallet common.Address, _initializedSpendLimit bool, _initializedGasTopUpLimit bool, _initializedLoadLimit bool, _initializedWhitelist bool, _spendLimit *big.Int, _gasTopUpLimit *big.Int, _loadLimit *big.Int, _whitelistedAddresses []common.Address) (*types.Transaction, error) {
 	return _WalletDeployer.Contract.MigrateWallet(&_WalletDeployer.TransactOpts, _owner, _oldWallet, _initializedSpendLimit, _initializedGasTopUpLimit, _initializedLoadLimit, _initializedWhitelist, _spendLimit, _gasTopUpLimit, _loadLimit, _whitelistedAddresses)
-}
-
-// WalletCacheNode is a paid mutator transaction binding the contract method 0xa6ede3d4.
-//
-// Solidity: function walletCacheNode() returns(bytes32)
-func (_WalletDeployer *WalletDeployerTransactor) WalletCacheNode(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return _WalletDeployer.contract.Transact(opts, "walletCacheNode")
-}
-
-// WalletCacheNode is a paid mutator transaction binding the contract method 0xa6ede3d4.
-//
-// Solidity: function walletCacheNode() returns(bytes32)
-func (_WalletDeployer *WalletDeployerSession) WalletCacheNode() (*types.Transaction, error) {
-	return _WalletDeployer.Contract.WalletCacheNode(&_WalletDeployer.TransactOpts)
-}
-
-// WalletCacheNode is a paid mutator transaction binding the contract method 0xa6ede3d4.
-//
-// Solidity: function walletCacheNode() returns(bytes32)
-func (_WalletDeployer *WalletDeployerTransactorSession) WalletCacheNode() (*types.Transaction, error) {
-	return _WalletDeployer.Contract.WalletCacheNode(&_WalletDeployer.TransactOpts)
 }
 
 // WalletDeployerDeployedWalletIterator is returned from FilterDeployedWallet and is used to iterate over the raw logs and unpacked data for DeployedWallet events raised by the WalletDeployer contract.
