@@ -189,23 +189,28 @@ func (_IsValidSignatureExporter *IsValidSignatureExporterTransactorRaw) Transact
 	return _IsValidSignatureExporter.Contract.contract.Transact(opts, method, params...)
 }
 
-// IsValidSignature is a paid mutator transaction binding the contract method 0x20c13b0b.
+// IsValidSignature is a free data retrieval call binding the contract method 0x20c13b0b.
 //
-// Solidity: function isValidSignature(bytes _data, bytes _signature) returns(bytes4)
-func (_IsValidSignatureExporter *IsValidSignatureExporterTransactor) IsValidSignature(opts *bind.TransactOpts, _data []byte, _signature []byte) (*types.Transaction, error) {
-	return _IsValidSignatureExporter.contract.Transact(opts, "isValidSignature", _data, _signature)
+// Solidity: function isValidSignature(bytes _data, bytes _signature) constant returns(bytes4)
+func (_IsValidSignatureExporter *IsValidSignatureExporterCaller) IsValidSignature(opts *bind.CallOpts, _data []byte, _signature []byte) ([4]byte, error) {
+	var (
+		ret0 = new([4]byte)
+	)
+	out := ret0
+	err := _IsValidSignatureExporter.contract.Call(opts, out, "isValidSignature", _data, _signature)
+	return *ret0, err
 }
 
-// IsValidSignature is a paid mutator transaction binding the contract method 0x20c13b0b.
+// IsValidSignature is a free data retrieval call binding the contract method 0x20c13b0b.
 //
-// Solidity: function isValidSignature(bytes _data, bytes _signature) returns(bytes4)
-func (_IsValidSignatureExporter *IsValidSignatureExporterSession) IsValidSignature(_data []byte, _signature []byte) (*types.Transaction, error) {
-	return _IsValidSignatureExporter.Contract.IsValidSignature(&_IsValidSignatureExporter.TransactOpts, _data, _signature)
+// Solidity: function isValidSignature(bytes _data, bytes _signature) constant returns(bytes4)
+func (_IsValidSignatureExporter *IsValidSignatureExporterSession) IsValidSignature(_data []byte, _signature []byte) ([4]byte, error) {
+	return _IsValidSignatureExporter.Contract.IsValidSignature(&_IsValidSignatureExporter.CallOpts, _data, _signature)
 }
 
-// IsValidSignature is a paid mutator transaction binding the contract method 0x20c13b0b.
+// IsValidSignature is a free data retrieval call binding the contract method 0x20c13b0b.
 //
-// Solidity: function isValidSignature(bytes _data, bytes _signature) returns(bytes4)
-func (_IsValidSignatureExporter *IsValidSignatureExporterTransactorSession) IsValidSignature(_data []byte, _signature []byte) (*types.Transaction, error) {
-	return _IsValidSignatureExporter.Contract.IsValidSignature(&_IsValidSignatureExporter.TransactOpts, _data, _signature)
+// Solidity: function isValidSignature(bytes _data, bytes _signature) constant returns(bytes4)
+func (_IsValidSignatureExporter *IsValidSignatureExporterCallerSession) IsValidSignature(_data []byte, _signature []byte) ([4]byte, error) {
+	return _IsValidSignatureExporter.Contract.IsValidSignature(&_IsValidSignatureExporter.CallOpts, _data, _signature)
 }

@@ -189,46 +189,342 @@ func (_Licence *LicenceTransactorRaw) Transact(opts *bind.TransactOpts, method s
 	return _Licence.Contract.contract.Transact(opts, method, params...)
 }
 
-// MAXAMOUNTSCALE is a paid mutator transaction binding the contract method 0xca0e2e20.
+// MAXAMOUNTSCALE is a free data retrieval call binding the contract method 0xca0e2e20.
 //
-// Solidity: function MAX_AMOUNT_SCALE() returns(uint256)
-func (_Licence *LicenceTransactor) MAXAMOUNTSCALE(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return _Licence.contract.Transact(opts, "MAX_AMOUNT_SCALE")
+// Solidity: function MAX_AMOUNT_SCALE() constant returns(uint256)
+func (_Licence *LicenceCaller) MAXAMOUNTSCALE(opts *bind.CallOpts) (*big.Int, error) {
+	var (
+		ret0 = new(*big.Int)
+	)
+	out := ret0
+	err := _Licence.contract.Call(opts, out, "MAX_AMOUNT_SCALE")
+	return *ret0, err
 }
 
-// MAXAMOUNTSCALE is a paid mutator transaction binding the contract method 0xca0e2e20.
+// MAXAMOUNTSCALE is a free data retrieval call binding the contract method 0xca0e2e20.
 //
-// Solidity: function MAX_AMOUNT_SCALE() returns(uint256)
-func (_Licence *LicenceSession) MAXAMOUNTSCALE() (*types.Transaction, error) {
-	return _Licence.Contract.MAXAMOUNTSCALE(&_Licence.TransactOpts)
+// Solidity: function MAX_AMOUNT_SCALE() constant returns(uint256)
+func (_Licence *LicenceSession) MAXAMOUNTSCALE() (*big.Int, error) {
+	return _Licence.Contract.MAXAMOUNTSCALE(&_Licence.CallOpts)
 }
 
-// MAXAMOUNTSCALE is a paid mutator transaction binding the contract method 0xca0e2e20.
+// MAXAMOUNTSCALE is a free data retrieval call binding the contract method 0xca0e2e20.
 //
-// Solidity: function MAX_AMOUNT_SCALE() returns(uint256)
-func (_Licence *LicenceTransactorSession) MAXAMOUNTSCALE() (*types.Transaction, error) {
-	return _Licence.Contract.MAXAMOUNTSCALE(&_Licence.TransactOpts)
+// Solidity: function MAX_AMOUNT_SCALE() constant returns(uint256)
+func (_Licence *LicenceCallerSession) MAXAMOUNTSCALE() (*big.Int, error) {
+	return _Licence.Contract.MAXAMOUNTSCALE(&_Licence.CallOpts)
 }
 
-// MINAMOUNTSCALE is a paid mutator transaction binding the contract method 0x3acec15f.
+// MINAMOUNTSCALE is a free data retrieval call binding the contract method 0x3acec15f.
 //
-// Solidity: function MIN_AMOUNT_SCALE() returns(uint256)
-func (_Licence *LicenceTransactor) MINAMOUNTSCALE(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return _Licence.contract.Transact(opts, "MIN_AMOUNT_SCALE")
+// Solidity: function MIN_AMOUNT_SCALE() constant returns(uint256)
+func (_Licence *LicenceCaller) MINAMOUNTSCALE(opts *bind.CallOpts) (*big.Int, error) {
+	var (
+		ret0 = new(*big.Int)
+	)
+	out := ret0
+	err := _Licence.contract.Call(opts, out, "MIN_AMOUNT_SCALE")
+	return *ret0, err
 }
 
-// MINAMOUNTSCALE is a paid mutator transaction binding the contract method 0x3acec15f.
+// MINAMOUNTSCALE is a free data retrieval call binding the contract method 0x3acec15f.
 //
-// Solidity: function MIN_AMOUNT_SCALE() returns(uint256)
-func (_Licence *LicenceSession) MINAMOUNTSCALE() (*types.Transaction, error) {
-	return _Licence.Contract.MINAMOUNTSCALE(&_Licence.TransactOpts)
+// Solidity: function MIN_AMOUNT_SCALE() constant returns(uint256)
+func (_Licence *LicenceSession) MINAMOUNTSCALE() (*big.Int, error) {
+	return _Licence.Contract.MINAMOUNTSCALE(&_Licence.CallOpts)
 }
 
-// MINAMOUNTSCALE is a paid mutator transaction binding the contract method 0x3acec15f.
+// MINAMOUNTSCALE is a free data retrieval call binding the contract method 0x3acec15f.
 //
-// Solidity: function MIN_AMOUNT_SCALE() returns(uint256)
-func (_Licence *LicenceTransactorSession) MINAMOUNTSCALE() (*types.Transaction, error) {
-	return _Licence.Contract.MINAMOUNTSCALE(&_Licence.TransactOpts)
+// Solidity: function MIN_AMOUNT_SCALE() constant returns(uint256)
+func (_Licence *LicenceCallerSession) MINAMOUNTSCALE() (*big.Int, error) {
+	return _Licence.Contract.MINAMOUNTSCALE(&_Licence.CallOpts)
+}
+
+// ControllerNode is a free data retrieval call binding the contract method 0xe2b4ce97.
+//
+// Solidity: function controllerNode() constant returns(bytes32)
+func (_Licence *LicenceCaller) ControllerNode(opts *bind.CallOpts) ([32]byte, error) {
+	var (
+		ret0 = new([32]byte)
+	)
+	out := ret0
+	err := _Licence.contract.Call(opts, out, "controllerNode")
+	return *ret0, err
+}
+
+// ControllerNode is a free data retrieval call binding the contract method 0xe2b4ce97.
+//
+// Solidity: function controllerNode() constant returns(bytes32)
+func (_Licence *LicenceSession) ControllerNode() ([32]byte, error) {
+	return _Licence.Contract.ControllerNode(&_Licence.CallOpts)
+}
+
+// ControllerNode is a free data retrieval call binding the contract method 0xe2b4ce97.
+//
+// Solidity: function controllerNode() constant returns(bytes32)
+func (_Licence *LicenceCallerSession) ControllerNode() ([32]byte, error) {
+	return _Licence.Contract.ControllerNode(&_Licence.CallOpts)
+}
+
+// CryptoFloat is a free data retrieval call binding the contract method 0xa036ba60.
+//
+// Solidity: function cryptoFloat() constant returns(address)
+func (_Licence *LicenceCaller) CryptoFloat(opts *bind.CallOpts) (common.Address, error) {
+	var (
+		ret0 = new(common.Address)
+	)
+	out := ret0
+	err := _Licence.contract.Call(opts, out, "cryptoFloat")
+	return *ret0, err
+}
+
+// CryptoFloat is a free data retrieval call binding the contract method 0xa036ba60.
+//
+// Solidity: function cryptoFloat() constant returns(address)
+func (_Licence *LicenceSession) CryptoFloat() (common.Address, error) {
+	return _Licence.Contract.CryptoFloat(&_Licence.CallOpts)
+}
+
+// CryptoFloat is a free data retrieval call binding the contract method 0xa036ba60.
+//
+// Solidity: function cryptoFloat() constant returns(address)
+func (_Licence *LicenceCallerSession) CryptoFloat() (common.Address, error) {
+	return _Licence.Contract.CryptoFloat(&_Licence.CallOpts)
+}
+
+// EnsRegistry is a free data retrieval call binding the contract method 0x7d73b231.
+//
+// Solidity: function ensRegistry() constant returns(address)
+func (_Licence *LicenceCaller) EnsRegistry(opts *bind.CallOpts) (common.Address, error) {
+	var (
+		ret0 = new(common.Address)
+	)
+	out := ret0
+	err := _Licence.contract.Call(opts, out, "ensRegistry")
+	return *ret0, err
+}
+
+// EnsRegistry is a free data retrieval call binding the contract method 0x7d73b231.
+//
+// Solidity: function ensRegistry() constant returns(address)
+func (_Licence *LicenceSession) EnsRegistry() (common.Address, error) {
+	return _Licence.Contract.EnsRegistry(&_Licence.CallOpts)
+}
+
+// EnsRegistry is a free data retrieval call binding the contract method 0x7d73b231.
+//
+// Solidity: function ensRegistry() constant returns(address)
+func (_Licence *LicenceCallerSession) EnsRegistry() (common.Address, error) {
+	return _Licence.Contract.EnsRegistry(&_Licence.CallOpts)
+}
+
+// FloatLocked is a free data retrieval call binding the contract method 0x940b9c3b.
+//
+// Solidity: function floatLocked() constant returns(bool)
+func (_Licence *LicenceCaller) FloatLocked(opts *bind.CallOpts) (bool, error) {
+	var (
+		ret0 = new(bool)
+	)
+	out := ret0
+	err := _Licence.contract.Call(opts, out, "floatLocked")
+	return *ret0, err
+}
+
+// FloatLocked is a free data retrieval call binding the contract method 0x940b9c3b.
+//
+// Solidity: function floatLocked() constant returns(bool)
+func (_Licence *LicenceSession) FloatLocked() (bool, error) {
+	return _Licence.Contract.FloatLocked(&_Licence.CallOpts)
+}
+
+// FloatLocked is a free data retrieval call binding the contract method 0x940b9c3b.
+//
+// Solidity: function floatLocked() constant returns(bool)
+func (_Licence *LicenceCallerSession) FloatLocked() (bool, error) {
+	return _Licence.Contract.FloatLocked(&_Licence.CallOpts)
+}
+
+// HolderLocked is a free data retrieval call binding the contract method 0xf15ff455.
+//
+// Solidity: function holderLocked() constant returns(bool)
+func (_Licence *LicenceCaller) HolderLocked(opts *bind.CallOpts) (bool, error) {
+	var (
+		ret0 = new(bool)
+	)
+	out := ret0
+	err := _Licence.contract.Call(opts, out, "holderLocked")
+	return *ret0, err
+}
+
+// HolderLocked is a free data retrieval call binding the contract method 0xf15ff455.
+//
+// Solidity: function holderLocked() constant returns(bool)
+func (_Licence *LicenceSession) HolderLocked() (bool, error) {
+	return _Licence.Contract.HolderLocked(&_Licence.CallOpts)
+}
+
+// HolderLocked is a free data retrieval call binding the contract method 0xf15ff455.
+//
+// Solidity: function holderLocked() constant returns(bool)
+func (_Licence *LicenceCallerSession) HolderLocked() (bool, error) {
+	return _Licence.Contract.HolderLocked(&_Licence.CallOpts)
+}
+
+// LicenceAmountScaled is a free data retrieval call binding the contract method 0xac904c63.
+//
+// Solidity: function licenceAmountScaled() constant returns(uint256)
+func (_Licence *LicenceCaller) LicenceAmountScaled(opts *bind.CallOpts) (*big.Int, error) {
+	var (
+		ret0 = new(*big.Int)
+	)
+	out := ret0
+	err := _Licence.contract.Call(opts, out, "licenceAmountScaled")
+	return *ret0, err
+}
+
+// LicenceAmountScaled is a free data retrieval call binding the contract method 0xac904c63.
+//
+// Solidity: function licenceAmountScaled() constant returns(uint256)
+func (_Licence *LicenceSession) LicenceAmountScaled() (*big.Int, error) {
+	return _Licence.Contract.LicenceAmountScaled(&_Licence.CallOpts)
+}
+
+// LicenceAmountScaled is a free data retrieval call binding the contract method 0xac904c63.
+//
+// Solidity: function licenceAmountScaled() constant returns(uint256)
+func (_Licence *LicenceCallerSession) LicenceAmountScaled() (*big.Int, error) {
+	return _Licence.Contract.LicenceAmountScaled(&_Licence.CallOpts)
+}
+
+// LicenceDAO is a free data retrieval call binding the contract method 0x3a7afe02.
+//
+// Solidity: function licenceDAO() constant returns(address)
+func (_Licence *LicenceCaller) LicenceDAO(opts *bind.CallOpts) (common.Address, error) {
+	var (
+		ret0 = new(common.Address)
+	)
+	out := ret0
+	err := _Licence.contract.Call(opts, out, "licenceDAO")
+	return *ret0, err
+}
+
+// LicenceDAO is a free data retrieval call binding the contract method 0x3a7afe02.
+//
+// Solidity: function licenceDAO() constant returns(address)
+func (_Licence *LicenceSession) LicenceDAO() (common.Address, error) {
+	return _Licence.Contract.LicenceDAO(&_Licence.CallOpts)
+}
+
+// LicenceDAO is a free data retrieval call binding the contract method 0x3a7afe02.
+//
+// Solidity: function licenceDAO() constant returns(address)
+func (_Licence *LicenceCallerSession) LicenceDAO() (common.Address, error) {
+	return _Licence.Contract.LicenceDAO(&_Licence.CallOpts)
+}
+
+// LicenceDAOLocked is a free data retrieval call binding the contract method 0xe30c5fa8.
+//
+// Solidity: function licenceDAOLocked() constant returns(bool)
+func (_Licence *LicenceCaller) LicenceDAOLocked(opts *bind.CallOpts) (bool, error) {
+	var (
+		ret0 = new(bool)
+	)
+	out := ret0
+	err := _Licence.contract.Call(opts, out, "licenceDAOLocked")
+	return *ret0, err
+}
+
+// LicenceDAOLocked is a free data retrieval call binding the contract method 0xe30c5fa8.
+//
+// Solidity: function licenceDAOLocked() constant returns(bool)
+func (_Licence *LicenceSession) LicenceDAOLocked() (bool, error) {
+	return _Licence.Contract.LicenceDAOLocked(&_Licence.CallOpts)
+}
+
+// LicenceDAOLocked is a free data retrieval call binding the contract method 0xe30c5fa8.
+//
+// Solidity: function licenceDAOLocked() constant returns(bool)
+func (_Licence *LicenceCallerSession) LicenceDAOLocked() (bool, error) {
+	return _Licence.Contract.LicenceDAOLocked(&_Licence.CallOpts)
+}
+
+// TknContractAddress is a free data retrieval call binding the contract method 0x99a5e1d0.
+//
+// Solidity: function tknContractAddress() constant returns(address)
+func (_Licence *LicenceCaller) TknContractAddress(opts *bind.CallOpts) (common.Address, error) {
+	var (
+		ret0 = new(common.Address)
+	)
+	out := ret0
+	err := _Licence.contract.Call(opts, out, "tknContractAddress")
+	return *ret0, err
+}
+
+// TknContractAddress is a free data retrieval call binding the contract method 0x99a5e1d0.
+//
+// Solidity: function tknContractAddress() constant returns(address)
+func (_Licence *LicenceSession) TknContractAddress() (common.Address, error) {
+	return _Licence.Contract.TknContractAddress(&_Licence.CallOpts)
+}
+
+// TknContractAddress is a free data retrieval call binding the contract method 0x99a5e1d0.
+//
+// Solidity: function tknContractAddress() constant returns(address)
+func (_Licence *LicenceCallerSession) TknContractAddress() (common.Address, error) {
+	return _Licence.Contract.TknContractAddress(&_Licence.CallOpts)
+}
+
+// TknContractAddressLocked is a free data retrieval call binding the contract method 0x837c70ef.
+//
+// Solidity: function tknContractAddressLocked() constant returns(bool)
+func (_Licence *LicenceCaller) TknContractAddressLocked(opts *bind.CallOpts) (bool, error) {
+	var (
+		ret0 = new(bool)
+	)
+	out := ret0
+	err := _Licence.contract.Call(opts, out, "tknContractAddressLocked")
+	return *ret0, err
+}
+
+// TknContractAddressLocked is a free data retrieval call binding the contract method 0x837c70ef.
+//
+// Solidity: function tknContractAddressLocked() constant returns(bool)
+func (_Licence *LicenceSession) TknContractAddressLocked() (bool, error) {
+	return _Licence.Contract.TknContractAddressLocked(&_Licence.CallOpts)
+}
+
+// TknContractAddressLocked is a free data retrieval call binding the contract method 0x837c70ef.
+//
+// Solidity: function tknContractAddressLocked() constant returns(bool)
+func (_Licence *LicenceCallerSession) TknContractAddressLocked() (bool, error) {
+	return _Licence.Contract.TknContractAddressLocked(&_Licence.CallOpts)
+}
+
+// TokenHolder is a free data retrieval call binding the contract method 0x420a83e7.
+//
+// Solidity: function tokenHolder() constant returns(address)
+func (_Licence *LicenceCaller) TokenHolder(opts *bind.CallOpts) (common.Address, error) {
+	var (
+		ret0 = new(common.Address)
+	)
+	out := ret0
+	err := _Licence.contract.Call(opts, out, "tokenHolder")
+	return *ret0, err
+}
+
+// TokenHolder is a free data retrieval call binding the contract method 0x420a83e7.
+//
+// Solidity: function tokenHolder() constant returns(address)
+func (_Licence *LicenceSession) TokenHolder() (common.Address, error) {
+	return _Licence.Contract.TokenHolder(&_Licence.CallOpts)
+}
+
+// TokenHolder is a free data retrieval call binding the contract method 0x420a83e7.
+//
+// Solidity: function tokenHolder() constant returns(address)
+func (_Licence *LicenceCallerSession) TokenHolder() (common.Address, error) {
+	return _Licence.Contract.TokenHolder(&_Licence.CallOpts)
 }
 
 // Claim is a paid mutator transaction binding the contract method 0x996cba68.
@@ -250,174 +546,6 @@ func (_Licence *LicenceSession) Claim(_to common.Address, _asset common.Address,
 // Solidity: function claim(address _to, address _asset, uint256 _amount) returns()
 func (_Licence *LicenceTransactorSession) Claim(_to common.Address, _asset common.Address, _amount *big.Int) (*types.Transaction, error) {
 	return _Licence.Contract.Claim(&_Licence.TransactOpts, _to, _asset, _amount)
-}
-
-// ControllerNode is a paid mutator transaction binding the contract method 0xe2b4ce97.
-//
-// Solidity: function controllerNode() returns(bytes32)
-func (_Licence *LicenceTransactor) ControllerNode(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return _Licence.contract.Transact(opts, "controllerNode")
-}
-
-// ControllerNode is a paid mutator transaction binding the contract method 0xe2b4ce97.
-//
-// Solidity: function controllerNode() returns(bytes32)
-func (_Licence *LicenceSession) ControllerNode() (*types.Transaction, error) {
-	return _Licence.Contract.ControllerNode(&_Licence.TransactOpts)
-}
-
-// ControllerNode is a paid mutator transaction binding the contract method 0xe2b4ce97.
-//
-// Solidity: function controllerNode() returns(bytes32)
-func (_Licence *LicenceTransactorSession) ControllerNode() (*types.Transaction, error) {
-	return _Licence.Contract.ControllerNode(&_Licence.TransactOpts)
-}
-
-// CryptoFloat is a paid mutator transaction binding the contract method 0xa036ba60.
-//
-// Solidity: function cryptoFloat() returns(address)
-func (_Licence *LicenceTransactor) CryptoFloat(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return _Licence.contract.Transact(opts, "cryptoFloat")
-}
-
-// CryptoFloat is a paid mutator transaction binding the contract method 0xa036ba60.
-//
-// Solidity: function cryptoFloat() returns(address)
-func (_Licence *LicenceSession) CryptoFloat() (*types.Transaction, error) {
-	return _Licence.Contract.CryptoFloat(&_Licence.TransactOpts)
-}
-
-// CryptoFloat is a paid mutator transaction binding the contract method 0xa036ba60.
-//
-// Solidity: function cryptoFloat() returns(address)
-func (_Licence *LicenceTransactorSession) CryptoFloat() (*types.Transaction, error) {
-	return _Licence.Contract.CryptoFloat(&_Licence.TransactOpts)
-}
-
-// EnsRegistry is a paid mutator transaction binding the contract method 0x7d73b231.
-//
-// Solidity: function ensRegistry() returns(address)
-func (_Licence *LicenceTransactor) EnsRegistry(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return _Licence.contract.Transact(opts, "ensRegistry")
-}
-
-// EnsRegistry is a paid mutator transaction binding the contract method 0x7d73b231.
-//
-// Solidity: function ensRegistry() returns(address)
-func (_Licence *LicenceSession) EnsRegistry() (*types.Transaction, error) {
-	return _Licence.Contract.EnsRegistry(&_Licence.TransactOpts)
-}
-
-// EnsRegistry is a paid mutator transaction binding the contract method 0x7d73b231.
-//
-// Solidity: function ensRegistry() returns(address)
-func (_Licence *LicenceTransactorSession) EnsRegistry() (*types.Transaction, error) {
-	return _Licence.Contract.EnsRegistry(&_Licence.TransactOpts)
-}
-
-// FloatLocked is a paid mutator transaction binding the contract method 0x940b9c3b.
-//
-// Solidity: function floatLocked() returns(bool)
-func (_Licence *LicenceTransactor) FloatLocked(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return _Licence.contract.Transact(opts, "floatLocked")
-}
-
-// FloatLocked is a paid mutator transaction binding the contract method 0x940b9c3b.
-//
-// Solidity: function floatLocked() returns(bool)
-func (_Licence *LicenceSession) FloatLocked() (*types.Transaction, error) {
-	return _Licence.Contract.FloatLocked(&_Licence.TransactOpts)
-}
-
-// FloatLocked is a paid mutator transaction binding the contract method 0x940b9c3b.
-//
-// Solidity: function floatLocked() returns(bool)
-func (_Licence *LicenceTransactorSession) FloatLocked() (*types.Transaction, error) {
-	return _Licence.Contract.FloatLocked(&_Licence.TransactOpts)
-}
-
-// HolderLocked is a paid mutator transaction binding the contract method 0xf15ff455.
-//
-// Solidity: function holderLocked() returns(bool)
-func (_Licence *LicenceTransactor) HolderLocked(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return _Licence.contract.Transact(opts, "holderLocked")
-}
-
-// HolderLocked is a paid mutator transaction binding the contract method 0xf15ff455.
-//
-// Solidity: function holderLocked() returns(bool)
-func (_Licence *LicenceSession) HolderLocked() (*types.Transaction, error) {
-	return _Licence.Contract.HolderLocked(&_Licence.TransactOpts)
-}
-
-// HolderLocked is a paid mutator transaction binding the contract method 0xf15ff455.
-//
-// Solidity: function holderLocked() returns(bool)
-func (_Licence *LicenceTransactorSession) HolderLocked() (*types.Transaction, error) {
-	return _Licence.Contract.HolderLocked(&_Licence.TransactOpts)
-}
-
-// LicenceAmountScaled is a paid mutator transaction binding the contract method 0xac904c63.
-//
-// Solidity: function licenceAmountScaled() returns(uint256)
-func (_Licence *LicenceTransactor) LicenceAmountScaled(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return _Licence.contract.Transact(opts, "licenceAmountScaled")
-}
-
-// LicenceAmountScaled is a paid mutator transaction binding the contract method 0xac904c63.
-//
-// Solidity: function licenceAmountScaled() returns(uint256)
-func (_Licence *LicenceSession) LicenceAmountScaled() (*types.Transaction, error) {
-	return _Licence.Contract.LicenceAmountScaled(&_Licence.TransactOpts)
-}
-
-// LicenceAmountScaled is a paid mutator transaction binding the contract method 0xac904c63.
-//
-// Solidity: function licenceAmountScaled() returns(uint256)
-func (_Licence *LicenceTransactorSession) LicenceAmountScaled() (*types.Transaction, error) {
-	return _Licence.Contract.LicenceAmountScaled(&_Licence.TransactOpts)
-}
-
-// LicenceDAO is a paid mutator transaction binding the contract method 0x3a7afe02.
-//
-// Solidity: function licenceDAO() returns(address)
-func (_Licence *LicenceTransactor) LicenceDAO(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return _Licence.contract.Transact(opts, "licenceDAO")
-}
-
-// LicenceDAO is a paid mutator transaction binding the contract method 0x3a7afe02.
-//
-// Solidity: function licenceDAO() returns(address)
-func (_Licence *LicenceSession) LicenceDAO() (*types.Transaction, error) {
-	return _Licence.Contract.LicenceDAO(&_Licence.TransactOpts)
-}
-
-// LicenceDAO is a paid mutator transaction binding the contract method 0x3a7afe02.
-//
-// Solidity: function licenceDAO() returns(address)
-func (_Licence *LicenceTransactorSession) LicenceDAO() (*types.Transaction, error) {
-	return _Licence.Contract.LicenceDAO(&_Licence.TransactOpts)
-}
-
-// LicenceDAOLocked is a paid mutator transaction binding the contract method 0xe30c5fa8.
-//
-// Solidity: function licenceDAOLocked() returns(bool)
-func (_Licence *LicenceTransactor) LicenceDAOLocked(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return _Licence.contract.Transact(opts, "licenceDAOLocked")
-}
-
-// LicenceDAOLocked is a paid mutator transaction binding the contract method 0xe30c5fa8.
-//
-// Solidity: function licenceDAOLocked() returns(bool)
-func (_Licence *LicenceSession) LicenceDAOLocked() (*types.Transaction, error) {
-	return _Licence.Contract.LicenceDAOLocked(&_Licence.TransactOpts)
-}
-
-// LicenceDAOLocked is a paid mutator transaction binding the contract method 0xe30c5fa8.
-//
-// Solidity: function licenceDAOLocked() returns(bool)
-func (_Licence *LicenceTransactorSession) LicenceDAOLocked() (*types.Transaction, error) {
-	return _Licence.Contract.LicenceDAOLocked(&_Licence.TransactOpts)
 }
 
 // Load is a paid mutator transaction binding the contract method 0x1b3c96b4.
@@ -523,69 +651,6 @@ func (_Licence *LicenceSession) LockTKNContractAddress() (*types.Transaction, er
 // Solidity: function lockTKNContractAddress() returns()
 func (_Licence *LicenceTransactorSession) LockTKNContractAddress() (*types.Transaction, error) {
 	return _Licence.Contract.LockTKNContractAddress(&_Licence.TransactOpts)
-}
-
-// TknContractAddress is a paid mutator transaction binding the contract method 0x99a5e1d0.
-//
-// Solidity: function tknContractAddress() returns(address)
-func (_Licence *LicenceTransactor) TknContractAddress(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return _Licence.contract.Transact(opts, "tknContractAddress")
-}
-
-// TknContractAddress is a paid mutator transaction binding the contract method 0x99a5e1d0.
-//
-// Solidity: function tknContractAddress() returns(address)
-func (_Licence *LicenceSession) TknContractAddress() (*types.Transaction, error) {
-	return _Licence.Contract.TknContractAddress(&_Licence.TransactOpts)
-}
-
-// TknContractAddress is a paid mutator transaction binding the contract method 0x99a5e1d0.
-//
-// Solidity: function tknContractAddress() returns(address)
-func (_Licence *LicenceTransactorSession) TknContractAddress() (*types.Transaction, error) {
-	return _Licence.Contract.TknContractAddress(&_Licence.TransactOpts)
-}
-
-// TknContractAddressLocked is a paid mutator transaction binding the contract method 0x837c70ef.
-//
-// Solidity: function tknContractAddressLocked() returns(bool)
-func (_Licence *LicenceTransactor) TknContractAddressLocked(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return _Licence.contract.Transact(opts, "tknContractAddressLocked")
-}
-
-// TknContractAddressLocked is a paid mutator transaction binding the contract method 0x837c70ef.
-//
-// Solidity: function tknContractAddressLocked() returns(bool)
-func (_Licence *LicenceSession) TknContractAddressLocked() (*types.Transaction, error) {
-	return _Licence.Contract.TknContractAddressLocked(&_Licence.TransactOpts)
-}
-
-// TknContractAddressLocked is a paid mutator transaction binding the contract method 0x837c70ef.
-//
-// Solidity: function tknContractAddressLocked() returns(bool)
-func (_Licence *LicenceTransactorSession) TknContractAddressLocked() (*types.Transaction, error) {
-	return _Licence.Contract.TknContractAddressLocked(&_Licence.TransactOpts)
-}
-
-// TokenHolder is a paid mutator transaction binding the contract method 0x420a83e7.
-//
-// Solidity: function tokenHolder() returns(address)
-func (_Licence *LicenceTransactor) TokenHolder(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return _Licence.contract.Transact(opts, "tokenHolder")
-}
-
-// TokenHolder is a paid mutator transaction binding the contract method 0x420a83e7.
-//
-// Solidity: function tokenHolder() returns(address)
-func (_Licence *LicenceSession) TokenHolder() (*types.Transaction, error) {
-	return _Licence.Contract.TokenHolder(&_Licence.TransactOpts)
-}
-
-// TokenHolder is a paid mutator transaction binding the contract method 0x420a83e7.
-//
-// Solidity: function tokenHolder() returns(address)
-func (_Licence *LicenceTransactorSession) TokenHolder() (*types.Transaction, error) {
-	return _Licence.Contract.TokenHolder(&_Licence.TransactOpts)
 }
 
 // UpdateFloat is a paid mutator transaction binding the contract method 0xd0cddd67.
