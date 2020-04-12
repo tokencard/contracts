@@ -189,65 +189,80 @@ func (_ParseIntScientificExporter *ParseIntScientificExporterTransactorRaw) Tran
 	return _ParseIntScientificExporter.Contract.contract.Transact(opts, method, params...)
 }
 
-// ParseIntScientific is a paid mutator transaction binding the contract method 0xba070695.
+// ParseIntScientific is a free data retrieval call binding the contract method 0xba070695.
 //
-// Solidity: function parseIntScientific(string _a) returns(uint256)
-func (_ParseIntScientificExporter *ParseIntScientificExporterTransactor) ParseIntScientific(opts *bind.TransactOpts, _a string) (*types.Transaction, error) {
-	return _ParseIntScientificExporter.contract.Transact(opts, "parseIntScientific", _a)
+// Solidity: function parseIntScientific(string _a) constant returns(uint256)
+func (_ParseIntScientificExporter *ParseIntScientificExporterCaller) ParseIntScientific(opts *bind.CallOpts, _a string) (*big.Int, error) {
+	var (
+		ret0 = new(*big.Int)
+	)
+	out := ret0
+	err := _ParseIntScientificExporter.contract.Call(opts, out, "parseIntScientific", _a)
+	return *ret0, err
 }
 
-// ParseIntScientific is a paid mutator transaction binding the contract method 0xba070695.
+// ParseIntScientific is a free data retrieval call binding the contract method 0xba070695.
 //
-// Solidity: function parseIntScientific(string _a) returns(uint256)
-func (_ParseIntScientificExporter *ParseIntScientificExporterSession) ParseIntScientific(_a string) (*types.Transaction, error) {
-	return _ParseIntScientificExporter.Contract.ParseIntScientific(&_ParseIntScientificExporter.TransactOpts, _a)
+// Solidity: function parseIntScientific(string _a) constant returns(uint256)
+func (_ParseIntScientificExporter *ParseIntScientificExporterSession) ParseIntScientific(_a string) (*big.Int, error) {
+	return _ParseIntScientificExporter.Contract.ParseIntScientific(&_ParseIntScientificExporter.CallOpts, _a)
 }
 
-// ParseIntScientific is a paid mutator transaction binding the contract method 0xba070695.
+// ParseIntScientific is a free data retrieval call binding the contract method 0xba070695.
 //
-// Solidity: function parseIntScientific(string _a) returns(uint256)
-func (_ParseIntScientificExporter *ParseIntScientificExporterTransactorSession) ParseIntScientific(_a string) (*types.Transaction, error) {
-	return _ParseIntScientificExporter.Contract.ParseIntScientific(&_ParseIntScientificExporter.TransactOpts, _a)
+// Solidity: function parseIntScientific(string _a) constant returns(uint256)
+func (_ParseIntScientificExporter *ParseIntScientificExporterCallerSession) ParseIntScientific(_a string) (*big.Int, error) {
+	return _ParseIntScientificExporter.Contract.ParseIntScientific(&_ParseIntScientificExporter.CallOpts, _a)
 }
 
-// ParseIntScientificDecimals is a paid mutator transaction binding the contract method 0x87c8da5e.
+// ParseIntScientificDecimals is a free data retrieval call binding the contract method 0x87c8da5e.
 //
-// Solidity: function parseIntScientificDecimals(string _a, uint256 _b) returns(uint256)
-func (_ParseIntScientificExporter *ParseIntScientificExporterTransactor) ParseIntScientificDecimals(opts *bind.TransactOpts, _a string, _b *big.Int) (*types.Transaction, error) {
-	return _ParseIntScientificExporter.contract.Transact(opts, "parseIntScientificDecimals", _a, _b)
+// Solidity: function parseIntScientificDecimals(string _a, uint256 _b) constant returns(uint256)
+func (_ParseIntScientificExporter *ParseIntScientificExporterCaller) ParseIntScientificDecimals(opts *bind.CallOpts, _a string, _b *big.Int) (*big.Int, error) {
+	var (
+		ret0 = new(*big.Int)
+	)
+	out := ret0
+	err := _ParseIntScientificExporter.contract.Call(opts, out, "parseIntScientificDecimals", _a, _b)
+	return *ret0, err
 }
 
-// ParseIntScientificDecimals is a paid mutator transaction binding the contract method 0x87c8da5e.
+// ParseIntScientificDecimals is a free data retrieval call binding the contract method 0x87c8da5e.
 //
-// Solidity: function parseIntScientificDecimals(string _a, uint256 _b) returns(uint256)
-func (_ParseIntScientificExporter *ParseIntScientificExporterSession) ParseIntScientificDecimals(_a string, _b *big.Int) (*types.Transaction, error) {
-	return _ParseIntScientificExporter.Contract.ParseIntScientificDecimals(&_ParseIntScientificExporter.TransactOpts, _a, _b)
+// Solidity: function parseIntScientificDecimals(string _a, uint256 _b) constant returns(uint256)
+func (_ParseIntScientificExporter *ParseIntScientificExporterSession) ParseIntScientificDecimals(_a string, _b *big.Int) (*big.Int, error) {
+	return _ParseIntScientificExporter.Contract.ParseIntScientificDecimals(&_ParseIntScientificExporter.CallOpts, _a, _b)
 }
 
-// ParseIntScientificDecimals is a paid mutator transaction binding the contract method 0x87c8da5e.
+// ParseIntScientificDecimals is a free data retrieval call binding the contract method 0x87c8da5e.
 //
-// Solidity: function parseIntScientificDecimals(string _a, uint256 _b) returns(uint256)
-func (_ParseIntScientificExporter *ParseIntScientificExporterTransactorSession) ParseIntScientificDecimals(_a string, _b *big.Int) (*types.Transaction, error) {
-	return _ParseIntScientificExporter.Contract.ParseIntScientificDecimals(&_ParseIntScientificExporter.TransactOpts, _a, _b)
+// Solidity: function parseIntScientificDecimals(string _a, uint256 _b) constant returns(uint256)
+func (_ParseIntScientificExporter *ParseIntScientificExporterCallerSession) ParseIntScientificDecimals(_a string, _b *big.Int) (*big.Int, error) {
+	return _ParseIntScientificExporter.Contract.ParseIntScientificDecimals(&_ParseIntScientificExporter.CallOpts, _a, _b)
 }
 
-// ParseIntScientificWei is a paid mutator transaction binding the contract method 0x61f7e0ac.
+// ParseIntScientificWei is a free data retrieval call binding the contract method 0x61f7e0ac.
 //
-// Solidity: function parseIntScientificWei(string _a) returns(uint256)
-func (_ParseIntScientificExporter *ParseIntScientificExporterTransactor) ParseIntScientificWei(opts *bind.TransactOpts, _a string) (*types.Transaction, error) {
-	return _ParseIntScientificExporter.contract.Transact(opts, "parseIntScientificWei", _a)
+// Solidity: function parseIntScientificWei(string _a) constant returns(uint256)
+func (_ParseIntScientificExporter *ParseIntScientificExporterCaller) ParseIntScientificWei(opts *bind.CallOpts, _a string) (*big.Int, error) {
+	var (
+		ret0 = new(*big.Int)
+	)
+	out := ret0
+	err := _ParseIntScientificExporter.contract.Call(opts, out, "parseIntScientificWei", _a)
+	return *ret0, err
 }
 
-// ParseIntScientificWei is a paid mutator transaction binding the contract method 0x61f7e0ac.
+// ParseIntScientificWei is a free data retrieval call binding the contract method 0x61f7e0ac.
 //
-// Solidity: function parseIntScientificWei(string _a) returns(uint256)
-func (_ParseIntScientificExporter *ParseIntScientificExporterSession) ParseIntScientificWei(_a string) (*types.Transaction, error) {
-	return _ParseIntScientificExporter.Contract.ParseIntScientificWei(&_ParseIntScientificExporter.TransactOpts, _a)
+// Solidity: function parseIntScientificWei(string _a) constant returns(uint256)
+func (_ParseIntScientificExporter *ParseIntScientificExporterSession) ParseIntScientificWei(_a string) (*big.Int, error) {
+	return _ParseIntScientificExporter.Contract.ParseIntScientificWei(&_ParseIntScientificExporter.CallOpts, _a)
 }
 
-// ParseIntScientificWei is a paid mutator transaction binding the contract method 0x61f7e0ac.
+// ParseIntScientificWei is a free data retrieval call binding the contract method 0x61f7e0ac.
 //
-// Solidity: function parseIntScientificWei(string _a) returns(uint256)
-func (_ParseIntScientificExporter *ParseIntScientificExporterTransactorSession) ParseIntScientificWei(_a string) (*types.Transaction, error) {
-	return _ParseIntScientificExporter.Contract.ParseIntScientificWei(&_ParseIntScientificExporter.TransactOpts, _a)
+// Solidity: function parseIntScientificWei(string _a) constant returns(uint256)
+func (_ParseIntScientificExporter *ParseIntScientificExporterCallerSession) ParseIntScientificWei(_a string) (*big.Int, error) {
+	return _ParseIntScientificExporter.Contract.ParseIntScientificWei(&_ParseIntScientificExporter.CallOpts, _a)
 }

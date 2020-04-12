@@ -189,25 +189,82 @@ func (_NonCompliantToken *NonCompliantTokenTransactorRaw) Transact(opts *bind.Tr
 	return _NonCompliantToken.Contract.contract.Transact(opts, method, params...)
 }
 
-// Allowance is a paid mutator transaction binding the contract method 0xdd62ed3e.
+// Allowance is a free data retrieval call binding the contract method 0xdd62ed3e.
 //
-// Solidity: function allowance(address , address ) returns(uint256)
-func (_NonCompliantToken *NonCompliantTokenTransactor) Allowance(opts *bind.TransactOpts, arg0 common.Address, arg1 common.Address) (*types.Transaction, error) {
-	return _NonCompliantToken.contract.Transact(opts, "allowance", arg0, arg1)
+// Solidity: function allowance(address , address ) constant returns(uint256)
+func (_NonCompliantToken *NonCompliantTokenCaller) Allowance(opts *bind.CallOpts, arg0 common.Address, arg1 common.Address) (*big.Int, error) {
+	var (
+		ret0 = new(*big.Int)
+	)
+	out := ret0
+	err := _NonCompliantToken.contract.Call(opts, out, "allowance", arg0, arg1)
+	return *ret0, err
 }
 
-// Allowance is a paid mutator transaction binding the contract method 0xdd62ed3e.
+// Allowance is a free data retrieval call binding the contract method 0xdd62ed3e.
 //
-// Solidity: function allowance(address , address ) returns(uint256)
-func (_NonCompliantToken *NonCompliantTokenSession) Allowance(arg0 common.Address, arg1 common.Address) (*types.Transaction, error) {
-	return _NonCompliantToken.Contract.Allowance(&_NonCompliantToken.TransactOpts, arg0, arg1)
+// Solidity: function allowance(address , address ) constant returns(uint256)
+func (_NonCompliantToken *NonCompliantTokenSession) Allowance(arg0 common.Address, arg1 common.Address) (*big.Int, error) {
+	return _NonCompliantToken.Contract.Allowance(&_NonCompliantToken.CallOpts, arg0, arg1)
 }
 
-// Allowance is a paid mutator transaction binding the contract method 0xdd62ed3e.
+// Allowance is a free data retrieval call binding the contract method 0xdd62ed3e.
 //
-// Solidity: function allowance(address , address ) returns(uint256)
-func (_NonCompliantToken *NonCompliantTokenTransactorSession) Allowance(arg0 common.Address, arg1 common.Address) (*types.Transaction, error) {
-	return _NonCompliantToken.Contract.Allowance(&_NonCompliantToken.TransactOpts, arg0, arg1)
+// Solidity: function allowance(address , address ) constant returns(uint256)
+func (_NonCompliantToken *NonCompliantTokenCallerSession) Allowance(arg0 common.Address, arg1 common.Address) (*big.Int, error) {
+	return _NonCompliantToken.Contract.Allowance(&_NonCompliantToken.CallOpts, arg0, arg1)
+}
+
+// BalanceOf is a free data retrieval call binding the contract method 0x70a08231.
+//
+// Solidity: function balanceOf(address ) constant returns(uint256)
+func (_NonCompliantToken *NonCompliantTokenCaller) BalanceOf(opts *bind.CallOpts, arg0 common.Address) (*big.Int, error) {
+	var (
+		ret0 = new(*big.Int)
+	)
+	out := ret0
+	err := _NonCompliantToken.contract.Call(opts, out, "balanceOf", arg0)
+	return *ret0, err
+}
+
+// BalanceOf is a free data retrieval call binding the contract method 0x70a08231.
+//
+// Solidity: function balanceOf(address ) constant returns(uint256)
+func (_NonCompliantToken *NonCompliantTokenSession) BalanceOf(arg0 common.Address) (*big.Int, error) {
+	return _NonCompliantToken.Contract.BalanceOf(&_NonCompliantToken.CallOpts, arg0)
+}
+
+// BalanceOf is a free data retrieval call binding the contract method 0x70a08231.
+//
+// Solidity: function balanceOf(address ) constant returns(uint256)
+func (_NonCompliantToken *NonCompliantTokenCallerSession) BalanceOf(arg0 common.Address) (*big.Int, error) {
+	return _NonCompliantToken.Contract.BalanceOf(&_NonCompliantToken.CallOpts, arg0)
+}
+
+// TotalSupply is a free data retrieval call binding the contract method 0x18160ddd.
+//
+// Solidity: function totalSupply() constant returns(uint256)
+func (_NonCompliantToken *NonCompliantTokenCaller) TotalSupply(opts *bind.CallOpts) (*big.Int, error) {
+	var (
+		ret0 = new(*big.Int)
+	)
+	out := ret0
+	err := _NonCompliantToken.contract.Call(opts, out, "totalSupply")
+	return *ret0, err
+}
+
+// TotalSupply is a free data retrieval call binding the contract method 0x18160ddd.
+//
+// Solidity: function totalSupply() constant returns(uint256)
+func (_NonCompliantToken *NonCompliantTokenSession) TotalSupply() (*big.Int, error) {
+	return _NonCompliantToken.Contract.TotalSupply(&_NonCompliantToken.CallOpts)
+}
+
+// TotalSupply is a free data retrieval call binding the contract method 0x18160ddd.
+//
+// Solidity: function totalSupply() constant returns(uint256)
+func (_NonCompliantToken *NonCompliantTokenCallerSession) TotalSupply() (*big.Int, error) {
+	return _NonCompliantToken.Contract.TotalSupply(&_NonCompliantToken.CallOpts)
 }
 
 // Approve is a paid mutator transaction binding the contract method 0x095ea7b3.
@@ -229,27 +286,6 @@ func (_NonCompliantToken *NonCompliantTokenSession) Approve(_spender common.Addr
 // Solidity: function approve(address _spender, uint256 _value) returns()
 func (_NonCompliantToken *NonCompliantTokenTransactorSession) Approve(_spender common.Address, _value *big.Int) (*types.Transaction, error) {
 	return _NonCompliantToken.Contract.Approve(&_NonCompliantToken.TransactOpts, _spender, _value)
-}
-
-// BalanceOf is a paid mutator transaction binding the contract method 0x70a08231.
-//
-// Solidity: function balanceOf(address ) returns(uint256)
-func (_NonCompliantToken *NonCompliantTokenTransactor) BalanceOf(opts *bind.TransactOpts, arg0 common.Address) (*types.Transaction, error) {
-	return _NonCompliantToken.contract.Transact(opts, "balanceOf", arg0)
-}
-
-// BalanceOf is a paid mutator transaction binding the contract method 0x70a08231.
-//
-// Solidity: function balanceOf(address ) returns(uint256)
-func (_NonCompliantToken *NonCompliantTokenSession) BalanceOf(arg0 common.Address) (*types.Transaction, error) {
-	return _NonCompliantToken.Contract.BalanceOf(&_NonCompliantToken.TransactOpts, arg0)
-}
-
-// BalanceOf is a paid mutator transaction binding the contract method 0x70a08231.
-//
-// Solidity: function balanceOf(address ) returns(uint256)
-func (_NonCompliantToken *NonCompliantTokenTransactorSession) BalanceOf(arg0 common.Address) (*types.Transaction, error) {
-	return _NonCompliantToken.Contract.BalanceOf(&_NonCompliantToken.TransactOpts, arg0)
 }
 
 // Credit is a paid mutator transaction binding the contract method 0xef6506db.
@@ -292,27 +328,6 @@ func (_NonCompliantToken *NonCompliantTokenSession) Debit(from common.Address, a
 // Solidity: function debit(address from, uint256 amount) returns()
 func (_NonCompliantToken *NonCompliantTokenTransactorSession) Debit(from common.Address, amount *big.Int) (*types.Transaction, error) {
 	return _NonCompliantToken.Contract.Debit(&_NonCompliantToken.TransactOpts, from, amount)
-}
-
-// TotalSupply is a paid mutator transaction binding the contract method 0x18160ddd.
-//
-// Solidity: function totalSupply() returns(uint256)
-func (_NonCompliantToken *NonCompliantTokenTransactor) TotalSupply(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return _NonCompliantToken.contract.Transact(opts, "totalSupply")
-}
-
-// TotalSupply is a paid mutator transaction binding the contract method 0x18160ddd.
-//
-// Solidity: function totalSupply() returns(uint256)
-func (_NonCompliantToken *NonCompliantTokenSession) TotalSupply() (*types.Transaction, error) {
-	return _NonCompliantToken.Contract.TotalSupply(&_NonCompliantToken.TransactOpts)
-}
-
-// TotalSupply is a paid mutator transaction binding the contract method 0x18160ddd.
-//
-// Solidity: function totalSupply() returns(uint256)
-func (_NonCompliantToken *NonCompliantTokenTransactorSession) TotalSupply() (*types.Transaction, error) {
-	return _NonCompliantToken.Contract.TotalSupply(&_NonCompliantToken.TransactOpts)
 }
 
 // Transfer is a paid mutator transaction binding the contract method 0xa9059cbb.

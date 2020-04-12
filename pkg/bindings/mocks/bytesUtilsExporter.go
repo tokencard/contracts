@@ -189,65 +189,80 @@ func (_BytesUtilsExporter *BytesUtilsExporterTransactorRaw) Transact(opts *bind.
 	return _BytesUtilsExporter.Contract.contract.Transact(opts, method, params...)
 }
 
-// BytesToAddress is a paid mutator transaction binding the contract method 0x0638c0f4.
+// BytesToAddress is a free data retrieval call binding the contract method 0x0638c0f4.
 //
-// Solidity: function bytesToAddress(bytes _bts, uint256 _from) returns(address)
-func (_BytesUtilsExporter *BytesUtilsExporterTransactor) BytesToAddress(opts *bind.TransactOpts, _bts []byte, _from *big.Int) (*types.Transaction, error) {
-	return _BytesUtilsExporter.contract.Transact(opts, "bytesToAddress", _bts, _from)
+// Solidity: function bytesToAddress(bytes _bts, uint256 _from) constant returns(address)
+func (_BytesUtilsExporter *BytesUtilsExporterCaller) BytesToAddress(opts *bind.CallOpts, _bts []byte, _from *big.Int) (common.Address, error) {
+	var (
+		ret0 = new(common.Address)
+	)
+	out := ret0
+	err := _BytesUtilsExporter.contract.Call(opts, out, "bytesToAddress", _bts, _from)
+	return *ret0, err
 }
 
-// BytesToAddress is a paid mutator transaction binding the contract method 0x0638c0f4.
+// BytesToAddress is a free data retrieval call binding the contract method 0x0638c0f4.
 //
-// Solidity: function bytesToAddress(bytes _bts, uint256 _from) returns(address)
-func (_BytesUtilsExporter *BytesUtilsExporterSession) BytesToAddress(_bts []byte, _from *big.Int) (*types.Transaction, error) {
-	return _BytesUtilsExporter.Contract.BytesToAddress(&_BytesUtilsExporter.TransactOpts, _bts, _from)
+// Solidity: function bytesToAddress(bytes _bts, uint256 _from) constant returns(address)
+func (_BytesUtilsExporter *BytesUtilsExporterSession) BytesToAddress(_bts []byte, _from *big.Int) (common.Address, error) {
+	return _BytesUtilsExporter.Contract.BytesToAddress(&_BytesUtilsExporter.CallOpts, _bts, _from)
 }
 
-// BytesToAddress is a paid mutator transaction binding the contract method 0x0638c0f4.
+// BytesToAddress is a free data retrieval call binding the contract method 0x0638c0f4.
 //
-// Solidity: function bytesToAddress(bytes _bts, uint256 _from) returns(address)
-func (_BytesUtilsExporter *BytesUtilsExporterTransactorSession) BytesToAddress(_bts []byte, _from *big.Int) (*types.Transaction, error) {
-	return _BytesUtilsExporter.Contract.BytesToAddress(&_BytesUtilsExporter.TransactOpts, _bts, _from)
+// Solidity: function bytesToAddress(bytes _bts, uint256 _from) constant returns(address)
+func (_BytesUtilsExporter *BytesUtilsExporterCallerSession) BytesToAddress(_bts []byte, _from *big.Int) (common.Address, error) {
+	return _BytesUtilsExporter.Contract.BytesToAddress(&_BytesUtilsExporter.CallOpts, _bts, _from)
 }
 
-// BytesToBytes4 is a paid mutator transaction binding the contract method 0xcbd85c76.
+// BytesToBytes4 is a free data retrieval call binding the contract method 0xcbd85c76.
 //
-// Solidity: function bytesToBytes4(bytes _bts, uint256 _from) returns(bytes4)
-func (_BytesUtilsExporter *BytesUtilsExporterTransactor) BytesToBytes4(opts *bind.TransactOpts, _bts []byte, _from *big.Int) (*types.Transaction, error) {
-	return _BytesUtilsExporter.contract.Transact(opts, "bytesToBytes4", _bts, _from)
+// Solidity: function bytesToBytes4(bytes _bts, uint256 _from) constant returns(bytes4)
+func (_BytesUtilsExporter *BytesUtilsExporterCaller) BytesToBytes4(opts *bind.CallOpts, _bts []byte, _from *big.Int) ([4]byte, error) {
+	var (
+		ret0 = new([4]byte)
+	)
+	out := ret0
+	err := _BytesUtilsExporter.contract.Call(opts, out, "bytesToBytes4", _bts, _from)
+	return *ret0, err
 }
 
-// BytesToBytes4 is a paid mutator transaction binding the contract method 0xcbd85c76.
+// BytesToBytes4 is a free data retrieval call binding the contract method 0xcbd85c76.
 //
-// Solidity: function bytesToBytes4(bytes _bts, uint256 _from) returns(bytes4)
-func (_BytesUtilsExporter *BytesUtilsExporterSession) BytesToBytes4(_bts []byte, _from *big.Int) (*types.Transaction, error) {
-	return _BytesUtilsExporter.Contract.BytesToBytes4(&_BytesUtilsExporter.TransactOpts, _bts, _from)
+// Solidity: function bytesToBytes4(bytes _bts, uint256 _from) constant returns(bytes4)
+func (_BytesUtilsExporter *BytesUtilsExporterSession) BytesToBytes4(_bts []byte, _from *big.Int) ([4]byte, error) {
+	return _BytesUtilsExporter.Contract.BytesToBytes4(&_BytesUtilsExporter.CallOpts, _bts, _from)
 }
 
-// BytesToBytes4 is a paid mutator transaction binding the contract method 0xcbd85c76.
+// BytesToBytes4 is a free data retrieval call binding the contract method 0xcbd85c76.
 //
-// Solidity: function bytesToBytes4(bytes _bts, uint256 _from) returns(bytes4)
-func (_BytesUtilsExporter *BytesUtilsExporterTransactorSession) BytesToBytes4(_bts []byte, _from *big.Int) (*types.Transaction, error) {
-	return _BytesUtilsExporter.Contract.BytesToBytes4(&_BytesUtilsExporter.TransactOpts, _bts, _from)
+// Solidity: function bytesToBytes4(bytes _bts, uint256 _from) constant returns(bytes4)
+func (_BytesUtilsExporter *BytesUtilsExporterCallerSession) BytesToBytes4(_bts []byte, _from *big.Int) ([4]byte, error) {
+	return _BytesUtilsExporter.Contract.BytesToBytes4(&_BytesUtilsExporter.CallOpts, _bts, _from)
 }
 
-// BytesToUint256 is a paid mutator transaction binding the contract method 0x55f94ce0.
+// BytesToUint256 is a free data retrieval call binding the contract method 0x55f94ce0.
 //
-// Solidity: function bytesToUint256(bytes _bts, uint256 _from) returns(uint256)
-func (_BytesUtilsExporter *BytesUtilsExporterTransactor) BytesToUint256(opts *bind.TransactOpts, _bts []byte, _from *big.Int) (*types.Transaction, error) {
-	return _BytesUtilsExporter.contract.Transact(opts, "bytesToUint256", _bts, _from)
+// Solidity: function bytesToUint256(bytes _bts, uint256 _from) constant returns(uint256)
+func (_BytesUtilsExporter *BytesUtilsExporterCaller) BytesToUint256(opts *bind.CallOpts, _bts []byte, _from *big.Int) (*big.Int, error) {
+	var (
+		ret0 = new(*big.Int)
+	)
+	out := ret0
+	err := _BytesUtilsExporter.contract.Call(opts, out, "bytesToUint256", _bts, _from)
+	return *ret0, err
 }
 
-// BytesToUint256 is a paid mutator transaction binding the contract method 0x55f94ce0.
+// BytesToUint256 is a free data retrieval call binding the contract method 0x55f94ce0.
 //
-// Solidity: function bytesToUint256(bytes _bts, uint256 _from) returns(uint256)
-func (_BytesUtilsExporter *BytesUtilsExporterSession) BytesToUint256(_bts []byte, _from *big.Int) (*types.Transaction, error) {
-	return _BytesUtilsExporter.Contract.BytesToUint256(&_BytesUtilsExporter.TransactOpts, _bts, _from)
+// Solidity: function bytesToUint256(bytes _bts, uint256 _from) constant returns(uint256)
+func (_BytesUtilsExporter *BytesUtilsExporterSession) BytesToUint256(_bts []byte, _from *big.Int) (*big.Int, error) {
+	return _BytesUtilsExporter.Contract.BytesToUint256(&_BytesUtilsExporter.CallOpts, _bts, _from)
 }
 
-// BytesToUint256 is a paid mutator transaction binding the contract method 0x55f94ce0.
+// BytesToUint256 is a free data retrieval call binding the contract method 0x55f94ce0.
 //
-// Solidity: function bytesToUint256(bytes _bts, uint256 _from) returns(uint256)
-func (_BytesUtilsExporter *BytesUtilsExporterTransactorSession) BytesToUint256(_bts []byte, _from *big.Int) (*types.Transaction, error) {
-	return _BytesUtilsExporter.Contract.BytesToUint256(&_BytesUtilsExporter.TransactOpts, _bts, _from)
+// Solidity: function bytesToUint256(bytes _bts, uint256 _from) constant returns(uint256)
+func (_BytesUtilsExporter *BytesUtilsExporterCallerSession) BytesToUint256(_bts []byte, _from *big.Int) (*big.Int, error) {
+	return _BytesUtilsExporter.Contract.BytesToUint256(&_BytesUtilsExporter.CallOpts, _bts, _from)
 }

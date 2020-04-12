@@ -189,6 +189,350 @@ func (_TokenWhitelist *TokenWhitelistTransactorRaw) Transact(opts *bind.Transact
 	return _TokenWhitelist.Contract.contract.Transact(opts, method, params...)
 }
 
+// ControllerNode is a free data retrieval call binding the contract method 0xe2b4ce97.
+//
+// Solidity: function controllerNode() constant returns(bytes32)
+func (_TokenWhitelist *TokenWhitelistCaller) ControllerNode(opts *bind.CallOpts) ([32]byte, error) {
+	var (
+		ret0 = new([32]byte)
+	)
+	out := ret0
+	err := _TokenWhitelist.contract.Call(opts, out, "controllerNode")
+	return *ret0, err
+}
+
+// ControllerNode is a free data retrieval call binding the contract method 0xe2b4ce97.
+//
+// Solidity: function controllerNode() constant returns(bytes32)
+func (_TokenWhitelist *TokenWhitelistSession) ControllerNode() ([32]byte, error) {
+	return _TokenWhitelist.Contract.ControllerNode(&_TokenWhitelist.CallOpts)
+}
+
+// ControllerNode is a free data retrieval call binding the contract method 0xe2b4ce97.
+//
+// Solidity: function controllerNode() constant returns(bytes32)
+func (_TokenWhitelist *TokenWhitelistCallerSession) ControllerNode() ([32]byte, error) {
+	return _TokenWhitelist.Contract.ControllerNode(&_TokenWhitelist.CallOpts)
+}
+
+// EnsRegistry is a free data retrieval call binding the contract method 0x7d73b231.
+//
+// Solidity: function ensRegistry() constant returns(address)
+func (_TokenWhitelist *TokenWhitelistCaller) EnsRegistry(opts *bind.CallOpts) (common.Address, error) {
+	var (
+		ret0 = new(common.Address)
+	)
+	out := ret0
+	err := _TokenWhitelist.contract.Call(opts, out, "ensRegistry")
+	return *ret0, err
+}
+
+// EnsRegistry is a free data retrieval call binding the contract method 0x7d73b231.
+//
+// Solidity: function ensRegistry() constant returns(address)
+func (_TokenWhitelist *TokenWhitelistSession) EnsRegistry() (common.Address, error) {
+	return _TokenWhitelist.Contract.EnsRegistry(&_TokenWhitelist.CallOpts)
+}
+
+// EnsRegistry is a free data retrieval call binding the contract method 0x7d73b231.
+//
+// Solidity: function ensRegistry() constant returns(address)
+func (_TokenWhitelist *TokenWhitelistCallerSession) EnsRegistry() (common.Address, error) {
+	return _TokenWhitelist.Contract.EnsRegistry(&_TokenWhitelist.CallOpts)
+}
+
+// GetERC20RecipientAndAmount is a free data retrieval call binding the contract method 0xafc72e93.
+//
+// Solidity: function getERC20RecipientAndAmount(address _token, bytes _data) constant returns(address, uint256)
+func (_TokenWhitelist *TokenWhitelistCaller) GetERC20RecipientAndAmount(opts *bind.CallOpts, _token common.Address, _data []byte) (common.Address, *big.Int, error) {
+	var (
+		ret0 = new(common.Address)
+		ret1 = new(*big.Int)
+	)
+	out := &[]interface{}{
+		ret0,
+		ret1,
+	}
+	err := _TokenWhitelist.contract.Call(opts, out, "getERC20RecipientAndAmount", _token, _data)
+	return *ret0, *ret1, err
+}
+
+// GetERC20RecipientAndAmount is a free data retrieval call binding the contract method 0xafc72e93.
+//
+// Solidity: function getERC20RecipientAndAmount(address _token, bytes _data) constant returns(address, uint256)
+func (_TokenWhitelist *TokenWhitelistSession) GetERC20RecipientAndAmount(_token common.Address, _data []byte) (common.Address, *big.Int, error) {
+	return _TokenWhitelist.Contract.GetERC20RecipientAndAmount(&_TokenWhitelist.CallOpts, _token, _data)
+}
+
+// GetERC20RecipientAndAmount is a free data retrieval call binding the contract method 0xafc72e93.
+//
+// Solidity: function getERC20RecipientAndAmount(address _token, bytes _data) constant returns(address, uint256)
+func (_TokenWhitelist *TokenWhitelistCallerSession) GetERC20RecipientAndAmount(_token common.Address, _data []byte) (common.Address, *big.Int, error) {
+	return _TokenWhitelist.Contract.GetERC20RecipientAndAmount(&_TokenWhitelist.CallOpts, _token, _data)
+}
+
+// GetStablecoinInfo is a free data retrieval call binding the contract method 0x3efec5e9.
+//
+// Solidity: function getStablecoinInfo() constant returns(string, uint256, uint256, bool, bool, bool, uint256)
+func (_TokenWhitelist *TokenWhitelistCaller) GetStablecoinInfo(opts *bind.CallOpts) (string, *big.Int, *big.Int, bool, bool, bool, *big.Int, error) {
+	var (
+		ret0 = new(string)
+		ret1 = new(*big.Int)
+		ret2 = new(*big.Int)
+		ret3 = new(bool)
+		ret4 = new(bool)
+		ret5 = new(bool)
+		ret6 = new(*big.Int)
+	)
+	out := &[]interface{}{
+		ret0,
+		ret1,
+		ret2,
+		ret3,
+		ret4,
+		ret5,
+		ret6,
+	}
+	err := _TokenWhitelist.contract.Call(opts, out, "getStablecoinInfo")
+	return *ret0, *ret1, *ret2, *ret3, *ret4, *ret5, *ret6, err
+}
+
+// GetStablecoinInfo is a free data retrieval call binding the contract method 0x3efec5e9.
+//
+// Solidity: function getStablecoinInfo() constant returns(string, uint256, uint256, bool, bool, bool, uint256)
+func (_TokenWhitelist *TokenWhitelistSession) GetStablecoinInfo() (string, *big.Int, *big.Int, bool, bool, bool, *big.Int, error) {
+	return _TokenWhitelist.Contract.GetStablecoinInfo(&_TokenWhitelist.CallOpts)
+}
+
+// GetStablecoinInfo is a free data retrieval call binding the contract method 0x3efec5e9.
+//
+// Solidity: function getStablecoinInfo() constant returns(string, uint256, uint256, bool, bool, bool, uint256)
+func (_TokenWhitelist *TokenWhitelistCallerSession) GetStablecoinInfo() (string, *big.Int, *big.Int, bool, bool, bool, *big.Int, error) {
+	return _TokenWhitelist.Contract.GetStablecoinInfo(&_TokenWhitelist.CallOpts)
+}
+
+// GetTokenInfo is a free data retrieval call binding the contract method 0x1f69565f.
+//
+// Solidity: function getTokenInfo(address _a) constant returns(string, uint256, uint256, bool, bool, bool, uint256)
+func (_TokenWhitelist *TokenWhitelistCaller) GetTokenInfo(opts *bind.CallOpts, _a common.Address) (string, *big.Int, *big.Int, bool, bool, bool, *big.Int, error) {
+	var (
+		ret0 = new(string)
+		ret1 = new(*big.Int)
+		ret2 = new(*big.Int)
+		ret3 = new(bool)
+		ret4 = new(bool)
+		ret5 = new(bool)
+		ret6 = new(*big.Int)
+	)
+	out := &[]interface{}{
+		ret0,
+		ret1,
+		ret2,
+		ret3,
+		ret4,
+		ret5,
+		ret6,
+	}
+	err := _TokenWhitelist.contract.Call(opts, out, "getTokenInfo", _a)
+	return *ret0, *ret1, *ret2, *ret3, *ret4, *ret5, *ret6, err
+}
+
+// GetTokenInfo is a free data retrieval call binding the contract method 0x1f69565f.
+//
+// Solidity: function getTokenInfo(address _a) constant returns(string, uint256, uint256, bool, bool, bool, uint256)
+func (_TokenWhitelist *TokenWhitelistSession) GetTokenInfo(_a common.Address) (string, *big.Int, *big.Int, bool, bool, bool, *big.Int, error) {
+	return _TokenWhitelist.Contract.GetTokenInfo(&_TokenWhitelist.CallOpts, _a)
+}
+
+// GetTokenInfo is a free data retrieval call binding the contract method 0x1f69565f.
+//
+// Solidity: function getTokenInfo(address _a) constant returns(string, uint256, uint256, bool, bool, bool, uint256)
+func (_TokenWhitelist *TokenWhitelistCallerSession) GetTokenInfo(_a common.Address) (string, *big.Int, *big.Int, bool, bool, bool, *big.Int, error) {
+	return _TokenWhitelist.Contract.GetTokenInfo(&_TokenWhitelist.CallOpts, _a)
+}
+
+// IsERC20MethodSupported is a free data retrieval call binding the contract method 0x6a1744dc.
+//
+// Solidity: function isERC20MethodSupported(address _token, bytes4 _methodId) constant returns(bool)
+func (_TokenWhitelist *TokenWhitelistCaller) IsERC20MethodSupported(opts *bind.CallOpts, _token common.Address, _methodId [4]byte) (bool, error) {
+	var (
+		ret0 = new(bool)
+	)
+	out := ret0
+	err := _TokenWhitelist.contract.Call(opts, out, "isERC20MethodSupported", _token, _methodId)
+	return *ret0, err
+}
+
+// IsERC20MethodSupported is a free data retrieval call binding the contract method 0x6a1744dc.
+//
+// Solidity: function isERC20MethodSupported(address _token, bytes4 _methodId) constant returns(bool)
+func (_TokenWhitelist *TokenWhitelistSession) IsERC20MethodSupported(_token common.Address, _methodId [4]byte) (bool, error) {
+	return _TokenWhitelist.Contract.IsERC20MethodSupported(&_TokenWhitelist.CallOpts, _token, _methodId)
+}
+
+// IsERC20MethodSupported is a free data retrieval call binding the contract method 0x6a1744dc.
+//
+// Solidity: function isERC20MethodSupported(address _token, bytes4 _methodId) constant returns(bool)
+func (_TokenWhitelist *TokenWhitelistCallerSession) IsERC20MethodSupported(_token common.Address, _methodId [4]byte) (bool, error) {
+	return _TokenWhitelist.Contract.IsERC20MethodSupported(&_TokenWhitelist.CallOpts, _token, _methodId)
+}
+
+// IsERC20MethodWhitelisted is a free data retrieval call binding the contract method 0x1d3a069f.
+//
+// Solidity: function isERC20MethodWhitelisted(bytes4 _methodId) constant returns(bool)
+func (_TokenWhitelist *TokenWhitelistCaller) IsERC20MethodWhitelisted(opts *bind.CallOpts, _methodId [4]byte) (bool, error) {
+	var (
+		ret0 = new(bool)
+	)
+	out := ret0
+	err := _TokenWhitelist.contract.Call(opts, out, "isERC20MethodWhitelisted", _methodId)
+	return *ret0, err
+}
+
+// IsERC20MethodWhitelisted is a free data retrieval call binding the contract method 0x1d3a069f.
+//
+// Solidity: function isERC20MethodWhitelisted(bytes4 _methodId) constant returns(bool)
+func (_TokenWhitelist *TokenWhitelistSession) IsERC20MethodWhitelisted(_methodId [4]byte) (bool, error) {
+	return _TokenWhitelist.Contract.IsERC20MethodWhitelisted(&_TokenWhitelist.CallOpts, _methodId)
+}
+
+// IsERC20MethodWhitelisted is a free data retrieval call binding the contract method 0x1d3a069f.
+//
+// Solidity: function isERC20MethodWhitelisted(bytes4 _methodId) constant returns(bool)
+func (_TokenWhitelist *TokenWhitelistCallerSession) IsERC20MethodWhitelisted(_methodId [4]byte) (bool, error) {
+	return _TokenWhitelist.Contract.IsERC20MethodWhitelisted(&_TokenWhitelist.CallOpts, _methodId)
+}
+
+// OracleNode is a free data retrieval call binding the contract method 0x80cc0dda.
+//
+// Solidity: function oracleNode() constant returns(bytes32)
+func (_TokenWhitelist *TokenWhitelistCaller) OracleNode(opts *bind.CallOpts) ([32]byte, error) {
+	var (
+		ret0 = new([32]byte)
+	)
+	out := ret0
+	err := _TokenWhitelist.contract.Call(opts, out, "oracleNode")
+	return *ret0, err
+}
+
+// OracleNode is a free data retrieval call binding the contract method 0x80cc0dda.
+//
+// Solidity: function oracleNode() constant returns(bytes32)
+func (_TokenWhitelist *TokenWhitelistSession) OracleNode() ([32]byte, error) {
+	return _TokenWhitelist.Contract.OracleNode(&_TokenWhitelist.CallOpts)
+}
+
+// OracleNode is a free data retrieval call binding the contract method 0x80cc0dda.
+//
+// Solidity: function oracleNode() constant returns(bytes32)
+func (_TokenWhitelist *TokenWhitelistCallerSession) OracleNode() ([32]byte, error) {
+	return _TokenWhitelist.Contract.OracleNode(&_TokenWhitelist.CallOpts)
+}
+
+// RedeemableCounter is a free data retrieval call binding the contract method 0x13d5e846.
+//
+// Solidity: function redeemableCounter() constant returns(uint256)
+func (_TokenWhitelist *TokenWhitelistCaller) RedeemableCounter(opts *bind.CallOpts) (*big.Int, error) {
+	var (
+		ret0 = new(*big.Int)
+	)
+	out := ret0
+	err := _TokenWhitelist.contract.Call(opts, out, "redeemableCounter")
+	return *ret0, err
+}
+
+// RedeemableCounter is a free data retrieval call binding the contract method 0x13d5e846.
+//
+// Solidity: function redeemableCounter() constant returns(uint256)
+func (_TokenWhitelist *TokenWhitelistSession) RedeemableCounter() (*big.Int, error) {
+	return _TokenWhitelist.Contract.RedeemableCounter(&_TokenWhitelist.CallOpts)
+}
+
+// RedeemableCounter is a free data retrieval call binding the contract method 0x13d5e846.
+//
+// Solidity: function redeemableCounter() constant returns(uint256)
+func (_TokenWhitelist *TokenWhitelistCallerSession) RedeemableCounter() (*big.Int, error) {
+	return _TokenWhitelist.Contract.RedeemableCounter(&_TokenWhitelist.CallOpts)
+}
+
+// RedeemableTokens is a free data retrieval call binding the contract method 0x44b049bc.
+//
+// Solidity: function redeemableTokens() constant returns(address[])
+func (_TokenWhitelist *TokenWhitelistCaller) RedeemableTokens(opts *bind.CallOpts) ([]common.Address, error) {
+	var (
+		ret0 = new([]common.Address)
+	)
+	out := ret0
+	err := _TokenWhitelist.contract.Call(opts, out, "redeemableTokens")
+	return *ret0, err
+}
+
+// RedeemableTokens is a free data retrieval call binding the contract method 0x44b049bc.
+//
+// Solidity: function redeemableTokens() constant returns(address[])
+func (_TokenWhitelist *TokenWhitelistSession) RedeemableTokens() ([]common.Address, error) {
+	return _TokenWhitelist.Contract.RedeemableTokens(&_TokenWhitelist.CallOpts)
+}
+
+// RedeemableTokens is a free data retrieval call binding the contract method 0x44b049bc.
+//
+// Solidity: function redeemableTokens() constant returns(address[])
+func (_TokenWhitelist *TokenWhitelistCallerSession) RedeemableTokens() ([]common.Address, error) {
+	return _TokenWhitelist.Contract.RedeemableTokens(&_TokenWhitelist.CallOpts)
+}
+
+// Stablecoin is a free data retrieval call binding the contract method 0xe9cbd822.
+//
+// Solidity: function stablecoin() constant returns(address)
+func (_TokenWhitelist *TokenWhitelistCaller) Stablecoin(opts *bind.CallOpts) (common.Address, error) {
+	var (
+		ret0 = new(common.Address)
+	)
+	out := ret0
+	err := _TokenWhitelist.contract.Call(opts, out, "stablecoin")
+	return *ret0, err
+}
+
+// Stablecoin is a free data retrieval call binding the contract method 0xe9cbd822.
+//
+// Solidity: function stablecoin() constant returns(address)
+func (_TokenWhitelist *TokenWhitelistSession) Stablecoin() (common.Address, error) {
+	return _TokenWhitelist.Contract.Stablecoin(&_TokenWhitelist.CallOpts)
+}
+
+// Stablecoin is a free data retrieval call binding the contract method 0xe9cbd822.
+//
+// Solidity: function stablecoin() constant returns(address)
+func (_TokenWhitelist *TokenWhitelistCallerSession) Stablecoin() (common.Address, error) {
+	return _TokenWhitelist.Contract.Stablecoin(&_TokenWhitelist.CallOpts)
+}
+
+// TokenAddressArray is a free data retrieval call binding the contract method 0x443dd2a4.
+//
+// Solidity: function tokenAddressArray() constant returns(address[])
+func (_TokenWhitelist *TokenWhitelistCaller) TokenAddressArray(opts *bind.CallOpts) ([]common.Address, error) {
+	var (
+		ret0 = new([]common.Address)
+	)
+	out := ret0
+	err := _TokenWhitelist.contract.Call(opts, out, "tokenAddressArray")
+	return *ret0, err
+}
+
+// TokenAddressArray is a free data retrieval call binding the contract method 0x443dd2a4.
+//
+// Solidity: function tokenAddressArray() constant returns(address[])
+func (_TokenWhitelist *TokenWhitelistSession) TokenAddressArray() ([]common.Address, error) {
+	return _TokenWhitelist.Contract.TokenAddressArray(&_TokenWhitelist.CallOpts)
+}
+
+// TokenAddressArray is a free data retrieval call binding the contract method 0x443dd2a4.
+//
+// Solidity: function tokenAddressArray() constant returns(address[])
+func (_TokenWhitelist *TokenWhitelistCallerSession) TokenAddressArray() ([]common.Address, error) {
+	return _TokenWhitelist.Contract.TokenAddressArray(&_TokenWhitelist.CallOpts)
+}
+
 // AddTokens is a paid mutator transaction binding the contract method 0x34c73edc.
 //
 // Solidity: function addTokens(address[] _tokens, bytes32[] _symbols, uint256[] _magnitude, bool[] _loadable, bool[] _redeemable, uint256 _lastUpdate) returns()
@@ -229,216 +573,6 @@ func (_TokenWhitelist *TokenWhitelistSession) Claim(_to common.Address, _asset c
 // Solidity: function claim(address _to, address _asset, uint256 _amount) returns()
 func (_TokenWhitelist *TokenWhitelistTransactorSession) Claim(_to common.Address, _asset common.Address, _amount *big.Int) (*types.Transaction, error) {
 	return _TokenWhitelist.Contract.Claim(&_TokenWhitelist.TransactOpts, _to, _asset, _amount)
-}
-
-// ControllerNode is a paid mutator transaction binding the contract method 0xe2b4ce97.
-//
-// Solidity: function controllerNode() returns(bytes32)
-func (_TokenWhitelist *TokenWhitelistTransactor) ControllerNode(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return _TokenWhitelist.contract.Transact(opts, "controllerNode")
-}
-
-// ControllerNode is a paid mutator transaction binding the contract method 0xe2b4ce97.
-//
-// Solidity: function controllerNode() returns(bytes32)
-func (_TokenWhitelist *TokenWhitelistSession) ControllerNode() (*types.Transaction, error) {
-	return _TokenWhitelist.Contract.ControllerNode(&_TokenWhitelist.TransactOpts)
-}
-
-// ControllerNode is a paid mutator transaction binding the contract method 0xe2b4ce97.
-//
-// Solidity: function controllerNode() returns(bytes32)
-func (_TokenWhitelist *TokenWhitelistTransactorSession) ControllerNode() (*types.Transaction, error) {
-	return _TokenWhitelist.Contract.ControllerNode(&_TokenWhitelist.TransactOpts)
-}
-
-// EnsRegistry is a paid mutator transaction binding the contract method 0x7d73b231.
-//
-// Solidity: function ensRegistry() returns(address)
-func (_TokenWhitelist *TokenWhitelistTransactor) EnsRegistry(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return _TokenWhitelist.contract.Transact(opts, "ensRegistry")
-}
-
-// EnsRegistry is a paid mutator transaction binding the contract method 0x7d73b231.
-//
-// Solidity: function ensRegistry() returns(address)
-func (_TokenWhitelist *TokenWhitelistSession) EnsRegistry() (*types.Transaction, error) {
-	return _TokenWhitelist.Contract.EnsRegistry(&_TokenWhitelist.TransactOpts)
-}
-
-// EnsRegistry is a paid mutator transaction binding the contract method 0x7d73b231.
-//
-// Solidity: function ensRegistry() returns(address)
-func (_TokenWhitelist *TokenWhitelistTransactorSession) EnsRegistry() (*types.Transaction, error) {
-	return _TokenWhitelist.Contract.EnsRegistry(&_TokenWhitelist.TransactOpts)
-}
-
-// GetERC20RecipientAndAmount is a paid mutator transaction binding the contract method 0xafc72e93.
-//
-// Solidity: function getERC20RecipientAndAmount(address _token, bytes _data) returns(address, uint256)
-func (_TokenWhitelist *TokenWhitelistTransactor) GetERC20RecipientAndAmount(opts *bind.TransactOpts, _token common.Address, _data []byte) (*types.Transaction, error) {
-	return _TokenWhitelist.contract.Transact(opts, "getERC20RecipientAndAmount", _token, _data)
-}
-
-// GetERC20RecipientAndAmount is a paid mutator transaction binding the contract method 0xafc72e93.
-//
-// Solidity: function getERC20RecipientAndAmount(address _token, bytes _data) returns(address, uint256)
-func (_TokenWhitelist *TokenWhitelistSession) GetERC20RecipientAndAmount(_token common.Address, _data []byte) (*types.Transaction, error) {
-	return _TokenWhitelist.Contract.GetERC20RecipientAndAmount(&_TokenWhitelist.TransactOpts, _token, _data)
-}
-
-// GetERC20RecipientAndAmount is a paid mutator transaction binding the contract method 0xafc72e93.
-//
-// Solidity: function getERC20RecipientAndAmount(address _token, bytes _data) returns(address, uint256)
-func (_TokenWhitelist *TokenWhitelistTransactorSession) GetERC20RecipientAndAmount(_token common.Address, _data []byte) (*types.Transaction, error) {
-	return _TokenWhitelist.Contract.GetERC20RecipientAndAmount(&_TokenWhitelist.TransactOpts, _token, _data)
-}
-
-// GetStablecoinInfo is a paid mutator transaction binding the contract method 0x3efec5e9.
-//
-// Solidity: function getStablecoinInfo() returns(string, uint256, uint256, bool, bool, bool, uint256)
-func (_TokenWhitelist *TokenWhitelistTransactor) GetStablecoinInfo(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return _TokenWhitelist.contract.Transact(opts, "getStablecoinInfo")
-}
-
-// GetStablecoinInfo is a paid mutator transaction binding the contract method 0x3efec5e9.
-//
-// Solidity: function getStablecoinInfo() returns(string, uint256, uint256, bool, bool, bool, uint256)
-func (_TokenWhitelist *TokenWhitelistSession) GetStablecoinInfo() (*types.Transaction, error) {
-	return _TokenWhitelist.Contract.GetStablecoinInfo(&_TokenWhitelist.TransactOpts)
-}
-
-// GetStablecoinInfo is a paid mutator transaction binding the contract method 0x3efec5e9.
-//
-// Solidity: function getStablecoinInfo() returns(string, uint256, uint256, bool, bool, bool, uint256)
-func (_TokenWhitelist *TokenWhitelistTransactorSession) GetStablecoinInfo() (*types.Transaction, error) {
-	return _TokenWhitelist.Contract.GetStablecoinInfo(&_TokenWhitelist.TransactOpts)
-}
-
-// GetTokenInfo is a paid mutator transaction binding the contract method 0x1f69565f.
-//
-// Solidity: function getTokenInfo(address _a) returns(string, uint256, uint256, bool, bool, bool, uint256)
-func (_TokenWhitelist *TokenWhitelistTransactor) GetTokenInfo(opts *bind.TransactOpts, _a common.Address) (*types.Transaction, error) {
-	return _TokenWhitelist.contract.Transact(opts, "getTokenInfo", _a)
-}
-
-// GetTokenInfo is a paid mutator transaction binding the contract method 0x1f69565f.
-//
-// Solidity: function getTokenInfo(address _a) returns(string, uint256, uint256, bool, bool, bool, uint256)
-func (_TokenWhitelist *TokenWhitelistSession) GetTokenInfo(_a common.Address) (*types.Transaction, error) {
-	return _TokenWhitelist.Contract.GetTokenInfo(&_TokenWhitelist.TransactOpts, _a)
-}
-
-// GetTokenInfo is a paid mutator transaction binding the contract method 0x1f69565f.
-//
-// Solidity: function getTokenInfo(address _a) returns(string, uint256, uint256, bool, bool, bool, uint256)
-func (_TokenWhitelist *TokenWhitelistTransactorSession) GetTokenInfo(_a common.Address) (*types.Transaction, error) {
-	return _TokenWhitelist.Contract.GetTokenInfo(&_TokenWhitelist.TransactOpts, _a)
-}
-
-// IsERC20MethodSupported is a paid mutator transaction binding the contract method 0x6a1744dc.
-//
-// Solidity: function isERC20MethodSupported(address _token, bytes4 _methodId) returns(bool)
-func (_TokenWhitelist *TokenWhitelistTransactor) IsERC20MethodSupported(opts *bind.TransactOpts, _token common.Address, _methodId [4]byte) (*types.Transaction, error) {
-	return _TokenWhitelist.contract.Transact(opts, "isERC20MethodSupported", _token, _methodId)
-}
-
-// IsERC20MethodSupported is a paid mutator transaction binding the contract method 0x6a1744dc.
-//
-// Solidity: function isERC20MethodSupported(address _token, bytes4 _methodId) returns(bool)
-func (_TokenWhitelist *TokenWhitelistSession) IsERC20MethodSupported(_token common.Address, _methodId [4]byte) (*types.Transaction, error) {
-	return _TokenWhitelist.Contract.IsERC20MethodSupported(&_TokenWhitelist.TransactOpts, _token, _methodId)
-}
-
-// IsERC20MethodSupported is a paid mutator transaction binding the contract method 0x6a1744dc.
-//
-// Solidity: function isERC20MethodSupported(address _token, bytes4 _methodId) returns(bool)
-func (_TokenWhitelist *TokenWhitelistTransactorSession) IsERC20MethodSupported(_token common.Address, _methodId [4]byte) (*types.Transaction, error) {
-	return _TokenWhitelist.Contract.IsERC20MethodSupported(&_TokenWhitelist.TransactOpts, _token, _methodId)
-}
-
-// IsERC20MethodWhitelisted is a paid mutator transaction binding the contract method 0x1d3a069f.
-//
-// Solidity: function isERC20MethodWhitelisted(bytes4 _methodId) returns(bool)
-func (_TokenWhitelist *TokenWhitelistTransactor) IsERC20MethodWhitelisted(opts *bind.TransactOpts, _methodId [4]byte) (*types.Transaction, error) {
-	return _TokenWhitelist.contract.Transact(opts, "isERC20MethodWhitelisted", _methodId)
-}
-
-// IsERC20MethodWhitelisted is a paid mutator transaction binding the contract method 0x1d3a069f.
-//
-// Solidity: function isERC20MethodWhitelisted(bytes4 _methodId) returns(bool)
-func (_TokenWhitelist *TokenWhitelistSession) IsERC20MethodWhitelisted(_methodId [4]byte) (*types.Transaction, error) {
-	return _TokenWhitelist.Contract.IsERC20MethodWhitelisted(&_TokenWhitelist.TransactOpts, _methodId)
-}
-
-// IsERC20MethodWhitelisted is a paid mutator transaction binding the contract method 0x1d3a069f.
-//
-// Solidity: function isERC20MethodWhitelisted(bytes4 _methodId) returns(bool)
-func (_TokenWhitelist *TokenWhitelistTransactorSession) IsERC20MethodWhitelisted(_methodId [4]byte) (*types.Transaction, error) {
-	return _TokenWhitelist.Contract.IsERC20MethodWhitelisted(&_TokenWhitelist.TransactOpts, _methodId)
-}
-
-// OracleNode is a paid mutator transaction binding the contract method 0x80cc0dda.
-//
-// Solidity: function oracleNode() returns(bytes32)
-func (_TokenWhitelist *TokenWhitelistTransactor) OracleNode(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return _TokenWhitelist.contract.Transact(opts, "oracleNode")
-}
-
-// OracleNode is a paid mutator transaction binding the contract method 0x80cc0dda.
-//
-// Solidity: function oracleNode() returns(bytes32)
-func (_TokenWhitelist *TokenWhitelistSession) OracleNode() (*types.Transaction, error) {
-	return _TokenWhitelist.Contract.OracleNode(&_TokenWhitelist.TransactOpts)
-}
-
-// OracleNode is a paid mutator transaction binding the contract method 0x80cc0dda.
-//
-// Solidity: function oracleNode() returns(bytes32)
-func (_TokenWhitelist *TokenWhitelistTransactorSession) OracleNode() (*types.Transaction, error) {
-	return _TokenWhitelist.Contract.OracleNode(&_TokenWhitelist.TransactOpts)
-}
-
-// RedeemableCounter is a paid mutator transaction binding the contract method 0x13d5e846.
-//
-// Solidity: function redeemableCounter() returns(uint256)
-func (_TokenWhitelist *TokenWhitelistTransactor) RedeemableCounter(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return _TokenWhitelist.contract.Transact(opts, "redeemableCounter")
-}
-
-// RedeemableCounter is a paid mutator transaction binding the contract method 0x13d5e846.
-//
-// Solidity: function redeemableCounter() returns(uint256)
-func (_TokenWhitelist *TokenWhitelistSession) RedeemableCounter() (*types.Transaction, error) {
-	return _TokenWhitelist.Contract.RedeemableCounter(&_TokenWhitelist.TransactOpts)
-}
-
-// RedeemableCounter is a paid mutator transaction binding the contract method 0x13d5e846.
-//
-// Solidity: function redeemableCounter() returns(uint256)
-func (_TokenWhitelist *TokenWhitelistTransactorSession) RedeemableCounter() (*types.Transaction, error) {
-	return _TokenWhitelist.Contract.RedeemableCounter(&_TokenWhitelist.TransactOpts)
-}
-
-// RedeemableTokens is a paid mutator transaction binding the contract method 0x44b049bc.
-//
-// Solidity: function redeemableTokens() returns(address[])
-func (_TokenWhitelist *TokenWhitelistTransactor) RedeemableTokens(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return _TokenWhitelist.contract.Transact(opts, "redeemableTokens")
-}
-
-// RedeemableTokens is a paid mutator transaction binding the contract method 0x44b049bc.
-//
-// Solidity: function redeemableTokens() returns(address[])
-func (_TokenWhitelist *TokenWhitelistSession) RedeemableTokens() (*types.Transaction, error) {
-	return _TokenWhitelist.Contract.RedeemableTokens(&_TokenWhitelist.TransactOpts)
-}
-
-// RedeemableTokens is a paid mutator transaction binding the contract method 0x44b049bc.
-//
-// Solidity: function redeemableTokens() returns(address[])
-func (_TokenWhitelist *TokenWhitelistTransactorSession) RedeemableTokens() (*types.Transaction, error) {
-	return _TokenWhitelist.Contract.RedeemableTokens(&_TokenWhitelist.TransactOpts)
 }
 
 // RemoveTokens is a paid mutator transaction binding the contract method 0x6c3824ef.
@@ -502,48 +636,6 @@ func (_TokenWhitelist *TokenWhitelistSession) SetTokenRedeemable(_token common.A
 // Solidity: function setTokenRedeemable(address _token, bool _redeemable) returns()
 func (_TokenWhitelist *TokenWhitelistTransactorSession) SetTokenRedeemable(_token common.Address, _redeemable bool) (*types.Transaction, error) {
 	return _TokenWhitelist.Contract.SetTokenRedeemable(&_TokenWhitelist.TransactOpts, _token, _redeemable)
-}
-
-// Stablecoin is a paid mutator transaction binding the contract method 0xe9cbd822.
-//
-// Solidity: function stablecoin() returns(address)
-func (_TokenWhitelist *TokenWhitelistTransactor) Stablecoin(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return _TokenWhitelist.contract.Transact(opts, "stablecoin")
-}
-
-// Stablecoin is a paid mutator transaction binding the contract method 0xe9cbd822.
-//
-// Solidity: function stablecoin() returns(address)
-func (_TokenWhitelist *TokenWhitelistSession) Stablecoin() (*types.Transaction, error) {
-	return _TokenWhitelist.Contract.Stablecoin(&_TokenWhitelist.TransactOpts)
-}
-
-// Stablecoin is a paid mutator transaction binding the contract method 0xe9cbd822.
-//
-// Solidity: function stablecoin() returns(address)
-func (_TokenWhitelist *TokenWhitelistTransactorSession) Stablecoin() (*types.Transaction, error) {
-	return _TokenWhitelist.Contract.Stablecoin(&_TokenWhitelist.TransactOpts)
-}
-
-// TokenAddressArray is a paid mutator transaction binding the contract method 0x443dd2a4.
-//
-// Solidity: function tokenAddressArray() returns(address[])
-func (_TokenWhitelist *TokenWhitelistTransactor) TokenAddressArray(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return _TokenWhitelist.contract.Transact(opts, "tokenAddressArray")
-}
-
-// TokenAddressArray is a paid mutator transaction binding the contract method 0x443dd2a4.
-//
-// Solidity: function tokenAddressArray() returns(address[])
-func (_TokenWhitelist *TokenWhitelistSession) TokenAddressArray() (*types.Transaction, error) {
-	return _TokenWhitelist.Contract.TokenAddressArray(&_TokenWhitelist.TransactOpts)
-}
-
-// TokenAddressArray is a paid mutator transaction binding the contract method 0x443dd2a4.
-//
-// Solidity: function tokenAddressArray() returns(address[])
-func (_TokenWhitelist *TokenWhitelistTransactorSession) TokenAddressArray() (*types.Transaction, error) {
-	return _TokenWhitelist.Contract.TokenAddressArray(&_TokenWhitelist.TransactOpts)
 }
 
 // UpdateTokenRate is a paid mutator transaction binding the contract method 0xd545782e.

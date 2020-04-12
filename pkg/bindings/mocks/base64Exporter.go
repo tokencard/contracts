@@ -189,23 +189,28 @@ func (_Base64Exporter *Base64ExporterTransactorRaw) Transact(opts *bind.Transact
 	return _Base64Exporter.Contract.contract.Transact(opts, method, params...)
 }
 
-// Base64decode is a paid mutator transaction binding the contract method 0x3a718bfb.
+// Base64decode is a free data retrieval call binding the contract method 0x3a718bfb.
 //
-// Solidity: function base64decode(bytes _encoded) returns(bytes)
-func (_Base64Exporter *Base64ExporterTransactor) Base64decode(opts *bind.TransactOpts, _encoded []byte) (*types.Transaction, error) {
-	return _Base64Exporter.contract.Transact(opts, "base64decode", _encoded)
+// Solidity: function base64decode(bytes _encoded) constant returns(bytes)
+func (_Base64Exporter *Base64ExporterCaller) Base64decode(opts *bind.CallOpts, _encoded []byte) ([]byte, error) {
+	var (
+		ret0 = new([]byte)
+	)
+	out := ret0
+	err := _Base64Exporter.contract.Call(opts, out, "base64decode", _encoded)
+	return *ret0, err
 }
 
-// Base64decode is a paid mutator transaction binding the contract method 0x3a718bfb.
+// Base64decode is a free data retrieval call binding the contract method 0x3a718bfb.
 //
-// Solidity: function base64decode(bytes _encoded) returns(bytes)
-func (_Base64Exporter *Base64ExporterSession) Base64decode(_encoded []byte) (*types.Transaction, error) {
-	return _Base64Exporter.Contract.Base64decode(&_Base64Exporter.TransactOpts, _encoded)
+// Solidity: function base64decode(bytes _encoded) constant returns(bytes)
+func (_Base64Exporter *Base64ExporterSession) Base64decode(_encoded []byte) ([]byte, error) {
+	return _Base64Exporter.Contract.Base64decode(&_Base64Exporter.CallOpts, _encoded)
 }
 
-// Base64decode is a paid mutator transaction binding the contract method 0x3a718bfb.
+// Base64decode is a free data retrieval call binding the contract method 0x3a718bfb.
 //
-// Solidity: function base64decode(bytes _encoded) returns(bytes)
-func (_Base64Exporter *Base64ExporterTransactorSession) Base64decode(_encoded []byte) (*types.Transaction, error) {
-	return _Base64Exporter.Contract.Base64decode(&_Base64Exporter.TransactOpts, _encoded)
+// Solidity: function base64decode(bytes _encoded) constant returns(bytes)
+func (_Base64Exporter *Base64ExporterCallerSession) Base64decode(_encoded []byte) ([]byte, error) {
+	return _Base64Exporter.Contract.Base64decode(&_Base64Exporter.CallOpts, _encoded)
 }

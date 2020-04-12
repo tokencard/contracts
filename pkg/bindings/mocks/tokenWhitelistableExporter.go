@@ -189,214 +189,296 @@ func (_TokenWhitelistableExporter *TokenWhitelistableExporterTransactorRaw) Tran
 	return _TokenWhitelistableExporter.Contract.contract.Transact(opts, method, params...)
 }
 
-// EnsRegistry is a paid mutator transaction binding the contract method 0x7d73b231.
+// EnsRegistry is a free data retrieval call binding the contract method 0x7d73b231.
 //
-// Solidity: function ensRegistry() returns(address)
-func (_TokenWhitelistableExporter *TokenWhitelistableExporterTransactor) EnsRegistry(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return _TokenWhitelistableExporter.contract.Transact(opts, "ensRegistry")
+// Solidity: function ensRegistry() constant returns(address)
+func (_TokenWhitelistableExporter *TokenWhitelistableExporterCaller) EnsRegistry(opts *bind.CallOpts) (common.Address, error) {
+	var (
+		ret0 = new(common.Address)
+	)
+	out := ret0
+	err := _TokenWhitelistableExporter.contract.Call(opts, out, "ensRegistry")
+	return *ret0, err
 }
 
-// EnsRegistry is a paid mutator transaction binding the contract method 0x7d73b231.
+// EnsRegistry is a free data retrieval call binding the contract method 0x7d73b231.
 //
-// Solidity: function ensRegistry() returns(address)
-func (_TokenWhitelistableExporter *TokenWhitelistableExporterSession) EnsRegistry() (*types.Transaction, error) {
-	return _TokenWhitelistableExporter.Contract.EnsRegistry(&_TokenWhitelistableExporter.TransactOpts)
+// Solidity: function ensRegistry() constant returns(address)
+func (_TokenWhitelistableExporter *TokenWhitelistableExporterSession) EnsRegistry() (common.Address, error) {
+	return _TokenWhitelistableExporter.Contract.EnsRegistry(&_TokenWhitelistableExporter.CallOpts)
 }
 
-// EnsRegistry is a paid mutator transaction binding the contract method 0x7d73b231.
+// EnsRegistry is a free data retrieval call binding the contract method 0x7d73b231.
 //
-// Solidity: function ensRegistry() returns(address)
-func (_TokenWhitelistableExporter *TokenWhitelistableExporterTransactorSession) EnsRegistry() (*types.Transaction, error) {
-	return _TokenWhitelistableExporter.Contract.EnsRegistry(&_TokenWhitelistableExporter.TransactOpts)
+// Solidity: function ensRegistry() constant returns(address)
+func (_TokenWhitelistableExporter *TokenWhitelistableExporterCallerSession) EnsRegistry() (common.Address, error) {
+	return _TokenWhitelistableExporter.Contract.EnsRegistry(&_TokenWhitelistableExporter.CallOpts)
 }
 
-// GetERC20RecipientAndAmount is a paid mutator transaction binding the contract method 0xafc72e93.
+// GetERC20RecipientAndAmount is a free data retrieval call binding the contract method 0xafc72e93.
 //
-// Solidity: function getERC20RecipientAndAmount(address _destination, bytes _data) returns(address, uint256)
-func (_TokenWhitelistableExporter *TokenWhitelistableExporterTransactor) GetERC20RecipientAndAmount(opts *bind.TransactOpts, _destination common.Address, _data []byte) (*types.Transaction, error) {
-	return _TokenWhitelistableExporter.contract.Transact(opts, "getERC20RecipientAndAmount", _destination, _data)
+// Solidity: function getERC20RecipientAndAmount(address _destination, bytes _data) constant returns(address, uint256)
+func (_TokenWhitelistableExporter *TokenWhitelistableExporterCaller) GetERC20RecipientAndAmount(opts *bind.CallOpts, _destination common.Address, _data []byte) (common.Address, *big.Int, error) {
+	var (
+		ret0 = new(common.Address)
+		ret1 = new(*big.Int)
+	)
+	out := &[]interface{}{
+		ret0,
+		ret1,
+	}
+	err := _TokenWhitelistableExporter.contract.Call(opts, out, "getERC20RecipientAndAmount", _destination, _data)
+	return *ret0, *ret1, err
 }
 
-// GetERC20RecipientAndAmount is a paid mutator transaction binding the contract method 0xafc72e93.
+// GetERC20RecipientAndAmount is a free data retrieval call binding the contract method 0xafc72e93.
 //
-// Solidity: function getERC20RecipientAndAmount(address _destination, bytes _data) returns(address, uint256)
-func (_TokenWhitelistableExporter *TokenWhitelistableExporterSession) GetERC20RecipientAndAmount(_destination common.Address, _data []byte) (*types.Transaction, error) {
-	return _TokenWhitelistableExporter.Contract.GetERC20RecipientAndAmount(&_TokenWhitelistableExporter.TransactOpts, _destination, _data)
+// Solidity: function getERC20RecipientAndAmount(address _destination, bytes _data) constant returns(address, uint256)
+func (_TokenWhitelistableExporter *TokenWhitelistableExporterSession) GetERC20RecipientAndAmount(_destination common.Address, _data []byte) (common.Address, *big.Int, error) {
+	return _TokenWhitelistableExporter.Contract.GetERC20RecipientAndAmount(&_TokenWhitelistableExporter.CallOpts, _destination, _data)
 }
 
-// GetERC20RecipientAndAmount is a paid mutator transaction binding the contract method 0xafc72e93.
+// GetERC20RecipientAndAmount is a free data retrieval call binding the contract method 0xafc72e93.
 //
-// Solidity: function getERC20RecipientAndAmount(address _destination, bytes _data) returns(address, uint256)
-func (_TokenWhitelistableExporter *TokenWhitelistableExporterTransactorSession) GetERC20RecipientAndAmount(_destination common.Address, _data []byte) (*types.Transaction, error) {
-	return _TokenWhitelistableExporter.Contract.GetERC20RecipientAndAmount(&_TokenWhitelistableExporter.TransactOpts, _destination, _data)
+// Solidity: function getERC20RecipientAndAmount(address _destination, bytes _data) constant returns(address, uint256)
+func (_TokenWhitelistableExporter *TokenWhitelistableExporterCallerSession) GetERC20RecipientAndAmount(_destination common.Address, _data []byte) (common.Address, *big.Int, error) {
+	return _TokenWhitelistableExporter.Contract.GetERC20RecipientAndAmount(&_TokenWhitelistableExporter.CallOpts, _destination, _data)
 }
 
-// GetStablecoinInfo is a paid mutator transaction binding the contract method 0x3efec5e9.
+// GetStablecoinInfo is a free data retrieval call binding the contract method 0x3efec5e9.
 //
-// Solidity: function getStablecoinInfo() returns(string, uint256, uint256, bool, bool, bool, uint256)
-func (_TokenWhitelistableExporter *TokenWhitelistableExporterTransactor) GetStablecoinInfo(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return _TokenWhitelistableExporter.contract.Transact(opts, "getStablecoinInfo")
+// Solidity: function getStablecoinInfo() constant returns(string, uint256, uint256, bool, bool, bool, uint256)
+func (_TokenWhitelistableExporter *TokenWhitelistableExporterCaller) GetStablecoinInfo(opts *bind.CallOpts) (string, *big.Int, *big.Int, bool, bool, bool, *big.Int, error) {
+	var (
+		ret0 = new(string)
+		ret1 = new(*big.Int)
+		ret2 = new(*big.Int)
+		ret3 = new(bool)
+		ret4 = new(bool)
+		ret5 = new(bool)
+		ret6 = new(*big.Int)
+	)
+	out := &[]interface{}{
+		ret0,
+		ret1,
+		ret2,
+		ret3,
+		ret4,
+		ret5,
+		ret6,
+	}
+	err := _TokenWhitelistableExporter.contract.Call(opts, out, "getStablecoinInfo")
+	return *ret0, *ret1, *ret2, *ret3, *ret4, *ret5, *ret6, err
 }
 
-// GetStablecoinInfo is a paid mutator transaction binding the contract method 0x3efec5e9.
+// GetStablecoinInfo is a free data retrieval call binding the contract method 0x3efec5e9.
 //
-// Solidity: function getStablecoinInfo() returns(string, uint256, uint256, bool, bool, bool, uint256)
-func (_TokenWhitelistableExporter *TokenWhitelistableExporterSession) GetStablecoinInfo() (*types.Transaction, error) {
-	return _TokenWhitelistableExporter.Contract.GetStablecoinInfo(&_TokenWhitelistableExporter.TransactOpts)
+// Solidity: function getStablecoinInfo() constant returns(string, uint256, uint256, bool, bool, bool, uint256)
+func (_TokenWhitelistableExporter *TokenWhitelistableExporterSession) GetStablecoinInfo() (string, *big.Int, *big.Int, bool, bool, bool, *big.Int, error) {
+	return _TokenWhitelistableExporter.Contract.GetStablecoinInfo(&_TokenWhitelistableExporter.CallOpts)
 }
 
-// GetStablecoinInfo is a paid mutator transaction binding the contract method 0x3efec5e9.
+// GetStablecoinInfo is a free data retrieval call binding the contract method 0x3efec5e9.
 //
-// Solidity: function getStablecoinInfo() returns(string, uint256, uint256, bool, bool, bool, uint256)
-func (_TokenWhitelistableExporter *TokenWhitelistableExporterTransactorSession) GetStablecoinInfo() (*types.Transaction, error) {
-	return _TokenWhitelistableExporter.Contract.GetStablecoinInfo(&_TokenWhitelistableExporter.TransactOpts)
+// Solidity: function getStablecoinInfo() constant returns(string, uint256, uint256, bool, bool, bool, uint256)
+func (_TokenWhitelistableExporter *TokenWhitelistableExporterCallerSession) GetStablecoinInfo() (string, *big.Int, *big.Int, bool, bool, bool, *big.Int, error) {
+	return _TokenWhitelistableExporter.Contract.GetStablecoinInfo(&_TokenWhitelistableExporter.CallOpts)
 }
 
-// GetTokenInfo is a paid mutator transaction binding the contract method 0x1f69565f.
+// GetTokenInfo is a free data retrieval call binding the contract method 0x1f69565f.
 //
-// Solidity: function getTokenInfo(address _a) returns(string, uint256, uint256, bool, bool, bool, uint256)
-func (_TokenWhitelistableExporter *TokenWhitelistableExporterTransactor) GetTokenInfo(opts *bind.TransactOpts, _a common.Address) (*types.Transaction, error) {
-	return _TokenWhitelistableExporter.contract.Transact(opts, "getTokenInfo", _a)
+// Solidity: function getTokenInfo(address _a) constant returns(string, uint256, uint256, bool, bool, bool, uint256)
+func (_TokenWhitelistableExporter *TokenWhitelistableExporterCaller) GetTokenInfo(opts *bind.CallOpts, _a common.Address) (string, *big.Int, *big.Int, bool, bool, bool, *big.Int, error) {
+	var (
+		ret0 = new(string)
+		ret1 = new(*big.Int)
+		ret2 = new(*big.Int)
+		ret3 = new(bool)
+		ret4 = new(bool)
+		ret5 = new(bool)
+		ret6 = new(*big.Int)
+	)
+	out := &[]interface{}{
+		ret0,
+		ret1,
+		ret2,
+		ret3,
+		ret4,
+		ret5,
+		ret6,
+	}
+	err := _TokenWhitelistableExporter.contract.Call(opts, out, "getTokenInfo", _a)
+	return *ret0, *ret1, *ret2, *ret3, *ret4, *ret5, *ret6, err
 }
 
-// GetTokenInfo is a paid mutator transaction binding the contract method 0x1f69565f.
+// GetTokenInfo is a free data retrieval call binding the contract method 0x1f69565f.
 //
-// Solidity: function getTokenInfo(address _a) returns(string, uint256, uint256, bool, bool, bool, uint256)
-func (_TokenWhitelistableExporter *TokenWhitelistableExporterSession) GetTokenInfo(_a common.Address) (*types.Transaction, error) {
-	return _TokenWhitelistableExporter.Contract.GetTokenInfo(&_TokenWhitelistableExporter.TransactOpts, _a)
+// Solidity: function getTokenInfo(address _a) constant returns(string, uint256, uint256, bool, bool, bool, uint256)
+func (_TokenWhitelistableExporter *TokenWhitelistableExporterSession) GetTokenInfo(_a common.Address) (string, *big.Int, *big.Int, bool, bool, bool, *big.Int, error) {
+	return _TokenWhitelistableExporter.Contract.GetTokenInfo(&_TokenWhitelistableExporter.CallOpts, _a)
 }
 
-// GetTokenInfo is a paid mutator transaction binding the contract method 0x1f69565f.
+// GetTokenInfo is a free data retrieval call binding the contract method 0x1f69565f.
 //
-// Solidity: function getTokenInfo(address _a) returns(string, uint256, uint256, bool, bool, bool, uint256)
-func (_TokenWhitelistableExporter *TokenWhitelistableExporterTransactorSession) GetTokenInfo(_a common.Address) (*types.Transaction, error) {
-	return _TokenWhitelistableExporter.Contract.GetTokenInfo(&_TokenWhitelistableExporter.TransactOpts, _a)
+// Solidity: function getTokenInfo(address _a) constant returns(string, uint256, uint256, bool, bool, bool, uint256)
+func (_TokenWhitelistableExporter *TokenWhitelistableExporterCallerSession) GetTokenInfo(_a common.Address) (string, *big.Int, *big.Int, bool, bool, bool, *big.Int, error) {
+	return _TokenWhitelistableExporter.Contract.GetTokenInfo(&_TokenWhitelistableExporter.CallOpts, _a)
 }
 
-// IsTokenAvailable is a paid mutator transaction binding the contract method 0x2ff0fcaa.
+// IsTokenAvailable is a free data retrieval call binding the contract method 0x2ff0fcaa.
 //
-// Solidity: function isTokenAvailable(address _a) returns(bool)
-func (_TokenWhitelistableExporter *TokenWhitelistableExporterTransactor) IsTokenAvailable(opts *bind.TransactOpts, _a common.Address) (*types.Transaction, error) {
-	return _TokenWhitelistableExporter.contract.Transact(opts, "isTokenAvailable", _a)
+// Solidity: function isTokenAvailable(address _a) constant returns(bool)
+func (_TokenWhitelistableExporter *TokenWhitelistableExporterCaller) IsTokenAvailable(opts *bind.CallOpts, _a common.Address) (bool, error) {
+	var (
+		ret0 = new(bool)
+	)
+	out := ret0
+	err := _TokenWhitelistableExporter.contract.Call(opts, out, "isTokenAvailable", _a)
+	return *ret0, err
 }
 
-// IsTokenAvailable is a paid mutator transaction binding the contract method 0x2ff0fcaa.
+// IsTokenAvailable is a free data retrieval call binding the contract method 0x2ff0fcaa.
 //
-// Solidity: function isTokenAvailable(address _a) returns(bool)
-func (_TokenWhitelistableExporter *TokenWhitelistableExporterSession) IsTokenAvailable(_a common.Address) (*types.Transaction, error) {
-	return _TokenWhitelistableExporter.Contract.IsTokenAvailable(&_TokenWhitelistableExporter.TransactOpts, _a)
+// Solidity: function isTokenAvailable(address _a) constant returns(bool)
+func (_TokenWhitelistableExporter *TokenWhitelistableExporterSession) IsTokenAvailable(_a common.Address) (bool, error) {
+	return _TokenWhitelistableExporter.Contract.IsTokenAvailable(&_TokenWhitelistableExporter.CallOpts, _a)
 }
 
-// IsTokenAvailable is a paid mutator transaction binding the contract method 0x2ff0fcaa.
+// IsTokenAvailable is a free data retrieval call binding the contract method 0x2ff0fcaa.
 //
-// Solidity: function isTokenAvailable(address _a) returns(bool)
-func (_TokenWhitelistableExporter *TokenWhitelistableExporterTransactorSession) IsTokenAvailable(_a common.Address) (*types.Transaction, error) {
-	return _TokenWhitelistableExporter.Contract.IsTokenAvailable(&_TokenWhitelistableExporter.TransactOpts, _a)
+// Solidity: function isTokenAvailable(address _a) constant returns(bool)
+func (_TokenWhitelistableExporter *TokenWhitelistableExporterCallerSession) IsTokenAvailable(_a common.Address) (bool, error) {
+	return _TokenWhitelistableExporter.Contract.IsTokenAvailable(&_TokenWhitelistableExporter.CallOpts, _a)
 }
 
-// IsTokenLoadable is a paid mutator transaction binding the contract method 0x17e73794.
+// IsTokenLoadable is a free data retrieval call binding the contract method 0x17e73794.
 //
-// Solidity: function isTokenLoadable(address _a) returns(bool)
-func (_TokenWhitelistableExporter *TokenWhitelistableExporterTransactor) IsTokenLoadable(opts *bind.TransactOpts, _a common.Address) (*types.Transaction, error) {
-	return _TokenWhitelistableExporter.contract.Transact(opts, "isTokenLoadable", _a)
+// Solidity: function isTokenLoadable(address _a) constant returns(bool)
+func (_TokenWhitelistableExporter *TokenWhitelistableExporterCaller) IsTokenLoadable(opts *bind.CallOpts, _a common.Address) (bool, error) {
+	var (
+		ret0 = new(bool)
+	)
+	out := ret0
+	err := _TokenWhitelistableExporter.contract.Call(opts, out, "isTokenLoadable", _a)
+	return *ret0, err
 }
 
-// IsTokenLoadable is a paid mutator transaction binding the contract method 0x17e73794.
+// IsTokenLoadable is a free data retrieval call binding the contract method 0x17e73794.
 //
-// Solidity: function isTokenLoadable(address _a) returns(bool)
-func (_TokenWhitelistableExporter *TokenWhitelistableExporterSession) IsTokenLoadable(_a common.Address) (*types.Transaction, error) {
-	return _TokenWhitelistableExporter.Contract.IsTokenLoadable(&_TokenWhitelistableExporter.TransactOpts, _a)
+// Solidity: function isTokenLoadable(address _a) constant returns(bool)
+func (_TokenWhitelistableExporter *TokenWhitelistableExporterSession) IsTokenLoadable(_a common.Address) (bool, error) {
+	return _TokenWhitelistableExporter.Contract.IsTokenLoadable(&_TokenWhitelistableExporter.CallOpts, _a)
 }
 
-// IsTokenLoadable is a paid mutator transaction binding the contract method 0x17e73794.
+// IsTokenLoadable is a free data retrieval call binding the contract method 0x17e73794.
 //
-// Solidity: function isTokenLoadable(address _a) returns(bool)
-func (_TokenWhitelistableExporter *TokenWhitelistableExporterTransactorSession) IsTokenLoadable(_a common.Address) (*types.Transaction, error) {
-	return _TokenWhitelistableExporter.Contract.IsTokenLoadable(&_TokenWhitelistableExporter.TransactOpts, _a)
+// Solidity: function isTokenLoadable(address _a) constant returns(bool)
+func (_TokenWhitelistableExporter *TokenWhitelistableExporterCallerSession) IsTokenLoadable(_a common.Address) (bool, error) {
+	return _TokenWhitelistableExporter.Contract.IsTokenLoadable(&_TokenWhitelistableExporter.CallOpts, _a)
 }
 
-// IsTokenRedeemable is a paid mutator transaction binding the contract method 0xdcc922bc.
+// IsTokenRedeemable is a free data retrieval call binding the contract method 0xdcc922bc.
 //
-// Solidity: function isTokenRedeemable(address _a) returns(bool)
-func (_TokenWhitelistableExporter *TokenWhitelistableExporterTransactor) IsTokenRedeemable(opts *bind.TransactOpts, _a common.Address) (*types.Transaction, error) {
-	return _TokenWhitelistableExporter.contract.Transact(opts, "isTokenRedeemable", _a)
+// Solidity: function isTokenRedeemable(address _a) constant returns(bool)
+func (_TokenWhitelistableExporter *TokenWhitelistableExporterCaller) IsTokenRedeemable(opts *bind.CallOpts, _a common.Address) (bool, error) {
+	var (
+		ret0 = new(bool)
+	)
+	out := ret0
+	err := _TokenWhitelistableExporter.contract.Call(opts, out, "isTokenRedeemable", _a)
+	return *ret0, err
 }
 
-// IsTokenRedeemable is a paid mutator transaction binding the contract method 0xdcc922bc.
+// IsTokenRedeemable is a free data retrieval call binding the contract method 0xdcc922bc.
 //
-// Solidity: function isTokenRedeemable(address _a) returns(bool)
-func (_TokenWhitelistableExporter *TokenWhitelistableExporterSession) IsTokenRedeemable(_a common.Address) (*types.Transaction, error) {
-	return _TokenWhitelistableExporter.Contract.IsTokenRedeemable(&_TokenWhitelistableExporter.TransactOpts, _a)
+// Solidity: function isTokenRedeemable(address _a) constant returns(bool)
+func (_TokenWhitelistableExporter *TokenWhitelistableExporterSession) IsTokenRedeemable(_a common.Address) (bool, error) {
+	return _TokenWhitelistableExporter.Contract.IsTokenRedeemable(&_TokenWhitelistableExporter.CallOpts, _a)
 }
 
-// IsTokenRedeemable is a paid mutator transaction binding the contract method 0xdcc922bc.
+// IsTokenRedeemable is a free data retrieval call binding the contract method 0xdcc922bc.
 //
-// Solidity: function isTokenRedeemable(address _a) returns(bool)
-func (_TokenWhitelistableExporter *TokenWhitelistableExporterTransactorSession) IsTokenRedeemable(_a common.Address) (*types.Transaction, error) {
-	return _TokenWhitelistableExporter.Contract.IsTokenRedeemable(&_TokenWhitelistableExporter.TransactOpts, _a)
+// Solidity: function isTokenRedeemable(address _a) constant returns(bool)
+func (_TokenWhitelistableExporter *TokenWhitelistableExporterCallerSession) IsTokenRedeemable(_a common.Address) (bool, error) {
+	return _TokenWhitelistableExporter.Contract.IsTokenRedeemable(&_TokenWhitelistableExporter.CallOpts, _a)
 }
 
-// RedeemableTokens is a paid mutator transaction binding the contract method 0x44b049bc.
+// RedeemableTokens is a free data retrieval call binding the contract method 0x44b049bc.
 //
-// Solidity: function redeemableTokens() returns(address[])
-func (_TokenWhitelistableExporter *TokenWhitelistableExporterTransactor) RedeemableTokens(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return _TokenWhitelistableExporter.contract.Transact(opts, "redeemableTokens")
+// Solidity: function redeemableTokens() constant returns(address[])
+func (_TokenWhitelistableExporter *TokenWhitelistableExporterCaller) RedeemableTokens(opts *bind.CallOpts) ([]common.Address, error) {
+	var (
+		ret0 = new([]common.Address)
+	)
+	out := ret0
+	err := _TokenWhitelistableExporter.contract.Call(opts, out, "redeemableTokens")
+	return *ret0, err
 }
 
-// RedeemableTokens is a paid mutator transaction binding the contract method 0x44b049bc.
+// RedeemableTokens is a free data retrieval call binding the contract method 0x44b049bc.
 //
-// Solidity: function redeemableTokens() returns(address[])
-func (_TokenWhitelistableExporter *TokenWhitelistableExporterSession) RedeemableTokens() (*types.Transaction, error) {
-	return _TokenWhitelistableExporter.Contract.RedeemableTokens(&_TokenWhitelistableExporter.TransactOpts)
+// Solidity: function redeemableTokens() constant returns(address[])
+func (_TokenWhitelistableExporter *TokenWhitelistableExporterSession) RedeemableTokens() ([]common.Address, error) {
+	return _TokenWhitelistableExporter.Contract.RedeemableTokens(&_TokenWhitelistableExporter.CallOpts)
 }
 
-// RedeemableTokens is a paid mutator transaction binding the contract method 0x44b049bc.
+// RedeemableTokens is a free data retrieval call binding the contract method 0x44b049bc.
 //
-// Solidity: function redeemableTokens() returns(address[])
-func (_TokenWhitelistableExporter *TokenWhitelistableExporterTransactorSession) RedeemableTokens() (*types.Transaction, error) {
-	return _TokenWhitelistableExporter.Contract.RedeemableTokens(&_TokenWhitelistableExporter.TransactOpts)
+// Solidity: function redeemableTokens() constant returns(address[])
+func (_TokenWhitelistableExporter *TokenWhitelistableExporterCallerSession) RedeemableTokens() ([]common.Address, error) {
+	return _TokenWhitelistableExporter.Contract.RedeemableTokens(&_TokenWhitelistableExporter.CallOpts)
 }
 
-// TokenAddressArray is a paid mutator transaction binding the contract method 0x443dd2a4.
+// TokenAddressArray is a free data retrieval call binding the contract method 0x443dd2a4.
 //
-// Solidity: function tokenAddressArray() returns(address[])
-func (_TokenWhitelistableExporter *TokenWhitelistableExporterTransactor) TokenAddressArray(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return _TokenWhitelistableExporter.contract.Transact(opts, "tokenAddressArray")
+// Solidity: function tokenAddressArray() constant returns(address[])
+func (_TokenWhitelistableExporter *TokenWhitelistableExporterCaller) TokenAddressArray(opts *bind.CallOpts) ([]common.Address, error) {
+	var (
+		ret0 = new([]common.Address)
+	)
+	out := ret0
+	err := _TokenWhitelistableExporter.contract.Call(opts, out, "tokenAddressArray")
+	return *ret0, err
 }
 
-// TokenAddressArray is a paid mutator transaction binding the contract method 0x443dd2a4.
+// TokenAddressArray is a free data retrieval call binding the contract method 0x443dd2a4.
 //
-// Solidity: function tokenAddressArray() returns(address[])
-func (_TokenWhitelistableExporter *TokenWhitelistableExporterSession) TokenAddressArray() (*types.Transaction, error) {
-	return _TokenWhitelistableExporter.Contract.TokenAddressArray(&_TokenWhitelistableExporter.TransactOpts)
+// Solidity: function tokenAddressArray() constant returns(address[])
+func (_TokenWhitelistableExporter *TokenWhitelistableExporterSession) TokenAddressArray() ([]common.Address, error) {
+	return _TokenWhitelistableExporter.Contract.TokenAddressArray(&_TokenWhitelistableExporter.CallOpts)
 }
 
-// TokenAddressArray is a paid mutator transaction binding the contract method 0x443dd2a4.
+// TokenAddressArray is a free data retrieval call binding the contract method 0x443dd2a4.
 //
-// Solidity: function tokenAddressArray() returns(address[])
-func (_TokenWhitelistableExporter *TokenWhitelistableExporterTransactorSession) TokenAddressArray() (*types.Transaction, error) {
-	return _TokenWhitelistableExporter.Contract.TokenAddressArray(&_TokenWhitelistableExporter.TransactOpts)
+// Solidity: function tokenAddressArray() constant returns(address[])
+func (_TokenWhitelistableExporter *TokenWhitelistableExporterCallerSession) TokenAddressArray() ([]common.Address, error) {
+	return _TokenWhitelistableExporter.Contract.TokenAddressArray(&_TokenWhitelistableExporter.CallOpts)
 }
 
-// TokenWhitelistNode is a paid mutator transaction binding the contract method 0x877337b0.
+// TokenWhitelistNode is a free data retrieval call binding the contract method 0x877337b0.
 //
-// Solidity: function tokenWhitelistNode() returns(bytes32)
-func (_TokenWhitelistableExporter *TokenWhitelistableExporterTransactor) TokenWhitelistNode(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return _TokenWhitelistableExporter.contract.Transact(opts, "tokenWhitelistNode")
+// Solidity: function tokenWhitelistNode() constant returns(bytes32)
+func (_TokenWhitelistableExporter *TokenWhitelistableExporterCaller) TokenWhitelistNode(opts *bind.CallOpts) ([32]byte, error) {
+	var (
+		ret0 = new([32]byte)
+	)
+	out := ret0
+	err := _TokenWhitelistableExporter.contract.Call(opts, out, "tokenWhitelistNode")
+	return *ret0, err
 }
 
-// TokenWhitelistNode is a paid mutator transaction binding the contract method 0x877337b0.
+// TokenWhitelistNode is a free data retrieval call binding the contract method 0x877337b0.
 //
-// Solidity: function tokenWhitelistNode() returns(bytes32)
-func (_TokenWhitelistableExporter *TokenWhitelistableExporterSession) TokenWhitelistNode() (*types.Transaction, error) {
-	return _TokenWhitelistableExporter.Contract.TokenWhitelistNode(&_TokenWhitelistableExporter.TransactOpts)
+// Solidity: function tokenWhitelistNode() constant returns(bytes32)
+func (_TokenWhitelistableExporter *TokenWhitelistableExporterSession) TokenWhitelistNode() ([32]byte, error) {
+	return _TokenWhitelistableExporter.Contract.TokenWhitelistNode(&_TokenWhitelistableExporter.CallOpts)
 }
 
-// TokenWhitelistNode is a paid mutator transaction binding the contract method 0x877337b0.
+// TokenWhitelistNode is a free data retrieval call binding the contract method 0x877337b0.
 //
-// Solidity: function tokenWhitelistNode() returns(bytes32)
-func (_TokenWhitelistableExporter *TokenWhitelistableExporterTransactorSession) TokenWhitelistNode() (*types.Transaction, error) {
-	return _TokenWhitelistableExporter.Contract.TokenWhitelistNode(&_TokenWhitelistableExporter.TransactOpts)
+// Solidity: function tokenWhitelistNode() constant returns(bytes32)
+func (_TokenWhitelistableExporter *TokenWhitelistableExporterCallerSession) TokenWhitelistNode() ([32]byte, error) {
+	return _TokenWhitelistableExporter.Contract.TokenWhitelistNode(&_TokenWhitelistableExporter.CallOpts)
 }
 
 // UpdateTokenRate is a paid mutator transaction binding the contract method 0xd545782e.

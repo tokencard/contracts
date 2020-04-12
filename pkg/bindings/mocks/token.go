@@ -189,25 +189,82 @@ func (_Token *TokenTransactorRaw) Transact(opts *bind.TransactOpts, method strin
 	return _Token.Contract.contract.Transact(opts, method, params...)
 }
 
-// Allowance is a paid mutator transaction binding the contract method 0xdd62ed3e.
+// Allowance is a free data retrieval call binding the contract method 0xdd62ed3e.
 //
-// Solidity: function allowance(address , address ) returns(uint256)
-func (_Token *TokenTransactor) Allowance(opts *bind.TransactOpts, arg0 common.Address, arg1 common.Address) (*types.Transaction, error) {
-	return _Token.contract.Transact(opts, "allowance", arg0, arg1)
+// Solidity: function allowance(address , address ) constant returns(uint256)
+func (_Token *TokenCaller) Allowance(opts *bind.CallOpts, arg0 common.Address, arg1 common.Address) (*big.Int, error) {
+	var (
+		ret0 = new(*big.Int)
+	)
+	out := ret0
+	err := _Token.contract.Call(opts, out, "allowance", arg0, arg1)
+	return *ret0, err
 }
 
-// Allowance is a paid mutator transaction binding the contract method 0xdd62ed3e.
+// Allowance is a free data retrieval call binding the contract method 0xdd62ed3e.
 //
-// Solidity: function allowance(address , address ) returns(uint256)
-func (_Token *TokenSession) Allowance(arg0 common.Address, arg1 common.Address) (*types.Transaction, error) {
-	return _Token.Contract.Allowance(&_Token.TransactOpts, arg0, arg1)
+// Solidity: function allowance(address , address ) constant returns(uint256)
+func (_Token *TokenSession) Allowance(arg0 common.Address, arg1 common.Address) (*big.Int, error) {
+	return _Token.Contract.Allowance(&_Token.CallOpts, arg0, arg1)
 }
 
-// Allowance is a paid mutator transaction binding the contract method 0xdd62ed3e.
+// Allowance is a free data retrieval call binding the contract method 0xdd62ed3e.
 //
-// Solidity: function allowance(address , address ) returns(uint256)
-func (_Token *TokenTransactorSession) Allowance(arg0 common.Address, arg1 common.Address) (*types.Transaction, error) {
-	return _Token.Contract.Allowance(&_Token.TransactOpts, arg0, arg1)
+// Solidity: function allowance(address , address ) constant returns(uint256)
+func (_Token *TokenCallerSession) Allowance(arg0 common.Address, arg1 common.Address) (*big.Int, error) {
+	return _Token.Contract.Allowance(&_Token.CallOpts, arg0, arg1)
+}
+
+// BalanceOf is a free data retrieval call binding the contract method 0x70a08231.
+//
+// Solidity: function balanceOf(address ) constant returns(uint256)
+func (_Token *TokenCaller) BalanceOf(opts *bind.CallOpts, arg0 common.Address) (*big.Int, error) {
+	var (
+		ret0 = new(*big.Int)
+	)
+	out := ret0
+	err := _Token.contract.Call(opts, out, "balanceOf", arg0)
+	return *ret0, err
+}
+
+// BalanceOf is a free data retrieval call binding the contract method 0x70a08231.
+//
+// Solidity: function balanceOf(address ) constant returns(uint256)
+func (_Token *TokenSession) BalanceOf(arg0 common.Address) (*big.Int, error) {
+	return _Token.Contract.BalanceOf(&_Token.CallOpts, arg0)
+}
+
+// BalanceOf is a free data retrieval call binding the contract method 0x70a08231.
+//
+// Solidity: function balanceOf(address ) constant returns(uint256)
+func (_Token *TokenCallerSession) BalanceOf(arg0 common.Address) (*big.Int, error) {
+	return _Token.Contract.BalanceOf(&_Token.CallOpts, arg0)
+}
+
+// TotalSupply is a free data retrieval call binding the contract method 0x18160ddd.
+//
+// Solidity: function totalSupply() constant returns(uint256)
+func (_Token *TokenCaller) TotalSupply(opts *bind.CallOpts) (*big.Int, error) {
+	var (
+		ret0 = new(*big.Int)
+	)
+	out := ret0
+	err := _Token.contract.Call(opts, out, "totalSupply")
+	return *ret0, err
+}
+
+// TotalSupply is a free data retrieval call binding the contract method 0x18160ddd.
+//
+// Solidity: function totalSupply() constant returns(uint256)
+func (_Token *TokenSession) TotalSupply() (*big.Int, error) {
+	return _Token.Contract.TotalSupply(&_Token.CallOpts)
+}
+
+// TotalSupply is a free data retrieval call binding the contract method 0x18160ddd.
+//
+// Solidity: function totalSupply() constant returns(uint256)
+func (_Token *TokenCallerSession) TotalSupply() (*big.Int, error) {
+	return _Token.Contract.TotalSupply(&_Token.CallOpts)
 }
 
 // Approve is a paid mutator transaction binding the contract method 0x095ea7b3.
@@ -229,27 +286,6 @@ func (_Token *TokenSession) Approve(_spender common.Address, _value *big.Int) (*
 // Solidity: function approve(address _spender, uint256 _value) returns(bool)
 func (_Token *TokenTransactorSession) Approve(_spender common.Address, _value *big.Int) (*types.Transaction, error) {
 	return _Token.Contract.Approve(&_Token.TransactOpts, _spender, _value)
-}
-
-// BalanceOf is a paid mutator transaction binding the contract method 0x70a08231.
-//
-// Solidity: function balanceOf(address ) returns(uint256)
-func (_Token *TokenTransactor) BalanceOf(opts *bind.TransactOpts, arg0 common.Address) (*types.Transaction, error) {
-	return _Token.contract.Transact(opts, "balanceOf", arg0)
-}
-
-// BalanceOf is a paid mutator transaction binding the contract method 0x70a08231.
-//
-// Solidity: function balanceOf(address ) returns(uint256)
-func (_Token *TokenSession) BalanceOf(arg0 common.Address) (*types.Transaction, error) {
-	return _Token.Contract.BalanceOf(&_Token.TransactOpts, arg0)
-}
-
-// BalanceOf is a paid mutator transaction binding the contract method 0x70a08231.
-//
-// Solidity: function balanceOf(address ) returns(uint256)
-func (_Token *TokenTransactorSession) BalanceOf(arg0 common.Address) (*types.Transaction, error) {
-	return _Token.Contract.BalanceOf(&_Token.TransactOpts, arg0)
 }
 
 // Credit is a paid mutator transaction binding the contract method 0xef6506db.
@@ -292,27 +328,6 @@ func (_Token *TokenSession) Debit(from common.Address, amount *big.Int) (*types.
 // Solidity: function debit(address from, uint256 amount) returns()
 func (_Token *TokenTransactorSession) Debit(from common.Address, amount *big.Int) (*types.Transaction, error) {
 	return _Token.Contract.Debit(&_Token.TransactOpts, from, amount)
-}
-
-// TotalSupply is a paid mutator transaction binding the contract method 0x18160ddd.
-//
-// Solidity: function totalSupply() returns(uint256)
-func (_Token *TokenTransactor) TotalSupply(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return _Token.contract.Transact(opts, "totalSupply")
-}
-
-// TotalSupply is a paid mutator transaction binding the contract method 0x18160ddd.
-//
-// Solidity: function totalSupply() returns(uint256)
-func (_Token *TokenSession) TotalSupply() (*types.Transaction, error) {
-	return _Token.Contract.TotalSupply(&_Token.TransactOpts)
-}
-
-// TotalSupply is a paid mutator transaction binding the contract method 0x18160ddd.
-//
-// Solidity: function totalSupply() returns(uint256)
-func (_Token *TokenTransactorSession) TotalSupply() (*types.Transaction, error) {
-	return _Token.Contract.TotalSupply(&_Token.TransactOpts)
 }
 
 // Transfer is a paid mutator transaction binding the contract method 0xa9059cbb.

@@ -189,25 +189,238 @@ func (_BurnerToken *BurnerTokenTransactorRaw) Transact(opts *bind.TransactOpts, 
 	return _BurnerToken.Contract.contract.Transact(opts, method, params...)
 }
 
-// Allowance is a paid mutator transaction binding the contract method 0xdd62ed3e.
+// Allowance is a free data retrieval call binding the contract method 0xdd62ed3e.
 //
-// Solidity: function allowance(address , address ) returns(uint256)
-func (_BurnerToken *BurnerTokenTransactor) Allowance(opts *bind.TransactOpts, arg0 common.Address, arg1 common.Address) (*types.Transaction, error) {
-	return _BurnerToken.contract.Transact(opts, "allowance", arg0, arg1)
+// Solidity: function allowance(address , address ) constant returns(uint256)
+func (_BurnerToken *BurnerTokenCaller) Allowance(opts *bind.CallOpts, arg0 common.Address, arg1 common.Address) (*big.Int, error) {
+	var (
+		ret0 = new(*big.Int)
+	)
+	out := ret0
+	err := _BurnerToken.contract.Call(opts, out, "allowance", arg0, arg1)
+	return *ret0, err
 }
 
-// Allowance is a paid mutator transaction binding the contract method 0xdd62ed3e.
+// Allowance is a free data retrieval call binding the contract method 0xdd62ed3e.
 //
-// Solidity: function allowance(address , address ) returns(uint256)
-func (_BurnerToken *BurnerTokenSession) Allowance(arg0 common.Address, arg1 common.Address) (*types.Transaction, error) {
-	return _BurnerToken.Contract.Allowance(&_BurnerToken.TransactOpts, arg0, arg1)
+// Solidity: function allowance(address , address ) constant returns(uint256)
+func (_BurnerToken *BurnerTokenSession) Allowance(arg0 common.Address, arg1 common.Address) (*big.Int, error) {
+	return _BurnerToken.Contract.Allowance(&_BurnerToken.CallOpts, arg0, arg1)
 }
 
-// Allowance is a paid mutator transaction binding the contract method 0xdd62ed3e.
+// Allowance is a free data retrieval call binding the contract method 0xdd62ed3e.
 //
-// Solidity: function allowance(address , address ) returns(uint256)
-func (_BurnerToken *BurnerTokenTransactorSession) Allowance(arg0 common.Address, arg1 common.Address) (*types.Transaction, error) {
-	return _BurnerToken.Contract.Allowance(&_BurnerToken.TransactOpts, arg0, arg1)
+// Solidity: function allowance(address , address ) constant returns(uint256)
+func (_BurnerToken *BurnerTokenCallerSession) Allowance(arg0 common.Address, arg1 common.Address) (*big.Int, error) {
+	return _BurnerToken.Contract.Allowance(&_BurnerToken.CallOpts, arg0, arg1)
+}
+
+// BalanceOf is a free data retrieval call binding the contract method 0x70a08231.
+//
+// Solidity: function balanceOf(address ) constant returns(uint256)
+func (_BurnerToken *BurnerTokenCaller) BalanceOf(opts *bind.CallOpts, arg0 common.Address) (*big.Int, error) {
+	var (
+		ret0 = new(*big.Int)
+	)
+	out := ret0
+	err := _BurnerToken.contract.Call(opts, out, "balanceOf", arg0)
+	return *ret0, err
+}
+
+// BalanceOf is a free data retrieval call binding the contract method 0x70a08231.
+//
+// Solidity: function balanceOf(address ) constant returns(uint256)
+func (_BurnerToken *BurnerTokenSession) BalanceOf(arg0 common.Address) (*big.Int, error) {
+	return _BurnerToken.Contract.BalanceOf(&_BurnerToken.CallOpts, arg0)
+}
+
+// BalanceOf is a free data retrieval call binding the contract method 0x70a08231.
+//
+// Solidity: function balanceOf(address ) constant returns(uint256)
+func (_BurnerToken *BurnerTokenCallerSession) BalanceOf(arg0 common.Address) (*big.Int, error) {
+	return _BurnerToken.Contract.BalanceOf(&_BurnerToken.CallOpts, arg0)
+}
+
+// CurrentSupply is a free data retrieval call binding the contract method 0x771282f6.
+//
+// Solidity: function currentSupply() constant returns(uint256)
+func (_BurnerToken *BurnerTokenCaller) CurrentSupply(opts *bind.CallOpts) (*big.Int, error) {
+	var (
+		ret0 = new(*big.Int)
+	)
+	out := ret0
+	err := _BurnerToken.contract.Call(opts, out, "currentSupply")
+	return *ret0, err
+}
+
+// CurrentSupply is a free data retrieval call binding the contract method 0x771282f6.
+//
+// Solidity: function currentSupply() constant returns(uint256)
+func (_BurnerToken *BurnerTokenSession) CurrentSupply() (*big.Int, error) {
+	return _BurnerToken.Contract.CurrentSupply(&_BurnerToken.CallOpts)
+}
+
+// CurrentSupply is a free data retrieval call binding the contract method 0x771282f6.
+//
+// Solidity: function currentSupply() constant returns(uint256)
+func (_BurnerToken *BurnerTokenCallerSession) CurrentSupply() (*big.Int, error) {
+	return _BurnerToken.Contract.CurrentSupply(&_BurnerToken.CallOpts)
+}
+
+// Decimals is a free data retrieval call binding the contract method 0x313ce567.
+//
+// Solidity: function decimals() constant returns(uint8)
+func (_BurnerToken *BurnerTokenCaller) Decimals(opts *bind.CallOpts) (uint8, error) {
+	var (
+		ret0 = new(uint8)
+	)
+	out := ret0
+	err := _BurnerToken.contract.Call(opts, out, "decimals")
+	return *ret0, err
+}
+
+// Decimals is a free data retrieval call binding the contract method 0x313ce567.
+//
+// Solidity: function decimals() constant returns(uint8)
+func (_BurnerToken *BurnerTokenSession) Decimals() (uint8, error) {
+	return _BurnerToken.Contract.Decimals(&_BurnerToken.CallOpts)
+}
+
+// Decimals is a free data retrieval call binding the contract method 0x313ce567.
+//
+// Solidity: function decimals() constant returns(uint8)
+func (_BurnerToken *BurnerTokenCallerSession) Decimals() (uint8, error) {
+	return _BurnerToken.Contract.Decimals(&_BurnerToken.CallOpts)
+}
+
+// Name is a free data retrieval call binding the contract method 0x06fdde03.
+//
+// Solidity: function name() constant returns(string)
+func (_BurnerToken *BurnerTokenCaller) Name(opts *bind.CallOpts) (string, error) {
+	var (
+		ret0 = new(string)
+	)
+	out := ret0
+	err := _BurnerToken.contract.Call(opts, out, "name")
+	return *ret0, err
+}
+
+// Name is a free data retrieval call binding the contract method 0x06fdde03.
+//
+// Solidity: function name() constant returns(string)
+func (_BurnerToken *BurnerTokenSession) Name() (string, error) {
+	return _BurnerToken.Contract.Name(&_BurnerToken.CallOpts)
+}
+
+// Name is a free data retrieval call binding the contract method 0x06fdde03.
+//
+// Solidity: function name() constant returns(string)
+func (_BurnerToken *BurnerTokenCallerSession) Name() (string, error) {
+	return _BurnerToken.Contract.Name(&_BurnerToken.CallOpts)
+}
+
+// Owner is a free data retrieval call binding the contract method 0x8da5cb5b.
+//
+// Solidity: function owner() constant returns(address)
+func (_BurnerToken *BurnerTokenCaller) Owner(opts *bind.CallOpts) (common.Address, error) {
+	var (
+		ret0 = new(common.Address)
+	)
+	out := ret0
+	err := _BurnerToken.contract.Call(opts, out, "owner")
+	return *ret0, err
+}
+
+// Owner is a free data retrieval call binding the contract method 0x8da5cb5b.
+//
+// Solidity: function owner() constant returns(address)
+func (_BurnerToken *BurnerTokenSession) Owner() (common.Address, error) {
+	return _BurnerToken.Contract.Owner(&_BurnerToken.CallOpts)
+}
+
+// Owner is a free data retrieval call binding the contract method 0x8da5cb5b.
+//
+// Solidity: function owner() constant returns(address)
+func (_BurnerToken *BurnerTokenCallerSession) Owner() (common.Address, error) {
+	return _BurnerToken.Contract.Owner(&_BurnerToken.CallOpts)
+}
+
+// Symbol is a free data retrieval call binding the contract method 0x95d89b41.
+//
+// Solidity: function symbol() constant returns(string)
+func (_BurnerToken *BurnerTokenCaller) Symbol(opts *bind.CallOpts) (string, error) {
+	var (
+		ret0 = new(string)
+	)
+	out := ret0
+	err := _BurnerToken.contract.Call(opts, out, "symbol")
+	return *ret0, err
+}
+
+// Symbol is a free data retrieval call binding the contract method 0x95d89b41.
+//
+// Solidity: function symbol() constant returns(string)
+func (_BurnerToken *BurnerTokenSession) Symbol() (string, error) {
+	return _BurnerToken.Contract.Symbol(&_BurnerToken.CallOpts)
+}
+
+// Symbol is a free data retrieval call binding the contract method 0x95d89b41.
+//
+// Solidity: function symbol() constant returns(string)
+func (_BurnerToken *BurnerTokenCallerSession) Symbol() (string, error) {
+	return _BurnerToken.Contract.Symbol(&_BurnerToken.CallOpts)
+}
+
+// Tokenholder is a free data retrieval call binding the contract method 0x84eba00c.
+//
+// Solidity: function tokenholder() constant returns(address)
+func (_BurnerToken *BurnerTokenCaller) Tokenholder(opts *bind.CallOpts) (common.Address, error) {
+	var (
+		ret0 = new(common.Address)
+	)
+	out := ret0
+	err := _BurnerToken.contract.Call(opts, out, "tokenholder")
+	return *ret0, err
+}
+
+// Tokenholder is a free data retrieval call binding the contract method 0x84eba00c.
+//
+// Solidity: function tokenholder() constant returns(address)
+func (_BurnerToken *BurnerTokenSession) Tokenholder() (common.Address, error) {
+	return _BurnerToken.Contract.Tokenholder(&_BurnerToken.CallOpts)
+}
+
+// Tokenholder is a free data retrieval call binding the contract method 0x84eba00c.
+//
+// Solidity: function tokenholder() constant returns(address)
+func (_BurnerToken *BurnerTokenCallerSession) Tokenholder() (common.Address, error) {
+	return _BurnerToken.Contract.Tokenholder(&_BurnerToken.CallOpts)
+}
+
+// TotalSupply is a free data retrieval call binding the contract method 0x18160ddd.
+//
+// Solidity: function totalSupply() constant returns(uint256)
+func (_BurnerToken *BurnerTokenCaller) TotalSupply(opts *bind.CallOpts) (*big.Int, error) {
+	var (
+		ret0 = new(*big.Int)
+	)
+	out := ret0
+	err := _BurnerToken.contract.Call(opts, out, "totalSupply")
+	return *ret0, err
+}
+
+// TotalSupply is a free data retrieval call binding the contract method 0x18160ddd.
+//
+// Solidity: function totalSupply() constant returns(uint256)
+func (_BurnerToken *BurnerTokenSession) TotalSupply() (*big.Int, error) {
+	return _BurnerToken.Contract.TotalSupply(&_BurnerToken.CallOpts)
+}
+
+// TotalSupply is a free data retrieval call binding the contract method 0x18160ddd.
+//
+// Solidity: function totalSupply() constant returns(uint256)
+func (_BurnerToken *BurnerTokenCallerSession) TotalSupply() (*big.Int, error) {
+	return _BurnerToken.Contract.TotalSupply(&_BurnerToken.CallOpts)
 }
 
 // Approve is a paid mutator transaction binding the contract method 0x095ea7b3.
@@ -231,27 +444,6 @@ func (_BurnerToken *BurnerTokenTransactorSession) Approve(_spender common.Addres
 	return _BurnerToken.Contract.Approve(&_BurnerToken.TransactOpts, _spender, _value)
 }
 
-// BalanceOf is a paid mutator transaction binding the contract method 0x70a08231.
-//
-// Solidity: function balanceOf(address ) returns(uint256)
-func (_BurnerToken *BurnerTokenTransactor) BalanceOf(opts *bind.TransactOpts, arg0 common.Address) (*types.Transaction, error) {
-	return _BurnerToken.contract.Transact(opts, "balanceOf", arg0)
-}
-
-// BalanceOf is a paid mutator transaction binding the contract method 0x70a08231.
-//
-// Solidity: function balanceOf(address ) returns(uint256)
-func (_BurnerToken *BurnerTokenSession) BalanceOf(arg0 common.Address) (*types.Transaction, error) {
-	return _BurnerToken.Contract.BalanceOf(&_BurnerToken.TransactOpts, arg0)
-}
-
-// BalanceOf is a paid mutator transaction binding the contract method 0x70a08231.
-//
-// Solidity: function balanceOf(address ) returns(uint256)
-func (_BurnerToken *BurnerTokenTransactorSession) BalanceOf(arg0 common.Address) (*types.Transaction, error) {
-	return _BurnerToken.Contract.BalanceOf(&_BurnerToken.TransactOpts, arg0)
-}
-
 // Burn is a paid mutator transaction binding the contract method 0x42966c68.
 //
 // Solidity: function burn(uint256 _amount) returns(bool result)
@@ -271,48 +463,6 @@ func (_BurnerToken *BurnerTokenSession) Burn(_amount *big.Int) (*types.Transacti
 // Solidity: function burn(uint256 _amount) returns(bool result)
 func (_BurnerToken *BurnerTokenTransactorSession) Burn(_amount *big.Int) (*types.Transaction, error) {
 	return _BurnerToken.Contract.Burn(&_BurnerToken.TransactOpts, _amount)
-}
-
-// CurrentSupply is a paid mutator transaction binding the contract method 0x771282f6.
-//
-// Solidity: function currentSupply() returns(uint256)
-func (_BurnerToken *BurnerTokenTransactor) CurrentSupply(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return _BurnerToken.contract.Transact(opts, "currentSupply")
-}
-
-// CurrentSupply is a paid mutator transaction binding the contract method 0x771282f6.
-//
-// Solidity: function currentSupply() returns(uint256)
-func (_BurnerToken *BurnerTokenSession) CurrentSupply() (*types.Transaction, error) {
-	return _BurnerToken.Contract.CurrentSupply(&_BurnerToken.TransactOpts)
-}
-
-// CurrentSupply is a paid mutator transaction binding the contract method 0x771282f6.
-//
-// Solidity: function currentSupply() returns(uint256)
-func (_BurnerToken *BurnerTokenTransactorSession) CurrentSupply() (*types.Transaction, error) {
-	return _BurnerToken.Contract.CurrentSupply(&_BurnerToken.TransactOpts)
-}
-
-// Decimals is a paid mutator transaction binding the contract method 0x313ce567.
-//
-// Solidity: function decimals() returns(uint8)
-func (_BurnerToken *BurnerTokenTransactor) Decimals(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return _BurnerToken.contract.Transact(opts, "decimals")
-}
-
-// Decimals is a paid mutator transaction binding the contract method 0x313ce567.
-//
-// Solidity: function decimals() returns(uint8)
-func (_BurnerToken *BurnerTokenSession) Decimals() (*types.Transaction, error) {
-	return _BurnerToken.Contract.Decimals(&_BurnerToken.TransactOpts)
-}
-
-// Decimals is a paid mutator transaction binding the contract method 0x313ce567.
-//
-// Solidity: function decimals() returns(uint8)
-func (_BurnerToken *BurnerTokenTransactorSession) Decimals() (*types.Transaction, error) {
-	return _BurnerToken.Contract.Decimals(&_BurnerToken.TransactOpts)
 }
 
 // DecreaseApproval is a paid mutator transaction binding the contract method 0x66188463.
@@ -378,48 +528,6 @@ func (_BurnerToken *BurnerTokenTransactorSession) Mint(addr common.Address, amou
 	return _BurnerToken.Contract.Mint(&_BurnerToken.TransactOpts, addr, amount)
 }
 
-// Name is a paid mutator transaction binding the contract method 0x06fdde03.
-//
-// Solidity: function name() returns(string)
-func (_BurnerToken *BurnerTokenTransactor) Name(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return _BurnerToken.contract.Transact(opts, "name")
-}
-
-// Name is a paid mutator transaction binding the contract method 0x06fdde03.
-//
-// Solidity: function name() returns(string)
-func (_BurnerToken *BurnerTokenSession) Name() (*types.Transaction, error) {
-	return _BurnerToken.Contract.Name(&_BurnerToken.TransactOpts)
-}
-
-// Name is a paid mutator transaction binding the contract method 0x06fdde03.
-//
-// Solidity: function name() returns(string)
-func (_BurnerToken *BurnerTokenTransactorSession) Name() (*types.Transaction, error) {
-	return _BurnerToken.Contract.Name(&_BurnerToken.TransactOpts)
-}
-
-// Owner is a paid mutator transaction binding the contract method 0x8da5cb5b.
-//
-// Solidity: function owner() returns(address)
-func (_BurnerToken *BurnerTokenTransactor) Owner(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return _BurnerToken.contract.Transact(opts, "owner")
-}
-
-// Owner is a paid mutator transaction binding the contract method 0x8da5cb5b.
-//
-// Solidity: function owner() returns(address)
-func (_BurnerToken *BurnerTokenSession) Owner() (*types.Transaction, error) {
-	return _BurnerToken.Contract.Owner(&_BurnerToken.TransactOpts)
-}
-
-// Owner is a paid mutator transaction binding the contract method 0x8da5cb5b.
-//
-// Solidity: function owner() returns(address)
-func (_BurnerToken *BurnerTokenTransactorSession) Owner() (*types.Transaction, error) {
-	return _BurnerToken.Contract.Owner(&_BurnerToken.TransactOpts)
-}
-
 // SetTokenHolder is a paid mutator transaction binding the contract method 0xf29d2f28.
 //
 // Solidity: function setTokenHolder(address _th) returns()
@@ -439,69 +547,6 @@ func (_BurnerToken *BurnerTokenSession) SetTokenHolder(_th common.Address) (*typ
 // Solidity: function setTokenHolder(address _th) returns()
 func (_BurnerToken *BurnerTokenTransactorSession) SetTokenHolder(_th common.Address) (*types.Transaction, error) {
 	return _BurnerToken.Contract.SetTokenHolder(&_BurnerToken.TransactOpts, _th)
-}
-
-// Symbol is a paid mutator transaction binding the contract method 0x95d89b41.
-//
-// Solidity: function symbol() returns(string)
-func (_BurnerToken *BurnerTokenTransactor) Symbol(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return _BurnerToken.contract.Transact(opts, "symbol")
-}
-
-// Symbol is a paid mutator transaction binding the contract method 0x95d89b41.
-//
-// Solidity: function symbol() returns(string)
-func (_BurnerToken *BurnerTokenSession) Symbol() (*types.Transaction, error) {
-	return _BurnerToken.Contract.Symbol(&_BurnerToken.TransactOpts)
-}
-
-// Symbol is a paid mutator transaction binding the contract method 0x95d89b41.
-//
-// Solidity: function symbol() returns(string)
-func (_BurnerToken *BurnerTokenTransactorSession) Symbol() (*types.Transaction, error) {
-	return _BurnerToken.Contract.Symbol(&_BurnerToken.TransactOpts)
-}
-
-// Tokenholder is a paid mutator transaction binding the contract method 0x84eba00c.
-//
-// Solidity: function tokenholder() returns(address)
-func (_BurnerToken *BurnerTokenTransactor) Tokenholder(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return _BurnerToken.contract.Transact(opts, "tokenholder")
-}
-
-// Tokenholder is a paid mutator transaction binding the contract method 0x84eba00c.
-//
-// Solidity: function tokenholder() returns(address)
-func (_BurnerToken *BurnerTokenSession) Tokenholder() (*types.Transaction, error) {
-	return _BurnerToken.Contract.Tokenholder(&_BurnerToken.TransactOpts)
-}
-
-// Tokenholder is a paid mutator transaction binding the contract method 0x84eba00c.
-//
-// Solidity: function tokenholder() returns(address)
-func (_BurnerToken *BurnerTokenTransactorSession) Tokenholder() (*types.Transaction, error) {
-	return _BurnerToken.Contract.Tokenholder(&_BurnerToken.TransactOpts)
-}
-
-// TotalSupply is a paid mutator transaction binding the contract method 0x18160ddd.
-//
-// Solidity: function totalSupply() returns(uint256)
-func (_BurnerToken *BurnerTokenTransactor) TotalSupply(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return _BurnerToken.contract.Transact(opts, "totalSupply")
-}
-
-// TotalSupply is a paid mutator transaction binding the contract method 0x18160ddd.
-//
-// Solidity: function totalSupply() returns(uint256)
-func (_BurnerToken *BurnerTokenSession) TotalSupply() (*types.Transaction, error) {
-	return _BurnerToken.Contract.TotalSupply(&_BurnerToken.TransactOpts)
-}
-
-// TotalSupply is a paid mutator transaction binding the contract method 0x18160ddd.
-//
-// Solidity: function totalSupply() returns(uint256)
-func (_BurnerToken *BurnerTokenTransactorSession) TotalSupply() (*types.Transaction, error) {
-	return _BurnerToken.Contract.TotalSupply(&_BurnerToken.TransactOpts)
 }
 
 // Transfer is a paid mutator transaction binding the contract method 0xa9059cbb.

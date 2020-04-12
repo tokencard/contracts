@@ -26,11 +26,10 @@ import "./internals/date.sol";
 import "./internals/ensResolvable.sol";
 import "./internals/parseIntScientific.sol";
 import "./internals/tokenWhitelistable.sol";
-import "./internals/transferrable.sol";
 
 
 /// @title Oracle provides asset exchange rates and conversion functionality.
-contract Oracle is ENSResolvable, Transferrable, Base64, Date, Controllable, ParseIntScientific, TokenWhitelistable {
+contract Oracle is ENSResolvable, Base64, Date, Controllable, ParseIntScientific, TokenWhitelistable {
     using SafeMath for uint256;
     using strings for *;
     
@@ -38,7 +37,6 @@ contract Oracle is ENSResolvable, Transferrable, Base64, Date, Controllable, Par
     /*     Events     */
     /*****************/
 
-    event Claimed(address _to, address _asset, uint256 _amount);
     event SetCryptoComparePublicKey(address _sender, bytes _publicKey);
     event VerifiedProof(bytes _publicKey, string _result);
 
@@ -79,12 +77,6 @@ contract Oracle is ENSResolvable, Transferrable, Base64, Date, Controllable, Par
     function updateCryptoCompareAPIPublicKey(bytes calldata _publicKey) external onlyAdmin {
         cryptoCompareAPIPublicKey = _publicKey;
         emit SetCryptoComparePublicKey(msg.sender, _publicKey);
-    }
-
-    /// @notice Withdraw tokens from the smart contract to the specified account.
-    function claim(address payable _to, address _asset, uint256 _amount) external onlyAdmin {
-        _safeTransfer(_to, _asset, _amount);
-        emit Claimed(_to, _asset, _amount);
     }
 
     /// @notice Handle the off-chain oracle call and verifiy the provided origin proof.
