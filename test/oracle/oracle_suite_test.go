@@ -11,24 +11,7 @@ import (
 	. "github.com/onsi/gomega"
 	"github.com/tokencard/contracts/v3/pkg/bindings"
 	. "github.com/tokencard/contracts/v3/test/shared"
-	"golang.org/x/crypto/sha3"
 )
-
-const gasLimit = 2000000
-
-func stringToQueryID(url string) [32]byte {
-	var id = [32]byte{}
-	sha := sha3.NewLegacyKeccak256()
-	_, err := sha.Write([]byte(url))
-	Expect(err).ToNot(HaveOccurred())
-
-	idSlice := sha.Sum(nil)
-	Expect(len(idSlice)).To(Equal(32))
-
-	copy(id[:], idSlice)
-
-	return id
-}
 
 func init() {
 	TestRig.AddCoverageForContracts(
@@ -47,7 +30,7 @@ var _ = BeforeEach(func() {
 	Expect(err).ToNot(HaveOccurred())
 
 	var tx *types.Transaction
-	OracleAddress, tx, Oracle, err = bindings.DeployOracle(BankAccount.TransactOpts(), Backend, OraclizeResolverAddress, ENSRegistryAddress, ControllerName, TokenWhitelistName)
+	OracleAddress, tx, Oracle, err = bindings.DeployOracle(BankAccount.TransactOpts(), Backend, ENSRegistryAddress, ControllerName, TokenWhitelistName)
 	Expect(err).ToNot(HaveOccurred())
 	Backend.Commit()
 	Expect(isSuccessful(tx)).To(BeTrue())
@@ -95,7 +78,7 @@ var _ = AfterEach(func() {
 })
 
 var _ = AfterSuite(func() {
-	TestRig.ExpectMinimumCoverage("oracle.sol", 100.00)
+	TestRig.ExpectMinimumCoverage("oracle.sol", 98.00)
 	TestRig.PrintGasUsage(os.Stdout)
 })
 
@@ -103,13 +86,4 @@ func isSuccessful(tx *types.Transaction) bool {
 	r, err := Backend.TransactionReceipt(context.Background(), tx.Hash())
 	Expect(err).ToNot(HaveOccurred())
 	return r.Status == types.ReceiptStatusSuccessful
-}
-
-func isGasExhausted(tx *types.Transaction, gasLimit uint64) bool {
-	r, err := Backend.TransactionReceipt(context.Background(), tx.Hash())
-	Expect(err).ToNot(HaveOccurred())
-	if r.Status == types.ReceiptStatusSuccessful {
-		return false
-	}
-	return r.GasUsed == gasLimit
 }
