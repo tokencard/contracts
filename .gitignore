@@ -3,3 +3,4 @@ coverage
 scTopics
 vendor
 crytic-export
+mcore_*
