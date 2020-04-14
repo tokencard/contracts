@@ -25,7 +25,11 @@ contract Token {
         return true;
     }
 
-    function transferFrom(address _from, address _to, uint256 _value) public returns (bool) {
+    function transferFrom(
+        address _from,
+        address _to,
+        uint256 _value
+    ) public returns (bool) {
         if (_to == address(0)) return false;
         if (balanceOf[_from] < _value) return false;
 

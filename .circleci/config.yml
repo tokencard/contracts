@@ -56,42 +56,42 @@ jobs:
           working_directory: contracts
           command: |
             if [[ "${CIRCLE_NODE_INDEX}" == 0 ]]; then
-              myth analyze --solv=0.5.17 ./oracle.sol --execution-timeout=800
+              myth analyze --solv=0.6.4 ./oracle.sol --execution-timeout=800
             fi
           no_output_timeout: 20m
       - run:
           working_directory: contracts
           command: |
             if [[ "${CIRCLE_NODE_INDEX}" == 1 ]]; then
-              myth analyze --solv=0.5.17 ./wallet.sol --execution-timeout=800
+              myth analyze --solv=0.6.4 ./wallet.sol --execution-timeout=800
             fi
           no_output_timeout: 20m
       - run:
           working_directory: contracts
           command: |
             if [[ "${CIRCLE_NODE_INDEX}" == 2 ]]; then
-              myth analyze --solv=0.5.17 ./holder.sol --execution-timeout=800
+              myth analyze --solv=0.6.4 ./holder.sol --execution-timeout=800
             fi
           no_output_timeout: 20m
       - run:
           working_directory: contracts
           command: |
             if [[ "${CIRCLE_NODE_INDEX}" == 3 ]]; then
-              myth analyze --solv=0.5.17 ./licence.sol --execution-timeout=800
+              myth analyze --solv=0.6.4 ./licence.sol --execution-timeout=800
             fi
           no_output_timeout: 20m
       - run:
           working_directory: contracts
           command: |
             if [[ "${CIRCLE_NODE_INDEX}" == 4 ]]; then
-              myth analyze --solv=0.5.17 ./tokenWhitelist.sol --execution-timeout=800
+              myth analyze --solv=0.6.4 ./tokenWhitelist.sol --execution-timeout=800
             fi
           no_output_timeout: 20m
       - run:
           working_directory: contracts
           command: |
             if [[ "${CIRCLE_NODE_INDEX}" == 5 ]]; then
-              myth analyze --solv=0.5.17 ./walletDeployer.sol --execution-timeout=800
+              myth analyze --solv=0.6.4 ./walletDeployer.sol --execution-timeout=800
             fi
           no_output_timeout: 20m
 
@@ -103,7 +103,7 @@ jobs:
     steps:
       - run: sudo -n apt-get update && sudo -n apt-get install -y openssh-client
       - checkout
-      - run: solc-select 0.5.17
+      - run: solc-select 0.6.4
       - run:
           working_directory: slither
           command: |
@@ -155,8 +155,8 @@ jobs:
     steps:
       - run: sudo -n apt-get update && sudo -n apt-get install -y openssh-client
       - checkout
-      - run: solc-select 0.5.17
-      - run: find contracts -type f -name '*.sol' -exec slither-flat --convert-external {} \;
+      - run: solc-select 0.6.4
+      - run: find contracts  -maxdepth 1 -type f -name '*.sol' -exec slither-flat --convert-external {} \;
       - run:
           command: |
             if [[ "${CIRCLE_NODE_INDEX}" == 0 ]]; then

@@ -32,7 +32,7 @@ import "./internals/tokenWhitelistable.sol";
 contract Oracle is ENSResolvable, Base64, Date, Controllable, ParseIntScientific, TokenWhitelistable {
     using SafeMath for uint256;
     using strings for *;
-    
+
     /*******************/
     /*     Events     */
     /*****************/
@@ -58,17 +58,15 @@ contract Oracle is ENSResolvable, Base64, Date, Controllable, ParseIntScientific
 
     bytes public cryptoCompareAPIPublicKey;
 
-
     /// @notice Construct the oracle with multiple controllers, address resolver and custom gas price.
     /// @param _ens_ is the address of the ENS.
     /// @param _controllerNode_ is the ENS node corresponding to the Controller.
     /// @param _tokenWhitelistNode_ is the ENS corresponding to the Token Whitelist.
-    constructor(address _ens_, bytes32 _controllerNode_, bytes32 _tokenWhitelistNode_)
-        public
-        ENSResolvable(_ens_)
-        Controllable(_controllerNode_)
-        TokenWhitelistable(_tokenWhitelistNode_)
-    {
+    constructor(
+        address _ens_,
+        bytes32 _controllerNode_,
+        bytes32 _tokenWhitelistNode_
+    ) public ENSResolvable(_ens_) Controllable(_controllerNode_) TokenWhitelistable(_tokenWhitelistNode_) {
         cryptoCompareAPIPublicKey = hex"a0f4f688350018ad1b9785991c0bde5f704b005dc79972b114dbed4a615a983710bfc647ebe5a320daa28771dce6a2d104f5efa2e4a85ba3760b76d46f8571ca";
     }
 
@@ -83,7 +81,11 @@ contract Oracle is ENSResolvable, Base64, Date, Controllable, ParseIntScientific
     /// @param _result query result in JSON format.
     /// @param _proof origin proof from CryptoCompare.
     // solium-disable-next-line mixedcase
-    function __callback(address _token, string calldata _result, bytes calldata _proof) external {
+    function __callback(
+        address _token,
+        string calldata _result,
+        bytes calldata _proof
+    ) external {
         // Get the corresponding token object.
         (, , , bool available, , , uint256 lastUpdate) = _getTokenInfo(_token);
         require(available, "token must be available");
@@ -124,14 +126,20 @@ contract Oracle is ENSResolvable, Base64, Date, Controllable, ParseIntScientific
         return body.toString();
     }
 
-     /*
+    /*
      The following function has been written by Alex Beregszaszi, use it under the terms of the MIT license
     */
-    function copyBytes(bytes memory _from, uint _fromOffset, uint _length, bytes memory _to, uint _toOffset) internal pure returns (bytes memory _copiedBytes) {
-        uint minLength = _length + _toOffset;
+    function copyBytes(
+        bytes memory _from,
+        uint256 _fromOffset,
+        uint256 _length,
+        bytes memory _to,
+        uint256 _toOffset
+    ) internal pure returns (bytes memory _copiedBytes) {
+        uint256 minLength = _length + _toOffset;
         require(_to.length >= minLength); // Buffer too small. Should be a better way?
-        uint i = 32 + _fromOffset; // NOTE: the offset 32 is added to skip the `size` field of both bytes variables
-        uint j = 32 + _toOffset;
+        uint256 i = 32 + _fromOffset; // NOTE: the offset 32 is added to skip the `size` field of both bytes variables
+        uint256 j = 32 + _toOffset;
         while (i < (32 + _fromOffset + _length)) {
             assembly {
                 let tmp := mload(add(_from, i))
@@ -143,11 +151,16 @@ contract Oracle is ENSResolvable, Base64, Date, Controllable, ParseIntScientific
         return _to;
     }
 
-     /*
+    /*
      The following function has been written by Alex Beregszaszi, use it under the terms of the MIT license
      Duplicate Solidity's ecrecover, but catching the CALL return value
     */
-    function safer_ecrecover(bytes32 _hash, uint8 _v, bytes32 _r, bytes32 _s) internal returns (bool _success, address _recoveredAddress) {
+    function safer_ecrecover(
+        bytes32 _hash,
+        uint8 _v,
+        bytes32 _r,
+        bytes32 _s
+    ) internal returns (bool _success, address _recoveredAddress) {
         /*
          We do our own memory management here. Solidity uses memory offset
          0x40 to store the current end of memory. We write past it (as
@@ -169,6 +182,7 @@ contract Oracle is ENSResolvable, Base64, Date, Controllable, ParseIntScientific
         }
         return (ret, addr);
     }
+
     /*
      The following function has been written by Alex Beregszaszi, use it under the terms of the MIT license
     */
@@ -220,7 +234,12 @@ contract Oracle is ENSResolvable, Base64, Date, Controllable, ParseIntScientific
     /// @param _proof origin proof from cryptocompare.
     /// @param _publicKey cryptocompare public key.
     /// @param _lastUpdate timestamp of the last time the requested token was updated.
-    function _verifyProof(string memory _result, bytes memory _proof, bytes memory _publicKey, uint256 _lastUpdate) private returns (bool, uint256) {
+    function _verifyProof(
+        string memory _result,
+        bytes memory _proof,
+        bytes memory _publicKey,
+        uint256 _lastUpdate
+    ) private returns (bool, uint256) {
         // expecting fixed length proofs
         if (_proof.length != _PROOF_LEN) {
             revert("invalid proof length");
@@ -281,7 +300,11 @@ contract Oracle is ENSResolvable, Base64, Date, Controllable, ParseIntScientific
     /// @param _headers HTTP headers provided by the cryptocompare api
     /// @param _signature signature provided by the cryptocompare api
     /// @param _publicKey cryptocompare public key.
-    function _verifySignature(bytes memory _headers, bytes memory _signature, bytes memory _publicKey) private returns (bool) {
+    function _verifySignature(
+        bytes memory _headers,
+        bytes memory _signature,
+        bytes memory _publicKey
+    ) private returns (bool) {
         address signer;
         bool signatureOK;
 
