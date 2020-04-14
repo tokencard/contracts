@@ -158,7 +158,7 @@ jobs:
     docker:
       - image: trailofbits/eth-security-toolbox@sha256:3fb96e2d9de772f5e97f1c3c650c8a3d28660f8a64a60b76269da1ac19b86a28
     working_directory: /tmp/contracts
-    parallelism: 7
+    parallelism: 6
     steps:
       - run: sudo -n apt-get update && sudo -n apt-get install -y openssh-client
       - checkout
@@ -190,21 +190,61 @@ jobs:
           no_output_timeout: 15m
       - run:
           command: |
-            cd tools &&
             if [[ "${CIRCLE_NODE_INDEX}" == 4 ]]; then
-                echidna-test tools/echidna/wallet/loadLimit.sol --config=tools/echidna/wallet/loadLimit.yaml --contract=TEST
-            fi
-          no_output_timeout: 15m
-      - run:
-          command: |
-            if [[ "${CIRCLE_NODE_INDEX}" == 5 ]]; then
                 echidna-test tools/echidna/controller/controller.sol --config=tools/echidna/controller/controller.yaml --contract=TEST 
             fi
           no_output_timeout: 15m
       - run:
           command: |
-            if [[ "${CIRCLE_NODE_INDEX}" == 6 ]]; then
+            if [[ "${CIRCLE_NODE_INDEX}" == 5 ]]; then
                 echidna-test tools/echidna/internals/ownable.sol --config=tools/echidna/internals/ownable.yaml --contract=TEST
+            fi
+          no_output_timeout: 15m
+  
+  manticore:
+    docker:
+      - image: trailofbits/eth-security-toolbox@sha256:3fb96e2d9de772f5e97f1c3c650c8a3d28660f8a64a60b76269da1ac19b86a28
+    working_directory: /tmp/contracts
+    parallelism: 6
+    steps:
+      - run: ulimit -s 100000
+      - run: sudo -n apt-get update && sudo -n apt-get install -y openssh-client
+      - checkout
+      - run: solc-select 0.5.17
+      - run:
+          command: |
+            if [[ "${CIRCLE_NODE_INDEX}" == 0 ]]; then
+                manticore contracts/holder.sol --contract=Holder --config=tools/manticore/manticore.yaml --quick-mode
+            fi
+          no_output_timeout: 15m
+      - run:
+          command: |
+            if [[ "${CIRCLE_NODE_INDEX}" == 1 ]]; then
+                manticore contracts/walletDeployer.sol --contract=WalletDeployer --config=tools/manticore/manticore.yaml --quick-mode
+            fi
+          no_output_timeout: 15m      
+      - run:
+          command: |
+            if [[ "${CIRCLE_NODE_INDEX}" == 2 ]]; then
+                manticore contracts/internals/bytesUtils.sol --contract=BytesUtils --config=tools/manticore/manticore.yaml --quick-mode
+            fi
+          no_output_timeout: 15m
+      - run:
+          command: |
+            if [[ "${CIRCLE_NODE_INDEX}" == 3 ]]; then
+                manticore contracts/internals/date.sol --contract=Date --config=tools/manticore/manticore.yaml --quick-mode
+            fi
+          no_output_timeout: 15m
+      - run:
+          command: |
+            if [[ "${CIRCLE_NODE_INDEX}" == 4 ]]; then
+                manticore contracts/internals/parseIntScientific.sol --contract=ParseIntScientific --config=tools/manticore/manticore.yaml --quick-mode
+            fi
+          no_output_timeout: 15m
+      - run:
+          command: |
+            if [[ "${CIRCLE_NODE_INDEX}" == 5 ]]; then
+                manticore contracts/internals/balanceable.sol --contract=Balanceable --config=tools/manticore/manticore.yaml --quick-mode
             fi
           no_output_timeout: 15m
 
@@ -235,6 +275,10 @@ workflows:
             tags:
               ignore: ""
       - echidna:
+          filters:
+            tags:
+              ignore: ""
+      - manticore:
           filters:
             tags:
               ignore: ""
