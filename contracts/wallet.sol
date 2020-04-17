@@ -605,7 +605,7 @@ contract Wallet is ENSResolvable, GasTopUpLimit, LoadLimit, AddressWhitelist, Sp
         require(_nonce == relayNonce, "Tx replay: nonce");
         _increaseRelayNonce();
         // Verify that the relayed Tx was originally signed for this wallet.
-        require(_walletAddress == address(this),"Tx replay: wallet address");
+        require(_walletAddress == address(this), "Tx replay: wallet address");
         // invoke wallet function with an external call
         (bool success, bytes memory returndata) = address(this).call(_data);
         require(success, string(returndata));
