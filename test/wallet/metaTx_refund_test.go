@@ -59,10 +59,10 @@ var _ = Describe("metaTx refund", func() {
 					Expect(err).ToNot(HaveOccurred())
 
 					nonce := big.NewInt(0)
-					signature, err := SignData(nonce, data, privateKey)
+					signature, err := SignData(nonce, WalletAddress, data, privateKey)
 					Expect(err).ToNot(HaveOccurred())
 
-					tx, err := Wallet.ExecuteRelayedTransaction(Controller.TransactOpts(), nonce, data, signature)
+					tx, err := Wallet.ExecuteRelayedTransaction(Controller.TransactOpts(), nonce, WalletAddress, data, signature)
 					Expect(err).ToNot(HaveOccurred())
 					Backend.Commit()
 					Expect(isSuccessful(tx)).To(BeTrue())
@@ -100,10 +100,10 @@ var _ = Describe("metaTx refund", func() {
 					Expect(err).ToNot(HaveOccurred())
 
 					nonce := big.NewInt(0)
-					signature, err := SignData(nonce, data, privateKey)
+					signature, err := SignData(nonce, WalletAddress, data, privateKey)
 					Expect(err).ToNot(HaveOccurred())
 
-					tx, err := Wallet.ExecuteRelayedTransaction(Controller.TransactOpts(), nonce, data, signature)
+					tx, err := Wallet.ExecuteRelayedTransaction(Controller.TransactOpts(), nonce, WalletAddress, data, signature)
 					Expect(err).ToNot(HaveOccurred())
 					Backend.Commit()
 					Expect(isSuccessful(tx)).To(BeTrue())

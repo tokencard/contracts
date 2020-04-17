@@ -592,18 +592,20 @@ contract Wallet is ENSResolvable, GasTopUpLimit, LoadLimit, AddressWhitelist, Sp
     /// @dev This function allows for the controller to relay transactions on the owner's behalf,
     /// the relayed message has to be signed by the owner.
     /// @param _nonce only used for relayed transactions, must match the wallet's relayNonce.
+    /// @param _walletAddress this is the wallet address used to avoid replay attacks in other wallets with the same owner.
     /// @param _data abi encoded data payload.
     /// @param _signature signed prefix + data.
-    function executeRelayedTransaction(uint256 _nonce, bytes calldata _data, bytes calldata _signature) external onlyController {
-        // expecting prefixed data ("rlx:") indicating relayed transaction...
+    function executeRelayedTransaction(uint256 _nonce, address _walletAddress, bytes calldata _data, bytes calldata _signature) external onlyController {
+        // Expecting prefixed data ("rlx:") indicating relayed transaction...
         // ...and an Ethereum Signed Message to protect user from signing an actual Tx
-        bytes32 dataHash = keccak256(abi.encodePacked("rlx:", _nonce, _data)).toEthSignedMessageHash();
-        // verify signature validity i.e. signer == owner
+        bytes32 dataHash = keccak256(abi.encodePacked("rlx:", _nonce, _walletAddress, _data)).toEthSignedMessageHash();
+        // Verify signature validity i.e. signer == owner
         require(isValidSignature(dataHash, _signature) == _EIP_1654, "sig not valid");
-        // verify and increase relayNonce to prevent replay attacks from the relayer
-        require(_nonce == relayNonce, "tx replay");
+        // Verify and increase relayNonce to prevent replay attacks from the relayer
+        require(_nonce == relayNonce, "Tx replay: nonce");
         _increaseRelayNonce();
-
+        // Verify that the relayed Tx was originally signed for this wallet.
+        require(_walletAddress == address(this),"Tx replay: wallet address");
         // invoke wallet function with an external call
         (bool success, bytes memory returndata) = address(this).call(_data);
         require(success, string(returndata));
@@ -629,7 +631,7 @@ contract Wallet is ENSResolvable, GasTopUpLimit, LoadLimit, AddressWhitelist, Sp
     /// @param _signature Signature byte array associated with _data
     function isValidSignature(bytes calldata _data, bytes calldata _signature) external view returns (bytes4) {
         bytes32 dataHash = keccak256(abi.encodePacked(_data));
-        // isValidSignature called reverts if not valid.
+        // isValidSignature call reverts if not valid.
         require(isValidSignature(dataHash, _signature) == _EIP_1654, "sig not valid");
         return _EIP_1271;
     }
@@ -813,7 +815,7 @@ contract Wallet is ENSResolvable, GasTopUpLimit, LoadLimit, AddressWhitelist, Sp
     /// @param _signature Signature byte array associated with _dataHash
     function isValidSignature(bytes32 _hashedData, bytes memory _signature) public view returns (bytes4) {
         address from = _hashedData.recover(_signature);
-        require(_isOwner(from), "only owner");
+        require(_isOwner(from), "invalid signature");
         return _EIP_1654;
     }
 
