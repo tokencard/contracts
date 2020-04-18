@@ -89,7 +89,7 @@ It should be noted that this codebase makes heavy use of inheritance.
 
 [tokenWhitelist.sol](/contracts/tokenWhitelist.sol) The list of tokens used in this system is managed in the *TokenWhitelist*. The *Controller* can be used to add and remove tokens from the *TokenWhitelist*, they also have the ability to set flags on the specific tokens, e.g. `loadable` (means that a token is loadable on the TokenCard) or `redeemable` (means that a token is redeemable in the *TKN Holder* contract); see ([tokenWhitelist inheritance diagram](/docs/tokenWhitelist.inheritance.png)).
 
-[walletCache.sol](/contracts/walletCache.sol) The *WalletCache* is a factory contract that may be used to pre-deploy and cache *Consumer Contract Wallets* when network prices are low.
+[walletCache.sol](/contracts/walletCache.sol) The *WalletCache* is a factory contract that is used to pre-deploy and cache *Consumer Contract Wallets* when network prices are low; see ([walletCache inheritance diagram](/docs/walletCache.inheritance.png)).
 
 [walletDeployer.sol](/contracts/walletDeployer.sol) The *WalletDeployer* contract accesses the *WalletCache* via ENS and allows the pre-cached wallets to be assigned new owners in a single contract call in order to satisfy requests for new  *Consumer Contract Wallets*. This contract also has the ability to configure a contract with set security features, this will be used to migrate users between contracts; see ([walletDeployer inheritance diagram](/docs/walletDeployer.inheritance.png)).
 
