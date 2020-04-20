@@ -40,7 +40,8 @@ var _ = Describe("relay Tx", func() {
 			Expect(err).ToNot(HaveOccurred())
 
 			nonce := big.NewInt(0)
-			signature, err := SignData(nonce, WalletAddress, data, Owner.PrivKey())
+			chainId := big.NewInt(1337)
+			signature, err := SignData(chainId, WalletAddress, nonce, data, Owner.PrivKey())
 			Expect(err).ToNot(HaveOccurred())
 
 			tx, err := Wallet.ExecuteRelayedTransaction(RandomAccount.TransactOpts(ethertest.WithGasLimit(500000)), nonce, data, signature)
@@ -60,7 +61,31 @@ var _ = Describe("relay Tx", func() {
 			Expect(err).ToNot(HaveOccurred())
 
 			nonce := big.NewInt(0)
-			signature, err := SignData(nonce, randomAddress, data, Owner.PrivKey())
+			chainId := big.NewInt(1) //the actual ethereum mainnet
+			signature, err := SignData(chainId, WalletAddress, nonce, data, Owner.PrivKey())
+			Expect(err).ToNot(HaveOccurred())
+
+			tx, err := Wallet.ExecuteRelayedTransaction(Controller.TransactOpts(ethertest.WithGasLimit(500000)), nonce, data, signature)
+			Expect(err).ToNot(HaveOccurred())
+			Backend.Commit()
+			Expect(isSuccessful(tx)).To(BeFalse())
+			returnData, _ := ethCall(tx)
+			Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("invalid signature"))
+		})
+	})
+
+	When("a controller tries to relay a transaction signed from the same owner but for another wallet", func() {
+		It("should fail", func() {
+			a, err := abi.JSON(strings.NewReader(WALLET_ABI))
+			Expect(err).ToNot(HaveOccurred())
+			privateKey, _ := crypto.GenerateKey()
+			randomAddress := crypto.PubkeyToAddress(privateKey.PublicKey)
+			data, err := a.Pack("transfer", randomAddress, common.HexToAddress("0x0"), EthToWei(1))
+			Expect(err).ToNot(HaveOccurred())
+
+			nonce := big.NewInt(0)
+			chainId := big.NewInt(1337)
+			signature, err := SignData(chainId, randomAddress, nonce, data, Owner.PrivKey())
 			Expect(err).ToNot(HaveOccurred())
 
 			tx, err := Wallet.ExecuteRelayedTransaction(Controller.TransactOpts(ethertest.WithGasLimit(500000)), nonce, data, signature)
@@ -82,7 +107,8 @@ var _ = Describe("relay Tx", func() {
 			Expect(err).ToNot(HaveOccurred())
 
 			nonce := big.NewInt(0)
-			signature, err := SignData(nonce, WalletAddress, data, privateKey)
+			chainId := big.NewInt(1337)
+			signature, err := SignData(chainId, WalletAddress, nonce, data, privateKey)
 			Expect(err).ToNot(HaveOccurred())
 
 			tx, err := Wallet.ExecuteRelayedTransaction(Controller.TransactOpts(ethertest.WithGasLimit(500000)), nonce, data, signature)
@@ -118,7 +144,8 @@ var _ = Describe("relay Tx", func() {
 				Expect(err).ToNot(HaveOccurred())
 
 				nonce := big.NewInt(0)
-				signature, err := SignData(nonce, WalletAddress, data, privateKey)
+				chainId := big.NewInt(1337)
+				signature, err := SignData(chainId, WalletAddress, nonce, data, privateKey)
 				Expect(err).ToNot(HaveOccurred())
 
 				tx, err = Wallet.ExecuteRelayedTransaction(Controller.TransactOpts(), nonce, data, signature)
@@ -175,7 +202,8 @@ var _ = Describe("relay Tx", func() {
 				Expect(err).ToNot(HaveOccurred())
 
 				nonce := big.NewInt(0)
-				signature, err := SignData(nonce, WalletAddress, data, privateKey)
+				chainId := big.NewInt(1337)
+				signature, err := SignData(chainId, WalletAddress, nonce, data, privateKey)
 				Expect(err).ToNot(HaveOccurred())
 
 				tx, err := Wallet.ExecuteRelayedTransaction(Controller.TransactOpts(ethertest.WithGasLimit(500000)), nonce, data, signature)
@@ -191,7 +219,8 @@ var _ = Describe("relay Tx", func() {
 				Expect(err).ToNot(HaveOccurred())
 
 				nonce := big.NewInt(1)
-				signature, err := SignData(nonce, WalletAddress, data, privateKey)
+				chainId := big.NewInt(1337)
+				signature, err := SignData(chainId, WalletAddress, nonce, data, privateKey)
 				Expect(err).ToNot(HaveOccurred())
 
 				tx, err := Wallet.ExecuteRelayedTransaction(Controller.TransactOpts(), nonce, data, signature)
@@ -209,7 +238,8 @@ var _ = Describe("relay Tx", func() {
 				Expect(err).ToNot(HaveOccurred())
 
 				nonce := big.NewInt(0)
-				signature, err := SignData(nonce, WalletAddress, data, privateKey)
+				chainId := big.NewInt(1337)
+				signature, err := SignData(chainId, WalletAddress, nonce, data, privateKey)
 				Expect(err).ToNot(HaveOccurred())
 
 				tx, err := Wallet.TransferOwnership(Owner.TransactOpts(), randomAddress, false)
@@ -235,7 +265,8 @@ var _ = Describe("relay Tx", func() {
 				Expect(err).ToNot(HaveOccurred())
 
 				nonce := big.NewInt(0)
-				signature, err := SignData(nonce, WalletAddress, data, privateKey)
+				chainId := big.NewInt(1337)
+				signature, err := SignData(chainId, WalletAddress, nonce, data, privateKey)
 				Expect(err).ToNot(HaveOccurred())
 
 				tx, err := Wallet.IncreaseRelayNonce(Owner.TransactOpts())

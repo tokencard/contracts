@@ -597,7 +597,11 @@ contract Wallet is ENSResolvable, GasTopUpLimit, LoadLimit, AddressWhitelist, Sp
     function executeRelayedTransaction(uint256 _nonce, bytes calldata _data, bytes calldata _signature) external onlyController {
         // Expecting prefixed data ("monolith:") indicating relayed transaction...
         // ...and an Ethereum Signed Message to protect user from signing an actual Tx
-        bytes32 dataHash = keccak256(abi.encodePacked("monolith:", _nonce, address(this), _data)).toEthSignedMessageHash();
+        uint256 id;
+        assembly {
+            id := chainid() //1 for Ethereum mainnet, > 1 for public testnets.
+        }
+        bytes32 dataHash = keccak256(abi.encodePacked("monolith:", id, address(this),  _nonce, _data)).toEthSignedMessageHash();
         // Verify signature validity i.e. signer == owner
         require(isValidSignature(dataHash, _signature) == _EIP_1654, "sig not valid");
         // Verify and increase relayNonce to prevent replay attacks from the relayer
