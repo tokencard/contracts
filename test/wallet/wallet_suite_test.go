@@ -40,8 +40,8 @@ func ethCall(tx *types.Transaction) ([]byte, error) {
 	return Backend.CallContract(context.Background(), calMsg, nil)
 }
 
-func SignData(nonce *big.Int, data []byte, prv *ecdsa.PrivateKey) ([]byte, error) {
-	relayMessage := fmt.Sprintf("rlx:%s%s", abi.U256(nonce), data)
+func SignData(nonce *big.Int, address common.Address, data []byte, prv *ecdsa.PrivateKey) ([]byte, error) {
+	relayMessage := fmt.Sprintf("monolith:%s%s%s", abi.U256(nonce), address, data)
 	hash := crypto.Keccak256([]byte(relayMessage))
 	ethMessage := fmt.Sprintf("\x19Ethereum Signed Message:\n%d%s", len(hash), hash)
 	hash = crypto.Keccak256([]byte(ethMessage))
