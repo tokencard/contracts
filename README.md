@@ -1,8 +1,8 @@
-# The Consumer Contract Wallet
+# The Consumer Contract Wallet version 3
 
-This repository contains the Smart Contracts needed to power the TokenCard, written in Solidity, for execution in the EVM.
+This repository contains the Smart Contracts needed to power the Monolith Card, written in Solidity, for execution in the EVM.
 
-The TokenCard is the world's first non-custodial VISA card, that allows people to hold their own assets, whilst being able to seamlessly move funds to a VISA debit card. 1% of all loads to the TokenCard are sent, by the user themselves, to the TKN Holder contract. This is used to back the TKN contract, aka the Asset Contract.
+The Monolith Card is the world's first non-custodial position to VISA debit card. The Consumer Contract Wallet allows people to hold their own assets, whilst being able to seamlessly move funds to a VISA debit card. 1% of all loads to the Monolith Cards are sent, by the user themselves, to the TKN Holder contract. This is used to back the Community Chest (aka the Asset Contract). The purpose of this onchain infrastructure is provide the most seemless user experience whilst maintaining a decentralised position.
 
 | [High Level Architecture](https://github.com/tokencard/contracts/blob/master/README.md/#high-level-architecture) | [Security Features](https://github.com/tokencard/contracts/blob/master/README.md/#security-features) | [Solidity Code](https://github.com/tokencard/contracts/blob/master/README.md/#solidity-code-in-the-contracts-folder) | [Running Contract Tests](https://github.com/tokencard/contracts/blob/master/README.md/#running-contract-tests) | [Resources](https://github.com/tokencard/contracts/blob/master/README.md/#resources) |
 |---|---|---|---|---|
@@ -11,13 +11,16 @@ The TokenCard is the world's first non-custodial VISA card, that allows people t
 
 The functionality encoded in the Smart Contracts found in this repository have been designed to help users protect their tokens, by holding them within their own instance of a *Consumer Contract Wallet* which they can configure to their liking. The functionality within the *Consumer Contract Wallet* has been designed to limit a user's exposure to loss of tokens in the event that a user has had their Private Key compromised.
 
-We believe there are two major problems facing the adoption and use of cryptocurrency, protection from:
- - Users having their private key compromised and losing all of their assets.
- - Users losing their private key.
+We believe there are three major problems facing the adoption and use of decentralised finances:
+ - The issue that users with compromised private keys could end up losing all of their assets.
+ - The issue that people are generally not good at keeping digital secrets safe, the potential loss of private keys.
+ - The UX of decentralised finances and real-world payments.
 
-This, first version, of the *Consumer Contract Wallet* protects users by limiting their exposure to theft if their private key gets compromised. We are working on things that will address the loss of one's private key in the future...
+This, third version, of the *Consumer Contract Wallet* protects users by limiting their exposure to theft in the event that their private key gets compromised. This version also brings batched-metatransaction to the experience. Batched MetaTransactions are flexible to the point where gas can be removed from equation or can be approximately paid for in any ERC20 token. By batching up meta-transactions we will be able to build a more compelling user experience, by utilising the composability of Smart Contract calls on Ethereum.
 
-Each user deploys their own instance of the *Consumer Contract Wallet* ([wallet.sol](/contracts/wallet.sol)) to the Ethereum Network which interacts with an exchange rate *Oracle* ([oracle.sol](/contracts/oracle.sol)) that exists to provide exchange rates needed to secure a user's tokens. The individual *Consumer Contract Wallet* contracts use the [Ethereum Name Service (ENS)](https://ens.domains/) to resolve the location of the exchange rate oracle, as well as to resolve the location of the *Controller* ([controller.sol](contracts/controller.sol)) contract, and the *Tokenwhitelist* ([tokenWhitelist.sol](contracts/tokenWhitelist.sol)) contract. The *TokenWhitelist* is a whitelist of tokens and their exchange rates that are used to secure a user's tokens within their wallet, it also determines which tokens can be used to load the TokenCard and which are "cash 'n' burnable" by the TKN ERC-20 Contract in conjunction with the *TKN Holder* Contract. This *Controller* contract is used for administrative purposes only, rest assured this has no access to user's funds. The controllers are used to perform 2FA functionality, used to help a user topup their gas when stuck, and are used to perform administrative tasks on the oracle and on the tokens.
+Each user deploys their own instance of the *Consumer Contract Wallet* ([wallet.sol](/contracts/wallet.sol)) to the Ethereum Network which interacts with a *TokenWhitelist* ([tokenWhitelist.sol](/contracts/tokenWhitelist.sol]) to get exchange rates between tokens to enforce a user-definted daily spend limit. The exchange rates in the *TokenWhitelist* are periodically updated using an exchange rate *Oracle* ([oracle.sol](/contracts/oracle.sol)). 
+
+The individual *Consumer Contract Wallet* contracts use the [Ethereum Name Service (ENS)](https://ens.domains/) to resolve the location of the *TokenWhitelist*, as well as to resolve the location of the *Controller* ([controller.sol](contracts/controller.sol)) contract. The *TokenWhitelist* is a whitelist of tokens and their exchange rates that are used to secure a user's tokens within their wallet, it also determines which tokens can be used to load the TokenCard and which are "cash 'n' burnable" by the TKN ERC-20 Contract in conjunction with the *TKN Holder* Contract. This *Controller* contract is used for administrative purposes only, rest assured this has no access to user's funds. The controllers are used to perform 2FA functionality, used to help a user topup their gas when stuck, as well as being used to perform administrative tasks on the *Oracle* and on the *TokenWhitelist*.
 
 
 ### High-level Architecture
@@ -32,12 +35,13 @@ Each user deploys their own instance of the *Consumer Contract Wallet* ([wallet.
      - An amount of ETH used to pay for the gas - *Gas Tank*. The *Gas Tank* is a representation of the ETH on the user's `Owner Address`. It should be noted that this ETH is NOT protected by the security features in the *Consumer Contract Wallet* as it resides outside of the Smart Contract. Note: in the current version (v3) meta-transactions are also supported i.e. the users can send trasnactions without having to top-up their *Gas Tank*. The way it works is the following: they sign the transsaction with their private key, a controller broadcasts it, the signature is validated by their contract and the original transaction is executed consecutively. The *Gas Tank* has been kept mainly for convenience and is gonna be removed entirely in the upcoming version.
 
 ### Requirements
-- This `Owner Address` will own all of the user’s Smart Contracts and will be referred to as the *Owner*, this is sometime referred to as an *Externally Owned Address (EOA)*
-- The *Controller* - Is a set of Addresses, owned and operated by Token Group Ltd, used to provide services to the end user.
+- This `Owner Address` will own all of the user’s Smart Contracts and will be referred to as the *Owner*, this is sometimes referred to as an *Externally Owned Address (EOA)*
+- The *Controller* - Is a key hierarchy of administrative addressed, owned and operated by Token Group Ltd. These are used to provide convenience to our users.
 - The *Consumer Contract Wallet* needs to allow its *Owner* to configure how they wish to secure their tokens in their wallet.
 - There needs to be a convenient way to "top-up" the amount of ETH that lives on our user’s `Owner Address` aka *Gas Tank* via the Smart Contracts
 - The wallet's design is intended to be as decentralised as possible. This will be achieved by eliminating access to user assets by third-parties and minimising reliance of third-party infrastructure in running the *Consumer Contract Wallet*.
 - Must help user protect their funds by minimising the risk in the event of their `Owner Address`'s private key being compromised.
+- Provide the best UX possible.
 
 ### Security Features
 
