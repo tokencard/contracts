@@ -128,7 +128,7 @@ contract Oracle is ENSResolvable, Base64, Date, Controllable, ParseIntScientific
         return body.toString();
     }
 
-     /// @dev Copies bytes from source array to destination array.
+    /// @dev Copies bytes from source array to destination array.
     /// @param _dst the bytes array that we want to copy data to.
     /// @param _src the bytes array that we want to copy data from.
     /// @param _srcOffset the offset of the source array that we want to start copying data from.
@@ -222,7 +222,7 @@ contract Oracle is ENSResolvable, Base64, Date, Controllable, ParseIntScientific
         bytes memory _headers,
         bytes memory _signature,
         bytes memory _publicKey
-    ) private returns (bool) {
+    ) private pure returns (bool) {
         address signer;
         // Checks if the signature is valid by hashing the headers
         bytes32 dataHash = sha256(_headers);
