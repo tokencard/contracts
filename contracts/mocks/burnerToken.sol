@@ -1,4 +1,4 @@
-pragma solidity ^0.5.17;
+pragma solidity ^0.6.0;
 
 import "../externals/SafeMath.sol";
 
@@ -54,7 +54,11 @@ contract BurnerToken {
         return true;
     }
 
-    function transferFrom(address _from, address _to, uint256 _value) external returns (bool success) {
+    function transferFrom(
+        address _from,
+        address _to,
+        uint256 _value
+    ) external returns (bool success) {
         if (_to == address(0)) return false;
         if (balanceOf[_from] < _value) return false;
 

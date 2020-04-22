@@ -1,1 +1,1 @@
-[{"constant":true,"inputs":[{"internalType":"bytes","name":"_encoded","type":"bytes"}],"name":"base64decode","outputs":[{"internalType":"bytes","name":"","type":"bytes"}],"payable":false,"stateMutability":"pure","type":"function"}]
+[{"inputs":[{"internalType":"bytes","name":"_encoded","type":"bytes"}],"name":"base64decode","outputs":[{"internalType":"bytes","name":"","type":"bytes"}],"stateMutability":"pure","type":"function"}]

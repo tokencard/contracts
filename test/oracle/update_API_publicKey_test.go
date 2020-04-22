@@ -41,7 +41,6 @@ var _ = Describe("updateAPIPublicKey", func() {
 			tx, err := Oracle.UpdateCryptoCompareAPIPublicKey(RandomAccount.TransactOpts(ethertest.WithGasLimit(100000)), common.Hex2Bytes("fffffff"))
 			Expect(err).ToNot(HaveOccurred())
 			Backend.Commit()
-			Expect(isGasExhausted(tx, 100000)).To(BeFalse())
 			Expect(isSuccessful(tx)).To(BeFalse())
 		})
 	})

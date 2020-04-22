@@ -16,11 +16,11 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-pragma solidity ^0.5.17;
+pragma solidity ^0.6.0;
 
-import "./wallet.sol";
-import "./internals/ensResolvable.sol";
 import "./internals/controllable.sol";
+import "./internals/ensResolvable.sol";
+import "./wallet.sol";
 
 
 /// @title IWalletCache interface describes a method for poping an already cached wallet
@@ -49,7 +49,7 @@ contract WalletCache is ENSResolvable, Controllable {
     Wallet[] public cachedWallets;
 
     address public ens;
-    uint public defaultDailyLimit; //in stablecoin absolute value (NOT base units!) e.g. 10K USD
+    uint256 public defaultDailyLimit; //in stablecoin absolute value (NOT base units!) e.g. 10K USD
 
     /// @notice parameters are passed in so that they can be used to construct new instances of the wallet
     /// @dev pass in bytes32 to use the default, production node labels for ENS
@@ -61,7 +61,6 @@ contract WalletCache is ENSResolvable, Controllable {
         bytes32 _tokenWhitelistNode_,
         bytes32 _walletDeployerNode_
     ) public ENSResolvable(_ens_) Controllable(_controllerNode_) {
-
         ens = _ens_;
         defaultDailyLimit = _defaultDailyLimit_;
 

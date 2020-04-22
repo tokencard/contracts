@@ -111,7 +111,7 @@ var _ = Describe("relay Tx", func() {
 				Expect(o).To(Equal(randomAddress))
 			})
 
-            It("should emit an IncreasedRelayNonce event", func() {
+			It("should emit an IncreasedRelayNonce event", func() {
 				it, err := Wallet.FilterIncreasedRelayNonce(nil)
 				Expect(err).ToNot(HaveOccurred())
 				Expect(it.Next()).To(BeTrue())
@@ -131,7 +131,7 @@ var _ = Describe("relay Tx", func() {
 				Expect(err).ToNot(HaveOccurred())
 				data, err := a.Pack("transfer", randomAddress, common.HexToAddress("0x0"), EthToWei(1))
 				Expect(evt.Data).To(Equal(data))
-				Expect(evt.Returndata).To(Equal([]byte{}))
+				Expect(evt.Privileged).To(Equal(false))
 			})
 
 			It("should decrease the wallet's ETH balance ", func() {
@@ -221,7 +221,7 @@ var _ = Describe("relay Tx", func() {
 				Backend.Commit()
 				Expect(isSuccessful(tx)).To(BeTrue())
 
-                tx, err = Wallet.IncreaseRelayNonce(Owner.TransactOpts())
+				tx, err = Wallet.IncreaseRelayNonce(Owner.TransactOpts())
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 				Expect(isSuccessful(tx)).To(BeTrue())
@@ -231,25 +231,25 @@ var _ = Describe("relay Tx", func() {
 				Backend.Commit()
 				Expect(isSuccessful(tx)).To(BeTrue())
 
-                tx, err = Wallet.ExecuteRelayedTransaction(Controller.TransactOpts(ethertest.WithGasLimit(500000)), nonce, data, signature)
+				tx, err = Wallet.ExecuteRelayedTransaction(Controller.TransactOpts(ethertest.WithGasLimit(500000)), nonce, data, signature)
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 				Expect(isSuccessful(tx)).To(BeFalse())
 
 				returnData, _ := ethCall(tx)
 				Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("tx replay"))
-            })
+			})
 
-            It("should emit an IncreasedRelayNonce event", func() {
+			It("should emit an IncreasedRelayNonce event", func() {
 				it, err := Wallet.FilterIncreasedRelayNonce(nil)
 				Expect(err).ToNot(HaveOccurred())
 				Expect(it.Next()).To(BeTrue())
 				evt := it.Event
 				Expect(evt.Sender).To(Equal(Owner.Address()))
 				Expect(evt.CurrentNonce.String()).To(Equal("1"))
-                Expect(it.Next()).To(BeTrue())
-                evt = it.Event
-                Expect(it.Next()).To(BeFalse())
+				Expect(it.Next()).To(BeTrue())
+				evt = it.Event
+				Expect(it.Next()).To(BeFalse())
 				Expect(evt.Sender).To(Equal(Owner.Address()))
 				Expect(evt.CurrentNonce.String()).To(Equal("2"))
 			})

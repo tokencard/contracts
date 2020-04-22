@@ -50,7 +50,7 @@
  *      corresponding to the left and right parts of the string.
  */
 
-pragma solidity ^0.5.0;
+pragma solidity ^0.6.0;
 
 library strings {
     struct slice {
@@ -58,7 +58,7 @@ library strings {
         uint _ptr;
     }
 
-    function memcpy(uint dest, uint src, uint len) private pure {
+    function memcpy(uint dest, uint src, uint len) internal pure {
         // Copy word-length chunks while possible
         for(; len >= 32; len -= 32) {
             assembly {

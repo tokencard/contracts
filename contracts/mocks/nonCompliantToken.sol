@@ -1,4 +1,4 @@
-pragma solidity ^0.5.17;
+pragma solidity ^0.6.0;
 
 import "../externals/SafeMath.sol";
 
@@ -24,7 +24,11 @@ contract NonCompliantToken {
         emit Transfer(msg.sender, to, amount);
     }
 
-    function transferFrom(address _from, address _to, uint256 _value) public {
+    function transferFrom(
+        address _from,
+        address _to,
+        uint256 _value
+    ) public {
         if (_to == address(0)) revert();
         if (balanceOf[_from] < _value) revert();
 

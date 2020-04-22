@@ -1,29 +1,4 @@
-/**
- * The MIT License (MIT)
- *
- * Copyright (c) 2016-2019 zOS Global Limited
- *
- * Permission is hereby granted, free of charge, to any person obtaining
- * a copy of this software and associated documentation files (the
- * "Software"), to deal in the Software without restriction, including
- * without limitation the rights to use, copy, modify, merge, publish,
- * distribute, sublicense, and/or sell copies of the Software, and to
- * permit persons to whom the Software is furnished to do so, subject to
- * the following conditions:
- *
- * The above copyright notice and this permission notice shall be included
- * in all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
- * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
- * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
- * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
- * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
- * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
- * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- */
-
-pragma solidity ^0.5.0;
+pragma solidity ^0.6.0;
 
 /**
  * @dev Elliptic Curve Digital Signature Algorithm (ECDSA) operations.
@@ -40,10 +15,6 @@ library ECDSA {
      * this function rejects them by requiring the `s` value to be in the lower
      * half order, and the `v` value to be either 27 or 28.
      *
-     * NOTE: This call _does not revert_ if the signature is invalid, or
-     * if the signer is otherwise unable to be retrieved. In those scenarios,
-     * the zero address is returned.
-     *
      * IMPORTANT: `hash` _must_ be the result of a hash operation for the
      * verification to be secure: it is possible to craft signatures that
      * recover to arbitrary addresses for non-hashed data. A safe way to ensure
@@ -53,7 +24,7 @@ library ECDSA {
     function recover(bytes32 hash, bytes memory signature) internal pure returns (address) {
         // Check the signature length
         if (signature.length != 65) {
-            return (address(0));
+            revert("ECDSA: invalid signature length");
         }
 
         // Divide the signature in r, s and v variables
@@ -80,15 +51,49 @@ library ECDSA {
         // vice versa. If your library also generates signatures with 0/1 for v instead 27/28, add 27 to v to accept
         // these malleable signatures as well.
         if (uint256(s) > 0x7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF5D576E7357A4501DDFE92F46681B20A0) {
-            return address(0);
+            revert("ECDSA: invalid signature 's' value");
         }
 
         if (v != 27 && v != 28) {
-            return address(0);
+            revert("ECDSA: invalid signature 'v' value");
         }
 
         // If the signature is valid (and not malleable), return the signer address
-        return ecrecover(hash, v, r, s);
+        address signer = ecrecover(hash, v, r, s);
+        require(signer != address(0), "ECDSA: invalid signature");
+
+        return signer;
+    }
+
+    function recover_malleable(bytes32 hash, bytes memory signature) internal pure returns (address) {
+        // Check the signature length
+        if (signature.length != 65) {
+            revert("ECDSA: invalid signature length");
+        }
+
+        // Divide the signature in r, s and v variables
+        bytes32 r;
+        bytes32 s;
+        uint8 v;
+
+        // ecrecover takes the signature parameters, and the only way to get them
+        // currently is to use assembly.
+        // solhint-disable-next-line no-inline-assembly
+        assembly {
+            r := mload(add(signature, 0x20))
+            s := mload(add(signature, 0x40))
+            v := byte(0, mload(add(signature, 0x60)))
+        }
+
+        if (v != 27 && v != 28) {
+            revert("ECDSA: invalid signature 'v' value");
+        }
+
+        // If the signature is valid (and not malleable), return the signer address
+        address signer = ecrecover(hash, v, r, s);
+        require(signer != address(0), "ECDSA: invalid signature");
+
+        return signer;
     }
 
     /**

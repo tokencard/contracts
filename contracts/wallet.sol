@@ -16,28 +16,28 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-pragma solidity ^0.5.17;
+pragma solidity ^0.6.0;
 
-import "./licence.sol";
-import "./internals/ownable.sol";
-import "./internals/controllable.sol";
-import "./internals/balanceable.sol";
-import "./internals/transferrable.sol";
-import "./internals/ensResolvable.sol";
-import "./internals/tokenWhitelistable.sol";
-import "./externals/SafeMath.sol";
 import "./externals/Address.sol";
-import "./externals/ERC20.sol";
-import "./externals/SafeERC20.sol";
-import "./externals/ERC165.sol";
 import "./externals/ECDSA.sol";
+import "./externals/SafeERC20.sol";
+import "./externals/SafeMath.sol";
+import "./interfaces/IERC20.sol";
+import "./interfaces/IERC165.sol";
+import "./interfaces/ILicence.sol";
+import "./internals/balanceable.sol";
+import "./internals/controllable.sol";
+import "./internals/ensResolvable.sol";
+import "./internals/ownable.sol";
+import "./internals/tokenWhitelistable.sol";
+import "./internals/transferrable.sol";
 
 
 
 /// @title SelfCallableOwnable allows either owner or the contract itself to call its functions
 /// @dev providing an additional modifier to check if Owner or self is calling
 /// @dev the "self" here is used for the meta transactions
-contract SelfCallableOwnable is Ownable {
+abstract contract SelfCallableOwnable is Ownable {
 
     /// @dev Check if the sender is the Owner or self
     modifier onlySelf() {
@@ -55,7 +55,7 @@ contract SelfCallableOwnable is Ownable {
 /// @title OptOutableMonolith2FA is used a configurable 2FA.
 /// @dev This provides the various modifiers and utility functions needed for 2FA.
 /// @dev 2FA is needed to confirm changes to the security settings in the wallet.
-contract OptOutableMonolith2FA is Controllable, SelfCallableOwnable {
+abstract contract OptOutableMonolith2FA is Controllable, SelfCallableOwnable {
 
     event SetMonolith2FA(address _sender);
     event SetPersonal2FA(address _sender, address _p2FA);
@@ -120,7 +120,7 @@ contract OptOutableMonolith2FA is Controllable, SelfCallableOwnable {
 /// @title AddressWhitelist provides payee-whitelist functionality.
 /// @dev This contract will allow the user to maintain a whitelist of addresses.
 /// @dev These addresses will live outside of the daily limit.
-contract AddressWhitelist is SelfCallableOwnable, OptOutableMonolith2FA {
+abstract contract AddressWhitelist is SelfCallableOwnable, OptOutableMonolith2FA {
     using SafeMath for uint256;
 
     event AddedToWhitelist(address _sender, address[] _addresses);
@@ -224,7 +224,7 @@ contract AddressWhitelist is SelfCallableOwnable, OptOutableMonolith2FA {
                         break;
                     }
                 }
-                whitelistArray.length--;
+                whitelistArray.pop();
             }
         }
         // Emit the removal event.
@@ -302,7 +302,7 @@ contract AddressWhitelist is SelfCallableOwnable, OptOutableMonolith2FA {
 }
 
 /// @title DailyLimit provides daily spend limit functionality.
-contract DailyLimit is SelfCallableOwnable, OptOutableMonolith2FA, TokenWhitelistable{
+abstract contract DailyLimit is SelfCallableOwnable, OptOutableMonolith2FA, TokenWhitelistable {
     using SafeMath for uint256;
 
     event InitializedDailyLimit(uint _amount, uint _nextReset);
@@ -414,11 +414,11 @@ contract DailyLimit is SelfCallableOwnable, OptOutableMonolith2FA, TokenWhitelis
 
 
 /// @title Asset wallet with extra security features and card integration.
-contract Wallet is ENSResolvable, AddressWhitelist, DailyLimit, ERC165, Transferrable, Balanceable {
+contract Wallet is ENSResolvable, AddressWhitelist, DailyLimit, IERC165, Transferrable, Balanceable {
 
     using Address for address;
     using ECDSA for bytes32;
-    using SafeERC20 for ERC20;
+    using SafeERC20 for IERC20;
     using SafeMath for uint256;
 
     event BulkTransferred(address _to, address[] _assets);
@@ -447,7 +447,7 @@ contract Wallet is ENSResolvable, AddressWhitelist, DailyLimit, ERC165, Transfer
     /// @dev Is the registered ENS node identifying the licence contract.
     bytes32 private _licenceNode;
 
-    /// @dev Constructor initializes the vault with an owner address and daily limit. It also sets up the controllable and tokenWhitelist contracts with the right name registered in ENS.
+    /// @dev Constructor initializes the wallet with an owner address and daily limit. It also sets up the controllable and tokenWhitelist contracts with the right name registered in ENS.
     /// @param _owner_ is the owner account of the wallet contract.
     /// @param _transferable_ indicates whether the contract ownership can be transferred.
     /// @param _ens_ is the address of the ENS registry.
@@ -474,7 +474,7 @@ contract Wallet is ENSResolvable, AddressWhitelist, DailyLimit, ERC165, Transfer
     }
 
     /// @dev Ether can be deposited from any source, so this contract must be payable by anyone.
-    function() external payable {
+    receive() external payable {
         emit Received(msg.sender, msg.value);
     }
 
@@ -573,17 +573,17 @@ contract Wallet is ENSResolvable, AddressWhitelist, DailyLimit, ERC165, Transfer
         // Get the TKN licenceAddress from ENS
         address licenceAddress = _ensResolve(_licenceNode);
         if (_asset != address(0)) {
-            ERC20(_asset).safeApprove(licenceAddress, _amount);
+            IERC20(_asset).safeApprove(licenceAddress, _amount);
             ILicence(licenceAddress).load(_asset, _amount);
         } else {
-            ILicence(licenceAddress).load.value(_amount)(_asset, _amount);
+            ILicence(licenceAddress).load{value: _amount}(_asset, _amount);
         }
 
         emit LoadedTokenCard(_asset, _amount);
     }
 
     /// @dev Checks for interface support based on ERC165.
-    function supportsInterface(bytes4 _interfaceID) external view returns (bool) {
+    function supportsInterface(bytes4 _interfaceID) external override view returns (bool) {
         return _interfaceID == _ERC165_INTERFACE_ID;
     }
 
@@ -695,7 +695,7 @@ contract Wallet is ENSResolvable, AddressWhitelist, DailyLimit, ERC165, Transfer
             }
             // use callOptionalReturn provided in SafeERC20 in case the ERC20 method
             // returns false instead of reverting!
-            ERC20(_destination).callOptionalReturn(_data);
+            IERC20(_destination)._callOptionalReturn(_data);
 
             // if ERC20 call completes, return a boolean "true" as bytes emulating ERC20
             bytes memory b = new bytes(32);
@@ -705,7 +705,7 @@ contract Wallet is ENSResolvable, AddressWhitelist, DailyLimit, ERC165, Transfer
             return b;
         }
 
-        (bool success, bytes memory returndata) = _destination.call.value(_value)(_data);
+        (bool success, bytes memory returndata) = _destination.call{value: _value}(_data);
         require(success, string(returndata));
 
         emit ExecutedTransaction(_destination, _value, _data, returndata);

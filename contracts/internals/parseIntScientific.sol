@@ -16,7 +16,7 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-pragma solidity ^0.5.17;
+pragma solidity ^0.6.0;
 
 import "../externals/SafeMath.sol";
 

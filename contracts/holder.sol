@@ -16,15 +16,15 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-pragma solidity ^0.5.17;
+pragma solidity ^0.6.0;
 
-import "./externals/ERC20.sol";
 import "./externals/SafeMath.sol";
-import "./internals/transferrable.sol";
+import "./interfaces/IERC20.sol";
+import "./interfaces/IBurner.sol";
 import "./internals/balanceable.sol";
-import "./internals/burner.sol";
 import "./internals/controllable.sol";
 import "./internals/tokenWhitelistable.sol";
+import "./internals/transferrable.sol";
 
 
 /// @title Holder - The TKN Asset Contract
@@ -50,17 +50,17 @@ contract Holder is Balanceable, ENSResolvable, Controllable, Transferrable, Toke
     /// @param _ens_ is the address of the ENS registry.
     /// @param _tokenWhitelistNode_ is the ENS node of the Token whitelist.
     /// @param _controllerNode_ is the ENS node of the Controller
-    constructor(address _burnerContract_, address _ens_, bytes32 _tokenWhitelistNode_, bytes32 _controllerNode_)
-        public
-        ENSResolvable(_ens_)
-        Controllable(_controllerNode_)
-        TokenWhitelistable(_tokenWhitelistNode_)
-    {
+    constructor(
+        address _burnerContract_,
+        address _ens_,
+        bytes32 _tokenWhitelistNode_,
+        bytes32 _controllerNode_
+    ) public ENSResolvable(_ens_) Controllable(_controllerNode_) TokenWhitelistable(_tokenWhitelistNode_) {
         _burner = _burnerContract_;
     }
 
     /// @notice Ether may be sent from anywhere.
-    function() external payable {
+    receive() external payable {
         emit Received(msg.sender, msg.value);
     }
 
