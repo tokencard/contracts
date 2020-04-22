@@ -174,7 +174,11 @@ contract Controller is IController, Ownable, Transferrable {
     }
 
     //// @notice Withdraw tokens from the smart contract to the specified account.
-    function claim(address payable _to, address _asset, uint256 _amount) external onlyAdmin notStopped {
+    function claim(
+        address payable _to,
+        address _asset,
+        uint256 _amount
+    ) external onlyAdmin notStopped {
         _safeTransfer(_to, _asset, _amount);
         emit Claimed(_to, _asset, _amount);
     }

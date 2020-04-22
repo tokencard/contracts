@@ -65,7 +65,14 @@ contract WalletDeployer is ENSResolvable, Controllable {
     /// @param _owner is the owner address for the new Wallet to be
     /// @param _dailyLimit is the user's set daily limit
     /// @param _whitelistedAddresses is the set of the user's whitelisted addresses
-    function migrateWallet(address payable _owner, Wallet _oldWallet, bool _initializedDailyLimit, bool _initializedWhitelist, uint _dailyLimit, address[] calldata _whitelistedAddresses) external payable onlyController {
+    function migrateWallet(
+        address payable _owner,
+        Wallet _oldWallet,
+        bool _initializedDailyLimit,
+        bool _initializedWhitelist,
+        uint256 _dailyLimit,
+        address[] calldata _whitelistedAddresses
+    ) external payable onlyController {
         require(deployedWallets[_owner] == address(0x0), "wallet already deployed for owner");
         require(_oldWallet.owner() == _owner, "owner mismatch");
 
