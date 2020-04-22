@@ -85,9 +85,9 @@ contract WalletCache is ENSResolvable, Controllable {
 
     /// @notice This public method allows anyone to pre-cache wallets
     function cacheWallet() public {
-        // the address(uint160()) cast is done as the Wallet owner (1st argument) needs to be payable
+        // the address is cast to payable because the Wallet owner (1st argument) needs to be payable
         Wallet wallet = new Wallet(
-            address(uint160(_ensResolve(walletDeployerNode))),
+            payable(address(_ensResolve(walletDeployerNode))),
             true,
             ens,
             tokenWhitelistNode,

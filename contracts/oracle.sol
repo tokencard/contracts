@@ -227,7 +227,7 @@ contract Oracle is ENSResolvable, Base64, Date, Controllable, ParseIntScientific
         // Checks if the signature is valid by hashing the headers
         bytes32 dataHash = sha256(_headers);
         signer = dataHash.recover_malleable(_signature);
-        return signer == address(uint160(uint256(keccak256(_publicKey))));
+        return signer == address(uint256(keccak256(_publicKey)));
     }
 
     /// @dev Verify the signed HTTP date header.
