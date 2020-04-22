@@ -19,6 +19,7 @@
 pragma solidity ^0.6.0;
 
 import "./externals/base64.sol";
+import "./externals/ECDSA.sol";
 import "./externals/SafeMath.sol";
 import "./externals/strings.sol";
 import "./internals/controllable.sol";
@@ -30,6 +31,7 @@ import "./internals/tokenWhitelistable.sol";
 
 /// @title Oracle provides asset exchange rates and conversion functionality.
 contract Oracle is ENSResolvable, Base64, Date, Controllable, ParseIntScientific, TokenWhitelistable {
+    using ECDSA for bytes32;
     using SafeMath for uint256;
     using strings for *;
 
@@ -58,7 +60,7 @@ contract Oracle is ENSResolvable, Base64, Date, Controllable, ParseIntScientific
 
     bytes public cryptoCompareAPIPublicKey;
 
-    /// @notice Construct the oracle with multiple controllers, address resolver and custom gas price.
+    /// @dev Construct the oracle with multiple controllers, address resolver and custom gas price.
     /// @param _ens_ is the address of the ENS.
     /// @param _controllerNode_ is the ENS node corresponding to the Controller.
     /// @param _tokenWhitelistNode_ is the ENS corresponding to the Token Whitelist.
@@ -70,18 +72,18 @@ contract Oracle is ENSResolvable, Base64, Date, Controllable, ParseIntScientific
         cryptoCompareAPIPublicKey = hex"a0f4f688350018ad1b9785991c0bde5f704b005dc79972b114dbed4a615a983710bfc647ebe5a320daa28771dce6a2d104f5efa2e4a85ba3760b76d46f8571ca";
     }
 
-    /// @notice Updates the Crypto Compare public API key.
+    /// @dev Updates the Crypto Compare public API key.
     /// @param _publicKey new Crypto Compare public API key
     function updateCryptoCompareAPIPublicKey(bytes calldata _publicKey) external onlyAdmin {
         cryptoCompareAPIPublicKey = _publicKey;
         emit SetCryptoComparePublicKey(msg.sender, _publicKey);
     }
 
-    /// @notice Handle the off-chain oracle call and verifiy the provided origin proof.
+    /// @dev Verifiy the provided origin proof and update token's rate.
+    /// @param _token the address of the token to be updated.
     /// @param _result query result in JSON format.
     /// @param _proof origin proof from CryptoCompare.
-    // solium-disable-next-line mixedcase
-    function __callback(
+    function UpdateTokenRate(
         address _token,
         string calldata _result,
         bytes calldata _proof
@@ -105,7 +107,7 @@ contract Oracle is ENSResolvable, Base64, Date, Controllable, ParseIntScientific
         }
     }
 
-    /// @notice Extracts JSON rate value from the response object.
+    /// @dev Extracts JSON rate value from the response object.
     /// @param _json body of the JSON response from the CryptoCompare API.
     function parseRate(string memory _json) internal pure returns (string memory) {
         uint256 jsonLen = abi.encodePacked(_json).length;
@@ -113,7 +115,7 @@ contract Oracle is ENSResolvable, Base64, Date, Controllable, ParseIntScientific
         require(jsonLen > 8 && jsonLen <= 28, "misformatted input");
 
         bytes memory jsonPrefix = new bytes(7);
-        copyBytes(abi.encodePacked(_json), 0, 7, jsonPrefix, 0);
+        _copyBytes(jsonPrefix, abi.encodePacked(_json), 0, 7);
         require(keccak256(jsonPrefix) == _PREFIX_HASH, "prefix mismatch");
 
         strings.slice memory body = _json.toSlice();
@@ -126,110 +128,27 @@ contract Oracle is ENSResolvable, Base64, Date, Controllable, ParseIntScientific
         return body.toString();
     }
 
-    /*
-     The following function has been written by Alex Beregszaszi, use it under the terms of the MIT license
-    */
-    function copyBytes(
-        bytes memory _from,
-        uint256 _fromOffset,
-        uint256 _length,
-        bytes memory _to,
-        uint256 _toOffset
-    ) internal pure returns (bytes memory _copiedBytes) {
-        uint256 minLength = _length + _toOffset;
-        require(_to.length >= minLength); // Buffer too small. Should be a better way?
-        uint256 i = 32 + _fromOffset; // NOTE: the offset 32 is added to skip the `size` field of both bytes variables
-        uint256 j = 32 + _toOffset;
-        while (i < (32 + _fromOffset + _length)) {
-            assembly {
-                let tmp := mload(add(_from, i))
-                mstore(add(_to, j), tmp)
-            }
-            i += 32;
-            j += 32;
-        }
-        return _to;
-    }
-
-    /*
-     The following function has been written by Alex Beregszaszi, use it under the terms of the MIT license
-     Duplicate Solidity's ecrecover, but catching the CALL return value
-    */
-    function safer_ecrecover(
-        bytes32 _hash,
-        uint8 _v,
-        bytes32 _r,
-        bytes32 _s
-    ) internal returns (bool _success, address _recoveredAddress) {
-        /*
-         We do our own memory management here. Solidity uses memory offset
-         0x40 to store the current end of memory. We write past it (as
-         writes are memory extensions), but don't update the offset so
-         Solidity will reuse it. The memory used here is only needed for
-         this context.
-         FIXME: inline assembly can't access return values
-        */
-        bool ret;
-        address addr;
+     /// @dev Copies bytes from source array to destination array.
+    /// @param _dst the bytes array that we want to copy data to.
+    /// @param _src the bytes array that we want to copy data from.
+    /// @param _srcOffset the offset of the source array that we want to start copying data from.
+    /// @param _len the length of the data we want to copy from source to destination.
+    function _copyBytes(
+        bytes memory _dst,
+        bytes memory _src,
+        uint256 _srcOffset,
+        uint256 _len
+    ) private pure {
+        uint256 dstPtr;
+        uint256 srcPtr = _srcOffset;
         assembly {
-            let size := mload(0x40)
-            mstore(size, _hash)
-            mstore(add(size, 32), _v)
-            mstore(add(size, 64), _r)
-            mstore(add(size, 96), _s)
-            ret := call(3000, 1, 0, size, 128, size, 32) // NOTE: we can reuse the request memory because we deal with the return code.
-            addr := mload(size)
+            dstPtr := add(_dst, 32)
+            srcPtr := add(_src, add(32, _srcOffset))
         }
-        return (ret, addr);
+        dstPtr.memcpy(srcPtr, _len);
     }
 
-    /*
-     The following function has been written by Alex Beregszaszi, use it under the terms of the MIT license
-    */
-    function ecrecovery(bytes32 _hash, bytes memory _sig) internal returns (bool _success, address _recoveredAddress) {
-        bytes32 r;
-        bytes32 s;
-        uint8 v;
-        if (_sig.length != 65) {
-            return (false, address(0));
-        }
-        /*
-         The signature format is a compact form of:
-           {bytes32 r}{bytes32 s}{uint8 v}
-         Compact means, uint8 is not padded to 32 bytes.
-        */
-        assembly {
-            r := mload(add(_sig, 32))
-            s := mload(add(_sig, 64))
-            /*
-             Here we are loading the last 32 bytes. We exploit the fact that
-             'mload' will pad with zeroes if we overread.
-             There is no 'mload8' to do this, but that would be nicer.
-            */
-            v := byte(0, mload(add(_sig, 96)))
-            /*
-              Alternative solution:
-              'byte' is not working due to the Solidity parser, so lets
-              use the second best option, 'and'
-              v := and(mload(add(_sig, 65)), 255)
-            */
-        }
-        /*
-         albeit non-transactional signatures are not specified by the YP, one would expect it
-         to match the YP range of [27, 28]
-         geth uses [0, 1] and some clients have followed. This might change, see:
-         https://github.com/ethereum/go-ethereum/issues/2053
-        */
-        if (v < 27) {
-            v += 27;
-        }
-        if (v != 27 && v != 28) {
-            return (false, address(0));
-        }
-        return safer_ecrecover(_hash, v, r, s);
-    }
-
-    /// @notice Verify the origin proof returned by the cryptocompare API.
+    /// @dev Verify the origin proof returned by the cryptocompare API.
     /// @param _result query result in JSON format.
     /// @param _proof origin proof from cryptocompare.
     /// @param _publicKey cryptocompare public key.
@@ -252,8 +171,7 @@ contract Oracle is ENSResolvable, Base64, Date, Controllable, ParseIntScientific
 
         bytes memory signature = new bytes(_ECDSA_SIG_LEN);
 
-        signature = copyBytes(_proof, 2, _ECDSA_SIG_LEN, signature, 0);
-
+        _copyBytes(signature, _proof, 2, _ECDSA_SIG_LEN);
         // Extract the headers, big endian encoding of headers length
         if (
             uint256(uint8(_proof[_ENCODING_BYTES + _ECDSA_SIG_LEN])) * _MAX_BYTE_SIZE + uint256(uint8(_proof[_ENCODING_BYTES + _ECDSA_SIG_LEN + 1])) !=
@@ -263,7 +181,7 @@ contract Oracle is ENSResolvable, Base64, Date, Controllable, ParseIntScientific
         }
 
         bytes memory headers = new bytes(_HEADERS_LEN);
-        headers = copyBytes(_proof, 2 * _ENCODING_BYTES + _ECDSA_SIG_LEN, _HEADERS_LEN, headers, 0);
+        _copyBytes(headers, _proof, 2 * _ENCODING_BYTES + _ECDSA_SIG_LEN, _HEADERS_LEN);
 
         // Check if the signature is valid and if the signer address is matching.
         if (!_verifySignature(headers, signature, _publicKey)) {
@@ -273,7 +191,7 @@ contract Oracle is ENSResolvable, Base64, Date, Controllable, ParseIntScientific
         // Check if the date is valid.
         bytes memory dateHeader = new bytes(20);
         // keep only the relevant string(e.g. "16 Nov 2018 16:22:18")
-        dateHeader = copyBytes(headers, 11, 20, dateHeader, 0);
+        _copyBytes(dateHeader, headers, 11, 20);
 
         bool dateValid;
         uint256 timestamp;
@@ -286,7 +204,7 @@ contract Oracle is ENSResolvable, Base64, Date, Controllable, ParseIntScientific
 
         // Check if the signed digest hash matches the result hash.
         bytes memory digest = new bytes(_DIGEST_BASE64_LEN);
-        digest = copyBytes(headers, _DIGEST_OFFSET, _DIGEST_BASE64_LEN, digest, 0);
+        _copyBytes(digest, headers, _DIGEST_OFFSET, _DIGEST_BASE64_LEN);
 
         if (keccak256(abi.encodePacked(sha256(abi.encodePacked(_result)))) != keccak256(_base64decode(digest))) {
             revert("result hash not matching");
@@ -296,7 +214,7 @@ contract Oracle is ENSResolvable, Base64, Date, Controllable, ParseIntScientific
         return (true, timestamp);
     }
 
-    /// @notice Verify the HTTP headers and the signature
+    /// @dev Verify the HTTP headers and the signature
     /// @param _headers HTTP headers provided by the cryptocompare api
     /// @param _signature signature provided by the cryptocompare api
     /// @param _publicKey cryptocompare public key.
@@ -306,14 +224,13 @@ contract Oracle is ENSResolvable, Base64, Date, Controllable, ParseIntScientific
         bytes memory _publicKey
     ) private returns (bool) {
         address signer;
-        bool signatureOK;
-
         // Checks if the signature is valid by hashing the headers
-        (signatureOK, signer) = ecrecovery(sha256(_headers), _signature);
-        return signatureOK && signer == address(uint160(uint256(keccak256(_publicKey))));
+        bytes32 dataHash = sha256(_headers);
+        signer = dataHash.recover_malleable(_signature);
+        return signer == address(uint160(uint256(keccak256(_publicKey))));
     }
 
-    /// @notice Verify the signed HTTP date header.
+    /// @dev Verify the signed HTTP date header.
     /// @param _dateHeader extracted date string e.g. Wed, 12 Sep 2018 15:18:14 GMT.
     /// @param _lastUpdate timestamp of the last time the requested token was updated.
     function _verifyDate(string memory _dateHeader, uint256 _lastUpdate) private pure returns (bool, uint256) {
