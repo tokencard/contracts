@@ -595,12 +595,16 @@ contract Wallet is ENSResolvable, GasTopUpLimit, LoadLimit, AddressWhitelist, Sp
     /// @param _data abi encoded data payload.
     /// @param _signature signed prefix + data.
     function executeRelayedTransaction(uint256 _nonce, bytes calldata _data, bytes calldata _signature) external onlyController {
-        // expecting prefixed data ("rlx:") indicating relayed transaction...
+        // Expecting prefixed data ("monolith:") indicating relayed transaction...
         // ...and an Ethereum Signed Message to protect user from signing an actual Tx
-        bytes32 dataHash = keccak256(abi.encodePacked("rlx:", _nonce, _data)).toEthSignedMessageHash();
-        // verify signature validity i.e. signer == owner
+        uint256 id;
+        assembly {
+            id := chainid() //1 for Ethereum mainnet, > 1 for public testnets.
+        }
+        bytes32 dataHash = keccak256(abi.encodePacked("monolith:", id, address(this), _nonce, _data)).toEthSignedMessageHash();
+        // Verify signature validity i.e. signer == owner
         require(isValidSignature(dataHash, _signature) == _EIP_1654, "sig not valid");
-        // verify and increase relayNonce to prevent replay attacks from the relayer
+        // Verify and increase relayNonce to prevent replay attacks from the relayer
         require(_nonce == relayNonce, "tx replay");
         _increaseRelayNonce();
 
@@ -629,7 +633,7 @@ contract Wallet is ENSResolvable, GasTopUpLimit, LoadLimit, AddressWhitelist, Sp
     /// @param _signature Signature byte array associated with _data
     function isValidSignature(bytes calldata _data, bytes calldata _signature) external view returns (bytes4) {
         bytes32 dataHash = keccak256(abi.encodePacked(_data));
-        // isValidSignature called reverts if not valid.
+        // isValidSignature call reverts if not valid.
         require(isValidSignature(dataHash, _signature) == _EIP_1654, "sig not valid");
         return _EIP_1271;
     }
@@ -813,7 +817,7 @@ contract Wallet is ENSResolvable, GasTopUpLimit, LoadLimit, AddressWhitelist, Sp
     /// @param _signature Signature byte array associated with _dataHash
     function isValidSignature(bytes32 _hashedData, bytes memory _signature) public view returns (bytes4) {
         address from = _hashedData.recover(_signature);
-        require(_isOwner(from), "only owner");
+        require(_isOwner(from), "invalid signature");
         return _EIP_1654;
     }
 
