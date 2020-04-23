@@ -525,7 +525,7 @@ contract Wallet is ENSResolvable, GasTopUpLimit, LoadLimit, AddressWhitelist, Sp
     event Transferred(address _to, address _asset, uint256 _amount);
     event UpdatedAvailableLimit(); // This is here because our tests don't inherit events from a library
 
-    string public constant WALLET_VERSION = "3.1.1";
+    string public constant WALLET_VERSION = "3.2.0";
 
     // keccak256("isValidSignature(bytes,bytes)") = 20c13b0bc670c284a9f19cdf7a533ca249404190f8dc132aac33e733b965269e
     bytes4 private constant _EIP_1271 = 0x20c13b0b;
