@@ -99,7 +99,7 @@ var _ = BeforeEach(func() {
 })
 
 var allPassed = true
-var currentVersion = "3.1.1"
+var currentVersion = "3.2.0"
 
 var _ = Describe("Wallet Version", func() {
 	It("should return the current version", func() {
