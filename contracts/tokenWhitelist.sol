@@ -244,10 +244,9 @@ contract TokenWhitelist is ENSResolvable, Controllable, Transferrable {
         require(_tokenInfoMap[_token].available, "redeemable: token not available");
         // If it does not change the current state i.e. _tokenInfoMap[_token].redeemable == _redeemable, revert!
         require(_tokenInfoMap[_token].redeemable != _redeemable, "redeemable: no state change");
-        if (_redeemable){
+        if (_redeemable) {
             _redeemableCounter = _redeemableCounter.add(1);
-        }
-        else{
+        } else {
             _redeemableCounter = _redeemableCounter.sub(1);
         }
         // This sets the redeemable flag to the value passed in
