@@ -18,14 +18,15 @@
 
 pragma solidity ^0.6.0;
 
+import "../externals/Address.sol";
 import "../externals/SafeERC20.sol";
 import "../interfaces/IERC20.sol";
 
 
 /// @title SafeTransfer, allowing contract to withdraw tokens accidentally sent to itself
 abstract contract Transferrable {
+    using Address for address payable;
     using SafeERC20 for IERC20;
-
     /// @dev This function is used to move tokens sent accidentally to this contract method.
     /// @dev The owner can chose the new destination address
     /// @param _to is the recipient's address.
@@ -38,7 +39,7 @@ abstract contract Transferrable {
     ) internal {
         // address(0) is used to denote ETH
         if (_asset == address(0)) {
-            _to.transfer(_amount);
+            _to.sendValue(_amount);
         } else {
             IERC20(_asset).safeTransfer(_to, _amount);
         }
