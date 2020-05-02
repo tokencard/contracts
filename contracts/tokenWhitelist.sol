@@ -164,7 +164,7 @@ contract TokenWhitelist is ENSResolvable, Controllable, Transferrable {
             });
             // Add the token address to the address list.
             _tokenAddressArray.push(_tokens[i]);
-            //if the token is redeemable increase the redeemableCounter
+            //if the token is redeemable, increase the redeemableCounter
             if (_redeemable[i]) {
                 _redeemableCounter = _redeemableCounter.add(1);
             }
@@ -230,7 +230,7 @@ contract TokenWhitelist is ENSResolvable, Controllable, Transferrable {
     /// @notice Toggles whether or not a token is loadable or not.
     function setTokenLoadable(address _token, bool _loadable) external onlyAdmin {
         // Require that the token exists.
-        require(_tokenInfoMap[_token].available, "token is not available");
+        require(_tokenInfoMap[_token].available, "loadable: token is not available");
 
         // this sets the loadable flag to the value passed in
         _tokenInfoMap[_token].loadable = _loadable;
@@ -241,9 +241,16 @@ contract TokenWhitelist is ENSResolvable, Controllable, Transferrable {
     /// @notice Toggles whether or not a token is redeemable or not.
     function setTokenRedeemable(address _token, bool _redeemable) external onlyAdmin {
         // Require that the token exists.
-        require(_tokenInfoMap[_token].available, "token is not available");
-
-        // this sets the redeemable flag to the value passed in
+        require(_tokenInfoMap[_token].available, "redeemable: token not available");
+        // If it does not change the current state i.e. _tokenInfoMap[_token].redeemable == _redeemable, revert!
+        require(_tokenInfoMap[_token].redeemable != _redeemable, "redeemable: no state change");
+        if (_redeemable){
+            _redeemableCounter = _redeemableCounter.add(1);
+        }
+        else{
+            _redeemableCounter = _redeemableCounter.sub(1);
+        }
+        // This sets the redeemable flag to the value passed in
         _tokenInfoMap[_token].redeemable = _redeemable;
 
         emit UpdatedTokenRedeemable(msg.sender, _token, _redeemable);

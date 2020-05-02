@@ -64,6 +64,7 @@ var _ = Describe("setTokenLoadable", func() {
 				Expect(evt.Loadable).To(BeFalse())
 			})
 		})
+
 		Context("When not called by the controller admin", func() {
 			It("Should fail", func() {
 				tx, err := TokenWhitelist.SetTokenLoadable(
@@ -73,7 +74,6 @@ var _ = Describe("setTokenLoadable", func() {
 				)
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
-				Expect(isGasExhausted(tx, 100000)).To(BeFalse())
 				Expect(isSuccessful(tx)).To(BeFalse())
 			})
 		})
@@ -89,7 +89,6 @@ var _ = Describe("setTokenLoadable", func() {
 				)
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
-				Expect(isGasExhausted(tx, 100000)).To(BeFalse())
 				Expect(isSuccessful(tx)).To(BeFalse())
 			})
 		})
@@ -103,7 +102,6 @@ var _ = Describe("setTokenLoadable", func() {
 				)
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
-				Expect(isGasExhausted(tx, 100000)).To(BeFalse())
 				Expect(isSuccessful(tx)).To(BeFalse())
 			})
 		})
@@ -128,7 +126,25 @@ var _ = Describe("setTokenRedeemable", func() {
 			Backend.Commit()
 			Expect(isSuccessful(tx)).To(BeTrue())
 		})
-		Context("When called by the controller admin", func() {
+
+		It("The redeemable counter should be equal to 1", func() {
+			cnt, err := TokenWhitelist.RedeemableCounter(nil)
+			Expect(err).ToNot(HaveOccurred())
+			Expect(cnt.String()).To(Equal("1"))
+		})
+
+		When("trying to set it to the current value (true)", func() {
+			It("Should fail", func() {
+				tx, err := TokenWhitelist.SetTokenRedeemable(ControllerAdmin.TransactOpts(ethertest.WithGasLimit(100000)), common.HexToAddress("0x1"), true)
+				Expect(err).ToNot(HaveOccurred())
+				Backend.Commit()
+				Expect(isSuccessful(tx)).To(BeFalse())
+				returnData, _ := ethCall(tx)
+				Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("redeemable: no state change"))
+			})
+		})
+
+		When("called by the controller admin", func() {
 			var tx *types.Transaction
 
 			BeforeEach(func() {
@@ -163,8 +179,25 @@ var _ = Describe("setTokenRedeemable", func() {
 				Expect(evt.Token).To(Equal(common.HexToAddress("0x1")))
 				Expect(evt.Redeemable).To(BeFalse())
 			})
+
+			It("Should decrease the redeemable counter", func() {
+				cnt, err := TokenWhitelist.RedeemableCounter(nil)
+				Expect(err).ToNot(HaveOccurred())
+				Expect(cnt.String()).To(Equal("0"))
+			})
+
+			When("trying to set it to the current value (false)", func() {
+				It("Should fail", func() {
+					tx, err := TokenWhitelist.SetTokenRedeemable(ControllerAdmin.TransactOpts(ethertest.WithGasLimit(100000)), common.HexToAddress("0x1"), false)
+					Expect(err).ToNot(HaveOccurred())
+					Backend.Commit()
+					Expect(isSuccessful(tx)).To(BeFalse())
+					returnData, _ := ethCall(tx)
+					Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("redeemable: no state change"))
+				})
+			})
 		})
-		Context("When not called by the controller", func() {
+		Context("When not called by the controller admin", func() {
 			It("Should fail", func() {
 				tx, err := TokenWhitelist.SetTokenRedeemable(
 					RandomAccount.TransactOpts(ethertest.WithGasLimit(100000)),
@@ -173,8 +206,9 @@ var _ = Describe("setTokenRedeemable", func() {
 				)
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
-				Expect(isGasExhausted(tx, 100000)).To(BeFalse())
 				Expect(isSuccessful(tx)).To(BeFalse())
+				returnData, _ := ethCall(tx)
+				Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("sender is not an admin"))
 			})
 		})
 	})
@@ -189,12 +223,13 @@ var _ = Describe("setTokenRedeemable", func() {
 				)
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
-				Expect(isGasExhausted(tx, 100000)).To(BeFalse())
 				Expect(isSuccessful(tx)).To(BeFalse())
+				returnData, _ := ethCall(tx)
+				Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("token"))
 			})
 		})
 
-		Context("When not called by the controller", func() {
+		Context("When not called by the controller admin", func() {
 			It("Should fail", func() {
 				tx, err := TokenWhitelist.SetTokenRedeemable(
 					RandomAccount.TransactOpts(ethertest.WithGasLimit(100000)),
@@ -203,7 +238,6 @@ var _ = Describe("setTokenRedeemable", func() {
 				)
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
-				Expect(isGasExhausted(tx, 100000)).To(BeFalse())
 				Expect(isSuccessful(tx)).To(BeFalse())
 			})
 		})
