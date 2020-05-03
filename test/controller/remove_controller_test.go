@@ -1,7 +1,6 @@
 package controller_test
 
 import (
-	"github.com/ethereum/go-ethereum/core/types"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	. "github.com/tokencard/contracts/v3/test/shared"
@@ -10,18 +9,17 @@ import (
 
 var _ = Describe("removeController", func() {
 
+	const gasLimit = 100000
+
 	When("controller owner calls RemoveController with a controller admin address", func() {
 
-		var tx *types.Transaction
-		const gasLimit = 100000
-
 		BeforeEach(func() {
-			var err error
-			tx, err = ControllerContract.RemoveController(ControllerOwner.TransactOpts(ethertest.WithGasLimit(gasLimit)), ControllerAdmin.Address())
+			tx, err := ControllerContract.RemoveController(ControllerOwner.TransactOpts(ethertest.WithGasLimit(gasLimit)), ControllerAdmin.Address())
 			Expect(err).ToNot(HaveOccurred())
 			Backend.Commit()
-			Expect(isGasExhausted(tx, gasLimit)).To(BeFalse())
 			Expect(isSuccessful(tx)).To(BeFalse())
+			returnData, _ := ethCall(tx)
+			Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("provided account is not a controller"))
 		})
 
 		It("should NOT decrease number of admins", func() {
@@ -36,13 +34,6 @@ var _ = Describe("removeController", func() {
 			Expect(it.Next()).To(BeFalse())
 		})
 
-		It("should fail", func() {
-			Expect(isSuccessful(tx)).To(BeFalse())
-		})
-
-		It("should not exaust gas", func() {
-			Expect(isGasExhausted(tx, gasLimit)).To(BeFalse())
-		})
 	})
 
 	When("controller admin calls RemoveController with a controller address", func() {
@@ -73,14 +64,13 @@ var _ = Describe("removeController", func() {
 
 	When("controller admin calls RemoveController with a non controller address", func() {
 
-		var tx *types.Transaction
-		const gasLimit = 100000
-
 		BeforeEach(func() {
-			var err error
-			tx, err = ControllerContract.RemoveController(ControllerAdmin.TransactOpts(ethertest.WithGasLimit(gasLimit)), RandomAccount.Address())
+			tx, err := ControllerContract.RemoveController(ControllerAdmin.TransactOpts(ethertest.WithGasLimit(gasLimit)), RandomAccount.Address())
 			Expect(err).ToNot(HaveOccurred())
 			Backend.Commit()
+			Expect(isSuccessful(tx)).To(BeFalse())
+			returnData, _ := ethCall(tx)
+			Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("provided account is not a controller"))
 		})
 
 		It("should NOT decrease number of controllers", func() {
@@ -95,34 +85,16 @@ var _ = Describe("removeController", func() {
 			Expect(it.Next()).To(BeFalse())
 		})
 
-		It("should fail", func() {
-			Expect(isSuccessful(tx)).To(BeFalse())
-		})
-
-		It("should not exaust gas", func() {
-			Expect(isGasExhausted(tx, gasLimit)).To(BeFalse())
-		})
-
 	})
 
 	When("a Random address calls RemoveController with a controller admin address", func() {
-
-		var tx *types.Transaction
-		const gasLimit = 100000
-
-		BeforeEach(func() {
-			var err error
-			tx, err = ControllerContract.RemoveController(RandomAccount.TransactOpts(ethertest.WithGasLimit(gasLimit)), ControllerAdmin.Address())
+		It("should fail", func() {
+			tx, err := ControllerContract.RemoveController(RandomAccount.TransactOpts(ethertest.WithGasLimit(gasLimit)), ControllerAdmin.Address())
 			Expect(err).ToNot(HaveOccurred())
 			Backend.Commit()
-		})
-
-		It("should fail", func() {
 			Expect(isSuccessful(tx)).To(BeFalse())
-		})
-
-		It("should not exaust gas", func() {
-			Expect(isGasExhausted(tx, gasLimit)).To(BeFalse())
+			returnData, _ := ethCall(tx)
+			Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("sender is not admin or owner"))
 		})
 
 	})
