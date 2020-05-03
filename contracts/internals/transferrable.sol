@@ -27,6 +27,7 @@ import "../interfaces/IERC20.sol";
 abstract contract Transferrable {
     using Address for address payable;
     using SafeERC20 for IERC20;
+
     /// @dev This function is used to move tokens sent accidentally to this contract method.
     /// @dev The owner can chose the new destination address
     /// @param _to is the recipient's address.

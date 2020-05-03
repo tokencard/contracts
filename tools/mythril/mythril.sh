@@ -5,7 +5,7 @@ if [ ! -d "contracts" ]; then
 	exit 1
 fi
 
-docker run --rm -v "$PWD":/contracts -it --workdir=/contracts/contracts --entrypoint=sh mythril/myth@sha256:75605a2a7e848e416f471a67159d6812feaa45e03ddd352aac588e505d68e5c5 -c '
+docker run --rm -v "$PWD":/contracts -it --workdir=/contracts/contracts --entrypoint=sh mythril/myth:latest -c '
 myth analyze --solv=0.6.4 controller.sol --execution-timeout=800 &&
 myth analyze --solv=0.6.4 holder.sol --execution-timeout=800 &&
 myth analyze --solv=0.6.4 licence.sol --execution-timeout=800 &&
