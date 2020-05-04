@@ -11,9 +11,9 @@ import (
 	"github.com/tokencard/ethertest"
 )
 
-var _ = Describe("transfer", func() {
+var _ = FDescribe("transfer", func() {
 
-	Context("when the wallet has enough ETH, the daily limit is 100$ and the rate is 1", func() {
+	Context("when the wallet has enough ETH, the daily limit is 100 and the rate is 1", func() {
 		BeforeEach(func() {
 			BankAccount.MustTransfer(Backend, WalletAddress, EthToWei(101))
 			BankAccount.MustTransfer(Backend, Controller.Address(), EthToWei(1))
@@ -29,14 +29,14 @@ var _ = Describe("transfer", func() {
 			Expect(isSuccessful(tx)).To(BeTrue())
 		})
 
-        It("should emit a UpdatedAvailableDailyLimit event", func() {
-            it, err := Wallet.FilterUpdatedAvailableDailyLimit(nil)
-            Expect(err).ToNot(HaveOccurred())
-            Expect(it.Next()).To(BeTrue())
-            evt := it.Event
-            Expect(it.Next()).To(BeFalse())
-            Expect(evt.Amount.String()).To(Equal(EthToWei(100).String()))
-        })
+		It("should emit a UpdatedAvailableDailyLimit event", func() {
+			it, err := Wallet.FilterUpdatedAvailableDailyLimit(nil)
+			Expect(err).ToNot(HaveOccurred())
+			Expect(it.Next()).To(BeTrue())
+			evt := it.Event
+			Expect(it.Next()).To(BeFalse())
+			Expect(evt.Amount.String()).To(Equal(EthToWei(100).String()))
+		})
 
 		Context("When I transfer 100 ETH to a randon person", func() {
 			BeforeEach(func() {
@@ -46,27 +46,15 @@ var _ = Describe("transfer", func() {
 				Expect(isSuccessful(tx)).To(BeTrue())
 			})
 
-			It("should reduce available transfer for today by 100$", func() {
-				av, err := Wallet.DailyLimitAvailable(nil)
+			It("should emit a UpdatedAvailableDailyLimit event", func() {
+				it, err := Wallet.FilterUpdatedAvailableDailyLimit(nil)
 				Expect(err).ToNot(HaveOccurred())
-				Expect(av.String()).To(Equal("0"))
+				Expect(it.Next()).To(BeTrue())
+				Expect(it.Next()).To(BeTrue())
+				evt := it.Event
+				Expect(it.Next()).To(BeFalse())
+				Expect(evt.Amount.String()).To(Equal("0"))
 			})
-
-			It("should update the available amount to 0", func() {
-				av, err := Wallet.DailyLimitAvailable(nil)
-				Expect(err).ToNot(HaveOccurred())
-				Expect(av.String()).To(Equal("0"))
-			})
-
-            It("should emit a UpdatedAvailableDailyLimit event", func() {
-                it, err := Wallet.FilterUpdatedAvailableDailyLimit(nil)
-                Expect(err).ToNot(HaveOccurred())
-                Expect(it.Next()).To(BeTrue())
-                Expect(it.Next()).To(BeTrue())
-                evt := it.Event
-                Expect(it.Next()).To(BeFalse())
-                Expect(evt.Amount.String()).To(Equal("0"))
-            })
 
 			When("I transfer 1 extra wei to a randon person", func() {
 				It("should fail", func() {
@@ -97,16 +85,16 @@ var _ = Describe("transfer", func() {
 						Expect(isSuccessful(tx)).To(BeTrue())
 					})
 
-                    It("should emit a UpdatedAvailableDailyLimit event", func() {
-                        it, err := Wallet.FilterUpdatedAvailableDailyLimit(nil)
-                        Expect(err).ToNot(HaveOccurred())
-                        Expect(it.Next()).To(BeTrue())
-                        Expect(it.Next()).To(BeTrue())
-                        Expect(it.Next()).To(BeTrue())
-                        evt := it.Event
-                        Expect(it.Next()).To(BeFalse())
-                        Expect(evt.Amount.String()).To(Equal("99999000000000000000"))
-                    })
+					It("should emit a UpdatedAvailableDailyLimit event", func() {
+						it, err := Wallet.FilterUpdatedAvailableDailyLimit(nil)
+						Expect(err).ToNot(HaveOccurred())
+						Expect(it.Next()).To(BeTrue())
+						Expect(it.Next()).To(BeTrue())
+						Expect(it.Next()).To(BeTrue())
+						evt := it.Event
+						Expect(it.Next()).To(BeFalse())
+						Expect(evt.Amount.String()).To(Equal("99999000000000000000"))
+					})
 
 					It("should reduce available transfer for today by 1 Finney", func() {
 						av, err := Wallet.DailyLimitAvailable(nil)
@@ -202,7 +190,7 @@ var _ = Describe("transfer", func() {
 				It("should reduce the available daily balance", func() {
 					av, err := Wallet.DailyLimitAvailable(nil)
 					Expect(err).ToNot(HaveOccurred())
-					Expect(av.String()).To(AlmostEqual("99999999999951010000"))
+					Expect(av.String()).To(Equal("99999999999951010000"))
 				})
 			})
 

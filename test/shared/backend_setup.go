@@ -2,7 +2,6 @@ package shared
 
 import (
 	"context"
-	"fmt"
 	"math"
 	"math/big"
 	"strings"
@@ -14,7 +13,6 @@ import (
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/crypto"
 	. "github.com/onsi/gomega"
-	gtypes "github.com/onsi/gomega/types"
 	"github.com/pkg/errors"
 	"github.com/tokencard/contracts/v3/pkg/bindings"
 	"github.com/tokencard/contracts/v3/pkg/bindings/externals/ens"
@@ -24,7 +22,6 @@ import (
 )
 
 var ErrFailedTransaction = errors.New("transaction failed")
-
 
 func EthToWei(amount int) *big.Int {
 	r := big.NewInt(1000000000000000000)
@@ -136,46 +133,6 @@ var BankAccount *ethertest.Account
 
 var TestRig = ethertest.NewTestRig()
 var Backend ethertest.TestBackend
-
-func AlmostEqual(val string) gtypes.GomegaMatcher {
-	return almostEqual(val)
-}
-
-type almostEqual string
-
-func (m almostEqual) FailureMessage(actual interface{}) (message string) {
-	return fmt.Sprintf("Actual value %v is not almost equal to expected %v", m, actual)
-}
-
-func (m almostEqual) NegatedFailureMessage(actual interface{}) (message string) {
-	return fmt.Sprintf("Actual value %v is almost equal to expected %v", m, actual)
-}
-
-var maxDelta = big.NewInt(1000000)
-
-func (m almostEqual) Match(actual interface{}) (success bool, err error) {
-
-	expected, ok := big.NewInt(0).SetString(string(m), 10)
-	if !ok {
-		return false, fmt.Errorf("%q is not a decimal integer", expected)
-	}
-
-	actualString, ok := actual.(string)
-	if !ok {
-		return false, fmt.Errorf("actual value is not a string")
-	}
-
-	act, ok := big.NewInt(0).SetString(actualString, 10)
-	if !ok {
-		return false, fmt.Errorf("%q is not a decimal integer", actualString)
-	}
-
-	delta := big.NewInt(0)
-
-	delta = delta.Sub(act, expected)
-
-	return delta.Abs(delta).Cmp(maxDelta) == -1, nil
-}
 
 func StringsToByte32(names ...string) [][32]byte {
 	r := [][32]byte{}
