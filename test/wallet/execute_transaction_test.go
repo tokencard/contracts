@@ -22,12 +22,12 @@ var _ = Describe("executeTransaction", func() {
 		BeforeEach(func() {
 			BankAccount.MustTransfer(Backend, WalletAddress, EthToWei(101))
 
-            tx, err := TokenWhitelist.UpdateTokenRate(ControllerAdmin.TransactOpts(), StablecoinAddress, EthToWei(1),big.NewInt(20180913153211))
-            Expect(err).ToNot(HaveOccurred())
-            Backend.Commit()
-            Expect(isSuccessful(tx)).To(BeTrue())
+			tx, err := TokenWhitelist.UpdateTokenRate(ControllerAdmin.TransactOpts(), StablecoinAddress, EthToWei(1), big.NewInt(20180913153211))
+			Expect(err).ToNot(HaveOccurred())
+			Backend.Commit()
+			Expect(isSuccessful(tx)).To(BeTrue())
 
-            tx, err = Wallet.SubmitDailyLimitUpdate(Owner.TransactOpts(), EthToWei(100))
+			tx, err = Wallet.SubmitDailyLimitUpdate(Owner.TransactOpts(), EthToWei(100))
 			Expect(err).ToNot(HaveOccurred())
 			Backend.Commit()
 			Expect(isSuccessful(tx)).To(BeTrue())
@@ -75,7 +75,7 @@ var _ = Describe("executeTransaction", func() {
 					Expect(evt.Destination).To(Equal(randomAddress))
 					Expect(evt.Value.String()).To(Equal(FinneyToWei(500).String()))
 					Expect(evt.Data).To(Equal([]uint8{}))
-                    Expect(evt.Returndata).To(Equal(common.Hex2Bytes("")))
+					Expect(evt.Returndata).To(Equal(common.Hex2Bytes("")))
 				})
 			})
 
@@ -121,7 +121,7 @@ var _ = Describe("executeTransaction", func() {
 					Expect(err).ToNot(HaveOccurred())
 					ed, _ := a.Pack("transfer", randomAddress, big.NewInt(300))
 					Expect(evt.Data).To(Equal(ed))
-                    Expect(evt.Returndata).To(Equal(common.Hex2Bytes("")))
+					Expect(evt.Returndata).To(Equal(common.Hex2Bytes("")))
 				})
 			})
 
@@ -173,7 +173,7 @@ var _ = Describe("executeTransaction", func() {
 					Expect(evt.Destination).To(Equal(randomAddress))
 					Expect(evt.Value.String()).To(Equal(EthToWei(100).String()))
 					Expect(evt.Data).To(Equal([]uint8{}))
-                    Expect(evt.Returndata).To(Equal(common.Hex2Bytes("")))
+					Expect(evt.Returndata).To(Equal(common.Hex2Bytes("")))
 				})
 			})
 
@@ -220,7 +220,7 @@ var _ = Describe("executeTransaction", func() {
 					Expect(evt.Value.String()).To(Equal(FinneyToWei(500).String()))
 					Expect(evt.Returndata).To(Equal(common.Hex2Bytes("")))
 					Expect(evt.Data).To(Equal([]uint8{}))
-                    Expect(evt.Returndata).To(Equal(common.Hex2Bytes("")))
+					Expect(evt.Returndata).To(Equal(common.Hex2Bytes("")))
 				})
 			})
 
@@ -289,7 +289,7 @@ var _ = Describe("executeTransaction", func() {
 					Expect(err).ToNot(HaveOccurred())
 					ed, _ := a.Pack("burn", big.NewInt(300))
 					Expect(evt.Data).To(Equal(ed))
-                    Expect(evt.Returndata).To(Equal(common.Hex2Bytes("0000000000000000000000000000000000000000000000000000000000000001")))
+					Expect(evt.Returndata).To(Equal(common.Hex2Bytes("0000000000000000000000000000000000000000000000000000000000000001")))
 				})
 			})
 
@@ -339,7 +339,7 @@ var _ = Describe("executeTransaction", func() {
 					Expect(err).ToNot(HaveOccurred())
 					ed, _ := a.Pack("transfer", RandomAccount.Address(), big.NewInt(300))
 					Expect(evt.Data).To(Equal(ed))
-                    Expect(evt.Returndata).To(Equal(common.Hex2Bytes("0000000000000000000000000000000000000000000000000000000000000001")))
+					Expect(evt.Returndata).To(Equal(common.Hex2Bytes("0000000000000000000000000000000000000000000000000000000000000001")))
 				})
 			})
 
