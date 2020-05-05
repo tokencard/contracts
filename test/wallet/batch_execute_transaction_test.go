@@ -1,284 +1,295 @@
 package wallet_test
 
-// import (
-// 	"context"
-// 	"fmt"
-// 	"math/big"
-// 	"strings"
+import (
+	"context"
+	"fmt"
+	"math/big"
+	"strings"
 
-// 	"github.com/ethereum/go-ethereum/accounts/abi"
-// 	"github.com/ethereum/go-ethereum/common"
-// 	"github.com/ethereum/go-ethereum/crypto"
-// 	. "github.com/onsi/ginkgo"
-// 	. "github.com/onsi/gomega"
-// 	. "github.com/tokencard/contracts/v3/test/shared"
-// 	"github.com/tokencard/ethertest"
-// )
+	"github.com/ethereum/go-ethereum/accounts/abi"
+	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/crypto"
+	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/gomega"
+	. "github.com/tokencard/contracts/v3/test/shared"
+	"github.com/tokencard/ethertest"
+)
 
-// var _ = Describe("batchExecuteTransaction", func() {
+// Extra tests: in order to test _batchExecuteTransaction, we use executeRelayedTransaction()
+var _ = Describe("batchExecuteTransaction", func() {
 
-// 	Context("when the wallet has enough ETH and ERC20 tokens", func() {
-// 		BeforeEach(func() {
-// 			BankAccount.MustTransfer(Backend, WalletAddress, EthToWei(1))
+	Context("when the wallet has enough ETH and ERC20 tokens", func() {
+		BeforeEach(func() {
+			BankAccount.MustTransfer(Backend, WalletAddress, EthToWei(1))
 
-// 			var err error
-// 			tx, err := TKNBurner.Mint(BankAccount.TransactOpts(), WalletAddress, big.NewInt(300))
-// 			Expect(err).ToNot(HaveOccurred())
-// 			Backend.Commit()
-// 			Expect(isSuccessful(tx)).To(BeTrue())
-// 		})
+			tx, err := TKNBurner.Mint(BankAccount.TransactOpts(), WalletAddress, big.NewInt(300))
+			Expect(err).ToNot(HaveOccurred())
+			Backend.Commit()
+			Expect(isSuccessful(tx)).To(BeTrue())
+		})
 
-// 		When("I batch a normal and an ERC20 transfer (both external calls)", func() {
+		When("I batch a normal and an ERC20 transfer (both external calls)", func() {
 
-// 			var randomAddress common.Address
+			var randomAddress common.Address
 
-// 			BeforeEach(func() {
+			BeforeEach(func() {
 
-// 				privateKey, _ := crypto.GenerateKey()
-// 				randomAddress = crypto.PubkeyToAddress(privateKey.PublicKey)
+				privateKey, _ := crypto.GenerateKey()
+				randomAddress = crypto.PubkeyToAddress(privateKey.PublicKey)
 
-// 				batch := fmt.Sprintf("%s%s%s", randomAddress, abi.U256(EthToWei(1)), abi.U256(big.NewInt(0)))
+				data1 := fmt.Sprintf("%s%s%s", randomAddress, abi.U256(EthToWei(1)), abi.U256(big.NewInt(0)))
 
-// 				a, err := abi.JSON(strings.NewReader(ERC20ABI))
-// 				Expect(err).ToNot(HaveOccurred())
-// 				data, err := a.Pack("transfer", randomAddress, big.NewInt(300))
-// 				Expect(err).ToNot(HaveOccurred())
-// 				batch = fmt.Sprintf("%s%s%s%s%s", batch, TKNBurnerAddress, abi.U256(big.NewInt(0)), abi.U256(big.NewInt(int64(len(data)))), data)
+				a, err := abi.JSON(strings.NewReader(ERC20ABI))
+				Expect(err).ToNot(HaveOccurred())
+				data2, err := a.Pack("transfer", randomAddress, big.NewInt(300))
+				Expect(err).ToNot(HaveOccurred())
+				batch := []byte(fmt.Sprintf("%s%s%s%s%s", data1, TKNBurnerAddress, abi.U256(big.NewInt(0)), abi.U256(big.NewInt(int64(len(data2)))), data2))
 
-// 				tx, err := Wallet.BatchExecuteTransaction(Owner.TransactOpts(), []byte(batch))
-// 				Expect(err).ToNot(HaveOccurred())
-// 				Backend.Commit()
-// 				Expect(isSuccessful(tx)).To(BeTrue())
-// 			})
+				nonce := big.NewInt(0)
+				signature, err := SignData(nonce, batch, Owner.PrivKey())
+				Expect(err).ToNot(HaveOccurred())
 
-// 			It("should increase random address' balance by the same amount", func() {
-// 				b, e := Backend.BalanceAt(context.Background(), randomAddress, nil)
-// 				Expect(e).ToNot(HaveOccurred())
-// 				Expect(b.String()).To(Equal(EthToWei(1).String()))
-// 			})
+				tx, err := Wallet.ExecuteRelayedTransaction(Controller.TransactOpts(), nonce, batch, signature)
+				Expect(err).ToNot(HaveOccurred())
+				Backend.Commit()
+				Expect(isSuccessful(tx)).To(BeTrue())
+			})
 
-// 			It("should increase the TKN balance of the random address", func() {
-// 				b, err := TKNBurner.BalanceOf(nil, randomAddress)
-// 				Expect(err).ToNot(HaveOccurred())
-// 				Expect(b.String()).To(Equal("300"))
-// 			})
+			It("should increase random address' balance by the same amount", func() {
+				b, e := Backend.BalanceAt(context.Background(), randomAddress, nil)
+				Expect(e).ToNot(HaveOccurred())
+				Expect(b.String()).To(Equal(EthToWei(1).String()))
+			})
 
-// 			It("should decrease the wallet's balance by the same amount", func() {
-// 				b, e := Backend.BalanceAt(context.Background(), WalletAddress, nil)
-// 				Expect(e).ToNot(HaveOccurred())
-// 				Expect(b.String()).To(Equal("0"))
-// 			})
+			It("should increase the TKN balance of the random address", func() {
+				b, err := TKNBurner.BalanceOf(nil, randomAddress)
+				Expect(err).ToNot(HaveOccurred())
+				Expect(b.String()).To(Equal("300"))
+			})
 
-// 			It("should decrease the TKN balance of the wallet", func() {
-// 				b, err := TKNBurner.BalanceOf(nil, WalletAddress)
-// 				Expect(err).ToNot(HaveOccurred())
-// 				Expect(b.String()).To(Equal("0"))
-// 			})
+			It("should decrease the wallet's balance by the same amount", func() {
+				b, e := Backend.BalanceAt(context.Background(), WalletAddress, nil)
+				Expect(e).ToNot(HaveOccurred())
+				Expect(b.String()).To(Equal("0"))
+			})
 
-// 			It("should emit 2 ExecutedTransaction events", func() {
-// 				it, err := Wallet.FilterExecutedTransaction(nil)
-// 				Expect(err).ToNot(HaveOccurred())
-// 				Expect(it.Next()).To(BeTrue())
-// 				evt := it.Event
-// 				Expect(it.Next()).To(BeTrue())
-// 				Expect(evt.Destination).To(Equal(randomAddress))
-// 				Expect(evt.Value.String()).To(Equal(EthToWei(1).String()))
-// 				Expect(evt.Data).To(Equal([]uint8{}))
-// 				Expect(evt.Returndata).To(Equal(common.Hex2Bytes("")))
-// 				evt = it.Event
-// 				Expect(it.Next()).To(BeFalse())
-// 				Expect(evt.Destination).To(Equal(TKNBurnerAddress))
-// 				Expect(evt.Value.String()).To(Equal("0"))
-// 				a, _ := abi.JSON(strings.NewReader(ERC20ABI))
-// 				d, _ := a.Pack("transfer", randomAddress, big.NewInt(300))
-// 				Expect(evt.Data).To(Equal(d))
-// 				Expect(evt.Returndata).To(Equal(common.Hex2Bytes("0000000000000000000000000000000000000000000000000000000000000001")))
-// 			})
-// 		})
+			It("should decrease the TKN balance of the wallet", func() {
+				b, err := TKNBurner.BalanceOf(nil, WalletAddress)
+				Expect(err).ToNot(HaveOccurred())
+				Expect(b.String()).To(Equal("0"))
+			})
 
-// 		When("I batch 3 transactions and the 3rd one fails (transfer 0 value)", func() {
+			It("should emit 2 ExecutedTransaction events", func() {
+				it, err := Wallet.FilterExecutedTransaction(nil)
+				Expect(err).ToNot(HaveOccurred())
+				Expect(it.Next()).To(BeTrue())
+				evt := it.Event
+				Expect(it.Next()).To(BeTrue())
+				Expect(evt.Destination).To(Equal(randomAddress))
+				Expect(evt.Value.String()).To(Equal(EthToWei(1).String()))
+				Expect(evt.Data).To(Equal([]uint8{}))
+				Expect(evt.Returndata).To(Equal(common.Hex2Bytes("")))
+				evt = it.Event
+				Expect(it.Next()).To(BeFalse())
+				Expect(evt.Destination).To(Equal(TKNBurnerAddress))
+				Expect(evt.Value.String()).To(Equal("0"))
+				a, _ := abi.JSON(strings.NewReader(ERC20ABI))
+				d, _ := a.Pack("transfer", randomAddress, big.NewInt(300))
+				Expect(evt.Data).To(Equal(d))
+				Expect(evt.Returndata).To(Equal(common.Hex2Bytes("0000000000000000000000000000000000000000000000000000000000000001")))
+			})
+		})
 
-// 			var randomAddress common.Address
+		When("I batch 3 transactions and the 3rd one fails (transfer 0 value) they should all revert", func() {
 
-// 			BeforeEach(func() {
+			var randomAddress common.Address
 
-// 				privateKey, _ := crypto.GenerateKey()
-// 				randomAddress = crypto.PubkeyToAddress(privateKey.PublicKey)
+			BeforeEach(func() {
 
-// 				batch := fmt.Sprintf("%s%s%s", randomAddress, abi.U256(EthToWei(1)), abi.U256(big.NewInt(0)))
+				privateKey, _ := crypto.GenerateKey()
+				randomAddress = crypto.PubkeyToAddress(privateKey.PublicKey)
 
-// 				a, err := abi.JSON(strings.NewReader(ERC20ABI))
-// 				Expect(err).ToNot(HaveOccurred())
-// 				data, err := a.Pack("transfer", randomAddress, big.NewInt(300))
-// 				Expect(err).ToNot(HaveOccurred())
-// 				batch = fmt.Sprintf("%s%s%s%s%s", batch, TKNBurnerAddress, abi.U256(big.NewInt(0)), abi.U256(big.NewInt(int64(len(data)))), data)
+				batchString := fmt.Sprintf("%s%s%s", randomAddress, abi.U256(EthToWei(1)), abi.U256(big.NewInt(0)))
 
-// 				a, err = abi.JSON(strings.NewReader(WALLET_ABI))
-// 				Expect(err).ToNot(HaveOccurred())
-// 				data, err = a.Pack("transfer", common.HexToAddress("0x0"), common.HexToAddress("0x0"), big.NewInt(0))
-// 				Expect(err).ToNot(HaveOccurred())
-// 				batch = fmt.Sprintf("%s%s%s%s%s", batch, WalletAddress, abi.U256(big.NewInt(0)), abi.U256(big.NewInt(int64(len(data)))), data)
+				a, err := abi.JSON(strings.NewReader(ERC20ABI))
+				Expect(err).ToNot(HaveOccurred())
+				data2, err := a.Pack("transfer", randomAddress, big.NewInt(300))
+				Expect(err).ToNot(HaveOccurred())
+				batchString = fmt.Sprintf("%s%s%s%s%s", batchString, TKNBurnerAddress, abi.U256(big.NewInt(0)), abi.U256(big.NewInt(int64(len(data2)))), data2)
 
-// 				tx, err := Wallet.BatchExecuteTransaction(Owner.TransactOpts(ethertest.WithGasLimit(1000000)), []byte(batch))
-// 				Expect(err).ToNot(HaveOccurred())
-// 				Backend.Commit()
-// 				Expect(isSuccessful(tx)).To(BeFalse())
+				a, err = abi.JSON(strings.NewReader(WALLET_ABI))
+				Expect(err).ToNot(HaveOccurred())
+				data3, err := a.Pack("transfer", common.HexToAddress("0x0"), common.HexToAddress("0x0"), big.NewInt(0))
+				Expect(err).ToNot(HaveOccurred())
+				batch := []byte(fmt.Sprintf("%s%s%s%s%s", batchString, WalletAddress, abi.U256(big.NewInt(0)), abi.U256(big.NewInt(int64(len(data3)))), data3))
 
-// 				returnData, _ := ethCall(tx)
-// 				Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("value=0"))
-// 			})
+				nonce := big.NewInt(0)
+				signature, err := SignData(nonce, batch, Owner.PrivKey())
+				Expect(err).ToNot(HaveOccurred())
 
-// 			It("should NOT increase random address' balance", func() {
-// 				b, e := Backend.BalanceAt(context.Background(), randomAddress, nil)
-// 				Expect(e).ToNot(HaveOccurred())
-// 				Expect(b.String()).To(Equal("0"))
-// 			})
+				tx, err := Wallet.ExecuteRelayedTransaction(Controller.TransactOpts(ethertest.WithGasLimit(500000)), nonce, batch, signature)
+				Expect(err).ToNot(HaveOccurred())
+				Backend.Commit()
+				Expect(isSuccessful(tx)).To(BeFalse())
 
-// 			It("should NOT increase the TKN balance of the random address", func() {
-// 				b, err := TKNBurner.BalanceOf(nil, randomAddress)
-// 				Expect(err).ToNot(HaveOccurred())
-// 				Expect(b.String()).To(Equal("0"))
-// 			})
+				returnData, _ := ethCall(tx)
+				Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("value=0"))
+			})
 
-// 			It("should NOT decrease the wallet's balance", func() {
-// 				b, e := Backend.BalanceAt(context.Background(), WalletAddress, nil)
-// 				Expect(e).ToNot(HaveOccurred())
-// 				Expect(b.String()).To(Equal(EthToWei(1).String()))
-// 			})
+			It("should NOT increase random address' balance", func() {
+				b, e := Backend.BalanceAt(context.Background(), randomAddress, nil)
+				Expect(e).ToNot(HaveOccurred())
+				Expect(b.String()).To(Equal("0"))
+			})
 
-// 			It("should NOT decrease the TKN balance of the wallet", func() {
-// 				b, err := TKNBurner.BalanceOf(nil, WalletAddress)
-// 				Expect(err).ToNot(HaveOccurred())
-// 				Expect(b.String()).To(Equal("300"))
-// 			})
+			It("should NOT increase the TKN balance of the random address", func() {
+				b, err := TKNBurner.BalanceOf(nil, randomAddress)
+				Expect(err).ToNot(HaveOccurred())
+				Expect(b.String()).To(Equal("0"))
+			})
 
-// 		})
+			It("should NOT decrease the wallet's balance", func() {
+				b, e := Backend.BalanceAt(context.Background(), WalletAddress, nil)
+				Expect(e).ToNot(HaveOccurred())
+				Expect(b.String()).To(Equal(EthToWei(1).String()))
+			})
 
-// 		When("I top up gas and set the whitelist", func() {
+			It("should NOT decrease the TKN balance of the wallet", func() {
+				b, err := TKNBurner.BalanceOf(nil, WalletAddress)
+				Expect(err).ToNot(HaveOccurred())
+				Expect(b.String()).To(Equal("300"))
+			})
 
-// 			BeforeEach(func() {
+		})
 
-// 				a, err := abi.JSON(strings.NewReader(WALLET_ABI))
-// 				Expect(err).ToNot(HaveOccurred())
-// 				data, err := a.Pack("submitDailyLimitUpdate", EthToWei(1))
-// 				Expect(err).ToNot(HaveOccurred())
-// 				batch := fmt.Sprintf("%s%s%s%s", WalletAddress, abi.U256(big.NewInt(0)), abi.U256(big.NewInt(int64(len(data)))), data)
+		When("I top up gas and set the whitelist", func() {
 
-// 				data, err = a.Pack("setWhitelist", []common.Address{RandomAccount.Address()})
-// 				Expect(err).ToNot(HaveOccurred())
-// 				batch = fmt.Sprintf("%s%s%s%s%s", batch, WalletAddress, abi.U256(big.NewInt(0)), abi.U256(big.NewInt(int64(len(data)))), data)
+			BeforeEach(func() {
 
-// 				tx, err := Wallet.BatchExecuteTransaction(Owner.TransactOpts(), []byte(batch))
-// 				Expect(err).ToNot(HaveOccurred())
-// 				Backend.Commit()
-// 				Expect(isSuccessful(tx)).To(BeTrue())
-// 			})
+				a, err := abi.JSON(strings.NewReader(WALLET_ABI))
+				Expect(err).ToNot(HaveOccurred())
+				data, err := a.Pack("submitDailyLimitUpdate", MweiToWei(100))
+				Expect(err).ToNot(HaveOccurred())
+				batchString := fmt.Sprintf("%s%s%s%s", WalletAddress, abi.U256(big.NewInt(0)), abi.U256(big.NewInt(int64(len(data)))), data)
 
-// 			It("should update the initializedWhitelist flag", func() {
-// 				initialized, err := Wallet.IsSetWhitelist(nil)
-// 				Expect(err).ToNot(HaveOccurred())
-// 				Expect(initialized).To(BeTrue())
-// 			})
+				data, err = a.Pack("setWhitelist", []common.Address{RandomAccount.Address()})
+				Expect(err).ToNot(HaveOccurred())
+				batch := []byte(fmt.Sprintf("%s%s%s%s%s", batchString, WalletAddress, abi.U256(big.NewInt(0)), abi.U256(big.NewInt(int64(len(data)))), data))
 
-// 			It("should add the random account to the whitelist", func() {
-// 				isWhitelisted, err := Wallet.WhitelistMap(nil, RandomAccount.Address())
-// 				Expect(err).ToNot(HaveOccurred())
-// 				Expect(isWhitelisted).To(BeTrue())
-// 			})
+				nonce := big.NewInt(0)
+				signature, err := SignData(nonce, batch, Owner.PrivKey())
+				Expect(err).ToNot(HaveOccurred())
 
-// 			It("should emit WhitelistAddition event", func() {
-// 				it, err := Wallet.FilterAddedToWhitelist(nil)
-// 				Expect(err).ToNot(HaveOccurred())
-// 				Expect(it.Next()).To(BeTrue())
-// 				evt := it.Event
-// 				Expect(it.Next()).To(BeFalse())
-// 				Expect(evt.Sender).To(Equal(WalletAddress))
-// 				Expect(evt.Addresses).To(Equal([]common.Address{RandomAccount.Address()}))
-// 			})
+				tx, err := Wallet.ExecuteRelayedTransaction(Controller.TransactOpts(), nonce, batch, signature)
+				Expect(err).ToNot(HaveOccurred())
+				Backend.Commit()
+				Expect(isSuccessful(tx)).To(BeTrue())
+			})
 
-// 			It("should emit a limit set event", func() {
-// 				it, err := Wallet.FilterSetDailyLimit(nil)
-// 				Expect(err).ToNot(HaveOccurred())
-// 				Expect(it.Next()).To(BeTrue())
-// 				evt := it.Event
-// 				Expect(it.Next()).To(BeFalse())
-// 				Expect(evt.Sender).To(Equal(WalletAddress))
-// 				Expect(evt.Amount).To(Equal(EthToWei(1)))
-// 			})
+			It("should update the IsSetWhitelist flag", func() {
+				initialized, err := Wallet.IsSetWhitelist(nil)
+				Expect(err).ToNot(HaveOccurred())
+				Expect(initialized).To(BeTrue())
+			})
 
-// 			It("should lower the available amount to 1 $USD", func() {
-// 				av, err := Wallet.DailyLimitAvailable(nil)
-// 				Expect(err).ToNot(HaveOccurred())
-// 				Expect(av.String()).To(Equal(EthToWei(1).String()))
-// 			})
+			It("should add the random account to the whitelist", func() {
+				isWhitelisted, err := Wallet.WhitelistMap(nil, RandomAccount.Address())
+				Expect(err).ToNot(HaveOccurred())
+				Expect(isWhitelisted).To(BeTrue())
+			})
 
-// 			It("should have a limit of 1 $USD", func() {
-// 				sl, err := Wallet.DailyLimitValue(nil)
-// 				Expect(err).ToNot(HaveOccurred())
-// 				Expect(sl.String()).To(Equal(EthToWei(1).String()))
-// 			})
-// 		})
+			It("should emit WhitelistAddition event", func() {
+				it, err := Wallet.FilterAddedToWhitelist(nil)
+				Expect(err).ToNot(HaveOccurred())
+				Expect(it.Next()).To(BeTrue())
+				evt := it.Event
+				Expect(it.Next()).To(BeFalse())
+				Expect(evt.Sender).To(Equal(WalletAddress))
+				Expect(evt.Addresses).To(Equal([]common.Address{RandomAccount.Address()}))
+			})
 
-// 		When("the datalength is a maliciously encoded", func() {
+			It("should emit a limit set event", func() {
+				it, err := Wallet.FilterSetDailyLimit(nil)
+				Expect(err).ToNot(HaveOccurred())
+				Expect(it.Next()).To(BeTrue())
+				evt := it.Event
+				Expect(it.Next()).To(BeFalse())
+				Expect(evt.Sender).To(Equal(WalletAddress))
+				Expect(evt.Amount).To(Equal(MweiToWei(100)))
+			})
 
-// 			var randomAddress common.Address
+			It("should lower the available amount to 100 $USD", func() {
+				av, err := Wallet.DailyLimitAvailable(nil)
+				Expect(err).ToNot(HaveOccurred())
+				Expect(av.String()).To(Equal(MweiToWei(100).String()))
+			})
 
-// 			It("should revert if the encoded length is larger than the actual batch size", func() {
+			It("should have a limit of 100 $USD", func() {
+				sl, err := Wallet.DailyLimitValue(nil)
+				Expect(err).ToNot(HaveOccurred())
+				Expect(sl.String()).To(Equal(MweiToWei(100).String()))
+			})
+		})
 
-// 				privateKey, _ := crypto.GenerateKey()
-// 				randomAddress = crypto.PubkeyToAddress(privateKey.PublicKey)
+		When("the datalength is a maliciously encoded", func() {
 
-// 				batch := fmt.Sprintf("%s%s%s", randomAddress, abi.U256(EthToWei(1)), abi.U256(big.NewInt(99999)))
+			It("should revert if the encoded length is larger than the actual batch size", func() {
 
-// 				tx, err := Wallet.BatchExecuteTransaction(Owner.TransactOpts(ethertest.WithGasLimit(1000000)), []byte(batch))
-// 				Expect(err).ToNot(HaveOccurred())
-// 				Backend.Commit()
-// 				Expect(isSuccessful(tx)).To(BeFalse())
+				batch := []byte(fmt.Sprintf("%s%s%s", RandomAccount.Address(), abi.U256(EthToWei(1)), abi.U256(big.NewInt(1))))
 
-// 				returnData, _ := ethCall(tx)
-// 				Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("out of bounds"))
-// 			})
+				nonce := big.NewInt(0)
+				signature, err := SignData(nonce, batch, Owner.PrivKey())
+				Expect(err).ToNot(HaveOccurred())
 
-// 			It("should revert if there is an index overflow", func() {
+				tx, err := Wallet.ExecuteRelayedTransaction(Controller.TransactOpts(ethertest.WithGasLimit(500000)), nonce, batch, signature)
+				Expect(err).ToNot(HaveOccurred())
+				Backend.Commit()
+				Expect(isSuccessful(tx)).To(BeFalse())
 
-// 				privateKey, _ := crypto.GenerateKey()
-// 				randomAddress = crypto.PubkeyToAddress(privateKey.PublicKey)
+				returnData, _ := ethCall(tx)
+				Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("out of bounds"))
+			})
 
-// 				batch := fmt.Sprintf("%s%s%s", randomAddress, abi.U256(EthToWei(1)), abi.U256(big.NewInt(-1)))
+			It("should revert if there is an index overflow", func() {
 
-// 				tx, err := Wallet.BatchExecuteTransaction(Owner.TransactOpts(ethertest.WithGasLimit(1000000)), []byte(batch))
-// 				Expect(err).ToNot(HaveOccurred())
-// 				Backend.Commit()
-// 				Expect(isSuccessful(tx)).To(BeFalse())
+				batch := []byte(fmt.Sprintf("%s%s%s", RandomAccount.Address(), abi.U256(EthToWei(1)), abi.U256(big.NewInt(-1))))
 
-// 				returnData, _ := ethCall(tx)
-// 				Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("SafeMath: addition overflow"))
-// 			})
-// 		})
+				nonce := big.NewInt(0)
+				signature, err := SignData(nonce, batch, Owner.PrivKey())
+				Expect(err).ToNot(HaveOccurred())
 
-// 		When("there are not enough bytes to encode the executeTransaction inputs", func() {
+				tx, err := Wallet.ExecuteRelayedTransaction(Controller.TransactOpts(ethertest.WithGasLimit(500000)), nonce, batch, signature)
+				Expect(err).ToNot(HaveOccurred())
+				Backend.Commit()
+				Expect(isSuccessful(tx)).To(BeFalse())
 
-// 			var randomAddress common.Address
+				returnData, _ := ethCall(tx)
+				Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("SafeMath: addition overflow"))
+			})
+		})
 
-// 			It("should revert", func() {
+		When("there are not enough bytes to encode the executeTransaction inputs", func() {
 
-// 				privateKey, _ := crypto.GenerateKey()
-// 				randomAddress = crypto.PubkeyToAddress(privateKey.PublicKey)
+			It("should revert", func() {
 
-// 				batch := fmt.Sprintf("%s%s", randomAddress, abi.U256(EthToWei(1)))
+				batch := []byte(fmt.Sprintf("%s%s", RandomAccount.Address(), abi.U256(EthToWei(1))))
 
-// 				tx, err := Wallet.BatchExecuteTransaction(Owner.TransactOpts(ethertest.WithGasLimit(1000000)), []byte(batch))
-// 				Expect(err).ToNot(HaveOccurred())
-// 				Backend.Commit()
-// 				Expect(isSuccessful(tx)).To(BeFalse())
+				nonce := big.NewInt(0)
+				signature, err := SignData(nonce, batch, Owner.PrivKey())
+				Expect(err).ToNot(HaveOccurred())
 
-// 				returnData, _ := ethCall(tx)
-// 				Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("SafeMath: subtraction overflow"))
-// 			})
-// 		})
+				tx, err := Wallet.ExecuteRelayedTransaction(Controller.TransactOpts(ethertest.WithGasLimit(500000)), nonce, batch, signature)
+				Expect(err).ToNot(HaveOccurred())
+				Backend.Commit()
+				Expect(isSuccessful(tx)).To(BeFalse())
 
-// 	})
-// })
+				returnData, _ := ethCall(tx)
+				Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("SafeMath: subtraction overflow"))
+			})
+		})
+
+	})
+})
 
 const WALLET_ABI = `[
     {
