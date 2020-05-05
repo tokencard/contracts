@@ -678,7 +678,9 @@ contract Wallet is ENSResolvable, AddressWhitelist, DailyLimit, IERC165, Transfe
 
 
         if (!whitelistMap[_destination] && !privileged) {
-            _enforceDailyLimit(_value);
+            // Convert ETH value to stablecoin, 0x0 denotes ETH.
+            uint stablecoinValue = convertToStablecoin(address(0), _value);
+            _enforceDailyLimit(stablecoinValue);
         }
         // Check if the destination is a Contract and it is one of our supported tokens
         if (address(_destination).isContract() && _isTokenAvailable(_destination)) {
