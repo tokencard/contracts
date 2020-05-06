@@ -108,7 +108,7 @@ var _ = Describe("convertToStablecoin", func() {
 		})
 	})
 
-    Context("When the token is not available", func() {
+	Context("When the token is not available", func() {
 		It("Should return 0", func() {
 			value, err := Wallet.ConvertToStablecoin(nil, common.HexToAddress("0x1"), big.NewInt(100))
 			Expect(err).ToNot(HaveOccurred())
@@ -117,34 +117,6 @@ var _ = Describe("convertToStablecoin", func() {
 	})
 
 	When("eth is converted", func() {
-		BeforeEach(func() {
-			tx, err := TokenWhitelist.AddTokens(
-				ControllerAdmin.TransactOpts(),
-				[]common.Address{common.HexToAddress("0x0")},
-				StringsToByte32("ETH"),
-				[]*big.Int{DecimalsToMagnitude(big.NewInt(18))},
-				[]bool{true},
-				[]bool{true},
-				big.NewInt(20180913153211),
-			)
-			Expect(err).ToNot(HaveOccurred())
-			Backend.Commit()
-			Expect(isSuccessful(tx)).To(BeTrue())
-		})
-
-		//rate has to be 1, i.e. 1 eth = > 10^18 wei
-		BeforeEach(func() {
-			tx, err := TokenWhitelist.UpdateTokenRate(
-				ControllerAdmin.TransactOpts(),
-				common.HexToAddress("0x0"),
-				big.NewInt(int64(math.Pow10(18))),
-				big.NewInt(20180913153211),
-			)
-			Expect(err).ToNot(HaveOccurred())
-			Backend.Commit()
-			Expect(isSuccessful(tx)).To(BeTrue())
-		})
-
 		When("the stablecoin rate is 0.001", func() {
 			BeforeEach(func() {
 				tx, err := TokenWhitelist.UpdateTokenRate(
