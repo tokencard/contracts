@@ -83,8 +83,9 @@ var _ = Describe("Controller claim", func() {
 				tx, err := ControllerContract.Claim(Controller.TransactOpts(ethertest.WithGasLimit(100000)), RandomAccount.Address(), ERC20Contract1Address, big.NewInt(222))
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
-				Expect(isGasExhausted(tx, 100000)).To(BeFalse())
 				Expect(isSuccessful(tx)).To(BeFalse())
+				returnData, _ := ethCall(tx)
+				Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("sender is not admin"))
 			})
 		})
 
@@ -93,8 +94,9 @@ var _ = Describe("Controller claim", func() {
 				tx, err := ControllerContract.Claim(ControllerOwner.TransactOpts(ethertest.WithGasLimit(100000)), RandomAccount.Address(), ERC20Contract1Address, big.NewInt(222))
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
-				Expect(isGasExhausted(tx, 100000)).To(BeFalse())
 				Expect(isSuccessful(tx)).To(BeFalse())
+				returnData, _ := ethCall(tx)
+				Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("sender is not admin"))
 			})
 		})
 
