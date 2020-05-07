@@ -202,6 +202,7 @@ contract TokenWhitelist is ENSResolvable, Controllable, Transferrable {
     }
 
     /// @notice based on the method it returns the recipient address and amount/value, ERC20 specific.
+    /// @param _token ERC20 token contract address.
     /// @param _data is the transaction payload.
     function getERC20RecipientAndAmount(address _token, bytes calldata _data) external view returns (address, uint256) {
         // Require that there exist enough bytes for encoding at least a method signature + data in the transaction payload:
@@ -227,7 +228,9 @@ contract TokenWhitelist is ENSResolvable, Controllable, Transferrable {
         }
     }
 
-    /// @notice Toggles whether or not a token is loadable or not.
+    /// @notice Toggles whether or not a token is loadable.
+    /// @param _token ERC20 token contract address.
+    /// @param _loadable bool that toggles the corresponding parameter.
     function setTokenLoadable(address _token, bool _loadable) external onlyAdmin {
         // Require that the token exists.
         require(_tokenInfoMap[_token].available, "loadable: token is not available");
@@ -238,7 +241,9 @@ contract TokenWhitelist is ENSResolvable, Controllable, Transferrable {
         emit UpdatedTokenLoadable(msg.sender, _token, _loadable);
     }
 
-    /// @notice Toggles whether or not a token is redeemable or not.
+    /// @notice Toggles whether or not a token is redeemable.
+    /// @param _token ERC20 token contract address.
+    /// @param _redeemable bool that toggles the corresponding parameter
     function setTokenRedeemable(address _token, bool _redeemable) external onlyAdmin {
         // Require that the token exists.
         require(_tokenInfoMap[_token].available, "redeemable: token not available");
@@ -333,7 +338,10 @@ contract TokenWhitelist is ENSResolvable, Controllable, Transferrable {
     }
 
     /// @notice This returns true if a method Id is supported for the specific token.
-    /// @return true if _methodId is supported in general or just for the specific token.
+    /// @param _token ERC20 token contract address.
+    /// @param _methodId The first four bytes of the Keccak256 hash of the function signature...
+    /// ...i.e the canonical expression of the basic prototype without data location specifier.
+    /// @return True if _methodId is supported in general or just for the specific token.
     function isERC20MethodSupported(address _token, bytes4 _methodId) public view returns (bool) {
         require(_tokenInfoMap[_token].available, "non-existing token");
         return (_methodIdWhitelist[_methodId]);
