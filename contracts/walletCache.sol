@@ -93,6 +93,7 @@ contract WalletCache is ENSResolvable, Controllable {
             tokenWhitelistNode,
             controllerNode(),
             licenceNode,
+            walletDeployerNode,
             defaultDailyLimit
         );
 

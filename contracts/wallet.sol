@@ -120,24 +120,32 @@ abstract contract OptOutableMonolith2FA is Controllable, SelfCallableOwnable {
 /// @title AddressWhitelist provides payee-whitelist functionality.
 /// @dev This contract will allow the user to maintain a whitelist of addresses.
 /// @dev These addresses will live outside of the daily limit.
-abstract contract AddressWhitelist is SelfCallableOwnable, OptOutableMonolith2FA {
+abstract contract AddressWhitelist is ENSResolvable, SelfCallableOwnable, OptOutableMonolith2FA {
     using SafeMath for uint256;
 
+    // wallet-deployer.v4.tokencard.eth
+    bytes32 private constant _DEFAULT_WALLET_DEPLOYER_NODE = 0x23349faba58c4a8622c88e7d3ba4a01da2f0764900bfb876898ac21e573273c9;
+
     event AddedToWhitelist(address _sender, address[] _addresses);
-    event CancelledWhitelistAddition(address _sender, bytes32 _hash);
-    event SubmittedWhitelistAddition(address[] _addresses, bytes32 _hash);
-
-    event CancelledWhitelistRemoval(address _sender, bytes32 _hash);
     event RemovedFromWhitelist(address _sender, address[] _addresses);
-    event SubmittedWhitelistRemoval(address[] _addresses, bytes32 _hash);
 
+    bytes32 public walletDeployerNode = _DEFAULT_WALLET_DEPLOYER_NODE;
+    
     mapping(address => bool) public whitelistMap;
     address[] public whitelistArray;
-    address[] private _pendingWhitelistAddition;
-    address[] private _pendingWhitelistRemoval;
-    bool public submittedWhitelistAddition;
-    bool public submittedWhitelistRemoval;
-    bool public isSetWhitelist;
+
+    constructor(bytes32 _walletDeployerNode_) public {
+        // Set walletDeployerNode or use default
+        if (_walletDeployerNode_ != bytes32(0)) {
+            walletDeployerNode = _walletDeployerNode_;
+        }
+    }
+
+     /// @dev Check if the sender is the wallet-deployer
+    modifier onlyWalletDeployer() {
+        require(msg.sender == _ensResolve(walletDeployerNode), "not called by wallet-deployer");
+        _;
+    }
 
     /// @dev Check if the provided addresses contain the owner or the zero-address address.
     modifier hasNoOwnerOrZeroAddress(address[] memory _addresses) {
@@ -148,156 +156,70 @@ abstract contract AddressWhitelist is SelfCallableOwnable, OptOutableMonolith2FA
         _;
     }
 
-    /// @dev Check that neither addition nor removal operations have already been submitted.
-    modifier noActiveSubmission() {
-        require(!submittedWhitelistAddition && !submittedWhitelistRemoval, "whitelist sumbission pending");
-        _;
-    }
-
-    /// @dev Cancel pending whitelist addition.
-    function cancelWhitelistAddition(bytes32 _hash) external onlyOwnerOr2FA {
-        // Check if operation has been submitted.
-        require(submittedWhitelistAddition, "no pending submission");
-        // Require that confirmation hash and the hash of the pending whitelist addition match
-        require(_hash == calculateHash(_pendingWhitelistAddition), "non-matching pending whitelist hash");
-        // Reset pending addresses.
-        delete _pendingWhitelistAddition;
-        // Reset the submitted operation flag.
-        submittedWhitelistAddition = false;
-        // Emit the cancellation event.
-        emit CancelledWhitelistAddition(msg.sender, _hash);
-    }
-
-    /// @dev Cancel pending removal of whitelisted addresses.
-    function cancelWhitelistRemoval(bytes32 _hash) external onlyOwnerOr2FA {
-        // Check if operation has been submitted.
-        require(submittedWhitelistRemoval, "no pending submission");
-        // Require that confirmation hash and the hash of the pending whitelist removal match
-        require(_hash == calculateHash(_pendingWhitelistRemoval), "non-matching pending whitelist hash");
-        // Reset pending addresses.
-        delete _pendingWhitelistRemoval;
-        // Reset pending addresses.
-        submittedWhitelistRemoval = false;
-        // Emit the cancellation event.
-        emit CancelledWhitelistRemoval(msg.sender, _hash);
-    }
-
-    /// @dev Confirm pending whitelist addition.
-    /// @dev This will only ever be applied post 2FA, by one of the Controllers
-    /// @param _hash is the hash of the pending whitelist array, a form of lamport lock
-    function confirmWhitelistAddition(bytes32 _hash) external only2FA {
-        // Require that the whitelist addition has been submitted.
-        require(submittedWhitelistAddition, "no pending submission");
-        // Require that confirmation hash and the hash of the pending whitelist addition match
-        require(_hash == calculateHash(_pendingWhitelistAddition), "non-matching pending whitelist hash");
-        // Whitelist pending addresses.
-        for (uint256 i = 0; i < _pendingWhitelistAddition.length; i++) {
-            // check if it doesn't exist already.
-            if (!whitelistMap[_pendingWhitelistAddition[i]]) {
-                // add to the Map and the Array
-                whitelistMap[_pendingWhitelistAddition[i]] = true;
-                whitelistArray.push(_pendingWhitelistAddition[i]);
-            }
-        }
-        // Emit the addition event.
-        emit AddedToWhitelist(msg.sender, _pendingWhitelistAddition);
-        // Reset pending addresses.
-        delete _pendingWhitelistAddition;
-        // Reset the submission flag.
-        submittedWhitelistAddition = false;
-    }
-
-    /// @dev Confirm pending removal of whitelisted addresses.
-    function confirmWhitelistRemoval(bytes32 _hash) external only2FA {
-        // Require that the pending whitelist is not empty and the operation has been submitted.
-        require(submittedWhitelistRemoval, "no pending submission");
-        // Require that confirmation hash and the hash of the pending whitelist removal match
-        require(_hash == calculateHash(_pendingWhitelistRemoval), "non-matching pending whitelist hash");
-        // Remove pending addresses.
-        for (uint256 i = 0; i < _pendingWhitelistRemoval.length; i++) {
-            // check if it exists
-            if (whitelistMap[_pendingWhitelistRemoval[i]]) {
-                whitelistMap[_pendingWhitelistRemoval[i]] = false;
-                for (uint256 j = 0; j < whitelistArray.length.sub(1); j++) {
-                    if (whitelistArray[j] == _pendingWhitelistRemoval[i]) {
-                        whitelistArray[j] = whitelistArray[whitelistArray.length - 1];
-                        break;
-                    }
-                }
-                whitelistArray.pop();
-            }
-        }
-        // Emit the removal event.
-        emit RemovedFromWhitelist(msg.sender, _pendingWhitelistRemoval);
-        // Reset pending addresses.
-        delete _pendingWhitelistRemoval;
-        // Reset the submission flag.
-        submittedWhitelistRemoval = false;
-    }
-
-    /// @dev Getter for pending addition array.
-    function pendingWhitelistAddition() external view returns (address[] memory) {
-        return _pendingWhitelistAddition;
-    }
-
-    /// @dev Getter for pending removal array.
-    function pendingWhitelistRemoval() external view returns (address[] memory) {
-        return _pendingWhitelistRemoval;
-    }
-
-    /// @dev Add initial addresses to the whitelist.
-    /// @param _addresses are the Ethereum addresses to be whitelisted.
-    function setWhitelist(address[] calldata _addresses) external onlyOwnerOrSelf hasNoOwnerOrZeroAddress(_addresses) {
-        // Require that the whitelist has not been init.
-        require(!isSetWhitelist, "whitelist initialized");
+    /// @dev Adds addresses to AddressWhitelist.
+    /// @param _addresses are the addresses to be whitelisted.
+    function addToWhitelist(address[] calldata _addresses) external only2FA {
+        // Require that the list is not empty.
+        require(_addresses.length != 0, "AddressWhitelist: empty list to be added");
         // Add each of the provided addresses to the whitelist.
         for (uint256 i = 0; i < _addresses.length; i++) {
-            // Dedup addresses before writing to the whitelist
-            if (!whitelistMap[_addresses[i]]) {
-                // adds to the whitelist mapping
-                whitelistMap[_addresses[i]] = true;
-                // adds to the whitelist array
-                whitelistArray.push(_addresses[i]);
-            }
+            // Require addresses not be already whitelisted.
+            require(!whitelistMap[_addresses[i]], "address already whitelisted");
+            // adds to the whitelist mapping
+            whitelistMap[_addresses[i]] = true;
+            // adds to the whitelist array
+            whitelistArray.push(_addresses[i]);
+            
         }
-        isSetWhitelist = true;
         // Emit the addition event.
-        emit AddedToWhitelist(msg.sender, whitelistArray);
+        emit AddedToWhitelist(msg.sender, _addresses);
     }
 
-    /// @dev Add addresses to the whitelist.
+    /// @dev Removes addresses from AddressWhitelist.
+    /// @param _addresses are the addresses to removed from the whitelist.
+    function removeFromWhitelist(address[] calldata _addresses) external only2FA {
+        // Require that the list is not empty.
+        require(_addresses.length != 0, "AddressWhitelist: empty list to be removed");
+        // Remove provided addresses.
+        for (uint256 i = 0; i < _addresses.length; i++) {
+            // Require addresses to have been already whitelisted.
+            require(!whitelistMap[_addresses[i]], "address not whitelisted");
+            whitelistMap[_addresses[i]] = false;
+            for (uint256 j = 0; j < whitelistArray.length.sub(1); j++) {
+                if (whitelistArray[j] == _addresses[i]) {
+                    whitelistArray[j] = whitelistArray[whitelistArray.length - 1];
+                    break;
+                }
+            }
+            whitelistArray.pop();
+        }
+        // Emit the removal event.
+        emit RemovedFromWhitelist(msg.sender, _addresses);
+    }
+
+     /// @dev This is used to restore the user's security setting during wallet migration, called by the deployer.
     /// @param _addresses are the Ethereum addresses to be whitelisted.
-    function submitWhitelistAddition(address[] calldata _addresses) external onlyOwnerOrSelf noActiveSubmission hasNoOwnerOrZeroAddress(_addresses) {
-        // Require that the whitelist has been initialized.
-        require(isSetWhitelist, "whitelist not initialized");
-        // Require this array of addresses not empty
-        require(_addresses.length > 0, "empty whitelist");
-        // Set the provided addresses to the pending addition addresses.
-        _pendingWhitelistAddition = _addresses;
-        // Flag the operation as submitted.
-        submittedWhitelistAddition = true;
-        // Emit the submission event.
-        emit SubmittedWhitelistAddition(_addresses, calculateHash(_addresses));
+    function setWhitelist(address[] calldata _addresses) external onlyWalletDeployer {
+        _addToWhitelist(_addresses);
     }
 
-    /// @dev Remove addresses from the whitelist.
-    /// @param _addresses are the Ethereum addresses to be removed.
-    function submitWhitelistRemoval(address[] calldata _addresses) external onlyOwnerOrSelf noActiveSubmission {
-        // Require that the whitelist has been initialized.
-        require(isSetWhitelist, "whitelist not initialized");
-        // Require that the array of addresses is not empty
-        require(_addresses.length > 0, "empty whitelist");
-        // Add the provided addresses to the pending addition list.
-        _pendingWhitelistRemoval = _addresses;
-        // Flag the operation as submitted.
-        submittedWhitelistRemoval = true;
-        // Emit the submission event.
-        emit SubmittedWhitelistRemoval(_addresses, calculateHash(_addresses));
-    }
-
-    /// @dev Method used to hash our whitelist address arrays.
-    function calculateHash(address[] memory _addresses) public pure returns (bytes32) {
-        return keccak256(abi.encodePacked(_addresses));
+    /// @dev Adds addresses to AddressWhitelist, called by addToWhitelist() and setWhitelist().
+    /// @param _addresses are the addresses to be whitelisted.
+    function _addToWhitelist(address[] memory _addresses) private  hasNoOwnerOrZeroAddress(_addresses) {
+         // Require that the list is not empty.
+        require(_addresses.length != 0, "AddressWhitelist: empty list to be added");
+        // Add each of the provided addresses to the whitelist.
+        for (uint256 i = 0; i < _addresses.length; i++) {
+            // Require addresses not be already whitelisted.
+            require(!whitelistMap[_addresses[i]], "address already whitelisted");
+            // adds to the whitelist mapping
+            whitelistMap[_addresses[i]] = true;
+            // adds to the whitelist array
+            whitelistArray.push(_addresses[i]);
+            
+        }
+        // Emit the addition event.
+        emit AddedToWhitelist(msg.sender, _addresses);
     }
 }
 
@@ -462,8 +384,9 @@ contract Wallet is ENSResolvable, AddressWhitelist, DailyLimit, IERC165, Transfe
         bytes32 _tokenWhitelistNode_,
         bytes32 _controllerNode_,
         bytes32 _licenceNode_,
+        bytes32 _walletDeployerNode_,
         uint256 _dailyLimit_
-    ) public ENSResolvable(_ens_) DailyLimit(_dailyLimit_, _tokenWhitelistNode_) Ownable(_owner_, _transferable_) Controllable(_controllerNode_) {
+    ) public ENSResolvable(_ens_) AddressWhitelist(_walletDeployerNode_) DailyLimit(_dailyLimit_, _tokenWhitelistNode_) Ownable(_owner_, _transferable_) Controllable(_controllerNode_) {
         _licenceNode = _licenceNode_;
     }
 
