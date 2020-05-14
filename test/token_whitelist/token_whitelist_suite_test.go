@@ -105,7 +105,7 @@ var _ = AfterEach(func() {
 })
 
 var _ = AfterSuite(func() {
-	TestRig.ExpectMinimumCoverage("tokenWhitelist.sol", 98.00)
+	TestRig.ExpectMinimumCoverage("tokenWhitelist.sol", 100.00)
 	TestRig.ExpectMinimumCoverage("internals/tokenWhitelistable.sol", 100.0)
 	TestRig.PrintGasUsage(os.Stdout)
 })

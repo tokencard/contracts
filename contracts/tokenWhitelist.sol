@@ -35,8 +35,6 @@ interface ITokenWhitelist {
 
     function redeemableTokens() external view returns (address[] memory);
 
-    function methodIdWhitelist(bytes4) external view returns (bool);
-
     function getERC20RecipientAndAmount(address, bytes calldata) external view returns (address, uint256);
 
     function stablecoin() external view returns (address);

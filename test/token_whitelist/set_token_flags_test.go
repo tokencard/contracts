@@ -121,6 +121,15 @@ var _ = Describe("setTokenLoadable/Redeemable", func() {
 					Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("loadable: no state change"))
 				})
 			})
+
+			When("trying to reset it", func() {
+				It("Should succeed", func() {
+					tx, err := TokenWhitelist.SetTokenLoadable(ControllerAdmin.TransactOpts(), common.HexToAddress("0x1"), true)
+					Expect(err).ToNot(HaveOccurred())
+					Backend.Commit()
+					Expect(isSuccessful(tx)).To(BeTrue())
+				})
+			})
 		})
 
 		When("SetTokenRedeemable is called by the controller admin", func() {
@@ -173,6 +182,15 @@ var _ = Describe("setTokenLoadable/Redeemable", func() {
 					Expect(isSuccessful(tx)).To(BeFalse())
 					returnData, _ := ethCall(tx)
 					Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("redeemable: no state change"))
+				})
+			})
+
+			When("trying to reset it", func() {
+				It("Should succeed", func() {
+					tx, err := TokenWhitelist.SetTokenRedeemable(ControllerAdmin.TransactOpts(), common.HexToAddress("0x1"), true)
+					Expect(err).ToNot(HaveOccurred())
+					Backend.Commit()
+					Expect(isSuccessful(tx)).To(BeTrue())
 				})
 			})
 		})
