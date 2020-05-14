@@ -13,7 +13,7 @@ import (
 
 var _ = Describe("removeTokens", func() {
 
-	Context("When tokens are supported", func() {
+	When("tokens are supported", func() {
 		BeforeEach(func() {
 
 			tokens := []common.Address{common.HexToAddress("0x1"), common.HexToAddress("0x2"), common.HexToAddress("0x3")}
@@ -38,9 +38,16 @@ var _ = Describe("removeTokens", func() {
 			Backend.Commit()
 			Expect(isSuccessful(tx)).To(BeTrue())
 		})
-		Context("When called by the controller admin", func() {
 
-			Context("When removing a supported token", func() {
+		It("The overal token counter should be equal to 3", func() {
+			cnt, err := TokenWhitelist.TokenCounter(nil)
+			Expect(err).ToNot(HaveOccurred())
+			Expect(cnt.String()).To(Equal("3"))
+		})
+
+		When("called by the controller admin", func() {
+
+			When("removing a supported token", func() {
 
 				BeforeEach(func() {
 					tx, err := TokenWhitelist.RemoveTokens(ControllerAdmin.TransactOpts(), []common.Address{common.HexToAddress("0x2")})
@@ -91,19 +98,43 @@ var _ = Describe("removeTokens", func() {
 					Expect(lastUpdate.String()).To(Equal(big.NewInt(20180913153211).String()))
 				})
 
+				It("Should decrease the overal token counter by 1", func() {
+					cnt, err := TokenWhitelist.TokenCounter(nil)
+					Expect(err).ToNot(HaveOccurred())
+					Expect(cnt.String()).To(Equal("2"))
+				})
+
+				It("Should decrease the loadable counter by 1", func() {
+					cnt, err := TokenWhitelist.LoadableCounter(nil)
+					Expect(err).ToNot(HaveOccurred())
+					Expect(cnt.String()).To(Equal("2"))
+				})
+
 				It("Should decrease the redeemable counter by 1", func() {
 					cnt, err := TokenWhitelist.RedeemableCounter(nil)
 					Expect(err).ToNot(HaveOccurred())
 					Expect(cnt.String()).To(Equal("2"))
 				})
 
-				Context("When removing another supported token", func() {
+				When("removing another supported token", func() {
 
 					BeforeEach(func() {
 						tx, err := TokenWhitelist.RemoveTokens(ControllerAdmin.TransactOpts(), []common.Address{common.HexToAddress("0x3")})
 						Expect(err).ToNot(HaveOccurred())
 						Backend.Commit()
 						Expect(isSuccessful(tx)).To(BeTrue())
+					})
+
+					It("Should decrease the overal token counter by 1", func() {
+						cnt, err := TokenWhitelist.TokenCounter(nil)
+						Expect(err).ToNot(HaveOccurred())
+						Expect(cnt.String()).To(Equal("1"))
+					})
+
+					It("Should decrease the loadable counter by 1", func() {
+						cnt, err := TokenWhitelist.LoadableCounter(nil)
+						Expect(err).ToNot(HaveOccurred())
+						Expect(cnt.String()).To(Equal("1"))
 					})
 
 					It("Should decrease the redeemable counter by 1", func() {
@@ -113,13 +144,15 @@ var _ = Describe("removeTokens", func() {
 					})
 				})
 
-				Context("When removing an unsupported token", func() {
+				When("removing an unsupported token", func() {
 
 					BeforeEach(func() {
 						tx, err := TokenWhitelist.RemoveTokens(ControllerAdmin.TransactOpts(ethertest.WithGasLimit(100000)), []common.Address{common.HexToAddress("0x5")})
 						Expect(err).ToNot(HaveOccurred())
 						Backend.Commit()
 						Expect(isSuccessful(tx)).To(BeFalse())
+						returnData, _ := ethCall(tx)
+						Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("token is not available"))
 					})
 
 					It("Should NOT decrease the redeemable counter", func() {
@@ -130,7 +163,7 @@ var _ = Describe("removeTokens", func() {
 				})
 			})
 
-			Context("When removing all supported tokens", func() {
+			When("removing all supported tokens", func() {
 
 				var tx *types.Transaction
 				BeforeEach(func() {
@@ -160,6 +193,18 @@ var _ = Describe("removeTokens", func() {
 					Expect(evt.Token).To(Equal(common.HexToAddress("0x3")))
 				})
 
+				It("Should decrease the overal token counter down to 0", func() {
+					cnt, err := TokenWhitelist.TokenCounter(nil)
+					Expect(err).ToNot(HaveOccurred())
+					Expect(cnt.String()).To(Equal("0"))
+				})
+
+				It("Should decrease the loadable counter down to 0", func() {
+					cnt, err := TokenWhitelist.LoadableCounter(nil)
+					Expect(err).ToNot(HaveOccurred())
+					Expect(cnt.String()).To(Equal("0"))
+				})
+
 				It("Should decrease the redeemable counter down to 0", func() {
 					cnt, err := TokenWhitelist.RedeemableCounter(nil)
 					Expect(err).ToNot(HaveOccurred())
@@ -167,7 +212,7 @@ var _ = Describe("removeTokens", func() {
 				})
 			})
 
-			Context("When removing all supported tokens but a duplicate is passed", func() {
+			When("removing all supported tokens but a duplicate is passed", func() {
 				It("Should fail", func() {
 					tokens := []common.Address{common.HexToAddress("0x3"), common.HexToAddress("0x2"), common.HexToAddress("0x1"), common.HexToAddress("0x2")}
 					tx, err := TokenWhitelist.RemoveTokens(ControllerAdmin.TransactOpts(ethertest.WithGasLimit(300000)), tokens)
@@ -175,10 +220,12 @@ var _ = Describe("removeTokens", func() {
 					Backend.Commit()
 					Expect(isGasExhausted(tx, 300000)).To(BeFalse())
 					Expect(isSuccessful(tx)).To(BeFalse())
+					returnData, _ := ethCall(tx)
+					Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("token is not available"))
 				})
 			})
 
-			Context("When removing at least one unsupported token", func() {
+			When("removing at least one unsupported token", func() {
 				It("Should fail", func() {
 					tokens := []common.Address{common.HexToAddress("0x1"), common.HexToAddress("0x0"), common.HexToAddress("0x2")}
 					tx, err := TokenWhitelist.RemoveTokens(ControllerAdmin.TransactOpts(ethertest.WithGasLimit(300000)), tokens)
@@ -186,10 +233,12 @@ var _ = Describe("removeTokens", func() {
 					Backend.Commit()
 					Expect(isGasExhausted(tx, 300000)).To(BeFalse())
 					Expect(isSuccessful(tx)).To(BeFalse())
+					returnData, _ := ethCall(tx)
+					Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("token is not available"))
 				})
 			})
 
-			Context("When trying to remove #0 tokens (empty list)", func() {
+			When("trying to remove #0 tokens (empty list)", func() {
 
 				var tx *types.Transaction
 				BeforeEach(func() {
@@ -209,6 +258,18 @@ var _ = Describe("removeTokens", func() {
 					Expect(it.Next()).To(BeFalse())
 				})
 
+				It("Should leave the the overal token counter intact", func() {
+					cnt, err := TokenWhitelist.TokenCounter(nil)
+					Expect(err).ToNot(HaveOccurred())
+					Expect(cnt.String()).To(Equal("3"))
+				})
+
+				It("Should leave the the loadable counter intact", func() {
+					cnt, err := TokenWhitelist.LoadableCounter(nil)
+					Expect(err).ToNot(HaveOccurred())
+					Expect(cnt.String()).To(Equal("3"))
+				})
+
 				It("Should leave the redeemable counter intact", func() {
 					cnt, err := TokenWhitelist.RedeemableCounter(nil)
 					Expect(err).ToNot(HaveOccurred())
@@ -218,13 +279,15 @@ var _ = Describe("removeTokens", func() {
 
 		})
 
-		Context("When called by a random address", func() {
+		When("called by a random address", func() {
 			It("Should fail", func() {
 				tx, err := TokenWhitelist.RemoveTokens(RandomAccount.TransactOpts(ethertest.WithGasLimit(300000)), []common.Address{common.HexToAddress("0x1")})
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 				Expect(isGasExhausted(tx, 300000)).To(BeFalse())
 				Expect(isSuccessful(tx)).To(BeFalse())
+				returnData, _ := ethCall(tx)
+				Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("sender is not an admin"))
 			})
 		})
 	}) //when tokens are supported

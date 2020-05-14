@@ -82,12 +82,18 @@ contract TokenWhitelist is ENSResolvable, Controllable {
 
     mapping(address => Token) private _tokenInfoMap;
 
-    // @notice specifies whitelisted methodIds for protected tokens in wallet's excuteTranaction() e.g. keccak256(transfer(address,uint256)) => 0xa9059cbb
+    /// @notice specifies whitelisted methodIds for protected tokens in wallet's excuteTranaction() e.g. keccak256(transfer(address,uint256)) => 0xa9059cbb
     mapping(bytes4 => bool) private _methodIdWhitelist;
 
     address[] private _tokenAddressArray;
 
-    /// @notice keeping track of how many redeemable tokens are in the tokenWhitelist
+     /// @notice keeping track of how many tokens are in the tokenWhitelist.
+    uint256 private _tokenCounter;
+
+    /// @notice keeping track of how many loadable tokens are in the tokenWhitelist.
+    uint256 private _loadableCounter;
+
+    /// @notice keeping track of how many redeemable tokens are in the tokenWhitelist.
     uint256 private _redeemableCounter;
 
     /// @notice Address of the stablecoin.
@@ -162,9 +168,15 @@ contract TokenWhitelist is ENSResolvable, Controllable {
             });
             // Add the token address to the address list.
             _tokenAddressArray.push(_tokens[i]);
-            //if the token is redeemable, increase the redeemableCounter
+            // Increase the token counter.
+            _tokenCounter += 1;
+            // If the token is loadable, increase the loadableCounter.
+            if (_loadable[i]) {
+                _loadableCounter += 1;
+            }
+            // If the token is redeemable, increase the redeemableCounter.
             if (_redeemable[i]) {
-                _redeemableCounter = _redeemableCounter.add(1);
+                _redeemableCounter += 1;
             }
             // Emit token addition event.
             emit AddedToken(msg.sender, _tokens[i], symbol, _magnitude[i], _loadable[i], _redeemable[i]);
@@ -178,8 +190,14 @@ contract TokenWhitelist is ENSResolvable, Controllable {
         for (uint256 i = 0; i < _tokens.length; i++) {
             // Store the token address.
             address token = _tokens[i];
-            //token must be available, reverts on duplicates as well
+            // The token must be available, reverts on duplicates as well
             require(_tokenInfoMap[token].available, "token is not available");
+             // Decrease the token counter.
+            _tokenCounter = _tokenCounter.sub(1);
+            // If the token is loadable decrease the loadableCounter
+            if (_tokenInfoMap[token].loadable) {
+                _loadableCounter = _loadableCounter.sub(1);
+            }
             //if the token is redeemable decrease the redeemableCounter
             if (_tokenInfoMap[token].redeemable) {
                 _redeemableCounter = _redeemableCounter.sub(1);
@@ -231,8 +249,14 @@ contract TokenWhitelist is ENSResolvable, Controllable {
     /// @param _loadable bool that toggles the corresponding parameter.
     function setTokenLoadable(address _token, bool _loadable) external onlyAdmin {
         // Require that the token exists.
-        require(_tokenInfoMap[_token].available, "loadable: token is not available");
-
+        require(_tokenInfoMap[_token].available, "loadable: token not available");
+        // If it does not change the current state i.e. _tokenInfoMap[_token].loadable == _loadable, revert!
+        require(_tokenInfoMap[_token].loadable != _loadable, "loadable: no state change");
+        if (_loadable) {
+            _loadableCounter = _loadableCounter.add(1);
+        } else {
+            _loadableCounter = _loadableCounter.sub(1);
+        }
         // this sets the loadable flag to the value passed in
         _tokenInfoMap[_token].loadable = _loadable;
 
@@ -343,6 +367,18 @@ contract TokenWhitelist is ENSResolvable, Controllable {
     /// @return true if _methodId is in the method whitelist.
     function isERC20MethodWhitelisted(bytes4 _methodId) external view returns (bool) {
         return (_methodIdWhitelist[_methodId]);
+    }
+
+     /// @notice This returns the total number of tokens.
+    /// @return current # of tokens.
+    function tokenCounter() external view returns (uint256) {
+        return _tokenCounter;
+    }
+
+    /// @notice This returns the number of loadable tokens.
+    /// @return current # of loadables.
+    function loadableCounter() external view returns (uint256) {
+        return _loadableCounter;
     }
 
     /// @notice This returns the number of redeemable tokens.

@@ -11,9 +11,9 @@ import (
 	"github.com/tokencard/ethertest"
 )
 
-var _ = Describe("setTokenLoadable", func() {
+var _ = Describe("setTokenLoadable/Redeemable", func() {
 
-	Context("When the token is already loadable", func() {
+	When("the token is both loadable and redeemable", func() {
 		BeforeEach(func() {
 			tx, err := TokenWhitelist.AddTokens(
 				ControllerAdmin.TransactOpts(),
@@ -28,7 +28,48 @@ var _ = Describe("setTokenLoadable", func() {
 			Backend.Commit()
 			Expect(isSuccessful(tx)).To(BeTrue())
 		})
-		Context("When called by the controller admin", func() {
+
+		It("The overal token counter should be equal to 1", func() {
+			cnt, err := TokenWhitelist.TokenCounter(nil)
+			Expect(err).ToNot(HaveOccurred())
+			Expect(cnt.String()).To(Equal("1"))
+		})
+
+		It("The loadable counter should be equal to 1", func() {
+			cnt, err := TokenWhitelist.LoadableCounter(nil)
+			Expect(err).ToNot(HaveOccurred())
+			Expect(cnt.String()).To(Equal("1"))
+		})
+
+		It("The redeemable counter should be equal to 1", func() {
+			cnt, err := TokenWhitelist.RedeemableCounter(nil)
+			Expect(err).ToNot(HaveOccurred())
+			Expect(cnt.String()).To(Equal("1"))
+		})
+
+		When("trying to set it to the current value (loadable = true)", func() {
+			It("Should fail", func() {
+				tx, err := TokenWhitelist.SetTokenLoadable(ControllerAdmin.TransactOpts(ethertest.WithGasLimit(100000)), common.HexToAddress("0x1"), true)
+				Expect(err).ToNot(HaveOccurred())
+				Backend.Commit()
+				Expect(isSuccessful(tx)).To(BeFalse())
+				returnData, _ := ethCall(tx)
+				Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("loadable: no state change"))
+			})
+		})
+
+		When("trying to set it to the current value (redeemable = true)", func() {
+			It("Should fail", func() {
+				tx, err := TokenWhitelist.SetTokenRedeemable(ControllerAdmin.TransactOpts(ethertest.WithGasLimit(100000)), common.HexToAddress("0x1"), true)
+				Expect(err).ToNot(HaveOccurred())
+				Backend.Commit()
+				Expect(isSuccessful(tx)).To(BeFalse())
+				returnData, _ := ethCall(tx)
+				Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("redeemable: no state change"))
+			})
+		})
+
+		When("SetTokenLoadable is called by the controller admin", func() {
 			var tx *types.Transaction
 
 			BeforeEach(func() {
@@ -63,88 +104,26 @@ var _ = Describe("setTokenLoadable", func() {
 				Expect(evt.Token).To(Equal(common.HexToAddress("0x1")))
 				Expect(evt.Loadable).To(BeFalse())
 			})
-		})
 
-		Context("When not called by the controller admin", func() {
-			It("Should fail", func() {
-				tx, err := TokenWhitelist.SetTokenLoadable(
-					RandomAccount.TransactOpts(ethertest.WithGasLimit(100000)),
-					common.HexToAddress("0x1"),
-					true,
-				)
+			It("Should decrease the loadable counter", func() {
+				cnt, err := TokenWhitelist.LoadableCounter(nil)
 				Expect(err).ToNot(HaveOccurred())
-				Backend.Commit()
-				Expect(isSuccessful(tx)).To(BeFalse())
+				Expect(cnt.String()).To(Equal("0"))
 			})
-		})
-	})
 
-	Context("When the token is not supported", func() {
-		Context("When called by the controller admin", func() {
-			It("Should fail", func() {
-				tx, err := TokenWhitelist.SetTokenLoadable(
-					ControllerAdmin.TransactOpts(ethertest.WithGasLimit(100000)),
-					common.HexToAddress("0x2"),
-					false,
-				)
-				Expect(err).ToNot(HaveOccurred())
-				Backend.Commit()
-				Expect(isSuccessful(tx)).To(BeFalse())
+			When("trying to set it to the current value (loadable = false)", func() {
+				It("Should fail", func() {
+					tx, err := TokenWhitelist.SetTokenLoadable(ControllerAdmin.TransactOpts(ethertest.WithGasLimit(100000)), common.HexToAddress("0x1"), false)
+					Expect(err).ToNot(HaveOccurred())
+					Backend.Commit()
+					Expect(isSuccessful(tx)).To(BeFalse())
+					returnData, _ := ethCall(tx)
+					Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("loadable: no state change"))
+				})
 			})
 		})
 
-		Context("When not called by the controller", func() {
-			It("Should fail", func() {
-				tx, err := TokenWhitelist.SetTokenLoadable(
-					RandomAccount.TransactOpts(ethertest.WithGasLimit(100000)),
-					common.HexToAddress("0x2"),
-					false,
-				)
-				Expect(err).ToNot(HaveOccurred())
-				Backend.Commit()
-				Expect(isSuccessful(tx)).To(BeFalse())
-			})
-		})
-	})
-
-})
-
-var _ = Describe("setTokenRedeemable", func() {
-
-	Context("When the token is already redeemable", func() {
-		BeforeEach(func() {
-			tx, err := TokenWhitelist.AddTokens(
-				ControllerAdmin.TransactOpts(),
-				[]common.Address{common.HexToAddress("0x1")},
-				StringsToByte32("ETH"),
-				[]*big.Int{DecimalsToMagnitude(big.NewInt(18))},
-				[]bool{true},
-				[]bool{true},
-				big.NewInt(20180913153211),
-			)
-			Expect(err).ToNot(HaveOccurred())
-			Backend.Commit()
-			Expect(isSuccessful(tx)).To(BeTrue())
-		})
-
-		It("The redeemable counter should be equal to 1", func() {
-			cnt, err := TokenWhitelist.RedeemableCounter(nil)
-			Expect(err).ToNot(HaveOccurred())
-			Expect(cnt.String()).To(Equal("1"))
-		})
-
-		When("trying to set it to the current value (true)", func() {
-			It("Should fail", func() {
-				tx, err := TokenWhitelist.SetTokenRedeemable(ControllerAdmin.TransactOpts(ethertest.WithGasLimit(100000)), common.HexToAddress("0x1"), true)
-				Expect(err).ToNot(HaveOccurred())
-				Backend.Commit()
-				Expect(isSuccessful(tx)).To(BeFalse())
-				returnData, _ := ethCall(tx)
-				Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("redeemable: no state change"))
-			})
-		})
-
-		When("called by the controller admin", func() {
+		When("SetTokenRedeemable is called by the controller admin", func() {
 			var tx *types.Transaction
 
 			BeforeEach(func() {
@@ -197,7 +176,23 @@ var _ = Describe("setTokenRedeemable", func() {
 				})
 			})
 		})
-		Context("When not called by the controller admin", func() {
+
+		When("SetTokenLoadable is not called by the controller admin", func() {
+			It("Should fail", func() {
+				tx, err := TokenWhitelist.SetTokenLoadable(
+					RandomAccount.TransactOpts(ethertest.WithGasLimit(100000)),
+					common.HexToAddress("0x1"),
+					true,
+				)
+				Expect(err).ToNot(HaveOccurred())
+				Backend.Commit()
+				Expect(isSuccessful(tx)).To(BeFalse())
+				returnData, _ := ethCall(tx)
+				Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("sender is not an admin"))
+			})
+		})
+
+		When("SetTokenRedeemable is not called by the controller admin", func() {
 			It("Should fail", func() {
 				tx, err := TokenWhitelist.SetTokenRedeemable(
 					RandomAccount.TransactOpts(ethertest.WithGasLimit(100000)),
@@ -213,8 +208,9 @@ var _ = Describe("setTokenRedeemable", func() {
 		})
 	})
 
-	Context("When the token is not supported", func() {
-		Context("When called by the controller admin", func() {
+	When("the token is not supported", func() {
+
+		When("SetTokenRedeemable is called by the controller admin", func() {
 			It("Should fail", func() {
 				tx, err := TokenWhitelist.SetTokenRedeemable(
 					ControllerAdmin.TransactOpts(ethertest.WithGasLimit(100000)),
@@ -225,22 +221,25 @@ var _ = Describe("setTokenRedeemable", func() {
 				Backend.Commit()
 				Expect(isSuccessful(tx)).To(BeFalse())
 				returnData, _ := ethCall(tx)
-				Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("token"))
+				Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("redeemable: token not available"))
 			})
 		})
 
-		Context("When not called by the controller admin", func() {
+		When("SetTokenLoadable is called by the controller admin", func() {
 			It("Should fail", func() {
-				tx, err := TokenWhitelist.SetTokenRedeemable(
-					RandomAccount.TransactOpts(ethertest.WithGasLimit(100000)),
+				tx, err := TokenWhitelist.SetTokenLoadable(
+					ControllerAdmin.TransactOpts(ethertest.WithGasLimit(100000)),
 					common.HexToAddress("0x2"),
 					false,
 				)
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 				Expect(isSuccessful(tx)).To(BeFalse())
+				returnData, _ := ethCall(tx)
+				Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("loadable: token not available"))
 			})
 		})
+
 	})
 
 })
