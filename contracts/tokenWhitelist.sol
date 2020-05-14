@@ -46,7 +46,7 @@ interface ITokenWhitelist {
 
 
 /// @title TokenWhitelist stores a list of tokens used by the Consumer Contract Wallet, the Oracle, the TKN Holder and the TKN Licence Contract
-contract TokenWhitelist is ENSResolvable, Controllable, Transferrable {
+contract TokenWhitelist is ENSResolvable, Controllable {
     using strings for *;
     using SafeMath for uint256;
     using BytesUtils for bytes;
@@ -63,8 +63,6 @@ contract TokenWhitelist is ENSResolvable, Controllable, Transferrable {
     event RemovedMethodId(bytes4 _methodId);
     event AddedExclusiveMethod(address _token, bytes4 _methodId);
     event RemovedExclusiveMethod(address _token, bytes4 _methodId);
-
-    event Claimed(address _to, address _asset, uint256 _amount);
 
     /// @dev these are the methods whitelisted by default in executeTransaction() for protected tokens
     bytes4 private constant _APPROVE = 0x095ea7b3; // keccak256(approve(address,uint256)) => 0x095ea7b3
@@ -273,12 +271,6 @@ contract TokenWhitelist is ENSResolvable, Controllable, Transferrable {
         _tokenInfoMap[_token].lastUpdate = _updateDate;
         // Emit the rate update event.
         emit UpdatedTokenRate(msg.sender, _token, _rate);
-    }
-
-    //// @notice Withdraw tokens from the smart contract to the specified account.
-    function claim(address payable _to, address _asset, uint256 _amount) external onlyAdmin {
-        _safeTransfer(_to, _asset, _amount);
-        emit Claimed(_to, _asset, _amount);
     }
 
     /// @notice This returns all of the fields for a given token.
