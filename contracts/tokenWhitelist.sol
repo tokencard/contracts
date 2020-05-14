@@ -85,7 +85,7 @@ contract TokenWhitelist is ENSResolvable, Controllable {
 
     address[] private _tokenAddressArray;
 
-     /// @notice keeping track of how many tokens are in the tokenWhitelist.
+    /// @notice keeping track of how many tokens are in the tokenWhitelist.
     uint256 private _tokenCounter;
 
     /// @notice keeping track of how many loadable tokens are in the tokenWhitelist.
@@ -190,7 +190,7 @@ contract TokenWhitelist is ENSResolvable, Controllable {
             address token = _tokens[i];
             // The token must be available, reverts on duplicates as well
             require(_tokenInfoMap[token].available, "token is not available");
-             // Decrease the token counter.
+            // Decrease the token counter.
             _tokenCounter = _tokenCounter.sub(1);
             // If the token is loadable decrease the loadableCounter
             if (_tokenInfoMap[token].loadable) {
@@ -367,7 +367,7 @@ contract TokenWhitelist is ENSResolvable, Controllable {
         return (_methodIdWhitelist[_methodId]);
     }
 
-     /// @notice This returns the total number of tokens.
+    /// @notice This returns the total number of tokens.
     /// @return current # of tokens.
     function tokenCounter() external view returns (uint256) {
         return _tokenCounter;
