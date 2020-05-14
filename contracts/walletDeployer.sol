@@ -83,10 +83,10 @@ contract WalletDeployer is ENSResolvable, Controllable {
 
         // Sets up the security settings as per the _oldWallet
         if (_initializedDailyLimit) {
-            wallet.submitDailyLimitUpdate(_dailyLimit);
+            wallet.migrateDailyLimit(_dailyLimit);
         }
         if (_initializedWhitelist) {
-            wallet.setWhitelist(_whitelistedAddresses);
+            wallet.migrateWhitelist(_whitelistedAddresses);
         }
 
         wallet.transferOwnership(_owner, false);

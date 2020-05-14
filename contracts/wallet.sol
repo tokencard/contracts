@@ -117,22 +117,12 @@ abstract contract OptOutableMonolith2FA is Controllable, SelfCallableOwnable {
     }
 }
 
-/// @title AddressWhitelist provides payee-whitelist functionality.
-/// @dev This contract will allow the user to maintain a whitelist of addresses.
-/// @dev These addresses will live outside of the daily limit.
-abstract contract AddressWhitelist is ENSResolvable, SelfCallableOwnable, OptOutableMonolith2FA {
-    using SafeMath for uint256;
+abstract contract WalletDeployable is ENSResolvable {
 
     // wallet-deployer.v4.tokencard.eth
     bytes32 private constant _DEFAULT_WALLET_DEPLOYER_NODE = 0x23349faba58c4a8622c88e7d3ba4a01da2f0764900bfb876898ac21e573273c9;
 
-    event AddedToWhitelist(address _sender, address[] _addresses);
-    event RemovedFromWhitelist(address _sender, address[] _addresses);
-
     bytes32 public walletDeployerNode = _DEFAULT_WALLET_DEPLOYER_NODE;
-    
-    mapping(address => bool) public whitelistMap;
-    address[] public whitelistArray;
 
     constructor(bytes32 _walletDeployerNode_) public {
         // Set walletDeployerNode or use default
@@ -141,11 +131,26 @@ abstract contract AddressWhitelist is ENSResolvable, SelfCallableOwnable, OptOut
         }
     }
 
-     /// @dev Check if the sender is the wallet-deployer
+    /// @dev Check if the sender is the wallet-deployer
     modifier onlyWalletDeployer() {
         require(msg.sender == _ensResolve(walletDeployerNode), "not called by wallet-deployer");
         _;
     }
+}
+
+/// @title AddressWhitelist provides payee-whitelist functionality.
+/// @dev This contract will allow the user to maintain a whitelist of addresses.
+/// @dev These addresses will live outside of the daily limit.
+abstract contract AddressWhitelist is WalletDeployable, SelfCallableOwnable, OptOutableMonolith2FA {
+    using SafeMath for uint256;
+
+    event AddedToWhitelist(address _sender, address[] _addresses);
+    event RemovedFromWhitelist(address _sender, address[] _addresses);
+    
+    mapping(address => bool) public whitelistMap;
+    address[] public whitelistArray;
+    // This variable ensures that migrateWhitelist() can only be called once by the walletDeployer.
+    bool private _migratedWhitelist;
 
     /// @dev Check if the provided addresses contain the owner or the zero-address address.
     modifier hasNoOwnerOrZeroAddress(address[] memory _addresses) {
@@ -157,27 +162,22 @@ abstract contract AddressWhitelist is ENSResolvable, SelfCallableOwnable, OptOut
     }
 
     /// @dev Adds addresses to AddressWhitelist.
-    /// @param _addresses are the addresses to be whitelisted.
-    function addToWhitelist(address[] calldata _addresses) external only2FA {
-        // Require that the list is not empty.
-        require(_addresses.length != 0, "AddressWhitelist: empty list to be added");
-        // Add each of the provided addresses to the whitelist.
-        for (uint256 i = 0; i < _addresses.length; i++) {
-            // Require addresses not be already whitelisted.
-            require(!whitelistMap[_addresses[i]], "address already whitelisted");
-            // adds to the whitelist mapping
-            whitelistMap[_addresses[i]] = true;
-            // adds to the whitelist array
-            whitelistArray.push(_addresses[i]);
-            
-        }
-        // Emit the addition event.
-        emit AddedToWhitelist(msg.sender, _addresses);
+    /// @param _addresses The addresses to be whitelisted.
+    function addToWhitelist(address[] calldata _addresses) external onlySelf {
+        _addToWhitelist(_addresses);
+    }
+
+    /// @dev This is used to restore the the address whitelist, called by the walletDeployer during wallet migration.
+    /// @param _addresses The addresses whitelisted by the owner before migration.
+    function migrateWhitelist(address[] calldata _addresses) external onlyWalletDeployer {
+        require(!_migratedWhitelist, "Whitelist already migrated");
+        _migratedWhitelist = true;
+        _addToWhitelist(_addresses);
     }
 
     /// @dev Removes addresses from AddressWhitelist.
-    /// @param _addresses are the addresses to removed from the whitelist.
-    function removeFromWhitelist(address[] calldata _addresses) external only2FA {
+    /// @param _addresses The addresses to be removed from the whitelist.
+    function removeFromWhitelist(address[] calldata _addresses) external onlySelf {
         // Require that the list is not empty.
         require(_addresses.length != 0, "AddressWhitelist: empty list to be removed");
         // Remove provided addresses.
@@ -197,15 +197,9 @@ abstract contract AddressWhitelist is ENSResolvable, SelfCallableOwnable, OptOut
         emit RemovedFromWhitelist(msg.sender, _addresses);
     }
 
-     /// @dev This is used to restore the user's security setting during wallet migration, called by the deployer.
-    /// @param _addresses are the Ethereum addresses to be whitelisted.
-    function setWhitelist(address[] calldata _addresses) external onlyWalletDeployer {
-        _addToWhitelist(_addresses);
-    }
-
     /// @dev Adds addresses to AddressWhitelist, called by addToWhitelist() and setWhitelist().
-    /// @param _addresses are the addresses to be whitelisted.
-    function _addToWhitelist(address[] memory _addresses) private  hasNoOwnerOrZeroAddress(_addresses) {
+    /// @param _addresses The addresses to be whitelisted.
+    function _addToWhitelist(address[] memory _addresses) private hasNoOwnerOrZeroAddress(_addresses) {
          // Require that the list is not empty.
         require(_addresses.length != 0, "AddressWhitelist: empty list to be added");
         // Add each of the provided addresses to the whitelist.
@@ -224,17 +218,17 @@ abstract contract AddressWhitelist is ENSResolvable, SelfCallableOwnable, OptOut
 }
 
 /// @title DailyLimit provides daily spend limit functionality.
-abstract contract DailyLimit is SelfCallableOwnable, OptOutableMonolith2FA, TokenWhitelistable {
+abstract contract DailyLimit is WalletDeployable, SelfCallableOwnable, OptOutableMonolith2FA, TokenWhitelistable {
     using SafeMath for uint256;
 
     event SetDailyLimit(address _sender, uint _amount);
-    event SubmittedDailyLimitUpdate(uint _amount);
     event UpdatedAvailableDailyLimit(uint _amount, uint _nextReset);
 
-    uint private _dailyLimit; // The daily limit amount.
     uint private _available; // The remaining amount available for spending in the current 24-hour window.
-    uint private _pendingLimit; // The pending new limit value requested in the latest limit update submission.
+    uint private _dailyLimit; // The daily limit amount.
+    bool private _migratedDailyLimit; // This variable ensures that migratedDailyLimit() can only be called once by the walletDeployer.
     uint private _resetTimestamp; // Denotes the future timestamp when the available daily limit is due to reset.
+    
 
     /// @dev Constructor initializes the daily limit in wei.
     constructor(uint _limit, bytes32 _tokenWhitelistNode) internal TokenWhitelistable(_tokenWhitelistNode) {
@@ -243,30 +237,8 @@ abstract contract DailyLimit is SelfCallableOwnable, OptOutableMonolith2FA, Toke
         uint limitBaseUnits = _limit * stablecoinMagnitude;
         _dailyLimit = limitBaseUnits;
         _available = limitBaseUnits;
-        _pendingLimit = limitBaseUnits;
         _resetTimestamp = now.add(24 hours);
         emit UpdatedAvailableDailyLimit(limitBaseUnits, _resetTimestamp);
-    }
-
-    /// @dev Confirm pending set daily limit operation.
-    function confirmDailyLimitUpdate(uint _amount) external only2FA {
-        // Require that pending and confirmed limits are the same
-        require(_pendingLimit == _amount, "confirmed/submitted limit mismatch");
-        // The new limit should be always higher then the current one otherwise no 2FA would be needed,
-        // this is done to avoid abuse e.g. resetting the current daily limit and thus resetting the available amount
-        require(_amount > _dailyLimit, "limit should be greater than current one");
-        // Increase the available amount...
-        _available = _amount;
-        // ...and reset the 24-hour window
-        _resetTimestamp = now.add(24 hours);
-        emit UpdatedAvailableDailyLimit(_available, _resetTimestamp);
-        // Set daily limit based on the pending value.
-        _setLimit(_pendingLimit);
-    }
-
-    /// @dev Is there an active daily limit change
-    function dailyLimitPending() external view returns (uint) {
-        return _pendingLimit;
     }
 
     /// @dev View the limit value
@@ -284,59 +256,53 @@ abstract contract DailyLimit is SelfCallableOwnable, OptOutableMonolith2FA, Toke
         }
     }
 
+    /// @dev Restores the daily limit, called by the walletDeployer duirng wallet migration.
+    /// @param _amount The limit set by the owner before migration.
+    function migrateDailyLimit(uint _amount) external onlyWalletDeployer {
+        require(!_migratedDailyLimit, "DailyLimit already migrated");
+        _migratedDailyLimit = true;
+        // Set the daily limit...
+        _setDailyLimit(_amount);
+    }
 
-    /// @dev Submit a daily limit update for non-whitelisted addresses...
-    /// ...if the new limit is below the current onee then it is accepted automatically...
-    /// ...otherwise 2FA is needed.
-    /// @param _amount is the daily limit amount in stablecoin base units.
-    function submitDailyLimitUpdate(uint _amount) external onlyOwnerOrSelf {
-        // Assign the provided amount to pending daily limit: this prevent the controller from reraising it after having been lowered
-        _pendingLimit = _amount;
-        // if new limit is lower then there is no need for 2FA
-        if (_amount <= _dailyLimit){
-            // Decrease the available amount if the new limit is lower than it
-            if (_amount < _available) {
-                _available = _amount;
-                emit UpdatedAvailableDailyLimit(_available, _resetTimestamp);
-            }
-            _setLimit(_amount);
-        }
-        else{
-            emit SubmittedDailyLimitUpdate(_amount);
-        }
+    /// @dev Set daily limit operation.
+    /// @param _amount the new limit amount.
+    function setDailyLimit(uint _amount) external onlySelf {
+        _setDailyLimit(_amount);
     }
 
     /// @dev Use up amount within the daily limit. Will fail if amount is larger than available limit.
     function _enforceDailyLimit(uint _amount) internal {
         // Account for the limit daily reset.
-        _updateAvailableDailyLimit();
-        require(_available >= _amount, "available<amount");
+        if (now > _resetTimestamp) {
+            // Set the available limit to the current daily limit.
+            _available = _dailyLimit;
+            // Update the current timestamp.
+            _resetTimestamp = now.add(24 hours);
+        }
+        require(_available >= _amount, "spend amount exceeds available limit");
         _available = _available.sub(_amount);
         emit UpdatedAvailableDailyLimit(_available, _resetTimestamp);
     }
 
     /// @dev Modify the daily limit and spend available based on the provided value.
     /// @dev _amount is the daily limit amount in stablecoin base units.
-    function _setLimit(uint _amount) private {
+    function _setDailyLimit(uint _amount) private {
         // Set the daily limit to the provided amount.
         _dailyLimit = _amount;
         emit SetDailyLimit(msg.sender, _dailyLimit);
+         // update the available amount...
+        _available = _amount;
+         // ...and reset the 24-hour window
+        _resetTimestamp = now.add(24 hours);
+        emit UpdatedAvailableDailyLimit(_available, _resetTimestamp);
     }
 
-    /// @dev Update available limit based on the daily reset.
-    function _updateAvailableDailyLimit() private {
-        if (now > _resetTimestamp) {
-            // Update the current timestamp.
-            _resetTimestamp = now.add(24 hours);
-            // Set the available limit to the current daily limit.
-            _available = _dailyLimit;
-        }
-    }
 }
 
 
 /// @title Asset wallet with extra security features and card integration.
-contract Wallet is ENSResolvable, AddressWhitelist, DailyLimit, IERC165, Transferrable, Balanceable {
+contract Wallet is ENSResolvable, WalletDeployable, AddressWhitelist, DailyLimit, IERC165, Transferrable, Balanceable {
 
     using Address for address;
     using ECDSA for bytes32;
@@ -386,7 +352,7 @@ contract Wallet is ENSResolvable, AddressWhitelist, DailyLimit, IERC165, Transfe
         bytes32 _licenceNode_,
         bytes32 _walletDeployerNode_,
         uint256 _dailyLimit_
-    ) public ENSResolvable(_ens_) AddressWhitelist(_walletDeployerNode_) DailyLimit(_dailyLimit_, _tokenWhitelistNode_) Ownable(_owner_, _transferable_) Controllable(_controllerNode_) {
+    ) public ENSResolvable(_ens_) WalletDeployable(_walletDeployerNode_) DailyLimit(_dailyLimit_, _tokenWhitelistNode_) Ownable(_owner_, _transferable_) Controllable(_controllerNode_) {
         _licenceNode = _licenceNode_;
     }
 
