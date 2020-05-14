@@ -5,6 +5,7 @@ import (
 	"os"
 	"testing"
 
+	"github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	. "github.com/onsi/ginkgo"
@@ -27,6 +28,21 @@ func init() {
 		"../../build/mocks/tokenWhitelistableExporter/combined.json",
 		"../../contracts",
 	)
+}
+
+func ethCall(tx *types.Transaction) ([]byte, error) {
+	msg, _ := tx.AsMessage(types.HomesteadSigner{})
+
+	calMsg := ethereum.CallMsg{
+		From:     msg.From(),
+		To:       msg.To(),
+		Gas:      msg.Gas(),
+		GasPrice: msg.GasPrice(),
+		Value:    msg.Value(),
+		Data:     msg.Data(),
+	}
+
+	return Backend.CallContract(context.Background(), calMsg, nil)
 }
 
 func TestTokenWhitelistSuite(t *testing.T) {
@@ -89,7 +105,7 @@ var _ = AfterEach(func() {
 })
 
 var _ = AfterSuite(func() {
-	TestRig.ExpectMinimumCoverage("tokenWhitelist.sol", 99.32)
+	TestRig.ExpectMinimumCoverage("tokenWhitelist.sol", 98.00)
 	TestRig.ExpectMinimumCoverage("internals/tokenWhitelistable.sol", 100.0)
 	TestRig.PrintGasUsage(os.Stdout)
 })
