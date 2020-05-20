@@ -1,9 +1,12 @@
 package wallet_test
 
 import (
+	"fmt"
 	"math/big"
+	"strings"
 	"time"
 
+	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/common"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -23,7 +26,18 @@ var _ = Describe("transfer", func() {
 			Backend.Commit()
 			Expect(isSuccessful(tx)).To(BeTrue())
 
-			tx, err = Wallet.SubmitDailyLimitUpdate(Owner.TransactOpts(), MweiToWei(100))
+			a, err := abi.JSON(strings.NewReader(WALLET_ABI))
+			Expect(err).ToNot(HaveOccurred())
+			data, err := a.Pack("setDailyLimit", MweiToWei(100))
+			Expect(err).ToNot(HaveOccurred())
+
+			batch := []byte(fmt.Sprintf("%s%s%s%s", WalletAddress, abi.U256(EthToWei(0)), abi.U256(big.NewInt(int64(len(data)))), data))
+
+			nonce := big.NewInt(0)
+			signature, err := SignData(nonce, batch, Owner.PrivKey())
+			Expect(err).ToNot(HaveOccurred())
+
+			tx, err = Wallet.ExecutePrivilegedRelayedTransaction(Controller.TransactOpts(), nonce, batch, signature)
 			Expect(err).ToNot(HaveOccurred())
 			Backend.Commit()
 			Expect(isSuccessful(tx)).To(BeTrue())
@@ -37,7 +51,7 @@ var _ = Describe("transfer", func() {
 			evt := it.Event
 			Expect(it.Next()).To(BeFalse())
 			Expect(evt.Amount.String()).To(Equal(MweiToWei(100).String()))
-			initTime := Backend.Blockchain().CurrentHeader().Time + 24*60*60 - 40
+			initTime := Backend.Blockchain().CurrentHeader().Time + 24*60*60
 			Expect(evt.NextReset.String()).To(Equal(big.NewInt(int64(initTime)).String()))
 		})
 
@@ -58,7 +72,7 @@ var _ = Describe("transfer", func() {
 				evt := it.Event
 				Expect(it.Next()).To(BeFalse())
 				Expect(evt.Amount.String()).To(Equal("0"))
-				initTime := Backend.Blockchain().CurrentHeader().Time + 24*60*60 - 50
+				initTime := Backend.Blockchain().CurrentHeader().Time + 24*60*60 - 10
 				Expect(evt.NextReset.String()).To(Equal(big.NewInt(int64(initTime)).String()))
 			})
 
@@ -75,7 +89,7 @@ var _ = Describe("transfer", func() {
 					Backend.Commit()
 					Expect(isSuccessful(tx)).To(BeFalse())
 					returnData, _ := ethCall(tx)
-					Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("available<amount"))
+					Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("Spend amount exceeds available limit"))
 				})
 			})
 
@@ -150,7 +164,7 @@ var _ = Describe("transfer", func() {
 				Backend.Commit()
 				Expect(isSuccessful(tx)).To(BeFalse())
 				returnData, _ := ethCall(tx)
-				Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("Not owner or self"))
+				Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("Only owner or self"))
 			})
 
 		})
@@ -162,7 +176,7 @@ var _ = Describe("transfer", func() {
 				Backend.Commit()
 				Expect(isSuccessful(tx)).To(BeFalse())
 				returnData, _ := ethCall(tx)
-				Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("Not owner or self"))
+				Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("Only owner or self"))
 			})
 		})
 
@@ -208,7 +222,7 @@ var _ = Describe("transfer", func() {
 					Backend.Commit()
 					Expect(isSuccessful(tx)).To(BeFalse())
 					returnData, _ := ethCall(tx)
-					Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("Not owner or self"))
+					Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("Only owner or self"))
 				})
 			})
 
@@ -219,7 +233,7 @@ var _ = Describe("transfer", func() {
 					Backend.Commit()
 					Expect(isSuccessful(tx)).To(BeFalse())
 					returnData, _ := ethCall(tx)
-					Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("Not owner or self"))
+					Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("Only owner or self"))
 				})
 			})
 

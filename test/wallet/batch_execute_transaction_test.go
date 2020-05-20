@@ -162,17 +162,17 @@ var _ = Describe("batchExecuteTransaction", func() {
 
 		})
 
-		When("I top up gas and set the whitelist", func() {
+		When("I set the daily limit and the whitelist", func() {
 
 			BeforeEach(func() {
 
 				a, err := abi.JSON(strings.NewReader(WALLET_ABI))
 				Expect(err).ToNot(HaveOccurred())
-				data, err := a.Pack("submitDailyLimitUpdate", MweiToWei(100))
+				data, err := a.Pack("setDailyLimit", MweiToWei(100))
 				Expect(err).ToNot(HaveOccurred())
 				batchString := fmt.Sprintf("%s%s%s%s", WalletAddress, abi.U256(big.NewInt(0)), abi.U256(big.NewInt(int64(len(data)))), data)
 
-				data, err = a.Pack("setWhitelist", []common.Address{RandomAccount.Address()})
+				data, err = a.Pack("addToWhitelist", []common.Address{RandomAccount.Address()})
 				Expect(err).ToNot(HaveOccurred())
 				batch := []byte(fmt.Sprintf("%s%s%s%s%s", batchString, WalletAddress, abi.U256(big.NewInt(0)), abi.U256(big.NewInt(int64(len(data)))), data))
 
@@ -180,16 +180,10 @@ var _ = Describe("batchExecuteTransaction", func() {
 				signature, err := SignData(nonce, batch, Owner.PrivKey())
 				Expect(err).ToNot(HaveOccurred())
 
-				tx, err := Wallet.ExecuteRelayedTransaction(Controller.TransactOpts(), nonce, batch, signature)
+				tx, err := Wallet.ExecutePrivilegedRelayedTransaction(Controller.TransactOpts(), nonce, batch, signature)
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 				Expect(isSuccessful(tx)).To(BeTrue())
-			})
-
-			It("should update the IsSetWhitelist flag", func() {
-				initialized, err := Wallet.IsSetWhitelist(nil)
-				Expect(err).ToNot(HaveOccurred())
-				Expect(initialized).To(BeTrue())
 			})
 
 			It("should add the random account to the whitelist", func() {
@@ -318,25 +312,11 @@ const WALLET_ABI = `[
         "constant": false,
         "inputs": [
             {
-                "name": "_amount",
-                "type": "uint256"
-            }
-        ],
-        "name": "topUpGas",
-        "outputs": [],
-        "payable": false,
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "constant": false,
-        "inputs": [
-            {
                 "name": "_addresses",
                 "type": "address[]"
             }
         ],
-        "name": "setWhitelist",
+        "name": "addToWhitelist",
         "outputs": [],
         "payable": false,
         "stateMutability": "nonpayable",
@@ -350,7 +330,7 @@ const WALLET_ABI = `[
                 "type": "uint256"
             }
         ],
-        "name": "submitDailyLimitUpdate",
+        "name": "setDailyLimit",
         "outputs": [],
         "payable": false,
         "stateMutability": "nonpayable",

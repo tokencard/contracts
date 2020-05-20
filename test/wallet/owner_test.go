@@ -51,9 +51,10 @@ var _ = Describe("ownable", func() {
 				Owner.Address(),
 				false,
 				ENSRegistryAddress,
-				TokenWhitelistName,
-				ControllerName,
-				LicenceName,
+				TokenWhitelistNode,
+				ControllerNode,
+				LicenceNode,
+				WalletDeployerNode,
 				EthToWei(100),
 			)
 			Expect(err).ToNot(HaveOccurred())

@@ -2,10 +2,13 @@ package wallet_test
 
 import (
 	"context"
+	"fmt"
 	"math"
 	"math/big"
+	"strings"
 	"time"
 
+	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/common"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -18,7 +21,7 @@ var _ = Describe("wallet load eth", func() {
 	It("Should return the licence ENS-registered node", func() {
 		sa, err := Wallet.LicenceNode(nil)
 		Expect(err).ToNot(HaveOccurred())
-		Expect(sa).To(Equal([32]byte(LicenceName)))
+		Expect(sa).To(Equal([32]byte(LicenceNode)))
 	})
 
 	When("the contract has no balance", func() {
@@ -43,9 +46,9 @@ var _ = Describe("wallet load eth", func() {
 				tx, err := Wallet.LoadTokenCard(Owner.TransactOpts(ethertest.WithGasLimit(1000000)), common.HexToAddress("0x0"), big.NewInt(1000))
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
-				Expect(isGasExhausted(tx, 1000000)).To(BeFalse())
 				Expect(isSuccessful(tx)).To(BeFalse())
-				Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*load\{value:\ _amount\}\(_asset, _amount\);`))
+				returnData, _ := ethCall(tx)
+				Expect(string(returnData[len(returnData)-84:])).To(ContainSubstring("Load: not sufficient balance"))
 			})
 		})
 
@@ -89,10 +92,21 @@ var _ = Describe("wallet load eth", func() {
 		Expect(b.String()).To(Equal("0"))
 	})
 
-	When("the wallet has 102 ETH and the daily limit is set to 101 ETH", func() {
+	When("the daily limit is set to 101 USD", func() {
 
 		BeforeEach(func() {
-			tx, err := Wallet.SubmitDailyLimitUpdate(Owner.TransactOpts(), EthToWei(101))
+			a, err := abi.JSON(strings.NewReader(WALLET_ABI))
+			Expect(err).ToNot(HaveOccurred())
+			data, err := a.Pack("setDailyLimit", MweiToWei(101))
+			Expect(err).ToNot(HaveOccurred())
+
+			batch := []byte(fmt.Sprintf("%s%s%s%s", WalletAddress, abi.U256(EthToWei(0)), abi.U256(big.NewInt(int64(len(data)))), data))
+
+			nonce := big.NewInt(0)
+			signature, err := SignData(nonce, batch, Owner.PrivKey())
+			Expect(err).ToNot(HaveOccurred())
+
+			tx, err := Wallet.ExecutePrivilegedRelayedTransaction(Controller.TransactOpts(), nonce, batch, signature)
 			Expect(err).ToNot(HaveOccurred())
 			Backend.Commit()
 			Expect(isSuccessful(tx)).To(BeTrue())
@@ -110,9 +124,9 @@ var _ = Describe("wallet load eth", func() {
 				tx, err := Wallet.LoadTokenCard(Owner.TransactOpts(ethertest.WithGasLimit(100000)), common.HexToAddress("0x0"), big.NewInt(1000))
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
-				Expect(isGasExhausted(tx, 100000)).To(BeFalse())
 				Expect(isSuccessful(tx)).To(BeFalse())
-				Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*_isTokenLoadable\(_asset\), "token not loadable"\);`))
+				returnData, _ := ethCall(tx)
+				Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("token not loadable"))
 			})
 		})
 
@@ -218,13 +232,13 @@ var _ = Describe("wallet load eth", func() {
 
 					It("Should revert", func() {
 						limPlusOneWei := EthToWei(10)
-						limPlusOneWei.Add(limPlusOneWei, GweiToWei(1)) // 10 ETH * 1000 + 1= 10,001 stablecoins
+						limPlusOneWei.Add(limPlusOneWei, GweiToWei(1))
 						tx, err := Wallet.LoadTokenCard(Owner.TransactOpts(ethertest.WithGasLimit(200000)), common.HexToAddress("0x0"), limPlusOneWei)
 						Expect(err).ToNot(HaveOccurred())
 						Backend.Commit()
 						Expect(isSuccessful(tx)).To(BeFalse())
 						returnData, _ := ethCall(tx)
-						Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("available<amount"))
+						Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("Spend amount exceeds available limit"))
 					})
 				}) //more daily Load limit
 

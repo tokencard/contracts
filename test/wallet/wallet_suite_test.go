@@ -24,6 +24,7 @@ import (
 
 var Wallet *bindings.Wallet
 var WalletAddress common.Address
+var WalletDeployerNode = EnsNode("wallet-deployer.v3.tokencard.eth")
 
 func ethCall(tx *types.Transaction) ([]byte, error) {
 	msg, _ := tx.AsMessage(types.HomesteadSigner{})
@@ -92,7 +93,7 @@ var _ = BeforeEach(func() {
 	Expect(err).ToNot(HaveOccurred())
 	// Deploy the Token wallet contract.
 	var tx *types.Transaction
-	WalletAddress, tx, Wallet, err = bindings.DeployWallet(BankAccount.TransactOpts(), Backend, Owner.Address(), true, ENSRegistryAddress, TokenWhitelistName, ControllerName, LicenceName, big.NewInt(10000))
+	WalletAddress, tx, Wallet, err = bindings.DeployWallet(BankAccount.TransactOpts(), Backend, Owner.Address(), true, ENSRegistryAddress, TokenWhitelistNode, ControllerNode, LicenceNode, WalletDeployerNode, big.NewInt(10000))
 	Expect(err).ToNot(HaveOccurred())
 	Backend.Commit()
 	Expect(isSuccessful(tx)).To(BeTrue())
