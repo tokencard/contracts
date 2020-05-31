@@ -14,6 +14,8 @@
 
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ *
+ *  SPDX-License-Identifier: GPL-3.0
  */
 
 pragma solidity ^0.5.17;
@@ -21,23 +23,20 @@ pragma solidity ^0.5.17;
 import "../controller.sol";
 import "./ensResolvable.sol";
 
-
-/// @title Controllable implements access control functionality of the Controller found via ENS.
+/// @title Controllable implements access control functionality of the Controller smart contract.
 contract Controllable is ENSResolvable {
-    // Default values for mainnet ENS
-    // controller.tokencard.eth
-    bytes32 private constant _DEFAULT_CONTROLLER_NODE = 0x7f2ce995617d2816b426c5c8698c5ec2952f7a34bb10f38326f74933d5893697;
+    /// @notice Emits the controller ENS node when set.
+    event SetControllerNode(bytes32 _controllerNode);
 
-    /// @dev Is the registered ENS node identifying the controller contract.
-    bytes32 private _controllerNode = _DEFAULT_CONTROLLER_NODE;
+    /// @notice ENS node for the Controller smart contract, set to the default value of `controller.tokencard.eth`.
+    bytes32 private _controllerNode = 0x7f2ce995617d2816b426c5c8698c5ec2952f7a34bb10f38326f74933d5893697;
 
-    /// @notice Constructor initializes the controller contract object.
-    /// @param _controllerNode_ is the ENS node of the Controller.
-    /// @dev pass in bytes32(0) to use the default, production node labels for ENS
+    /// @notice Constructor initializes the Controller contract object.
+    /// @param _controllerNode_ ENS node for the Controller smart contract.
     constructor(bytes32 _controllerNode_) internal {
-        // Set controllerNode or use default
         if (_controllerNode_ != bytes32(0)) {
             _controllerNode = _controllerNode_;
+            emit SetControllerNode(_controllerNode_);
         }
     }
 
@@ -53,17 +52,23 @@ contract Controllable is ENSResolvable {
         _;
     }
 
-    /// @return the controller node registered in ENS.
+    /// @return Controller node registered in the ENS registry.
     function controllerNode() public view returns (bytes32) {
         return _controllerNode;
     }
 
-    /// @return true if the provided account is a controller.
+    /// @notice Set the controller ENS node to a different one.
+    function setControllerNode(bytes32 _controllerNode_) internal {
+        _controllerNode = _controllerNode_;
+        emit SetControllerNode(_controllerNode_);
+    }
+
+    /// @return Result of whether the provided address is the same as the controller contract address.
     function _isController(address _account) internal view returns (bool) {
         return IController(_ensResolve(_controllerNode)).isController(_account);
     }
 
-    /// @return true if the provided account is an admin.
+    /// @return Result of whether the provided address is an admin address.
     function _isAdmin(address _account) internal view returns (bool) {
         return IController(_ensResolve(_controllerNode)).isAdmin(_account);
     }

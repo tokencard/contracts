@@ -24,19 +24,32 @@ import "./ensResolvable.sol";
 
 /// @title TokenWhitelistable implements access to the TokenWhitelist located behind ENS.
 contract TokenWhitelistable is ENSResolvable {
-    /// @notice Is the registered ENS node identifying the tokenWhitelist contract
-    bytes32 private _tokenWhitelistNode;
+    /// @notice Emits the TokenWhitelist ENS node when set.
+    event SetTokenWhitelistNode(bytes32 _tokenWhitelistNode);
+
+    /// @notice ENS node for the TokenWhitelist smart contract set to the default value (token-whitelist.tokencard.eth).
+    bytes32 private _tokenWhitelistNode = 0xe84f90570f13fe09f288f2411ff9cf50da611ed0c7db7f73d48053ffc974d396;
 
     /// @notice Constructor initializes the TokenWhitelistable object.
     /// @param _tokenWhitelistNode_ is the ENS node of the TokenWhitelist.
     constructor(bytes32 _tokenWhitelistNode_) internal {
-        _tokenWhitelistNode = _tokenWhitelistNode_;
+        if (_tokenWhitelistNode_ != bytes32(0)) {
+            _tokenWhitelistNode = _tokenWhitelistNode_;
+            emit SetTokenWhitelistNode(_tokenWhitelistNode_);
+        }
     }
 
     /// @notice This shows what TokenWhitelist is being used
     /// @return TokenWhitelist's node registered in ENS.
     function tokenWhitelistNode() external view returns (bytes32) {
         return _tokenWhitelistNode;
+    }
+
+	/// @notice Set the ENS node for the TokenWhitelist smart contract.
+    /// @param _tokenWhitelistNode_ A new ENS node for the TokenWhitelist smart contract.
+    function _setTokenWhitelistNode(bytes32 _tokenWhitelistNode_) internal {
+        _tokenWhitelistNode = _tokenWhitelistNode_;
+        emit SetTokenWhitelistNode(_tokenWhitelistNode_);
     }
 
     /// @notice This returns all of the fields for a given token.

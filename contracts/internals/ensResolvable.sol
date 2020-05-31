@@ -14,6 +14,8 @@
 
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ *
+ *  SPDX-License-Identifier: GPL-3.0
  */
 
 pragma solidity ^0.5.17;
@@ -22,25 +24,30 @@ import "../externals/ens/ENS.sol";
 import "../externals/ens/PublicResolver.sol";
 
 
-///@title ENSResolvable - Ethereum Name Service Resolver
-///@notice contract should be used to get an address for an ENS node
+///@title Provides an interface for the ENS registry and the corresponding Resolver contract.
+///@dev It can be inherited by other contracts which want to make use of ENS.
 contract ENSResolvable {
-    /// @notice _ensRegistry points to the ENS registry smart contract.
-    address private _ensRegistry;
+    /// @notice Emits the address of the new ENS registry when it is set.
+    event ENSSetRegistry(address _ensRegistry);
 
-    /// @param _ensReg_ is the ENS registry used
-    constructor(address _ensReg_) internal {
-        _ensRegistry = _ensReg_;
-    }
+    /// @notice Address of the ENS registry contract set to the default ENS registry address.
+    address private _ensRegistry = 0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e;
 
-    /// @notice this is used to that one can observe which ENS registry is being used
+    /// @return Current address of the ENS registry contract.
     function ensRegistry() external view returns (address) {
         return _ensRegistry;
     }
 
-    /// @notice helper function used to get the address of a node
-    /// @param _node of the ENS entry that needs resolving
-    /// @return the address of the said node
+    /// @notice Sets the ENS registry address to the provided address.
+    /// @param _ensRegistry_ Address of the ENS registry smart contract.
+    function _ensSetRegistry(address _ensRegistry_) internal {
+        _ensRegistry = _ensRegistry_;
+        emit ENSSetRegistry(_ensRegistry_);
+    }
+
+    /// @notice Resolves the address of an ENS node.
+    /// @param _node The ENS node to be resolved.
+    /// @return Address of the resolved ENS node.
     function _ensResolve(bytes32 _node) internal view returns (address) {
         return PublicResolver(ENS(_ensRegistry).resolver(_node)).addr(_node);
     }

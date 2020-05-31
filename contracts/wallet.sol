@@ -544,7 +544,6 @@ contract Wallet is ENSResolvable, GasTopUpLimit, LoadLimit, AddressWhitelist, Sp
     /// @dev Constructor initializes the wallet top up limit and the vault contract.
     /// @param _owner_ is the owner account of the wallet contract.
     /// @param _transferable_ indicates whether the contract ownership can be transferred.
-    /// @param _ens_ is the address of the ENS registry.
     /// @param _tokenWhitelistNode_ is the ENS name node of the Token whitelist.
     /// @param _controllerNode_ is the ENS name node of the Controller contract.
     /// @param _licenceNode_ is the ENS name node of the Licence contract.
@@ -552,12 +551,11 @@ contract Wallet is ENSResolvable, GasTopUpLimit, LoadLimit, AddressWhitelist, Sp
     constructor(
         address payable _owner_,
         bool _transferable_,
-        address _ens_,
         bytes32 _tokenWhitelistNode_,
         bytes32 _controllerNode_,
         bytes32 _licenceNode_,
         uint256 _spendLimit_
-    ) public ENSResolvable(_ens_) SpendLimit(_spendLimit_) Ownable(_owner_, _transferable_) Controllable(_controllerNode_) LoadLimit(_tokenWhitelistNode_) {
+    ) public SpendLimit(_spendLimit_) Ownable(_owner_, _transferable_) Controllable(_controllerNode_) LoadLimit(_tokenWhitelistNode_) {
         _licenceNode = _licenceNode_;
     }
 
