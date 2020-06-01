@@ -52,13 +52,10 @@ contract WalletCache is ENSResolvable, Controllable {
 
     /// @notice parameters are passed in so that they can be used to construct new instances of the wallet
     /// @dev pass in bytes32 to use the default, production node labels for ENS
-    constructor(
-        uint256 _defaultSpendLimit_,
-        bytes32 _controllerNode_,
-        bytes32 _licenceNode_,
-        bytes32 _tokenWhitelistNode_,
-        bytes32 _walletDeployerNode_
-    ) public Controllable(_controllerNode_) {
+    constructor(uint256 _defaultSpendLimit_, bytes32 _controllerNode_, bytes32 _licenceNode_, bytes32 _tokenWhitelistNode_, bytes32 _walletDeployerNode_)
+        public
+        Controllable(_controllerNode_)
+    {
         defaultSpendLimit = _defaultSpendLimit_;
 
         // Set licenceNode or use default

@@ -23,6 +23,7 @@ pragma solidity ^0.5.17;
 import "../controller.sol";
 import "./ensResolvable.sol";
 
+
 /// @title Controllable implements access control functionality of the Controller smart contract.
 contract Controllable is ENSResolvable {
     /// @notice Emits the controller ENS node when set.

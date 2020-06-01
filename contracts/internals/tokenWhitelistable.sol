@@ -45,7 +45,7 @@ contract TokenWhitelistable is ENSResolvable {
         return _tokenWhitelistNode;
     }
 
-	/// @notice Set the ENS node for the TokenWhitelist smart contract.
+    /// @notice Set the ENS node for the TokenWhitelist smart contract.
     /// @param _tokenWhitelistNode_ A new ENS node for the TokenWhitelist smart contract.
     function _setTokenWhitelistNode(bytes32 _tokenWhitelistNode_) internal {
         _tokenWhitelistNode = _tokenWhitelistNode_;

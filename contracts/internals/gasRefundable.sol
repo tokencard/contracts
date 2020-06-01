@@ -25,10 +25,14 @@ import "./ensResolvable.sol";
 
 interface IGasToken {
     function free(uint256) external returns (bool);
+
     function freeUpTo(uint256) external returns (uint256);
+
     function freeFrom(address, uint256) external returns (bool);
+
     function freeFromUpTo(address, uint256) external returns (uint256);
 }
+
 
 contract GasRefundable is ENSResolvable {
     /// @notice Emits the GST ENS node when set.
@@ -38,14 +42,14 @@ contract GasRefundable is ENSResolvable {
     bytes32 private _gstNode = 0x09eda238d4d37e8ac546190722df083c57c5adeae8a32c990781b796ca0886c0;
 
     /// @param _gstNode_ ENS node for the GST token contract.
-	constructor(bytes32 _gstNode_) internal {
+    constructor(bytes32 _gstNode_) internal {
         if (_gstNode_ != bytes32(0)) {
             _gstNode = _gstNode_;
             emit GSTSetNode(_gstNode_);
         }
     }
 
-	/// @notice Set the ENS node for the GST token.
+    /// @notice Set the ENS node for the GST token.
     /// @param _gstNode_ A new ENS node for the GST token contract.
     function _gstSetNode(bytes32 _gstNode_) internal {
         _gstNode = _gstNode_;

@@ -21,12 +21,13 @@
 pragma solidity ^0.5.17;
 
 import "./internals/ownable.sol";
-import "./internals/transferrable.sol";
 import "./internals/gasRefundable.sol";
+
 
 /// @title The IController interface provides access to the isController and isAdmin checks.
 interface IController {
     function isController(address) external view returns (bool);
+
     function isAdmin(address) external view returns (bool);
 }
 
@@ -34,7 +35,7 @@ interface IController {
 /// @title Controller stores a list of controller addresses that can be used for authentication in other contracts.
 /// @notice The Controller contract implements a hierarchy of concepts: owner, admin and signer.
 /// @notice Owner can modify admins, admins can modify the signers, signers are used to execute transactions.
-contract Controller is Ownable, Transferrable, GasRefundable {
+contract Controller is Ownable, GasRefundable {
     event ExecutedTransaction(address _destination, uint256 _value, bytes _data, bytes _returnData);
 
     event AddedSigner(address _sender, address _signer);
@@ -59,7 +60,7 @@ contract Controller is Ownable, Transferrable, GasRefundable {
 
     /// @dev The controller contract is added to the list of controllers to be backwards compatible with the v1 interface.
     /// @param _ownerAddress Address of the contract owner.
-    constructor(address payable _ownerAddress) public Ownable(_ownerAddress, false) GasRefundable(bytes32(0)) {
+    constructor(address payable _ownerAddress, bytes32 _gasTokenNode) public Ownable(_ownerAddress, false) GasRefundable(_gasTokenNode) {
         _isController[address(this)] = true;
         _controllerCount++;
     }
