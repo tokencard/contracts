@@ -70,12 +70,10 @@ contract Oracle is ENSResolvable, usingOraclize, Transferrable, Base64, Date, Co
 
     /// @notice Construct the oracle with multiple controllers, address resolver and custom gas price.
     /// @param _resolver_ is the address of the oraclize resolver
-    /// @param _ens_ is the address of the ENS.
     /// @param _controllerNode_ is the ENS node corresponding to the Controller.
     /// @param _tokenWhitelistNode_ is the ENS corresponding to the Token Whitelist.
-    constructor(address _resolver_, address _ens_, bytes32 _controllerNode_, bytes32 _tokenWhitelistNode_)
+    constructor(address _resolver_, bytes32 _controllerNode_, bytes32 _tokenWhitelistNode_)
         public
-        ENSResolvable(_ens_)
         Controllable(_controllerNode_)
         TokenWhitelistable(_tokenWhitelistNode_)
     {

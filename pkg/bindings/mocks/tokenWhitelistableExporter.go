@@ -28,19 +28,19 @@ var (
 )
 
 // TokenWhitelistableExporterABI is the input ABI used to generate the binding from.
-const TokenWhitelistableExporterABI = "[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_ens_\",\"type\":\"address\"},{\"internalType\":\"bytes32\",\"name\":\"_tokenWhitelistName_\",\"type\":\"bytes32\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"constant\":true,\"inputs\":[],\"name\":\"ensRegistry\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"address\",\"name\":\"_destination\",\"type\":\"address\"},{\"internalType\":\"bytes\",\"name\":\"_data\",\"type\":\"bytes\"}],\"name\":\"getERC20RecipientAndAmount\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"getStablecoinInfo\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"},{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"},{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"},{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"address\",\"name\":\"_a\",\"type\":\"address\"}],\"name\":\"getTokenInfo\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"},{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"},{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"},{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"address\",\"name\":\"_a\",\"type\":\"address\"}],\"name\":\"isTokenAvailable\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"address\",\"name\":\"_a\",\"type\":\"address\"}],\"name\":\"isTokenLoadable\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"address\",\"name\":\"_a\",\"type\":\"address\"}],\"name\":\"isTokenRedeemable\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"redeemableTokens\",\"outputs\":[{\"internalType\":\"address[]\",\"name\":\"\",\"type\":\"address[]\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"tokenAddressArray\",\"outputs\":[{\"internalType\":\"address[]\",\"name\":\"\",\"type\":\"address[]\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"tokenWhitelistNode\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"address\",\"name\":\"_token\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"_rate\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"_updateDate\",\"type\":\"uint256\"}],\"name\":\"updateTokenRate\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"}]"
+const TokenWhitelistableExporterABI = "[{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"_tokenWhitelistName_\",\"type\":\"bytes32\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"_ensRegistry\",\"type\":\"address\"}],\"name\":\"ENSSetRegistry\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"bytes32\",\"name\":\"_tokenWhitelistNode\",\"type\":\"bytes32\"}],\"name\":\"SetTokenWhitelistNode\",\"type\":\"event\"},{\"constant\":true,\"inputs\":[],\"name\":\"ensRegistry\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"address\",\"name\":\"_destination\",\"type\":\"address\"},{\"internalType\":\"bytes\",\"name\":\"_data\",\"type\":\"bytes\"}],\"name\":\"getERC20RecipientAndAmount\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"getStablecoinInfo\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"},{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"},{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"},{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"address\",\"name\":\"_a\",\"type\":\"address\"}],\"name\":\"getTokenInfo\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"},{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"},{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"},{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"address\",\"name\":\"_a\",\"type\":\"address\"}],\"name\":\"isTokenAvailable\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"address\",\"name\":\"_a\",\"type\":\"address\"}],\"name\":\"isTokenLoadable\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"address\",\"name\":\"_a\",\"type\":\"address\"}],\"name\":\"isTokenRedeemable\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"redeemableTokens\",\"outputs\":[{\"internalType\":\"address[]\",\"name\":\"\",\"type\":\"address[]\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"tokenAddressArray\",\"outputs\":[{\"internalType\":\"address[]\",\"name\":\"\",\"type\":\"address[]\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"tokenWhitelistNode\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"address\",\"name\":\"_token\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"_rate\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"_updateDate\",\"type\":\"uint256\"}],\"name\":\"updateTokenRate\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"}]"
 
 // TokenWhitelistableExporterBin is the compiled bytecode used for deploying new contracts.
-var TokenWhitelistableExporterBin = "0x608060405234801561001057600080fd5b50604051610c5b380380610c5b8339818101604052604081101561003357600080fd5b508051602090910151600080546001600160a01b0319166001600160a01b03909316929092178255600155610bed90819061006e90396000f3fe608060405234801561001057600080fd5b50600436106100a95760003560e01c806344b049bc1161007157806344b049bc1461023e5780637d73b23114610246578063877337b01461026a578063afc72e9314610284578063d545782e14610325578063dcc922bc14610359576100a9565b806317e73794146100ae5780631f69565f146100e85780632ff0fcaa146101b85780633efec5e9146101de578063443dd2a4146101e6575b600080fd5b6100d4600480360360208110156100c457600080fd5b50356001600160a01b031661037f565b604080519115158252519081900360200190f35b61010e600480360360208110156100fe57600080fd5b50356001600160a01b0316610390565b6040805160208082018990529181018790528515156060820152841515608082015283151560a082015260c0810183905260e08082528951908201528851909182916101008301918b019080838360005b8381101561017757818101518382015260200161015f565b50505050905090810190601f1680156101a45780820380516001836020036101000a031916815260200191505b509850505050505050505060405180910390f35b6100d4600480360360208110156101ce57600080fd5b50356001600160a01b03166103bb565b61010e6103c6565b6101ee6103ef565b60408051602080825283518183015283519192839290830191858101910280838360005b8381101561022a578181015183820152602001610212565b505050509050019250505060405180910390f35b6101ee6103fe565b61024e610408565b604080516001600160a01b039092168252519081900360200190f35b610272610417565b60408051918252519081900360200190f35b6103026004803603604081101561029a57600080fd5b6001600160a01b038235169190810190604081016020820135600160201b8111156102c457600080fd5b8201836020820111156102d657600080fd5b803590602001918460018302840111600160201b831117156102f757600080fd5b50909250905061041d565b604080516001600160a01b03909316835260208301919091528051918290030190f35b6103576004803603606081101561033b57600080fd5b506001600160a01b03813516906020810135906040013561046c565b005b6100d46004803603602081101561036f57600080fd5b50356001600160a01b031661047c565b600061038a82610487565b92915050565b60606000806000806000806103a4886104a1565b959e949d50929b5090995097509550909350915050565b600061038a82610633565b60606000806000806000806103d961064d565b959d949c50929a50909850965094509092509050565b60606103f96107bc565b905090565b60606103f96108cd565b6000546001600160a01b031690565b60015490565b6000806104608585858080601f01602080910402602001604051908101604052809392919081815260200183838082843760009201919091525061091292505050565b91509150935093915050565b610477838383610a1c565b505050565b600061038a82610aab565b600080610493836104a1565b509098975050505050505050565b60606000806000806000806104b7600154610ac4565b6001600160a01b0316631f69565f896040518263ffffffff1660e01b815260040180826001600160a01b03166001600160a01b0316815260200191505060006040518083038186803b15801561050c57600080fd5b505afa158015610520573d6000803e3d6000fd5b505050506040513d6000823e601f3d908101601f1916820160405260e081101561054957600080fd5b8101908080516040519392919084600160201b82111561056857600080fd5b90830190602082018581111561057d57600080fd5b8251600160201b81118282018810171561059657600080fd5b82525081516020918201929091019080838360005b838110156105c35781810151838201526020016105ab565b50505050905090810190601f1680156105f05780820380516001836020036101000a031916815260200191505b5060409081526020820151908201516060830151608084015160a085015160c090950151979e50929c50909a509850965094509192505050919395979092949650565b60008061063f836104a1565b509198975050505050505050565b6060600080600080600080610663600154610ac4565b6001600160a01b0316633efec5e96040518163ffffffff1660e01b815260040160006040518083038186803b15801561069b57600080fd5b505afa1580156106af573d6000803e3d6000fd5b505050506040513d6000823e601f3d908101601f1916820160405260e08110156106d857600080fd5b8101908080516040519392919084600160201b8211156106f757600080fd5b90830190602082018581111561070c57600080fd5b8251600160201b81118282018810171561072557600080fd5b82525081516020918201929091019080838360005b8381101561075257818101518382015260200161073a565b50505050905090810190601f16801561077f5780820380516001836020036101000a031916815260200191505b5060409081526020820151908201516060830151608084015160a085015160c090950151979f939e50919c509a5098509096509294509192505050565b60606107c9600154610ac4565b6001600160a01b031663443dd2a46040518163ffffffff1660e01b815260040160006040518083038186803b15801561080157600080fd5b505afa158015610815573d6000803e3d6000fd5b505050506040513d6000823e601f3d908101601f19168201604052602081101561083e57600080fd5b8101908080516040519392919084600160201b82111561085d57600080fd5b90830190602082018581111561087257600080fd5b82518660208202830111600160201b8211171561088e57600080fd5b82525081516020918201928201910280838360005b838110156108bb5781810151838201526020016108a3565b50505050905001604052505050905090565b60606108da600154610ac4565b6001600160a01b03166344b049bc6040518163ffffffff1660e01b815260040160006040518083038186803b15801561080157600080fd5b600080610920600154610ac4565b6001600160a01b031663afc72e9385856040518363ffffffff1660e01b815260040180836001600160a01b03166001600160a01b0316815260200180602001828103825283818151815260200191508051906020019080838360005b8381101561099457818101518382015260200161097c565b50505050905090810190601f1680156109c15780820380516001836020036101000a031916815260200191505b509350505050604080518083038186803b1580156109de57600080fd5b505afa1580156109f2573d6000803e3d6000fd5b505050506040513d6040811015610a0857600080fd5b508051602090910151909590945092505050565b610a27600154610ac4565b6001600160a01b031663d545782e8484846040518463ffffffff1660e01b815260040180846001600160a01b03166001600160a01b031681526020018381526020018281526020019350505050600060405180830381600087803b158015610a8e57600080fd5b505af1158015610aa2573d6000803e3d6000fd5b50505050505050565b600080610ab7836104a1565b5098975050505050505050565b6000805460408051630178b8bf60e01b81526004810185905290516001600160a01b0390921691630178b8bf91602480820192602092909190829003018186803b158015610b1157600080fd5b505afa158015610b25573d6000803e3d6000fd5b505050506040513d6020811015610b3b57600080fd5b505160408051631d9dabef60e11b81526004810185905290516001600160a01b0390921691633b3b57de91602480820192602092909190829003018186803b158015610b8657600080fd5b505afa158015610b9a573d6000803e3d6000fd5b505050506040513d6020811015610bb057600080fd5b50519291505056fea265627a7a723158204d06c0b59e72e9f205a6f968ae61985dccad30cce29d283d56c395a443ae10a364736f6c63430005110032"
+var TokenWhitelistableExporterBin = "0x6080604052600080546001600160a01b0319166e0c2e074ec69a0dfb2997ba6c7d2e1e1790557fe84f90570f13fe09f288f2411ff9cf50da611ed0c7db7f73d48053ffc974d39660015534801561005557600080fd5b50604051610cb8380380610cb88339818101604052602081101561007857600080fd5b50518080156100ba5760018190556040805182815290517f6b870d88ca471938bca0d02b60d4eea926d8a893430130f2e80906a75ef2387a9181900360200190a15b5050610bed806100cb6000396000f3fe608060405234801561001057600080fd5b50600436106100a95760003560e01c806344b049bc1161007157806344b049bc1461023e5780637d73b23114610246578063877337b01461026a578063afc72e9314610284578063d545782e14610325578063dcc922bc14610359576100a9565b806317e73794146100ae5780631f69565f146100e85780632ff0fcaa146101b85780633efec5e9146101de578063443dd2a4146101e6575b600080fd5b6100d4600480360360208110156100c457600080fd5b50356001600160a01b031661037f565b604080519115158252519081900360200190f35b61010e600480360360208110156100fe57600080fd5b50356001600160a01b0316610390565b6040805160208082018990529181018790528515156060820152841515608082015283151560a082015260c0810183905260e08082528951908201528851909182916101008301918b019080838360005b8381101561017757818101518382015260200161015f565b50505050905090810190601f1680156101a45780820380516001836020036101000a031916815260200191505b509850505050505050505060405180910390f35b6100d4600480360360208110156101ce57600080fd5b50356001600160a01b03166103bb565b61010e6103c6565b6101ee6103ef565b60408051602080825283518183015283519192839290830191858101910280838360005b8381101561022a578181015183820152602001610212565b505050509050019250505060405180910390f35b6101ee6103fe565b61024e610408565b604080516001600160a01b039092168252519081900360200190f35b610272610417565b60408051918252519081900360200190f35b6103026004803603604081101561029a57600080fd5b6001600160a01b038235169190810190604081016020820135600160201b8111156102c457600080fd5b8201836020820111156102d657600080fd5b803590602001918460018302840111600160201b831117156102f757600080fd5b50909250905061041d565b604080516001600160a01b03909316835260208301919091528051918290030190f35b6103576004803603606081101561033b57600080fd5b506001600160a01b03813516906020810135906040013561046c565b005b6100d46004803603602081101561036f57600080fd5b50356001600160a01b031661047c565b600061038a82610487565b92915050565b60606000806000806000806103a4886104a1565b959e949d50929b5090995097509550909350915050565b600061038a82610633565b60606000806000806000806103d961064d565b959d949c50929a50909850965094509092509050565b60606103f96107bc565b905090565b60606103f96108cd565b6000546001600160a01b031690565b60015490565b6000806104608585858080601f01602080910402602001604051908101604052809392919081815260200183838082843760009201919091525061091292505050565b91509150935093915050565b610477838383610a1c565b505050565b600061038a82610aab565b600080610493836104a1565b509098975050505050505050565b60606000806000806000806104b7600154610ac4565b6001600160a01b0316631f69565f896040518263ffffffff1660e01b815260040180826001600160a01b03166001600160a01b0316815260200191505060006040518083038186803b15801561050c57600080fd5b505afa158015610520573d6000803e3d6000fd5b505050506040513d6000823e601f3d908101601f1916820160405260e081101561054957600080fd5b8101908080516040519392919084600160201b82111561056857600080fd5b90830190602082018581111561057d57600080fd5b8251600160201b81118282018810171561059657600080fd5b82525081516020918201929091019080838360005b838110156105c35781810151838201526020016105ab565b50505050905090810190601f1680156105f05780820380516001836020036101000a031916815260200191505b5060409081526020820151908201516060830151608084015160a085015160c090950151979e50929c50909a509850965094509192505050919395979092949650565b60008061063f836104a1565b509198975050505050505050565b6060600080600080600080610663600154610ac4565b6001600160a01b0316633efec5e96040518163ffffffff1660e01b815260040160006040518083038186803b15801561069b57600080fd5b505afa1580156106af573d6000803e3d6000fd5b505050506040513d6000823e601f3d908101601f1916820160405260e08110156106d857600080fd5b8101908080516040519392919084600160201b8211156106f757600080fd5b90830190602082018581111561070c57600080fd5b8251600160201b81118282018810171561072557600080fd5b82525081516020918201929091019080838360005b8381101561075257818101518382015260200161073a565b50505050905090810190601f16801561077f5780820380516001836020036101000a031916815260200191505b5060409081526020820151908201516060830151608084015160a085015160c090950151979f939e50919c509a5098509096509294509192505050565b60606107c9600154610ac4565b6001600160a01b031663443dd2a46040518163ffffffff1660e01b815260040160006040518083038186803b15801561080157600080fd5b505afa158015610815573d6000803e3d6000fd5b505050506040513d6000823e601f3d908101601f19168201604052602081101561083e57600080fd5b8101908080516040519392919084600160201b82111561085d57600080fd5b90830190602082018581111561087257600080fd5b82518660208202830111600160201b8211171561088e57600080fd5b82525081516020918201928201910280838360005b838110156108bb5781810151838201526020016108a3565b50505050905001604052505050905090565b60606108da600154610ac4565b6001600160a01b03166344b049bc6040518163ffffffff1660e01b815260040160006040518083038186803b15801561080157600080fd5b600080610920600154610ac4565b6001600160a01b031663afc72e9385856040518363ffffffff1660e01b815260040180836001600160a01b03166001600160a01b0316815260200180602001828103825283818151815260200191508051906020019080838360005b8381101561099457818101518382015260200161097c565b50505050905090810190601f1680156109c15780820380516001836020036101000a031916815260200191505b509350505050604080518083038186803b1580156109de57600080fd5b505afa1580156109f2573d6000803e3d6000fd5b505050506040513d6040811015610a0857600080fd5b508051602090910151909590945092505050565b610a27600154610ac4565b6001600160a01b031663d545782e8484846040518463ffffffff1660e01b815260040180846001600160a01b03166001600160a01b031681526020018381526020018281526020019350505050600060405180830381600087803b158015610a8e57600080fd5b505af1158015610aa2573d6000803e3d6000fd5b50505050505050565b600080610ab7836104a1565b5098975050505050505050565b6000805460408051630178b8bf60e01b81526004810185905290516001600160a01b0390921691630178b8bf91602480820192602092909190829003018186803b158015610b1157600080fd5b505afa158015610b25573d6000803e3d6000fd5b505050506040513d6020811015610b3b57600080fd5b505160408051631d9dabef60e11b81526004810185905290516001600160a01b0390921691633b3b57de91602480820192602092909190829003018186803b158015610b8657600080fd5b505afa158015610b9a573d6000803e3d6000fd5b505050506040513d6020811015610bb057600080fd5b50519291505056fea265627a7a72315820ac605dfa34a075e4b09bbaf798d5b691eae906574bb120a08b0928e367556e4564736f6c63430005110032"
 
 // DeployTokenWhitelistableExporter deploys a new Ethereum contract, binding an instance of TokenWhitelistableExporter to it.
-func DeployTokenWhitelistableExporter(auth *bind.TransactOpts, backend bind.ContractBackend, _ens_ common.Address, _tokenWhitelistName_ [32]byte) (common.Address, *types.Transaction, *TokenWhitelistableExporter, error) {
+func DeployTokenWhitelistableExporter(auth *bind.TransactOpts, backend bind.ContractBackend, _tokenWhitelistName_ [32]byte) (common.Address, *types.Transaction, *TokenWhitelistableExporter, error) {
 	parsed, err := abi.JSON(strings.NewReader(TokenWhitelistableExporterABI))
 	if err != nil {
 		return common.Address{}, nil, nil, err
 	}
 
-	address, tx, contract, err := bind.DeployContract(auth, parsed, common.FromHex(TokenWhitelistableExporterBin), backend, _ens_, _tokenWhitelistName_)
+	address, tx, contract, err := bind.DeployContract(auth, parsed, common.FromHex(TokenWhitelistableExporterBin), backend, _tokenWhitelistName_)
 	if err != nil {
 		return common.Address{}, nil, nil, err
 	}
@@ -500,4 +500,270 @@ func (_TokenWhitelistableExporter *TokenWhitelistableExporterSession) UpdateToke
 // Solidity: function updateTokenRate(address _token, uint256 _rate, uint256 _updateDate) returns()
 func (_TokenWhitelistableExporter *TokenWhitelistableExporterTransactorSession) UpdateTokenRate(_token common.Address, _rate *big.Int, _updateDate *big.Int) (*types.Transaction, error) {
 	return _TokenWhitelistableExporter.Contract.UpdateTokenRate(&_TokenWhitelistableExporter.TransactOpts, _token, _rate, _updateDate)
+}
+
+// TokenWhitelistableExporterENSSetRegistryIterator is returned from FilterENSSetRegistry and is used to iterate over the raw logs and unpacked data for ENSSetRegistry events raised by the TokenWhitelistableExporter contract.
+type TokenWhitelistableExporterENSSetRegistryIterator struct {
+	Event *TokenWhitelistableExporterENSSetRegistry // Event containing the contract specifics and raw log
+
+	contract *bind.BoundContract // Generic contract to use for unpacking event data
+	event    string              // Event name to use for unpacking event data
+
+	logs chan types.Log        // Log channel receiving the found contract events
+	sub  ethereum.Subscription // Subscription for errors, completion and termination
+	done bool                  // Whether the subscription completed delivering logs
+	fail error                 // Occurred error to stop iteration
+}
+
+// Next advances the iterator to the subsequent event, returning whether there
+// are any more events found. In case of a retrieval or parsing error, false is
+// returned and Error() can be queried for the exact failure.
+func (it *TokenWhitelistableExporterENSSetRegistryIterator) Next() bool {
+	// If the iterator failed, stop iterating
+	if it.fail != nil {
+		return false
+	}
+	// If the iterator completed, deliver directly whatever's available
+	if it.done {
+		select {
+		case log := <-it.logs:
+			it.Event = new(TokenWhitelistableExporterENSSetRegistry)
+			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+				it.fail = err
+				return false
+			}
+			it.Event.Raw = log
+			return true
+
+		default:
+			return false
+		}
+	}
+	// Iterator still in progress, wait for either a data or an error event
+	select {
+	case log := <-it.logs:
+		it.Event = new(TokenWhitelistableExporterENSSetRegistry)
+		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+			it.fail = err
+			return false
+		}
+		it.Event.Raw = log
+		return true
+
+	case err := <-it.sub.Err():
+		it.done = true
+		it.fail = err
+		return it.Next()
+	}
+}
+
+// Error returns any retrieval or parsing error occurred during filtering.
+func (it *TokenWhitelistableExporterENSSetRegistryIterator) Error() error {
+	return it.fail
+}
+
+// Close terminates the iteration process, releasing any pending underlying
+// resources.
+func (it *TokenWhitelistableExporterENSSetRegistryIterator) Close() error {
+	it.sub.Unsubscribe()
+	return nil
+}
+
+// TokenWhitelistableExporterENSSetRegistry represents a ENSSetRegistry event raised by the TokenWhitelistableExporter contract.
+type TokenWhitelistableExporterENSSetRegistry struct {
+	EnsRegistry common.Address
+	Raw         types.Log // Blockchain specific contextual infos
+}
+
+// FilterENSSetRegistry is a free log retrieval operation binding the contract event 0x186a5507043ec82d7cac3080e4bf22b3f781d96b198adf165a2df507bda90773.
+//
+// Solidity: event ENSSetRegistry(address _ensRegistry)
+func (_TokenWhitelistableExporter *TokenWhitelistableExporterFilterer) FilterENSSetRegistry(opts *bind.FilterOpts) (*TokenWhitelistableExporterENSSetRegistryIterator, error) {
+
+	logs, sub, err := _TokenWhitelistableExporter.contract.FilterLogs(opts, "ENSSetRegistry")
+	if err != nil {
+		return nil, err
+	}
+	return &TokenWhitelistableExporterENSSetRegistryIterator{contract: _TokenWhitelistableExporter.contract, event: "ENSSetRegistry", logs: logs, sub: sub}, nil
+}
+
+// WatchENSSetRegistry is a free log subscription operation binding the contract event 0x186a5507043ec82d7cac3080e4bf22b3f781d96b198adf165a2df507bda90773.
+//
+// Solidity: event ENSSetRegistry(address _ensRegistry)
+func (_TokenWhitelistableExporter *TokenWhitelistableExporterFilterer) WatchENSSetRegistry(opts *bind.WatchOpts, sink chan<- *TokenWhitelistableExporterENSSetRegistry) (event.Subscription, error) {
+
+	logs, sub, err := _TokenWhitelistableExporter.contract.WatchLogs(opts, "ENSSetRegistry")
+	if err != nil {
+		return nil, err
+	}
+	return event.NewSubscription(func(quit <-chan struct{}) error {
+		defer sub.Unsubscribe()
+		for {
+			select {
+			case log := <-logs:
+				// New log arrived, parse the event and forward to the user
+				event := new(TokenWhitelistableExporterENSSetRegistry)
+				if err := _TokenWhitelistableExporter.contract.UnpackLog(event, "ENSSetRegistry", log); err != nil {
+					return err
+				}
+				event.Raw = log
+
+				select {
+				case sink <- event:
+				case err := <-sub.Err():
+					return err
+				case <-quit:
+					return nil
+				}
+			case err := <-sub.Err():
+				return err
+			case <-quit:
+				return nil
+			}
+		}
+	}), nil
+}
+
+// ParseENSSetRegistry is a log parse operation binding the contract event 0x186a5507043ec82d7cac3080e4bf22b3f781d96b198adf165a2df507bda90773.
+//
+// Solidity: event ENSSetRegistry(address _ensRegistry)
+func (_TokenWhitelistableExporter *TokenWhitelistableExporterFilterer) ParseENSSetRegistry(log types.Log) (*TokenWhitelistableExporterENSSetRegistry, error) {
+	event := new(TokenWhitelistableExporterENSSetRegistry)
+	if err := _TokenWhitelistableExporter.contract.UnpackLog(event, "ENSSetRegistry", log); err != nil {
+		return nil, err
+	}
+	return event, nil
+}
+
+// TokenWhitelistableExporterSetTokenWhitelistNodeIterator is returned from FilterSetTokenWhitelistNode and is used to iterate over the raw logs and unpacked data for SetTokenWhitelistNode events raised by the TokenWhitelistableExporter contract.
+type TokenWhitelistableExporterSetTokenWhitelistNodeIterator struct {
+	Event *TokenWhitelistableExporterSetTokenWhitelistNode // Event containing the contract specifics and raw log
+
+	contract *bind.BoundContract // Generic contract to use for unpacking event data
+	event    string              // Event name to use for unpacking event data
+
+	logs chan types.Log        // Log channel receiving the found contract events
+	sub  ethereum.Subscription // Subscription for errors, completion and termination
+	done bool                  // Whether the subscription completed delivering logs
+	fail error                 // Occurred error to stop iteration
+}
+
+// Next advances the iterator to the subsequent event, returning whether there
+// are any more events found. In case of a retrieval or parsing error, false is
+// returned and Error() can be queried for the exact failure.
+func (it *TokenWhitelistableExporterSetTokenWhitelistNodeIterator) Next() bool {
+	// If the iterator failed, stop iterating
+	if it.fail != nil {
+		return false
+	}
+	// If the iterator completed, deliver directly whatever's available
+	if it.done {
+		select {
+		case log := <-it.logs:
+			it.Event = new(TokenWhitelistableExporterSetTokenWhitelistNode)
+			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+				it.fail = err
+				return false
+			}
+			it.Event.Raw = log
+			return true
+
+		default:
+			return false
+		}
+	}
+	// Iterator still in progress, wait for either a data or an error event
+	select {
+	case log := <-it.logs:
+		it.Event = new(TokenWhitelistableExporterSetTokenWhitelistNode)
+		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+			it.fail = err
+			return false
+		}
+		it.Event.Raw = log
+		return true
+
+	case err := <-it.sub.Err():
+		it.done = true
+		it.fail = err
+		return it.Next()
+	}
+}
+
+// Error returns any retrieval or parsing error occurred during filtering.
+func (it *TokenWhitelistableExporterSetTokenWhitelistNodeIterator) Error() error {
+	return it.fail
+}
+
+// Close terminates the iteration process, releasing any pending underlying
+// resources.
+func (it *TokenWhitelistableExporterSetTokenWhitelistNodeIterator) Close() error {
+	it.sub.Unsubscribe()
+	return nil
+}
+
+// TokenWhitelistableExporterSetTokenWhitelistNode represents a SetTokenWhitelistNode event raised by the TokenWhitelistableExporter contract.
+type TokenWhitelistableExporterSetTokenWhitelistNode struct {
+	TokenWhitelistNode [32]byte
+	Raw                types.Log // Blockchain specific contextual infos
+}
+
+// FilterSetTokenWhitelistNode is a free log retrieval operation binding the contract event 0x6b870d88ca471938bca0d02b60d4eea926d8a893430130f2e80906a75ef2387a.
+//
+// Solidity: event SetTokenWhitelistNode(bytes32 _tokenWhitelistNode)
+func (_TokenWhitelistableExporter *TokenWhitelistableExporterFilterer) FilterSetTokenWhitelistNode(opts *bind.FilterOpts) (*TokenWhitelistableExporterSetTokenWhitelistNodeIterator, error) {
+
+	logs, sub, err := _TokenWhitelistableExporter.contract.FilterLogs(opts, "SetTokenWhitelistNode")
+	if err != nil {
+		return nil, err
+	}
+	return &TokenWhitelistableExporterSetTokenWhitelistNodeIterator{contract: _TokenWhitelistableExporter.contract, event: "SetTokenWhitelistNode", logs: logs, sub: sub}, nil
+}
+
+// WatchSetTokenWhitelistNode is a free log subscription operation binding the contract event 0x6b870d88ca471938bca0d02b60d4eea926d8a893430130f2e80906a75ef2387a.
+//
+// Solidity: event SetTokenWhitelistNode(bytes32 _tokenWhitelistNode)
+func (_TokenWhitelistableExporter *TokenWhitelistableExporterFilterer) WatchSetTokenWhitelistNode(opts *bind.WatchOpts, sink chan<- *TokenWhitelistableExporterSetTokenWhitelistNode) (event.Subscription, error) {
+
+	logs, sub, err := _TokenWhitelistableExporter.contract.WatchLogs(opts, "SetTokenWhitelistNode")
+	if err != nil {
+		return nil, err
+	}
+	return event.NewSubscription(func(quit <-chan struct{}) error {
+		defer sub.Unsubscribe()
+		for {
+			select {
+			case log := <-logs:
+				// New log arrived, parse the event and forward to the user
+				event := new(TokenWhitelistableExporterSetTokenWhitelistNode)
+				if err := _TokenWhitelistableExporter.contract.UnpackLog(event, "SetTokenWhitelistNode", log); err != nil {
+					return err
+				}
+				event.Raw = log
+
+				select {
+				case sink <- event:
+				case err := <-sub.Err():
+					return err
+				case <-quit:
+					return nil
+				}
+			case err := <-sub.Err():
+				return err
+			case <-quit:
+				return nil
+			}
+		}
+	}), nil
+}
+
+// ParseSetTokenWhitelistNode is a log parse operation binding the contract event 0x6b870d88ca471938bca0d02b60d4eea926d8a893430130f2e80906a75ef2387a.
+//
+// Solidity: event SetTokenWhitelistNode(bytes32 _tokenWhitelistNode)
+func (_TokenWhitelistableExporter *TokenWhitelistableExporterFilterer) ParseSetTokenWhitelistNode(log types.Log) (*TokenWhitelistableExporterSetTokenWhitelistNode, error) {
+	event := new(TokenWhitelistableExporterSetTokenWhitelistNode)
+	if err := _TokenWhitelistableExporter.contract.UnpackLog(event, "SetTokenWhitelistNode", log); err != nil {
+		return nil, err
+	}
+	return event, nil
 }

@@ -47,12 +47,10 @@ contract Holder is Balanceable, ENSResolvable, Controllable, Transferrable, Toke
 
     /// @notice Constructor initializes the holder contract.
     /// @param _burnerContract_ is the address of the token contract TKN with burning functionality.
-    /// @param _ens_ is the address of the ENS registry.
     /// @param _tokenWhitelistNode_ is the ENS node of the Token whitelist.
     /// @param _controllerNode_ is the ENS node of the Controller
-    constructor(address _burnerContract_, address _ens_, bytes32 _tokenWhitelistNode_, bytes32 _controllerNode_)
+    constructor(address _burnerContract_, bytes32 _tokenWhitelistNode_, bytes32 _controllerNode_)
         public
-        ENSResolvable(_ens_)
         Controllable(_controllerNode_)
         TokenWhitelistable(_tokenWhitelistNode_)
     {

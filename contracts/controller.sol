@@ -57,11 +57,9 @@ contract Controller is Ownable, Transferrable, GasRefundable {
 
     bool private _stopped;
 
-    /// @param _ownerAddress Address of the contract owner.
-    /// @param _ensRegistry Address of the ENS registry.
-    /// @dev Pass address(0) to use the default value for the ENS registry.
     /// @dev The controller contract is added to the list of controllers to be backwards compatible with the v1 interface.
-    constructor(address payable _ownerAddress, address _ensRegistry) public Ownable(_ownerAddress, false) GasRefundable(bytes32(0)) {
+    /// @param _ownerAddress Address of the contract owner.
+    constructor(address payable _ownerAddress) public Ownable(_ownerAddress, false) GasRefundable(bytes32(0)) {
         _isController[address(this)] = true;
         _controllerCount++;
     }

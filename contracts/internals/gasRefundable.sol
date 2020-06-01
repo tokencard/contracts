@@ -38,7 +38,6 @@ contract GasRefundable is ENSResolvable {
     bytes32 private _gstNode = 0x09eda238d4d37e8ac546190722df083c57c5adeae8a32c990781b796ca0886c0;
 
     /// @param _gstNode_ ENS node for the GST token contract.
-    /// @param _ensRegistry Address of the ENS registry.
 	constructor(bytes32 _gstNode_) internal {
         if (_gstNode_ != bytes32(0)) {
             _gstNode = _gstNode_;
