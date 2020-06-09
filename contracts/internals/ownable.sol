@@ -47,26 +47,6 @@ contract Ownable {
         _;
     }
 
-    /// @notice Allows the current owner to transfer control of the contract to a new address.
-    /// @param _account address to transfer ownership to.
-    /// @param _transferable indicates whether to keep the ownership transferable.
-    function transferOwnership(address payable _account, bool _transferable) external onlyOwner {
-        // Require that the ownership is transferable.
-        require(_isTransferable, "ownership is not transferable");
-        // Require that the new owner is not the zero address.
-        require(_account != address(0), "owner cannot be set to zero address");
-        // Set the transferable flag to the value _transferable passed in.
-        _isTransferable = _transferable;
-        // Emit the LockedOwnership event if no longer transferable.
-        if (!_transferable) {
-            emit LockedOwnership(_account);
-        }
-        // Emit the ownership transfer event.
-        emit TransferredOwnership(_owner, _account);
-        // Set the owner to the provided address.
-        _owner = _account;
-    }
-
     /// @notice check if the ownership is transferable.
     /// @return true if the ownership is transferable.
     function isTransferable() external view returns (bool) {
@@ -95,5 +75,25 @@ contract Ownable {
     /// @return true if sender is the owner of the contract.
     function _isOwner(address _address) internal view returns (bool) {
         return _address == _owner;
+    }
+
+    /// @notice Allows the current owner to transfer control of the contract to a new address.
+    /// @param _account address to transfer ownership to.
+    /// @param _transferable indicates whether to keep the ownership transferable.
+    function _transferOwnership(address payable _account, bool _transferable) internal onlyOwner {
+        // Require that the ownership is transferable.
+        require(_isTransferable, "ownership is not transferable");
+        // Require that the new owner is not the zero address.
+        require(_account != address(0), "owner cannot be set to zero address");
+        // Set the transferable flag to the value _transferable passed in.
+        _isTransferable = _transferable;
+        // Emit the LockedOwnership event if no longer transferable.
+        if (!_transferable) {
+            emit LockedOwnership(_account);
+        }
+        // Emit the ownership transfer event.
+        emit TransferredOwnership(_owner, _account);
+        // Set the owner to the provided address.
+        _owner = _account;
     }
 }

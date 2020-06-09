@@ -57,8 +57,8 @@ contract WalletDeployer is ENSResolvable, Controllable {
 
         deployedWallets[_owner] = address(wallet);
 
-        // This sets the changeableOwner boolean to false, i.e. no more change ownership
-        wallet.transferOwnership(_owner, false);
+        // This sets the transferable boolean to true, i.e. allows for future change of ownership
+        wallet.transferOwnership(_owner, true);
     }
 
     /// @notice This function is used to migrate an owner's security settings from a previous version of the wallet
@@ -89,7 +89,7 @@ contract WalletDeployer is ENSResolvable, Controllable {
             wallet.migrateWhitelist(_whitelistedAddresses);
         }
 
-        wallet.transferOwnership(_owner, false);
+        wallet.transferOwnership(_owner, true);
 
         if (msg.value > 0) {
             _owner.transfer(msg.value);

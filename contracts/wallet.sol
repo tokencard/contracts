@@ -124,6 +124,19 @@ abstract contract WalletDeployable is ENSResolvable {
     }
 }
 
+/// @title Recoverable provides wallet recovery functionality.
+/// @dev This contract will allow the user revover their wallet i.e. change the owner in case they lose their back-up seed.
+abstract contract Recoverable is  SelfCallableOwnable, OptOutableMonolith2FA {
+
+    /// @dev Recovers wallet by transfering ownership to a new address, needs privileged access.
+    /// @param _newOwner address to transfer ownership to.
+    /// @param _transferable indicates whether to keep the ownership transferable or not.
+    function recoverWallet(address payable  _newOwner, bool _transferable) external onlySelf {
+        require(privileged, "Recovery requires privileged mode");
+        _transferOwnership(_newOwner, _transferable);
+    }
+}
+
 /// @title AddressWhitelist provides payee-whitelist functionality.
 /// @dev This contract will allow the user to maintain a whitelist of addresses.
 /// @dev These addresses will live outside of the daily limit.
@@ -320,12 +333,16 @@ contract Wallet is ENSResolvable, WalletDeployable, AddressWhitelist, DailyLimit
     /// @dev Supported ERC165 interface ID.
     bytes4 private constant _ERC165_INTERFACE_ID = 0x01ffc9a7; // solium-disable-line uppercase
 
-    /// @dev this is an internal nonce to prevent replay attacks from relayer
+    /// @dev This is an internal nonce to prevent replay attacks from relayer
     uint256 public relayNonce;
+
+    /// @dev This ensures that transferOwnership() can only be called once by the walletDeployer during deployment or migration.
+    bool private _transferredOwnership;
 
     /// @dev Is the registered ENS node identifying the licence contract.
     bytes32 private _licenceNode;
 
+    
     /// @dev Constructor initializes the wallet with an owner address and daily limit. It also sets up the controllable and tokenWhitelist contracts with the right name registered in ENS.
     /// @param _owner_ is the owner account of the wallet contract.
     /// @param _transferable_ indicates whether the contract ownership can be transferred.
@@ -383,6 +400,15 @@ contract Wallet is ENSResolvable, WalletDeployable, AddressWhitelist, DailyLimit
     /// Privileged functionality
     function executePrivilegedRelayedTransaction(uint _nonce, bytes calldata _data, bytes calldata _signature) external only2FA {
         return _executeRelayedTransaction(_nonce, _data, _signature, true);
+    }
+
+     /// @dev Recovers wallet by transfering ownership to a new address, needs privileged access.
+    /// @param _newOwner address to transfer ownership to.
+    /// @param _transferable indicates whether to keep the ownership transferable or not.
+    function transferOwnership(address payable  _newOwner, bool _transferable) external onlyWalletDeployer {
+        require(!_transferredOwnership, "Ownership already transferred");
+        _transferredOwnership = true;
+        _transferOwnership(_newOwner, _transferable);
     }
 
     /// @dev This function allows for the controller to relay transactions on the owner's behalf,
