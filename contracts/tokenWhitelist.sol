@@ -20,6 +20,7 @@ pragma solidity ^0.6.0;
 
 import "./externals/SafeMath.sol";
 import "./externals/strings.sol";
+import "./interfaces/IChainlink.sol";
 import "./internals/bytesUtils.sol";
 import "./internals/controllable.sol";
 import "./internals/transferrable.sol";
@@ -77,20 +78,17 @@ contract TokenWhitelist is ENSResolvable, Controllable, Transferrable {
     using SafeMath for uint256;
     using BytesUtils for bytes;
 
-    event UpdatedTokenRate(address _sender, address _token, uint256 _rate);
-
-    event UpdatedTokenLoadable(address _sender, address _token, bool _loadable);
-    event UpdatedTokenRedeemable(address _sender, address _token, bool _redeemable);
-
-    event AddedToken(address _sender, address _token, string _symbol, uint256 _magnitude, bool _loadable, bool _redeemable);
-    event RemovedToken(address _sender, address _token);
-
-    event AddedMethodId(bytes4 _methodId);
-    event RemovedMethodId(bytes4 _methodId);
     event AddedExclusiveMethod(address _token, bytes4 _methodId);
-    event RemovedExclusiveMethod(address _token, bytes4 _methodId);
-
+    event AddedMethodId(bytes4 _methodId);
+    event AddedToken(address _sender, address _token, string _symbol, uint256 _magnitude, bool _loadable, bool _redeemable);
     event Claimed(address _to, address _asset, uint256 _amount);
+    event RemovedExclusiveMethod(address _token, bytes4 _methodId);
+    event RemovedMethodId(bytes4 _methodId);
+    event RemovedToken(address _sender, address _token);
+    event UpdatedChainlinkFeed(address _token, address _previousContract, address _newContract);
+    event UpdatedTokenLoadable(address _sender, address _token, bool _loadable);
+    event UpdatedTokenRate(address _sender, address _token, uint256 _rate);
+    event UpdatedTokenRedeemable(address _sender, address _token, bool _redeemable);
 
     /// @dev these are the methods whitelisted by default in executeTransaction() for protected tokens
     bytes4 private constant _APPROVE = 0x095ea7b3; // keccak256(approve(address,uint256)) => 0x095ea7b3
@@ -108,10 +106,13 @@ contract TokenWhitelist is ENSResolvable, Controllable, Transferrable {
         uint256 lastUpdate; // Time of the last rate update
     }
 
+    /// @notice Specifies whitelisted methodIds for protected tokens in wallet's excuteTranaction() e.g. keccak256(transfer(address,uint256)) => 0xa9059cbb
+    mapping(bytes4 => bool) private _methodIdWhitelist;
+
     mapping(address => Token) private _tokenInfoMap;
 
-    // @notice specifies whitelisted methodIds for protected tokens in wallet's excuteTranaction() e.g. keccak256(transfer(address,uint256)) => 0xa9059cbb
-    mapping(bytes4 => bool) private _methodIdWhitelist;
+    /// @notice This is a mapping of Chainlink reference data contracts that correspond to the supported tokens, if any!
+    mapping(address => address) private _chainlinkContracts;
 
     address[] private _tokenAddressArray;
 
@@ -148,6 +149,26 @@ contract TokenWhitelist is ENSResolvable, Controllable, Transferrable {
         address oracleAddress = _ensResolve(_oracleNode);
         require(_isAdmin(msg.sender) || msg.sender == oracleAddress, "either oracle or admin");
         _;
+    }
+
+    /// @notice It add or updates the Chainlink reference contracts.
+    /// @dev If the entry does not exist, it creates a new one, otherwise it overwwites it.
+    /// @param _tokens ERC20 token contract addresses.
+    /// @param _refContracts The Chainlink feed contract addresses.
+    function updateChainlinkFeeds(
+        address[] calldata _tokens,
+        address[] calldata _refContracts
+    ) external onlyAdmin {
+        // Require that the two parameters have the same length.
+        require(_tokens.length == _refContracts.length, "Parameter lengths do not match");
+        // Update the mapping for each token.
+        for (uint256 i = 0; i < _tokens.length; i++) {
+            // Require that the token is available on the list.
+            require(_tokenInfoMap[_tokens[i]].available, "token should be available");
+            address previousContract = _chainlinkContracts[_tokens[i]];
+            _chainlinkContracts[_tokens[i]] = _refContracts[i];
+            emit UpdatedChainlinkFeed(_tokens[i], previousContract, _refContracts[i]);
+        }
     }
 
     /// @notice Add ERC20 tokens to the list of whitelisted tokens.
@@ -328,7 +349,17 @@ contract TokenWhitelist is ENSResolvable, Controllable, Transferrable {
         )
     {
         Token storage tokenInfo = _tokenInfoMap[_a];
-        return (tokenInfo.symbol, tokenInfo.magnitude, tokenInfo.rate, tokenInfo.available, tokenInfo.loadable, tokenInfo.redeemable, tokenInfo.lastUpdate);
+        address chainlink = _chainlinkContracts[_a];
+        uint256 rate;
+        if (chainlink != address(0)) {
+            int256 chainlinkRate = IChainlink(chainlink).latestAnswer();
+            if (chainlinkRate >= 0) {
+                rate = uint256(chainlinkRate);
+            }
+        } else {
+            rate = tokenInfo.rate;
+        }
+        return (tokenInfo.symbol, tokenInfo.magnitude, rate, tokenInfo.available, tokenInfo.loadable, tokenInfo.redeemable, tokenInfo.lastUpdate);
     }
 
     /// @notice This returns all of the fields for our StableCoin.
@@ -353,10 +384,20 @@ contract TokenWhitelist is ENSResolvable, Controllable, Transferrable {
         )
     {
         Token storage stablecoinInfo = _tokenInfoMap[_stablecoin];
+        uint256 stablecoinRate;
+        address chainlink = _chainlinkContracts[_stablecoin];
+        if (chainlink != address(0)) {
+            int256 chainlinkRate = IChainlink(chainlink).latestAnswer();
+            if (chainlinkRate >= 0) {
+                stablecoinRate = uint256(chainlinkRate);
+            }
+        } else {
+            stablecoinRate = stablecoinInfo.rate;
+        }
         return (
             stablecoinInfo.symbol,
             stablecoinInfo.magnitude,
-            stablecoinInfo.rate,
+            stablecoinRate,
             stablecoinInfo.available,
             stablecoinInfo.loadable,
             stablecoinInfo.redeemable,
