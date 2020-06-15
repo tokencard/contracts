@@ -38,7 +38,9 @@ contract WalletDeployer is ENSResolvable, Controllable {
 
     /// @notice it needs to know to address of the wallet cache
 
-    constructor(address _ens_, bytes32 _controllerNode_, bytes32 _walletCacheNode_) public ENSResolvable(_ens_) Controllable(_controllerNode_) {
+    constructor(address _ens_, bytes32 _controllerNode_, bytes32 _walletCacheNode_) public {
+        ensResolvableInitialize(_ens_);
+        controllableInitialize(_controllerNode_);
         // Set walletCacheNode or use default
         if (_walletCacheNode_ != bytes32(0)) {
             walletCacheNode = _walletCacheNode_;

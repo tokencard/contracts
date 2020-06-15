@@ -27,9 +27,9 @@ contract TokenWhitelistable is ENSResolvable {
     /// @notice Is the registered ENS node identifying the tokenWhitelist contract
     bytes32 private _tokenWhitelistNode;
 
-    /// @notice Constructor initializes the TokenWhitelistable object.
+    /// @notice initializes the TokenWhitelistable object.
     /// @param _tokenWhitelistNode_ is the ENS node of the TokenWhitelist.
-    constructor(bytes32 _tokenWhitelistNode_) internal {
+    function tokenWhitelistableInitialize(bytes32 _tokenWhitelistNode_) internal {
         _tokenWhitelistNode = _tokenWhitelistNode_;
     }
 

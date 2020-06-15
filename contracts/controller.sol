@@ -57,7 +57,9 @@ contract Controller is IController, Ownable, Transferrable {
 
     /// @notice Constructor initializes the owner with the provided address.
     /// @param _ownerAddress_ address of the owner.
-    constructor(address payable _ownerAddress_) public Ownable(_ownerAddress_, false) {}
+    constructor(address payable _ownerAddress_) public {
+        ownableInitialize(_ownerAddress_, false);
+    }
 
     /// @notice Checks if message sender is an admin.
     modifier onlyAdmin() {

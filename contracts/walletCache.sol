@@ -60,7 +60,9 @@ contract WalletCache is ENSResolvable, Controllable {
         bytes32 _licenceNode_,
         bytes32 _tokenWhitelistNode_,
         bytes32 _walletDeployerNode_
-    ) public ENSResolvable(_ens_) Controllable(_controllerNode_) {
+    ) public {
+        ensResolvableInitialize(_ens_);
+        controllableInitialize(_controllerNode_);
         ens = _ens_;
         defaultSpendLimit = _defaultSpendLimit_;
 
@@ -86,7 +88,8 @@ contract WalletCache is ENSResolvable, Controllable {
     /// @notice This public method allows anyone to pre-cache wallets
     function cacheWallet() public {
         // the address(uint160()) cast is done as the Wallet owner (1st argument) needs to be payable
-        Wallet wallet = new Wallet(
+        Wallet wallet = new Wallet();
+        wallet.initialize(
             address(uint160(_ensResolve(walletDeployerNode))),
             true,
             ens,

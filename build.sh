@@ -29,6 +29,7 @@ contract_sources=(
   'mocks/tokenWhitelistableExporter'
   'externals/ens/PublicResolver'
   'externals/ens/ENSRegistry'
+  'externals/upgradeability/AdminUpgradeabilityProxy'
 )
 
 for c in "${contract_sources[@]}"
@@ -69,6 +70,7 @@ contracts=(
   "mocks/tokenWhitelistableExporter/TokenWhitelistableExporter mocks/tokenWhitelistableExporter.go TokenWhitelistableExporter mocks"
   "externals/ens/ENSRegistry/ENSRegistry externals/ens/ENSRegistry.go ENSRegistry ens"
   "externals/ens/PublicResolver/PublicResolver externals/ens/PublicResolver.go PublicResolver ens"
+  "externals/upgradeability/AdminUpgradeabilityProxy/AdminUpgradeabilityProxy externals/upgradeability/AdminUpgradeabilityProxy.go AdminUpgradeabilityProxy upgradeability"
 )
 
 for c in "${contracts[@]}"

@@ -29,7 +29,7 @@ contract ENSResolvable {
     address private _ensRegistry;
 
     /// @param _ensReg_ is the ENS registry used
-    constructor(address _ensReg_) internal {
+    function ensResolvableInitialize(address _ensReg_) internal {
         _ensRegistry = _ensReg_;
     }
 
