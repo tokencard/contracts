@@ -89,7 +89,7 @@ contract WalletCache is ENSResolvable, Controllable {
     function cacheWallet() public {
         // the address(uint160()) cast is done as the Wallet owner (1st argument) needs to be payable
         Wallet wallet = new Wallet();
-        wallet.initialize(
+        wallet.initializeWallet(
             address(uint160(_ensResolve(walletDeployerNode))),
             true,
             ens,

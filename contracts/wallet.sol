@@ -551,7 +551,7 @@ contract Wallet is ENSResolvable, GasTopUpLimit, LoadLimit, AddressWhitelist, Sp
     /// @param _controllerNode_ is the ENS name node of the Controller contract.
     /// @param _licenceNode_ is the ENS name node of the Licence contract.
     /// @param _spendLimit_ is the initial spend limit.
-    function initialize(
+    function initializeWallet(
         address payable _owner_,
         bool _transferable_,
         address _ens_,

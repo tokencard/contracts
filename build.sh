@@ -27,6 +27,7 @@ contract_sources=(
   'mocks/isValidSignatureExporter'
   'mocks/parseIntScientificExporter'
   'mocks/tokenWhitelistableExporter'
+  'mocks/walletMock'
   'externals/ens/PublicResolver'
   'externals/ens/ENSRegistry'
   'externals/upgradeability/AdminUpgradeabilityProxy'
@@ -68,6 +69,7 @@ contracts=(
   "mocks/isValidSignatureExporter/IsValidSignatureExporter mocks/isValidSignatureExporter.go IsValidSignatureExporter mocks"
   "mocks/parseIntScientificExporter/ParseIntScientificExporter mocks/parseIntScientificExporter.go ParseIntScientificExporter mocks"
   "mocks/tokenWhitelistableExporter/TokenWhitelistableExporter mocks/tokenWhitelistableExporter.go TokenWhitelistableExporter mocks"
+  "mocks/walletMock/WalletMock mocks/walletMock.go WalletMock mocks"
   "externals/ens/ENSRegistry/ENSRegistry externals/ens/ENSRegistry.go ENSRegistry ens"
   "externals/ens/PublicResolver/PublicResolver externals/ens/PublicResolver.go PublicResolver ens"
   "externals/upgradeability/AdminUpgradeabilityProxy/AdminUpgradeabilityProxy externals/upgradeability/AdminUpgradeabilityProxy.go AdminUpgradeabilityProxy upgradeability"
