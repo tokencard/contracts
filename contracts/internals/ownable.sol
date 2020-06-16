@@ -30,8 +30,8 @@ contract Ownable {
     address payable private _owner;
     bool private _isTransferable;
 
-    /// @notice sets the original owner of the contract and whether or not it is one time transferable.
-    function ownableInitialize(address payable _account_, bool _transferable_) internal {
+    /// @notice Sets the original owner of the contract and whether or not it is one time transferable.
+    function initializeOwnable(address payable _account_, bool _transferable_) internal {
         _owner = _account_;
         _isTransferable = _transferable_;
         // Emit the LockedOwnership event if no longer transferable.

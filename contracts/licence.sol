@@ -90,8 +90,8 @@ contract Licence is Transferrable, ENSResolvable, Controllable {
         public
     {
         require(MIN_AMOUNT_SCALE <= _licence_ && _licence_ <= MAX_AMOUNT_SCALE, "licence amount out of range");
-        ensResolvableInitialize(_ens_);
-        controllableInitialize(_controllerNode_);
+        initializeENSResolvable(_ens_);
+        initializeControllable(_controllerNode_);
         _licenceAmountScaled = _licence_;
         _cryptoFloat = _float_;
         _tokenHolder = _holder_;

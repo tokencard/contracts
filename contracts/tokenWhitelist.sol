@@ -106,8 +106,8 @@ contract TokenWhitelist is ENSResolvable, Controllable, Transferrable {
     constructor(address _ens_, bytes32 _oracleNode_, bytes32 _controllerNode_, address _stablecoinAddress_)
         public
     {
-        ensResolvableInitialize(_ens_);
-        controllableInitialize(_controllerNode_);
+        initializeENSResolvable(_ens_);
+        initializeControllable(_controllerNode_);
         _oracleNode = _oracleNode_;
         _stablecoin = _stablecoinAddress_;
         //a priori ERC20 whitelisted methods

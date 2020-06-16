@@ -338,8 +338,8 @@ contract SpendLimit is ControllableOwnable, SelfCallableOwnable {
 
     DailyLimitTrait.DailyLimit internal _spendLimit;
 
-    /// @dev initializes the daily spend limit in wei.
-    function spendLimitInitialize(uint256 _limit_) internal {
+    /// @dev Initializes the daily spend limit in wei.
+    function initializeSpendLimit(uint256 _limit_) internal {
         _spendLimit = DailyLimitTrait.DailyLimit(_limit_, _limit_, now, 0, false);
     }
 
@@ -397,8 +397,8 @@ contract GasTopUpLimit is ControllableOwnable, SelfCallableOwnable {
 
     DailyLimitTrait.DailyLimit internal _gasTopUpLimit;
 
-    /// @dev Constructor initializes the daily gas topup limit in wei.
-    function gasTopUpLimitInitialize() internal {
+    /// @dev Initializes the daily gas topup limit in wei.
+    function initializeGasTopUpLimit() internal {
         _gasTopUpLimit = DailyLimitTrait.DailyLimit(_MAXIMUM_GAS_TOPUP_LIMIT, _MAXIMUM_GAS_TOPUP_LIMIT, now, 0, false);
     }
 
@@ -458,8 +458,8 @@ contract LoadLimit is ControllableOwnable, SelfCallableOwnable, TokenWhitelistab
 
     DailyLimitTrait.DailyLimit internal _loadLimit;
 
-    function loadLimitInitialize(bytes32 _tokenWhitelistNode_) internal {
-        tokenWhitelistableInitialize(_tokenWhitelistNode_);
+    function initializeLoadLimit(bytes32 _tokenWhitelistNode_) internal {
+        initializeTokenWhitelistable(_tokenWhitelistNode_);
         (, uint256 stablecoinMagnitude, , , , , ) = _getStablecoinInfo();
         require(stablecoinMagnitude > 0, "no stablecoin");
         _maximumLoadLimit = _MAXIMUM_STABLECOIN_LOAD_LIMIT * stablecoinMagnitude;
@@ -511,7 +511,7 @@ contract LoadLimit is ControllableOwnable, SelfCallableOwnable, TokenWhitelistab
 
 
 /// @title Asset wallet with extra security features, gas top up management and card integration.
-contract Wallet is ENSResolvable, GasTopUpLimit, LoadLimit, AddressWhitelist, SpendLimit, ERC165, Transferrable, Balanceable, Initializable {
+contract Wallet is ENSResolvable, AddressWhitelist, SpendLimit, GasTopUpLimit, LoadLimit, ERC165, Transferrable, Balanceable, Initializable {
     using Address for address;
     using ECDSA for bytes32;
     using SafeERC20 for ERC20;
@@ -543,7 +543,7 @@ contract Wallet is ENSResolvable, GasTopUpLimit, LoadLimit, AddressWhitelist, Sp
     /// @dev Is the registered ENS node identifying the licence contract.
     bytes32 private _licenceNode;
 
-    /// @dev Constructor initializes the wallet top up limit and the vault contract.
+    /// @dev Initializes the wallet top up limit and the vault contract.
     /// @param _owner_ is the owner account of the wallet contract.
     /// @param _transferable_ indicates whether the contract ownership can be transferred.
     /// @param _ens_ is the address of the ENS registry.
@@ -559,13 +559,13 @@ contract Wallet is ENSResolvable, GasTopUpLimit, LoadLimit, AddressWhitelist, Sp
         bytes32 _controllerNode_,
         bytes32 _licenceNode_,
         uint256 _spendLimit_
-    ) public initializer {
-        ensResolvableInitialize(_ens_);
-        spendLimitInitialize(_spendLimit_);
-        loadLimitInitialize(_tokenWhitelistNode_);
-        gasTopUpLimitInitialize();
-        ownableInitialize(_owner_, _transferable_);
-        controllableInitialize(_controllerNode_);
+    ) external initializer {
+        initializeENSResolvable(_ens_);
+        initializeControllable(_controllerNode_);
+        initializeOwnable(_owner_, _transferable_);
+        initializeSpendLimit(_spendLimit_);
+        initializeGasTopUpLimit();
+        initializeLoadLimit(_tokenWhitelistNode_);
         _licenceNode = _licenceNode_;
     }
 

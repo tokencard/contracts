@@ -76,9 +76,9 @@ contract Oracle is ENSResolvable, usingOraclize, Transferrable, Base64, Date, Co
     constructor(address _resolver_, address _ens_, bytes32 _controllerNode_, bytes32 _tokenWhitelistNode_)
         public
     {
-        ensResolvableInitialize(_ens_);
-        controllableInitialize(_controllerNode_);
-        tokenWhitelistableInitialize(_tokenWhitelistNode_);
+        initializeENSResolvable(_ens_);
+        initializeControllable(_controllerNode_);
+        initializeTokenWhitelistable(_tokenWhitelistNode_);
         cryptoCompareAPIPublicKey = hex"a0f4f688350018ad1b9785991c0bde5f704b005dc79972b114dbed4a615a983710bfc647ebe5a320daa28771dce6a2d104f5efa2e4a85ba3760b76d46f8571ca";
         OAR = OraclizeAddrResolverI(_resolver_);
         oraclize_setCustomGasPrice(10000000000);

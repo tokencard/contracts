@@ -31,10 +31,10 @@ contract Controllable is ENSResolvable {
     /// @dev Is the registered ENS node identifying the controller contract.
     bytes32 private _controllerNode = _DEFAULT_CONTROLLER_NODE;
 
-    /// @notice initializes the controller contract object.
+    /// @notice Initializes the controller contract object.
     /// @param _controllerNode_ is the ENS node of the Controller.
     /// @dev pass in bytes32(0) to use the default, production node labels for ENS
-    function controllableInitialize(bytes32 _controllerNode_) internal {
+    function initializeControllable(bytes32 _controllerNode_) internal {
         // Set controllerNode or use default
         if (_controllerNode_ != bytes32(0)) {
             _controllerNode = _controllerNode_;

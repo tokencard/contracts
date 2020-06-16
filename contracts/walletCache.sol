@@ -61,8 +61,8 @@ contract WalletCache is ENSResolvable, Controllable {
         bytes32 _tokenWhitelistNode_,
         bytes32 _walletDeployerNode_
     ) public {
-        ensResolvableInitialize(_ens_);
-        controllableInitialize(_controllerNode_);
+        initializeENSResolvable(_ens_);
+        initializeControllable(_controllerNode_);
         ens = _ens_;
         defaultSpendLimit = _defaultSpendLimit_;
 
