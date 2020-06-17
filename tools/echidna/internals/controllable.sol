@@ -12,7 +12,9 @@ contract Echidna {
 contract TEST is Echidna, Controllable {
     bytes32 constant _DEFAULT_CONTROLLER_NODE = 0x7f2ce995617d2816b426c5c8698c5ec2952f7a34bb10f38326f74933d5893697;
 
-    constructor() public Controllable(bytes32(0)) {}
+    constructor() public {
+        initializeControllable(bytes32(0x0));
+    }
 
     function echidna_controllerNode() public view returns (bool) {
         return controllerNode() == _DEFAULT_CONTROLLER_NODE;

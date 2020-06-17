@@ -13,6 +13,9 @@ contract Echidna {
 
 contract TEST is Echidna, AddressWhitelist {
     constructor() public Ownable(echidnaOwner, false) Controllable(bytes32(0x0)) ENSResolvable(address(0x0)) {
+        initializeOwnable(echidnaOwner, false);
+        initializeControllable(bytes32(0x0));
+        initializeENSResolvable(address(0x0));
         isSetWhitelist = true;
     }
 
