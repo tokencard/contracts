@@ -73,9 +73,7 @@ contract Oracle is ENSResolvable, usingOraclize, Transferrable, Base64, Date, Co
     /// @param _ens_ is the address of the ENS.
     /// @param _controllerNode_ is the ENS node corresponding to the Controller.
     /// @param _tokenWhitelistNode_ is the ENS corresponding to the Token Whitelist.
-    constructor(address _resolver_, address _ens_, bytes32 _controllerNode_, bytes32 _tokenWhitelistNode_)
-        public
-    {
+    constructor(address _resolver_, address _ens_, bytes32 _controllerNode_, bytes32 _tokenWhitelistNode_) public {
         initializeENSResolvable(_ens_);
         initializeControllable(_controllerNode_);
         initializeTokenWhitelistable(_tokenWhitelistNode_);

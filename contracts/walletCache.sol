@@ -24,7 +24,6 @@ import "./internals/ensResolvable.sol";
 import "./internals/controllable.sol";
 
 
-
 /// @title IWalletCache interface describes a method for poping an already cached wallet
 interface IWalletCache {
     function walletCachePop() external returns (address payable);
@@ -91,12 +90,12 @@ contract WalletCache is ENSResolvable, Controllable {
         _;
     }
 
-     /// @notice returns the number of pre-cached wallets.
+    /// @notice returns the number of pre-cached wallets.
     function cachedWalletsCount() external view returns (uint256) {
         return cachedWallets.length;
     }
 
-     /// @notice Sets a new wallet implementation.
+    /// @notice Sets a new wallet implementation.
     function setNewWalletImplementaton(address _newWalletImplementation) external onlyAdmin {
         require(_newWalletImplementation != address(0) && _newWalletImplementation != walletImplementation, "invalid implementation");
         walletImplementation = _newWalletImplementation;
@@ -115,7 +114,7 @@ contract WalletCache is ENSResolvable, Controllable {
         return wallet;
     }
 
-     /// @notice This public method allows anyone to pre-cache wallets
+    /// @notice This public method allows anyone to pre-cache wallets
     function cacheWallet() public {
         address walletDeployerAddress = _ensResolve(walletDeployerNode);
         address payable wallet = address(new AdminUpgradeabilityProxy(walletImplementation, walletDeployerAddress, ""));
