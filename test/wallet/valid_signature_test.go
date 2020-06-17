@@ -21,7 +21,7 @@ var _ = Describe("Valid Signature", func() {
 		var tx *types.Transaction
 		var err error
 		BeforeEach(func() {
-			_, tx, IsValidSignatureExporter, err = mocks.DeployIsValidSignatureExporter(BankAccount.TransactOpts(), Backend, WalletAddress)
+			_, tx, IsValidSignatureExporter, err = mocks.DeployIsValidSignatureExporter(BankAccount.TransactOpts(), Backend, WalletProxyAddress)
 			Expect(err).ToNot(HaveOccurred())
 			Backend.Commit()
 			Expect(isSuccessful(tx)).To(BeTrue())
@@ -48,7 +48,7 @@ var _ = Describe("Valid Signature", func() {
 
 			It("should revert", func() {
 				copy(hash32[:], hash)
-				_, err := Wallet.IsValidSignature(nil, hash32, signature)
+				_, err := WalletProxy.IsValidSignature(nil, hash32, signature)
 				Expect(err).To(HaveOccurred())
 				Expect(err.Error()).To(ContainSubstring("invalid signature"))
 			})
@@ -81,7 +81,7 @@ var _ = Describe("Valid Signature", func() {
 
 			It("should return 0x1626ba7e (_EIP_1654)", func() {
 				copy(hash32[:], hash)
-				ivs, err := Wallet.IsValidSignature(nil, hash32, signature)
+				ivs, err := WalletProxy.IsValidSignature(nil, hash32, signature)
 				Expect(err).ToNot(HaveOccurred())
 				Expect(ivs).To(Equal([4]byte{0x16, 0x26, 0xba, 0x7e}))
 			})

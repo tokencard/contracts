@@ -19,10 +19,10 @@ var _ = Describe("metaTx refund", func() {
 
 	Context("when the wallet has enough ETH and ERC20 tokens", func() {
 		BeforeEach(func() {
-			BankAccount.MustTransfer(Backend, WalletAddress, EthToWei(2))
+			BankAccount.MustTransfer(Backend, WalletProxyAddress, EthToWei(2))
 
 			var err error
-			tx, err := TKNBurner.Mint(BankAccount.TransactOpts(), WalletAddress, big.NewInt(300))
+			tx, err := TKNBurner.Mint(BankAccount.TransactOpts(), WalletProxyAddress, big.NewInt(300))
 			Expect(err).ToNot(HaveOccurred())
 			Backend.Commit()
 			Expect(isSuccessful(tx)).To(BeTrue())
@@ -40,7 +40,7 @@ var _ = Describe("metaTx refund", func() {
 				tokenBank = crypto.PubkeyToAddress(privateKey.PublicKey)
 				privateKey, _ = crypto.GenerateKey()
 				randomAddress = crypto.PubkeyToAddress(privateKey.PublicKey)
-				tx, err := Wallet.TransferOwnership(Owner.TransactOpts(), randomAddress, false)
+				tx, err := WalletProxy.TransferOwnership(Owner.TransactOpts(), randomAddress, false)
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 				Expect(isSuccessful(tx)).To(BeTrue())
@@ -60,10 +60,10 @@ var _ = Describe("metaTx refund", func() {
 
 					nonce := big.NewInt(0)
 					chainId := big.NewInt(1337)
-					signature, err := SignData(chainId, WalletAddress, nonce, data, privateKey)
+					signature, err := SignData(chainId, WalletProxyAddress, nonce, data, privateKey)
 					Expect(err).ToNot(HaveOccurred())
 
-					tx, err := Wallet.ExecuteRelayedTransaction(Controller.TransactOpts(), nonce, data, signature)
+					tx, err := WalletProxy.ExecuteRelayedTransaction(Controller.TransactOpts(), nonce, data, signature)
 					Expect(err).ToNot(HaveOccurred())
 					Backend.Commit()
 					Expect(isSuccessful(tx)).To(BeTrue())
@@ -102,10 +102,10 @@ var _ = Describe("metaTx refund", func() {
 
 					nonce := big.NewInt(0)
 					chainId := big.NewInt(1337)
-					signature, err := SignData(chainId, WalletAddress, nonce, data, privateKey)
+					signature, err := SignData(chainId, WalletProxyAddress, nonce, data, privateKey)
 					Expect(err).ToNot(HaveOccurred())
 
-					tx, err := Wallet.ExecuteRelayedTransaction(Controller.TransactOpts(), nonce, data, signature)
+					tx, err := WalletProxy.ExecuteRelayedTransaction(Controller.TransactOpts(), nonce, data, signature)
 					Expect(err).ToNot(HaveOccurred())
 					Backend.Commit()
 					Expect(isSuccessful(tx)).To(BeTrue())
@@ -124,13 +124,13 @@ var _ = Describe("metaTx refund", func() {
 				})
 
 				It("should decrease the TKN balance of the wallet", func() {
-					b, err := TKNBurner.BalanceOf(nil, WalletAddress)
+					b, err := TKNBurner.BalanceOf(nil, WalletProxyAddress)
 					Expect(err).ToNot(HaveOccurred())
 					Expect(b.String()).To(Equal("0"))
 				})
 
 				It("should emit 2 ExecutedTransaction events", func() {
-					it, err := Wallet.FilterExecutedTransaction(nil)
+					it, err := WalletProxy.FilterExecutedTransaction(nil)
 					Expect(err).ToNot(HaveOccurred())
 					Expect(it.Next()).To(BeTrue())
 					evt := it.Event
@@ -152,7 +152,7 @@ var _ = Describe("metaTx refund", func() {
 				})
 
 				It("should emit an ExecutedRelayedTransaction event", func() {
-					it, err := Wallet.FilterExecutedRelayedTransaction(nil)
+					it, err := WalletProxy.FilterExecutedRelayedTransaction(nil)
 					Expect(err).ToNot(HaveOccurred())
 					Expect(it.Next()).To(BeTrue())
 					evt := it.Event

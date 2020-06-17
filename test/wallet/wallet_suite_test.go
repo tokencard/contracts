@@ -21,26 +21,11 @@ import (
 	"github.com/tokencard/contracts/v3/pkg/bindings"
 	"github.com/tokencard/contracts/v3/pkg/bindings/externals/upgradeability"
 	. "github.com/tokencard/contracts/v3/test/shared"
-	"github.com/tokencard/ethertest"
 )
 
-var Wallet *bindings.Wallet
-var WalletAddress common.Address
-
-func deployInitProxy(owner *ethertest.Account, spendLimit *big.Int) common.Address {
-	RandomProxyAddress, tx, _, err := upgradeability.DeployAdminUpgradeabilityProxy(owner.TransactOpts(), Backend, WalletImplementationAddress, Owner.Address(), nil)
-	Expect(err).ToNot(HaveOccurred())
-	Backend.Commit()
-	Expect(isSuccessful(tx)).To(BeTrue())
-
-	RandomProxy, err := bindings.NewWallet(RandomProxyAddress, Backend)
-	tx, err = RandomProxy.InitializeWallet(owner.TransactOpts(), owner.Address(), false, ENSRegistryAddress, TokenWhitelistName, ControllerName, LicenceName, spendLimit)
-	Expect(err).ToNot(HaveOccurred())
-	Backend.Commit()
-	Expect(isSuccessful(tx)).To(BeTrue())
-
-	return RandomProxyAddress
-}
+var WalletProxy *bindings.Wallet
+var WalletProxyAddress common.Address
+var WalletImplementationAddress common.Address
 
 func ethCall(tx *types.Transaction) ([]byte, error) {
 	msg, _ := tx.AsMessage(types.HomesteadSigner{})
@@ -109,7 +94,19 @@ var _ = BeforeEach(func() {
 	Expect(err).ToNot(HaveOccurred())
 	// Deploy the Token wallet contract.
 	var tx *types.Transaction
-	WalletAddress, tx, Wallet, err = bindings.DeployWallet(BankAccount.TransactOpts(), Backend, Owner.Address(), true, ENSRegistryAddress, TokenWhitelistName, ControllerName, LicenceName, EthToWei(100))
+	// deploy wallet implementation
+	WalletImplementationAddress, tx, _, err = bindings.DeployWallet(BankAccount.TransactOpts(), Backend)
+	Expect(err).ToNot(HaveOccurred())
+	Backend.Commit()
+	Expect(isSuccessful(tx)).To(BeTrue())
+
+	WalletProxyAddress, tx, _, err = upgradeability.DeployAdminUpgradeabilityProxy(Owner.TransactOpts(), Backend, WalletImplementationAddress, Owner.Address(), nil)
+	Expect(err).ToNot(HaveOccurred())
+	Backend.Commit()
+	Expect(isSuccessful(tx)).To(BeTrue())
+
+	WalletProxy, err = bindings.NewWallet(WalletProxyAddress, Backend)
+	tx, err = WalletProxy.InitializeWallet(Owner.TransactOpts(), Owner.Address(), true, ENSRegistryAddress, TokenWhitelistName, ControllerName, LicenceName, EthToWei(100))
 	Expect(err).ToNot(HaveOccurred())
 	Backend.Commit()
 	Expect(isSuccessful(tx)).To(BeTrue())
@@ -120,20 +117,20 @@ var currentVersion = "3.2.0"
 
 var _ = Describe("Wallet Version", func() {
 	It("should return the current version", func() {
-		v, err := Wallet.WALLETVERSION(nil)
+		v, err := WalletProxy.WALLETVERSION(nil)
 		Expect(err).ToNot(HaveOccurred())
 		Expect(v).To(Equal(currentVersion))
 	})
 
 	It("should be a Semver", func() {
-		v, err := Wallet.WALLETVERSION(nil)
+		v, err := WalletProxy.WALLETVERSION(nil)
 		Expect(err).ToNot(HaveOccurred())
 		_, err = semver.NewVersion(v)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
 	It("should not start with a v prefix", func() {
-		v, err := Wallet.WALLETVERSION(nil)
+		v, err := WalletProxy.WALLETVERSION(nil)
 		Expect(err).ToNot(HaveOccurred())
 		Expect(strings.HasPrefix(v, "v")).To(BeFalse())
 	})

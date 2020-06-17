@@ -28,14 +28,14 @@ var _ = Describe("wallet load non-compliant ERC20", func() {
 
 	When("The Wallet contract is credited with NonCompliantERC20 tokens ", func() {
 		BeforeEach(func() {
-			tx, err := NonCompliantERC20.Credit(BankAccount.TransactOpts(), WalletAddress, EthToWei(1000))
+			tx, err := NonCompliantERC20.Credit(BankAccount.TransactOpts(), WalletProxyAddress, EthToWei(1000))
 			Expect(err).ToNot(HaveOccurred())
 			Backend.Commit()
 			Expect(isSuccessful(tx)).To(BeTrue())
 		})
 
 		It("should increase the NonCompliantERC20 balance of the Wallet by 1000", func() {
-			b, err := NonCompliantERC20.BalanceOf(nil, WalletAddress)
+			b, err := NonCompliantERC20.BalanceOf(nil, WalletProxyAddress)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(b.String()).To(Equal(EthToWei(1000).String()))
 		})
@@ -77,21 +77,21 @@ var _ = Describe("wallet load non-compliant ERC20", func() {
 			When("a valid amount is transfered ", func() {
 
 				BeforeEach(func() {
-					tx, err := Wallet.LoadTokenCard(Owner.TransactOpts(), NonCompliantERC20Address, EthToWei(101))
+					tx, err := WalletProxy.LoadTokenCard(Owner.TransactOpts(), NonCompliantERC20Address, EthToWei(101))
 					Expect(err).ToNot(HaveOccurred())
 					Backend.Commit()
 					Expect(isSuccessful(tx)).To(BeTrue())
 				})
 
 				It("Should emit 1 NonCompliantERC20 Approval event", func() {
-					owner := []common.Address{WalletAddress}
+					owner := []common.Address{WalletProxyAddress}
 					spender := []common.Address{LicenceAddress}
 					it, err := NonCompliantERC20.FilterApproval(nil, owner, spender)
 					Expect(err).ToNot(HaveOccurred())
 					Expect(it.Next()).To(BeTrue())
 					evt := it.Event
 					Expect(it.Next()).To(BeFalse())
-					Expect(evt.Owner).To(Equal(WalletAddress))
+					Expect(evt.Owner).To(Equal(WalletProxyAddress))
 					Expect(evt.Spender).To(Equal(LicenceAddress))
 					Expect(evt.Value.String()).To(Equal(EthToWei(101).String()))
 				})
@@ -102,7 +102,7 @@ var _ = Describe("wallet load non-compliant ERC20", func() {
 					Expect(it.Next()).To(BeTrue())
 					evt := it.Event
 					Expect(it.Next()).To(BeFalse())
-					Expect(evt.From).To(Equal(WalletAddress))
+					Expect(evt.From).To(Equal(WalletProxyAddress))
 					Expect(evt.To).To(Equal(TokenHolderAddress))
 					Expect(evt.Asset).To(Equal(NonCompliantERC20Address))
 					Expect(evt.Amount.String()).To(Equal(EthToWei(1).String()))
@@ -114,32 +114,32 @@ var _ = Describe("wallet load non-compliant ERC20", func() {
 					Expect(it.Next()).To(BeTrue())
 					evt := it.Event
 					Expect(it.Next()).To(BeFalse())
-					Expect(evt.From).To(Equal(WalletAddress))
+					Expect(evt.From).To(Equal(WalletProxyAddress))
 					Expect(evt.To).To(Equal(CryptoFloatAddress))
 					Expect(evt.Asset).To(Equal(NonCompliantERC20Address))
 					Expect(evt.Amount.String()).To(Equal(EthToWei(100).String()))
 				})
 
 				It("Should emit 2 NonCompliantERC20 Transfer events", func() {
-					from := []common.Address{WalletAddress}
+					from := []common.Address{WalletProxyAddress}
 					var to []common.Address
 					it, err := NonCompliantERC20.FilterTransfer(nil, from, to)
 					Expect(err).ToNot(HaveOccurred())
 					Expect(it.Next()).To(BeTrue())
 					evt := it.Event
 					Expect(it.Next()).To(BeTrue())
-					Expect(evt.From).To(Equal(WalletAddress))
+					Expect(evt.From).To(Equal(WalletProxyAddress))
 					Expect(evt.To).To(Equal(TokenHolderAddress))
 					Expect(evt.Amount.String()).To(Equal(EthToWei(1).String()))
 					evt = it.Event
 					Expect(it.Next()).To(BeFalse())
-					Expect(evt.From).To(Equal(WalletAddress))
+					Expect(evt.From).To(Equal(WalletProxyAddress))
 					Expect(evt.To).To(Equal(CryptoFloatAddress))
 					Expect(evt.Amount.String()).To(Equal(EthToWei(100).String()))
 				})
 
 				It("Should emit 1 LoadedTokenCard event", func() {
-					it, err := Wallet.FilterLoadedTokenCard(nil)
+					it, err := WalletProxy.FilterLoadedTokenCard(nil)
 					Expect(err).ToNot(HaveOccurred())
 					Expect(it.Next()).To(BeTrue())
 					evt := it.Event
@@ -161,7 +161,7 @@ var _ = Describe("wallet load non-compliant ERC20", func() {
 				})
 
 				It("should decrease the NonCompliantERC201 balance of the Wallet by 101", func() {
-					b, err := NonCompliantERC20.BalanceOf(nil, WalletAddress)
+					b, err := NonCompliantERC20.BalanceOf(nil, WalletProxyAddress)
 					Expect(err).ToNot(HaveOccurred())
 					Expect(b.String()).To(Equal(EthToWei(899).String()))
 				})
@@ -171,7 +171,7 @@ var _ = Describe("wallet load non-compliant ERC20", func() {
 			When("a bigger amount than the one owned is loaded", func() {
 
 				It("Should revert", func() {
-					tx, err := Wallet.LoadTokenCard(Owner.TransactOpts(ethertest.WithGasLimit(300000)), NonCompliantERC20Address, EthToWei(1001))
+					tx, err := WalletProxy.LoadTokenCard(Owner.TransactOpts(ethertest.WithGasLimit(300000)), NonCompliantERC20Address, EthToWei(1001))
 					Expect(err).ToNot(HaveOccurred())
 					Backend.Commit()
 					Expect(isSuccessful(tx)).To(BeFalse())
@@ -208,7 +208,7 @@ var _ = Describe("wallet load non-compliant ERC20", func() {
 				})
 
 				It("Should revert", func() {
-					tx, err := Wallet.LoadTokenCard(Owner.TransactOpts(ethertest.WithGasLimit(200000)), NonCompliantERC20Address, EthToWei(1000))
+					tx, err := WalletProxy.LoadTokenCard(Owner.TransactOpts(ethertest.WithGasLimit(200000)), NonCompliantERC20Address, EthToWei(1000))
 					Expect(err).ToNot(HaveOccurred())
 					Backend.Commit()
 					Expect(isSuccessful(tx)).To(BeFalse())
@@ -222,7 +222,7 @@ var _ = Describe("wallet load non-compliant ERC20", func() {
 
 		When("the token is NOT loadable", func() {
 			It("should fail (NOT loadable)", func() {
-				tx, err := Wallet.LoadTokenCard(Owner.TransactOpts(ethertest.WithGasLimit(100000)), NonCompliantERC20Address, big.NewInt(101))
+				tx, err := WalletProxy.LoadTokenCard(Owner.TransactOpts(ethertest.WithGasLimit(100000)), NonCompliantERC20Address, big.NewInt(101))
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 				Expect(isGasExhausted(tx, 100000)).To(BeFalse())
@@ -252,7 +252,7 @@ var _ = Describe("wallet load non-compliant ERC20", func() {
 			})
 
 			It("should fail (rate == 0)", func() {
-				tx, err := Wallet.LoadTokenCard(Owner.TransactOpts(ethertest.WithGasLimit(100000)), NonCompliantERC20Address, big.NewInt(101))
+				tx, err := WalletProxy.LoadTokenCard(Owner.TransactOpts(ethertest.WithGasLimit(100000)), NonCompliantERC20Address, big.NewInt(101))
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 				Expect(isGasExhausted(tx, 100000)).To(BeFalse())
