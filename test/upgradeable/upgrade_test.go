@@ -7,7 +7,7 @@ import (
 	. "github.com/tokencard/contracts/v3/test/shared"
 )
 
-var _ = FDescribe("upgrade implementation", func() {
+var _ = Describe("upgrade implementation", func() {
 
 	It("should have spend limit of 1 ETH", func() {
 		sl, err := ProxyWallet.SpendLimitValue(nil)

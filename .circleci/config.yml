@@ -65,7 +65,7 @@ jobs:
           working_directory: contracts
           command: |
             if [[ "${CIRCLE_NODE_INDEX}" == 1 ]]; then
-              myth analyze --solv=0.5.17 ./wallet.sol --execution-timeout=1200
+              myth analyze --solv=0.5.17 ./wallet.sol --execution-timeout=1500
             fi
           no_output_timeout: 20m
       - run:
