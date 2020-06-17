@@ -3,10 +3,9 @@ package upgrade_test
 import (
 	"context"
 	"fmt"
-	"strings"
 	"testing"
 
-	"github.com/Masterminds/semver"
+	"github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	. "github.com/onsi/ginkgo"
@@ -16,8 +15,7 @@ import (
 	. "github.com/tokencard/contracts/v3/test/shared"
 )
 
-var Wallet *bindings.Wallet
-var WalletAddress common.Address
+var WalletImplementationAddress common.Address
 
 var Proxy *upgradeability.AdminUpgradeabilityProxy
 var ProxyAddress common.Address
@@ -25,7 +23,22 @@ var ProxyAddress common.Address
 var ProxyWallet *bindings.Wallet
 
 func init() {
-	TestRig.AddCoverageForContracts("../../build/wallet/combined.json", "../../contracts")
+	TestRig.AddCoverageForContracts("../../build/externals/upgradeability/AdminUpgradeabilityProxy/combined.json", "../../contracts")
+}
+
+func ethCall(tx *types.Transaction) ([]byte, error) {
+	msg, _ := tx.AsMessage(types.HomesteadSigner{})
+
+	calMsg := ethereum.CallMsg{
+		From:     msg.From(),
+		To:       msg.To(),
+		Gas:      msg.Gas(),
+		GasPrice: msg.GasPrice(),
+		Value:    msg.Value(),
+		Data:     msg.Data(),
+	}
+
+	return Backend.CallContract(context.Background(), calMsg, nil)
 }
 
 func TestWalletSuite(t *testing.T) {
@@ -38,12 +51,12 @@ var _ = BeforeEach(func() {
 	Expect(err).ToNot(HaveOccurred())
 	// Deploy the Token wallet contract.
 	var tx *types.Transaction
-	WalletAddress, tx, Wallet, err = bindings.DeployWallet(BankAccount.TransactOpts(), Backend)
+	WalletImplementationAddress, tx, _, err = bindings.DeployWallet(BankAccount.TransactOpts(), Backend)
 	Expect(err).ToNot(HaveOccurred())
 	Backend.Commit()
 	Expect(isSuccessful(tx)).To(BeTrue())
 
-	ProxyAddress, tx, Proxy, err = upgradeability.DeployAdminUpgradeabilityProxy(Owner.TransactOpts(), Backend, WalletAddress, Owner.Address(), nil)
+	ProxyAddress, tx, Proxy, err = upgradeability.DeployAdminUpgradeabilityProxy(BankAccount.TransactOpts(), Backend, WalletImplementationAddress, Owner.Address(), nil)
 	Expect(err).ToNot(HaveOccurred())
 	Backend.Commit()
 	Expect(isSuccessful(tx)).To(BeTrue())
@@ -56,34 +69,6 @@ var _ = BeforeEach(func() {
 })
 
 var allPassed = true
-var currentVersion = "3.2.0"
-
-var _ = Describe("Wallet Version", func() {
-	It("should return the current version", func() {
-		v, err := ProxyWallet.WALLETVERSION(nil)
-		Expect(err).ToNot(HaveOccurred())
-		Expect(v).To(Equal(currentVersion))
-	})
-
-	It("should be a Semver", func() {
-		v, err := ProxyWallet.WALLETVERSION(nil)
-		Expect(err).ToNot(HaveOccurred())
-		_, err = semver.NewVersion(v)
-		Expect(err).ToNot(HaveOccurred())
-	})
-
-	It("should not start with a v prefix", func() {
-		v, err := ProxyWallet.WALLETVERSION(nil)
-		Expect(err).ToNot(HaveOccurred())
-		Expect(strings.HasPrefix(v, "v")).To(BeFalse())
-	})
-
-	It("should have spend limit of 1 ETH", func() {
-		sl, err := ProxyWallet.SpendLimitValue(nil)
-		Expect(err).ToNot(HaveOccurred())
-		Expect(sl.String()).To(Equal(EthToWei(1).String()))
-	})
-})
 
 var _ = AfterEach(func() {
 	td := CurrentGinkgoTestDescription()
@@ -95,7 +80,7 @@ var _ = AfterEach(func() {
 
 // var _ = AfterSuite(func() {
 // 	if allPassed {
-// 		TestRig.ExpectMinimumCoverage("wallet.sol", 98.00)
+// 		TestRig.ExpectMinimumCoverage("AdminUpgradeabilityProxy.sol", 98.00)
 // 		TestRig.PrintGasUsage(os.Stdout)
 // 	}
 // })

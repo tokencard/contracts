@@ -36,7 +36,7 @@ import "./externals/ERC165.sol";
 
 /// @title ControllableOwnable combines Controllable and Ownable
 /// @dev providing an additional modifier to check if Owner or Controller
-contract ControllableOwnable is Controllable, Ownable {
+contract ControllableOwnable is Controllable, Ownable, Initializable {
     /// @dev Check if the sender is the Owner or one of the Controllers
     modifier onlyOwnerOrController() {
         require(_isOwner(msg.sender) || _isController(msg.sender), "only owner||controller");
@@ -95,7 +95,7 @@ contract AddressWhitelist is ControllableOwnable, SelfCallableOwnable {
     }
 
     /// @dev Cancel pending whitelist addition.
-    function cancelWhitelistAddition(bytes32 _hash) external onlyOwnerOrController {
+    function cancelWhitelistAddition(bytes32 _hash) external initializer onlyOwnerOrController {
         // Check if operation has been submitted.
         require(submittedWhitelistAddition, "no pending submission");
         // Require that confirmation hash and the hash of the pending whitelist addition match
@@ -109,7 +109,7 @@ contract AddressWhitelist is ControllableOwnable, SelfCallableOwnable {
     }
 
     /// @dev Cancel pending removal of whitelisted addresses.
-    function cancelWhitelistRemoval(bytes32 _hash) external onlyOwnerOrController {
+    function cancelWhitelistRemoval(bytes32 _hash) external initializer onlyOwnerOrController {
         // Check if operation has been submitted.
         require(submittedWhitelistRemoval, "no pending submission");
         // Require that confirmation hash and the hash of the pending whitelist removal match
@@ -125,7 +125,7 @@ contract AddressWhitelist is ControllableOwnable, SelfCallableOwnable {
     /// @dev Confirm pending whitelist addition.
     /// @dev This will only ever be applied post 2FA, by one of the Controllers
     /// @param _hash is the hash of the pending whitelist array, a form of lamport lock
-    function confirmWhitelistAddition(bytes32 _hash) external onlyController {
+    function confirmWhitelistAddition(bytes32 _hash) external initializer onlyController {
         // Require that the whitelist addition has been submitted.
         require(submittedWhitelistAddition, "no pending submission");
         // Require that confirmation hash and the hash of the pending whitelist addition match
@@ -148,7 +148,7 @@ contract AddressWhitelist is ControllableOwnable, SelfCallableOwnable {
     }
 
     /// @dev Confirm pending removal of whitelisted addresses.
-    function confirmWhitelistRemoval(bytes32 _hash) external onlyController {
+    function confirmWhitelistRemoval(bytes32 _hash) external initializer onlyController {
         // Require that the pending whitelist is not empty and the operation has been submitted.
         require(submittedWhitelistRemoval, "no pending submission");
         // Require that confirmation hash and the hash of the pending whitelist removal match
@@ -344,7 +344,7 @@ contract SpendLimit is ControllableOwnable, SelfCallableOwnable {
     }
 
     /// @dev Confirm pending set daily limit operation.
-    function confirmSpendLimitUpdate(uint256 _amount) external onlyController {
+    function confirmSpendLimitUpdate(uint256 _amount) external initializer onlyController {
         _spendLimit._confirmLimitUpdate(_amount);
         emit SetSpendLimit(msg.sender, _amount);
     }
@@ -403,7 +403,7 @@ contract GasTopUpLimit is ControllableOwnable, SelfCallableOwnable {
     }
 
     /// @dev Confirm pending set top up gas limit operation.
-    function confirmGasTopUpLimitUpdate(uint256 _amount) external onlyController {
+    function confirmGasTopUpLimitUpdate(uint256 _amount) external initializer onlyController {
         _gasTopUpLimit._confirmLimitUpdate(_amount);
         emit SetGasTopUpLimit(msg.sender, _amount);
     }
@@ -483,7 +483,7 @@ contract LoadLimit is ControllableOwnable, SelfCallableOwnable, TokenWhitelistab
     }
 
     /// @dev Confirm pending set load limit operation.
-    function confirmLoadLimitUpdate(uint256 _amount) external onlyController {
+    function confirmLoadLimitUpdate(uint256 _amount) external initializer onlyController {
         _loadLimit._confirmLimitUpdate(_amount);
         emit SetLoadLimit(msg.sender, _amount);
     }
@@ -511,7 +511,7 @@ contract LoadLimit is ControllableOwnable, SelfCallableOwnable, TokenWhitelistab
 
 
 /// @title Asset wallet with extra security features, gas top up management and card integration.
-contract Wallet is ENSResolvable, AddressWhitelist, SpendLimit, GasTopUpLimit, LoadLimit, ERC165, Transferrable, Balanceable, Initializable {
+contract Wallet is ENSResolvable, AddressWhitelist, SpendLimit, GasTopUpLimit, LoadLimit, ERC165, Transferrable, Balanceable {
     using Address for address;
     using ECDSA for bytes32;
     using SafeERC20 for ERC20;
@@ -602,7 +602,7 @@ contract Wallet is ENSResolvable, AddressWhitelist, SpendLimit, GasTopUpLimit, L
     /// @param _nonce only used for relayed transactions, must match the wallet's relayNonce.
     /// @param _data abi encoded data payload.
     /// @param _signature signed prefix + data.
-    function executeRelayedTransaction(uint256 _nonce, bytes calldata _data, bytes calldata _signature) external onlyController {
+    function executeRelayedTransaction(uint256 _nonce, bytes calldata _data, bytes calldata _signature) external initializer onlyController {
         // Expecting prefixed data ("monolith:") indicating relayed transaction...
         // ...and an Ethereum Signed Message to protect user from signing an actual Tx
         uint256 id;
@@ -681,7 +681,7 @@ contract Wallet is ENSResolvable, AddressWhitelist, SpendLimit, GasTopUpLimit, L
 
     /// @dev Refill owner's gas balance, revert if the transaction amount is too large
     /// @param _amount is the amount of ether to transfer to the owner account in wei.
-    function topUpGas(uint256 _amount) external isNotZero(_amount) onlyOwnerOrController {
+    function topUpGas(uint256 _amount) external isNotZero(_amount) initializer onlyOwnerOrController {
         // Check against the daily spent limit and update accordingly, require that the value is under remaining limit.
         _gasTopUpLimit._enforceLimit(_amount);
         // Then perform the transfer

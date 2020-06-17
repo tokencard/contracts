@@ -1,6 +1,7 @@
 package upgrade_test
 
 import (
+	"github.com/i-stam/ethertest"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	"github.com/tokencard/contracts/v3/pkg/bindings/mocks"
@@ -9,25 +10,16 @@ import (
 
 var _ = Describe("upgrade implementation", func() {
 
-	It("should have spend limit of 1 ETH", func() {
-		sl, err := ProxyWallet.SpendLimitValue(nil)
+	It("should fail when someone tries to re-initialize", func() {
+		tx, err := ProxyWallet.InitializeWallet(BankAccount.TransactOpts(ethertest.WithGasLimit(100000)), RandomAccount.Address(), true, ENSRegistryAddress, TokenWhitelistName, ControllerName, LicenceName, EthToWei(1))
 		Expect(err).ToNot(HaveOccurred())
-		Expect(sl.String()).To(Equal(EthToWei(1).String()))
+		Backend.Commit()
+		Expect(isSuccessful(tx)).To(BeFalse())
+		returnData, _ := ethCall(tx)
+		Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("Contract instance has already been initialized"))
 	})
 
-	It("should have an owner", func() {
-		o, err := ProxyWallet.Owner(nil)
-		Expect(err).ToNot(HaveOccurred())
-		Expect(o).To(Equal(Owner.Address()))
-	})
-
-	It("should have an owner", func() {
-		rn, err := ProxyWallet.RelayNonce(nil)
-		Expect(err).ToNot(HaveOccurred())
-		Expect(rn.String()).To(Equal("0"))
-	})
-
-	When("we upgrade to a new mock imlementation", func() {
+	When("we increase the nonce", func() {
 
 		BeforeEach(func() {
 			tx, err := ProxyWallet.IncreaseRelayNonce(Owner.TransactOpts())
@@ -54,12 +46,17 @@ var _ = Describe("upgrade implementation", func() {
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 				Expect(isSuccessful(tx)).To(BeTrue())
+
+				tx, err = ProxyWallet.IncreaseRelayNonce(Owner.TransactOpts()) //new implementation: nonce += 2;
+				Expect(err).ToNot(HaveOccurred())
+				Backend.Commit()
+				Expect(isSuccessful(tx)).To(BeTrue())
 			})
 
-			It("Should return the number of the beast", func() {
-				value, err := ProxyWallet.SpendLimitValue(nil)
+			It("Should return the previous nonce + 2", func() {
+				rn, err := ProxyWallet.RelayNonce(nil)
 				Expect(err).ToNot(HaveOccurred())
-				Expect(value.String()).To(Equal("666"))
+				Expect(rn.String()).To(Equal("3"))
 			})
 
 		})

@@ -1,0 +1,1 @@
+[{"constant":true,"inputs":[],"name":"ensRegistry","outputs":[{"internalType":"address","name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"}]
