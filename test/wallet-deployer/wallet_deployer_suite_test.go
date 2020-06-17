@@ -3,6 +3,7 @@ package wallet_deployer_test
 import (
 	"context"
 	"fmt"
+	"math/big"
 	"os"
 	"testing"
 
@@ -12,8 +13,33 @@ import (
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	"github.com/tokencard/contracts/v3/pkg/bindings"
+	"github.com/tokencard/contracts/v3/pkg/bindings/externals/upgradeability"
 	. "github.com/tokencard/contracts/v3/test/shared"
 )
+
+var WalletImplementation *bindings.Wallet
+var WalletImplementationAddress common.Address
+
+var WalletCacheAddress common.Address
+var WalletCache *bindings.WalletCache
+
+var WalletDeployerAddress common.Address
+var WalletDeployer *bindings.WalletDeployer
+
+func deployInitProxy(owner common.Address, spendLimit *big.Int) common.Address {
+	RandomProxyAddress, tx, _, err := upgradeability.DeployAdminUpgradeabilityProxy(BankAccount.TransactOpts(), Backend, WalletImplementationAddress, owner, nil)
+	Expect(err).ToNot(HaveOccurred())
+	Backend.Commit()
+	Expect(isSuccessful(tx)).To(BeTrue())
+
+	RandomProxy, err := bindings.NewWallet(RandomProxyAddress, Backend)
+	tx, err = RandomProxy.InitializeWallet(BankAccount.TransactOpts(), owner, false, ENSRegistryAddress, TokenWhitelistName, ControllerName, LicenceName, spendLimit)
+	Expect(err).ToNot(HaveOccurred())
+	Backend.Commit()
+	Expect(isSuccessful(tx)).To(BeTrue())
+
+	return RandomProxyAddress
+}
 
 func ethCall(tx *types.Transaction) ([]byte, error) {
 	msg, _ := tx.AsMessage(types.HomesteadSigner{})
@@ -59,7 +85,7 @@ var _ = AfterEach(func() {
 var _ = AfterSuite(func() {
 	if allPassed {
 		TestRig.ExpectMinimumCoverage("walletDeployer.sol", 92.00)
-		TestRig.ExpectMinimumCoverage("walletCache.sol", 88.00)
+		TestRig.ExpectMinimumCoverage("walletCache.sol", 80.00)
 		TestRig.PrintGasUsage(os.Stdout)
 	}
 })
@@ -79,12 +105,6 @@ var _ = AfterEach(func() {
 
 })
 
-var WalletCacheAddress common.Address
-var WalletCache *bindings.WalletCache
-
-var WalletDeployerAddress common.Address
-var WalletDeployer *bindings.WalletDeployer
-
 func isSuccessful(tx *types.Transaction) bool {
 	r, err := Backend.TransactionReceipt(context.Background(), tx.Hash())
 	Expect(err).ToNot(HaveOccurred())
@@ -98,7 +118,12 @@ var _ = BeforeEach(func() {
 	err := InitializeBackend()
 	Expect(err).ToNot(HaveOccurred())
 	var tx *types.Transaction
-	WalletCacheAddress, tx, WalletCache, err = bindings.DeployWalletCache(BankAccount.TransactOpts(), Backend, ENSRegistryAddress, EthToWei(1), [32]byte{}, [32]byte{}, [32]byte{}, [32]byte{})
+	// deploy wallet implementation
+	WalletImplementationAddress, tx, WalletImplementation, err = bindings.DeployWallet(BankAccount.TransactOpts(), Backend)
+	Expect(err).ToNot(HaveOccurred())
+	Backend.Commit()
+	Expect(isSuccessful(tx)).To(BeTrue())
+	WalletCacheAddress, tx, WalletCache, err = bindings.DeployWalletCache(BankAccount.TransactOpts(), Backend, WalletImplementationAddress, ENSRegistryAddress, EthToWei(1), [32]byte{}, [32]byte{}, [32]byte{}, [32]byte{})
 	Expect(err).ToNot(HaveOccurred())
 	WalletDeployerAddress, tx, WalletDeployer, err = bindings.DeployWalletDeployer(BankAccount.TransactOpts(), Backend, ENSRegistryAddress, [32]byte{}, [32]byte{})
 	Expect(err).ToNot(HaveOccurred())

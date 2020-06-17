@@ -105,6 +105,8 @@ github.com/hpcloud/tail v1.0.0/go.mod h1:ab1qPbhIpdTxEkNHXyeSf5vhxWSCs/tWer42PpO
 github.com/huin/goupnp v0.0.0-20161224104101-679507af18f3/go.mod h1:MZ2ZmwcBpvOoJ22IJsc7va19ZwoheaBk43rKg12SKag=
 github.com/huin/goupnp v0.0.0-20180415215157-1395d1447324 h1:PV190X5/DzQ/tbFFG5YpT5mH6q+cHlfgqI5JuRnH9oE=
 github.com/huin/goupnp v0.0.0-20180415215157-1395d1447324/go.mod h1:MZ2ZmwcBpvOoJ22IJsc7va19ZwoheaBk43rKg12SKag=
+github.com/i-stam/ethertest v0.8.4 h1:l10Q/MzPRHmlZFqaw9deEC4eqohoaiFvIo3mPGJ3T+k=
+github.com/i-stam/ethertest v0.8.4/go.mod h1:rOnr1CJxkpPxDV/d+GSAz4qJfP16IsbD9vJUduwkHE8=
 github.com/influxdata/influxdb v1.2.3-0.20180221223340-01288bdb0883/go.mod h1:qZna6X/4elxqT3yI9iZYdZrWWdeFOOprn86kgg4+IzY=
 github.com/jackpal/go-nat-pmp v1.0.1/go.mod h1:QPH045xvCAeXUZOxsnwmrtiCoxIr9eob+4orBN1SBKc=
 github.com/jackpal/go-nat-pmp v1.0.2-0.20160603034137-1fa385a6f458 h1:6OvNmYgJyexcZ3pYbTI9jWx5tHo1Dee/tWbLMfPe2TA=
@@ -208,6 +210,7 @@ github.com/syndtr/goleveldb v1.0.1-0.20190923125748-758128399b1d/go.mod h1:9OrXJ
 github.com/tokencard/contracts v1.5.8 h1:hUlZFRCEQiGMFS9NP6ze1BMXOLOJT4tKc58iRIXSRFQ=
 github.com/tokencard/ethertest v0.8.1 h1:C4+NPfDQ5g3avQdRU6B7UvT+BHk9EcvKnwIcoO1tll0=
 github.com/tokencard/ethertest v0.8.1/go.mod h1:1GTnshKUCoZACOuj+ak3oc5L6DIfxM+P8Nefml8eA3I=
+github.com/tokencard/ethertest v0.8.2/go.mod h1:1GTnshKUCoZACOuj+ak3oc5L6DIfxM+P8Nefml8eA3I=
 github.com/tokencard/ethertest v0.9.0 h1:ezzZRtftyf8MO+U502r1tTJEVVHEkkZmUp9WurWbzRk=
 github.com/tokencard/ethertest v0.9.0/go.mod h1:NGTJ8DcKF7l+b+mU7YykHhv/pckChUW6zrogmx78pSo=
 github.com/tyler-smith/go-bip39 v1.0.1-0.20181017060643-dbb3b84ba2ef/go.mod h1:sJ5fKU0s6JVwZjjcUEX2zFOnvq0ASQ2K9Zr6cf67kNs=

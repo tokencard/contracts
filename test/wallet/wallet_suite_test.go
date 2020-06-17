@@ -19,11 +19,28 @@ import (
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	"github.com/tokencard/contracts/v3/pkg/bindings"
+	"github.com/tokencard/contracts/v3/pkg/bindings/externals/upgradeability"
 	. "github.com/tokencard/contracts/v3/test/shared"
+	"github.com/tokencard/ethertest"
 )
 
 var Wallet *bindings.Wallet
 var WalletAddress common.Address
+
+func deployInitProxy(owner *ethertest.Account, spendLimit *big.Int) common.Address {
+	RandomProxyAddress, tx, _, err := upgradeability.DeployAdminUpgradeabilityProxy(owner.TransactOpts(), Backend, WalletImplementationAddress, Owner.Address(), nil)
+	Expect(err).ToNot(HaveOccurred())
+	Backend.Commit()
+	Expect(isSuccessful(tx)).To(BeTrue())
+
+	RandomProxy, err := bindings.NewWallet(RandomProxyAddress, Backend)
+	tx, err = RandomProxy.InitializeWallet(owner.TransactOpts(), owner.Address(), false, ENSRegistryAddress, TokenWhitelistName, ControllerName, LicenceName, spendLimit)
+	Expect(err).ToNot(HaveOccurred())
+	Backend.Commit()
+	Expect(isSuccessful(tx)).To(BeTrue())
+
+	return RandomProxyAddress
+}
 
 func ethCall(tx *types.Transaction) ([]byte, error) {
 	msg, _ := tx.AsMessage(types.HomesteadSigner{})
