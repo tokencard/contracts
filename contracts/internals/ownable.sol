@@ -30,17 +30,6 @@ contract Ownable {
     address payable private _owner;
     bool private _isTransferable;
 
-    /// @notice Sets the original owner of the contract and whether or not it is one time transferable.
-    function initializeOwnable(address payable _account_, bool _transferable_) internal {
-        _owner = _account_;
-        _isTransferable = _transferable_;
-        // Emit the LockedOwnership event if no longer transferable.
-        if (!_isTransferable) {
-            emit LockedOwnership(_account_);
-        }
-        emit TransferredOwnership(address(0), _account_);
-    }
-
     /// @notice Reverts if called by any account other than the owner.
     modifier onlyOwner() {
         require(_isOwner(msg.sender), "sender is not an owner");
@@ -89,6 +78,17 @@ contract Ownable {
     /// @return address of the owner.
     function owner() public view returns (address payable) {
         return _owner;
+    }
+
+    /// @notice Sets the original owner of the contract and whether or not it is one time transferable.
+    function _initializeOwnable(address payable _account, bool _transferable) internal {
+        _owner = _account;
+        _isTransferable = _transferable;
+        // Emit the LockedOwnership event if no longer transferable.
+        if (!_isTransferable) {
+            emit LockedOwnership(_account);
+        }
+        emit TransferredOwnership(address(0), _account);
     }
 
     /// @notice Check if owner address

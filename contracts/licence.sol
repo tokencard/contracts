@@ -88,8 +88,8 @@ contract Licence is Transferrable, ENSResolvable, Controllable {
     /// @param _controllerNode_ is the ENS node corresponding to the controller
     constructor(uint256 _licence_, address payable _float_, address payable _holder_, address _tknAddress_, address _ens_, bytes32 _controllerNode_) public {
         require(MIN_AMOUNT_SCALE <= _licence_ && _licence_ <= MAX_AMOUNT_SCALE, "licence amount out of range");
-        initializeENSResolvable(_ens_);
-        initializeControllable(_controllerNode_);
+        _initializeENSResolvable(_ens_);
+        _initializeControllable(_controllerNode_);
         _licenceAmountScaled = _licence_;
         _cryptoFloat = _float_;
         _tokenHolder = _holder_;

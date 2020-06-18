@@ -51,9 +51,9 @@ contract Holder is Balanceable, ENSResolvable, Controllable, Transferrable, Toke
     /// @param _tokenWhitelistNode_ is the ENS node of the Token whitelist.
     /// @param _controllerNode_ is the ENS node of the Controller
     constructor(address _burnerContract_, address _ens_, bytes32 _tokenWhitelistNode_, bytes32 _controllerNode_) public {
-        initializeENSResolvable(_ens_);
-        initializeControllable(_controllerNode_);
-        initializeTokenWhitelistable(_tokenWhitelistNode_);
+        _initializeENSResolvable(_ens_);
+        _initializeControllable(_controllerNode_);
+        _initializeTokenWhitelistable(_tokenWhitelistNode_);
         _burner = _burnerContract_;
     }
 

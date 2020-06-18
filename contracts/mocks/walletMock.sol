@@ -36,7 +36,7 @@ import "../externals/ERC165.sol";
 
 /// @title ControllableOwnable combines Controllable and Ownable
 /// @dev providing an additional modifier to check if Owner or Controller
-contract ControllableOwnable is Controllable, Ownable, Initializable {
+contract ControllableOwnable is Controllable, Ownable {
     /// @dev Check if the sender is the Owner or one of the Controllers
     modifier onlyOwnerOrController() {
         require(_isOwner(msg.sender) || _isController(msg.sender), "only owner||controller");
@@ -339,7 +339,7 @@ contract SpendLimit is ControllableOwnable, SelfCallableOwnable {
     DailyLimitTrait.DailyLimit internal _spendLimit;
 
     /// @dev Initializes the daily spend limit in wei.
-    function initializeSpendLimit(uint256 _limit_) internal {
+    function _initializeSpendLimit(uint256 _limit_) internal {
         _spendLimit = DailyLimitTrait.DailyLimit(_limit_, _limit_, now, 0, false);
     }
 
@@ -398,7 +398,7 @@ contract GasTopUpLimit is ControllableOwnable, SelfCallableOwnable {
     DailyLimitTrait.DailyLimit internal _gasTopUpLimit;
 
     /// @dev Initializes the daily gas topup limit in wei.
-    function initializeGasTopUpLimit() internal {
+    function _initializeGasTopUpLimit() internal {
         _gasTopUpLimit = DailyLimitTrait.DailyLimit(_MAXIMUM_GAS_TOPUP_LIMIT, _MAXIMUM_GAS_TOPUP_LIMIT, now, 0, false);
     }
 
@@ -458,8 +458,8 @@ contract LoadLimit is ControllableOwnable, SelfCallableOwnable, TokenWhitelistab
 
     DailyLimitTrait.DailyLimit internal _loadLimit;
 
-    function initializeLoadLimit(bytes32 _tokenWhitelistNode_) internal {
-        initializeTokenWhitelistable(_tokenWhitelistNode_);
+    function _initializeLoadLimit(bytes32 _tokenWhitelistNode_) internal {
+        _initializeTokenWhitelistable(_tokenWhitelistNode_);
         (, uint256 stablecoinMagnitude, , , , , ) = _getStablecoinInfo();
         require(stablecoinMagnitude > 0, "no stablecoin");
         _maximumLoadLimit = _MAXIMUM_STABLECOIN_LOAD_LIMIT * stablecoinMagnitude;
@@ -511,7 +511,7 @@ contract LoadLimit is ControllableOwnable, SelfCallableOwnable, TokenWhitelistab
 
 
 /// @title Asset wallet with extra security features, gas top up management and card integration.
-contract WalletMock is ENSResolvable, AddressWhitelist, SpendLimit, GasTopUpLimit, LoadLimit, ERC165, Transferrable, Balanceable {
+contract WalletMock is ENSResolvable, AddressWhitelist, SpendLimit, GasTopUpLimit, LoadLimit, ERC165, Transferrable, Balanceable, Initializable {
     using Address for address;
     using ECDSA for bytes32;
     using SafeERC20 for ERC20;
@@ -560,12 +560,12 @@ contract WalletMock is ENSResolvable, AddressWhitelist, SpendLimit, GasTopUpLimi
         bytes32 _licenceNode_,
         uint256 _spendLimit_
     ) external initializer {
-        initializeENSResolvable(_ens_);
-        initializeControllable(_controllerNode_);
-        initializeOwnable(_owner_, _transferable_);
-        initializeSpendLimit(_spendLimit_);
-        initializeGasTopUpLimit();
-        initializeLoadLimit(_tokenWhitelistNode_);
+        _initializeENSResolvable(_ens_);
+        _initializeControllable(_controllerNode_);
+        _initializeOwnable(_owner_, _transferable_);
+        _initializeSpendLimit(_spendLimit_);
+        _initializeGasTopUpLimit();
+        _initializeLoadLimit(_tokenWhitelistNode_);
         _licenceNode = _licenceNode_;
     }
 

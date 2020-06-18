@@ -31,16 +31,6 @@ contract Controllable is ENSResolvable {
     /// @dev Is the registered ENS node identifying the controller contract.
     bytes32 private _controllerNode = _DEFAULT_CONTROLLER_NODE;
 
-    /// @notice Initializes the controller contract object.
-    /// @param _controllerNode_ is the ENS node of the Controller.
-    /// @dev pass in bytes32(0) to use the default, production node labels for ENS
-    function initializeControllable(bytes32 _controllerNode_) internal {
-        // Set controllerNode or use default
-        if (_controllerNode_ != bytes32(0)) {
-            _controllerNode = _controllerNode_;
-        }
-    }
-
     /// @notice Checks if message sender is a controller.
     modifier onlyController() {
         require(_isController(msg.sender), "sender is not a controller");
@@ -56,6 +46,15 @@ contract Controllable is ENSResolvable {
     /// @return the controller node registered in ENS.
     function controllerNode() public view returns (bytes32) {
         return _controllerNode;
+    }
+
+    /// @notice Initializes the controller contract object.
+    /// @param _controllerNode_ is the ENS node of the Controller.
+    /// @dev pass in bytes32(0) to use the default, production node labels for ENS
+    function _initializeControllable(bytes32 _controllerNode_) internal {
+        require(_controllerNode_ != bytes32(0), "controler node is 0");
+        // Set controllerNode or use default
+        _controllerNode = _controllerNode_;
     }
 
     /// @return true if the provided account is a controller.

@@ -18,14 +18,11 @@ var _ = Describe("uninitialized", func() {
 		var tx *types.Transaction
 		var err error
 		BeforeEach(func() {
-
 			ProxyAddress, tx, Proxy, err = upgradeability.DeployAdminUpgradeabilityProxy(BankAccount.TransactOpts(), Backend, WalletImplementationAddress, Owner.Address(), nil)
 			Expect(err).ToNot(HaveOccurred())
 			Backend.Commit()
 			Expect(isSuccessful(tx)).To(BeTrue())
-
 			ProxyWallet, err = bindings.NewWallet(ProxyAddress, Backend)
-
 		})
 
 		It("Should fail when there's onlyOwnerOrController()", func() {
@@ -33,6 +30,8 @@ var _ = Describe("uninitialized", func() {
 			Expect(err).ToNot(HaveOccurred())
 			Backend.Commit()
 			Expect(isSuccessful(tx)).To(BeFalse())
+			returnData, _ := ethCall(tx)
+			Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("ENSResolvable not initialized"))
 		})
 
 		It("Should fail it when there's onlyOwnerOrSelf()", func() {
@@ -49,6 +48,8 @@ var _ = Describe("uninitialized", func() {
 			Expect(err).ToNot(HaveOccurred())
 			Backend.Commit()
 			Expect(isSuccessful(tx)).To(BeFalse())
+			returnData, _ := ethCall(tx)
+			Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("ENSResolvable not initialized"))
 		})
 
 		It("Should fail it when there's onlyOwner()", func() {
