@@ -15,10 +15,10 @@ contract TEST is Echidna, GasTopUpLimit {
     uint256 initialLimit = 500 finney;
 
     constructor() public {
-        initializeGasTopUpLimit();
-        initializeOwnable(echidnaOwner, false);
-        initializeControllable(bytes32(0x0));
-        initializeENSResolvable(address(0x0));
+        _initializeGasTopUpLimit();
+        _initializeOwnable(echidnaOwner, false);
+        _initializeControllable(bytes32(0x0));
+        _initializeENSResolvable(address(0x0));
     }
 
     // This function is used to simulate the user spending, so anyone can call it

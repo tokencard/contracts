@@ -14,10 +14,10 @@ contract TEST is Echidna, SpendLimit {
     uint256 initialLimit = 10000;
 
     constructor() public {
-        initializeSpendLimit(initialLimit);
-        initializeOwnable(echidnaOwner, false);
-        initializeControllable(bytes32(0x0));
-        initializeENSResolvable(address(0x0));
+        _initializeSpendLimit(initialLimit);
+        _initializeOwnable(echidnaOwner, false);
+        _initializeControllable(bytes32(0x0));
+        _initializeENSResolvable(address(0x0));
         // This simulates calling to setSpendLimit (which is an external function).
         _spendLimit._setLimit(initialLimit);
     }

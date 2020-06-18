@@ -14,10 +14,10 @@ contract TEST is Echidna, LoadLimit {
     uint256 initialLimit = 10000000000;
 
     constructor() public {
-        initializeLoadLimit(bytes32(0x0));
-        initializeOwnable(echidnaOwner, false);
-        initializeControllable(bytes32(0x0));
-        initializeENSResolvable(address(0x0));
+        _initializeLoadLimit(bytes32(0x0));
+        _initializeOwnable(echidnaOwner, false);
+        _initializeControllable(bytes32(0x0));
+        _initializeENSResolvable(address(0x0));
         _loadLimit = DailyLimitTrait.DailyLimit(initialLimit, initialLimit, now, 0, false);
     }
 

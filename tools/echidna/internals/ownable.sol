@@ -11,7 +11,7 @@ contract Echidna {
 
 contract TEST is Echidna, Ownable {
     constructor() public {
-        initializeOwnable(echidnaOwner, false);
+        _initializeOwnable(echidnaOwner, false);
     }
 
     function echidna_nonTransferable() public view returns (bool) {
