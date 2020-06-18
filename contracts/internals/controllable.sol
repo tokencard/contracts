@@ -52,9 +52,10 @@ contract Controllable is ENSResolvable {
     /// @param _controllerNode_ is the ENS node of the Controller.
     /// @dev pass in bytes32(0) to use the default, production node labels for ENS
     function _initializeControllable(bytes32 _controllerNode_) internal {
-        require(_controllerNode_ != bytes32(0), "controler node is 0");
         // Set controllerNode or use default
-        _controllerNode = _controllerNode_;
+        if (_controllerNode_ != bytes32(0)) {
+            _controllerNode = _controllerNode_;
+        }
     }
 
     /// @return true if the provided account is a controller.
