@@ -1,4 +1,4 @@
-pragma solidity ^0.5.17;
+pragma solidity 0.5.15;
 
 import "../internals/tokenWhitelistable.sol";
 import "../internals/ensResolvable.sol";
