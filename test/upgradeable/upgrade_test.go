@@ -19,6 +19,18 @@ var _ = Describe("upgrade implementation", func() {
 		Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("Contract instance has already been initialized"))
 	})
 
+	It("set the correct wallet implementations", func() {
+		imp, err := Proxy.Implementation(nil)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(imp).To(Equal(WalletImplementationAddress))
+	})
+
+	It("should set the wallet owner as the admin", func() {
+		admin, err := Proxy.Admin(nil)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(admin).To(Equal(Owner.Address()))
+	})
+
 	When("we increase the nonce", func() {
 
 		BeforeEach(func() {
