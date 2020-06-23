@@ -1,4 +1,4 @@
-pragma solidity ^0.5.15;
+pragma solidity 0.5.17;
 
 /// @title ERC20 interface is a subset of the ERC20 specification.
 /// @notice see https://github.com/ethereum/EIPs/issues/20
