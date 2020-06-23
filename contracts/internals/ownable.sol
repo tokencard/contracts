@@ -18,12 +18,14 @@
 
 pragma solidity 0.5.15;
 
+import "../externals/initializable.sol";
+
 
 /// @title Ownable has an owner address and provides basic authorization control functions.
 /// This contract is modified version of the MIT OpenZepplin Ownable contract
 /// This contract allows for the transferOwnership operation to be made impossible
 /// https://github.com/OpenZeppelin/openzeppelin-solidity/blob/master/contracts/ownership/Ownable.sol
-contract Ownable {
+contract Ownable is Initializable {
     event TransferredOwnership(address _from, address _to);
     event LockedOwnership(address _locked);
 
@@ -81,7 +83,7 @@ contract Ownable {
     }
 
     /// @notice Sets the original owner of the contract and whether or not it is one time transferable.
-    function _initializeOwnable(address payable _account, bool _transferable) internal {
+    function _initializeOwnable(address payable _account, bool _transferable) internal initializer {
         _owner = _account;
         _isTransferable = _transferable;
         // Emit the LockedOwnership event if no longer transferable.

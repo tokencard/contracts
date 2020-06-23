@@ -379,7 +379,7 @@ contract SpendLimit is ControllableOwnable, SelfCallableOwnable {
     }
 
     /// @dev Initializes the daily spend limit in wei.
-    function _initializeSpendLimit(uint256 _limit) internal {
+    function _initializeSpendLimit(uint256 _limit) internal initializer {
         _spendLimit = DailyLimitTrait.DailyLimit(_limit, _limit, now, 0, false);
     }
 }
@@ -440,7 +440,7 @@ contract GasTopUpLimit is ControllableOwnable, SelfCallableOwnable {
     }
 
     /// @dev Initializes the daily gas topup limit in wei.
-    function _initializeGasTopUpLimit() internal {
+    function _initializeGasTopUpLimit() internal initializer {
         _gasTopUpLimit = DailyLimitTrait.DailyLimit(_MAXIMUM_GAS_TOPUP_LIMIT, _MAXIMUM_GAS_TOPUP_LIMIT, now, 0, false);
     }
 }
@@ -500,7 +500,7 @@ contract LoadLimit is ControllableOwnable, SelfCallableOwnable, TokenWhitelistab
         return _loadLimit.value;
     }
 
-    function _initializeLoadLimit(bytes32 _tokenWhitelistNode) internal {
+    function _initializeLoadLimit(bytes32 _tokenWhitelistNode) internal initializer {
         _initializeTokenWhitelistable(_tokenWhitelistNode);
         (, uint256 stablecoinMagnitude, , , , , ) = _getStablecoinInfo();
         require(stablecoinMagnitude > 0, "no stablecoin");
@@ -511,7 +511,7 @@ contract LoadLimit is ControllableOwnable, SelfCallableOwnable, TokenWhitelistab
 
 
 /// @title Asset wallet with extra security features, gas top up management and card integration.
-contract Wallet is ENSResolvable, AddressWhitelist, SpendLimit, GasTopUpLimit, LoadLimit, ERC165, Transferrable, Balanceable, Initializable {
+contract Wallet is ENSResolvable, AddressWhitelist, SpendLimit, GasTopUpLimit, LoadLimit, ERC165, Transferrable, Balanceable {
     using Address for address;
     using ECDSA for bytes32;
     using SafeERC20 for ERC20;

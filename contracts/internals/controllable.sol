@@ -18,8 +18,9 @@
 
 pragma solidity 0.5.15;
 
-import "../controller.sol";
 import "./ensResolvable.sol";
+import "../controller.sol";
+import "../externals/initializable.sol";
 
 
 /// @title Controllable implements access control functionality of the Controller found via ENS.
@@ -51,7 +52,7 @@ contract Controllable is ENSResolvable {
     /// @notice Initializes the controller contract object.
     /// @param _controllerNode_ is the ENS node of the Controller.
     /// @dev pass in bytes32(0) to use the default, production node labels for ENS
-    function _initializeControllable(bytes32 _controllerNode_) internal {
+    function _initializeControllable(bytes32 _controllerNode_) internal initializer {
         // Set controllerNode or use default
         if (_controllerNode_ != bytes32(0)) {
             _controllerNode = _controllerNode_;

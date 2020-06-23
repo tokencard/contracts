@@ -18,8 +18,9 @@
 
 pragma solidity 0.5.15;
 
-import "../tokenWhitelist.sol";
 import "./ensResolvable.sol";
+import "../tokenWhitelist.sol";
+import "../externals/initializable.sol";
 
 
 /// @title TokenWhitelistable implements access to the TokenWhitelist located behind ENS.
@@ -66,7 +67,7 @@ contract TokenWhitelistable is ENSResolvable {
 
     /// @notice Initializes the TokenWhitelistable object.
     /// @param _tokenWhitelistNode_ is the ENS node of the TokenWhitelist.
-    function _initializeTokenWhitelistable(bytes32 _tokenWhitelistNode_) internal {
+    function _initializeTokenWhitelistable(bytes32 _tokenWhitelistNode_) internal initializer {
         _tokenWhitelistNode = _tokenWhitelistNode_;
     }
 

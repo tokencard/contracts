@@ -19,12 +19,13 @@
 pragma solidity 0.5.15;
 
 import "../externals/ens/ENS.sol";
+import "../externals/initializable.sol";
 import "../externals/ens/PublicResolver.sol";
 
 
 ///@title ENSResolvable - Ethereum Name Service Resolver
 ///@notice contract should be used to get an address for an ENS node
-contract ENSResolvable {
+contract ENSResolvable is Initializable {
     /// @notice _ensRegistry points to the ENS registry smart contract.
     address private _ensRegistry;
 
@@ -47,7 +48,7 @@ contract ENSResolvable {
     }
 
     /// @param _ensReg is the ENS registry used
-    function _initializeENSResolvable(address _ensReg) internal {
+    function _initializeENSResolvable(address _ensReg) internal initializer {
         require(_ensReg != address(0), "ensReg is 0");
         _ensRegistry = _ensReg;
     }
