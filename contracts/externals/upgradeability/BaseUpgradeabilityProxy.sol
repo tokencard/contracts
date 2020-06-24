@@ -10,11 +10,6 @@ import '../Address.sol';
  * Such a change is called an implementation upgrade.
  */
 contract BaseUpgradeabilityProxy is Proxy {
-  /**
-   * @dev Emitted when the implementation is upgraded.
-   * @param implementation Address of the new implementation.
-   */
-  event Upgraded(address indexed implementation);
 
   /**
    * @dev Storage slot with the address of the current implementation.
@@ -32,15 +27,6 @@ contract BaseUpgradeabilityProxy is Proxy {
     assembly {
       impl := sload(slot)
     }
-  }
-
-  /**
-   * @dev Upgrades the proxy to a new implementation.
-   * @param newImplementation Address of the new implementation.
-   */
-  function _upgradeTo(address newImplementation) internal {
-    _setImplementation(newImplementation);
-    emit Upgraded(newImplementation);
   }
 
   /**
