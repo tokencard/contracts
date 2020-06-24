@@ -28,10 +28,10 @@ var (
 )
 
 // AdminUpgradeabilityProxyABI is the input ABI used to generate the binding from.
-const AdminUpgradeabilityProxyABI = "[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_logic\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_admin\",\"type\":\"address\"},{\"internalType\":\"bytes\",\"name\":\"_data\",\"type\":\"bytes\"}],\"payable\":true,\"stateMutability\":\"payable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"previousAdmin\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"newAdmin\",\"type\":\"address\"}],\"name\":\"AdminChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"implementation\",\"type\":\"address\"}],\"name\":\"Upgraded\",\"type\":\"event\"},{\"payable\":true,\"stateMutability\":\"payable\",\"type\":\"fallback\"},{\"constant\":true,\"inputs\":[],\"name\":\"admin\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"address\",\"name\":\"newAdmin\",\"type\":\"address\"}],\"name\":\"changeAdmin\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"implementation\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"}]"
+const AdminUpgradeabilityProxyABI = "[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_logic\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_admin\",\"type\":\"address\"},{\"internalType\":\"bytes\",\"name\":\"_data\",\"type\":\"bytes\"}],\"payable\":true,\"stateMutability\":\"payable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"previousAdmin\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"newAdmin\",\"type\":\"address\"}],\"name\":\"AdminChanged\",\"type\":\"event\"},{\"payable\":true,\"stateMutability\":\"payable\",\"type\":\"fallback\"},{\"constant\":true,\"inputs\":[],\"name\":\"admin\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"address\",\"name\":\"newAdmin\",\"type\":\"address\"}],\"name\":\"changeAdmin\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"implementation\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"}]"
 
 // AdminUpgradeabilityProxyBin is the compiled bytecode used for deploying new contracts.
-var AdminUpgradeabilityProxyBin = "0x608060405260405161073f38038061073f8339818101604052606081101561002657600080fd5b8151602083015160408085018051915193959294830192918464010000000082111561005157600080fd5b90830190602082018581111561006657600080fd5b825164010000000081118282018810171561008057600080fd5b82525081516020918201929091019080838360005b838110156100ad578181015183820152602001610095565b50505050905090810190601f1680156100da5780820380516001836020036101000a031916815260200191505b5060408181527f656970313936372e70726f78792e696d706c656d656e746174696f6e0000000082525190819003601c0190208693508492506000805160206106e483398151915260001990910114905061013157fe5b610143826001600160e01b0361026516565b8051156101fb576000826001600160a01b0316826040518082805190602001908083835b602083106101865780518252601f199092019160209182019101610167565b6001836020036101000a038019825116818451168082178552505050505050905001915050600060405180830381855af49150503d80600081146101e6576040519150601f19603f3d011682016040523d82523d6000602084013e6101eb565b606091505b50509050806101f957600080fd5b505b5050604080517f656970313936372e70726f78792e61646d696e00000000000000000000000000815290519081900360130190206000805160206106c48339815191526000199091011461024b57fe5b61025d826001600160e01b036102c516565b5050506102dd565b610278816102d760201b61036e1760201c565b6102b35760405162461bcd60e51b815260040180806020018281038252603b815260200180610704603b913960400191505060405180910390fd5b6000805160206106e483398151915255565b6000805160206106c483398151915255565b3b151590565b6103d8806102ec6000396000f3fe6080604052600436106100345760003560e01c80635c60da1b1461003e5780638f2839701461006f578063f851a440146100a2575b61003c6100b7565b005b34801561004a57600080fd5b506100536100d1565b604080516001600160a01b039092168252519081900360200190f35b34801561007b57600080fd5b5061003c6004803603602081101561009257600080fd5b50356001600160a01b03166100e0565b3480156100ae57600080fd5b506100536102ca565b6100bf6102d4565b6100cf6100ca6102dc565b610301565b565b60006100db6102dc565b905090565b6100e8610325565b6001600160a01b0316336001600160a01b031614156102bf576001600160a01b0381166101465760405162461bcd60e51b815260040180806020018281038252602f815260200180610375602f913960400191505060405180910390fd5b600060606101526102dc565b6001600160a01b03166040518080632121dc7560e01b8152506004019050600060405180830381855af49150503d80600081146101ab576040519150601f19603f3d011682016040523d82523d6000602084013e6101b0565b606091505b5091509150816101fc576040805162461bcd60e51b815260206004820152601260248201527118da185b99d950591b5a5b8819985a5b195960721b604482015290519081900360640190fd5b80806020019051602081101561021157600080fd5b5051610264576040805162461bcd60e51b815260206004820152601c60248201527f6e6f6e2d7472616e7366657261626c652070726f78792061646d696e00000000604482015290519081900360640190fd5b7f7e644d79422f17c01e4894b5f4f588d331ebfa28653d42ae832dc59e38c9798f61028d610325565b604080516001600160a01b03928316815291861660208301528051918290030190a16102b88361034a565b50506102c7565b6102c76100b7565b50565b60006100db610325565b6100cf6100cf565b7f360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc5490565b3660008037600080366000845af43d6000803e808015610320573d6000f35b3d6000fd5b7fb53127684a568b3173ae13b9f8a6016e243e63b6e8ee1178d6a717850b5d61035490565b7fb53127684a568b3173ae13b9f8a6016e243e63b6e8ee1178d6a717850b5d610355565b3b15159056fe43616e6e6f74206368616e6765207468652061646d696e206f6620612070726f787920746f20616464726573732030a265627a7a723158201be2cdd95b5f17ede0f0a2f47551e1702ee9ec87810031845615fbb1bf0b622f64736f6c63430005110032b53127684a568b3173ae13b9f8a6016e243e63b6e8ee1178d6a717850b5d6103360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc43616e6e6f742073657420612070726f787920696d706c656d656e746174696f6e20746f2061206e6f6e2d636f6e74726163742061646472657373"
+var AdminUpgradeabilityProxyBin = "0x608060405260405161072f38038061072f8339818101604052606081101561002657600080fd5b8151602083015160408085018051915193959294830192918464010000000082111561005157600080fd5b90830190602082018581111561006657600080fd5b825164010000000081118282018810171561008057600080fd5b82525081516020918201929091019080838360005b838110156100ad578181015183820152602001610095565b50505050905090810190601f1680156100da5780820380516001836020036101000a031916815260200191505b5060408181527f656970313936372e70726f78792e696d706c656d656e746174696f6e0000000082525190819003601c0190208693508492506000805160206106d483398151915260001990910114905061013157fe5b610143826001600160e01b0361026516565b8051156101fb576000826001600160a01b0316826040518082805190602001908083835b602083106101865780518252601f199092019160209182019101610167565b6001836020036101000a038019825116818451168082178552505050505050905001915050600060405180830381855af49150503d80600081146101e6576040519150601f19603f3d011682016040523d82523d6000602084013e6101eb565b606091505b50509050806101f957600080fd5b505b5050604080517f656970313936372e70726f78792e61646d696e00000000000000000000000000815290519081900360130190206000805160206106b48339815191526000199091011461024b57fe5b61025d826001600160e01b036102c516565b5050506102dd565b610278816102d760201b61035e1760201c565b6102b35760405162461bcd60e51b815260040180806020018281038252603b8152602001806106f4603b913960400191505060405180910390fd5b6000805160206106d483398151915255565b6000805160206106b483398151915255565b3b151590565b6103c8806102ec6000396000f3fe6080604052600436106100345760003560e01c80635c60da1b1461003e5780638f2839701461006f578063f851a440146100a2575b61003c6100b7565b005b34801561004a57600080fd5b506100536100c9565b604080516001600160a01b039092168252519081900360200190f35b34801561007b57600080fd5b5061003c6004803603602081101561009257600080fd5b50356001600160a01b03166100d8565b3480156100ae57600080fd5b506100536102c2565b6100c76100c26102cc565b6102f1565b565b60006100d36102cc565b905090565b6100e0610315565b6001600160a01b0316336001600160a01b031614156102b7576001600160a01b03811661013e5760405162461bcd60e51b815260040180806020018281038252602f815260200180610365602f913960400191505060405180910390fd5b6000606061014a6102cc565b6001600160a01b03166040518080632121dc7560e01b8152506004019050600060405180830381855af49150503d80600081146101a3576040519150601f19603f3d011682016040523d82523d6000602084013e6101a8565b606091505b5091509150816101f4576040805162461bcd60e51b815260206004820152601260248201527118da185b99d950591b5a5b8819985a5b195960721b604482015290519081900360640190fd5b80806020019051602081101561020957600080fd5b505161025c576040805162461bcd60e51b815260206004820152601c60248201527f6e6f6e2d7472616e7366657261626c652070726f78792061646d696e00000000604482015290519081900360640190fd5b7f7e644d79422f17c01e4894b5f4f588d331ebfa28653d42ae832dc59e38c9798f610285610315565b604080516001600160a01b03928316815291861660208301528051918290030190a16102b08361033a565b50506102bf565b6102bf6100b7565b50565b60006100d3610315565b7f360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc5490565b3660008037600080366000845af43d6000803e808015610310573d6000f35b3d6000fd5b7fb53127684a568b3173ae13b9f8a6016e243e63b6e8ee1178d6a717850b5d61035490565b7fb53127684a568b3173ae13b9f8a6016e243e63b6e8ee1178d6a717850b5d610355565b3b15159056fe43616e6e6f74206368616e6765207468652061646d696e206f6620612070726f787920746f20616464726573732030a265627a7a72315820258737ccb37dbc8f368b195252b4417387886540d70c3f3092422b65d1ac621364736f6c63430005110032b53127684a568b3173ae13b9f8a6016e243e63b6e8ee1178d6a717850b5d6103360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc43616e6e6f742073657420612070726f787920696d706c656d656e746174696f6e20746f2061206e6f6e2d636f6e74726163742061646472657373"
 
 // DeployAdminUpgradeabilityProxy deploys a new Ethereum contract, binding an instance of AdminUpgradeabilityProxy to it.
 func DeployAdminUpgradeabilityProxy(auth *bind.TransactOpts, backend bind.ContractBackend, _logic common.Address, _admin common.Address, _data []byte) (common.Address, *types.Transaction, *AdminUpgradeabilityProxy, error) {
@@ -391,149 +391,6 @@ func (_AdminUpgradeabilityProxy *AdminUpgradeabilityProxyFilterer) WatchAdminCha
 func (_AdminUpgradeabilityProxy *AdminUpgradeabilityProxyFilterer) ParseAdminChanged(log types.Log) (*AdminUpgradeabilityProxyAdminChanged, error) {
 	event := new(AdminUpgradeabilityProxyAdminChanged)
 	if err := _AdminUpgradeabilityProxy.contract.UnpackLog(event, "AdminChanged", log); err != nil {
-		return nil, err
-	}
-	return event, nil
-}
-
-// AdminUpgradeabilityProxyUpgradedIterator is returned from FilterUpgraded and is used to iterate over the raw logs and unpacked data for Upgraded events raised by the AdminUpgradeabilityProxy contract.
-type AdminUpgradeabilityProxyUpgradedIterator struct {
-	Event *AdminUpgradeabilityProxyUpgraded // Event containing the contract specifics and raw log
-
-	contract *bind.BoundContract // Generic contract to use for unpacking event data
-	event    string              // Event name to use for unpacking event data
-
-	logs chan types.Log        // Log channel receiving the found contract events
-	sub  ethereum.Subscription // Subscription for errors, completion and termination
-	done bool                  // Whether the subscription completed delivering logs
-	fail error                 // Occurred error to stop iteration
-}
-
-// Next advances the iterator to the subsequent event, returning whether there
-// are any more events found. In case of a retrieval or parsing error, false is
-// returned and Error() can be queried for the exact failure.
-func (it *AdminUpgradeabilityProxyUpgradedIterator) Next() bool {
-	// If the iterator failed, stop iterating
-	if it.fail != nil {
-		return false
-	}
-	// If the iterator completed, deliver directly whatever's available
-	if it.done {
-		select {
-		case log := <-it.logs:
-			it.Event = new(AdminUpgradeabilityProxyUpgraded)
-			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
-				it.fail = err
-				return false
-			}
-			it.Event.Raw = log
-			return true
-
-		default:
-			return false
-		}
-	}
-	// Iterator still in progress, wait for either a data or an error event
-	select {
-	case log := <-it.logs:
-		it.Event = new(AdminUpgradeabilityProxyUpgraded)
-		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
-			it.fail = err
-			return false
-		}
-		it.Event.Raw = log
-		return true
-
-	case err := <-it.sub.Err():
-		it.done = true
-		it.fail = err
-		return it.Next()
-	}
-}
-
-// Error returns any retrieval or parsing error occurred during filtering.
-func (it *AdminUpgradeabilityProxyUpgradedIterator) Error() error {
-	return it.fail
-}
-
-// Close terminates the iteration process, releasing any pending underlying
-// resources.
-func (it *AdminUpgradeabilityProxyUpgradedIterator) Close() error {
-	it.sub.Unsubscribe()
-	return nil
-}
-
-// AdminUpgradeabilityProxyUpgraded represents a Upgraded event raised by the AdminUpgradeabilityProxy contract.
-type AdminUpgradeabilityProxyUpgraded struct {
-	Implementation common.Address
-	Raw            types.Log // Blockchain specific contextual infos
-}
-
-// FilterUpgraded is a free log retrieval operation binding the contract event 0xbc7cd75a20ee27fd9adebab32041f755214dbc6bffa90cc0225b39da2e5c2d3b.
-//
-// Solidity: event Upgraded(address indexed implementation)
-func (_AdminUpgradeabilityProxy *AdminUpgradeabilityProxyFilterer) FilterUpgraded(opts *bind.FilterOpts, implementation []common.Address) (*AdminUpgradeabilityProxyUpgradedIterator, error) {
-
-	var implementationRule []interface{}
-	for _, implementationItem := range implementation {
-		implementationRule = append(implementationRule, implementationItem)
-	}
-
-	logs, sub, err := _AdminUpgradeabilityProxy.contract.FilterLogs(opts, "Upgraded", implementationRule)
-	if err != nil {
-		return nil, err
-	}
-	return &AdminUpgradeabilityProxyUpgradedIterator{contract: _AdminUpgradeabilityProxy.contract, event: "Upgraded", logs: logs, sub: sub}, nil
-}
-
-// WatchUpgraded is a free log subscription operation binding the contract event 0xbc7cd75a20ee27fd9adebab32041f755214dbc6bffa90cc0225b39da2e5c2d3b.
-//
-// Solidity: event Upgraded(address indexed implementation)
-func (_AdminUpgradeabilityProxy *AdminUpgradeabilityProxyFilterer) WatchUpgraded(opts *bind.WatchOpts, sink chan<- *AdminUpgradeabilityProxyUpgraded, implementation []common.Address) (event.Subscription, error) {
-
-	var implementationRule []interface{}
-	for _, implementationItem := range implementation {
-		implementationRule = append(implementationRule, implementationItem)
-	}
-
-	logs, sub, err := _AdminUpgradeabilityProxy.contract.WatchLogs(opts, "Upgraded", implementationRule)
-	if err != nil {
-		return nil, err
-	}
-	return event.NewSubscription(func(quit <-chan struct{}) error {
-		defer sub.Unsubscribe()
-		for {
-			select {
-			case log := <-logs:
-				// New log arrived, parse the event and forward to the user
-				event := new(AdminUpgradeabilityProxyUpgraded)
-				if err := _AdminUpgradeabilityProxy.contract.UnpackLog(event, "Upgraded", log); err != nil {
-					return err
-				}
-				event.Raw = log
-
-				select {
-				case sink <- event:
-				case err := <-sub.Err():
-					return err
-				case <-quit:
-					return nil
-				}
-			case err := <-sub.Err():
-				return err
-			case <-quit:
-				return nil
-			}
-		}
-	}), nil
-}
-
-// ParseUpgraded is a log parse operation binding the contract event 0xbc7cd75a20ee27fd9adebab32041f755214dbc6bffa90cc0225b39da2e5c2d3b.
-//
-// Solidity: event Upgraded(address indexed implementation)
-func (_AdminUpgradeabilityProxy *AdminUpgradeabilityProxyFilterer) ParseUpgraded(log types.Log) (*AdminUpgradeabilityProxyUpgraded, error) {
-	event := new(AdminUpgradeabilityProxyUpgraded)
-	if err := _AdminUpgradeabilityProxy.contract.UnpackLog(event, "Upgraded", log); err != nil {
 		return nil, err
 	}
 	return event, nil
