@@ -41,7 +41,7 @@ var _ = Describe("change Admin", func() {
 			Expect(admin).To(Equal(RandomAccount.Address()))
 		})
 
-		FIt("should emit an AdminChanged event", func() {
+		It("should emit an AdminChanged event", func() {
 			it, err := Proxy.FilterAdminChanged(nil)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(it.Next()).To(BeTrue())
@@ -74,7 +74,7 @@ var _ = Describe("change Admin", func() {
 
 	})
 
-	FWhen("there is something wrong on the implementation side", func() {
+	When("there is something wrong on the implementation side", func() {
 
 		var tx *types.Transaction
 		var err error
