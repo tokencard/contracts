@@ -100,9 +100,9 @@ contract WalletDeployer is ENSResolvable, Controllable {
             Wallet(wallet).setWhitelist(_whitelistedAddresses);
         }
 
-        // Change admin before transfering owenrship.
+        // Change admin before transferring owenrship.
         BaseAdminUpgradeabilityProxy(wallet).changeAdmin(_owner);
-        // Change ownership and set tarnsferable to false so ownership cannot be transferred again.
+        // Change ownership and set transferable to false so ownership cannot be transferred again.
         Wallet(wallet).transferOwnership(_owner, false);
 
         if (msg.value > 0) {
