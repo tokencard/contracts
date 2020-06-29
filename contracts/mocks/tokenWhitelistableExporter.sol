@@ -1,11 +1,14 @@
-pragma solidity ^0.5.17;
+pragma solidity 0.5.17;
 
 import "../internals/tokenWhitelistable.sol";
 import "../internals/ensResolvable.sol";
 
 
 contract TokenWhitelistableExporter is ENSResolvable, TokenWhitelistable {
-    constructor(address _ens_, bytes32 _tokenWhitelistName_) public ENSResolvable(_ens_) TokenWhitelistable(_tokenWhitelistName_) {}
+    constructor(address _ens_, bytes32 _tokenWhitelistNode_) public {
+        _initializeENSResolvable(_ens_);
+        _initializeTokenWhitelistable(_tokenWhitelistNode_);
+    }
 
     function getTokenInfo(address _a) external view returns (string memory, uint256, uint256, bool, bool, bool, uint256) {
         return _getTokenInfo(_a);

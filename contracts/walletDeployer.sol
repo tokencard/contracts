@@ -16,7 +16,7 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-pragma solidity ^0.5.17;
+pragma solidity 0.5.17;
 
 import "./wallet.sol";
 import "./walletCache.sol";
@@ -25,8 +25,8 @@ import "./internals/controllable.sol";
 
 //// @title Wallet deployer with pre-caching if wallets functionality.
 contract WalletDeployer is ENSResolvable, Controllable {
-    event DeployedWallet(Wallet _wallet, address _owner);
-    event MigratedWallet(Wallet _wallet, Wallet _oldWallet, address _owner, uint256 _paid);
+    event DeployedWallet(address _wallet, address _owner);
+    event MigratedWallet(address _wallet, address _oldWallet, address _owner, uint256 _paid);
 
     /*****   Constants   *****/
     // Default values for mainnet ENS
@@ -38,7 +38,9 @@ contract WalletDeployer is ENSResolvable, Controllable {
 
     /// @notice it needs to know to address of the wallet cache
 
-    constructor(address _ens_, bytes32 _controllerNode_, bytes32 _walletCacheNode_) public ENSResolvable(_ens_) Controllable(_controllerNode_) {
+    constructor(address _ens_, bytes32 _controllerNode_, bytes32 _walletCacheNode_) public {
+        _initializeENSResolvable(_ens_);
+        _initializeControllable(_controllerNode_);
         // Set walletCacheNode or use default
         if (_walletCacheNode_ != bytes32(0)) {
             walletCacheNode = _walletCacheNode_;
@@ -48,13 +50,15 @@ contract WalletDeployer is ENSResolvable, Controllable {
     /// @notice This function is used to deploy a Wallet for a given owner address
     /// @param _owner is the owner address for the new Wallet to be
     function deployWallet(address payable _owner) external onlyController {
-        Wallet wallet = IWalletCache(_ensResolve(walletCacheNode)).walletCachePop();
+        address payable wallet = IWalletCache(_ensResolve(walletCacheNode)).walletCachePop();
         emit DeployedWallet(wallet, _owner);
 
-        deployedWallets[_owner] = address(wallet);
+        deployedWallets[_owner] = wallet;
 
-        // This sets the changeableOwner boolean to false, i.e. no more change ownership
-        wallet.transferOwnership(_owner, false);
+        // We have το change the owner of the proxy before transfring ownership of the wallet.
+        BaseAdminUpgradeabilityProxy(wallet).changeAdmin(_owner);
+        // This sets the 'transferable' boolean to false, i.e. no more change of ownership.
+        Wallet(wallet).transferOwnership(_owner, false);
     }
 
     /// @notice This function is used to migrate an owner's security settings from a previous version of the wallet
@@ -64,7 +68,7 @@ contract WalletDeployer is ENSResolvable, Controllable {
     /// @param _whitelistedAddresses is the set of the user's whitelisted addresses
     function migrateWallet(
         address payable _owner,
-        Wallet _oldWallet,
+        address payable _oldWallet,
         bool _initializedSpendLimit,
         bool _initializedGasTopUpLimit,
         bool _initializedLoadLimit,
@@ -74,29 +78,32 @@ contract WalletDeployer is ENSResolvable, Controllable {
         uint256 _loadLimit,
         address[] calldata _whitelistedAddresses
     ) external payable onlyController {
-        require(deployedWallets[_owner] == address(0x0), "wallet already deployed for owner");
-        require(_oldWallet.owner() == _owner, "owner mismatch");
+        require(deployedWallets[_owner] == address(0), "wallet already deployed for owner");
+        require(Wallet(_oldWallet).owner() == _owner, "owner mismatch");
 
-        Wallet wallet = IWalletCache(_ensResolve(walletCacheNode)).walletCachePop();
+        address payable wallet = IWalletCache(_ensResolve(walletCacheNode)).walletCachePop();
         emit MigratedWallet(wallet, _oldWallet, _owner, msg.value);
 
-        deployedWallets[_owner] = address(wallet);
+        deployedWallets[_owner] = wallet;
 
         // Sets up the security settings as per the _oldWallet
         if (_initializedSpendLimit) {
-            wallet.setSpendLimit(_spendLimit);
+            Wallet(wallet).setSpendLimit(_spendLimit);
         }
         if (_initializedGasTopUpLimit) {
-            wallet.setGasTopUpLimit(_gasTopUpLimit);
+            Wallet(wallet).setGasTopUpLimit(_gasTopUpLimit);
         }
         if (_initializedLoadLimit) {
-            wallet.setLoadLimit(_loadLimit);
+            Wallet(wallet).setLoadLimit(_loadLimit);
         }
         if (_initializedWhitelist) {
-            wallet.setWhitelist(_whitelistedAddresses);
+            Wallet(wallet).setWhitelist(_whitelistedAddresses);
         }
 
-        wallet.transferOwnership(_owner, false);
+        // Change admin before transferring owenrship.
+        BaseAdminUpgradeabilityProxy(wallet).changeAdmin(_owner);
+        // Change ownership and set transferable to false so ownership cannot be transferred again.
+        Wallet(wallet).transferOwnership(_owner, false);
 
         if (msg.value > 0) {
             _owner.transfer(msg.value);

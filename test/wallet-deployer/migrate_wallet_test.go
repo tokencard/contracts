@@ -22,18 +22,14 @@ var _ = Describe("Migrate Wallet", func() {
 
 		BeforeEach(func() {
 
-			RandomWalletAddress, tx, _, err := bindings.DeployWallet(BankAccount.TransactOpts(), Backend, Owner.Address(), false, ENSRegistryAddress, TokenWhitelistName, ControllerName, LicenceName, EthToWei(2))
-			Expect(err).ToNot(HaveOccurred())
-			Backend.Commit()
-			Expect(isSuccessful(tx)).To(BeTrue())
+			RandomProxyAddress := deployInitProxy(Owner.Address(), EthToWei(2))
 
-			tx, err = WalletDeployer.MigrateWallet(Controller.TransactOpts(), Owner.Address(), RandomWalletAddress, false, false, false, false, EthToWei(2), FinneyToWei(1), EthToWei(1), []common.Address{common.HexToAddress("0x1"), common.HexToAddress("0x2")})
+			tx, err := WalletDeployer.MigrateWallet(Controller.TransactOpts(), Owner.Address(), RandomProxyAddress, false, false, false, false, EthToWei(2), FinneyToWei(1), EthToWei(1), []common.Address{common.HexToAddress("0x1"), common.HexToAddress("0x2")})
 			Expect(err).ToNot(HaveOccurred())
 			Backend.Commit()
 			Expect(isSuccessful(tx)).To(BeTrue())
 
 			MigratedWalletAddress, err := WalletDeployer.DeployedWallets(nil, Owner.Address())
-
 			MigratedWallet, err = bindings.NewWallet(MigratedWalletAddress, Backend)
 			Expect(err).ToNot(HaveOccurred())
 		})
@@ -94,7 +90,7 @@ var _ = Describe("Migrate Wallet", func() {
 
 	When("no wallets are cached and a controller migrates a Wallet and send 1000 wei", func() {
 
-		var RandomWalletAddress common.Address
+		var RandomProxyAddress common.Address
 		var RandomOwner common.Address
 		var tx *types.Transaction
 		var err error
@@ -102,12 +98,10 @@ var _ = Describe("Migrate Wallet", func() {
 		BeforeEach(func() {
 			privateKey, _ := crypto.GenerateKey()
 			RandomOwner = crypto.PubkeyToAddress(privateKey.PublicKey)
-			RandomWalletAddress, tx, _, err = bindings.DeployWallet(BankAccount.TransactOpts(), Backend, RandomOwner, false, ENSRegistryAddress, TokenWhitelistName, ControllerName, LicenceName, EthToWei(2))
-			Expect(err).ToNot(HaveOccurred())
-			Backend.Commit()
-			Expect(isSuccessful(tx)).To(BeTrue())
 
-			tx, err = WalletDeployer.MigrateWallet(Controller.TransactOpts(ethertest.WithValue(big.NewInt(1000))), RandomOwner, RandomWalletAddress, true, true, true, true, EthToWei(2), FinneyToWei(1), GweiToWei(1), []common.Address{common.HexToAddress("0x1"), common.HexToAddress("0x2")})
+			RandomProxyAddress = deployInitProxy(RandomOwner, EthToWei(2))
+
+			tx, err = WalletDeployer.MigrateWallet(Controller.TransactOpts(ethertest.WithValue(big.NewInt(1000))), RandomOwner, RandomProxyAddress, true, true, true, true, EthToWei(2), FinneyToWei(1), GweiToWei(1), []common.Address{common.HexToAddress("0x1"), common.HexToAddress("0x2")})
 			Expect(err).ToNot(HaveOccurred())
 			Backend.Commit()
 			Expect(isSuccessful(tx)).To(BeTrue())
@@ -128,7 +122,7 @@ var _ = Describe("Migrate Wallet", func() {
 			Expect(err).ToNot(HaveOccurred())
 			Expect(it.Next()).To(BeTrue())
 			Expect(it.Event.Wallet).To(Equal(addr))
-			Expect(it.Event.OldWallet).To(Equal(RandomWalletAddress))
+			Expect(it.Event.OldWallet).To(Equal(RandomProxyAddress))
 			Expect(it.Event.Owner).To(Equal(RandomOwner))
 			Expect(it.Event.Paid.String()).To(Equal("1000"))
 		})
@@ -146,7 +140,7 @@ var _ = Describe("Migrate Wallet", func() {
 		})
 
 		It("should fail if a wallet is already deployed/migrated for this owner", func() {
-			tx, err = WalletDeployer.MigrateWallet(Controller.TransactOpts(ethertest.WithGasLimit(5000000)), RandomOwner, RandomWalletAddress, true, true, true, true, EthToWei(2), FinneyToWei(1), EthToWei(1000), []common.Address{common.HexToAddress("0x1"), common.HexToAddress("0x2")})
+			tx, err = WalletDeployer.MigrateWallet(Controller.TransactOpts(ethertest.WithGasLimit(5000000)), RandomOwner, RandomProxyAddress, true, true, true, true, EthToWei(2), FinneyToWei(1), EthToWei(1000), []common.Address{common.HexToAddress("0x1"), common.HexToAddress("0x2")})
 			Expect(err).ToNot(HaveOccurred())
 			Backend.Commit()
 			Expect(isSuccessful(tx)).To(BeFalse())
@@ -294,12 +288,9 @@ var _ = Describe("Migrate Wallet", func() {
 
 	When("the worng owner is passed in", func() {
 		It("should fail", func() {
-			RandomWalletAddress, tx, _, err := bindings.DeployWallet(BankAccount.TransactOpts(), Backend, Owner.Address(), false, ENSRegistryAddress, TokenWhitelistName, ControllerName, LicenceName, EthToWei(2))
-			Expect(err).ToNot(HaveOccurred())
-			Backend.Commit()
-			Expect(isSuccessful(tx)).To(BeTrue())
+			RandomProxyAddress := deployInitProxy(Owner.Address(), EthToWei(2))
 
-			tx, err = WalletDeployer.MigrateWallet(Controller.TransactOpts(ethertest.WithGasLimit(5000000)), Controller.Address(), RandomWalletAddress, false, false, false, false, EthToWei(2), FinneyToWei(1), EthToWei(1000), []common.Address{common.HexToAddress("0x1"), common.HexToAddress("0x2")})
+			tx, err := WalletDeployer.MigrateWallet(Controller.TransactOpts(ethertest.WithGasLimit(5000000)), Controller.Address(), RandomProxyAddress, false, false, false, false, EthToWei(2), FinneyToWei(1), EthToWei(1000), []common.Address{common.HexToAddress("0x1"), common.HexToAddress("0x2")})
 			Expect(err).ToNot(HaveOccurred())
 			Backend.Commit()
 			Expect(isSuccessful(tx)).To(BeFalse())
@@ -327,18 +318,15 @@ var _ = Describe("Migrate Wallet", func() {
 
 		When("a controller migrates a Wallet", func() {
 
-			var RandomWalletAddress common.Address
+			var RandomProxyAddress common.Address
 			var tx *types.Transaction
 			var err error
 
 			BeforeEach(func() {
 
-				RandomWalletAddress, tx, _, err = bindings.DeployWallet(BankAccount.TransactOpts(), Backend, Owner.Address(), false, ENSRegistryAddress, TokenWhitelistName, ControllerName, LicenceName, EthToWei(2))
-				Expect(err).ToNot(HaveOccurred())
-				Backend.Commit()
-				Expect(isSuccessful(tx)).To(BeTrue())
+				RandomProxyAddress = deployInitProxy(Owner.Address(), EthToWei(2))
 
-				tx, err = WalletDeployer.MigrateWallet(Controller.TransactOpts(), Owner.Address(), RandomWalletAddress, false, false, false, false, EthToWei(1), FinneyToWei(2), EthToWei(1000), []common.Address{common.HexToAddress("0x1"), common.HexToAddress("0x2")})
+				tx, err = WalletDeployer.MigrateWallet(Controller.TransactOpts(), Owner.Address(), RandomProxyAddress, false, false, false, false, EthToWei(1), FinneyToWei(2), EthToWei(1000), []common.Address{common.HexToAddress("0x1"), common.HexToAddress("0x2")})
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 				Expect(isSuccessful(tx)).To(BeTrue())
@@ -353,7 +341,7 @@ var _ = Describe("Migrate Wallet", func() {
 				Expect(err).ToNot(HaveOccurred())
 				Expect(it.Next()).To(BeTrue())
 				Expect(it.Event.Wallet).To(Equal(addr))
-				Expect(it.Event.OldWallet).To(Equal(RandomWalletAddress))
+				Expect(it.Event.OldWallet).To(Equal(RandomProxyAddress))
 				Expect(it.Event.Owner).To(Equal(Owner.Address()))
 			})
 

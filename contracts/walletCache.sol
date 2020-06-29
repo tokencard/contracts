@@ -16,22 +16,24 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-pragma solidity ^0.5.17;
+pragma solidity 0.5.17;
 
 import "./wallet.sol";
+import "./externals/upgradeability/AdminUpgradeabilityProxy.sol";
 import "./internals/ensResolvable.sol";
 import "./internals/controllable.sol";
 
 
 /// @title IWalletCache interface describes a method for poping an already cached wallet
 interface IWalletCache {
-    function walletCachePop() external returns (Wallet);
+    function walletCachePop() external returns (address payable);
 }
 
 
 //// @title Wallet cache with wallet pre-caching functionality.
 contract WalletCache is ENSResolvable, Controllable {
-    event CachedWallet(Wallet _wallet);
+    event CachedWallet(address payable _wallet);
+    event setNewWalletImplementation(address _newWalletImplementation);
 
     /*****   Constants   *****/
     // Default values for mainnet ENS
@@ -46,21 +48,26 @@ contract WalletCache is ENSResolvable, Controllable {
     bytes32 public tokenWhitelistNode = _DEFAULT_TOKEN_WHITELIST_NODE;
     bytes32 public walletDeployerNode = _DEFAULT_WALLET_DEPLOYER_NODE;
 
-    Wallet[] public cachedWallets;
-
+    address public walletImplementation;
     address public ens;
     uint256 public defaultSpendLimit;
+
+    address payable[] public cachedWallets;
 
     /// @notice parameters are passed in so that they can be used to construct new instances of the wallet
     /// @dev pass in bytes32 to use the default, production node labels for ENS
     constructor(
+        address _walletImplementation_,
         address _ens_,
         uint256 _defaultSpendLimit_,
         bytes32 _controllerNode_,
         bytes32 _licenceNode_,
         bytes32 _tokenWhitelistNode_,
         bytes32 _walletDeployerNode_
-    ) public ENSResolvable(_ens_) Controllable(_controllerNode_) {
+    ) public {
+        _initializeENSResolvable(_ens_);
+        _initializeControllable(_controllerNode_);
+        walletImplementation = _walletImplementation_;
         ens = _ens_;
         defaultSpendLimit = _defaultSpendLimit_;
 
@@ -83,11 +90,36 @@ contract WalletCache is ENSResolvable, Controllable {
         _;
     }
 
+    /// @notice returns the number of pre-cached wallets.
+    function cachedWalletsCount() external view returns (uint256) {
+        return cachedWallets.length;
+    }
+
+    /// @notice Sets a new wallet implementation.
+    function setNewWalletImplementaton(address _newWalletImplementation) external onlyAdmin {
+        require(_newWalletImplementation != address(0) && _newWalletImplementation != walletImplementation, "invalid implementation");
+        walletImplementation = _newWalletImplementation;
+        emit setNewWalletImplementation(_newWalletImplementation);
+    }
+
+    /// @notice This public method allows only the wallet deployer to pop pre-cached wallets or create a new one in case there aren't any
+    function walletCachePop() external onlyWalletDeployer returns (address payable) {
+        if (cachedWallets.length < 1) {
+            cacheWallet();
+        }
+
+        address payable wallet = cachedWallets[cachedWallets.length - 1];
+        cachedWallets.pop();
+
+        return wallet;
+    }
+
     /// @notice This public method allows anyone to pre-cache wallets
     function cacheWallet() public {
-        // the address(uint160()) cast is done as the Wallet owner (1st argument) needs to be payable
-        Wallet wallet = new Wallet(
-            address(uint160(_ensResolve(walletDeployerNode))),
+        address walletDeployerAddress = _ensResolve(walletDeployerNode);
+        address payable wallet = address(new AdminUpgradeabilityProxy(walletImplementation, walletDeployerAddress, ""));
+        Wallet(wallet).initializeWallet(
+            address(uint160(walletDeployerAddress)), // the address(uint160()) cast is done as the Wallet owner (1st argument) needs to be payable
             true,
             ens,
             tokenWhitelistNode,
@@ -98,22 +130,5 @@ contract WalletCache is ENSResolvable, Controllable {
         cachedWallets.push(wallet);
 
         emit CachedWallet(wallet);
-    }
-
-    /// @notice This public method allows only the wallet deployer to pop pre-cached wallets or create a new one in case there aren't any
-    function walletCachePop() external onlyWalletDeployer returns (Wallet) {
-        if (cachedWallets.length < 1) {
-            cacheWallet();
-        }
-
-        Wallet wallet = cachedWallets[cachedWallets.length - 1];
-        cachedWallets.pop();
-
-        return wallet;
-    }
-
-    /// @notice returns the number of pre-cached wallets
-    function cachedWalletsCount() external view returns (uint256) {
-        return cachedWallets.length;
     }
 }

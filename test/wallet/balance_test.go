@@ -13,23 +13,23 @@ import (
 
 var _ = Describe("balance", func() {
 	Context("When the contract has no balance", func() {
-        It("should return 0", func() {
-            b, e := Backend.BalanceAt(context.Background(), WalletAddress, nil)
-            Expect(e).ToNot(HaveOccurred())
-            Expect(b.String()).To(Equal("0"))
-        })
+		It("should return 0", func() {
+			b, e := Backend.BalanceAt(context.Background(), WalletProxyAddress, nil)
+			Expect(e).ToNot(HaveOccurred())
+			Expect(b.String()).To(Equal("0"))
+		})
 	})
 
 	Context("When contract has 1 ETH", func() {
 		BeforeEach(func() {
-			BankAccount.MustTransfer(Backend, WalletAddress, EthToWei(1))
+			BankAccount.MustTransfer(Backend, WalletProxyAddress, EthToWei(1))
 		})
 
 		It("should return 1 ETH", func() {
-            b, e := Backend.BalanceAt(context.Background(), WalletAddress, nil)
-            Expect(e).ToNot(HaveOccurred())
-            Expect(b.String()).To(Equal(EthToWei(1).String()))
-        })
+			b, e := Backend.BalanceAt(context.Background(), WalletProxyAddress, nil)
+			Expect(e).ToNot(HaveOccurred())
+			Expect(b.String()).To(Equal(EthToWei(1).String()))
+		})
 	})
 
 	Context("When contract owns one TKN", func() {
@@ -39,7 +39,7 @@ var _ = Describe("balance", func() {
 			_, _, t, err = mocks.DeployToken(BankAccount.TransactOpts(), Backend)
 			Expect(err).ToNot(HaveOccurred())
 
-			tx, err := t.Credit(BankAccount.TransactOpts(), WalletAddress, big.NewInt(1))
+			tx, err := t.Credit(BankAccount.TransactOpts(), WalletProxyAddress, big.NewInt(1))
 
 			Expect(err).ToNot(HaveOccurred())
 			Backend.Commit()
@@ -50,11 +50,11 @@ var _ = Describe("balance", func() {
 
 		})
 
-        It("Balance for that token should return 1", func() {
-            b, err := t.BalanceOf(nil, WalletAddress)
-            Expect(err).ToNot(HaveOccurred())
-            Expect(b.String()).To(Equal("1"))
-        })
+		It("Balance for that token should return 1", func() {
+			b, err := t.BalanceOf(nil, WalletProxyAddress)
+			Expect(err).ToNot(HaveOccurred())
+			Expect(b.String()).To(Equal("1"))
+		})
 
 	})
 

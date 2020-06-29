@@ -18,12 +18,12 @@ import (
 var _ = Describe("relay Tx", func() {
 
 	BeforeEach(func() {
-		BankAccount.MustTransfer(Backend, WalletAddress, EthToWei(2))
+		BankAccount.MustTransfer(Backend, WalletProxyAddress, EthToWei(2))
 	})
 
 	When("a non-owner account tries to increase the nonce", func() {
 		It("should fail", func() {
-			tx, err := Wallet.IncreaseRelayNonce(Controller.TransactOpts(ethertest.WithGasLimit(60000)))
+			tx, err := WalletProxy.IncreaseRelayNonce(Controller.TransactOpts(ethertest.WithGasLimit(60000)))
 			Expect(err).ToNot(HaveOccurred())
 			Backend.Commit()
 			Expect(isSuccessful(tx)).To(BeFalse())
@@ -41,10 +41,10 @@ var _ = Describe("relay Tx", func() {
 
 			nonce := big.NewInt(0)
 			chainId := big.NewInt(1337)
-			signature, err := SignData(chainId, WalletAddress, nonce, data, Owner.PrivKey())
+			signature, err := SignData(chainId, WalletProxyAddress, nonce, data, Owner.PrivKey())
 			Expect(err).ToNot(HaveOccurred())
 
-			tx, err := Wallet.ExecuteRelayedTransaction(RandomAccount.TransactOpts(ethertest.WithGasLimit(500000)), nonce, data, signature)
+			tx, err := WalletProxy.ExecuteRelayedTransaction(RandomAccount.TransactOpts(ethertest.WithGasLimit(500000)), nonce, data, signature)
 			Expect(err).ToNot(HaveOccurred())
 			Backend.Commit()
 			Expect(isSuccessful(tx)).To(BeFalse())
@@ -62,10 +62,10 @@ var _ = Describe("relay Tx", func() {
 
 			nonce := big.NewInt(0)
 			chainId := big.NewInt(1) //the actual ethereum mainnet
-			signature, err := SignData(chainId, WalletAddress, nonce, data, Owner.PrivKey())
+			signature, err := SignData(chainId, WalletProxyAddress, nonce, data, Owner.PrivKey())
 			Expect(err).ToNot(HaveOccurred())
 
-			tx, err := Wallet.ExecuteRelayedTransaction(Controller.TransactOpts(ethertest.WithGasLimit(500000)), nonce, data, signature)
+			tx, err := WalletProxy.ExecuteRelayedTransaction(Controller.TransactOpts(ethertest.WithGasLimit(500000)), nonce, data, signature)
 			Expect(err).ToNot(HaveOccurred())
 			Backend.Commit()
 			Expect(isSuccessful(tx)).To(BeFalse())
@@ -88,7 +88,7 @@ var _ = Describe("relay Tx", func() {
 			signature, err := SignData(chainId, randomAddress, nonce, data, Owner.PrivKey())
 			Expect(err).ToNot(HaveOccurred())
 
-			tx, err := Wallet.ExecuteRelayedTransaction(Controller.TransactOpts(ethertest.WithGasLimit(500000)), nonce, data, signature)
+			tx, err := WalletProxy.ExecuteRelayedTransaction(Controller.TransactOpts(ethertest.WithGasLimit(500000)), nonce, data, signature)
 			Expect(err).ToNot(HaveOccurred())
 			Backend.Commit()
 			Expect(isSuccessful(tx)).To(BeFalse())
@@ -108,10 +108,10 @@ var _ = Describe("relay Tx", func() {
 
 			nonce := big.NewInt(0)
 			chainId := big.NewInt(1337)
-			signature, err := SignData(chainId, WalletAddress, nonce, data, privateKey)
+			signature, err := SignData(chainId, WalletProxyAddress, nonce, data, privateKey)
 			Expect(err).ToNot(HaveOccurred())
 
-			tx, err := Wallet.ExecuteRelayedTransaction(Controller.TransactOpts(ethertest.WithGasLimit(500000)), nonce, data, signature)
+			tx, err := WalletProxy.ExecuteRelayedTransaction(Controller.TransactOpts(ethertest.WithGasLimit(500000)), nonce, data, signature)
 			Expect(err).ToNot(HaveOccurred())
 			Backend.Commit()
 			Expect(isSuccessful(tx)).To(BeFalse())
@@ -133,7 +133,7 @@ var _ = Describe("relay Tx", func() {
 		When("the call succeeds", func() {
 			BeforeEach(func() {
 
-				tx, err := Wallet.TransferOwnership(Owner.TransactOpts(), randomAddress, false)
+				tx, err := WalletProxy.TransferOwnership(Owner.TransactOpts(), randomAddress, false)
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 				Expect(isSuccessful(tx)).To(BeTrue())
@@ -145,23 +145,23 @@ var _ = Describe("relay Tx", func() {
 
 				nonce := big.NewInt(0)
 				chainId := big.NewInt(1337)
-				signature, err := SignData(chainId, WalletAddress, nonce, data, privateKey)
+				signature, err := SignData(chainId, WalletProxyAddress, nonce, data, privateKey)
 				Expect(err).ToNot(HaveOccurred())
 
-				tx, err = Wallet.ExecuteRelayedTransaction(Controller.TransactOpts(), nonce, data, signature)
+				tx, err = WalletProxy.ExecuteRelayedTransaction(Controller.TransactOpts(), nonce, data, signature)
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 				Expect(isSuccessful(tx)).To(BeTrue())
 			})
 
 			It("should change the owner", func() {
-				o, err := Wallet.Owner(nil)
+				o, err := WalletProxy.Owner(nil)
 				Expect(err).ToNot(HaveOccurred())
 				Expect(o).To(Equal(randomAddress))
 			})
 
 			It("should emit an IncreasedRelayNonce event", func() {
-				it, err := Wallet.FilterIncreasedRelayNonce(nil)
+				it, err := WalletProxy.FilterIncreasedRelayNonce(nil)
 				Expect(err).ToNot(HaveOccurred())
 				Expect(it.Next()).To(BeTrue())
 				evt := it.Event
@@ -171,7 +171,7 @@ var _ = Describe("relay Tx", func() {
 			})
 
 			It("should emit an ExecutedRelayedTransaction event", func() {
-				it, err := Wallet.FilterExecutedRelayedTransaction(nil)
+				it, err := WalletProxy.FilterExecutedRelayedTransaction(nil)
 				Expect(err).ToNot(HaveOccurred())
 				Expect(it.Next()).To(BeTrue())
 				evt := it.Event
@@ -184,7 +184,7 @@ var _ = Describe("relay Tx", func() {
 			})
 
 			It("should decrease the wallet's ETH balance ", func() {
-				b, err := Backend.BalanceAt(context.Background(), WalletAddress, nil)
+				b, err := Backend.BalanceAt(context.Background(), WalletProxyAddress, nil)
 				Expect(err).ToNot(HaveOccurred())
 				Expect(b.String()).To(Equal(EthToWei(1).String()))
 			})
@@ -203,10 +203,10 @@ var _ = Describe("relay Tx", func() {
 
 				nonce := big.NewInt(0)
 				chainId := big.NewInt(1337)
-				signature, err := SignData(chainId, WalletAddress, nonce, data, privateKey)
+				signature, err := SignData(chainId, WalletProxyAddress, nonce, data, privateKey)
 				Expect(err).ToNot(HaveOccurred())
 
-				tx, err := Wallet.ExecuteRelayedTransaction(Controller.TransactOpts(ethertest.WithGasLimit(500000)), nonce, data, signature)
+				tx, err := WalletProxy.ExecuteRelayedTransaction(Controller.TransactOpts(ethertest.WithGasLimit(500000)), nonce, data, signature)
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 				Expect(isSuccessful(tx)).To(BeFalse())
@@ -220,10 +220,10 @@ var _ = Describe("relay Tx", func() {
 
 				nonce := big.NewInt(1)
 				chainId := big.NewInt(1337)
-				signature, err := SignData(chainId, WalletAddress, nonce, data, privateKey)
+				signature, err := SignData(chainId, WalletProxyAddress, nonce, data, privateKey)
 				Expect(err).ToNot(HaveOccurred())
 
-				tx, err := Wallet.ExecuteRelayedTransaction(Controller.TransactOpts(), nonce, data, signature)
+				tx, err := WalletProxy.ExecuteRelayedTransaction(Controller.TransactOpts(), nonce, data, signature)
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 				Expect(isSuccessful(tx)).To(BeTrue())
@@ -239,15 +239,15 @@ var _ = Describe("relay Tx", func() {
 
 				nonce := big.NewInt(0)
 				chainId := big.NewInt(1337)
-				signature, err := SignData(chainId, WalletAddress, nonce, data, privateKey)
+				signature, err := SignData(chainId, WalletProxyAddress, nonce, data, privateKey)
 				Expect(err).ToNot(HaveOccurred())
 
-				tx, err := Wallet.TransferOwnership(Owner.TransactOpts(), randomAddress, false)
+				tx, err := WalletProxy.TransferOwnership(Owner.TransactOpts(), randomAddress, false)
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 				Expect(isSuccessful(tx)).To(BeTrue())
 
-				tx, err = Wallet.ExecuteRelayedTransaction(Controller.TransactOpts(ethertest.WithGasLimit(500000)), nonce, data, signature)
+				tx, err = WalletProxy.ExecuteRelayedTransaction(Controller.TransactOpts(ethertest.WithGasLimit(500000)), nonce, data, signature)
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 				Expect(isSuccessful(tx)).To(BeFalse())
@@ -266,25 +266,25 @@ var _ = Describe("relay Tx", func() {
 
 				nonce := big.NewInt(0)
 				chainId := big.NewInt(1337)
-				signature, err := SignData(chainId, WalletAddress, nonce, data, privateKey)
+				signature, err := SignData(chainId, WalletProxyAddress, nonce, data, privateKey)
 				Expect(err).ToNot(HaveOccurred())
 
-				tx, err := Wallet.IncreaseRelayNonce(Owner.TransactOpts())
-				Expect(err).ToNot(HaveOccurred())
-				Backend.Commit()
-				Expect(isSuccessful(tx)).To(BeTrue())
-
-				tx, err = Wallet.IncreaseRelayNonce(Owner.TransactOpts())
+				tx, err := WalletProxy.IncreaseRelayNonce(Owner.TransactOpts())
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 				Expect(isSuccessful(tx)).To(BeTrue())
 
-				tx, err = Wallet.TransferOwnership(Owner.TransactOpts(), randomAddress, false)
+				tx, err = WalletProxy.IncreaseRelayNonce(Owner.TransactOpts())
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 				Expect(isSuccessful(tx)).To(BeTrue())
 
-				tx, err = Wallet.ExecuteRelayedTransaction(Controller.TransactOpts(ethertest.WithGasLimit(500000)), nonce, data, signature)
+				tx, err = WalletProxy.TransferOwnership(Owner.TransactOpts(), randomAddress, false)
+				Expect(err).ToNot(HaveOccurred())
+				Backend.Commit()
+				Expect(isSuccessful(tx)).To(BeTrue())
+
+				tx, err = WalletProxy.ExecuteRelayedTransaction(Controller.TransactOpts(ethertest.WithGasLimit(500000)), nonce, data, signature)
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 				Expect(isSuccessful(tx)).To(BeFalse())
@@ -294,7 +294,7 @@ var _ = Describe("relay Tx", func() {
 			})
 
 			It("should emit an IncreasedRelayNonce event", func() {
-				it, err := Wallet.FilterIncreasedRelayNonce(nil)
+				it, err := WalletProxy.FilterIncreasedRelayNonce(nil)
 				Expect(err).ToNot(HaveOccurred())
 				Expect(it.Next()).To(BeTrue())
 				evt := it.Event

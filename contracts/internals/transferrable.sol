@@ -16,7 +16,7 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-pragma solidity ^0.5.17;
+pragma solidity 0.5.17;
 
 import "../externals/ERC20.sol";
 import "../externals/SafeERC20.sol";
@@ -34,7 +34,8 @@ contract Transferrable {
     function _safeTransfer(address payable _to, address _asset, uint256 _amount) internal {
         // address(0) is used to denote ETH
         if (_asset == address(0)) {
-            _to.transfer(_amount);
+            (bool success, ) = _to.call.value(_amount)("");
+            require(success, "safeTransfer failed");
         } else {
             ERC20(_asset).safeTransfer(_to, _amount);
         }

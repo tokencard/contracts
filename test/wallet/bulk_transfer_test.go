@@ -16,51 +16,51 @@ var _ = Describe("bulk_transfer", func() {
 
 	When("the wallet has enough ETH and a spendLimit of 1 ETH", func() {
 		BeforeEach(func() {
-			BankAccount.MustTransfer(Backend, WalletAddress, EthToWei(1))
+			BankAccount.MustTransfer(Backend, WalletProxyAddress, EthToWei(1))
 			BankAccount.MustTransfer(Backend, Controller.Address(), EthToWei(1))
 		})
 
 		BeforeEach(func() {
-			tx, err := ERC20Contract1.Credit(BankAccount.TransactOpts(), WalletAddress, big.NewInt(1000))
+			tx, err := ERC20Contract1.Credit(BankAccount.TransactOpts(), WalletProxyAddress, big.NewInt(1000))
 			Expect(err).ToNot(HaveOccurred())
 			Backend.Commit()
 			Expect(isSuccessful(tx)).To(BeTrue())
 		})
 
 		BeforeEach(func() {
-			tx, err := ERC20Contract2.Credit(BankAccount.TransactOpts(), WalletAddress, big.NewInt(500))
+			tx, err := ERC20Contract2.Credit(BankAccount.TransactOpts(), WalletProxyAddress, big.NewInt(500))
 			Expect(err).ToNot(HaveOccurred())
 			Backend.Commit()
 			Expect(isSuccessful(tx)).To(BeTrue())
 		})
 
 		BeforeEach(func() {
-			tx, err := Wallet.SetSpendLimit(Owner.TransactOpts(), EthToWei(2))
+			tx, err := WalletProxy.SetSpendLimit(Owner.TransactOpts(), EthToWei(2))
 			Expect(err).ToNot(HaveOccurred())
 			Backend.Commit()
 			Expect(isSuccessful(tx)).To(BeTrue())
 		})
 
 		It("should have a spendLimit of 2 ETH", func() {
-			av, err := Wallet.SpendLimitAvailable(nil)
+			av, err := WalletProxy.SpendLimitAvailable(nil)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(av.String()).To(Equal(EthToWei(2).String()))
 		})
 
 		It("the balance of the wallet should be 1 eth", func() {
-			b, e := Backend.BalanceAt(context.Background(), WalletAddress, nil)
+			b, e := Backend.BalanceAt(context.Background(), WalletProxyAddress, nil)
 			Expect(e).ToNot(HaveOccurred())
 			Expect(b.String()).To(Equal(EthToWei(1).String()))
 		})
 
 		It("should increase the ERC20 type-1 balance of the Wallet by 1000", func() {
-			b, err := ERC20Contract1.BalanceOf(nil, WalletAddress)
+			b, err := ERC20Contract1.BalanceOf(nil, WalletProxyAddress)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(b.String()).To(Equal("1000"))
 		})
 
 		It("should increase the ERC20 type-2 balance of the Wallet by 500", func() {
-			b, err := ERC20Contract2.BalanceOf(nil, WalletAddress)
+			b, err := ERC20Contract2.BalanceOf(nil, WalletProxyAddress)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(b.String()).To(Equal("500"))
 		})
@@ -69,7 +69,7 @@ var _ = Describe("bulk_transfer", func() {
 		When("called by the Owner", func() {
 			When("the size of the array of assets is zero", func() {
 				It("should fail", func() {
-					tx, err := Wallet.BulkTransfer(Owner.TransactOpts(ethertest.WithGasLimit(81000)), RandomAccount.Address(), []common.Address{})
+					tx, err := WalletProxy.BulkTransfer(Owner.TransactOpts(ethertest.WithGasLimit(81000)), RandomAccount.Address(), []common.Address{})
 					Expect(err).ToNot(HaveOccurred())
 					Backend.Commit()
 					Expect(isGasExhausted(tx, 81000)).To(BeFalse())
@@ -93,30 +93,30 @@ var _ = Describe("bulk_transfer", func() {
 					When("the tokens are not added to the oracle (they are treated as whitelisted)", func() {
 						//Balance is now 2 ETH == spendLimit
 						BeforeEach(func() {
-							BankAccount.MustTransfer(Backend, WalletAddress, EthToWei(1))
+							BankAccount.MustTransfer(Backend, WalletProxyAddress, EthToWei(1))
 						})
 
 						BeforeEach(func() {
 							var err error
-							tx, err = Wallet.BulkTransfer(Owner.TransactOpts(), RandomAccount.Address(), assets)
+							tx, err = WalletProxy.BulkTransfer(Owner.TransactOpts(), RandomAccount.Address(), assets)
 							Expect(err).ToNot(HaveOccurred())
 							Backend.Commit()
 							Expect(isSuccessful(tx)).To(BeTrue())
 						})
 
 						It("the balance of the wallet should be 0", func() {
-							b, e := Backend.BalanceAt(context.Background(), WalletAddress, nil)
+							b, e := Backend.BalanceAt(context.Background(), WalletProxyAddress, nil)
 							Expect(e).ToNot(HaveOccurred())
 							Expect(b.String()).To(Equal("0"))
 						})
 						It("should decrease the ERC20 type-1 balance of the Wallet by 1000", func() {
-							b, err := ERC20Contract1.BalanceOf(nil, WalletAddress)
+							b, err := ERC20Contract1.BalanceOf(nil, WalletProxyAddress)
 							Expect(err).ToNot(HaveOccurred())
 							Expect(b.String()).To(Equal("0"))
 						})
 
 						It("should decrease the ERC20 type-2 balance of the Wallet by 500", func() {
-							b, err := ERC20Contract2.BalanceOf(nil, WalletAddress)
+							b, err := ERC20Contract2.BalanceOf(nil, WalletProxyAddress)
 							Expect(err).ToNot(HaveOccurred())
 							Expect(b.String()).To(Equal("0"))
 						})
@@ -137,7 +137,7 @@ var _ = Describe("bulk_transfer", func() {
 							Expect(b.String()).To(Equal("500"))
 						})
 						It("Should emit a BulkTransferred event", func() {
-							it, err := Wallet.FilterBulkTransferred(nil)
+							it, err := WalletProxy.FilterBulkTransferred(nil)
 							Expect(err).ToNot(HaveOccurred())
 							Expect(it.Next()).To(BeTrue())
 							evt := it.Event
@@ -147,7 +147,7 @@ var _ = Describe("bulk_transfer", func() {
 						})
 
 						It("Should emit 3 Transferred events", func() {
-							it, err := Wallet.FilterTransferred(nil)
+							it, err := WalletProxy.FilterTransferred(nil)
 							Expect(err).ToNot(HaveOccurred())
 							Expect(it.Next()).To(BeTrue())
 							evt := it.Event
@@ -193,13 +193,13 @@ var _ = Describe("bulk_transfer", func() {
 						})
 						When("rates are not updated (=0)", func() {
 							It("Should revert", func() {
-								tx, err := Wallet.BulkTransfer(Owner.TransactOpts(ethertest.WithGasLimit(81000)), RandomAccount.Address(), assets)
+								tx, err := WalletProxy.BulkTransfer(Owner.TransactOpts(ethertest.WithGasLimit(81000)), RandomAccount.Address(), assets)
 								Expect(err).ToNot(HaveOccurred())
 								Backend.Commit()
 								Expect(isGasExhausted(tx, 81000)).To(BeFalse())
 								Expect(isSuccessful(tx)).To(BeFalse())
-                                returnData, _ := ethCall(tx)
-                				Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("rate=0"))
+								returnData, _ := ethCall(tx)
+								Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("rate=0"))
 							})
 						})
 						When("rates are updated with valid rates", func() {
@@ -227,25 +227,25 @@ var _ = Describe("bulk_transfer", func() {
 							})
 							BeforeEach(func() {
 								var err error
-								tx, err = Wallet.BulkTransfer(Owner.TransactOpts(), RandomAccount.Address(), assets)
+								tx, err = WalletProxy.BulkTransfer(Owner.TransactOpts(), RandomAccount.Address(), assets)
 								Expect(err).ToNot(HaveOccurred())
 								Backend.Commit()
 								Expect(isSuccessful(tx)).To(BeTrue())
 							})
 
 							It("the balance of the wallet should be 0", func() {
-								b, e := Backend.BalanceAt(context.Background(), WalletAddress, nil)
+								b, e := Backend.BalanceAt(context.Background(), WalletProxyAddress, nil)
 								Expect(e).ToNot(HaveOccurred())
 								Expect(b.String()).To(Equal("0"))
 							})
 							It("should decrease the ERC20 type-1 balance of the Wallet by 1000", func() {
-								b, err := ERC20Contract1.BalanceOf(nil, WalletAddress)
+								b, err := ERC20Contract1.BalanceOf(nil, WalletProxyAddress)
 								Expect(err).ToNot(HaveOccurred())
 								Expect(b.String()).To(Equal("0"))
 							})
 
 							It("should decrease the ERC20 type-2 balance of the Wallet by 500", func() {
-								b, err := ERC20Contract2.BalanceOf(nil, WalletAddress)
+								b, err := ERC20Contract2.BalanceOf(nil, WalletProxyAddress)
 								Expect(err).ToNot(HaveOccurred())
 								Expect(b.String()).To(Equal("0"))
 							})
@@ -276,42 +276,42 @@ var _ = Describe("bulk_transfer", func() {
 							})
 							When("the 'sent' address is not whitelisted", func() {
 								It("Should revert", func() {
-									tx, err := Wallet.BulkTransfer(Owner.TransactOpts(ethertest.WithGasLimit(1000000)), RandomAccount.Address(), assets)
+									tx, err := WalletProxy.BulkTransfer(Owner.TransactOpts(ethertest.WithGasLimit(1000000)), RandomAccount.Address(), assets)
 									Expect(err).ToNot(HaveOccurred())
 									Backend.Commit()
 									Expect(isGasExhausted(tx, 1000000)).To(BeFalse())
 									Expect(isSuccessful(tx)).To(BeFalse())
-                                    returnData, _ := ethCall(tx)
-                    				Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("available<amount"))
+									returnData, _ := ethCall(tx)
+									Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("available<amount"))
 								})
 							})
 
 							When("the 'sent' address is  whitelisted", func() {
 								BeforeEach(func() {
-									tx, err := Wallet.SetWhitelist(Owner.TransactOpts(), []common.Address{RandomAccount.Address()})
+									tx, err := WalletProxy.SetWhitelist(Owner.TransactOpts(), []common.Address{RandomAccount.Address()})
 									Expect(err).ToNot(HaveOccurred())
 									Backend.Commit()
 									Expect(isSuccessful(tx)).To(BeTrue())
 								})
 								BeforeEach(func() {
-									tx, err := Wallet.BulkTransfer(Owner.TransactOpts(), RandomAccount.Address(), assets)
+									tx, err := WalletProxy.BulkTransfer(Owner.TransactOpts(), RandomAccount.Address(), assets)
 									Expect(err).ToNot(HaveOccurred())
 									Backend.Commit()
 									Expect(isSuccessful(tx)).To(BeTrue())
 								})
 								It("the balance of the wallet should be 0", func() {
-									b, e := Backend.BalanceAt(context.Background(), WalletAddress, nil)
+									b, e := Backend.BalanceAt(context.Background(), WalletProxyAddress, nil)
 									Expect(e).ToNot(HaveOccurred())
 									Expect(b.String()).To(Equal("0"))
 								})
 								It("should decrease the ERC20 type-1 balance of the Wallet by 1000", func() {
-									b, err := ERC20Contract1.BalanceOf(nil, WalletAddress)
+									b, err := ERC20Contract1.BalanceOf(nil, WalletProxyAddress)
 									Expect(err).ToNot(HaveOccurred())
 									Expect(b.String()).To(Equal("0"))
 								})
 
 								It("should decrease the ERC20 type-2 balance of the Wallet by 500", func() {
-									b, err := ERC20Contract2.BalanceOf(nil, WalletAddress)
+									b, err := ERC20Contract2.BalanceOf(nil, WalletProxyAddress)
 									Expect(err).ToNot(HaveOccurred())
 									Expect(b.String()).To(Equal("0"))
 								})
@@ -327,7 +327,7 @@ var _ = Describe("bulk_transfer", func() {
 
 		When("called by a random address", func() {
 			It("should fail", func() {
-				tx, err := Wallet.BulkTransfer(RandomAccount.TransactOpts(ethertest.WithGasLimit(81000)), RandomAccount.Address(), []common.Address{common.HexToAddress("0x0"), common.HexToAddress("0x2"), common.HexToAddress("0x3")})
+				tx, err := WalletProxy.BulkTransfer(RandomAccount.TransactOpts(ethertest.WithGasLimit(81000)), RandomAccount.Address(), []common.Address{common.HexToAddress("0x0"), common.HexToAddress("0x2"), common.HexToAddress("0x3")})
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 				Expect(isGasExhausted(tx, 81000)).To(BeFalse())

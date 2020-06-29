@@ -5,6 +5,7 @@ require (
 	github.com/elastic/gosigar v0.10.5 // indirect
 	github.com/ethereum/go-ethereum v1.9.12
 	github.com/gorilla/websocket v1.4.1 // indirect
+	github.com/i-stam/ethertest v0.8.4
 	github.com/onsi/ginkgo v1.7.0
 	github.com/onsi/gomega v1.4.3
 	github.com/pkg/errors v0.8.1

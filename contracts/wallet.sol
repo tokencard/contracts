@@ -16,7 +16,7 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-pragma solidity ^0.5.17;
+pragma solidity 0.5.17;
 
 import "./licence.sol";
 import "./internals/ownable.sol";
@@ -27,10 +27,11 @@ import "./internals/ensResolvable.sol";
 import "./internals/tokenWhitelistable.sol";
 import "./externals/SafeMath.sol";
 import "./externals/Address.sol";
+import "./externals/ECDSA.sol";
 import "./externals/ERC20.sol";
+import "./externals/initializable.sol";
 import "./externals/SafeERC20.sol";
 import "./externals/ERC165.sol";
-import "./externals/ECDSA.sol";
 
 
 /// @title ControllableOwnable combines Controllable and Ownable
@@ -337,11 +338,6 @@ contract SpendLimit is ControllableOwnable, SelfCallableOwnable {
 
     DailyLimitTrait.DailyLimit internal _spendLimit;
 
-    /// @dev Constructor initializes the daily spend limit in wei.
-    constructor(uint256 _limit_) internal {
-        _spendLimit = DailyLimitTrait.DailyLimit(_limit_, _limit_, now, 0, false);
-    }
-
     /// @dev Confirm pending set daily limit operation.
     function confirmSpendLimitUpdate(uint256 _amount) external onlyController {
         _spendLimit._confirmLimitUpdate(_amount);
@@ -381,6 +377,11 @@ contract SpendLimit is ControllableOwnable, SelfCallableOwnable {
         _spendLimit._submitLimitUpdate(_amount);
         emit SubmittedSpendLimitUpdate(_amount);
     }
+
+    /// @dev Initializes the daily spend limit in wei.
+    function _initializeSpendLimit(uint256 _limit) internal initializer {
+        _spendLimit = DailyLimitTrait.DailyLimit(_limit, _limit, now, 0, false);
+    }
 }
 
 
@@ -395,11 +396,6 @@ contract GasTopUpLimit is ControllableOwnable, SelfCallableOwnable {
     using DailyLimitTrait for DailyLimitTrait.DailyLimit;
 
     DailyLimitTrait.DailyLimit internal _gasTopUpLimit;
-
-    /// @dev Constructor initializes the daily gas topup limit in wei.
-    constructor() internal {
-        _gasTopUpLimit = DailyLimitTrait.DailyLimit(_MAXIMUM_GAS_TOPUP_LIMIT, _MAXIMUM_GAS_TOPUP_LIMIT, now, 0, false);
-    }
 
     /// @dev Confirm pending set top up gas limit operation.
     function confirmGasTopUpLimitUpdate(uint256 _amount) external onlyController {
@@ -442,6 +438,11 @@ contract GasTopUpLimit is ControllableOwnable, SelfCallableOwnable {
         _gasTopUpLimit._submitLimitUpdate(_amount);
         emit SubmittedGasTopUpLimitUpdate(_amount);
     }
+
+    /// @dev Initializes the daily gas topup limit in wei.
+    function _initializeGasTopUpLimit() internal initializer {
+        _gasTopUpLimit = DailyLimitTrait.DailyLimit(_MAXIMUM_GAS_TOPUP_LIMIT, _MAXIMUM_GAS_TOPUP_LIMIT, now, 0, false);
+    }
 }
 
 
@@ -456,13 +457,6 @@ contract LoadLimit is ControllableOwnable, SelfCallableOwnable, TokenWhitelistab
     using DailyLimitTrait for DailyLimitTrait.DailyLimit;
 
     DailyLimitTrait.DailyLimit internal _loadLimit;
-
-    constructor(bytes32 _tokenWhitelistNode_) internal TokenWhitelistable(_tokenWhitelistNode_) {
-        (, uint256 stablecoinMagnitude, , , , , ) = _getStablecoinInfo();
-        require(stablecoinMagnitude > 0, "no stablecoin");
-        _maximumLoadLimit = _MAXIMUM_STABLECOIN_LOAD_LIMIT * stablecoinMagnitude;
-        _loadLimit = DailyLimitTrait.DailyLimit(_maximumLoadLimit, _maximumLoadLimit, now, 0, false);
-    }
 
     /// @dev Sets a daily card load limit.
     /// @param _amount is the card load amount in current stablecoin base units.
@@ -505,11 +499,19 @@ contract LoadLimit is ControllableOwnable, SelfCallableOwnable, TokenWhitelistab
     function loadLimitValue() external view returns (uint256) {
         return _loadLimit.value;
     }
+
+    function _initializeLoadLimit(bytes32 _tokenWhitelistNode) internal initializer {
+        _initializeTokenWhitelistable(_tokenWhitelistNode);
+        (, uint256 stablecoinMagnitude, , , , , ) = _getStablecoinInfo();
+        require(stablecoinMagnitude > 0, "no stablecoin");
+        _maximumLoadLimit = _MAXIMUM_STABLECOIN_LOAD_LIMIT * stablecoinMagnitude;
+        _loadLimit = DailyLimitTrait.DailyLimit(_maximumLoadLimit, _maximumLoadLimit, now, 0, false);
+    }
 }
 
 
 /// @title Asset wallet with extra security features, gas top up management and card integration.
-contract Wallet is ENSResolvable, GasTopUpLimit, LoadLimit, AddressWhitelist, SpendLimit, ERC165, Transferrable, Balanceable {
+contract Wallet is ENSResolvable, AddressWhitelist, SpendLimit, GasTopUpLimit, LoadLimit, ERC165, Transferrable, Balanceable {
     using Address for address;
     using ECDSA for bytes32;
     using SafeERC20 for ERC20;
@@ -541,7 +543,7 @@ contract Wallet is ENSResolvable, GasTopUpLimit, LoadLimit, AddressWhitelist, Sp
     /// @dev Is the registered ENS node identifying the licence contract.
     bytes32 private _licenceNode;
 
-    /// @dev Constructor initializes the wallet top up limit and the vault contract.
+    /// @dev Initializes the wallet top up limit and the vault contract.
     /// @param _owner_ is the owner account of the wallet contract.
     /// @param _transferable_ indicates whether the contract ownership can be transferred.
     /// @param _ens_ is the address of the ENS registry.
@@ -549,7 +551,7 @@ contract Wallet is ENSResolvable, GasTopUpLimit, LoadLimit, AddressWhitelist, Sp
     /// @param _controllerNode_ is the ENS name node of the Controller contract.
     /// @param _licenceNode_ is the ENS name node of the Licence contract.
     /// @param _spendLimit_ is the initial spend limit.
-    constructor(
+    function initializeWallet(
         address payable _owner_,
         bool _transferable_,
         address _ens_,
@@ -557,7 +559,13 @@ contract Wallet is ENSResolvable, GasTopUpLimit, LoadLimit, AddressWhitelist, Sp
         bytes32 _controllerNode_,
         bytes32 _licenceNode_,
         uint256 _spendLimit_
-    ) public ENSResolvable(_ens_) SpendLimit(_spendLimit_) Ownable(_owner_, _transferable_) Controllable(_controllerNode_) LoadLimit(_tokenWhitelistNode_) {
+    ) external initializer {
+        _initializeENSResolvable(_ens_);
+        _initializeControllable(_controllerNode_);
+        _initializeOwnable(_owner_, _transferable_);
+        _initializeSpendLimit(_spendLimit_);
+        _initializeGasTopUpLimit();
+        _initializeLoadLimit(_tokenWhitelistNode_);
         _licenceNode = _licenceNode_;
     }
 

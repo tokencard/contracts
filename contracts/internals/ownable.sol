@@ -16,30 +16,21 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-pragma solidity ^0.5.17;
+pragma solidity 0.5.17;
+
+import "../externals/initializable.sol";
 
 
 /// @title Ownable has an owner address and provides basic authorization control functions.
 /// This contract is modified version of the MIT OpenZepplin Ownable contract
 /// This contract allows for the transferOwnership operation to be made impossible
 /// https://github.com/OpenZeppelin/openzeppelin-solidity/blob/master/contracts/ownership/Ownable.sol
-contract Ownable {
+contract Ownable is Initializable {
     event TransferredOwnership(address _from, address _to);
     event LockedOwnership(address _locked);
 
     address payable private _owner;
     bool private _isTransferable;
-
-    /// @notice Constructor sets the original owner of the contract and whether or not it is one time transferable.
-    constructor(address payable _account_, bool _transferable_) internal {
-        _owner = _account_;
-        _isTransferable = _transferable_;
-        // Emit the LockedOwnership event if no longer transferable.
-        if (!_isTransferable) {
-            emit LockedOwnership(_account_);
-        }
-        emit TransferredOwnership(address(0), _account_);
-    }
 
     /// @notice Reverts if called by any account other than the owner.
     modifier onlyOwner() {
@@ -89,6 +80,17 @@ contract Ownable {
     /// @return address of the owner.
     function owner() public view returns (address payable) {
         return _owner;
+    }
+
+    /// @notice Sets the original owner of the contract and whether or not it is one time transferable.
+    function _initializeOwnable(address payable _account, bool _transferable) internal initializer {
+        _owner = _account;
+        _isTransferable = _transferable;
+        // Emit the LockedOwnership event if no longer transferable.
+        if (!_isTransferable) {
+            emit LockedOwnership(_account);
+        }
+        emit TransferredOwnership(address(0), _account);
     }
 
     /// @notice Check if owner address

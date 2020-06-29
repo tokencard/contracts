@@ -1,4 +1,4 @@
-pragma solidity ^0.5.15;
+pragma solidity 0.5.17;
 
 import "crytic-export/flattening/Wallet.sol";
 
@@ -13,7 +13,9 @@ contract Echidna {
 contract TEST is Echidna, Wallet {
     bytes32 private testNode = "test";
 
-    constructor() public Wallet(echidnaOwner, false, address(0), bytes32(0), bytes32(0), bytes32(0), 10000) {}
+    constructor() public {
+        initializeWallet(echidnaOwner, false, address(0), bytes32(0), bytes32(0), bytes32(0), 10000);
+    }
 
     function echidna_licenceNodeStatic() public view returns (bool) {
         return licenceNode() == testNode;

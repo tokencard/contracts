@@ -1,4 +1,4 @@
-pragma solidity ^0.5.15;
+pragma solidity 0.5.17;
 
 import "crytic-export/flattening/Wallet.sol";
 
@@ -14,7 +14,12 @@ contract Echidna {
 contract TEST is Echidna, GasTopUpLimit {
     uint256 initialLimit = 500 finney;
 
-    constructor() public GasTopUpLimit() Ownable(echidnaOwner, false) Controllable(bytes32(0x0)) ENSResolvable(address(0x0)) {}
+    constructor() public {
+        _initializeGasTopUpLimit();
+        _initializeOwnable(echidnaOwner, false);
+        _initializeControllable(bytes32(0x0));
+        _initializeENSResolvable(address(0x0));
+    }
 
     // This function is used to simulate the user spending, so anyone can call it
     function spend(uint256 _amount) public {

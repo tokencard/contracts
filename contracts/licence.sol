@@ -16,7 +16,7 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-pragma solidity ^0.5.17;
+pragma solidity 0.5.17;
 
 import "./externals/SafeMath.sol";
 import "./externals/SafeERC20.sol";
@@ -86,12 +86,10 @@ contract Licence is Transferrable, ENSResolvable, Controllable {
     /// @param _tknAddress_ is the address of the TKN ERC20 contract
     /// @param _ens_ is the address of the ENS Registry
     /// @param _controllerNode_ is the ENS node corresponding to the controller
-    constructor(uint256 _licence_, address payable _float_, address payable _holder_, address _tknAddress_, address _ens_, bytes32 _controllerNode_)
-        public
-        ENSResolvable(_ens_)
-        Controllable(_controllerNode_)
-    {
+    constructor(uint256 _licence_, address payable _float_, address payable _holder_, address _tknAddress_, address _ens_, bytes32 _controllerNode_) public {
         require(MIN_AMOUNT_SCALE <= _licence_ && _licence_ <= MAX_AMOUNT_SCALE, "licence amount out of range");
+        _initializeENSResolvable(_ens_);
+        _initializeControllable(_controllerNode_);
         _licenceAmountScaled = _licence_;
         _cryptoFloat = _float_;
         _tokenHolder = _holder_;

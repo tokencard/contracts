@@ -21,11 +21,11 @@ var _ = Describe("loadLimit", func() {
 	When("the contract just has been deployed", func() {
 
 		It("should have initial MAX load limit of 10,000 USD /stablecoins", func() {
-			ll, err := Wallet.LoadLimitValue(nil)
+			ll, err := WalletProxy.LoadLimitValue(nil)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(ll.String()).To(Equal(GweiToWei(10).String()))
 
-			ll, err = Wallet.LoadLimitAvailable(nil)
+			ll, err = WalletProxy.LoadLimitAvailable(nil)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(ll.String()).To(Equal(GweiToWei(10).String()))
 		})
@@ -36,7 +36,7 @@ var _ = Describe("loadLimit", func() {
 
 		When("I try to set load limit to 0 (below min load limit)", func() {
 			It("Should succeed", func() {
-				tx, err := Wallet.SetLoadLimit(Owner.TransactOpts(), GweiToWei(0))
+				tx, err := WalletProxy.SetLoadLimit(Owner.TransactOpts(), GweiToWei(0))
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 				Expect(isSuccessful(tx)).To(BeTrue())
@@ -46,7 +46,7 @@ var _ = Describe("loadLimit", func() {
 
 		When("I try to Set load limit to 10001 USD (above max load limit)", func() {
 			It("Should fail", func() {
-				tx, err := Wallet.SetLoadLimit(Owner.TransactOpts(ethertest.WithGasLimit(100000)), EthToWei(10001))
+				tx, err := WalletProxy.SetLoadLimit(Owner.TransactOpts(ethertest.WithGasLimit(100000)), EthToWei(10001))
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 				Expect(isGasExhausted(tx, 100000)).To(BeFalse())
@@ -58,7 +58,7 @@ var _ = Describe("loadLimit", func() {
 			var tx *types.Transaction
 			BeforeEach(func() {
 				var err error
-				tx, err = Wallet.SetLoadLimit(Owner.TransactOpts(), GweiToWei(1))
+				tx, err = WalletProxy.SetLoadLimit(Owner.TransactOpts(), GweiToWei(1))
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 			})
@@ -68,13 +68,13 @@ var _ = Describe("loadLimit", func() {
 			})
 
 			It("should update the set flag", func() {
-				set, err := Wallet.LoadLimitControllerConfirmationRequired(nil)
+				set, err := WalletProxy.LoadLimitControllerConfirmationRequired(nil)
 				Expect(err).ToNot(HaveOccurred())
 				Expect(set).To(BeTrue())
 			})
 
 			It("should emit a load limit set event", func() {
-				it, err := Wallet.FilterSetLoadLimit(nil)
+				it, err := WalletProxy.FilterSetLoadLimit(nil)
 				Expect(err).ToNot(HaveOccurred())
 				Expect(it.Next()).To(BeTrue())
 				evt := it.Event
@@ -85,7 +85,7 @@ var _ = Describe("loadLimit", func() {
 
 			When("I try to set the limit again", func() {
 				It("should fail", func() {
-					tx, err := Wallet.SetLoadLimit(Owner.TransactOpts(ethertest.WithGasLimit(100000)), GweiToWei(5))
+					tx, err := WalletProxy.SetLoadLimit(Owner.TransactOpts(ethertest.WithGasLimit(100000)), GweiToWei(5))
 					Expect(err).ToNot(HaveOccurred())
 					Backend.Commit()
 					Expect(isGasExhausted(tx, 100000)).To(BeFalse())
@@ -102,7 +102,7 @@ var _ = Describe("loadLimit", func() {
 
 		When("I submit daily load limit of 5K USD before setting it", func() {
 			It("should fail", func() {
-				tx, err := Wallet.SubmitLoadLimitUpdate(Owner.TransactOpts(ethertest.WithGasLimit(100000)), GweiToWei(5))
+				tx, err := WalletProxy.SubmitLoadLimitUpdate(Owner.TransactOpts(ethertest.WithGasLimit(100000)), GweiToWei(5))
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 				Expect(isGasExhausted(tx, 100000)).To(BeFalse())
@@ -112,12 +112,12 @@ var _ = Describe("loadLimit", func() {
 
 		When("I submit daily load limit of 0 (< min load limit) after having set it", func() {
 			It("should succeed", func() {
-				tx, err := Wallet.SetLoadLimit(Owner.TransactOpts(), GweiToWei(10))
+				tx, err := WalletProxy.SetLoadLimit(Owner.TransactOpts(), GweiToWei(10))
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 				Expect(isSuccessful(tx)).To(BeTrue())
 
-				tx, err = Wallet.SubmitLoadLimitUpdate(Owner.TransactOpts(), GweiToWei(0))
+				tx, err = WalletProxy.SubmitLoadLimitUpdate(Owner.TransactOpts(), GweiToWei(0))
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 				Expect(isSuccessful(tx)).To(BeTrue())
@@ -126,12 +126,12 @@ var _ = Describe("loadLimit", func() {
 
 		When("I submit daily load limit of 10001 USD (> max load limit) after having set it", func() {
 			It("should fail", func() {
-				tx, err := Wallet.SetLoadLimit(Owner.TransactOpts(), GweiToWei(5))
+				tx, err := WalletProxy.SetLoadLimit(Owner.TransactOpts(), GweiToWei(5))
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 				Expect(isSuccessful(tx)).To(BeTrue())
 
-				tx, err = Wallet.SubmitLoadLimitUpdate(Owner.TransactOpts(ethertest.WithGasLimit(65000)), GweiToWei(10001))
+				tx, err = WalletProxy.SubmitLoadLimitUpdate(Owner.TransactOpts(ethertest.WithGasLimit(65000)), GweiToWei(10001))
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 				Expect(isGasExhausted(tx, 100000)).To(BeFalse())
@@ -141,12 +141,12 @@ var _ = Describe("loadLimit", func() {
 
 		When("controller submits daily load limit of 1K USD(> max load limit) after having set it", func() {
 			It("should fail", func() {
-				tx, err := Wallet.SetLoadLimit(Owner.TransactOpts(), GweiToWei(5))
+				tx, err := WalletProxy.SetLoadLimit(Owner.TransactOpts(), GweiToWei(5))
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 				Expect(isSuccessful(tx)).To(BeTrue())
 
-				tx, err = Wallet.SubmitLoadLimitUpdate(Controller.TransactOpts(ethertest.WithGasLimit(65000)), GweiToWei(1))
+				tx, err = WalletProxy.SubmitLoadLimitUpdate(Controller.TransactOpts(ethertest.WithGasLimit(65000)), GweiToWei(1))
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 				Expect(isGasExhausted(tx, 65000)).To(BeFalse())
@@ -157,12 +157,12 @@ var _ = Describe("loadLimit", func() {
 
 		When("a random person submits daily load limit of 0 USD after having set it", func() {
 			It("should fail", func() {
-				tx, err := Wallet.SetLoadLimit(Owner.TransactOpts(), GweiToWei(5))
+				tx, err := WalletProxy.SetLoadLimit(Owner.TransactOpts(), GweiToWei(5))
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 				Expect(isSuccessful(tx)).To(BeTrue())
 
-				tx, err = Wallet.SubmitLoadLimitUpdate(RandomAccount.TransactOpts(ethertest.WithGasLimit(65000)), big.NewInt(0))
+				tx, err = WalletProxy.SubmitLoadLimitUpdate(RandomAccount.TransactOpts(ethertest.WithGasLimit(65000)), big.NewInt(0))
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 				Expect(isGasExhausted(tx, 65000)).To(BeFalse())
@@ -173,24 +173,24 @@ var _ = Describe("loadLimit", func() {
 
 		When("I submit 2 Loadlimits of 2K and 1K USD respectively after having set it", func() {
 			BeforeEach(func() {
-				tx, err := Wallet.SetLoadLimit(Owner.TransactOpts(), GweiToWei(5))
+				tx, err := WalletProxy.SetLoadLimit(Owner.TransactOpts(), GweiToWei(5))
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 				Expect(isSuccessful(tx)).To(BeTrue())
 
-				tx, err = Wallet.SubmitLoadLimitUpdate(Owner.TransactOpts(), GweiToWei(2))
+				tx, err = WalletProxy.SubmitLoadLimitUpdate(Owner.TransactOpts(), GweiToWei(2))
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 				Expect(isSuccessful(tx)).To(BeTrue())
 
-				tx, err = Wallet.SubmitLoadLimitUpdate(Owner.TransactOpts(), GweiToWei(1))
+				tx, err = WalletProxy.SubmitLoadLimitUpdate(Owner.TransactOpts(), GweiToWei(1))
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 				Expect(isSuccessful(tx)).To(BeTrue())
 			})
 
 			It("should emit 2 submission events", func() {
-				it, err := Wallet.FilterSubmittedLoadLimitUpdate(nil)
+				it, err := WalletProxy.FilterSubmittedLoadLimitUpdate(nil)
 				Expect(err).ToNot(HaveOccurred())
 				Expect(it.Next()).To(BeTrue())
 				evt := it.Event
@@ -202,28 +202,28 @@ var _ = Describe("loadLimit", func() {
 			})
 
 			It("should have pending load limit of 1K USD", func() {
-				ptl, err := Wallet.LoadLimitPending(nil)
+				ptl, err := WalletProxy.LoadLimitPending(nil)
 				Expect(err).ToNot(HaveOccurred())
 				Expect(ptl.String()).To(Equal(GweiToWei(1).String()))
 			})
 
 			When("the Owner tries to re-submit a load limit of 5K USD", func() {
 				BeforeEach(func() {
-					tx, err := Wallet.SubmitLoadLimitUpdate(Owner.TransactOpts(), GweiToWei(5))
+					tx, err := WalletProxy.SubmitLoadLimitUpdate(Owner.TransactOpts(), GweiToWei(5))
 					Expect(err).ToNot(HaveOccurred())
 					Backend.Commit()
 					Expect(isSuccessful(tx)).To(BeTrue())
 				})
 
 				It("should set pending load limit to 5K", func() {
-					psl, err := Wallet.LoadLimitPending(nil)
+					psl, err := WalletProxy.LoadLimitPending(nil)
 					Expect(err).ToNot(HaveOccurred())
 					Expect(psl.String()).To(Equal(GweiToWei(5).String()))
 				})
 
 				When("the Owner tries to submit a second load limit of 5K USD", func() {
 					It("should succeed", func() {
-						tx, err := Wallet.SubmitLoadLimitUpdate(Owner.TransactOpts(ethertest.WithGasLimit(65000)), GweiToWei(5))
+						tx, err := WalletProxy.SubmitLoadLimitUpdate(Owner.TransactOpts(ethertest.WithGasLimit(65000)), GweiToWei(5))
 						Expect(err).ToNot(HaveOccurred())
 						Backend.Commit()
 						Expect(isSuccessful(tx)).To(BeTrue())
@@ -233,7 +233,7 @@ var _ = Describe("loadLimit", func() {
 
 			When("I try to confirm the load limit", func() {
 				It("should fail", func() {
-					tx, err := Wallet.ConfirmLoadLimitUpdate(Owner.TransactOpts(ethertest.WithGasLimit(65000)), GweiToWei(1))
+					tx, err := WalletProxy.ConfirmLoadLimitUpdate(Owner.TransactOpts(ethertest.WithGasLimit(65000)), GweiToWei(1))
 					Expect(err).ToNot(HaveOccurred())
 					Backend.Commit()
 					Expect(isSuccessful(tx)).To(BeFalse())
@@ -242,7 +242,7 @@ var _ = Describe("loadLimit", func() {
 
 			When("a random person tries to confirm the load limit", func() {
 				It("should fail", func() {
-					tx, err := Wallet.ConfirmLoadLimitUpdate(RandomAccount.TransactOpts(ethertest.WithGasLimit(65000)), GweiToWei(1))
+					tx, err := WalletProxy.ConfirmLoadLimitUpdate(RandomAccount.TransactOpts(ethertest.WithGasLimit(65000)), GweiToWei(1))
 					Expect(err).ToNot(HaveOccurred())
 					Backend.Commit()
 					Expect(isGasExhausted(tx, 65000)).To(BeFalse())
@@ -252,7 +252,7 @@ var _ = Describe("loadLimit", func() {
 
 			When("the controller confirms the load limit using the wrong amount", func() {
 				It("should fail", func() {
-					tx, err := Wallet.ConfirmLoadLimitUpdate(Controller.TransactOpts(ethertest.WithGasLimit(100000)), GweiToWei(2))
+					tx, err := WalletProxy.ConfirmLoadLimitUpdate(Controller.TransactOpts(ethertest.WithGasLimit(100000)), GweiToWei(2))
 					Expect(err).ToNot(HaveOccurred())
 					Backend.Commit()
 					Expect(isGasExhausted(tx, 100000)).To(BeFalse())
@@ -262,21 +262,21 @@ var _ = Describe("loadLimit", func() {
 
 			When("the controller confirms the load limit", func() {
 				BeforeEach(func() {
-					tx, err := Wallet.ConfirmLoadLimitUpdate(Controller.TransactOpts(), GweiToWei(1))
+					tx, err := WalletProxy.ConfirmLoadLimitUpdate(Controller.TransactOpts(), GweiToWei(1))
 					Expect(err).ToNot(HaveOccurred())
 					Backend.Commit()
 					Expect(isSuccessful(tx)).To(BeTrue())
 				})
 
 				It("should have 1K USD available for loading", func() {
-					ll, err := Wallet.LoadLimitAvailable(nil)
+					ll, err := WalletProxy.LoadLimitAvailable(nil)
 					Expect(err).ToNot(HaveOccurred())
 					Expect(ll.String()).To(Equal(GweiToWei(1).String()))
 				})
 
 				When("I submit a second load limit to 5K USD", func() {
 					BeforeEach(func() {
-						tx, err := Wallet.SubmitLoadLimitUpdate(Owner.TransactOpts(), GweiToWei(5))
+						tx, err := WalletProxy.SubmitLoadLimitUpdate(Owner.TransactOpts(), GweiToWei(5))
 						Expect(err).ToNot(HaveOccurred())
 						Backend.Commit()
 						Expect(isSuccessful(tx)).To(BeTrue())
@@ -284,14 +284,14 @@ var _ = Describe("loadLimit", func() {
 
 					When("the controller confirms the load limit", func() {
 						BeforeEach(func() {
-							tx, err := Wallet.ConfirmLoadLimitUpdate(Controller.TransactOpts(), GweiToWei(5))
+							tx, err := WalletProxy.ConfirmLoadLimitUpdate(Controller.TransactOpts(), GweiToWei(5))
 							Expect(err).ToNot(HaveOccurred())
 							Backend.Commit()
 							Expect(isSuccessful(tx)).To(BeTrue())
 						})
 
 						It("should have 1K USD available for loading", func() {
-							tl, err := Wallet.LoadLimitAvailable(nil)
+							tl, err := WalletProxy.LoadLimitAvailable(nil)
 							Expect(err).ToNot(HaveOccurred())
 							Expect(tl.String()).To(Equal(GweiToWei(1).String()))
 						})
@@ -302,7 +302,7 @@ var _ = Describe("loadLimit", func() {
 							})
 
 							It("should have 5K USD available for further loading", func() {
-								ll, err := Wallet.LoadLimitAvailable(nil)
+								ll, err := WalletProxy.LoadLimitAvailable(nil)
 								Expect(err).ToNot(HaveOccurred())
 								Expect(ll.String()).To(Equal(GweiToWei(5).String()))
 							})

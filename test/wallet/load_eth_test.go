@@ -15,7 +15,7 @@ import (
 var _ = Describe("wallet load eth", func() {
 
 	It("Should return the licence ENS-registered node", func() {
-		sa, err := Wallet.LicenceNode(nil)
+		sa, err := WalletProxy.LicenceNode(nil)
 		Expect(err).ToNot(HaveOccurred())
 		Expect(sa).To(Equal([32]byte(LicenceName)))
 	})
@@ -39,7 +39,7 @@ var _ = Describe("wallet load eth", func() {
 
 		When("no value is sent", func() {
 			It("Should revert", func() {
-				tx, err := Wallet.LoadTokenCard(Owner.TransactOpts(ethertest.WithGasLimit(1000000)), common.HexToAddress("0x0"), big.NewInt(1000))
+				tx, err := WalletProxy.LoadTokenCard(Owner.TransactOpts(ethertest.WithGasLimit(1000000)), common.HexToAddress("0x0"), big.NewInt(1000))
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 				Expect(isGasExhausted(tx, 1000000)).To(BeFalse())
@@ -50,7 +50,7 @@ var _ = Describe("wallet load eth", func() {
 
 		When("the right value is sent along with the transaction", func() {
 			It("Should succeed", func() {
-				tx, err := Wallet.LoadTokenCard(Owner.TransactOpts(ethertest.WithValue(big.NewInt(1000))), common.HexToAddress("0x0"), big.NewInt(1000))
+				tx, err := WalletProxy.LoadTokenCard(Owner.TransactOpts(ethertest.WithValue(big.NewInt(1000))), common.HexToAddress("0x0"), big.NewInt(1000))
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 				Expect(isSuccessful(tx)).To(BeTrue())
@@ -62,7 +62,7 @@ var _ = Describe("wallet load eth", func() {
 	When("not called by the owner", func() {
 
 		It("Should revert", func() {
-			tx, err := Wallet.LoadTokenCard(RandomAccount.TransactOpts(ethertest.WithGasLimit(100000), ethertest.WithValue(EthToWei(1))), common.HexToAddress("0x0"), EthToWei(1))
+			tx, err := WalletProxy.LoadTokenCard(RandomAccount.TransactOpts(ethertest.WithGasLimit(100000), ethertest.WithValue(EthToWei(1))), common.HexToAddress("0x0"), EthToWei(1))
 			Expect(err).ToNot(HaveOccurred())
 			Backend.Commit()
 			Expect(isGasExhausted(tx, 100000)).To(BeFalse())
@@ -83,7 +83,7 @@ var _ = Describe("wallet load eth", func() {
 	})
 
 	It("the initial balance of the Wallet should be zero", func() {
-		b, e := Backend.BalanceAt(context.Background(), WalletAddress, nil)
+		b, e := Backend.BalanceAt(context.Background(), WalletProxyAddress, nil)
 		Expect(e).ToNot(HaveOccurred())
 		Expect(b.String()).To(Equal("0"))
 	})
@@ -91,12 +91,12 @@ var _ = Describe("wallet load eth", func() {
 	When("the wallet has 102 ETH", func() {
 
 		BeforeEach(func() {
-			RandomAccount.MustTransfer(Backend, WalletAddress, EthToWei(102))
+			RandomAccount.MustTransfer(Backend, WalletProxyAddress, EthToWei(102))
 		})
 
 		When("ETH (0x0) is not in the token whitelist", func() {
 			It("Should revert", func() {
-				tx, err := Wallet.LoadTokenCard(Owner.TransactOpts(ethertest.WithGasLimit(100000)), common.HexToAddress("0x0"), big.NewInt(1000))
+				tx, err := WalletProxy.LoadTokenCard(Owner.TransactOpts(ethertest.WithGasLimit(100000)), common.HexToAddress("0x0"), big.NewInt(1000))
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 				Expect(isGasExhausted(tx, 100000)).To(BeFalse())
@@ -136,7 +136,7 @@ var _ = Describe("wallet load eth", func() {
 				})
 
 				BeforeEach(func() {
-					tx, err := Wallet.LoadTokenCard(Owner.TransactOpts(), common.HexToAddress("0x0"), EthToWei(101))
+					tx, err := WalletProxy.LoadTokenCard(Owner.TransactOpts(), common.HexToAddress("0x0"), EthToWei(101))
 					Expect(err).ToNot(HaveOccurred())
 					Backend.Commit()
 					Expect(isSuccessful(tx)).To(BeTrue())
@@ -148,7 +148,7 @@ var _ = Describe("wallet load eth", func() {
 					Expect(it.Next()).To(BeTrue())
 					evt := it.Event
 					Expect(it.Next()).To(BeFalse())
-					Expect(evt.From).To(Equal(WalletAddress))
+					Expect(evt.From).To(Equal(WalletProxyAddress))
 					Expect(evt.To).To(Equal(TokenHolderAddress))
 					Expect(evt.Asset).To(Equal(common.HexToAddress("0x0"))) //represents ETH
 					Expect(evt.Amount.String()).To(Equal(EthToWei(1).String()))
@@ -160,14 +160,14 @@ var _ = Describe("wallet load eth", func() {
 					Expect(it.Next()).To(BeTrue())
 					evt := it.Event
 					Expect(it.Next()).To(BeFalse())
-					Expect(evt.From).To(Equal(WalletAddress))
+					Expect(evt.From).To(Equal(WalletProxyAddress))
 					Expect(evt.To).To(Equal(CryptoFloatAddress))
 					Expect(evt.Asset).To(Equal(common.HexToAddress("0x0"))) //represents ETH
 					Expect(evt.Amount.String()).To(Equal(EthToWei(100).String()))
 				})
 
 				It("Should emit a LoadedTokenCard event", func() {
-					it, err := Wallet.FilterLoadedTokenCard(nil)
+					it, err := WalletProxy.FilterLoadedTokenCard(nil)
 					Expect(err).ToNot(HaveOccurred())
 					Expect(it.Next()).To(BeTrue())
 					evt := it.Event
@@ -208,7 +208,7 @@ var _ = Describe("wallet load eth", func() {
 					It("Should revert", func() {
 						limPlusOneWei := EthToWei(10)
 						limPlusOneWei.Add(limPlusOneWei, GweiToWei(1)) // 10 ETH * 1000 + 1= 10,001 stablecoins
-						tx, err := Wallet.LoadTokenCard(Owner.TransactOpts(ethertest.WithGasLimit(200000)), common.HexToAddress("0x0"), limPlusOneWei)
+						tx, err := WalletProxy.LoadTokenCard(Owner.TransactOpts(ethertest.WithGasLimit(200000)), common.HexToAddress("0x0"), limPlusOneWei)
 						Expect(err).ToNot(HaveOccurred())
 						Backend.Commit()
 						Expect(isSuccessful(tx)).To(BeFalse())
@@ -220,7 +220,7 @@ var _ = Describe("wallet load eth", func() {
 				When("the MAX amount of the daily Load limit is loaded", func() {
 
 					It("Should return 10K USD", func() {
-						value, err := Wallet.ConvertToStablecoin(nil, common.HexToAddress("0x0"), EthToWei(10))
+						value, err := WalletProxy.ConvertToStablecoin(nil, common.HexToAddress("0x0"), EthToWei(10))
 						Expect(err).ToNot(HaveOccurred())
 						finalAmount := MweiToWei(10)
 						finalAmount.Mul(finalAmount, big.NewInt(1000))
@@ -228,7 +228,7 @@ var _ = Describe("wallet load eth", func() {
 					})
 
 					It("Should succeed", func() {
-						tx, err := Wallet.LoadTokenCard(Owner.TransactOpts(), common.HexToAddress("0x0"), GweiToWei(10))
+						tx, err := WalletProxy.LoadTokenCard(Owner.TransactOpts(), common.HexToAddress("0x0"), GweiToWei(10))
 						Expect(err).ToNot(HaveOccurred())
 						Backend.Commit()
 						Expect(isSuccessful(tx)).To(BeTrue())

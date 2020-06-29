@@ -1,4 +1,4 @@
-pragma solidity ^0.5.15;
+pragma solidity 0.5.17;
 
 import "crytic-export/flattening/Wallet.sol";
 
@@ -13,7 +13,11 @@ contract Echidna {
 contract TEST is Echidna, LoadLimit {
     uint256 initialLimit = 10000000000;
 
-    constructor() public LoadLimit(bytes32(0x0)) Ownable(echidnaOwner, false) Controllable(bytes32(0x0)) ENSResolvable(address(0x0)) {
+    constructor() public {
+        _initializeLoadLimit(bytes32(0x0));
+        _initializeOwnable(echidnaOwner, false);
+        _initializeControllable(bytes32(0x0));
+        _initializeENSResolvable(address(0x0));
         _loadLimit = DailyLimitTrait.DailyLimit(initialLimit, initialLimit, now, 0, false);
     }
 

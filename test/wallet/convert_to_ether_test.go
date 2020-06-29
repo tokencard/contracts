@@ -28,7 +28,7 @@ var _ = Describe("convertToEther", func() {
 		})
 		Context("When exchange rate is 0", func() {
 			It("Should fail", func() {
-				_, err := Wallet.ConvertToEther(nil, common.HexToAddress("0xfe209bdE5CA32fa20E6728A005F26D651FFF5982"), big.NewInt(100))
+				_, err := WalletProxy.ConvertToEther(nil, common.HexToAddress("0xfe209bdE5CA32fa20E6728A005F26D651FFF5982"), big.NewInt(100))
 				Expect(err).To(HaveOccurred())
 			})
 		})
@@ -46,13 +46,13 @@ var _ = Describe("convertToEther", func() {
 			})
 			Context("When overflow occurs", func() {
 				It("Should trigger assert() (empty output)", func() {
-					_, err := Wallet.ConvertToEther(nil, common.HexToAddress("0xfe209bdE5CA32fa20E6728A005F26D651FFF5982"), big.NewInt(-1))
+					_, err := WalletProxy.ConvertToEther(nil, common.HexToAddress("0xfe209bdE5CA32fa20E6728A005F26D651FFF5982"), big.NewInt(-1))
 					Expect(err.Error()).To(ContainSubstring("SafeMath: multiplication overflow"))
 				})
 			})
 			Context("When overflow does not occur", func() {
 				It("Should return 0.01(amount)*0.001633(rate)*10^18(in wei)", func() {
-					value, err := Wallet.ConvertToEther(nil, common.HexToAddress("0xfe209bdE5CA32fa20E6728A005F26D651FFF5982"), big.NewInt(int64(0.01*math.Pow10(8))))
+					value, err := WalletProxy.ConvertToEther(nil, common.HexToAddress("0xfe209bdE5CA32fa20E6728A005F26D651FFF5982"), big.NewInt(int64(0.01*math.Pow10(8))))
 					Expect(err).ToNot(HaveOccurred())
 					Expect(value.String()).To(Equal("16330000000000"))
 				})
@@ -62,7 +62,7 @@ var _ = Describe("convertToEther", func() {
 
 	Context("When the token is not supported", func() {
 		It("Should return 0", func() {
-			value, err := Wallet.ConvertToEther(nil, common.HexToAddress("0x1"), big.NewInt(100))
+			value, err := WalletProxy.ConvertToEther(nil, common.HexToAddress("0x1"), big.NewInt(100))
 			Expect(err).ToNot(HaveOccurred())
 			Expect(value.String()).To(Equal("0"))
 		})
@@ -97,7 +97,7 @@ var _ = Describe("convertToEther", func() {
 		})
 
 		It("Should return the same amount", func() {
-			value, err := Wallet.ConvertToEther(nil, common.HexToAddress("0x0"), big.NewInt(100))
+			value, err := WalletProxy.ConvertToEther(nil, common.HexToAddress("0x0"), big.NewInt(100))
 			Expect(err).ToNot(HaveOccurred())
 			Expect(value.String()).To(Equal("100"))
 		})
