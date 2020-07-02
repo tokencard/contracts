@@ -31,7 +31,7 @@ contract Balanceable {
         if (_asset != address(0)) {
             return IERC20(_asset).balanceOf(_address);
         } else {
-            return _address.balance;
+            return address(this).balance;
         }
     }
 }
