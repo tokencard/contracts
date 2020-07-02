@@ -43,7 +43,7 @@ var _ = BeforeEach(func() {
 
 	Expect(err).ToNot(HaveOccurred())
 
-	LicenceAddress, tx, Licence, err = bindings.DeployLicence(BankAccount.TransactOpts(), Backend, big.NewInt(10), CryptoFloatAddress, TokenHolderAddress, common.HexToAddress("0xaAAf91D9b90dF800Df4F55c205fd6989c977E73a"), ENSRegistryAddress, ControllerName)
+	LicenceAddress, tx, Licence, err = bindings.DeployLicence(BankAccount.TransactOpts(), Backend, big.NewInt(10), CryptoFloatAddress, TokenHolderAddress, common.HexToAddress("0xaAAf91D9b90dF800Df4F55c205fd6989c977E73a"), ENSRegistryAddress, ControllerNode)
 	Expect(err).ToNot(HaveOccurred())
 	Backend.Commit()
 	Expect(isSuccessful(tx)).To(BeTrue())
@@ -52,14 +52,14 @@ var _ = BeforeEach(func() {
 
 var _ = Describe("constructor is called with an out of range licence value", func() {
 	It("should fail", func() {
-		_, tx, _, err := bindings.DeployLicence(BankAccount.TransactOpts(ethertest.WithGasLimit(2000000)), Backend, big.NewInt(0), CryptoFloatAddress, TokenHolderAddress, common.HexToAddress("0x0"), ENSRegistryAddress, ControllerName)
+		_, tx, _, err := bindings.DeployLicence(BankAccount.TransactOpts(ethertest.WithGasLimit(2000000)), Backend, big.NewInt(0), CryptoFloatAddress, TokenHolderAddress, common.HexToAddress("0x0"), ENSRegistryAddress, ControllerNode)
 		Expect(err).ToNot(HaveOccurred())
 		Backend.Commit()
 		Expect(isSuccessful(tx)).To(BeFalse())
 	})
 
 	It("should fail", func() {
-		_, tx, _, err := bindings.DeployLicence(BankAccount.TransactOpts(ethertest.WithGasLimit(2000000)), Backend, big.NewInt(1001), CryptoFloatAddress, TokenHolderAddress, common.HexToAddress("0x0"), ENSRegistryAddress, ControllerName)
+		_, tx, _, err := bindings.DeployLicence(BankAccount.TransactOpts(ethertest.WithGasLimit(2000000)), Backend, big.NewInt(1001), CryptoFloatAddress, TokenHolderAddress, common.HexToAddress("0x0"), ENSRegistryAddress, ControllerNode)
 		Expect(err).ToNot(HaveOccurred())
 		Backend.Commit()
 		Expect(isSuccessful(tx)).To(BeFalse())
