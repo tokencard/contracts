@@ -210,7 +210,7 @@ var _ = Describe("Migrate Wallet", func() {
 
 	}) //no wallets chached
 
-	When("the worng owner is passed in", func() {
+	When("the wrong owner is passed in", func() {
 		It("should fail", func() {
 			RandomWalletAddress, tx, _, err := bindings.DeployWallet(BankAccount.TransactOpts(), Backend, Owner.Address(), false, ENSRegistryAddress, TokenWhitelistNode, ControllerNode, LicenceNode, WalletDeployerNode, EthToWei(2))
 			Expect(err).ToNot(HaveOccurred())

@@ -22,6 +22,26 @@ var _ = Describe("Wallet Deployer", func() {
 		Expect(common.Hash(on)).To(Equal(EnsNode("controller.tokencard.eth")))
 	})
 
+	When("a wallet is deployed and ownership is transferred to address 0", func() {
+		It("should fail", func() {
+			tx, err := WalletDeployer.DeployWallet(Controller.TransactOpts(ethertest.WithGasLimit(5000000)), common.HexToAddress("0x0"))
+			Expect(err).ToNot(HaveOccurred())
+			Backend.Commit()
+			Expect(isSuccessful(tx)).To(BeFalse())
+			returnData, _ := ethCall(tx)
+			Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("owner cannot be set to zero address"))
+		})
+	})
+
+	When("a random account tries to deploy a Wallet", func() {
+		It("should fail", func() {
+			tx, err := WalletDeployer.DeployWallet(RandomAccount.TransactOpts(ethertest.WithGasLimit(5000000)), Owner.Address())
+			Expect(err).ToNot(HaveOccurred())
+			Backend.Commit()
+			Expect(isSuccessful(tx)).To(BeFalse())
+		})
+	})
+
 	When("no Wallets are cached", func() {
 
 		When("a controller deploys a Wallet", func() {
@@ -69,15 +89,6 @@ var _ = Describe("Wallet Deployer", func() {
 
 		})
 
-		When("a random account tries to deploy a Wallet", func() {
-
-			It("should fail", func() {
-				tx, err := WalletDeployer.DeployWallet(RandomAccount.TransactOpts(ethertest.WithGasLimit(5000000)), Owner.Address())
-				Expect(err).ToNot(HaveOccurred())
-				Backend.Commit()
-				Expect(isSuccessful(tx)).To(BeFalse())
-			})
-		})
 	})
 
 	When("one Wallet is cached", func() {
