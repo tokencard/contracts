@@ -18,7 +18,6 @@
 
 pragma solidity ^0.6.0;
 
-
 /// @title Ownable has an owner address and provides basic authorization control functions.
 /// This contract is modified version of the MIT OpenZepplin Ownable contract
 /// This contract allows for the transferOwnership operation to be made impossible
@@ -65,7 +64,7 @@ contract Ownable {
         return _address == _owner;
     }
 
-     /// @notice Allows for relinquishing control of the contract.
+    /// @notice Allows for relinquishing control of the contract.
     /// @dev Renouncing to ownership will leave the contract without an owner and unusable.
     /// @dev It will not be possible to call the functions with the `onlyOwner` modifier anymore.
     function _renounceOwnership() internal {
@@ -76,7 +75,7 @@ contract Ownable {
 
         emit TransferredOwnership(_owner, address(0));
     }
-    
+
     /// @notice Allows the current owner to transfer control of the contract to a new address.
     /// @param _account address to transfer ownership to.
     /// @param _transferable indicates whether to keep the ownership transferable.

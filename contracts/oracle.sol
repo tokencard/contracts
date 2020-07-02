@@ -28,7 +28,6 @@ import "./internals/ensResolvable.sol";
 import "./internals/parseIntScientific.sol";
 import "./internals/tokenWhitelistable.sol";
 
-
 /// @title Oracle provides asset exchange rates and conversion functionality.
 contract Oracle is ENSResolvable, Base64, Date, Controllable, ParseIntScientific, TokenWhitelistable {
     using ECDSA for bytes32;

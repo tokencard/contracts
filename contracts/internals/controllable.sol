@@ -21,7 +21,6 @@ pragma solidity ^0.6.0;
 import "./ensResolvable.sol";
 import "../interfaces/IController.sol";
 
-
 /// @title Controllable implements access control functionality of the Controller found via ENS.
 abstract contract Controllable is ENSResolvable {
     // Default values for mainnet ENS

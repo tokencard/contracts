@@ -24,7 +24,6 @@ import "./internals/controllable.sol";
 import "./internals/ensResolvable.sol";
 import "./internals/transferrable.sol";
 
-
 /// @title Licence loads the TokenCard and transfers the licence amout to the TKN Holder Contract.
 /// @notice the rest of the amount gets sent to the CryptoFloat
 contract Licence is Transferrable, ENSResolvable, Controllable {

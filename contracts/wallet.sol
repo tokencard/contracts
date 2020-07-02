@@ -32,22 +32,19 @@ import "./internals/ownable.sol";
 import "./internals/tokenWhitelistable.sol";
 import "./internals/transferrable.sol";
 
-
-
 /// @title SelfCallableOwnable allows either owner or the contract itself to call its functions
 /// @dev providing an additional modifier to check if Owner or self is calling
 /// @dev the "self" here is used for the meta transactions
 abstract contract SelfCallableOwnable is Ownable {
-
     /// @dev Check if the sender is the Owner or self
     modifier onlySelf() {
-        require (msg.sender == address(this), "Only self");
+        require(msg.sender == address(this), "Only self");
         _;
     }
 
     /// @dev Check if the sender is the Owner or self
     modifier onlyOwnerOrSelf() {
-        require (_isOwner(msg.sender) || msg.sender == address(this), "Only owner or self");
+        require(_isOwner(msg.sender) || msg.sender == address(this), "Only owner or self");
         _;
     }
 }
@@ -56,7 +53,6 @@ abstract contract SelfCallableOwnable is Ownable {
 /// @dev This provides the various modifiers and utility functions needed for 2FA.
 /// @dev 2FA is needed to confirm changes to the security settings in the wallet.
 abstract contract OptOutableMonolith2FA is Controllable, SelfCallableOwnable {
-
     event SetMonolith2FA(address _sender);
     event SetPersonal2FA(address _sender, address _p2FA);
 
@@ -100,11 +96,9 @@ abstract contract OptOutableMonolith2FA is Controllable, SelfCallableOwnable {
 
         emit SetPersonal2FA(msg.sender, _p2FA);
     }
-
 }
 
 abstract contract WalletDeployable is ENSResolvable {
-
     // wallet-deployer.v4.tokencard.eth
     bytes32 private constant _DEFAULT_WALLET_DEPLOYER_NODE = 0x23349faba58c4a8622c88e7d3ba4a01da2f0764900bfb876898ac21e573273c9;
 
@@ -126,12 +120,11 @@ abstract contract WalletDeployable is ENSResolvable {
 
 /// @title Recoverable provides wallet recovery functionality.
 /// @dev This contract will allow the user revover their wallet i.e. change the owner in case they lose their back-up seed.
-abstract contract Recoverable is  SelfCallableOwnable, OptOutableMonolith2FA {
-
+abstract contract Recoverable is SelfCallableOwnable, OptOutableMonolith2FA {
     /// @dev Recovers wallet by transfering ownership to a new address, needs privileged access.
     /// @param _newOwner address to transfer ownership to.
     /// @param _transferable indicates whether to keep the ownership transferable or not.
-    function recoverWallet(address payable  _newOwner, bool _transferable) external onlySelf {
+    function recoverWallet(address payable _newOwner, bool _transferable) external onlySelf {
         require(privileged, "Recovery requires privileged mode");
         _transferOwnership(_newOwner, _transferable);
     }
@@ -145,7 +138,7 @@ abstract contract AddressWhitelist is WalletDeployable, SelfCallableOwnable, Opt
 
     event AddedToWhitelist(address _sender, address[] _addresses);
     event RemovedFromWhitelist(address _sender, address[] _addresses);
-    
+
     mapping(address => bool) public whitelistMap;
     address[] public whitelistArray;
     // This variable ensures that migrateWhitelist() can only be called once by the walletDeployer.
@@ -179,7 +172,7 @@ abstract contract AddressWhitelist is WalletDeployable, SelfCallableOwnable, Opt
     /// @param _addresses The addresses to be removed from the whitelist.
     function removeFromWhitelist(address[] calldata _addresses) external onlySelf {
         require(privileged, "Removing from whitelist requires privileged mode");
-         // Require that the input list is not empty.
+        // Require that the input list is not empty.
         require(_addresses.length != 0, "Empty list to be removed from whitelist");
         // Require that the whiteList is not empty.
         require(whitelistArray.length != 0, "Whitelist is empty");
@@ -203,7 +196,7 @@ abstract contract AddressWhitelist is WalletDeployable, SelfCallableOwnable, Opt
     /// @dev Adds addresses to AddressWhitelist, called by addToWhitelist() and migrateWhitelist().
     /// @param _addresses The addresses to be whitelisted.
     function _addToWhitelist(address[] memory _addresses) private hasNoOwnerOrZeroAddress(_addresses) {
-         // Require that the list is not empty.
+        // Require that the list is not empty.
         require(_addresses.length != 0, "Empty list to be added to whitelist");
         // Add each of the provided addresses to the whitelist.
         for (uint256 i = 0; i < _addresses.length; i++) {
@@ -213,7 +206,6 @@ abstract contract AddressWhitelist is WalletDeployable, SelfCallableOwnable, Opt
             whitelistMap[_addresses[i]] = true;
             // adds to the whitelist array
             whitelistArray.push(_addresses[i]);
-            
         }
         // Emit the addition event.
         emit AddedToWhitelist(msg.sender, _addresses);
@@ -224,20 +216,19 @@ abstract contract AddressWhitelist is WalletDeployable, SelfCallableOwnable, Opt
 abstract contract DailyLimit is WalletDeployable, SelfCallableOwnable, OptOutableMonolith2FA, TokenWhitelistable {
     using SafeMath for uint256;
 
-    event SetDailyLimit(address _sender, uint _amount);
-    event UpdatedAvailableDailyLimit(uint _amount, uint _nextReset);
+    event SetDailyLimit(address _sender, uint256 _amount);
+    event UpdatedAvailableDailyLimit(uint256 _amount, uint256 _nextReset);
 
-    uint private _available; // The remaining amount available for spending in the current 24-hour window.
-    uint private _dailyLimit; // The daily limit amount.
+    uint256 private _available; // The remaining amount available for spending in the current 24-hour window.
+    uint256 private _dailyLimit; // The daily limit amount.
     bool private _migratedDailyLimit; // This variable ensures that migratedDailyLimit() can only be called once by the walletDeployer.
-    uint private _resetTimestamp; // Denotes the future timestamp when the available daily limit is due to reset.
-    
+    uint256 private _resetTimestamp; // Denotes the future timestamp when the available daily limit is due to reset.
 
     /// @dev Constructor initializes the daily limit in wei.
-    constructor(uint _limit, bytes32 _tokenWhitelistNode) internal TokenWhitelistable(_tokenWhitelistNode) {
+    constructor(uint256 _limit, bytes32 _tokenWhitelistNode) internal TokenWhitelistable(_tokenWhitelistNode) {
         (, uint256 stablecoinMagnitude, , , , , ) = _getStablecoinInfo();
         require(stablecoinMagnitude > 0, "Stablecoin not set");
-        uint limitBaseUnits = _limit * stablecoinMagnitude;
+        uint256 limitBaseUnits = _limit * stablecoinMagnitude;
         _dailyLimit = limitBaseUnits;
         _available = limitBaseUnits;
         _resetTimestamp = now.add(24 hours);
@@ -245,13 +236,13 @@ abstract contract DailyLimit is WalletDeployable, SelfCallableOwnable, OptOutabl
     }
 
     /// @dev View the limit value
-    function dailyLimitValue() external view returns (uint) {
+    function dailyLimitValue() external view returns (uint256) {
         return _dailyLimit;
     }
 
     /// @dev Returns the available daily limit/balance, accounts for daily limit reset.
     /// @return amount of available to spend within the current day in base units.
-    function dailyLimitAvailable() external view returns (uint) {
+    function dailyLimitAvailable() external view returns (uint256) {
         if (now > _resetTimestamp) {
             return _dailyLimit;
         } else {
@@ -261,7 +252,7 @@ abstract contract DailyLimit is WalletDeployable, SelfCallableOwnable, OptOutabl
 
     /// @dev Restores the daily limit, called by the walletDeployer duirng wallet migration.
     /// @param _amount The limit set by the owner before migration.
-    function migrateDailyLimit(uint _amount) external onlyWalletDeployer {
+    function migrateDailyLimit(uint256 _amount) external onlyWalletDeployer {
         require(!_migratedDailyLimit, "DailyLimit already migrated");
         _migratedDailyLimit = true;
         // Set the daily limit...
@@ -270,13 +261,13 @@ abstract contract DailyLimit is WalletDeployable, SelfCallableOwnable, OptOutabl
 
     /// @dev Set daily limit operation.
     /// @param _amount the new limit amount.
-    function setDailyLimit(uint _amount) external onlySelf {
+    function setDailyLimit(uint256 _amount) external onlySelf {
         require(privileged, "Setting the daily limit requires privileged mode");
         _setDailyLimit(_amount);
     }
 
     /// @dev Use up amount within the daily limit. Will fail if amount is larger than available limit.
-    function _enforceDailyLimit(uint _amount) internal {
+    function _enforceDailyLimit(uint256 _amount) internal {
         // Account for the limit daily reset.
         if (now > _resetTimestamp) {
             // Set the available limit to the current daily limit.
@@ -291,23 +282,20 @@ abstract contract DailyLimit is WalletDeployable, SelfCallableOwnable, OptOutabl
 
     /// @dev Modify the daily limit and spend available based on the provided value.
     /// @dev _amount is the daily limit amount in stablecoin base units.
-    function _setDailyLimit(uint _amount) private {
+    function _setDailyLimit(uint256 _amount) private {
         // Set the daily limit to the provided amount.
         _dailyLimit = _amount;
         emit SetDailyLimit(msg.sender, _dailyLimit);
-         // update the available amount...
+        // update the available amount...
         _available = _amount;
-         // ...and reset the 24-hour window
+        // ...and reset the 24-hour window
         _resetTimestamp = now.add(24 hours);
         emit UpdatedAvailableDailyLimit(_available, _resetTimestamp);
     }
-
 }
-
 
 /// @title Asset wallet with extra security features and card integration.
 contract Wallet is ENSResolvable, WalletDeployable, AddressWhitelist, DailyLimit, IERC165, Transferrable, Balanceable {
-
     using Address for address;
     using ECDSA for bytes32;
     using SafeERC20 for IERC20;
@@ -342,7 +330,6 @@ contract Wallet is ENSResolvable, WalletDeployable, AddressWhitelist, DailyLimit
     /// @dev Is the registered ENS node identifying the licence contract.
     bytes32 private _licenceNode;
 
-    
     /// @dev Constructor initializes the wallet with an owner address and daily limit. It also sets up the controllable and tokenWhitelist contracts with the right name registered in ENS.
     /// @param _owner_ is the owner account of the wallet contract.
     /// @param _transferable_ indicates whether the contract ownership can be transferred.
@@ -360,7 +347,14 @@ contract Wallet is ENSResolvable, WalletDeployable, AddressWhitelist, DailyLimit
         bytes32 _licenceNode_,
         bytes32 _walletDeployerNode_,
         uint256 _dailyLimit_
-    ) public ENSResolvable(_ens_) WalletDeployable(_walletDeployerNode_) DailyLimit(_dailyLimit_, _tokenWhitelistNode_) Ownable(_owner_, _transferable_) Controllable(_controllerNode_) {
+    )
+        public
+        ENSResolvable(_ens_)
+        WalletDeployable(_walletDeployerNode_)
+        DailyLimit(_dailyLimit_, _tokenWhitelistNode_)
+        Ownable(_owner_, _transferable_)
+        Controllable(_controllerNode_)
+    {
         _licenceNode = _licenceNode_;
     }
 
@@ -393,19 +387,27 @@ contract Wallet is ENSResolvable, WalletDeployable, AddressWhitelist, DailyLimit
     }
 
     /// Meta-transaction
-    function executeRelayedTransaction(uint256 _nonce, bytes calldata _data, bytes calldata _signature) external onlyController {
-        return _executeRelayedTransaction(_nonce,  _data, _signature, false);
+    function executeRelayedTransaction(
+        uint256 _nonce,
+        bytes calldata _data,
+        bytes calldata _signature
+    ) external onlyController {
+        return _executeRelayedTransaction(_nonce, _data, _signature, false);
     }
 
     /// Privileged functionality
-    function executePrivilegedRelayedTransaction(uint _nonce, bytes calldata _data, bytes calldata _signature) external only2FA {
+    function executePrivilegedRelayedTransaction(
+        uint256 _nonce,
+        bytes calldata _data,
+        bytes calldata _signature
+    ) external only2FA {
         return _executeRelayedTransaction(_nonce, _data, _signature, true);
     }
 
-     /// @dev Enables the wallet-deployer to transfer ownership to the new owner, can be used only once.
+    /// @dev Enables the wallet-deployer to transfer ownership to the new owner, can be used only once.
     /// @param _newOwner address to transfer ownership to.
     /// @param _transferable indicates whether to keep the ownership transferable or not.
-    function transferOwnership(address payable  _newOwner, bool _transferable) external onlyWalletDeployer {
+    function transferOwnership(address payable _newOwner, bool _transferable) external onlyWalletDeployer {
         require(!_transferredOwnership, "Ownership already transferred");
         _transferredOwnership = true;
         _transferOwnership(_newOwner, _transferable);
@@ -416,7 +418,12 @@ contract Wallet is ENSResolvable, WalletDeployable, AddressWhitelist, DailyLimit
     /// @param _nonce only used for relayed transactions, must match the wallet's relayNonce.
     /// @param _data abi encoded data payload.
     /// @param _signature signed prefix + data.
-    function _executeRelayedTransaction(uint _nonce, bytes memory _data, bytes memory _signature, bool _privileged) private {
+    function _executeRelayedTransaction(
+        uint256 _nonce,
+        bytes memory _data,
+        bytes memory _signature,
+        bool _privileged
+    ) private {
         // expecting prefixed data ("rlx:") indicating relayed transaction...
         // ...and an Ethereum Signed Message to protect user from signing an actual Tx
         bytes32 dataHash = keccak256(abi.encodePacked("rlx:", _nonce, _data)).toEthSignedMessageHash();
@@ -469,10 +476,10 @@ contract Wallet is ENSResolvable, WalletDeployable, AddressWhitelist, DailyLimit
         // check if token is allowed to be used for loading the card
         require(_isTokenLoadable(_asset), "token not loadable");
         // if it is not privileged enforce the limit
-        if (!privileged){
+        if (!privileged) {
             // Convert token amount to stablecoin value.
             // If the asset is not available (2nd return value) then revertstablecoinValue will be zero
-            uint stablecoinValue = convertToStablecoin(_asset, _amount);
+            uint256 stablecoinValue = convertToStablecoin(_asset, _amount);
             // Check against the daily spent limit and update accordingly, require that the value is under remaining limit.
             _enforceDailyLimit(stablecoinValue);
         }
@@ -533,7 +540,6 @@ contract Wallet is ENSResolvable, WalletDeployable, AddressWhitelist, DailyLimit
 
             // call executeTransaction(), if one of them reverts then the whole batch reverts.
             _executeTransaction(destination, value, data);
-
         }
     }
 
@@ -541,19 +547,19 @@ contract Wallet is ENSResolvable, WalletDeployable, AddressWhitelist, DailyLimit
     /// @param _token ERC20 token contract address.
     /// @param _amount amount of token in base units.
     /// @return the eqivalent amount in stablecoin base units & 0 if the token is not available.
-    function convertToStablecoin(address _token, uint _amount) public view returns (uint) {
+    function convertToStablecoin(address _token, uint256 _amount) public view returns (uint256) {
         // avoid the unnecessary calculations if the token to be loaded is the stablecoin itself
         if (_token == _stablecoin()) {
             return _amount;
         }
 
-        uint amountToSend = _amount;
+        uint256 amountToSend = _amount;
         // convert token amount to ETH first (the 0x0 address represents ether)
         if (_token != address(0)) {
             // Store the token in memory to save map entry lookup gas.
-            (,uint256 magnitude, uint256 rate, bool available, , , ) = _getTokenInfo(_token);
+            (, uint256 magnitude, uint256 rate, bool available, , , ) = _getTokenInfo(_token);
             // if the token does NOT exist in the whitelist then return 0
-            if(!available){
+            if (!available) {
                 return 0;
             }
             // if it exists then require that its rate is not zero.
@@ -563,7 +569,7 @@ contract Wallet is ENSResolvable, WalletDeployable, AddressWhitelist, DailyLimit
         }
         // _amountToSend now is in ether
         // Get the stablecoin's magnitude and its current rate.
-        ( ,uint256 stablecoinMagnitude, uint256 stablecoinRate, bool stablecoinAvailable, , , ) = _getStablecoinInfo();
+        (, uint256 stablecoinMagnitude, uint256 stablecoinRate, bool stablecoinAvailable, , , ) = _getStablecoinInfo();
         // Check if the stablecoin rate is set.
         require(stablecoinAvailable, "token not available");
         require(stablecoinRate != 0, "stablecoin rate=0");
@@ -571,7 +577,11 @@ contract Wallet is ENSResolvable, WalletDeployable, AddressWhitelist, DailyLimit
         return amountToSend.mul(stablecoinMagnitude).div(stablecoinRate);
     }
 
-    function executeTransaction(address _destination, uint _value, bytes calldata _data) external onlyOwner returns (bytes memory) {
+    function executeTransaction(
+        address _destination,
+        uint256 _value,
+        bytes calldata _data
+    ) external onlyOwner returns (bytes memory) {
         _executeTransaction(_destination, _value, _data);
     }
 
@@ -579,14 +589,17 @@ contract Wallet is ENSResolvable, WalletDeployable, AddressWhitelist, DailyLimit
     /// @param _destination address of the transaction
     /// @param _value ETH amount in wei
     /// @param _data transaction payload binary
-    function _executeTransaction(address _destination, uint _value, bytes memory _data) private returns (bytes memory) {
+    function _executeTransaction(
+        address _destination,
+        uint256 _value,
+        bytes memory _data
+    ) private returns (bytes memory) {
         // If value is send across as a part of this executeTransaction, this will be sent to any payable
         // destination. As a result enforceLimit if destination is not whitelisted.
 
-
         if (!whitelistMap[_destination] && !privileged) {
             // Convert ETH value to stablecoin, 0x0 denotes ETH.
-            uint stablecoinValue = convertToStablecoin(address(0), _value);
+            uint256 stablecoinValue = convertToStablecoin(address(0), _value);
             _enforceDailyLimit(stablecoinValue);
         }
         // Check if the destination is a Contract and it is one of our supported tokens
@@ -599,7 +612,7 @@ contract Wallet is ENSResolvable, WalletDeployable, AddressWhitelist, DailyLimit
                 // Convert token amount to stablecoin value.
                 // If the address (of the token contract) is not in the TokenWhitelist used by the convert method...
                 // ...then stablecoinValue will be zero
-                uint stablecoinValue = convertToStablecoin(_destination, amount);
+                uint256 stablecoinValue = convertToStablecoin(_destination, amount);
                 _enforceDailyLimit(stablecoinValue);
             }
             // use callOptionalReturn provided in SafeERC20 in case the ERC20 method
@@ -636,7 +649,11 @@ contract Wallet is ENSResolvable, WalletDeployable, AddressWhitelist, DailyLimit
     /// @param _to is the recipient's address.
     /// @param _asset is the address of an ERC20 token or 0x0 for ether.
     /// @param _amount is the amount of assets to be transferred in base units.
-    function transfer(address payable _to, address _asset, uint256 _amount) public onlyOwnerOrSelf isNotZero(_amount) {
+    function transfer(
+        address payable _to,
+        address _asset,
+        uint256 _amount
+    ) public onlyOwnerOrSelf isNotZero(_amount) {
         // Checks if the _to address is not the zero-address
         require(_to != address(0), "destination=0");
 
@@ -645,7 +662,7 @@ contract Wallet is ENSResolvable, WalletDeployable, AddressWhitelist, DailyLimit
             // Convert token amount to stablecoin value.
             // If the address (of the token contract) is not in the TokenWhitelist used by the convert method...
             // ...then stablecoinValue will be zero
-            uint stablecoinValue = convertToStablecoin(_asset, _amount);
+            uint256 stablecoinValue = convertToStablecoin(_asset, _amount);
             // Check against the daily spent limit and update accordingly, require that the value is under remaining limit.
             _enforceDailyLimit(stablecoinValue);
         }

@@ -20,7 +20,6 @@ pragma solidity ^0.6.0;
 
 import "../externals/SafeMath.sol";
 
-
 /// @title BytesUtils provides basic byte slicing and casting functionality.
 library BytesUtils {
     using SafeMath for uint256;

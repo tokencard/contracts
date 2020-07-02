@@ -2,11 +2,9 @@ pragma solidity ^0.6.0;
 
 import "../externals/SafeMath.sol";
 
-
 interface TokenHolder {
     function burn(address, uint256) external returns (bool);
 }
-
 
 contract BurnerToken {
     using SafeMath for uint256;

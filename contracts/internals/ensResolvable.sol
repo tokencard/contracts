@@ -21,7 +21,6 @@ pragma solidity ^0.6.0;
 import "../interfaces/IENS.sol";
 import "../interfaces/IPublicResolver.sol";
 
-
 ///@title ENSResolvable - Ethereum Name Service Resolver
 ///@notice contract should be used to get an address for an ENS node
 contract ENSResolvable {

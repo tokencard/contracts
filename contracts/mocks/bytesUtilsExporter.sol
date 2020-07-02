@@ -2,7 +2,6 @@ pragma solidity ^0.6.0;
 
 import "../internals/bytesUtils.sol";
 
-
 contract BytesUtilsExporter {
     using BytesUtils for bytes;
 

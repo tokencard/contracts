@@ -20,7 +20,6 @@ pragma solidity ^0.6.0;
 
 import "../interfaces/IERC20.sol";
 
-
 /// @title Balanceable - This is a contract used to get a balance
 contract Balanceable {
     /// @dev This function is used to get a balance

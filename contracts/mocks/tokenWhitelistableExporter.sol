@@ -3,7 +3,6 @@ pragma solidity ^0.6.0;
 import "../internals/ensResolvable.sol";
 import "../internals/tokenWhitelistable.sol";
 
-
 contract TokenWhitelistableExporter is ENSResolvable, TokenWhitelistable {
     constructor(address _ens_, bytes32 _tokenWhitelistName_) public ENSResolvable(_ens_) TokenWhitelistable(_tokenWhitelistName_) {}
 

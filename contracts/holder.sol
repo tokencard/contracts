@@ -26,7 +26,6 @@ import "./internals/controllable.sol";
 import "./internals/tokenWhitelistable.sol";
 import "./internals/transferrable.sol";
 
-
 /// @title Holder - The TKN Asset Contract
 /// @notice When the TKN contract calls the burn method, a share of the tokens held by this contract are disbursed to the burner.
 contract Holder is Balanceable, ENSResolvable, Controllable, Transferrable, TokenWhitelistable {

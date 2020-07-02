@@ -2,7 +2,6 @@ pragma solidity ^0.6.0;
 
 import "../externals/SafeMath.sol";
 
-
 /// @title NonCompliantToken is a mock ERC20 token that is not compatible with the ERC20 interface.
 contract NonCompliantToken {
     using SafeMath for uint256;

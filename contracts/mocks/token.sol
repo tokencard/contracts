@@ -2,7 +2,6 @@ pragma solidity ^0.6.0;
 
 import "../externals/SafeMath.sol";
 
-
 /// @title Token is a mock ERC20 token used for testing.
 contract Token {
     using SafeMath for uint256;

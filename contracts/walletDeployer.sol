@@ -22,7 +22,6 @@ import "./internals/controllable.sol";
 import "./wallet.sol";
 import "./walletCache.sol";
 
-
 //// @title Wallet deployer with pre-caching if wallets functionality.
 contract WalletDeployer is ENSResolvable, Controllable {
     event DeployedWallet(Wallet _wallet, address _owner);

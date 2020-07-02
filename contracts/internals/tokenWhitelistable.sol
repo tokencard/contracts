@@ -21,7 +21,6 @@ pragma solidity ^0.6.0;
 import "./ensResolvable.sol";
 import "../interfaces/ITokenWhitelist.sol";
 
-
 /// @title TokenWhitelistable implements access to the TokenWhitelist located behind ENS.
 abstract contract TokenWhitelistable is ENSResolvable {
     /// @notice Is the registered ENS node identifying the tokenWhitelist contract

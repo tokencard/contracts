@@ -25,7 +25,6 @@ import "./internals/bytesUtils.sol";
 import "./internals/controllable.sol";
 import "./internals/transferrable.sol";
 
-
 /// @title The ITokenWhitelist interface provides access to a whitelist of tokens.
 interface ITokenWhitelist {
     function getTokenInfo(address)
@@ -70,7 +69,6 @@ interface ITokenWhitelist {
         uint256
     ) external;
 }
-
 
 /// @title TokenWhitelist stores a list of tokens used by the Consumer Contract Wallet, the Oracle, the TKN Holder and the TKN Licence Contract
 contract TokenWhitelist is ENSResolvable, Controllable, Transferrable {

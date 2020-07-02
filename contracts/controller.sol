@@ -22,7 +22,6 @@ import "./interfaces/IController.sol";
 import "./internals/ownable.sol";
 import "./internals/transferrable.sol";
 
-
 /// @title Controller stores a list of controller addresses that can be used for authentication in other contracts.
 /// @notice The Controller implements a hierarchy of concepts, Owner, Admin, and the Controllers.
 /// @dev Owner can change the Admins
