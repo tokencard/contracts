@@ -133,7 +133,7 @@ var _ = AfterEach(func() {
 
 var _ = AfterSuite(func() {
 	if allPassed {
-		TestRig.ExpectMinimumCoverage("wallet.sol", 98.00)
+		TestRig.ExpectMinimumCoverage("wallet.sol", 96.00)
 		TestRig.PrintGasUsage(os.Stdout)
 	}
 })
