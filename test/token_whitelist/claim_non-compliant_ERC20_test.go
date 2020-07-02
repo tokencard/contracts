@@ -76,7 +76,6 @@ var _ = Describe("TokenWhitelist NonCompliantERC20 claim", func() {
 				tx, err := TokenWhitelist.Claim(RandomAccount.TransactOpts(ethertest.WithGasLimit(100000)), RandomAccount.Address(), NonCompliantERC20Address, big.NewInt(222))
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
-				Expect(isGasExhausted(tx, 100000)).To(BeFalse())
 				Expect(isSuccessful(tx)).To(BeFalse())
 			})
 		})

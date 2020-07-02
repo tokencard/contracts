@@ -21,13 +21,13 @@ var _ = Describe("tokenWhitelistable", func() {
 	It("Should return the orcale ENS-registered node", func() {
 		sa, err := TokenWhitelist.OracleNode(nil)
 		Expect(err).ToNot(HaveOccurred())
-		Expect(sa).To(Equal([32]byte(OracleName)))
+		Expect(sa).To(Equal([32]byte(OracleNode)))
 	})
 
 	It("Should return the tokenWhitelist ENS-registered node", func() {
 		sa, err := TokenWhitelistableExporter.TokenWhitelistNode(nil)
 		Expect(err).ToNot(HaveOccurred())
-		Expect(sa).To(Equal([32]byte(TokenWhitelistName)))
+		Expect(sa).To(Equal([32]byte(TokenWhitelistNode)))
 	})
 
 	When("DAI is the stablecoin used", func() {
@@ -122,7 +122,6 @@ var _ = Describe("tokenWhitelistable", func() {
 				)
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
-				Expect(isGasExhausted(tx, 100000)).To(BeFalse())
 				Expect(isSuccessful(tx)).To(BeFalse())
 			})
 		})

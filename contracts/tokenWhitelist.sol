@@ -78,12 +78,8 @@ contract TokenWhitelist is ENSResolvable, Controllable, Transferrable {
     using SafeMath for uint256;
     using BytesUtils for bytes;
 
-    event AddedExclusiveMethod(address _token, bytes4 _methodId);
-    event AddedMethodId(bytes4 _methodId);
     event AddedToken(address _sender, address _token, string _symbol, uint256 _magnitude, bool _loadable, bool _redeemable);
     event Claimed(address _to, address _asset, uint256 _amount);
-    event RemovedExclusiveMethod(address _token, bytes4 _methodId);
-    event RemovedMethodId(bytes4 _methodId);
     event RemovedToken(address _sender, address _token);
     event UpdatedChainlinkFeed(address _token, address _previousContract, address _newContract);
     event UpdatedTokenLoadable(address _sender, address _token, bool _loadable);
@@ -97,26 +93,26 @@ contract TokenWhitelist is ENSResolvable, Controllable, Transferrable {
     bytes4 private constant _TRANSFER_FROM = 0x23b872dd; // keccak256(transferFrom(address,address,uint256)) => 0x23b872dd
 
     struct Token {
-        string symbol; // Token symbol
-        uint256 magnitude; // 10^decimals
-        uint256 rate; // Token exchange rate in wei
-        bool available; // Flags if the token is available or not
-        bool loadable; // Flags if token is loadable to the TokenCard
-        bool redeemable; // Flags if token is redeemable in the TKN Holder contract
-        uint256 lastUpdate; // Time of the last rate update
+        string symbol; // Token symbol.
+        uint256 magnitude; // 10^decimals.
+        uint256 rate; // Token exchange rate in wei.
+        bool available; // Flags if the token is available or not.
+        bool loadable; // Flags if token is loadable to the TokenCard.
+        bool redeemable; // Flags if token is redeemable in the TKN Holder contract.
+        uint256 lastUpdate; // Time of the last rate update.
     }
 
-    /// @notice Specifies whitelisted methodIds for protected tokens in wallet's excuteTranaction() e.g. keccak256(transfer(address,uint256)) => 0xa9059cbb
+    /// @notice Specifies whitelisted methodIds for protected tokens in wallet's excuteTranaction() e.g. keccak256(transfer(address,uint256)) => 0xa9059cbb.
     mapping(bytes4 => bool) private _methodIdWhitelist;
 
     mapping(address => Token) private _tokenInfoMap;
 
-    /// @notice This is a mapping of Chainlink reference data contracts that correspond to the supported tokens, if any!
+    /// @notice This is a mapping of supported tokens to Chainlink reference data contracts, if there is no entry then rate stored in _tokenInfoMap is used instead.
     mapping(address => address) private _chainlinkContracts;
 
     address[] private _tokenAddressArray;
 
-    /// @notice keeping track of how many redeemable tokens are in the tokenWhitelist
+    /// @notice keeping track of how many redeemable tokens are in the tokenWhitelist.
     uint256 private _redeemableCounter;
 
     /// @notice Address of the stablecoin.
@@ -152,22 +148,19 @@ contract TokenWhitelist is ENSResolvable, Controllable, Transferrable {
     }
 
     /// @notice It add or updates the Chainlink reference contracts.
-    /// @dev If the entry does not exist, it creates a new one, otherwise it overwwites it.
+    /// @dev If the entry does not exist, it creates a new one, otherwise it overwrites it.
     /// @param _tokens ERC20 token contract addresses.
-    /// @param _refContracts The Chainlink feed contract addresses.
-    function updateChainlinkFeeds(
-        address[] calldata _tokens,
-        address[] calldata _refContracts
-    ) external onlyAdmin {
+    /// @param _refContracts The Chainlink feed contract addresses, it can be 0 in case we want to deactivate it.
+    function updateChainlinkFeeds(address[] calldata _tokens, address[] calldata _refContracts) external onlyAdmin {
         // Require that the two parameters have the same length.
-        require(_tokens.length == _refContracts.length, "Parameter lengths do not match");
+        require(_tokens.length == _refContracts.length, "Parameter length mismatch");
         // Update the mapping for each token.
         for (uint256 i = 0; i < _tokens.length; i++) {
             // Require that the token is available on the list.
-            require(_tokenInfoMap[_tokens[i]].available, "token should be available");
-            address previousContract = _chainlinkContracts[_tokens[i]];
-            _chainlinkContracts[_tokens[i]] = _refContracts[i];
-            emit UpdatedChainlinkFeed(_tokens[i], previousContract, _refContracts[i]);
+            require(_tokenInfoMap[_tokens[i]].available, "Token not available");
+            address newRefContract = _refContracts[i];
+            emit UpdatedChainlinkFeed(_tokens[i], _chainlinkContracts[_tokens[i]], newRefContract);
+            _chainlinkContracts[_tokens[i]] = newRefContract;
         }
     }
 
@@ -349,14 +342,17 @@ contract TokenWhitelist is ENSResolvable, Controllable, Transferrable {
         )
     {
         Token storage tokenInfo = _tokenInfoMap[_a];
+        // Get the chainlink reference contract if any!
         address chainlink = _chainlinkContracts[_a];
         uint256 rate;
         if (chainlink != address(0)) {
+            // If Chainlink is used as the price feed, access the corresponding contract and fetch the rate.
             int256 chainlinkRate = IChainlink(chainlink).latestAnswer();
             if (chainlinkRate >= 0) {
                 rate = uint256(chainlinkRate);
             }
         } else {
+            // Otherwise, get the rate already stored in this contract.
             rate = tokenInfo.rate;
         }
         return (tokenInfo.symbol, tokenInfo.magnitude, rate, tokenInfo.available, tokenInfo.loadable, tokenInfo.redeemable, tokenInfo.lastUpdate);
@@ -387,11 +383,13 @@ contract TokenWhitelist is ENSResolvable, Controllable, Transferrable {
         uint256 stablecoinRate;
         address chainlink = _chainlinkContracts[_stablecoin];
         if (chainlink != address(0)) {
+            // If Chainlink is used as the price feed, access the corresponding contract and fetch the rate.
             int256 chainlinkRate = IChainlink(chainlink).latestAnswer();
             if (chainlinkRate >= 0) {
                 stablecoinRate = uint256(chainlinkRate);
             }
         } else {
+            // Otherwise, get the rate already stored in this contract.
             stablecoinRate = stablecoinInfo.rate;
         }
         return (

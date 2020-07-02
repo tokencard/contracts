@@ -11,7 +11,7 @@ import (
 	"github.com/tokencard/ethertest"
 )
 
-var _ = Describe("Chainlink", func() {
+var _ = Describe("Update Token Rate", func() {
 
 	When("the token is already supported", func() {
 		BeforeEach(func() {
@@ -78,7 +78,6 @@ var _ = Describe("Chainlink", func() {
 				)
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
-				Expect(isGasExhausted(tx, 100000)).To(BeFalse())
 				Expect(isSuccessful(tx)).To(BeFalse())
 			})
 		})
@@ -95,7 +94,6 @@ var _ = Describe("Chainlink", func() {
 				)
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
-				Expect(isGasExhausted(tx, 100000)).To(BeFalse())
 				Expect(isSuccessful(tx)).To(BeFalse())
 			})
 		})
@@ -109,7 +107,6 @@ var _ = Describe("Chainlink", func() {
 				)
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
-				Expect(isGasExhausted(tx, 100000)).To(BeFalse())
 				Expect(isSuccessful(tx)).To(BeFalse())
 			})
 		})

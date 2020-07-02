@@ -28,10 +28,10 @@ var (
 )
 
 // ChainlinkMockABI is the input ABI used to generate the binding from.
-const ChainlinkMockABI = "[{\"inputs\":[],\"name\":\"getLatestAnswer\",\"outputs\":[{\"internalType\":\"int256\",\"name\":\"\",\"type\":\"int256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getLatestTimestamp\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"rate\",\"outputs\":[{\"internalType\":\"int256\",\"name\":\"\",\"type\":\"int256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"int256\",\"name\":\"_rate\",\"type\":\"int256\"}],\"name\":\"setLatestAnswer\",\"outputs\":[{\"internalType\":\"int256\",\"name\":\"\",\"type\":\"int256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}]"
+const ChainlinkMockABI = "[{\"inputs\":[],\"name\":\"latestAnswer\",\"outputs\":[{\"internalType\":\"int256\",\"name\":\"\",\"type\":\"int256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"latestTimestamp\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"rate\",\"outputs\":[{\"internalType\":\"int256\",\"name\":\"\",\"type\":\"int256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"int256\",\"name\":\"_rate\",\"type\":\"int256\"}],\"name\":\"setLatestAnswer\",\"outputs\":[{\"internalType\":\"int256\",\"name\":\"\",\"type\":\"int256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}]"
 
 // ChainlinkMockBin is the compiled bytecode used for deploying new contracts.
-var ChainlinkMockBin = "0x608060405234801561001057600080fd5b5060d78061001f6000396000f3fe6080604052348015600f57600080fd5b506004361060465760003560e01c806304ea97b014604b5780632c4e722e14607757806396237c0214607d578063f43b52cb146083575b600080fd5b606560048036036020811015605f57600080fd5b50356089565b60408051918252519081900360200190f35b60656091565b60656097565b6065609d565b600090815590565b60005481565b60005490565b429056fea26469706673582212200f7092e87fb41a6c470af50a4755fd8f3295881df12ab7e99c9b5d72ac17f8af64736f6c63430006040033"
+var ChainlinkMockBin = "0x608060405234801561001057600080fd5b5060d78061001f6000396000f3fe6080604052348015600f57600080fd5b506004361060465760003560e01c806304ea97b014604b5780632c4e722e14607757806350d25bcd14607d5780638205bf6a146083575b600080fd5b606560048036036020811015605f57600080fd5b50356089565b60408051918252519081900360200190f35b60656091565b60656097565b6065609d565b600090815590565b60005481565b60005490565b429056fea2646970667358221220b2c73f280dcaac6ccfc939515acbea2b796b5cfe441dc892bb2f197477f9336364736f6c63430006040033"
 
 // DeployChainlinkMock deploys a new Ethereum contract, binding an instance of ChainlinkMock to it.
 func DeployChainlinkMock(auth *bind.TransactOpts, backend bind.ContractBackend) (common.Address, *types.Transaction, *ChainlinkMock, error) {
@@ -189,6 +189,58 @@ func (_ChainlinkMock *ChainlinkMockTransactorRaw) Transact(opts *bind.TransactOp
 	return _ChainlinkMock.Contract.contract.Transact(opts, method, params...)
 }
 
+// LatestAnswer is a free data retrieval call binding the contract method 0x50d25bcd.
+//
+// Solidity: function latestAnswer() constant returns(int256)
+func (_ChainlinkMock *ChainlinkMockCaller) LatestAnswer(opts *bind.CallOpts) (*big.Int, error) {
+	var (
+		ret0 = new(*big.Int)
+	)
+	out := ret0
+	err := _ChainlinkMock.contract.Call(opts, out, "latestAnswer")
+	return *ret0, err
+}
+
+// LatestAnswer is a free data retrieval call binding the contract method 0x50d25bcd.
+//
+// Solidity: function latestAnswer() constant returns(int256)
+func (_ChainlinkMock *ChainlinkMockSession) LatestAnswer() (*big.Int, error) {
+	return _ChainlinkMock.Contract.LatestAnswer(&_ChainlinkMock.CallOpts)
+}
+
+// LatestAnswer is a free data retrieval call binding the contract method 0x50d25bcd.
+//
+// Solidity: function latestAnswer() constant returns(int256)
+func (_ChainlinkMock *ChainlinkMockCallerSession) LatestAnswer() (*big.Int, error) {
+	return _ChainlinkMock.Contract.LatestAnswer(&_ChainlinkMock.CallOpts)
+}
+
+// LatestTimestamp is a free data retrieval call binding the contract method 0x8205bf6a.
+//
+// Solidity: function latestTimestamp() constant returns(uint256)
+func (_ChainlinkMock *ChainlinkMockCaller) LatestTimestamp(opts *bind.CallOpts) (*big.Int, error) {
+	var (
+		ret0 = new(*big.Int)
+	)
+	out := ret0
+	err := _ChainlinkMock.contract.Call(opts, out, "latestTimestamp")
+	return *ret0, err
+}
+
+// LatestTimestamp is a free data retrieval call binding the contract method 0x8205bf6a.
+//
+// Solidity: function latestTimestamp() constant returns(uint256)
+func (_ChainlinkMock *ChainlinkMockSession) LatestTimestamp() (*big.Int, error) {
+	return _ChainlinkMock.Contract.LatestTimestamp(&_ChainlinkMock.CallOpts)
+}
+
+// LatestTimestamp is a free data retrieval call binding the contract method 0x8205bf6a.
+//
+// Solidity: function latestTimestamp() constant returns(uint256)
+func (_ChainlinkMock *ChainlinkMockCallerSession) LatestTimestamp() (*big.Int, error) {
+	return _ChainlinkMock.Contract.LatestTimestamp(&_ChainlinkMock.CallOpts)
+}
+
 // Rate is a free data retrieval call binding the contract method 0x2c4e722e.
 //
 // Solidity: function rate() constant returns(int256)
@@ -213,48 +265,6 @@ func (_ChainlinkMock *ChainlinkMockSession) Rate() (*big.Int, error) {
 // Solidity: function rate() constant returns(int256)
 func (_ChainlinkMock *ChainlinkMockCallerSession) Rate() (*big.Int, error) {
 	return _ChainlinkMock.Contract.Rate(&_ChainlinkMock.CallOpts)
-}
-
-// GetLatestAnswer is a paid mutator transaction binding the contract method 0x96237c02.
-//
-// Solidity: function getLatestAnswer() returns(int256)
-func (_ChainlinkMock *ChainlinkMockTransactor) GetLatestAnswer(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return _ChainlinkMock.contract.Transact(opts, "getLatestAnswer")
-}
-
-// GetLatestAnswer is a paid mutator transaction binding the contract method 0x96237c02.
-//
-// Solidity: function getLatestAnswer() returns(int256)
-func (_ChainlinkMock *ChainlinkMockSession) GetLatestAnswer() (*types.Transaction, error) {
-	return _ChainlinkMock.Contract.GetLatestAnswer(&_ChainlinkMock.TransactOpts)
-}
-
-// GetLatestAnswer is a paid mutator transaction binding the contract method 0x96237c02.
-//
-// Solidity: function getLatestAnswer() returns(int256)
-func (_ChainlinkMock *ChainlinkMockTransactorSession) GetLatestAnswer() (*types.Transaction, error) {
-	return _ChainlinkMock.Contract.GetLatestAnswer(&_ChainlinkMock.TransactOpts)
-}
-
-// GetLatestTimestamp is a paid mutator transaction binding the contract method 0xf43b52cb.
-//
-// Solidity: function getLatestTimestamp() returns(uint256)
-func (_ChainlinkMock *ChainlinkMockTransactor) GetLatestTimestamp(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return _ChainlinkMock.contract.Transact(opts, "getLatestTimestamp")
-}
-
-// GetLatestTimestamp is a paid mutator transaction binding the contract method 0xf43b52cb.
-//
-// Solidity: function getLatestTimestamp() returns(uint256)
-func (_ChainlinkMock *ChainlinkMockSession) GetLatestTimestamp() (*types.Transaction, error) {
-	return _ChainlinkMock.Contract.GetLatestTimestamp(&_ChainlinkMock.TransactOpts)
-}
-
-// GetLatestTimestamp is a paid mutator transaction binding the contract method 0xf43b52cb.
-//
-// Solidity: function getLatestTimestamp() returns(uint256)
-func (_ChainlinkMock *ChainlinkMockTransactorSession) GetLatestTimestamp() (*types.Transaction, error) {
-	return _ChainlinkMock.Contract.GetLatestTimestamp(&_ChainlinkMock.TransactOpts)
 }
 
 // SetLatestAnswer is a paid mutator transaction binding the contract method 0x04ea97b0.
