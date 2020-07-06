@@ -19,7 +19,7 @@
 pragma solidity 0.5.17;
 
 import "./wallet.sol";
-import "./externals/upgradeability/AdminUpgradeabilityProxy.sol";
+import "./externals/upgradeability/UpgradeabilityProxy.sol";
 import "./internals/ensResolvable.sol";
 import "./internals/controllable.sol";
 
@@ -117,7 +117,7 @@ contract WalletCache is ENSResolvable, Controllable {
     /// @notice This public method allows anyone to pre-cache wallets
     function cacheWallet() public {
         address walletDeployerAddress = _ensResolve(walletDeployerNode);
-        address payable wallet = address(new AdminUpgradeabilityProxy(walletImplementation, walletDeployerAddress, ""));
+        address payable wallet = address(new UpgradeabilityProxy(walletImplementation, ""));
         Wallet(wallet).initializeWallet(
             address(uint160(walletDeployerAddress)), // the address(uint160()) cast is done as the Wallet owner (1st argument) needs to be payable
             true,
