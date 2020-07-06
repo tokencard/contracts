@@ -55,8 +55,6 @@ contract WalletDeployer is ENSResolvable, Controllable {
 
         deployedWallets[_owner] = wallet;
 
-        // We have το change the owner of the proxy before transfring ownership of the wallet.
-        BaseAdminUpgradeabilityProxy(wallet).changeAdmin(_owner);
         // This sets the 'transferable' boolean to false, i.e. no more change of ownership.
         Wallet(wallet).transferOwnership(_owner, false);
     }
@@ -100,8 +98,6 @@ contract WalletDeployer is ENSResolvable, Controllable {
             Wallet(wallet).setWhitelist(_whitelistedAddresses);
         }
 
-        // Change admin before transferring owenrship.
-        BaseAdminUpgradeabilityProxy(wallet).changeAdmin(_owner);
         // Change ownership and set transferable to false so ownership cannot be transferred again.
         Wallet(wallet).transferOwnership(_owner, false);
 
