@@ -580,6 +580,12 @@ contract Wallet is ENSResolvable, AddressWhitelist, SpendLimit, GasTopUpLimit, L
         emit Received(msg.sender, msg.value);
     }
 
+    /// @dev This returns the balance of the contract for any ERC20 token or ETH.
+    /// @param _asset is the address of an ERC20 token or 0x0 for ETH.
+    function balance(address _asset) external view returns (uint256) {
+        return _balance(_asset);
+    }
+
     /// @dev This is a bulk transfer convenience function, used to migrate contracts.
     /// @notice If any of the transfers fail, this will revert.
     /// @param _to is the recipient's address, can't be the zero (0x0) address: transfer() will revert.
@@ -589,7 +595,7 @@ contract Wallet is ENSResolvable, AddressWhitelist, SpendLimit, GasTopUpLimit, L
         require(_assets.length != 0, "asset array is empty");
         // This loops through all of the transfers to be made
         for (uint256 i = 0; i < _assets.length; i++) {
-            uint256 amount = _balance(address(this), _assets[i]);
+            uint256 amount = _balance(_assets[i]);
             // use our safe, daily limit protected transfer
             transfer(_to, _assets[i], amount);
         }
