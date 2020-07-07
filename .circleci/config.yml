@@ -30,7 +30,7 @@ jobs:
           at: /tmp/home/circleci/github.com/tokencard/contracts
       - run:
           name: "Copy build files from previous job"
-          command: cp -r /home/circleci/github.com/tokencard/contracts/build /tmp/home/circleci/github.com/tokencard/contracts/build
+          command: cp -r /tmp/home/circleci/github.com/tokencard/contracts/build /home/circleci/github.com/tokencard/contracts/build
       - run:
           name: "Setup custom environment variables"
           command: |
