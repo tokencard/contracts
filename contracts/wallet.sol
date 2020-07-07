@@ -522,7 +522,6 @@ contract Wallet is ENSResolvable, AddressWhitelist, SpendLimit, GasTopUpLimit, L
     event ExecutedTransaction(address _destination, uint256 _value, bytes _data, bytes _returndata);
     event IncreasedRelayNonce(address _sender, uint256 _currentNonce);
     event LoadedTokenCard(address _asset, uint256 _amount);
-    event Received(address _from, uint256 _amount);
     event ToppedUpGas(address _sender, address _owner, uint256 _amount);
     event Transferred(address _to, address _asset, uint256 _amount);
     event UpdatedAvailableLimit(); // This is here because our tests don't inherit events from a library
@@ -575,17 +574,6 @@ contract Wallet is ENSResolvable, AddressWhitelist, SpendLimit, GasTopUpLimit, L
         _;
     }
 
-    /// @dev Ether can be deposited from any source, so this contract must be payable by anyone.
-    function() external payable {
-        emit Received(msg.sender, msg.value);
-    }
-
-    /// @dev This returns the balance of the contract for any ERC20 token or ETH.
-    /// @param _asset is the address of an ERC20 token or 0x0 for ETH.
-    function getBalance(address _asset) external view returns (uint256) {
-        return _balance(_asset);
-    }
-
     /// @dev This is a bulk transfer convenience function, used to migrate contracts.
     /// @notice If any of the transfers fail, this will revert.
     /// @param _to is the recipient's address, can't be the zero (0x0) address: transfer() will revert.
@@ -629,6 +617,12 @@ contract Wallet is ENSResolvable, AddressWhitelist, SpendLimit, GasTopUpLimit, L
         emit ExecutedRelayedTransaction(_data, returndata);
     }
 
+    /// @dev This returns the balance of the contract for any ERC20 token or ETH.
+    /// @param _asset is the address of an ERC20 token or 0x0 for ETH.
+    function getBalance(address _asset) external view returns (uint256) {
+        return _balance(_asset);
+    }
+    
     /// @dev This allows the user to cancel a transaction that was unexpectedly delayed by the relayer
     function increaseRelayNonce() external onlyOwner {
         _increaseRelayNonce();

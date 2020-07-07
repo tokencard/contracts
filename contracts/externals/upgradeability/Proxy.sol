@@ -8,12 +8,19 @@ pragma solidity ^0.5.0;
  * returned by the abstract _implementation() internal function.
  */
 contract Proxy {
+
+  event Received(address _from, uint256 _amount);
+  
   /**
    * @dev Fallback function.
    * Implemented entirely in `_fallback`.
    */
   function () payable external {
-    _fallback();
+    if(msg.data.length == 0){
+      emit Received(msg.sender, msg.value);
+      return;
+    }
+    _delegate(_implementation());
   }
 
   /**
@@ -48,11 +55,4 @@ contract Proxy {
     }
   }
 
-  /**
-   * @dev fallback implementation.
-   * Extracted to enable manual triggering.
-   */
-  function _fallback() internal {
-    _delegate(_implementation());
-  }
 }
