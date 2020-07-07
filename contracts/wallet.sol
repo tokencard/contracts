@@ -526,7 +526,7 @@ contract Wallet is ENSResolvable, AddressWhitelist, SpendLimit, GasTopUpLimit, L
     event Transferred(address _to, address _asset, uint256 _amount);
     event UpdatedAvailableLimit(); // This is here because our tests don't inherit events from a library
 
-    string public constant WALLET_VERSION = "3.2.0";
+    string public constant WALLET_VERSION = "3.3.1";
 
     // keccak256("isValidSignature(bytes,bytes)") = 20c13b0bc670c284a9f19cdf7a533ca249404190f8dc132aac33e733b965269e
     bytes4 private constant _EIP_1271 = 0x20c13b0b;
@@ -622,7 +622,7 @@ contract Wallet is ENSResolvable, AddressWhitelist, SpendLimit, GasTopUpLimit, L
     function getBalance(address _asset) external view returns (uint256) {
         return _balance(_asset);
     }
-    
+
     /// @dev This allows the user to cancel a transaction that was unexpectedly delayed by the relayer
     function increaseRelayNonce() external onlyOwner {
         _increaseRelayNonce();
