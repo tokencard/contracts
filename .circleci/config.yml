@@ -2,7 +2,7 @@ version: 2
 jobs:
   build_check:
     machine:
-      image: ubuntu-1604:201903-01      
+      image: ubuntu-1604:201903-01
     working_directory: /home/circleci/github.com/tokencard/contracts
     steps:
       - checkout
@@ -13,7 +13,7 @@ jobs:
       - run: '[[ -z $(git status -uno --porcelain) ]] || (git status ; echo "Please run ./build.sh before committing changes!"; exit 1)'
       - persist_to_workspace:
           root: /home/circleci/github.com/tokencard/contracts
-          paths: 
+          paths:
             - build
 
   build_test:
@@ -28,7 +28,7 @@ jobs:
             - vendor-{{ checksum "go.sum" }}
       - attach_workspace:
           at: /tmp/home/circleci/github.com/tokencard/contracts
-      - run: 
+      - run:
           name: "Copy build files from previous job"
           command: cp -r /tmp/home/circleci/github.com/tokencard/contracts/build /home/circleci/github.com/tokencard/contracts/build
       - run:
@@ -113,7 +113,7 @@ jobs:
             if [[ "${CIRCLE_NODE_INDEX}" == 6 ]]; then
               myth analyze --solv=0.5.17 ./controller.sol --execution-timeout=800
             fi
-          no_output_timeout: 20m          
+          no_output_timeout: 20m
 
   slither:
     docker:
@@ -183,7 +183,7 @@ jobs:
             if [[ "${CIRCLE_NODE_INDEX}" == 0 ]]; then
                 echidna-test tools/echidna/wallet/wallet.sol --config=tools/echidna/wallet/wallet.yaml --contract=TEST
             fi
-          no_output_timeout: 15m              
+          no_output_timeout: 15m
       - run:
           command: |
             if [[ "${CIRCLE_NODE_INDEX}" == 1 ]]; then
@@ -214,7 +214,7 @@ jobs:
                 echidna-test tools/echidna/internals/ownable.sol --config=tools/echidna/internals/ownable.yaml --contract=TEST
             fi
           no_output_timeout: 15m
-  
+
   manticore:
     docker:
       - image: trailofbits/eth-security-toolbox@sha256:3fb96e2d9de772f5e97f1c3c650c8a3d28660f8a64a60b76269da1ac19b86a28
@@ -236,7 +236,7 @@ jobs:
             if [[ "${CIRCLE_NODE_INDEX}" == 1 ]]; then
                 manticore contracts/walletDeployer.sol --contract=WalletDeployer --config=tools/manticore/manticore.yaml --quick-mode
             fi
-          no_output_timeout: 15m      
+          no_output_timeout: 15m
       - run:
           command: |
             if [[ "${CIRCLE_NODE_INDEX}" == 2 ]]; then
@@ -272,7 +272,7 @@ workflows:
               ignore: ""
       - build_test:
           requires:
-              - build_check
+            - build_check
           filters:
             tags:
               ignore: ""
