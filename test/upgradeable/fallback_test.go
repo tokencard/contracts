@@ -6,7 +6,6 @@ import (
 
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/i-stam/ethertest"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	"github.com/tokencard/contracts/v3/pkg/bindings/mocks"
@@ -48,12 +47,26 @@ var _ = Describe("fallback", func() {
 		})
 
 		When("using tranfser()", func() {
-			It("should fail", func() {
+			BeforeEach(func() {
 				// transfer 1 wei to proxy
-				tx, err = WalletMock.Transfer(Owner.TransactOpts(ethertest.WithGasLimit(100000)), ProxyAddress, big.NewInt(1))
+				tx, err = WalletMock.Transfer(Owner.TransactOpts(), ProxyAddress, big.NewInt(1))
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
-				Expect(isSuccessful(tx)).To(BeFalse())
+				Expect(isSuccessful(tx)).To(BeTrue())
+			})
+			It("should return 1 wei", func() {
+				b, e := Backend.BalanceAt(context.Background(), ProxyAddress, nil)
+				Expect(e).ToNot(HaveOccurred())
+				Expect(b.String()).To(Equal("1"))
+			})
+			It("should emit a deposit event", func() {
+				it, err := Proxy.FilterReceived(nil)
+				Expect(err).ToNot(HaveOccurred())
+				Expect(it.Next()).To(BeTrue())
+				evt := it.Event
+				Expect(it.Next()).To(BeFalse())
+				Expect(evt.From).To(Equal(WalletMockAddress))
+				Expect(evt.Amount.String()).To(Equal("1"))
 			})
 		})
 

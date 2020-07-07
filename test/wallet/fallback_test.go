@@ -24,7 +24,7 @@ var _ = Describe("fallback", func() {
 		})
 
 		It("should emit a deposit event", func() {
-			it, err := WalletProxy.FilterReceived(nil)
+			it, err := Proxy.FilterReceived(nil)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(it.Next()).To(BeTrue())
 			evt := it.Event
@@ -47,23 +47,19 @@ var _ = Describe("fallback", func() {
 			err = Backend.SendTransaction(context.Background(), signedTx)
 			Expect(err).ToNot(HaveOccurred())
 			Backend.Commit()
-			Expect(isSuccessful(signedTx)).To(BeTrue())
+			Expect(isSuccessful(signedTx)).To(BeFalse())
 		})
 
-		It("should increase the wallet's ETH balance by one Finney", func() {
+		It("should NOT increase the wallet's ETH balance", func() {
 			balance, err := Backend.BalanceAt(context.Background(), WalletProxyAddress, nil)
 			Expect(err).ToNot(HaveOccurred())
-			Expect(balance.String()).To(Equal(FinneyToWei(1).String()))
+			Expect(balance.String()).To(Equal("0"))
 		})
 
-		It("should emit a deposit event", func() {
-			it, err := WalletProxy.FilterReceived(nil)
+		It("should NOT emit a deposit event", func() {
+			it, err := Proxy.FilterReceived(nil)
 			Expect(err).ToNot(HaveOccurred())
-			Expect(it.Next()).To(BeTrue())
-			evt := it.Event
 			Expect(it.Next()).To(BeFalse())
-			Expect(evt.From).To(Equal(randomAddress))
-			Expect(evt.Amount.String()).To(Equal(FinneyToWei(1).String()))
 		})
 	})
 })

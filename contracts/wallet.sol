@@ -522,7 +522,6 @@ contract Wallet is ENSResolvable, AddressWhitelist, SpendLimit, GasTopUpLimit, L
     event ExecutedTransaction(address _destination, uint256 _value, bytes _data, bytes _returndata);
     event IncreasedRelayNonce(address _sender, uint256 _currentNonce);
     event LoadedTokenCard(address _asset, uint256 _amount);
-    event Received(address _from, uint256 _amount);
     event ToppedUpGas(address _sender, address _owner, uint256 _amount);
     event Transferred(address _to, address _asset, uint256 _amount);
     event UpdatedAvailableLimit(); // This is here because our tests don't inherit events from a library
@@ -573,11 +572,6 @@ contract Wallet is ENSResolvable, AddressWhitelist, SpendLimit, GasTopUpLimit, L
     modifier isNotZero(uint256 _value) {
         require(_value != 0, "value=0");
         _;
-    }
-
-    /// @dev Ether can be deposited from any source, so this contract must be payable by anyone.
-    function() external payable {
-        emit Received(msg.sender, msg.value);
     }
 
     /// @dev This is a bulk transfer convenience function, used to migrate contracts.
