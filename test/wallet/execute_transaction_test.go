@@ -511,7 +511,7 @@ var _ = Describe("executeTransaction", func() {
 					var tx *types.Transaction
 					var err error
 
-					RandomWalletProxyAddress, tx, _, err = upgradeability.DeployAdminUpgradeabilityProxy(BankAccount.TransactOpts(), Backend, WalletImplementationAddress, RandomAccount.Address(), nil)
+					RandomWalletProxyAddress, tx, _, err = upgradeability.DeployUpgradeabilityProxy(BankAccount.TransactOpts(), Backend, WalletImplementationAddress, nil)
 					Expect(err).ToNot(HaveOccurred())
 					Backend.Commit()
 					Expect(isSuccessful(tx)).To(BeTrue())

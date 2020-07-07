@@ -27,7 +27,7 @@ var WalletDeployerAddress common.Address
 var WalletDeployer *bindings.WalletDeployer
 
 func deployInitProxy(owner common.Address, spendLimit *big.Int) common.Address {
-	RandomProxyAddress, tx, _, err := upgradeability.DeployAdminUpgradeabilityProxy(BankAccount.TransactOpts(), Backend, WalletImplementationAddress, owner, nil)
+	RandomProxyAddress, tx, _, err := upgradeability.DeployUpgradeabilityProxy(BankAccount.TransactOpts(), Backend, WalletImplementationAddress, nil)
 	Expect(err).ToNot(HaveOccurred())
 	Backend.Commit()
 	Expect(isSuccessful(tx)).To(BeTrue())
