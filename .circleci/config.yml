@@ -59,7 +59,7 @@ jobs:
 
   mythril:
     docker:
-      - image: mythril/myth@sha256:75605a2a7e848e416f471a67159d6812feaa45e03ddd352aac588e505d68e5c5
+      - image: mythril/myth@sha256:e78a96bd0f5e57fe45bcd1c744509932bee83706a00293e53a60e83cd0ab89f3
     resource_class: xlarge
     working_directory: /tmp/contracts
     parallelism: 7
@@ -69,49 +69,49 @@ jobs:
           working_directory: contracts
           command: |
             if [[ "${CIRCLE_NODE_INDEX}" == 0 ]]; then
-              myth analyze --solv=0.5.17 ./oracle.sol --execution-timeout=800
+              myth analyze --solv=0.5.17 ./oracle.sol --execution-timeout=800 --max-depth=15 --parallel-solving
             fi
           no_output_timeout: 20m
       - run:
           working_directory: contracts
           command: |
             if [[ "${CIRCLE_NODE_INDEX}" == 1 ]]; then
-              myth analyze --solv=0.5.17 ./wallet.sol --execution-timeout=800
+              myth analyze --solv=0.5.17 ./wallet.sol --execution-timeout=800 --max-depth=15 --parallel-solving
             fi
           no_output_timeout: 20m
       - run:
           working_directory: contracts
           command: |
             if [[ "${CIRCLE_NODE_INDEX}" == 2 ]]; then
-              myth analyze --solv=0.5.17 ./holder.sol --execution-timeout=800
+              myth analyze --solv=0.5.17 ./holder.sol --execution-timeout=800  --max-depth=15 --parallel-solving
             fi
           no_output_timeout: 20m
       - run:
           working_directory: contracts
           command: |
             if [[ "${CIRCLE_NODE_INDEX}" == 3 ]]; then
-              myth analyze --solv=0.5.17 ./licence.sol --execution-timeout=800
+              myth analyze --solv=0.5.17 ./licence.sol --execution-timeout=800  --max-depth=15 --parallel-solving
             fi
           no_output_timeout: 20m
       - run:
           working_directory: contracts
           command: |
             if [[ "${CIRCLE_NODE_INDEX}" == 4 ]]; then
-              myth analyze --solv=0.5.17 ./tokenWhitelist.sol --execution-timeout=800
+              myth analyze --solv=0.5.17 ./tokenWhitelist.sol --execution-timeout=800  --max-depth=15 --parallel-solving
             fi
           no_output_timeout: 20m
       - run:
           working_directory: contracts
           command: |
             if [[ "${CIRCLE_NODE_INDEX}" == 5 ]]; then
-              myth analyze --solv=0.5.17 ./walletDeployer.sol --execution-timeout=800
+              myth analyze --solv=0.5.17 ./walletDeployer.sol --execution-timeout=800  --max-depth=15 --parallel-solving
             fi
           no_output_timeout: 20m
       - run:
           working_directory: contracts
           command: |
             if [[ "${CIRCLE_NODE_INDEX}" == 6 ]]; then
-              myth analyze --solv=0.5.17 ./controller.sol --execution-timeout=800
+              myth analyze --solv=0.5.17 ./controller.sol --execution-timeout=800  --max-depth=15 --parallel-solving
             fi
           no_output_timeout: 20m
 
