@@ -100,7 +100,7 @@ var _ = BeforeEach(func() {
 	Backend.Commit()
 	Expect(isSuccessful(tx)).To(BeTrue())
 
-	WalletProxyAddress, tx, _, err = upgradeability.DeployAdminUpgradeabilityProxy(Owner.TransactOpts(), Backend, WalletImplementationAddress, Owner.Address(), nil)
+	WalletProxyAddress, tx, _, err = upgradeability.DeployUpgradeabilityProxy(Owner.TransactOpts(), Backend, WalletImplementationAddress, nil)
 	Expect(err).ToNot(HaveOccurred())
 	Backend.Commit()
 	Expect(isSuccessful(tx)).To(BeTrue())
