@@ -4,3 +4,4 @@ scTopics
 vendor
 crytic-export
 mcore_*
+/build
