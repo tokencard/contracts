@@ -23,15 +23,14 @@ import "../externals/ERC20.sol";
 
 /// @title Balanceable - This is a contract used to get a balance
 contract Balanceable {
-    /// @dev This function is used to get a balance
-    /// @param _address of which balance we are trying to ascertain
+    /// @dev This function is used to get a balance.
     /// @param _asset is the address of an ERC20 token or 0x0 for ether.
     /// @return balance associated with an address, for any token, in the wei equivalent
-    function _balance(address _address, address _asset) internal view returns (uint256) {
+    function _balance(address _asset) internal view returns (uint256) {
         if (_asset != address(0)) {
-            return ERC20(_asset).balanceOf(_address);
+            return ERC20(_asset).balanceOf(address(this));
         } else {
-            return _address.balance;
+            return address(this).balance;
         }
     }
 }

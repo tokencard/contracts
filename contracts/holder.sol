@@ -73,7 +73,7 @@ contract Holder is Balanceable, ENSResolvable, Controllable, Transferrable, Toke
         uint256 supply = IBurner(_burner).currentSupply().add(_amount);
         address[] memory redeemableAddresses = _redeemableTokens();
         for (uint256 i = 0; i < redeemableAddresses.length; i++) {
-            uint256 redeemableBalance = _balance(address(this), redeemableAddresses[i]);
+            uint256 redeemableBalance = _balance(redeemableAddresses[i]);
             if (redeemableBalance > 0) {
                 uint256 redeemableAmount = redeemableBalance.mul(_amount).div(supply);
                 _safeTransfer(_to, redeemableAddresses[i], redeemableAmount);
@@ -91,7 +91,7 @@ contract Holder is Balanceable, ENSResolvable, Controllable, Transferrable, Toke
         for (uint256 i = 0; i < _nonRedeemableAddresses.length; i++) {
             //revert if token is redeemable
             require(!_isTokenRedeemable(_nonRedeemableAddresses[i]), "redeemables cannot be claimed");
-            uint256 claimBalance = _balance(address(this), _nonRedeemableAddresses[i]);
+            uint256 claimBalance = _balance(_nonRedeemableAddresses[i]);
             if (claimBalance > 0) {
                 _safeTransfer(_to, _nonRedeemableAddresses[i], claimBalance);
                 emit Claimed(_to, _nonRedeemableAddresses[i], claimBalance);
