@@ -72,7 +72,7 @@ contracts=(
   "mocks/walletMock/WalletMock mocks/walletMock.go WalletMock mocks"
   "externals/ens/ENSRegistry/ENSRegistry externals/ens/ENSRegistry.go ENSRegistry ens"
   "externals/ens/PublicResolver/PublicResolver externals/ens/PublicResolver.go PublicResolver ens"
-  "externals/upgradeability/UpgradeabilityProxy/UpgradeabilityProxy externals/upgradeability/UpgradeabilityProxy.go AdminUpgradeabilityProxy upgradeability"
+  "externals/upgradeability/UpgradeabilityProxy/UpgradeabilityProxy externals/upgradeability/UpgradeabilityProxy.go UpgradeabilityProxy upgradeability"
 )
 
 for c in "${contracts[@]}"
