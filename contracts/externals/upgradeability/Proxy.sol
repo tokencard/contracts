@@ -16,7 +16,7 @@ contract Proxy {
    * Implemented entirely in `_fallback`.
    */
   function () payable external {
-    if(msg.data.length == 0){
+    if (msg.data.length == 0) {
       emit Received(msg.sender, msg.value);
       return;
     }
