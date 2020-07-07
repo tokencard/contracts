@@ -582,7 +582,7 @@ contract Wallet is ENSResolvable, AddressWhitelist, SpendLimit, GasTopUpLimit, L
 
     /// @dev This returns the balance of the contract for any ERC20 token or ETH.
     /// @param _asset is the address of an ERC20 token or 0x0 for ETH.
-    function balance(address _asset) external view returns (uint256) {
+    function getBalance(address _asset) external view returns (uint256) {
         return _balance(_asset);
     }
 
