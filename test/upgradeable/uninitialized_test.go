@@ -18,7 +18,7 @@ var _ = Describe("uninitialized", func() {
 		var tx *types.Transaction
 		var err error
 		BeforeEach(func() {
-			ProxyAddress, tx, Proxy, err = upgradeability.DeployAdminUpgradeabilityProxy(BankAccount.TransactOpts(), Backend, WalletImplementationAddress, Owner.Address(), nil)
+			ProxyAddress, tx, Proxy, err = upgradeability.DeployUpgradeabilityProxy(BankAccount.TransactOpts(), Backend, WalletImplementationAddress, nil)
 			Expect(err).ToNot(HaveOccurred())
 			Backend.Commit()
 			Expect(isSuccessful(tx)).To(BeTrue())

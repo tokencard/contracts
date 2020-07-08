@@ -49,7 +49,7 @@ var _ = Describe("ownable", func() {
 		var err error
 
 		BeforeEach(func() {
-			RandomProxyAddress, tx, _, err = upgradeability.DeployAdminUpgradeabilityProxy(BankAccount.TransactOpts(), Backend, WalletImplementationAddress, Owner.Address(), nil)
+			RandomProxyAddress, tx, _, err = upgradeability.DeployUpgradeabilityProxy(BankAccount.TransactOpts(), Backend, WalletImplementationAddress, nil)
 			Expect(err).ToNot(HaveOccurred())
 			Backend.Commit()
 			Expect(isSuccessful(tx)).To(BeTrue())

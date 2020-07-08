@@ -32,7 +32,7 @@ var _ = Describe("wallet initialization", func() {
 		})
 
 		It("Should NOT initialize a new wallet porxy", func() {
-			RandomProxyAddress, tx, _, err := upgradeability.DeployAdminUpgradeabilityProxy(BankAccount.TransactOpts(), Backend, WalletImplementationAddress, Owner.Address(), nil)
+			RandomProxyAddress, tx, _, err := upgradeability.DeployUpgradeabilityProxy(BankAccount.TransactOpts(), Backend, WalletImplementationAddress, nil)
 			Expect(err).ToNot(HaveOccurred())
 			Backend.Commit()
 			Expect(isSuccessful(tx)).To(BeTrue())

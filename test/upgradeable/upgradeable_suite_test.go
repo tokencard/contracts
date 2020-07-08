@@ -3,6 +3,7 @@ package upgrade_test
 import (
 	"context"
 	"fmt"
+	"os"
 	"testing"
 
 	"github.com/ethereum/go-ethereum"
@@ -17,13 +18,13 @@ import (
 
 var WalletImplementationAddress common.Address
 
-var Proxy *upgradeability.AdminUpgradeabilityProxy
+var Proxy *upgradeability.UpgradeabilityProxy
 var ProxyAddress common.Address
 
 var ProxyWallet *bindings.Wallet
 
 func init() {
-	TestRig.AddCoverageForContracts("../../build/externals/upgradeability/AdminUpgradeabilityProxy/combined.json", "../../contracts")
+	TestRig.AddCoverageForContracts("../../build/externals/upgradeability/UpgradeabilityProxy/combined.json", "../../contracts")
 }
 
 func ethCall(tx *types.Transaction) ([]byte, error) {
@@ -56,7 +57,7 @@ var _ = BeforeEach(func() {
 	Backend.Commit()
 	Expect(isSuccessful(tx)).To(BeTrue())
 
-	ProxyAddress, tx, Proxy, err = upgradeability.DeployAdminUpgradeabilityProxy(BankAccount.TransactOpts(), Backend, WalletImplementationAddress, Owner.Address(), nil)
+	ProxyAddress, tx, Proxy, err = upgradeability.DeployUpgradeabilityProxy(BankAccount.TransactOpts(), Backend, WalletImplementationAddress, nil)
 	Expect(err).ToNot(HaveOccurred())
 	Backend.Commit()
 	Expect(isSuccessful(tx)).To(BeTrue())
@@ -78,12 +79,12 @@ var _ = AfterEach(func() {
 
 })
 
-// var _ = AfterSuite(func() {
-// 	if allPassed {
-// 		TestRig.ExpectMinimumCoverage("AdminUpgradeabilityProxy.sol", 98.00)
-// 		TestRig.PrintGasUsage(os.Stdout)
-// 	}
-// })
+var _ = AfterSuite(func() {
+	if allPassed {
+		TestRig.ExpectMinimumCoverage("externals/upgradeability/UpgradeabilityProxy.sol", 69.00)
+		TestRig.PrintGasUsage(os.Stdout)
+	}
+})
 
 func isSuccessful(tx *types.Transaction) bool {
 	r, err := Backend.TransactionReceipt(context.Background(), tx.Hash())

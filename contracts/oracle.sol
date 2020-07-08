@@ -137,7 +137,7 @@ contract Oracle is ENSResolvable, usingOraclize, Transferrable, Base64, Date, Co
         // Require that the proof is valid.
         if (valid) {
             // Parse the JSON result to get the rate in wei.
-            uint256 parsedRate = _parseIntScientificWei(parseRate(_result));
+            uint256 parsedRate = _parseIntScientificWei(_parseRate(_result));
             // Set the update time of the token rate.
             uint256 parsedLastUpdate = timestamp;
             // Remove query from the list.
@@ -149,7 +149,7 @@ contract Oracle is ENSResolvable, usingOraclize, Transferrable, Base64, Date, Co
 
     /// @notice Extracts JSON rate value from the response object.
     /// @param _json body of the JSON response from the CryptoCompare API.
-    function parseRate(string memory _json) internal pure returns (string memory) {
+    function _parseRate(string memory _json) internal pure returns (string memory) {
         uint256 jsonLen = abi.encodePacked(_json).length;
         //{"ETH":}.length = 8, assuming a (maximum of) 18 digit prevision
         require(jsonLen > 8 && jsonLen <= 28, "misformatted input");

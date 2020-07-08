@@ -24,6 +24,7 @@ import (
 )
 
 var WalletProxy *bindings.Wallet
+var Proxy *upgradeability.UpgradeabilityProxy
 var WalletProxyAddress common.Address
 var WalletImplementationAddress common.Address
 
@@ -100,7 +101,7 @@ var _ = BeforeEach(func() {
 	Backend.Commit()
 	Expect(isSuccessful(tx)).To(BeTrue())
 
-	WalletProxyAddress, tx, _, err = upgradeability.DeployAdminUpgradeabilityProxy(Owner.TransactOpts(), Backend, WalletImplementationAddress, Owner.Address(), nil)
+	WalletProxyAddress, tx, Proxy, err = upgradeability.DeployUpgradeabilityProxy(Owner.TransactOpts(), Backend, WalletImplementationAddress, nil)
 	Expect(err).ToNot(HaveOccurred())
 	Backend.Commit()
 	Expect(isSuccessful(tx)).To(BeTrue())
@@ -113,7 +114,7 @@ var _ = BeforeEach(func() {
 })
 
 var allPassed = true
-var currentVersion = "3.2.0"
+var currentVersion = "3.3.1"
 
 var _ = Describe("Wallet Version", func() {
 	It("should return the current version", func() {
