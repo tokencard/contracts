@@ -33,7 +33,6 @@ interface IWalletCache {
 //// @title Wallet cache with wallet pre-caching functionality.
 contract WalletCache is ENSResolvable, Controllable {
     event CachedWallet(address payable _wallet);
-    event setNewWalletImplementation(address _newWalletImplementation);
 
     /*****   Constants   *****/
     // Default values for mainnet ENS
@@ -93,13 +92,6 @@ contract WalletCache is ENSResolvable, Controllable {
     /// @notice returns the number of pre-cached wallets.
     function cachedWalletsCount() external view returns (uint256) {
         return cachedWallets.length;
-    }
-
-    /// @notice Sets a new wallet implementation.
-    function setNewWalletImplementaton(address _newWalletImplementation) external onlyAdmin {
-        require(_newWalletImplementation != address(0) && _newWalletImplementation != walletImplementation, "invalid implementation");
-        walletImplementation = _newWalletImplementation;
-        emit setNewWalletImplementation(_newWalletImplementation);
     }
 
     /// @notice This public method allows only the wallet deployer to pop pre-cached wallets or create a new one in case there aren't any
