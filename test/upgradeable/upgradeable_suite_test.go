@@ -3,6 +3,7 @@ package upgrade_test
 import (
 	"context"
 	"fmt"
+	"os"
 	"testing"
 
 	"github.com/ethereum/go-ethereum"
@@ -78,12 +79,12 @@ var _ = AfterEach(func() {
 
 })
 
-// var _ = AfterSuite(func() {
-// 	if allPassed {
-// 		TestRig.ExpectMinimumCoverage("UpgradeabilityProxy.sol", 98.00)
-// 		TestRig.PrintGasUsage(os.Stdout)
-// 	}
-// })
+var _ = AfterSuite(func() {
+	if allPassed {
+		TestRig.ExpectMinimumCoverage("externals/upgradeability/UpgradeabilityProxy.sol", 69.00)
+		TestRig.PrintGasUsage(os.Stdout)
+	}
+})
 
 func isSuccessful(tx *types.Transaction) bool {
 	r, err := Backend.TransactionReceipt(context.Background(), tx.Hash())
