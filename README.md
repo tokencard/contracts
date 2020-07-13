@@ -2,7 +2,7 @@
 
 This repository contains the Smart Contracts needed to power the Monolith Card, written in Solidity, for execution in the EVM.
 
-The Monolith Card is the world's first non-custodial position to VISA debit card. The Consumer Contract Wallet allows people to hold their own assets, whilst being able to seamlessly move funds to a VISA debit card. 1% of all loads to the Monolith Cards are sent, by the user themselves, to the TKN Holder contract. This is used to back the Community Chest (aka the Asset Contract). The purpose of this onchain infrastructure is provide the most seemless user experience whilst maintaining a decentralised position.
+The Monolith Card is the world's first non-custodial position to VISA debit card. The Consumer Contract Wallet allows people to hold their own assets, whilst being able to seamlessly move funds to a VISA debit card. 1% of all loads to the Monolith Cards are sent, by the user themselves, to the TKN Holder contract. This is used to back the Community Chest (aka the Asset Contract). The purpose of this onchain infrastructure is provide the most seamless user experience whilst maintaining a decentralised position.
 
 | [High Level Architecture](https://github.com/tokencard/contracts/blob/master/README.md/#high-level-architecture) | [Security Features](https://github.com/tokencard/contracts/blob/master/README.md/#security-features) | [Solidity Code](https://github.com/tokencard/contracts/blob/master/README.md/#solidity-code-in-the-contracts-folder) | [Running Contract Tests](https://github.com/tokencard/contracts/blob/master/README.md/#running-contract-tests) | [Resources](https://github.com/tokencard/contracts/blob/master/README.md/#resources) |
 |---|---|---|---|---|
