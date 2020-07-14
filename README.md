@@ -1,26 +1,30 @@
-# The Consumer Contract Wallet version 3
+# The Consumer Contract Wallet - Version 3.3.1
 
-This repository contains the Smart Contracts needed to power the Monolith Card, written in Solidity, for execution in the EVM.
+This repository contains the Smart Contracts needed to power the Monolith App, written in Solidity, for execution in the EVM.
 
-The Monolith Card is the world's first non-custodial position to VISA debit card. The Consumer Contract Wallet allows people to hold their own assets, whilst being able to seamlessly move funds to a VISA debit card. 1% of all loads to the Monolith Cards are sent, by the user themselves, to the TKN Holder contract. This is used to back the Community Chest (aka the Asset Contract). The purpose of this onchain infrastructure is provide the most seemless user experience whilst maintaining a decentralised position.
+We are committed to building a non-custodial banking alternative on Ethereum and these contracts define our relationship with our users.
+
+The Monolith Card is the world's first non-custodial position to VISA debit card. The Consumer Contract Wallet allows people to hold their own assets, whilst being able to seamlessly move funds to a VISA debit card. 1% of all loads to the Monolith Cards are sent, by the user themselves, to the TKN Holder contract. This is used to back the Community Chest (aka the Asset Contract). The purpose of this on-chain infrastructure is provide the most seamless user experience when it comes to using crypto in the real-world, whilst maintaining a decentralised position.
 
 | [High Level Architecture](https://github.com/tokencard/contracts/blob/master/README.md/#high-level-architecture) | [Security Features](https://github.com/tokencard/contracts/blob/master/README.md/#security-features) | [Solidity Code](https://github.com/tokencard/contracts/blob/master/README.md/#solidity-code-in-the-contracts-folder) | [Running Contract Tests](https://github.com/tokencard/contracts/blob/master/README.md/#running-contract-tests) | [Resources](https://github.com/tokencard/contracts/blob/master/README.md/#resources) |
 |---|---|---|---|---|
 
 ## Overview
 
-The functionality encoded in the Smart Contracts found in this repository have been designed to help users protect their tokens, by holding them within their own instance of a *Consumer Contract Wallet* which they can configure to their liking. The functionality within the *Consumer Contract Wallet* has been designed to limit a user's exposure to loss of tokens in the event that a user has had their Private Key compromised.
+The functionality encoded in the Smart Contracts found in this repository have been designed to help users protect their tokens, by holding them within their own contract wallet that implements the logic defined in our *Consumer Contract Wallet*. Users of the contract wallet need to configure their wallet's to their own liking. The logic defined within the *Consumer Contract Wallet* has been created to limit a user's exposure to loss of tokens in the event that a user has had their Private Key compromised.
 
 We believe there are three major problems facing the adoption and use of decentralised finances:
  - The issue that users with compromised private keys could end up losing all of their assets.
  - The issue that people are generally not good at keeping digital secrets safe, the potential loss of private keys.
- - The UX of decentralised finances and real-world payments.
+ - The UX of decentralised finances and how they interplay into real-world payments.
 
-This, third version, of the *Consumer Contract Wallet* protects users by limiting their exposure to theft in the event that their private key gets compromised. This version also brings batched meta-transactions to the experience. Batched meta-transactions are flexible to the point where gas can be removed from equation or can be approximately paid for in any ERC20 token. By batching up meta-transactions we will be able to build a more compelling user experience, by utilising the composability of Smart Contract calls on Ethereum.
+This, version 3.3.1, of the *Consumer Contract Wallet* utilises the library/proxy pattern for the deployment of this smart contract. This pattern is mainly employed by ([upgradeable smart contracts](https://docs.openzeppelin.com/upgrades/2.8/writing-upgradeable)) but can also be adopted to provide effeciencies on chain. All users get given a proxy contract that outsources the logic to a central library contract. The *Consumer Contract Wallet* uses the proxy contracts developed by OpenZeppelin in their suite of ([upgradeable contracts](https://docs.openzeppelin.com/upgrades/2.8/)). It should be noted that the *Consumer Contract Wallet* builds on top of the Proxy contract used by developers wanting to build upgradeable smart contracts, this version of the contract wallet itself isn't upgradeable. Users will still need to migrate between versions of the contract wallet to get the benefit of new features.
 
-Each user deploys their own instance of the *Consumer Contract Wallet* ([wallet.sol](/contracts/wallet.sol)) to the Ethereum Network which interacts with the *TokenWhitelist* ([tokenWhitelist.sol](/contracts/tokenWhitelist.sol])) to get exchange rates between tokens to enforce a user-definted daily spend limit. The exchange rates in the *TokenWhitelist* contract are periodically updated using an exchange rate *Oracle* ([oracle.sol](/contracts/oracle.sol)). 
+The *Consumer Contract Wallet* protects users by limiting their exposure to theft in the event that their private key becoming compromised. This version also brings 'batched meta-transactions' to the list of features of the contract wallet. Batched meta-transactions are flexible to the point where gas can be removed from equation or can be approximately paid for in any ERC20 token. By batching up meta-transactions we will be able to build a more compelling user experience, by utilising the composability of Smart Contract calls on Ethereum.
 
-The individual *Consumer Contract Wallet* contracts use the [Ethereum Name Service (ENS)](https://ens.domains/) to resolve the location of the *TokenWhitelist* contract, as well as to resolve the location of the *Controller* ([controller.sol](contracts/controller.sol)) contract. The *TokenWhitelist* is a whitelist of tokens and their exchange rates that are used to secure a user's tokens within their wallet, it also determines which tokens can be used to load the TokenCard and which are "cash 'n' burnable" by the TKN ERC-20 Contract in conjunction with the *TKN Holder* Contract. This *Controller* contract is used for administrative purposes only, rest assured this has no access to user's funds. The controllers are used to perform 2FA functionality as well as administrative tasks on the *Oracle* and on the *TokenWhitelist*.
+Each user deploys their own proxy contract, i.e. their contract wallet, that uses the logic defined in ([wallet.sol](/contracts/wallet.sol)) that in turn interacts with the *TokenWhitelist* ([tokenWhitelist.sol](/contracts/tokenWhitelist.sol)) to get token exchange rates to enforce a user-defined daily spend limit. The exchange rates in the *TokenWhitelist* contract are periodically updated using an exchange rate *Oracle* ([oracle.sol](/contracts/oracle.sol)) that builds upon the [Provable Things Ethereum APIs](https://github.com/provable-things/ethereum-api) and [CryptoCompare's APIs](https://min-api.cryptocompare.com/).
+
+Service discovery in the *Consumer Contract Wallet* is performed via the use of the [Ethereum Name Service (ENS)](https://ens.domains/). For example, ENS is used to resolve the location of the *TokenWhitelist* contract, as well as to resolve the location of the *Controller* ([controller.sol](contracts/controller.sol)) contract. The *TokenWhitelist* is a list of tokens and their exchange rates that defines the set of tokens that are protected within a user's wallet. It also determines which tokens can be used to load fiat on to a user's Monolith card. Card load transactions are peformed by sending assets to the ([licence.sol](/contracts/licence.sol)) contract that in turn takes a 1% fee and adds it to the ([holder.sol](/contracts/holder.sol)) contract. The tokens sent to the holder contract are "cash 'n' burnable" by the ([TKN ERC-20 Contract](https://etherscan.io/token/0xaaaf91d9b90df800df4f55c205fd6989c977e73a)) in conjunction with the *TKN Holder* Contract. This *Controller* contract is used for administrative purposes only, rest assured this has no access to user's funds. The controllers are used to perform 2FA functionality as well as administrative tasks on the *Oracle* and on the *TokenWhitelist*.
 
 
 ### High-level Architecture
@@ -81,7 +85,7 @@ This section details the naming convention adopted in this codebase:
 
 It should be noted that this codebase makes heavy use of inheritance.
 
-[wallet.sol](/contracts/wallet.sol) is the primary *Consumer Contract Wallet* contract that helps user's secure their funds. The Wallet communicates with the *TokenWhitelist*, the *Controller*, the *TKN licence*, and other ERC20 contracts. It should noted that the *Consumer Contract Wallet* only protects the ERC20 tokens supported by the *TokenWhitelist* in its Security Features, tokens not listed as `available` by the *TokenWhitelist* will not be secured by the *Consumer Contract Wallet*'s daily spend limit; see([wallet inheritance digram](/docs/wallet.inheritance.png)).
+[wallet.sol](/contracts/wallet.sol) is the library contract that defines the business logic of the *Consumer Contract Wallet*. This library is used to secure user funds. The Wallet communicates with the *TokenWhitelist*, the *Controller*, the *TKN licence*, and other ERC20 contracts. It should noted that the *Consumer Contract Wallet* only protects the ERC20 tokens supported by the *TokenWhitelist* in its Security Features, tokens not listed as `available` by the *TokenWhitelist* will not be secured by the *Consumer Contract Wallet*'s daily spend limit; see([wallet inheritance digram](/docs/wallet.inheritance.png)).
 
 [controller.sol](/contracts/controller.sol) the *Controller* is used to perform tasks on behalf of Token Group Ltd. These tasks range from operational tasks, such as updating the token exchange rates via the *Oracle*, adding/removing tokens from the *TokenWhitelist* to signing 2FA functions on behalf of our users. The *Controller* contract implements a key hierarchy of: `controllers` used for operational tasks, `admin` used for administrative tasks, and the `owner` which is used to change out the `admins`; see([controller inheritance diagram](/docs/controllers.inheritance.png)).
 
@@ -93,9 +97,9 @@ It should be noted that this codebase makes heavy use of inheritance.
 
 [tokenWhitelist.sol](/contracts/tokenWhitelist.sol) The list of tokens used in this system is managed in the *TokenWhitelist*. The *Controller* can be used to add and remove tokens from the *TokenWhitelist*, they also have the ability to set flags on the specific tokens, e.g. `loadable` (means that a token is loadable on the TokenCard) or `redeemable` (means that a token is redeemable in the *TKN Holder* contract); see ([tokenWhitelist inheritance diagram](/docs/tokenWhitelist.inheritance.png)).
 
-[walletCache.sol](/contracts/walletCache.sol) The *WalletCache* is a factory contract that is used to pre-deploy and cache *Consumer Contract Wallets* when network prices are low; see ([walletCache inheritance diagram](/docs/walletCache.inheritance.png)).
+[walletCache.sol](/contracts/walletCache.sol) The *WalletCache* is a factory contract that is used to pre-deploy and cache the proxy contracts that make up the user's *Consumer Contract Wallets* when network prices are low; see ([walletCache inheritance diagram](/docs/walletCache.inheritance.png)).
 
-[walletDeployer.sol](/contracts/walletDeployer.sol) The *WalletDeployer* contract accesses the *WalletCache* via ENS and allows the pre-cached wallets to be assigned new owners in a single contract call in order to satisfy requests for new  *Consumer Contract Wallets*. This contract also has the ability to configure a contract with set security features, this will be used to migrate users between contracts; see ([walletDeployer inheritance diagram](/docs/walletDeployer.inheritance.png)).
+[walletDeployer.sol](/contracts/walletDeployer.sol) The *WalletDeployer* contract accesses the *WalletCache* via ENS and allows the pre-cached wallets to be assigned new owners in a single contract call in order to satisfy requests for new  *Consumer Contract Wallets*. This contract also has the ability to configure a contract with set security features, this will be used to migrate users between versions of the contract wallets; see ([walletDeployer inheritance diagram](/docs/walletDeployer.inheritance.png)).
 
 ### Solidity code in the `/contracts/internals/` folder
 [balanceable.sol](/contracts/internals/balanceable.sol) is an inheritable contract that checks the ETH or ERC20 balance of an address.
@@ -126,15 +130,20 @@ It should be noted that this codebase makes heavy use of inheritance.
 
 [bytesUtilsExporter.sol](/contracts/mocks/bytesUtilsExporter.sol) used to export methods on the bytesUtils contract for testing purposes.
 
+[isValidSignatureExporter.sol](/contracts/mocks/isValidSignatureExporter.sol) used to export valid signatures for meta transaction testing.
+
 [nonCompliantToken.sol](/contracts/mocks/nonCompliantToken.sol) a version of a non-compliant ERC20 token, used to test the SafeERC20 stuff. 
 
-[oraclize.sol](/contracts/mocks/oraclize-connector.sol) is a mocked out version of the oraclize, this is for testing purposes only.
+[oraclize.sol](/contracts/mocks/oraclize.sol) is a mocked out version of the oraclize, this is for testing purposes only.
 
-[parseIntScientific-exporter.sol](/contracts/mocks/parseIntScientific-exporter.sol) is a mocked out version of a contract that pulls in the parseIntScientific contract used to parse floating points that include scientific notation out of JSON.
+[parseIntScientific-exporter.sol](/contracts/mocks/parseIntScientificExporter.sol) is a mocked out version of a contract that pulls in the parseIntScientific contract used to parse floating points that include scientific notation out of JSON.
 
 [token.sol](/contracts/mocks/token.sol) is a partial compliant implementation of the ERC20 token standard used for testing and development purposes.
 
 [tokenWhitelistableExporter.sol](/contracts/mocks/tokenWhitelistableExporter.sol) exports the tokenWhitelist for testing purposes.
+
+[walletMock.sol](/contracts/mocks/walletMock.sol) exports the wallet that is now used by the proxy/library pattern so that it can be used for testing purposes.
+
 
 ### Solidity code in the `/contracts/externals/` folder
 
@@ -152,6 +161,12 @@ All of the third-party code we rely on can be found in this folder. The below ta
 | [strings.sol](https://github.com/Arachnid/solidity-stringutils/pull/37)     | [Apache v2](https://github.com/Arachnid/solidity-stringutils/blob/master/LICENSE) |
 | [oraclizeAPI](https://raw.githubusercontent.com/provable-things/ethereum-api/d02497b4d84e02a8649af3822950873d305f7659/oraclizeAPI_0.5.sol)     | [MIT](https://github.com/oraclize/ethereum-api/blob/master/LICENSE) |
 | [gnosis MultiSig](https://github.com/gnosis/MultiSigWallet) | [GPLv3](https://github.com/gnosis/MultiSigWallet/blob/master/LICENSE) |
+| [zOS Upgradeability](https://github.com/OpenZeppelin/openzeppelin-sdk/blob/9baca3afb5649b6defc3a75eeb69f4930852180f/packages/lib/contracts/upgradeability/Proxy.sol) | [MIT](https://github.com/OpenZeppelin/openzeppelin-sdk/blob/9baca3afb5649b6defc3a75eeb69f4930852180f/LICENSE) |
+
+## Deploying the contracts
+We have an instance of the wallet-deployer, which is a factory contract, that is the official way of deploying a new instance of the *Consumer Contract Wallet*. The production instance of the wallet deployer factory contract can be found at the following ENS address: ([wallet-deployer.v3.tokencard.eth](https://etherscan.io/address/wallet-deployer.v3.tokencard.eth)) this works in conjunction with the wallet cache, which can be found at the following ENS address ([wallet-cache.v3.tokencard.eth](https://etherscan.io/address/wallet-cache.v3.tokencard.eth)).
+
+It should be noted that when creating a new instance of the *Consumer Contract Wallet* particular attention must be given to ensuring that the wallet is properly configured. It is particularly important that the wallet's owner is no longer transaferable before the wallet is used in anger: arguements
 
 
 ## Building contracts
@@ -200,6 +215,18 @@ To run a specific validation tool, use the provided scripts:
 ./tools/echidna/echidna.sh
 ./tools/mythril/mythril.sh
 ./tools/manticore/manticore.sh
+```
+
+## To generate the inheritance graphs
+
+```sh
+docker run -v /path/contracts:/contracts -it trailofbits/eth-security-toolbox:latest
+solc-select 0.5.17
+cd /contracts
+sudo apt-get update
+sudo apt install xdot
+slither contracts/wallet.sol --print inheritance-graph
+dot contracts.dot -Tpng -o ./wallet.inheritance.png
 ```
 
 ## Resources
