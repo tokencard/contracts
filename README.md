@@ -220,7 +220,7 @@ To run a specific validation tool, use the provided scripts:
 ## To generate the inheritance graphs
 
 ```sh
-docker run -v ~/monolith/contracts:/contracts -it trailofbits/eth-security-toolbox
+docker run -v /path/contracts:/contracts -it trailofbits/eth-security-toolbox:latest
 solc-select 0.5.17
 cd /contracts
 sudo apt-get update
