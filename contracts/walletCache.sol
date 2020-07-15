@@ -48,7 +48,6 @@ contract WalletCache is ENSResolvable, Controllable {
     bytes32 public walletDeployerNode = _DEFAULT_WALLET_DEPLOYER_NODE;
 
     address public walletImplementation;
-    address public ens;
     uint256 public defaultSpendLimit;
 
     address payable[] public cachedWallets;
@@ -67,7 +66,6 @@ contract WalletCache is ENSResolvable, Controllable {
         _initializeENSResolvable(_ens_);
         _initializeControllable(_controllerNode_);
         walletImplementation = _walletImplementation_;
-        ens = _ens_;
         defaultSpendLimit = _defaultSpendLimit_;
 
         // Set licenceNode or use default
@@ -113,7 +111,7 @@ contract WalletCache is ENSResolvable, Controllable {
         Wallet(wallet).initializeWallet(
             address(uint160(walletDeployerAddress)), // the address(uint160()) cast is done as the Wallet owner (1st argument) needs to be payable
             true,
-            ens,
+            ensRegistry(),
             tokenWhitelistNode,
             controllerNode(),
             licenceNode,
