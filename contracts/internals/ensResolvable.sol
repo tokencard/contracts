@@ -26,8 +26,8 @@ import "../externals/ens/PublicResolver.sol";
 ///@title ENSResolvable - Ethereum Name Service Resolver
 ///@notice contract should be used to get an address for an ENS node
 contract ENSResolvable is Initializable {
-    /// @notice _ensRegistry points to the ENS registry smart contract.
-    address private _ensRegistry;
+    /// @notice Address of the ENS registry contract set to the default ENS registry address.
+    address private _ensRegistry = address(0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e);
 
     /// @notice Checks if the contract has been initialized succesfully i.e. the ENS registry has been set.
     modifier initialized() {
@@ -49,7 +49,9 @@ contract ENSResolvable is Initializable {
 
     /// @param _ensReg is the ENS registry used
     function _initializeENSResolvable(address _ensReg) internal initializer {
-        require(_ensReg != address(0), "ensReg is 0");
-        _ensRegistry = _ensReg;
+        // Set ENS registry or use default
+        if (_ensReg != address(0)) {
+            _ensRegistry = _ensReg;
+        }
     }
 }
