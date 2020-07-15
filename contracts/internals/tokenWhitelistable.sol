@@ -25,8 +25,11 @@ import "../externals/initializable.sol";
 
 /// @title TokenWhitelistable implements access to the TokenWhitelist located behind ENS.
 contract TokenWhitelistable is ENSResolvable {
-    /// @notice Is the registered ENS node identifying the tokenWhitelist contract
-    bytes32 private _tokenWhitelistNode;
+    // token-whitelist.tokencard.eth
+    bytes32 private constant _DEFAULT_TOKEN_WHITELIST_NODE = 0xe84f90570f13fe09f288f2411ff9cf50da611ed0c7db7f73d48053ffc974d396;
+
+    /// @notice This is the registered ENS node identifying the tokenWhitelist contract
+    bytes32 private _tokenWhitelistNode = _DEFAULT_TOKEN_WHITELIST_NODE;
 
     /// @notice This shows what TokenWhitelist is being used
     /// @return TokenWhitelist's node registered in ENS.
@@ -68,7 +71,10 @@ contract TokenWhitelistable is ENSResolvable {
     /// @notice Initializes the TokenWhitelistable object.
     /// @param _tokenWhitelistNode_ is the ENS node of the TokenWhitelist.
     function _initializeTokenWhitelistable(bytes32 _tokenWhitelistNode_) internal initializer {
-        _tokenWhitelistNode = _tokenWhitelistNode_;
+        // Set tokenWhitelistNode or use default
+        if (_tokenWhitelistNode_ != bytes32(0)) {
+            _tokenWhitelistNode = _tokenWhitelistNode_;
+        }
     }
 
     /// @notice Checks whether a token is available.
