@@ -36,7 +36,7 @@ contract ENSResolvable is Initializable {
     }
 
     /// @notice this is used to that one can observe which ENS registry is being used
-    function ensRegistry() external view returns (address) {
+    function ensRegistry() public view returns (address) {
         return _ensRegistry;
     }
 
