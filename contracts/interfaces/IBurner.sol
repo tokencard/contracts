@@ -18,7 +18,8 @@
 
 // SPDX-License-Identifier: GPLv3
 
-pragma solidity ^0.6.11;
+pragma solidity ^0.6.0;
+
 
 // The BurnerToken interface is the interface to a token contract which
 // provides the total burnable supply for the TokenHolder contract.

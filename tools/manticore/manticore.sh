@@ -5,7 +5,7 @@ if [ ! -d "contracts" ]; then
 	exit 1
 fi
 
-docker run --rm -v "$PWD":/contracts -it --ulimit stack=100000000:100000000 --workdir=/contracts trailofbits/eth-security-toolbox@sha256:3fb96e2d9de772f5e97f1c3c650c8a3d28660f8a64a60b76269da1ac19b86a28 -c 'solc-select 0.5.17 &&
+docker run --rm -v "$PWD":/contracts -it --ulimit stack=100000000:100000000 --workdir=/contracts trailofbits/eth-security-toolbox@sha256:e5e2ebbffcc4c3a334063ba3871ec25a4e1dc4915d77166aef1aa265e0a5978f -c 'solc-select 0.6.11 &&
 manticore contracts/controller.sol --contract=Controller --config=tools/manticore/manticore.yaml --quick-mode &&
 manticore contracts/wallet.sol --contract=Wallet --config=tools/manticore/manticore.yaml --quick-mode &&
 manticore contracts/oracle.sol --contract=Oracle --config=tools/manticore/manticore.yaml --quick-mode &&

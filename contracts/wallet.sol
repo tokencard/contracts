@@ -20,20 +20,20 @@
 
 pragma solidity ^0.6.11;
 
-import "./licence.sol";
-import "./internals/ownable.sol";
-import "./internals/controllable.sol";
-import "./internals/balanceable.sol";
-import "./internals/transferrable.sol";
-import "./internals/ensResolvable.sol";
-import "./internals/tokenWhitelistable.sol";
-import "./externals/SafeMath.sol";
 import "./externals/Address.sol";
 import "./externals/ECDSA.sol";
-import "./externals/ERC20.sol";
 import "./externals/initializable.sol";
+import "./externals/SafeMath.sol";
 import "./externals/SafeERC20.sol";
-import "./externals/ERC165.sol";
+import "./interfaces/IERC20.sol";
+import "./interfaces/IERC165.sol";
+import "./interfaces/ILicence.sol";
+import "./internals/balanceable.sol";
+import "./internals/controllable.sol";
+import "./internals/ensResolvable.sol";
+import "./internals/ownable.sol";
+import "./internals/tokenWhitelistable.sol";
+import "./internals/transferrable.sol";
 
 /// @title ControllableOwnable combines Controllable and Ownable
 /// @dev providing an additional modifier to check if Owner or Controller
@@ -505,7 +505,7 @@ contract LoadLimit is ControllableOwnable, SelfCallableOwnable, TokenWhitelistab
 }
 
 /// @title Asset wallet with extra security features, gas top up management and card integration.
-contract Wallet is ENSResolvable, AddressWhitelist, SpendLimit, GasTopUpLimit, LoadLimit, ERC165, Transferrable, Balanceable {
+contract Wallet is ENSResolvable, AddressWhitelist, SpendLimit, GasTopUpLimit, LoadLimit, IERC165, Transferrable, Balanceable {
     using Address for address;
     using ECDSA for bytes32;
     using SafeERC20 for IERC20;

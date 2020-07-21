@@ -20,13 +20,13 @@
 
 pragma solidity ^0.6.11;
 
-import "./externals/ERC20.sol";
 import "./externals/SafeMath.sol";
-import "./internals/transferrable.sol";
+import "./interfaces/IERC20.sol";
+import "./interfaces/IBurner.sol";
 import "./internals/balanceable.sol";
-import "./internals/burner.sol";
 import "./internals/controllable.sol";
 import "./internals/tokenWhitelistable.sol";
+import "./internals/transferrable.sol";
 
 /// @title Holder - The TKN Asset Contract
 /// @notice When the TKN contract calls the burn method, a share of the tokens held by this contract are disbursed to the burner.

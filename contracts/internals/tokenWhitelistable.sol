@@ -21,8 +21,8 @@
 pragma solidity ^0.6.11;
 
 import "./ensResolvable.sol";
-import "../tokenWhitelist.sol";
 import "../externals/initializable.sol";
+import "../interfaces/ITokenWhitelist.sol";
 
 /// @title TokenWhitelistable implements access to the TokenWhitelist located behind ENS.
 contract TokenWhitelistable is ENSResolvable {

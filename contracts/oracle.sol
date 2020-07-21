@@ -23,6 +23,7 @@ pragma solidity ^0.6.11;
 import "./externals/base64.sol";
 import "./externals/provableAPI_0.6.sol";
 import "./externals/SafeMath.sol";
+import "./externals/strings.sol";
 import "./internals/controllable.sol";
 import "./internals/date.sol";
 import "./internals/ensResolvable.sol";

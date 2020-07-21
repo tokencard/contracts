@@ -20,7 +20,7 @@
 
 pragma solidity ^0.6.11;
 
-import "../externals/ERC20.sol";
+import "../interfaces/IERC20.sol";
 
 /// @title Balanceable - This is a contract used to get a balance
 contract Balanceable {

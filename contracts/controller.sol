@@ -20,15 +20,9 @@
 
 pragma solidity ^0.6.11;
 
+import "./interfaces/IController.sol";
 import "./internals/ownable.sol";
 import "./internals/transferrable.sol";
-
-/// @title The IController interface provides access to the isController and isAdmin checks.
-interface IController {
-    function isController(address) external view returns (bool);
-
-    function isAdmin(address) external view returns (bool);
-}
 
 /// @title Controller stores a list of controller addresses that can be used for authentication in other contracts.
 /// @notice The Controller implements a hierarchy of concepts, Owner, Admin, and the Controllers.

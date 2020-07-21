@@ -22,8 +22,8 @@ pragma solidity ^0.6.11;
 
 import "./externals/upgradeability/UpgradeabilityProxy.sol";
 import "./interfaces/IWallet.sol";
-import "./internals/ensResolvable.sol";
 import "./internals/controllable.sol";
+import "./internals/ensResolvable.sol";
 
 /// @title IWalletCache interface describes a method for poping an already cached wallet
 interface IWalletCache {

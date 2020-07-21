@@ -21,8 +21,8 @@
 pragma solidity ^0.6.11;
 
 import "../externals/Address.sol";
-import "../externals/ERC20.sol";
 import "../externals/SafeERC20.sol";
+import "../interfaces/IERC20.sol";
 
 /// @title SafeTransfer, allowing contract to withdraw tokens accidentally sent to itself
 contract Transferrable {
