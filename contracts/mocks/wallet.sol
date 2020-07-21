@@ -6,6 +6,7 @@ import "../internals/controllable.sol";
 
 
 contract Wallet is Controllable {
+
     event ConfirmedOperation(bool _status);
 
     /// @dev Ether can be deposited from any source, so this contract must be payable by anyone.
@@ -21,7 +22,7 @@ contract Wallet is Controllable {
     }
 
     function sendValue(address payable _to, uint256 _amount) external {
-        (bool success, ) = _to.call{value: _amount }("");
+        (bool success, ) = _to.call{value: _amount}("");
         require(success, "sendValue failed");
     }
 

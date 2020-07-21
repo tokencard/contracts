@@ -35,7 +35,6 @@ import "./externals/initializable.sol";
 import "./externals/SafeERC20.sol";
 import "./externals/ERC165.sol";
 
-
 /// @title ControllableOwnable combines Controllable and Ownable
 /// @dev providing an additional modifier to check if Owner or Controller
 contract ControllableOwnable is Controllable, Ownable {
@@ -45,7 +44,6 @@ contract ControllableOwnable is Controllable, Ownable {
         _;
     }
 }
-
 
 /// @title SelfCallableOwnable allows either owner or the contract itself to call its functions
 /// @dev providing an additional modifier to check if Owner or self is calling
@@ -57,7 +55,6 @@ contract SelfCallableOwnable is Ownable {
         _;
     }
 }
-
 
 /// @title AddressWhitelist provides payee-whitelist functionality.
 /// @dev This contract will allow the user to maintain a whitelist of addresses
@@ -243,7 +240,6 @@ contract AddressWhitelist is ControllableOwnable, SelfCallableOwnable {
     }
 }
 
-
 /// @title DailyLimitTrait This trait allows for daily limits to be included in other contracts.
 /// This contract will allow for a DailyLimit object to be instantiated and used.
 library DailyLimitTrait {
@@ -330,7 +326,6 @@ library DailyLimitTrait {
     }
 }
 
-
 /// @title  it provides daily spend limit functionality.
 contract SpendLimit is ControllableOwnable, SelfCallableOwnable {
     event SetSpendLimit(address _sender, uint256 _amount);
@@ -385,7 +380,6 @@ contract SpendLimit is ControllableOwnable, SelfCallableOwnable {
         _spendLimit = DailyLimitTrait.DailyLimit(_limit, _limit, now, 0, false);
     }
 }
-
 
 /// @title GasTopUpLimit provides daily limit functionality.
 contract GasTopUpLimit is ControllableOwnable, SelfCallableOwnable {
@@ -446,7 +440,6 @@ contract GasTopUpLimit is ControllableOwnable, SelfCallableOwnable {
         _gasTopUpLimit = DailyLimitTrait.DailyLimit(_MAXIMUM_GAS_TOPUP_LIMIT, _MAXIMUM_GAS_TOPUP_LIMIT, now, 0, false);
     }
 }
-
 
 /// @title LoadLimit provides daily load limit functionality.
 contract LoadLimit is ControllableOwnable, SelfCallableOwnable, TokenWhitelistable {
@@ -510,7 +503,6 @@ contract LoadLimit is ControllableOwnable, SelfCallableOwnable, TokenWhitelistab
         _loadLimit = DailyLimitTrait.DailyLimit(_maximumLoadLimit, _maximumLoadLimit, now, 0, false);
     }
 }
-
 
 /// @title Asset wallet with extra security features, gas top up management and card integration.
 contract Wallet is ENSResolvable, AddressWhitelist, SpendLimit, GasTopUpLimit, LoadLimit, ERC165, Transferrable, Balanceable {
@@ -598,7 +590,11 @@ contract Wallet is ENSResolvable, AddressWhitelist, SpendLimit, GasTopUpLimit, L
     /// @param _nonce only used for relayed transactions, must match the wallet's relayNonce.
     /// @param _data abi encoded data payload.
     /// @param _signature signed prefix + data.
-    function executeRelayedTransaction(uint256 _nonce, bytes calldata _data, bytes calldata _signature) external onlyController {
+    function executeRelayedTransaction(
+        uint256 _nonce,
+        bytes calldata _data,
+        bytes calldata _signature
+    ) external onlyController {
         // Expecting prefixed data ("monolith:") indicating relayed transaction...
         // ...and an Ethereum Signed Message to protect user from signing an actual Tx
         uint256 id;
@@ -783,7 +779,11 @@ contract Wallet is ENSResolvable, AddressWhitelist, SpendLimit, GasTopUpLimit, L
     /// @param _destination address of the transaction
     /// @param _value ETH amount in wei
     /// @param _data transaction payload binary
-    function executeTransaction(address _destination, uint256 _value, bytes memory _data) public onlyOwnerOrSelf returns (bytes memory) {
+    function executeTransaction(
+        address _destination,
+        uint256 _value,
+        bytes memory _data
+    ) public onlyOwnerOrSelf returns (bytes memory) {
         // If value is send across as a part of this executeTransaction, this will be sent to any payable
         // destination. As a result enforceLimit if destination is not whitelisted.
         if (!whitelistMap[_destination]) {
@@ -835,7 +835,11 @@ contract Wallet is ENSResolvable, AddressWhitelist, SpendLimit, GasTopUpLimit, L
     /// @param _to is the recipient's address.
     /// @param _asset is the address of an ERC20 token or 0x0 for ether.
     /// @param _amount is the amount of assets to be transferred in base units.
-    function transfer(address payable _to, address _asset, uint256 _amount) public onlyOwnerOrSelf isNotZero(_amount) {
+    function transfer(
+        address payable _to,
+        address _asset,
+        uint256 _amount
+    ) public onlyOwnerOrSelf isNotZero(_amount) {
         // Checks if the _to address is not the zero-address
         require(_to != address(0), "destination=0");
 

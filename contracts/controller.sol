@@ -23,14 +23,12 @@ pragma solidity ^0.6.11;
 import "./internals/ownable.sol";
 import "./internals/transferrable.sol";
 
-
 /// @title The IController interface provides access to the isController and isAdmin checks.
 interface IController {
     function isController(address) external view returns (bool);
 
     function isAdmin(address) external view returns (bool);
 }
-
 
 /// @title Controller stores a list of controller addresses that can be used for authentication in other contracts.
 /// @notice The Controller implements a hierarchy of concepts, Owner, Admin, and the Controllers.
@@ -185,7 +183,11 @@ contract Controller is IController, Ownable, Transferrable {
     }
 
     //// @notice Withdraw tokens from the smart contract to the specified account.
-    function claim(address payable _to, address _asset, uint256 _amount) external onlyAdmin notStopped {
+    function claim(
+        address payable _to,
+        address _asset,
+        uint256 _amount
+    ) external onlyAdmin notStopped {
         _safeTransfer(_to, _asset, _amount);
         emit Claimed(_to, _asset, _amount);
     }

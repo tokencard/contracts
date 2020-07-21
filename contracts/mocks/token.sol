@@ -4,7 +4,6 @@ pragma solidity ^0.6.11;
 
 import "../externals/SafeMath.sol";
 
-
 /// @title Token is a mock ERC20 token used for testing.
 contract Token {
     using SafeMath for uint256;
@@ -27,7 +26,11 @@ contract Token {
         return true;
     }
 
-    function transferFrom(address _from, address _to, uint256 _value) public returns (bool) {
+    function transferFrom(
+        address _from,
+        address _to,
+        uint256 _value
+    ) public returns (bool) {
         if (_to == address(0)) return false;
         if (balanceOf[_from] < _value) return false;
 

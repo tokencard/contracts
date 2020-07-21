@@ -26,12 +26,33 @@ import "./internals/bytesUtils.sol";
 import "./externals/strings.sol";
 import "./externals/SafeMath.sol";
 
-
 /// @title The ITokenWhitelist interface provides access to a whitelist of tokens.
 interface ITokenWhitelist {
-    function getTokenInfo(address) external view returns (string memory, uint256, uint256, bool, bool, bool, uint256);
+    function getTokenInfo(address)
+        external
+        view
+        returns (
+            string memory,
+            uint256,
+            uint256,
+            bool,
+            bool,
+            bool,
+            uint256
+        );
 
-    function getStablecoinInfo() external view returns (string memory, uint256, uint256, bool, bool, bool, uint256);
+    function getStablecoinInfo()
+        external
+        view
+        returns (
+            string memory,
+            uint256,
+            uint256,
+            bool,
+            bool,
+            bool,
+            uint256
+        );
 
     function tokenAddressArray() external view returns (address[] memory);
 
@@ -43,9 +64,12 @@ interface ITokenWhitelist {
 
     function stablecoin() external view returns (address);
 
-    function updateTokenRate(address, uint256, uint256) external;
+    function updateTokenRate(
+        address,
+        uint256,
+        uint256
+    ) external;
 }
-
 
 /// @title TokenWhitelist stores a list of tokens used by the Consumer Contract Wallet, the Oracle, the TKN Holder and the TKN Licence Contract
 contract TokenWhitelist is ENSResolvable, Controllable, Transferrable {
@@ -105,7 +129,12 @@ contract TokenWhitelist is ENSResolvable, Controllable, Transferrable {
     /// @param _oracleNode_ is the ENS node of the Oracle.
     /// @param _controllerNode_ is our Controllers node.
     /// @param _stablecoinAddress_ is the address of the stablecoint used by the wallet for the card load limit.
-    constructor(address _ens_, bytes32 _oracleNode_, bytes32 _controllerNode_, address _stablecoinAddress_) public {
+    constructor(
+        address _ens_,
+        bytes32 _oracleNode_,
+        bytes32 _controllerNode_,
+        address _stablecoinAddress_
+    ) public {
         _initializeENSResolvable(_ens_);
         _initializeControllable(_controllerNode_);
         _oracleNode = _oracleNode_;
@@ -264,7 +293,11 @@ contract TokenWhitelist is ENSResolvable, Controllable, Transferrable {
     /// @param _token ERC20 token contract address.
     /// @param _rate ERC20 token exchange rate in wei.
     /// @param _updateDate date for the token updates. This will be compared to when oracle updates are received.
-    function updateTokenRate(address _token, uint256 _rate, uint256 _updateDate) external onlyAdminOrOracle {
+    function updateTokenRate(
+        address _token,
+        uint256 _rate,
+        uint256 _updateDate
+    ) external onlyAdminOrOracle {
         // Require that the token exists.
         require(_tokenInfoMap[_token].available, "token is not available");
         // Update the token's rate.
@@ -276,7 +309,11 @@ contract TokenWhitelist is ENSResolvable, Controllable, Transferrable {
     }
 
     //// @notice Withdraw tokens from the smart contract to the specified account.
-    function claim(address payable _to, address _asset, uint256 _amount) external onlyAdmin {
+    function claim(
+        address payable _to,
+        address _asset,
+        uint256 _amount
+    ) external onlyAdmin {
         _safeTransfer(_to, _asset, _amount);
         emit Claimed(_to, _asset, _amount);
     }
@@ -290,7 +327,19 @@ contract TokenWhitelist is ENSResolvable, Controllable, Transferrable {
     /// @return bool whether the token is loadable to the TokenCard.
     /// @return bool whether the token is redeemable to the TKN Holder Contract.
     /// @return uint of the lastUpdated time of the token's exchange rate.
-    function getTokenInfo(address _a) external view returns (string memory, uint256, uint256, bool, bool, bool, uint256) {
+    function getTokenInfo(address _a)
+        external
+        view
+        returns (
+            string memory,
+            uint256,
+            uint256,
+            bool,
+            bool,
+            bool,
+            uint256
+        )
+    {
         Token storage tokenInfo = _tokenInfoMap[_a];
         return (tokenInfo.symbol, tokenInfo.magnitude, tokenInfo.rate, tokenInfo.available, tokenInfo.loadable, tokenInfo.redeemable, tokenInfo.lastUpdate);
     }
@@ -303,7 +352,19 @@ contract TokenWhitelist is ENSResolvable, Controllable, Transferrable {
     /// @return bool whether the token is loadable to the TokenCard.
     /// @return bool whether the token is redeemable to the TKN Holder Contract.
     /// @return uint of the lastUpdated time of the token's exchange rate.
-    function getStablecoinInfo() external view returns (string memory, uint256, uint256, bool, bool, bool, uint256) {
+    function getStablecoinInfo()
+        external
+        view
+        returns (
+            string memory,
+            uint256,
+            uint256,
+            bool,
+            bool,
+            bool,
+            uint256
+        )
+    {
         Token storage stablecoinInfo = _tokenInfoMap[_stablecoin];
         return (
             stablecoinInfo.symbol,

@@ -24,7 +24,6 @@ import "./ensResolvable.sol";
 import "../controller.sol";
 import "../externals/initializable.sol";
 
-
 /// @title Controllable implements access control functionality of the Controller found via ENS.
 contract Controllable is ENSResolvable {
     // Default values for mainnet ENS

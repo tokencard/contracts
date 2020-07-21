@@ -28,7 +28,6 @@ import "./internals/burner.sol";
 import "./internals/controllable.sol";
 import "./internals/tokenWhitelistable.sol";
 
-
 /// @title Holder - The TKN Asset Contract
 /// @notice When the TKN contract calls the burn method, a share of the tokens held by this contract are disbursed to the burner.
 contract Holder is Balanceable, ENSResolvable, Controllable, Transferrable, TokenWhitelistable {
@@ -52,7 +51,12 @@ contract Holder is Balanceable, ENSResolvable, Controllable, Transferrable, Toke
     /// @param _ens_ is the address of the ENS registry.
     /// @param _tokenWhitelistNode_ is the ENS node of the Token whitelist.
     /// @param _controllerNode_ is the ENS node of the Controller
-    constructor(address _burnerContract_, address _ens_, bytes32 _tokenWhitelistNode_, bytes32 _controllerNode_) public {
+    constructor(
+        address _burnerContract_,
+        address _ens_,
+        bytes32 _tokenWhitelistNode_,
+        bytes32 _controllerNode_
+    ) public {
         _initializeENSResolvable(_ens_);
         _initializeControllable(_controllerNode_);
         _initializeTokenWhitelistable(_tokenWhitelistNode_);

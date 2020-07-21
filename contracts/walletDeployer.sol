@@ -24,7 +24,6 @@ import "./wallet.sol";
 import "./walletCache.sol";
 import "./internals/controllable.sol";
 
-
 //// @title Wallet deployer with pre-caching if wallets functionality.
 contract WalletDeployer is ENSResolvable, Controllable {
     event DeployedWallet(address _wallet, address _owner);
@@ -40,7 +39,11 @@ contract WalletDeployer is ENSResolvable, Controllable {
 
     /// @notice it needs to know to address of the wallet cache
 
-    constructor(address _ens_, bytes32 _controllerNode_, bytes32 _walletCacheNode_) public {
+    constructor(
+        address _ens_,
+        bytes32 _controllerNode_,
+        bytes32 _walletCacheNode_
+    ) public {
         _initializeENSResolvable(_ens_);
         _initializeControllable(_controllerNode_);
         // Set walletCacheNode or use default

@@ -4,11 +4,9 @@ pragma solidity ^0.6.11;
 
 import "../wallet.sol";
 
-
 interface IWallet {
     function isValidSignature(bytes calldata, bytes calldata) external view returns (bytes4);
 }
-
 
 contract IsValidSignatureExporter {
     address walletAddress;

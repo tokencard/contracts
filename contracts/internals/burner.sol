@@ -20,7 +20,6 @@
 
 pragma solidity ^0.6.11;
 
-
 // The BurnerToken interface is the interface to a token contract which
 // provides the total burnable supply for the TokenHolder contract.
 interface IBurner {

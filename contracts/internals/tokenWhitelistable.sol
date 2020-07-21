@@ -24,7 +24,6 @@ import "./ensResolvable.sol";
 import "../tokenWhitelist.sol";
 import "../externals/initializable.sol";
 
-
 /// @title TokenWhitelistable implements access to the TokenWhitelist located behind ENS.
 contract TokenWhitelistable is ENSResolvable {
     // token-whitelist.tokencard.eth
@@ -53,7 +52,19 @@ contract TokenWhitelistable is ENSResolvable {
     /// @return bool whether the token is loadable to the TokenCard.
     /// @return bool whether the token is redeemable to the TKN Holder Contract.
     /// @return uint of the lastUpdated time of the token's exchange rate.
-    function _getStablecoinInfo() internal view returns (string memory, uint256, uint256, bool, bool, bool, uint256) {
+    function _getStablecoinInfo()
+        internal
+        view
+        returns (
+            string memory,
+            uint256,
+            uint256,
+            bool,
+            bool,
+            bool,
+            uint256
+        )
+    {
         return ITokenWhitelist(_ensResolve(_tokenWhitelistNode)).getStablecoinInfo();
     }
 
@@ -66,7 +77,19 @@ contract TokenWhitelistable is ENSResolvable {
     /// @return bool whether the token is loadable to the TokenCard.
     /// @return bool whether the token is redeemable to the TKN Holder Contract.
     /// @return uint of the lastUpdated time of the token's exchange rate.
-    function _getTokenInfo(address _a) internal view returns (string memory, uint256, uint256, bool, bool, bool, uint256) {
+    function _getTokenInfo(address _a)
+        internal
+        view
+        returns (
+            string memory,
+            uint256,
+            uint256,
+            bool,
+            bool,
+            bool,
+            uint256
+        )
+    {
         return ITokenWhitelist(_ensResolve(_tokenWhitelistNode)).getTokenInfo(_a);
     }
 
@@ -122,7 +145,11 @@ contract TokenWhitelistable is ENSResolvable {
     /// @param _token ERC20 token contract address.
     /// @param _rate ERC20 token exchange rate in wei.
     /// @param _updateDate date for the token updates. This will be compared to when oracle updates are received.
-    function _updateTokenRate(address _token, uint256 _rate, uint256 _updateDate) internal {
+    function _updateTokenRate(
+        address _token,
+        uint256 _rate,
+        uint256 _updateDate
+    ) internal {
         ITokenWhitelist(_ensResolve(_tokenWhitelistNode)).updateTokenRate(_token, _rate, _updateDate);
     }
 }

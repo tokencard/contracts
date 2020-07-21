@@ -22,7 +22,6 @@ pragma solidity ^0.6.11;
 
 import "../externals/SafeMath.sol";
 
-
 /// @title ParseIntScientific provides floating point in scientific notation (e.g. e-5) parsing functionality.
 contract ParseIntScientific {
     using SafeMath for uint256;

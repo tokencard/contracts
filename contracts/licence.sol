@@ -26,14 +26,12 @@ import "./internals/controllable.sol";
 import "./internals/ensResolvable.sol";
 import "./internals/transferrable.sol";
 
-
 /// @title ILicence interface describes methods for loading a TokenCard and updating licence amount.
 interface ILicence {
     function load(address, uint256) external payable;
 
     function updateLicenceAmount(uint256) external;
 }
-
 
 /// @title Licence loads the TokenCard and transfers the licence amout to the TKN Holder Contract.
 /// @dev the rest of the amount gets sent to the CryptoFloat
@@ -88,7 +86,14 @@ contract Licence is Transferrable, ENSResolvable, Controllable {
     /// @param _tknAddress_ is the address of the TKN ERC20 contract
     /// @param _ens_ is the address of the ENS Registry
     /// @param _controllerNode_ is the ENS node corresponding to the controller
-    constructor(uint256 _licence_, address payable _float_, address payable _holder_, address _tknAddress_, address _ens_, bytes32 _controllerNode_) public {
+    constructor(
+        uint256 _licence_,
+        address payable _float_,
+        address payable _holder_,
+        address _tknAddress_,
+        address _ens_,
+        bytes32 _controllerNode_
+    ) public {
         require(MIN_AMOUNT_SCALE <= _licence_ && _licence_ <= MAX_AMOUNT_SCALE, "licence amount out of range");
         _initializeENSResolvable(_ens_);
         _initializeControllable(_controllerNode_);
@@ -225,7 +230,11 @@ contract Licence is Transferrable, ENSResolvable, Controllable {
     }
 
     //// @dev Withdraw tokens from the smart contract to the specified account.
-    function claim(address payable _to, address _asset, uint256 _amount) external onlyAdmin {
+    function claim(
+        address payable _to,
+        address _asset,
+        uint256 _amount
+    ) external onlyAdmin {
         _safeTransfer(_to, _asset, _amount);
         emit Claimed(_to, _asset, _amount);
     }

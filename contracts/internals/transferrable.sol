@@ -24,7 +24,6 @@ import "../externals/Address.sol";
 import "../externals/ERC20.sol";
 import "../externals/SafeERC20.sol";
 
-
 /// @title SafeTransfer, allowing contract to withdraw tokens accidentally sent to itself
 contract Transferrable {
     using Address for address payable;
@@ -35,10 +34,14 @@ contract Transferrable {
     /// @param _to is the recipient's address.
     /// @param _asset is the address of an ERC20 token or 0x0 for ether.
     /// @param _amount is the amount to be transferred in base units.
-    function _safeTransfer(address payable _to, address _asset, uint256 _amount) internal {
+    function _safeTransfer(
+        address payable _to,
+        address _asset,
+        uint256 _amount
+    ) internal {
         // address(0) is used to denote ETH
         if (_asset == address(0)) {
-           _to.sendValue(_amount);
+            _to.sendValue(_amount);
         } else {
             IERC20(_asset).safeTransfer(_to, _amount);
         }

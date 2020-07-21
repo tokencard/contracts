@@ -30,7 +30,6 @@ import "./internals/parseIntScientific.sol";
 import "./internals/tokenWhitelistable.sol";
 import "./internals/transferrable.sol";
 
-
 /// @title Oracle provides asset exchange rates and conversion functionality.
 contract Oracle is ENSResolvable, usingProvable, Transferrable, Base64, Date, Controllable, ParseIntScientific, TokenWhitelistable {
     using strings for *;
@@ -75,7 +74,12 @@ contract Oracle is ENSResolvable, usingProvable, Transferrable, Base64, Date, Co
     /// @param _ens_ is the address of the ENS.
     /// @param _controllerNode_ is the ENS node corresponding to the Controller.
     /// @param _tokenWhitelistNode_ is the ENS corresponding to the Token Whitelist.
-    constructor(address _resolver_, address _ens_, bytes32 _controllerNode_, bytes32 _tokenWhitelistNode_) public {
+    constructor(
+        address _resolver_,
+        address _ens_,
+        bytes32 _controllerNode_,
+        bytes32 _tokenWhitelistNode_
+    ) public {
         _initializeENSResolvable(_ens_);
         _initializeControllable(_controllerNode_);
         _initializeTokenWhitelistable(_tokenWhitelistNode_);
@@ -113,7 +117,11 @@ contract Oracle is ENSResolvable, usingProvable, Transferrable, Base64, Date, Co
     }
 
     /// @notice Withdraw tokens from the smart contract to the specified account.
-    function claim(address payable _to, address _asset, uint256 _amount) external onlyAdmin {
+    function claim(
+        address payable _to,
+        address _asset,
+        uint256 _amount
+    ) external onlyAdmin {
         _safeTransfer(_to, _asset, _amount);
         emit Claimed(_to, _asset, _amount);
     }
@@ -123,7 +131,11 @@ contract Oracle is ENSResolvable, usingProvable, Transferrable, Base64, Date, Co
     /// @param _result query result in JSON format.
     /// @param _proof origin proof from crypto compare.
     // solium-disable-next-line mixedcase
-    function __callback(bytes32 _queryID, string memory _result, bytes memory _proof) public override {
+    function __callback(
+        bytes32 _queryID,
+        string memory _result,
+        bytes memory _proof
+    ) public override {
         // Require that the caller is the Provable contract.
         require(msg.sender == provable_cbAddress(), "sender is not provable");
         // Use the query ID to find the matching token address.
@@ -242,7 +254,12 @@ contract Oracle is ENSResolvable, usingProvable, Transferrable, Base64, Date, Co
     /// @param _proof origin proof from cryptocompare.
     /// @param _publicKey cryptocompare public key.
     /// @param _lastUpdate timestamp of the last time the requested token was updated.
-    function _verifyProof(string memory _result, bytes memory _proof, bytes memory _publicKey, uint256 _lastUpdate) private returns (bool, uint256) {
+    function _verifyProof(
+        string memory _result,
+        bytes memory _proof,
+        bytes memory _publicKey,
+        uint256 _lastUpdate
+    ) private returns (bool, uint256) {
         // expecting fixed length proofs
         if (_proof.length != _PROOF_LEN) {
             revert("invalid proof length");
@@ -303,7 +320,11 @@ contract Oracle is ENSResolvable, usingProvable, Transferrable, Base64, Date, Co
     /// @param _headers HTTP headers provided by the cryptocompare api
     /// @param _signature signature provided by the cryptocompare api
     /// @param _publicKey cryptocompare public key.
-    function _verifySignature(bytes memory _headers, bytes memory _signature, bytes memory _publicKey) private returns (bool) {
+    function _verifySignature(
+        bytes memory _headers,
+        bytes memory _signature,
+        bytes memory _publicKey
+    ) private returns (bool) {
         address signer;
         bool signatureOK;
 

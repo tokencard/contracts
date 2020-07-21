@@ -25,12 +25,10 @@ import "./interfaces/IWallet.sol";
 import "./internals/ensResolvable.sol";
 import "./internals/controllable.sol";
 
-
 /// @title IWalletCache interface describes a method for poping an already cached wallet
 interface IWalletCache {
     function walletCachePop() external returns (address payable);
 }
-
 
 //// @title Wallet cache with wallet pre-caching functionality.
 contract WalletCache is ENSResolvable, Controllable {

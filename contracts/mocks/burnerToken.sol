@@ -4,11 +4,9 @@ pragma solidity ^0.6.11;
 
 import "../externals/SafeMath.sol";
 
-
 interface TokenHolder {
     function burn(address, uint256) external returns (bool);
 }
-
 
 contract BurnerToken {
     using SafeMath for uint256;
@@ -56,7 +54,11 @@ contract BurnerToken {
         return true;
     }
 
-    function transferFrom(address _from, address _to, uint256 _value) external returns (bool success) {
+    function transferFrom(
+        address _from,
+        address _to,
+        uint256 _value
+    ) external returns (bool success) {
         if (_to == address(0)) return false;
         if (balanceOf[_from] < _value) return false;
 
