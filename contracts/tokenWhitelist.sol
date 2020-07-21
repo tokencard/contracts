@@ -16,7 +16,9 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-pragma solidity 0.5.17;
+// SPDX-License-Identifier: GPLv3
+
+pragma solidity ^0.6.11;
 
 import "./internals/controllable.sol";
 import "./internals/transferrable.sol";
@@ -89,13 +91,13 @@ contract TokenWhitelist is ENSResolvable, Controllable, Transferrable {
 
     address[] private _tokenAddressArray;
 
-    /// @notice keeping track of how many redeemable tokens are in the tokenWhitelist
+    /// @dev keeping track of how many redeemable tokens are in the tokenWhitelist
     uint256 private _redeemableCounter;
 
-    /// @notice Address of the stablecoin.
+    /// @dev Address of the stablecoin.
     address private _stablecoin;
 
-    /// @notice is registered ENS node identifying the oracle contract.
+    /// @dev is registered ENS node identifying the oracle contract.
     bytes32 private _oracleNode;
 
     /// @notice Constructor initializes ENSResolvable, and Controllable.
@@ -193,7 +195,7 @@ contract TokenWhitelist is ENSResolvable, Controllable, Transferrable {
                     break;
                 }
             }
-            _tokenAddressArray.length--;
+            _tokenAddressArray.pop();
             // Emit token removal event.
             emit RemovedToken(msg.sender, token);
         }

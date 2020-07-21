@@ -16,10 +16,12 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-pragma solidity 0.5.17;
+// SPDX-License-Identifier: GPLv3
 
-import "./wallet.sol";
+pragma solidity ^0.6.11;
+
 import "./externals/upgradeability/UpgradeabilityProxy.sol";
+import "./interfaces/IWallet.sol";
 import "./internals/ensResolvable.sol";
 import "./internals/controllable.sol";
 
@@ -108,7 +110,7 @@ contract WalletCache is ENSResolvable, Controllable {
     function cacheWallet() public {
         address walletDeployerAddress = _ensResolve(walletDeployerNode);
         address payable wallet = address(new UpgradeabilityProxy(walletImplementation, ""));
-        Wallet(wallet).initializeWallet(
+        IWallet(wallet).initializeWallet(
             address(uint160(walletDeployerAddress)), // the address(uint160()) cast is done as the Wallet owner (1st argument) needs to be payable
             true,
             ensRegistry(),

@@ -16,7 +16,9 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-pragma solidity 0.5.17;
+// SPDX-License-Identifier: GPLv3
+
+pragma solidity ^0.6.11;
 
 import "./externals/SafeMath.sol";
 import "./externals/SafeERC20.sol";
@@ -34,10 +36,10 @@ interface ILicence {
 
 
 /// @title Licence loads the TokenCard and transfers the licence amout to the TKN Holder Contract.
-/// @notice the rest of the amount gets sent to the CryptoFloat
+/// @dev the rest of the amount gets sent to the CryptoFloat
 contract Licence is Transferrable, ENSResolvable, Controllable {
     using SafeMath for uint256;
-    using SafeERC20 for ERC20;
+    using SafeERC20 for IERC20;
 
     /*******************/
     /*     Events     */
@@ -54,7 +56,7 @@ contract Licence is Transferrable, ENSResolvable, Controllable {
 
     event Claimed(address _to, address _asset, uint256 _amount);
 
-    /// @notice This is 100% scaled up by a factor of 10 to give us an extra 1 decimal place of precision
+    /// @dev This is 100% scaled up by a factor of 10 to give us an extra 1 decimal place of precision
     uint256 public constant MAX_AMOUNT_SCALE = 1000;
     uint256 public constant MIN_AMOUNT_SCALE = 1;
 
@@ -69,17 +71,17 @@ contract Licence is Transferrable, ENSResolvable, Controllable {
     bool private _lockedLicenceDAO;
     bool private _lockedTKNContractAddress;
 
-    /// @notice This is the _licenceAmountScaled by a factor of 10
+    /// @dev This is the _licenceAmountScaled by a factor of 10
     /// @dev i.e. 1% is 10 _licenceAmountScaled, 0.1% is 1 _licenceAmountScaled
     uint256 private _licenceAmountScaled;
 
-    /// @notice Reverts if called by any address other than the DAO contract.
+    /// @dev Reverts if called by any address other than the DAO contract.
     modifier onlyDAO() {
         require(msg.sender == _licenceDAO, "the sender isn't the DAO");
         _;
     }
 
-    /// @notice Constructor initializes the card licence contract.
+    /// @dev Constructor initializes the card licence contract.
     /// @param _licence_ is the initial card licence amount. this number is scaled 10 = 1%, 9 = 0.9%
     /// @param _float_ is the address of the multi-sig cryptocurrency float contract.
     /// @param _holder_ is the address of the token holder contract
@@ -98,64 +100,64 @@ contract Licence is Transferrable, ENSResolvable, Controllable {
         }
     }
 
-    /// @notice Ether can be deposited from any source, so this contract should be payable by anyone.
-    function() external payable {}
+    /// @dev Ether can be deposited from any source, so this contract should be payable by anyone.
+    receive() external payable {}
 
-    /// @notice this allows for people to see the scaled licence amount
+    /// @dev this allows for people to see the scaled licence amount
     /// @return the scaled licence amount, used to calculate the split when loading.
     function licenceAmountScaled() external view returns (uint256) {
         return _licenceAmountScaled;
     }
 
-    /// @notice allows one to see the address of the CryptoFloat
+    /// @dev allows one to see the address of the CryptoFloat
     /// @return the address of the multi-sig cryptocurrency float contract.
     function cryptoFloat() external view returns (address) {
         return _cryptoFloat;
     }
 
-    /// @notice allows one to see the address TKN holder contract
+    /// @dev allows one to see the address TKN holder contract
     /// @return the address of the token holder contract.
     function tokenHolder() external view returns (address) {
         return _tokenHolder;
     }
 
-    /// @notice allows one to see the address of the DAO
+    /// @dev allows one to see the address of the DAO
     /// @return the address of the DAO contract.
     function licenceDAO() external view returns (address) {
         return _licenceDAO;
     }
 
-    /// @notice The address of the TKN token
+    /// @dev The address of the TKN token
     /// @return the address of the TKN contract.
     function tknContractAddress() external view returns (address) {
         return _tknContractAddress;
     }
 
-    /// @notice This locks the cryptoFloat address
+    /// @dev This locks the cryptoFloat address
     /// @dev so that it can no longer be updated
     function lockFloat() external onlyAdmin {
         _lockedCryptoFloat = true;
     }
 
-    /// @notice This locks the TokenHolder address
+    /// @dev This locks the TokenHolder address
     /// @dev so that it can no longer be updated
     function lockHolder() external onlyAdmin {
         _lockedTokenHolder = true;
     }
 
-    /// @notice This locks the DAO address
+    /// @dev This locks the DAO address
     /// @dev so that it can no longer be updated
     function lockLicenceDAO() external onlyAdmin {
         _lockedLicenceDAO = true;
     }
 
-    /// @notice This locks the TKN address
+    /// @dev This locks the TKN address
     /// @dev so that it can no longer be updated
     function lockTKNContractAddress() external onlyAdmin {
         _lockedTKNContractAddress = true;
     }
 
-    /// @notice Updates the address of the cyptoFloat.
+    /// @dev Updates the address of the cyptoFloat.
     /// @param _newFloat This is the new address for the CryptoFloat
     function updateFloat(address payable _newFloat) external onlyAdmin {
         require(!floatLocked(), "float is locked");
@@ -163,7 +165,7 @@ contract Licence is Transferrable, ENSResolvable, Controllable {
         emit UpdatedCryptoFloat(_newFloat);
     }
 
-    /// @notice Updates the address of the Holder contract.
+    /// @dev Updates the address of the Holder contract.
     /// @param _newHolder This is the new address for the TokenHolder
     function updateHolder(address payable _newHolder) external onlyAdmin {
         require(!holderLocked(), "holder contract is locked");
@@ -171,7 +173,7 @@ contract Licence is Transferrable, ENSResolvable, Controllable {
         emit UpdatedTokenHolder(_newHolder);
     }
 
-    /// @notice Updates the address of the DAO contract.
+    /// @dev Updates the address of the DAO contract.
     /// @param _newDAO This is the new address for the Licence DAO
     function updateLicenceDAO(address _newDAO) external onlyAdmin {
         require(!licenceDAOLocked(), "DAO is locked");
@@ -179,7 +181,7 @@ contract Licence is Transferrable, ENSResolvable, Controllable {
         emit UpdatedLicenceDAO(_newDAO);
     }
 
-    /// @notice Updates the address of the TKN contract.
+    /// @dev Updates the address of the TKN contract.
     /// @param _newTKN This is the new address for the TKN contract
     function updateTKNContractAddress(address _newTKN) external onlyAdmin {
         require(!tknContractAddressLocked(), "TKN is locked");
@@ -187,7 +189,7 @@ contract Licence is Transferrable, ENSResolvable, Controllable {
         emit UpdatedTKNContractAddress(_newTKN);
     }
 
-    /// @notice Updates the TKN licence amount
+    /// @dev Updates the TKN licence amount
     /// @param _newAmount is a number between MIN_AMOUNT_SCALE (1) and MAX_AMOUNT_SCALE
     function updateLicenceAmount(uint256 _newAmount) external onlyDAO {
         require(MIN_AMOUNT_SCALE <= _newAmount && _newAmount <= MAX_AMOUNT_SCALE, "licence amount out of range");
@@ -195,21 +197,21 @@ contract Licence is Transferrable, ENSResolvable, Controllable {
         emit UpdatedLicenceAmount(_newAmount);
     }
 
-    /// @notice Load the holder and float contracts based on the licence amount and asset amount.
+    /// @dev Load the holder and float contracts based on the licence amount and asset amount.
     /// @param _asset is the address of an ERC20 token or 0x0 for ether.
     /// @param _amount is the amount of assets to be transferred including the licence amount.
     function load(address _asset, uint256 _amount) external payable {
         uint256 loadAmount = _amount;
         // If TKN then no licence to be paid
         if (_asset == _tknContractAddress) {
-            ERC20(_asset).safeTransferFrom(msg.sender, _cryptoFloat, loadAmount);
+            IERC20(_asset).safeTransferFrom(msg.sender, _cryptoFloat, loadAmount);
         } else {
             loadAmount = _amount.mul(MAX_AMOUNT_SCALE).div(_licenceAmountScaled + MAX_AMOUNT_SCALE);
             uint256 licenceAmount = _amount.sub(loadAmount);
 
             if (_asset != address(0)) {
-                ERC20(_asset).safeTransferFrom(msg.sender, _tokenHolder, licenceAmount);
-                ERC20(_asset).safeTransferFrom(msg.sender, _cryptoFloat, loadAmount);
+                IERC20(_asset).safeTransferFrom(msg.sender, _tokenHolder, licenceAmount);
+                IERC20(_asset).safeTransferFrom(msg.sender, _cryptoFloat, loadAmount);
             } else {
                 require(msg.value == _amount, "ETH sent is not equal to amount");
                 _tokenHolder.transfer(licenceAmount);
@@ -222,28 +224,28 @@ contract Licence is Transferrable, ENSResolvable, Controllable {
         emit TransferredToCryptoFloat(msg.sender, _cryptoFloat, _asset, loadAmount);
     }
 
-    //// @notice Withdraw tokens from the smart contract to the specified account.
+    //// @dev Withdraw tokens from the smart contract to the specified account.
     function claim(address payable _to, address _asset, uint256 _amount) external onlyAdmin {
         _safeTransfer(_to, _asset, _amount);
         emit Claimed(_to, _asset, _amount);
     }
 
-    /// @notice returns whether or not the CryptoFloat address is locked
+    /// @dev returns whether or not the CryptoFloat address is locked
     function floatLocked() public view returns (bool) {
         return _lockedCryptoFloat;
     }
 
-    /// @notice returns whether or not the TokenHolder address is locked
+    /// @dev returns whether or not the TokenHolder address is locked
     function holderLocked() public view returns (bool) {
         return _lockedTokenHolder;
     }
 
-    /// @notice returns whether or not the Licence DAO address is locked
+    /// @dev returns whether or not the Licence DAO address is locked
     function licenceDAOLocked() public view returns (bool) {
         return _lockedLicenceDAO;
     }
 
-    /// @notice returns whether or not the TKN address is locked
+    /// @dev returns whether or not the TKN address is locked
     function tknContractAddressLocked() public view returns (bool) {
         return _lockedTKNContractAddress;
     }

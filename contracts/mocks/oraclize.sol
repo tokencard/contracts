@@ -1,5 +1,6 @@
-pragma solidity 0.5.17;
+// SPDX-License-Identifier: GPLv3
 
+pragma solidity ^0.6.11;
 
 contract OraclizeConnector {
     address public cbAddress;

@@ -16,7 +16,9 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-pragma solidity 0.5.17;
+// SPDX-License-Identifier: GPLv3
+
+pragma solidity ^0.6.11;
 
 import "./ensResolvable.sol";
 import "../tokenWhitelist.sol";
@@ -28,7 +30,7 @@ contract TokenWhitelistable is ENSResolvable {
     // token-whitelist.tokencard.eth
     bytes32 private constant _DEFAULT_TOKEN_WHITELIST_NODE = 0xe84f90570f13fe09f288f2411ff9cf50da611ed0c7db7f73d48053ffc974d396;
 
-    /// @notice This is the registered ENS node identifying the tokenWhitelist contract
+    /// @dev This is the registered ENS node identifying the tokenWhitelist contract
     bytes32 private _tokenWhitelistNode = _DEFAULT_TOKEN_WHITELIST_NODE;
 
     /// @notice This shows what TokenWhitelist is being used

@@ -16,7 +16,9 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-pragma solidity 0.5.17;
+// SPDX-License-Identifier: GPLv3
+
+pragma solidity ^0.6.11;
 
 import "../externals/SafeMath.sol";
 

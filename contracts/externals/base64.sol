@@ -1,4 +1,6 @@
-pragma solidity 0.5.17;
+// SPDX-License-Identifier: GPLv3
+
+pragma solidity ^0.6.0;
 
 /**
  * This method was modified from the GPLv3 solidity code found in this repository

@@ -13,7 +13,9 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-pragma solidity ^0.5.17;
+// SPDX-License-Identifier: GPLv3
+
+pragma solidity ^0.6.11;
 pragma experimental ABIEncoderV2;
 
 import "./internals/controllable.sol";
@@ -42,7 +44,7 @@ contract GasProxy is Controllable, GasRefundable {
     /// @param _value Amount of ETH (wei) to be sent together with the transaction.
     /// @param _data Data payload of the controller transaction.
     function executeTransaction(address _destination, uint256 _value, bytes calldata _data) external onlyController refundGas returns (bytes memory) {
-        (bool success, bytes memory returnData) = _destination.call.value(_value)(_data);
+        (bool success, bytes memory returnData) = _destination.call{value: _value}(_data);
         require(success, "external call failed");
         emit ExecutedTransaction(_destination, _value, _data, returnData);
         return returnData;

@@ -16,7 +16,9 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-pragma solidity 0.5.17;
+// SPDX-License-Identifier: GPLv3
+
+pragma solidity ^0.6.11;
 
 import "../externals/ERC20.sol";
 
@@ -28,7 +30,7 @@ contract Balanceable {
     /// @return balance associated with an address, for any token, in the wei equivalent
     function _balance(address _asset) internal view returns (uint256) {
         if (_asset != address(0)) {
-            return ERC20(_asset).balanceOf(address(this));
+            return IERC20(_asset).balanceOf(address(this));
         } else {
             return address(this).balance;
         }

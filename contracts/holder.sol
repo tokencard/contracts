@@ -16,7 +16,9 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-pragma solidity 0.5.17;
+// SPDX-License-Identifier: GPLv3
+
+pragma solidity ^0.6.11;
 
 import "./externals/ERC20.sol";
 import "./externals/SafeMath.sol";
@@ -58,7 +60,7 @@ contract Holder is Balanceable, ENSResolvable, Controllable, Transferrable, Toke
     }
 
     /// @notice Ether may be sent from anywhere.
-    function() external payable {
+    receive() external payable {
         emit Received(msg.sender, msg.value);
     }
 

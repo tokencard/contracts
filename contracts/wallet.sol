@@ -16,7 +16,9 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-pragma solidity 0.5.17;
+// SPDX-License-Identifier: GPLv3
+
+pragma solidity ^0.6.11;
 
 import "./licence.sol";
 import "./internals/ownable.sol";
@@ -164,7 +166,7 @@ contract AddressWhitelist is ControllableOwnable, SelfCallableOwnable {
                         break;
                     }
                 }
-                whitelistArray.length--;
+                whitelistArray.pop();
             }
         }
         // Emit the removal event.
@@ -514,7 +516,7 @@ contract LoadLimit is ControllableOwnable, SelfCallableOwnable, TokenWhitelistab
 contract Wallet is ENSResolvable, AddressWhitelist, SpendLimit, GasTopUpLimit, LoadLimit, ERC165, Transferrable, Balanceable {
     using Address for address;
     using ECDSA for bytes32;
-    using SafeERC20 for ERC20;
+    using SafeERC20 for IERC20;
     using SafeMath for uint256;
 
     event BulkTransferred(address _to, address[] _assets);
@@ -665,17 +667,17 @@ contract Wallet is ENSResolvable, AddressWhitelist, SpendLimit, GasTopUpLimit, L
         // Get the TKN licenceAddress from ENS
         address licenceAddress = _ensResolve(_licenceNode);
         if (_asset != address(0)) {
-            ERC20(_asset).safeApprove(licenceAddress, _amount);
+            IERC20(_asset).safeApprove(licenceAddress, _amount);
             ILicence(licenceAddress).load(_asset, _amount);
         } else {
-            ILicence(licenceAddress).load.value(_amount)(_asset, _amount);
+            ILicence(licenceAddress).load{value: _amount}(_asset, _amount);
         }
 
         emit LoadedTokenCard(_asset, _amount);
     }
 
     /// @dev Checks for interface support based on ERC165.
-    function supportsInterface(bytes4 _interfaceID) external view returns (bool) {
+    function supportsInterface(bytes4 _interfaceID) external override view returns (bool) {
         return _interfaceID == _ERC165_INTERFACE_ID;
     }
 
@@ -801,7 +803,7 @@ contract Wallet is ENSResolvable, AddressWhitelist, SpendLimit, GasTopUpLimit, L
             }
             // use callOptionalReturn provided in SafeERC20 in case the ERC20 method
             // returns false instead of reverting!
-            ERC20(_destination).callOptionalReturn(_data);
+            IERC20(_destination)._callOptionalReturn(_data);
 
             // if ERC20 call completes, return a boolean "true" as bytes emulating ERC20
             bytes memory b = new bytes(32);
@@ -811,7 +813,7 @@ contract Wallet is ENSResolvable, AddressWhitelist, SpendLimit, GasTopUpLimit, L
             return b;
         }
 
-        (bool success, bytes memory returnData) = _destination.call.value(_value)(_data);
+        (bool success, bytes memory returnData) = _destination.call{value: _value}(_data);
         require(success, string(returnData));
 
         emit ExecutedTransaction(_destination, _value, _data, returnData);
