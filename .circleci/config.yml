@@ -54,7 +54,7 @@ jobs:
     steps:
       - run: apk add -U git openssh-client ca-certificates
       - checkout
-      - run: npm install --no-package-lock prettier@2.0.2 prettier-plugin-solidity@1.0.0-alpha.47
+      - run: npm install --no-package-lock prettier@2.0.2 prettier-plugin-solidity@1.0.0-alpha.54
       - run: npx prettier --list-different --plugin=prettier-plugin-solidity {contracts,contracts/mocks,contracts/internals,echidna}/*.sol
 
   mythril:
