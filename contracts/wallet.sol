@@ -511,7 +511,6 @@ contract Wallet is ENSResolvable, AddressWhitelist, SpendLimit, GasTopUpLimit, L
     using SafeERC20 for IERC20;
     using SafeMath for uint256;
 
-    event BulkTransferred(address _to, address[] _assets);
     event ExecutedRelayedTransaction(bytes _data, bytes _returnData);
     event ExecutedTransaction(address _destination, uint256 _value, bytes _data, bytes _returnData);
     event IncreasedRelayNonce(address _sender, uint256 _currentNonce);
@@ -566,23 +565,6 @@ contract Wallet is ENSResolvable, AddressWhitelist, SpendLimit, GasTopUpLimit, L
     modifier isNotZero(uint256 _value) {
         require(_value != 0, "value=0");
         _;
-    }
-
-    /// @dev This is a bulk transfer convenience function, used to migrate contracts.
-    /// @notice If any of the transfers fail, this will revert.
-    /// @param _to is the recipient's address, can't be the zero (0x0) address: transfer() will revert.
-    /// @param _assets is an array of addresses of ERC20 tokens or 0x0 for ether.
-    function bulkTransfer(address payable _to, address[] calldata _assets) external onlyOwnerOrSelf {
-        // check to make sure that _assets isn't empty
-        require(_assets.length != 0, "asset array is empty");
-        // This loops through all of the transfers to be made
-        for (uint256 i = 0; i < _assets.length; i++) {
-            uint256 amount = _balance(_assets[i]);
-            // use our safe, daily limit protected transfer
-            transfer(_to, _assets[i], amount);
-        }
-
-        emit BulkTransferred(_to, _assets);
     }
 
     /// @dev This function allows for the controller to relay transactions on the owner's behalf,
