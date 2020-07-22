@@ -2,7 +2,6 @@
 
 pragma solidity ^0.6.11;
 
-
 contract GasBurner {
     function dummy() public pure {
         assembly {

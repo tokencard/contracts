@@ -21,7 +21,6 @@ pragma experimental ABIEncoderV2;
 import "./internals/controllable.sol";
 import "./internals/gasRefundable.sol";
 
-
 contract GasProxy is Controllable, GasRefundable {
     /// @notice Emits the transaction executed by the controller.
     event ExecutedTransaction(address _destination, uint256 _value, bytes _data, bytes _returnData);
@@ -43,7 +42,11 @@ contract GasProxy is Controllable, GasRefundable {
     /// @param _destination Destination address of the executed transaction.
     /// @param _value Amount of ETH (wei) to be sent together with the transaction.
     /// @param _data Data payload of the controller transaction.
-    function executeTransaction(address _destination, uint256 _value, bytes calldata _data) external onlyController refundGas returns (bytes memory) {
+    function executeTransaction(
+        address _destination,
+        uint256 _value,
+        bytes calldata _data
+    ) external onlyController refundGas returns (bytes memory) {
         (bool success, bytes memory returnData) = _destination.call{value: _value}(_data);
         require(success, "external call failed");
         emit ExecutedTransaction(_destination, _value, _data, returnData);

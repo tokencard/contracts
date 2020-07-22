@@ -18,11 +18,9 @@
 pragma solidity ^0.6.11;
 pragma experimental ABIEncoderV2;
 
-
 interface IGasToken {
     function freeUpTo(uint256) external returns (uint256);
 }
-
 
 contract GasRefundable {
     /// @notice Emits the new gas token information when it is set.

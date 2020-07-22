@@ -4,7 +4,6 @@ pragma solidity ^0.6.11;
 
 import "../externals/SafeMath.sol";
 
-
 contract GasToken {
     using SafeMath for uint256;
 
