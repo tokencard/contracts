@@ -26,7 +26,6 @@ import "./internals/transferrable.sol";
 import "./externals/SafeMath.sol";
 import "./externals/strings.sol";
 
-
 /// @title TokenWhitelist stores a list of tokens used by the Consumer Contract Wallet, the Oracle, the TKN Holder and the TKN Licence Contract
 contract TokenWhitelist is ENSResolvable, Controllable, Transferrable {
     using strings for *;

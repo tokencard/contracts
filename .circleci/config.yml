@@ -59,7 +59,7 @@ jobs:
 
   mythril:
     docker:
-      - image: mythril/myth@sha256:e78a96bd0f5e57fe45bcd1c744509932bee83706a00293e53a60e83cd0ab89f3
+      - image: mythril/myth@sha256:48a0bbe632eca0312237cae70395e687c748f1cf2585494a305fee26fb685fc6
     resource_class: xlarge
     working_directory: /tmp/contracts
     parallelism: 8
@@ -69,49 +69,49 @@ jobs:
           working_directory: contracts
           command: |
             if [[ "${CIRCLE_NODE_INDEX}" == 0 ]]; then
-              myth analyze --solv=0.5.17 ./oracle.sol --execution-timeout=800 --max-depth=15 --parallel-solving
+              myth analyze --solv=0.6.11 ./oracle.sol --execution-timeout=800 --max-depth=15 --parallel-solving
             fi
           no_output_timeout: 20m
       - run:
           working_directory: contracts
           command: |
             if [[ "${CIRCLE_NODE_INDEX}" == 1 ]]; then
-              myth analyze --solv=0.5.17 ./wallet.sol --execution-timeout=800 --max-depth=15 --parallel-solving
+              myth analyze --solv=0.6.11 ./wallet.sol --execution-timeout=800 --max-depth=15 --parallel-solving
             fi
           no_output_timeout: 20m
       - run:
           working_directory: contracts
           command: |
             if [[ "${CIRCLE_NODE_INDEX}" == 2 ]]; then
-              myth analyze --solv=0.5.17 ./holder.sol --execution-timeout=800  --max-depth=15 --parallel-solving
+              myth analyze --solv=0.6.11 ./holder.sol --execution-timeout=800  --max-depth=15 --parallel-solving
             fi
           no_output_timeout: 20m
       - run:
           working_directory: contracts
           command: |
             if [[ "${CIRCLE_NODE_INDEX}" == 3 ]]; then
-              myth analyze --solv=0.5.17 ./licence.sol --execution-timeout=800  --max-depth=15 --parallel-solving
+              myth analyze --solv=0.6.11 ./licence.sol --execution-timeout=800  --max-depth=15 --parallel-solving
             fi
           no_output_timeout: 20m
       - run:
           working_directory: contracts
           command: |
             if [[ "${CIRCLE_NODE_INDEX}" == 4 ]]; then
-              myth analyze --solv=0.5.17 ./tokenWhitelist.sol --execution-timeout=800  --max-depth=15 --parallel-solving
+              myth analyze --solv=0.6.11 ./tokenWhitelist.sol --execution-timeout=800  --max-depth=15 --parallel-solving
             fi
           no_output_timeout: 20m
       - run:
           working_directory: contracts
           command: |
             if [[ "${CIRCLE_NODE_INDEX}" == 5 ]]; then
-              myth analyze --solv=0.5.17 ./walletDeployer.sol --execution-timeout=800  --max-depth=15 --parallel-solving
+              myth analyze --solv=0.6.11 ./walletDeployer.sol --execution-timeout=800  --max-depth=15 --parallel-solving
             fi
           no_output_timeout: 20m
       - run:
           working_directory: contracts
           command: |
             if [[ "${CIRCLE_NODE_INDEX}" == 6 ]]; then
-              myth analyze --solv=0.5.17 ./controller.sol --execution-timeout=800  --max-depth=15 --parallel-solving
+              myth analyze --solv=0.6.11 ./controller.sol --execution-timeout=800  --max-depth=15 --parallel-solving
             fi
           no_output_timeout: 20m
       - run:
@@ -124,13 +124,13 @@ jobs:
 
   slither:
     docker:
-      - image: trailofbits/eth-security-toolbox@sha256:3fb96e2d9de772f5e97f1c3c650c8a3d28660f8a64a60b76269da1ac19b86a28
+      - image: trailofbits/eth-security-toolbox@sha256:6376ca0f1e01cfac40499650e3b5c3c430f7c6fee73fcd2ea71aad4d0fa0038b
     working_directory: /tmp/contracts
     parallelism: 7
     steps:
       - run: sudo -n apt-get update && sudo -n apt-get install -y openssh-client
       - checkout
-      - run: solc-select 0.5.17
+      - run: solc-select 0.6.11
       - run:
           working_directory: tools/slither
           command: |
@@ -183,14 +183,14 @@ jobs:
 
   echidna:
     docker:
-      - image: trailofbits/eth-security-toolbox@sha256:3fb96e2d9de772f5e97f1c3c650c8a3d28660f8a64a60b76269da1ac19b86a28
+      - image: trailofbits/eth-security-toolbox@sha256:6376ca0f1e01cfac40499650e3b5c3c430f7c6fee73fcd2ea71aad4d0fa0038b
     resource_class: xlarge
     working_directory: /tmp/contracts
     parallelism: 6
     steps:
       - run: sudo -n apt-get update && sudo -n apt-get install -y openssh-client
       - checkout
-      - run: solc-select 0.5.17
+      - run: solc-select 0.6.11
       - run: find contracts -type f -name '*.sol' -exec slither-flat --convert-external {} \;
       - run:
           command: |
@@ -231,14 +231,14 @@ jobs:
 
   manticore:
     docker:
-      - image: trailofbits/eth-security-toolbox@sha256:3fb96e2d9de772f5e97f1c3c650c8a3d28660f8a64a60b76269da1ac19b86a28
+      - image: trailofbits/eth-security-toolbox@sha256:6376ca0f1e01cfac40499650e3b5c3c430f7c6fee73fcd2ea71aad4d0fa0038b
     working_directory: /tmp/contracts
     parallelism: 6
     steps:
       - run: ulimit -s 100000
       - run: sudo -n apt-get update && sudo -n apt-get install -y openssh-client
       - checkout
-      - run: solc-select 0.5.17
+      - run: solc-select 0.6.11
       - run:
           command: |
             if [[ "${CIRCLE_NODE_INDEX}" == 0 ]]; then
@@ -302,10 +302,10 @@ workflows:
           filters:
             tags:
               ignore: ""
-      - echidna:
-          filters:
-            tags:
-              ignore: ""
+      # - echidna:
+      #     filters:
+      #       tags:
+      #         ignore: ""
       - manticore:
           filters:
             tags:

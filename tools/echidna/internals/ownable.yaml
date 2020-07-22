@@ -6,3 +6,4 @@ sender: ["0x2"]
 dashboard: false
 coverage: true
 solcArgs: "--allow-paths ."
+cryticArgs: ["--solc-args=--optimize"]
