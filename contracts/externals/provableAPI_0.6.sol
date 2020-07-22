@@ -354,14 +354,7 @@ contract usingProvable {
         }
         return false;
     }
-    /**
-     * @dev The following `__callback` functions are just placeholders ideally
-     *      meant to be defined in child contract when proofs are used.
-     *      The function bodies simply silence compiler warnings.
-     */
-    function __callback(bytes32 _myid, string memory _result) virtual public {
-        __callback(_myid, _result, new bytes(0));
-    }
+    
 
     function __callback(bytes32 _myid, string memory _result, bytes memory _proof) virtual public {
       _myid; _result; _proof;
