@@ -181,53 +181,53 @@ jobs:
             fi
           no_output_timeout: 5m
 
-  echidna:
-    docker:
-      - image: trailofbits/eth-security-toolbox@sha256:6376ca0f1e01cfac40499650e3b5c3c430f7c6fee73fcd2ea71aad4d0fa0038b
-    resource_class: xlarge
-    working_directory: /tmp/contracts
-    parallelism: 6
-    steps:
-      - run: sudo -n apt-get update && sudo -n apt-get install -y openssh-client
-      - checkout
-      - run: solc-select 0.6.11
-      - run: find contracts -type f -name '*.sol' -exec slither-flat --convert-external {} \;
-      - run:
-          command: |
-            if [[ "${CIRCLE_NODE_INDEX}" == 0 ]]; then
-                echidna-test tools/echidna/wallet/wallet.sol --config=tools/echidna/wallet/wallet.yaml --contract=TEST
-            fi
-          no_output_timeout: 15m
-      - run:
-          command: |
-            if [[ "${CIRCLE_NODE_INDEX}" == 1 ]]; then
-                echidna-test tools/echidna/wallet/addressWhitelist.sol --config=tools/echidna/wallet/addressWhitelist.yaml --contract=TEST
-            fi
-          no_output_timeout: 15m
-      - run:
-          command: |
-            if [[ "${CIRCLE_NODE_INDEX}" == 2 ]]; then
-                echidna-test tools/echidna/wallet/spendLimit.sol --config=tools/echidna/wallet/spendLimit.yaml --contract=TEST
-            fi
-          no_output_timeout: 15m
-      - run:
-          command: |
-            if [[ "${CIRCLE_NODE_INDEX}" == 3 ]]; then
-                echidna-test tools/echidna/wallet/gasTopUpLimit.sol --config=tools/echidna/wallet/gasTopUpLimit.yaml --contract=TEST
-            fi
-          no_output_timeout: 15m
-      - run:
-          command: |
-            if [[ "${CIRCLE_NODE_INDEX}" == 4 ]]; then
-                echidna-test tools/echidna/controller/controller.sol --config=tools/echidna/controller/controller.yaml --contract=TEST 
-            fi
-          no_output_timeout: 15m
-      - run:
-          command: |
-            if [[ "${CIRCLE_NODE_INDEX}" == 5 ]]; then
-                echidna-test tools/echidna/internals/ownable.sol --config=tools/echidna/internals/ownable.yaml --contract=TEST
-            fi
-          no_output_timeout: 15m
+  # echidna:
+  #   docker:
+  #     - image: trailofbits/eth-security-toolbox@sha256:6376ca0f1e01cfac40499650e3b5c3c430f7c6fee73fcd2ea71aad4d0fa0038b
+  #   resource_class: xlarge
+  #   working_directory: /tmp/contracts
+  #   parallelism: 6
+  #   steps:
+  #     - run: sudo -n apt-get update && sudo -n apt-get install -y openssh-client
+  #     - checkout
+  #     - run: solc-select 0.6.11
+  #     - run: find contracts -type f -name '*.sol' -exec slither-flat --convert-external {} \;
+  #     - run:
+  #         command: |
+  #           if [[ "${CIRCLE_NODE_INDEX}" == 0 ]]; then
+  #               echidna-test tools/echidna/wallet/wallet.sol --config=tools/echidna/wallet/wallet.yaml --contract=TEST
+  #           fi
+  #         no_output_timeout: 15m
+  #     - run:
+  #         command: |
+  #           if [[ "${CIRCLE_NODE_INDEX}" == 1 ]]; then
+  #               echidna-test tools/echidna/wallet/addressWhitelist.sol --config=tools/echidna/wallet/addressWhitelist.yaml --contract=TEST
+  #           fi
+  #         no_output_timeout: 15m
+  #     - run:
+  #         command: |
+  #           if [[ "${CIRCLE_NODE_INDEX}" == 2 ]]; then
+  #               echidna-test tools/echidna/wallet/spendLimit.sol --config=tools/echidna/wallet/spendLimit.yaml --contract=TEST
+  #           fi
+  #         no_output_timeout: 15m
+  #     - run:
+  #         command: |
+  #           if [[ "${CIRCLE_NODE_INDEX}" == 3 ]]; then
+  #               echidna-test tools/echidna/wallet/gasTopUpLimit.sol --config=tools/echidna/wallet/gasTopUpLimit.yaml --contract=TEST
+  #           fi
+  #         no_output_timeout: 15m
+  #     - run:
+  #         command: |
+  #           if [[ "${CIRCLE_NODE_INDEX}" == 4 ]]; then
+  #               echidna-test tools/echidna/controller/controller.sol --config=tools/echidna/controller/controller.yaml --contract=TEST 
+  #           fi
+  #         no_output_timeout: 15m
+  #     - run:
+  #         command: |
+  #           if [[ "${CIRCLE_NODE_INDEX}" == 5 ]]; then
+  #               echidna-test tools/echidna/internals/ownable.sol --config=tools/echidna/internals/ownable.yaml --contract=TEST
+  #           fi
+  #         no_output_timeout: 15m
 
   manticore:
     docker:
