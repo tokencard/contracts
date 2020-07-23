@@ -40,8 +40,8 @@ contract GasProxy is Ownable, Controllable, GasRefundable {
         _ensSetRegistry(_ensRegistry);
     }
 
-	/// @notice Sets the ENS node for the GST token.
-    function gstSetNode(bytes32 _gstNode) external onlyOwner {
+	/// @notice Sets the ENS node for the gas token.
+    function gasTokenSetNode(bytes32 _gstNode) external onlyOwner {
         _gasTokenSetNode(_gstNode);
     }
 
