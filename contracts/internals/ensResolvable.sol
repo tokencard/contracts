@@ -43,13 +43,6 @@ contract ENSResolvable is Initializable {
         return _ensRegistry;
     }
 
-    /// @notice Sets the ENS registry address to the provided address.
-    /// @param _ensRegistry_ Address of the ENS registry smart contract.
-    function _ensSetRegistry(address _ensRegistry_) internal {
-        _ensRegistry = _ensRegistry_;
-        emit ENSSetRegistry(_ensRegistry_);
-    }
-
     /// @notice Helper function used to get the address of a node.
     /// @param _node of the ENS entry that needs resolving.
     /// @return The address of the resolved ENS node.

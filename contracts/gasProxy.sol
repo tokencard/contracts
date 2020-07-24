@@ -21,43 +21,38 @@ import "./internals/controllable.sol";
 import "./internals/gasRefundable.sol";
 
 
-contract GasProxy is Ownable, Controllable, GasRefundable {
-
-	/// @dev Controllers are used by the application.	    
+contract GasProxy is Controllable, GasRefundable {
+	/// @notice Emits the transaction executed by the controller.
 	event ExecutedTransaction(address _destination, uint256 _value, bytes _data, bytes _returnData);
 
-
-    /// @param _ownerAddress Address of the contract owner.
 	/// @param _controllerNode ENS node of the controller contract.
-	/// @param _gasTokenNode ENS node of the gas token contract.
-    constructor(address payable _ownerAddress, bytes32 _controllerNode, bytes32 _gasTokenNode) public GasRefundable(_gasTokenNode) {
+	/// @param _gasTokenAddress ENS node of the gas token contract.
+    constructor(bytes32 _controllerNode, address _gasTokenAddress) public GasRefundable(_gasTokenAddress) {
 		_initializeControllable(_controllerNode);
-		_initializeOwnable(_ownerAddress, false);
     }
 
-    /// @notice Sets the ENS registry address to a different one.
-    function ensSetRegistry(address _ensRegistry) external onlyOwner {
-        _ensSetRegistry(_ensRegistry);
+    /// @param _gasTokenAddress Address of the gas token used to refund gas.
+    function setGasToken(address _gasTokenAddress) external onlyController {
+        _setGasToken(_gasTokenAddress);
     }
 
-	/// @notice Sets the ENS node for the gas token.
-    function gasTokenSetNode(bytes32 _gstNode) external onlyOwner {
-        _gasTokenSetNode(_gstNode);
+    /// @param _gasCost Gas cost of the gas token free method call.
+    function setFreeCallGasCost(uint256 _gasCost) external onlyController {
+        _setFreeCallGasCost(_gasCost);
+    }
+
+    /// @param _gasRefund Amount of gas refunded per unit of gas token.
+    function setGasRefundPerUnit(uint256 _gasRefund) external onlyController {
+        _setGasRefundPerUnit(_gasRefund);
     }
 
 	/// @notice Executes a controller operation and refunds gas using gas tokens.
-    /// @notice Only controllers can call this method when the controller isn't stopped.
     /// @param _destination Destination address of the executed transaction.
     /// @param _value Amount of ETH (wei) to be sent together with the transaction.
     /// @param _data Data payload of the controller transaction.
-    /// @param _gasRefund Amount of gas to be refunded using gas tokens.
-    function executeTransaction(address _destination, uint256 _value, bytes calldata _data, uint256 _gasRefund) external onlyController {
-        if (_gasRefund != 0) {
-            _freeGas(_gasRefund);
-        }
+    function executeTransaction(address _destination, uint256 _value, bytes calldata _data) external onlyController refundGas {
         (bool success, bytes memory returnData) = _destination.call.value(_value)(_data);
         require(success, "external call failed");
-
         emit ExecutedTransaction(_destination, _value, _data, returnData);
     }
 }

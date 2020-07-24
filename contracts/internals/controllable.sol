@@ -25,12 +25,8 @@ import "../externals/initializable.sol";
 
 /// @title Controllable implements access control functionality of the Controller found via ENS.
 contract Controllable is ENSResolvable {
-    // Default values for mainnet ENS
-    // controller.tokencard.eth
-    bytes32 private constant _DEFAULT_CONTROLLER_NODE = 0x7f2ce995617d2816b426c5c8698c5ec2952f7a34bb10f38326f74933d5893697;
-
-    /// @dev Is the registered ENS node identifying the controller contract.
-    bytes32 private _controllerNode = _DEFAULT_CONTROLLER_NODE;
+    /// @dev Registered ENS node identifying the controller contract (default: controller.tokencard.eth).
+    bytes32 private _controllerNode = 0x7f2ce995617d2816b426c5c8698c5ec2952f7a34bb10f38326f74933d5893697;
 
     /// @notice Checks if message sender is a controller.
     modifier onlyController() {
