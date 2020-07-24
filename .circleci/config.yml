@@ -62,7 +62,7 @@ jobs:
       - image: mythril/myth@sha256:e78a96bd0f5e57fe45bcd1c744509932bee83706a00293e53a60e83cd0ab89f3
     resource_class: xlarge
     working_directory: /tmp/contracts
-    parallelism: 7
+    parallelism: 8
     steps:
       - checkout
       - run:
@@ -114,12 +114,19 @@ jobs:
               myth analyze --solv=0.5.17 ./controller.sol --execution-timeout=800  --max-depth=15 --parallel-solving
             fi
           no_output_timeout: 20m
+      - run:
+          working_directory: contracts
+          command: |
+            if [[ "${CIRCLE_NODE_INDEX}" == 7 ]]; then
+              myth analyze --solv=0.5.17 ./gasProxy.sol --execution-timeout=800  --max-depth=15 --parallel-solving
+            fi
+          no_output_timeout: 20m
 
   slither:
     docker:
       - image: trailofbits/eth-security-toolbox@sha256:3fb96e2d9de772f5e97f1c3c650c8a3d28660f8a64a60b76269da1ac19b86a28
     working_directory: /tmp/contracts
-    parallelism: 6
+    parallelism: 7
     steps:
       - run: sudo -n apt-get update && sudo -n apt-get install -y openssh-client
       - checkout
@@ -164,6 +171,13 @@ jobs:
           command: |
             if [[ "${CIRCLE_NODE_INDEX}" == 5 ]]; then
                 slither ../../contracts/walletDeployer.sol
+            fi
+          no_output_timeout: 5m
+      - run:
+          working_directory: tools/slither
+          command: |
+            if [[ "${CIRCLE_NODE_INDEX}" == 6 ]]; then
+                slither ../../contracts/gasProxy.sol
             fi
           no_output_timeout: 5m
 

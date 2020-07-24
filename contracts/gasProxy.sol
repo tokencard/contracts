@@ -15,7 +15,6 @@
 
 pragma solidity ^0.5.17;
 
-import "./internals/ownable.sol";
 import "./internals/controllable.sol";
 import "./internals/gasRefundable.sol";
 
@@ -24,10 +23,10 @@ contract GasProxy is Controllable, GasRefundable {
     /// @notice Emits the transaction executed by the controller.
     event ExecutedTransaction(address _destination, uint256 _value, bytes _data, bytes _returnData);
 
-    /// @param _controllerNode ENS node of the controller contract.
+    /// @param _controllerNode_ ENS node of the controller contract.
     /// @param _gasTokenAddress ENS node of the gas token contract.
-    constructor(bytes32 _controllerNode, address _gasTokenAddress) public GasRefundable(_gasTokenAddress) {
-        _initializeControllable(_controllerNode);
+    constructor(bytes32 _controllerNode_, address _gasTokenAddress) public GasRefundable(_gasTokenAddress) {
+        _initializeControllable(_controllerNode_);
     }
 
     /// @param _gasTokenAddress Address of the gas token used to refund gas.
