@@ -13,8 +13,7 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
- pragma solidity ^0.5.17;
-
+pragma solidity ^0.5.17;
 
 import "./internals/ownable.sol";
 import "./internals/controllable.sol";
@@ -22,13 +21,13 @@ import "./internals/gasRefundable.sol";
 
 
 contract GasProxy is Controllable, GasRefundable {
-	/// @notice Emits the transaction executed by the controller.
-	event ExecutedTransaction(address _destination, uint256 _value, bytes _data, bytes _returnData);
+    /// @notice Emits the transaction executed by the controller.
+    event ExecutedTransaction(address _destination, uint256 _value, bytes _data, bytes _returnData);
 
-	/// @param _controllerNode ENS node of the controller contract.
-	/// @param _gasTokenAddress ENS node of the gas token contract.
+    /// @param _controllerNode ENS node of the controller contract.
+    /// @param _gasTokenAddress ENS node of the gas token contract.
     constructor(bytes32 _controllerNode, address _gasTokenAddress) public GasRefundable(_gasTokenAddress) {
-		_initializeControllable(_controllerNode);
+        _initializeControllable(_controllerNode);
     }
 
     /// @param _gasTokenAddress Address of the gas token used to refund gas.
@@ -46,7 +45,7 @@ contract GasProxy is Controllable, GasRefundable {
         _setGasRefundPerUnit(_gasRefund);
     }
 
-	/// @notice Executes a controller operation and refunds gas using gas tokens.
+    /// @notice Executes a controller operation and refunds gas using gas tokens.
     /// @param _destination Destination address of the executed transaction.
     /// @param _value Amount of ETH (wei) to be sent together with the transaction.
     /// @param _data Data payload of the controller transaction.
