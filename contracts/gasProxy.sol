@@ -23,9 +23,11 @@ contract GasProxy is Controllable, GasRefundable {
     /// @notice Emits the transaction executed by the controller.
     event ExecutedTransaction(address _destination, uint256 _value, bytes _data, bytes _returnData);
 
+    /// @param _ens_ is the address of the ENS registry.
     /// @param _controllerNode_ ENS node of the controller contract.
     /// @param _gasTokenAddress ENS node of the gas token contract.
-    constructor(bytes32 _controllerNode_, address _gasTokenAddress) public GasRefundable(_gasTokenAddress) {
+    constructor(address _ens_, bytes32 _controllerNode_, address _gasTokenAddress) public GasRefundable(_gasTokenAddress) {
+        _initializeENSResolvable(_ens_);
         _initializeControllable(_controllerNode_);
     }
 

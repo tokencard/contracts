@@ -29,6 +29,8 @@ contract_sources=(
   'mocks/token'
   'mocks/tokenWhitelistableExporter'
   'mocks/walletMock'
+  'mocks/gasToken'
+  'mocks/gasBurner'
   'externals/ens/ENSRegistry'
   'externals/ens/PublicResolver'
   'externals/upgradeability/UpgradeabilityProxy'
@@ -60,6 +62,7 @@ contracts=(
   "tokenWhitelist/TokenWhitelist tokenWhitelist.go TokenWhitelist bindings"
   "walletDeployer/WalletDeployer walletDeployer.go WalletDeployer bindings"
   "walletCache/WalletCache walletCache.go WalletCache bindings"
+  "gasProxy/GasProxy gasProxy.go GasProxy bindings"
   "mocks/token/Token mocks/token.go Token mocks"
   "mocks/burnerToken/BurnerToken mocks/burnerToken.go BurnerToken mocks"
   "mocks/nonCompliantToken/NonCompliantToken mocks/nonCompliantToken.go NonCompliantToken mocks"
@@ -70,6 +73,8 @@ contracts=(
   "mocks/isValidSignatureExporter/IsValidSignatureExporter mocks/isValidSignatureExporter.go IsValidSignatureExporter mocks"
   "mocks/parseIntScientificExporter/ParseIntScientificExporter mocks/parseIntScientificExporter.go ParseIntScientificExporter mocks"
   "mocks/tokenWhitelistableExporter/TokenWhitelistableExporter mocks/tokenWhitelistableExporter.go TokenWhitelistableExporter mocks"
+  "mocks/gasToken/GasToken mocks/gasToken.go GasToken mocks"
+  "mocks/gasBurner/GasBurner mocks/gasBurner.go GasBurner mocks"
   "mocks/walletMock/WalletMock mocks/walletMock.go WalletMock mocks"
   "externals/ens/ENSRegistry/ENSRegistry externals/ens/ENSRegistry.go ENSRegistry ens"
   "externals/ens/PublicResolver/PublicResolver externals/ens/PublicResolver.go PublicResolver ens"
