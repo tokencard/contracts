@@ -1,9 +1,9 @@
 pragma solidity ^0.5.17;
 
-contract GasBurner {
 
-    function dummy() pure public {
-        assembly{
+contract GasBurner {
+    function dummy() public pure {
+        assembly {
             invalid()
         }
     }

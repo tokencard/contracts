@@ -71,6 +71,8 @@ var _ = BeforeEach(func() {
 	Backend.Commit()
 	Expect(isSuccessful(tx)).To(BeTrue())
 
+	// Add gas proxy as a controller.
+
 	tx, err = GasToken.Mint(BankAccount.TransactOpts(), big.NewInt(20))
 	Expect(err).ToNot(HaveOccurred())
 	Backend.Commit()

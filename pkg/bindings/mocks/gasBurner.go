@@ -31,7 +31,7 @@ var (
 const GasBurnerABI = "[{\"constant\":false,\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"burn\",\"type\":\"uint256\"}],\"name\":\"burnGas\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"dummy\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"pure\",\"type\":\"function\"}]"
 
 // GasBurnerBin is the compiled bytecode used for deploying new contracts.
-var GasBurnerBin = "0x6080604052348015600f57600080fd5b5060aa8061001e6000396000f3fe6080604052348015600f57600080fd5b506004361060325760003560e01c806332e43a111460375780634ad5d16f14603f575b600080fd5b603d6059565b005b603d60048036036020811015605357600080fd5b5035605b565bfe5b6332e43a1160e01b60005260008060046000803086f1505056fea265627a7a72315820b2d6dfe8f3f8259034849b0376bb34c4add5de7e69e7b9456a79fd939dd5ba6c64736f6c63430005110032"
+var GasBurnerBin = "0x6080604052348015600f57600080fd5b5060aa8061001e6000396000f3fe6080604052348015600f57600080fd5b506004361060325760003560e01c806332e43a111460375780634ad5d16f14603f575b600080fd5b603d6059565b005b603d60048036036020811015605357600080fd5b5035605b565bfe5b6332e43a1160e01b60005260008060046000803086f1505056fea265627a7a723158208c9a5e13ac93af4fe519b9868c883c1c83f890fe3ad01a695477f9b94e18946564736f6c63430005110032"
 
 // DeployGasBurner deploys a new Ethereum contract, binding an instance of GasBurner to it.
 func DeployGasBurner(auth *bind.TransactOpts, backend bind.ContractBackend) (common.Address, *types.Transaction, *GasBurner, error) {
