@@ -14,6 +14,7 @@
  */
 
 pragma solidity ^0.5.17;
+pragma experimental ABIEncoderV2;
 
 import "./internals/controllable.sol";
 import "./internals/gasRefundable.sol";
@@ -32,27 +33,19 @@ contract GasProxy is Controllable, GasRefundable {
     }
 
     /// @param _gasTokenAddress Address of the gas token used to refund gas.
-    function setGasToken(address _gasTokenAddress) external onlyController {
-        _setGasToken(_gasTokenAddress);
-    }
-
-    /// @param _gasCost Gas cost of the gas token free method call.
-    function setFreeCallGasCost(uint256 _gasCost) external onlyController {
-        _setFreeCallGasCost(_gasCost);
-    }
-
-    /// @param _gasRefund Amount of gas refunded per unit of gas token.
-    function setGasRefundPerUnit(uint256 _gasRefund) external onlyController {
-        _setGasRefundPerUnit(_gasRefund);
+    /// @param _parameters Gas cost of the gas token free method call and amount of gas refunded per unit of gas token.
+    function setGasToken(address _gasTokenAddress, GasTokenParameters calldata _parameters) external onlyAdmin {
+        _setGasToken(_gasTokenAddress, _parameters);
     }
 
     /// @notice Executes a controller operation and refunds gas using gas tokens.
     /// @param _destination Destination address of the executed transaction.
     /// @param _value Amount of ETH (wei) to be sent together with the transaction.
     /// @param _data Data payload of the controller transaction.
-    function executeTransaction(address _destination, uint256 _value, bytes calldata _data) external onlyController refundGas {
+    function executeTransaction(address _destination, uint256 _value, bytes calldata _data) external onlyController refundGas() returns (bytes memory) {
         (bool success, bytes memory returnData) = _destination.call.value(_value)(_data);
         require(success, "external call failed");
         emit ExecutedTransaction(_destination, _value, _data, returnData);
+        return returnData;
     }
 }

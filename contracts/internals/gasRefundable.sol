@@ -14,6 +14,7 @@
  */
 
 pragma solidity ^0.5.17;
+pragma experimental ABIEncoderV2;
 
 
 interface IGasToken {
@@ -22,52 +23,45 @@ interface IGasToken {
 
 
 contract GasRefundable {
-    /// @notice Emits the old and new gas token parameter when changed.
-    event SetGasTokenAddress(address _previous, address _new);
-    event SetFreeCallGasCost(uint256 _previous, uint256 _new);
-    event SetGasRefundPerUnit(uint256 _previous, uint256 _new);
+    /// @notice Emits the new gas token information when it is set.
+    event SetGasToken(address _gasTokenAddress, GasTokenParameters _gasTokenParameters);
+
+    struct GasTokenParameters {
+        uint256 freeCallGasCost;
+        uint256 gasRefundPerUnit;
+    }
 
     /// @notice Address of the gas token used to refund gas (default: CHI).
     IGasToken private _gasToken = IGasToken(0x0000000000004946c0e9F43F4Dee607b0eF1fA1c);
-    /// @notice Gas token cost and refund parameters used in the gas refund calcualtion (default: CHI).
-    uint256 private _freeCallGasCost = 14154;
-    uint256 private _gasRefundPerUnit = 41130;
+    /// @notice Gas token parameters parameters used in the gas refund calcualtion (default: CHI).
+    GasTokenParameters private _gasTokenParameters = GasTokenParameters({freeCallGasCost: 14154, gasRefundPerUnit: 41130});
 
     /// @notice Refunds gas based on the amount of gas spent in the transaction and the gas token parameters.
-    modifier refundGas {
+    modifier refundGas() {
         uint256 gasStart = gasleft();
         _;
         uint256 gasSpent = 21000 + gasStart - gasleft() + 16 * msg.data.length;
-        _gasToken.freeUpTo((gasSpent + _freeCallGasCost) / _gasRefundPerUnit);
+        _gasToken.freeUpTo((gasSpent + _gasTokenParameters.freeCallGasCost) / _gasTokenParameters.gasRefundPerUnit);
     }
 
     /// @param _gasTokenAddress Address of the gas token used to refund gas.
     constructor(address _gasTokenAddress) internal {
         if (_gasTokenAddress != address(0)) {
-            emit SetGasTokenAddress(address(_gasToken), _gasTokenAddress);
             _gasToken = IGasToken(_gasTokenAddress);
+            emit SetGasToken(_gasTokenAddress, _gasTokenParameters);
         }
     }
 
     /// @param _gasTokenAddress Address of the gas token used to refund gas.
-    function _setGasToken(address _gasTokenAddress) internal {
+    /// @param _parameters Gas cost of the gas token free method call and amount of gas refunded per unit of gas token.
+    function _setGasToken(address _gasTokenAddress, GasTokenParameters memory _parameters) internal {
         require(_gasTokenAddress != address(0), "gas token address is 0x0");
-        emit SetGasTokenAddress(address(_gasToken), _gasTokenAddress);
+        require(_parameters.freeCallGasCost != 0, "free call gas cost is 0");
+        require(_parameters.gasRefundPerUnit != 0, "gas refund per unit is 0");
         _gasToken = IGasToken(_gasTokenAddress);
-    }
-
-    /// @param _gasCost Gas cost of the gas token free method call.
-    function _setFreeCallGasCost(uint256 _gasCost) internal {
-        require(_gasCost != 0, "free call gas cost is 0");
-        emit SetFreeCallGasCost(_freeCallGasCost, _gasCost);
-        _freeCallGasCost = _gasCost;
-    }
-
-    /// @param _gasRefund Amount of gas refunded per unit of gas token.
-    function _setGasRefundPerUnit(uint256 _gasRefund) internal {
-        require(_gasRefund != 0, "gas refund per unit is 0");
-        emit SetGasRefundPerUnit(_gasRefundPerUnit, _gasRefund);
-        _gasRefundPerUnit = _gasRefund;
+        _gasTokenParameters.freeCallGasCost = _parameters.freeCallGasCost;
+        _gasTokenParameters.gasRefundPerUnit = _parameters.gasRefundPerUnit;
+        emit SetGasToken(_gasTokenAddress, _parameters);
     }
 
     /// @return Address of the gas token used to refund gas.
@@ -76,12 +70,8 @@ contract GasRefundable {
     }
 
     /// @return Gas cost of the gas token free method call.
-    function freeCallGasCost() external view returns (uint256) {
-        return _freeCallGasCost;
-    }
-
     /// @return Amount of gas refunded per unit of gas token.
-    function gasRefundPerUnit() external view returns (uint256) {
-        return _gasRefundPerUnit;
+    function gasTokenParameters() external view returns (GasTokenParameters memory) {
+        return _gasTokenParameters;
     }
 }

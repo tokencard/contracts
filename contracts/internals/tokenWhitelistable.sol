@@ -25,9 +25,6 @@ import "../externals/initializable.sol";
 
 /// @title TokenWhitelistable implements access to the TokenWhitelist located behind ENS.
 contract TokenWhitelistable is ENSResolvable {
-    /// @notice Emits the TokenWhitelist ENS node when set.
-    event SetTokenWhitelistNode(bytes32 _tokenWhitelistNode);
-
     // token-whitelist.tokencard.eth
     bytes32 private constant _DEFAULT_TOKEN_WHITELIST_NODE = 0xe84f90570f13fe09f288f2411ff9cf50da611ed0c7db7f73d48053ffc974d396;
 
@@ -38,13 +35,6 @@ contract TokenWhitelistable is ENSResolvable {
     /// @return TokenWhitelist's node registered in ENS.
     function tokenWhitelistNode() external view returns (bytes32) {
         return _tokenWhitelistNode;
-    }
-
-    /// @notice Set the ENS node for the TokenWhitelist smart contract.
-    /// @param _tokenWhitelistNode_ A new ENS node for the TokenWhitelist smart contract.
-    function _setTokenWhitelistNode(bytes32 _tokenWhitelistNode_) internal {
-        _tokenWhitelistNode = _tokenWhitelistNode_;
-        emit SetTokenWhitelistNode(_tokenWhitelistNode_);
     }
 
     /// @notice based on the method it returns the recipient address and amount/value, ERC20 specific.
