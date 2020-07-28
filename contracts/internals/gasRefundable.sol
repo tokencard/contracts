@@ -45,14 +45,6 @@ contract GasRefundable {
     }
 
     /// @param _gasTokenAddress Address of the gas token used to refund gas.
-    constructor(address _gasTokenAddress) internal {
-        if (_gasTokenAddress != address(0)) {
-            _gasToken = IGasToken(_gasTokenAddress);
-            emit SetGasToken(_gasTokenAddress, _gasTokenParameters);
-        }
-    }
-
-    /// @param _gasTokenAddress Address of the gas token used to refund gas.
     /// @param _parameters Gas cost of the gas token free method call and amount of gas refunded per unit of gas token.
     function _setGasToken(address _gasTokenAddress, GasTokenParameters memory _parameters) internal {
         require(_gasTokenAddress != address(0), "gas token address is 0x0");

@@ -66,7 +66,15 @@ var _ = BeforeEach(func() {
 	Backend.Commit()
 	Expect(isSuccessful(tx)).To(BeTrue())
 
-	GasProxyAddress, tx, GasProxy, err = bindings.DeployGasProxy(BankAccount.TransactOpts(), Backend, ENSRegistryAddress, ControllerName, GasTokenAddress)
+	GasProxyAddress, tx, GasProxy, err = bindings.DeployGasProxy(BankAccount.TransactOpts(), Backend, ENSRegistryAddress, ControllerName)
+	Expect(err).ToNot(HaveOccurred())
+	Backend.Commit()
+	Expect(isSuccessful(tx)).To(BeTrue())
+
+	tx, err = GasProxy.SetGasToken(ControllerAdmin.TransactOpts(), GasTokenAddress, bindings.GasRefundableGasTokenParameters{
+		FreeCallGasCost:  big.NewInt(14154),
+		GasRefundPerUnit: big.NewInt(41130),
+	})
 	Expect(err).ToNot(HaveOccurred())
 	Backend.Commit()
 	Expect(isSuccessful(tx)).To(BeTrue())
@@ -94,8 +102,8 @@ var _ = AfterEach(func() {
 })
 
 var _ = AfterSuite(func() {
-	TestRig.ExpectMinimumCoverage("gasProxy.sol", 38.3)
-	TestRig.ExpectMinimumCoverage("internals/gasRefundable.sol", 79.5)
+	TestRig.ExpectMinimumCoverage("gasProxy.sol", 36.2)
+	TestRig.ExpectMinimumCoverage("internals/gasRefundable.sol", 76.2)
 	TestRig.PrintGasUsage(os.Stdout)
 })
 

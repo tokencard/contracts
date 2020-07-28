@@ -10,29 +10,29 @@ compile_solidity() {
 }
 
 contract_sources=(
-  'controller'
-  'gasProxy'
-  'holder'
-  'licence'
-  'oracle'
-  'tokenWhitelist'
   'wallet'
-  'walletCache'
+  'oracle'
+  'licence'
+  'holder'
+  'controller'
+  'tokenWhitelist'
   'walletDeployer'
-  'mocks/base64Exporter'
+  'walletCache'
+  'gasProxy'
+  'mocks/token'
   'mocks/burnerToken'
+  'mocks/nonCompliantToken'
+  'mocks/base64Exporter'
+  'mocks/oraclize'
   'mocks/bytesUtilsExporter'
   'mocks/isValidSignatureExporter'
-  'mocks/nonCompliantToken'
-  'mocks/oraclize'
   'mocks/parseIntScientificExporter'
-  'mocks/token'
   'mocks/tokenWhitelistableExporter'
   'mocks/walletMock'
   'mocks/gasToken'
   'mocks/gasBurner'
-  'externals/ens/ENSRegistry'
   'externals/ens/PublicResolver'
+  'externals/ens/ENSRegistry'
   'externals/upgradeability/UpgradeabilityProxy'
 )
 
@@ -73,9 +73,9 @@ contracts=(
   "mocks/isValidSignatureExporter/IsValidSignatureExporter mocks/isValidSignatureExporter.go IsValidSignatureExporter mocks"
   "mocks/parseIntScientificExporter/ParseIntScientificExporter mocks/parseIntScientificExporter.go ParseIntScientificExporter mocks"
   "mocks/tokenWhitelistableExporter/TokenWhitelistableExporter mocks/tokenWhitelistableExporter.go TokenWhitelistableExporter mocks"
+  "mocks/walletMock/WalletMock mocks/walletMock.go WalletMock mocks"
   "mocks/gasToken/GasToken mocks/gasToken.go GasToken mocks"
   "mocks/gasBurner/GasBurner mocks/gasBurner.go GasBurner mocks"
-  "mocks/walletMock/WalletMock mocks/walletMock.go WalletMock mocks"
   "externals/ens/ENSRegistry/ENSRegistry externals/ens/ENSRegistry.go ENSRegistry ens"
   "externals/ens/PublicResolver/PublicResolver externals/ens/PublicResolver.go PublicResolver ens"
   "externals/upgradeability/UpgradeabilityProxy/UpgradeabilityProxy externals/upgradeability/UpgradeabilityProxy.go UpgradeabilityProxy upgradeability"
