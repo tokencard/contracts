@@ -23,6 +23,9 @@ var GasBurnerAddress common.Address
 var GasProxy *bindings.GasProxy
 var GasProxyAddress common.Address
 
+var Wallet *mocks.Wallet
+var WalletAddress common.Address
+
 func init() {
 	TestRig.AddCoverageForContracts(
 		"../../build/gasProxy/combined.json",
@@ -47,7 +50,7 @@ func ethCall(tx *types.Transaction) ([]byte, error) {
 
 func TestTokenWhitelistSuite(t *testing.T) {
 	RegisterFailHandler(Fail)
-	RunSpecs(t, "TokenWhitelist Suite")
+	RunSpecs(t, "Gas Proxy Suite")
 }
 
 var _ = BeforeEach(func() {
@@ -56,7 +59,7 @@ var _ = BeforeEach(func() {
 
 	var tx *types.Transaction
 
-	GasTokenAddress, tx, GasToken, err = mocks.DeployGasToken(BankAccount.TransactOpts(), Backend)
+	GasTokenAddress, tx, GasToken, err = mocks.DeployGasToken(VanityAccount.TransactOpts(), Backend)
 	Expect(err).ToNot(HaveOccurred())
 	Backend.Commit()
 	Expect(isSuccessful(tx)).To(BeTrue())
@@ -89,7 +92,7 @@ var _ = BeforeEach(func() {
 	Backend.Commit()
 	Expect(isSuccessful(tx)).To(BeTrue())
 
-	tx, err = GasToken.Transfer(BankAccount.TransactOpts(), GasProxyAddress, big.NewInt(20))
+	WalletAddress, tx, Wallet, err = mocks.DeployWallet(Owner.TransactOpts(), Backend, ENSRegistryAddress, ControllerName)
 	Expect(err).ToNot(HaveOccurred())
 	Backend.Commit()
 	Expect(isSuccessful(tx)).To(BeTrue())
@@ -102,8 +105,8 @@ var _ = AfterEach(func() {
 })
 
 var _ = AfterSuite(func() {
-	TestRig.ExpectMinimumCoverage("gasProxy.sol", 36.2)
-	TestRig.ExpectMinimumCoverage("internals/gasRefundable.sol", 76.2)
+	TestRig.ExpectMinimumCoverage("gasProxy.sol", 100.0)
+	TestRig.ExpectMinimumCoverage("internals/gasRefundable.sol", 99.0)
 	TestRig.PrintGasUsage(os.Stdout)
 })
 

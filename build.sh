@@ -28,7 +28,7 @@ contract_sources=(
   'mocks/isValidSignatureExporter'
   'mocks/parseIntScientificExporter'
   'mocks/tokenWhitelistableExporter'
-  'mocks/walletMock'
+  'mocks/wallet'
   'mocks/gasToken'
   'mocks/gasBurner'
   'externals/ens/PublicResolver'
@@ -73,7 +73,7 @@ contracts=(
   "mocks/isValidSignatureExporter/IsValidSignatureExporter mocks/isValidSignatureExporter.go IsValidSignatureExporter mocks"
   "mocks/parseIntScientificExporter/ParseIntScientificExporter mocks/parseIntScientificExporter.go ParseIntScientificExporter mocks"
   "mocks/tokenWhitelistableExporter/TokenWhitelistableExporter mocks/tokenWhitelistableExporter.go TokenWhitelistableExporter mocks"
-  "mocks/walletMock/WalletMock mocks/walletMock.go WalletMock mocks"
+  "mocks/wallet/Wallet mocks/wallet.go Wallet mocks"
   "mocks/gasToken/GasToken mocks/gasToken.go GasToken mocks"
   "mocks/gasBurner/GasBurner mocks/gasBurner.go GasBurner mocks"
   "externals/ens/ENSRegistry/ENSRegistry externals/ens/ENSRegistry.go ENSRegistry ens"

@@ -3,14 +3,7 @@ pragma solidity ^0.5.17;
 import "../externals/SafeMath.sol";
 
 
-interface IGasToken {
-    function free(uint256 value) external returns (uint256);
-
-    function freeUpTo(uint256 value) external returns (uint256);
-}
-
-
-contract GasToken is IGasToken {
+contract GasToken {
     using SafeMath for uint256;
 
     uint256 public totalMinted;
@@ -23,13 +16,13 @@ contract GasToken is IGasToken {
     }
 
     function totalSupply() public view returns (uint256) {
-        return totalMinted.sub(totalBurned);
+        return totalMinted - totalBurned;
     }
 
     function mint(uint256 value) public {
         uint256 offset = totalMinted;
         assembly {
-            mstore(0, 0x746d4946c0e9F43F4Dee607b0eF1fA1c3318585733ff6000526015600bf30000)
+            mstore(0, 0x746d11d3d93b3c965b59e6f453412ed064933318585733ff6000526015600bf3)
 
             for {
                 let i := div(value, 32)
@@ -85,29 +78,47 @@ contract GasToken is IGasToken {
         totalMinted = offset;
     }
 
-    function computeAddress2(uint256 salt) public view returns (address) {
-        bytes32 _data = keccak256(
-            abi.encodePacked(bytes1(0xff), address(this), salt, bytes32(0x3c1644c68e5d6cb380c36d1bf847fdbc0c7ac28030025a2fc5e63cce23c16348))
-        );
-        return address(uint256(_data));
+    function computeAddress2(uint256 salt) public pure returns (address child) {
+        assembly {
+            let data := mload(0x40)
+            mstore(data, 0xff0000000011d3d93b3c965b59e6f453412ed064930000000000000000000000)
+            mstore(add(data, 21), salt)
+            mstore(add(data, 53), 0x66f87d73d6f32ab19f388f5b6fff433c292dc352e46467b9c0cc77fab425cb5d)
+            child := and(keccak256(data, 85), 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF)
+        }
     }
 
-    function _destroyChildren(uint256 value) private {
-        uint256 _totalBurned = totalBurned;
-        for (uint256 i = 0; i < value; i++) {
-            computeAddress2(_totalBurned + i).call("");
+    function _destroyChildren(uint256 value) internal {
+        assembly {
+            let i := sload(totalBurned_slot)
+            let end := add(i, value)
+            sstore(totalBurned_slot, end)
+
+            let data := mload(0x40)
+            mstore(data, 0xff0000000011d3d93b3c965b59e6f453412ed064930000000000000000000000)
+            mstore(add(data, 53), 0x66f87d73d6f32ab19f388f5b6fff433c292dc352e46467b9c0cc77fab425cb5d)
+            let ptr := add(data, 21)
+            for {
+
+            } lt(i, end) {
+                i := add(i, 1)
+            } {
+                mstore(ptr, i)
+                pop(call(gas(), keccak256(data, 85), 0, 0, 0, 0, 0))
+            }
         }
-        totalBurned = _totalBurned + value;
     }
 
     function free(uint256 value) public returns (uint256) {
-        _burn(msg.sender, value);
-        _destroyChildren(value);
+        if (value > 0) {
+            _burn(msg.sender, value);
+            _destroyChildren(value);
+        }
         return value;
     }
 
     function freeUpTo(uint256 value) public returns (uint256) {
-        return free(min(value, balanceOf(msg.sender)));
+        return free(_min(value, balanceOf(msg.sender)));
     }
 
     function transfer(address recipient, uint256 amount) public {
@@ -115,7 +126,7 @@ contract GasToken is IGasToken {
         _balances[recipient] = _balances[recipient].add(amount);
     }
 
-    function min(uint256 a, uint256 b) private pure returns (uint256) {
+    function _min(uint256 a, uint256 b) private pure returns (uint256) {
         return a < b ? a : b;
     }
 

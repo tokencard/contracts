@@ -9,7 +9,7 @@ require (
 	github.com/onsi/gomega v1.4.3
 	github.com/pkg/errors v0.8.1
 	github.com/robertkrimen/otto v0.0.0-20170205013659-6a77b7cbc37d // indirect
-	github.com/tokencard/ethertest v0.9.0
+	github.com/tokencard/ethertest v0.9.1-0.20200730064741-c73dff8da5a3
 	golang.org/x/crypto v0.0.0-20200311171314-f7b00557c8c4
 	gopkg.in/sourcemap.v1 v1.0.5 // indirect
 )

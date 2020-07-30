@@ -16,7 +16,7 @@ var _ = Describe("SetProperties", func() {
 		Expect(gasTokenAddress.Hex()).To(Equal(GasTokenAddress.Hex()))
 	})
 
-	It("the initial value of the _gasTokenParameters property should be set to {freeCallGasCost: 14154, gasRefundPerUnit: 41130}", func() {
+	It("the initial value of the _gasTokenParameters property should be set to the initial values", func() {
 		gasTokenParameters, err := GasProxy.GasTokenParameters(nil)
 		Expect(err).ToNot(HaveOccurred())
 		Expect(gasTokenParameters.FreeCallGasCost.String()).To(Equal("14154"))
