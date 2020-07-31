@@ -216,7 +216,7 @@ func InitializeBackend() error {
 	RandomAccount = ethertest.NewAccount()
 	BankAccount = ethertest.NewAccount()
 	OraclizeConnectorOwner = ethertest.NewAccount()
-	pk, err := crypto.HexToECDSA("8d3c4f627eb6940e06e73a595703b46e8663d95306c51061335bc878eb0695cd")
+	pk, err := crypto.HexToECDSA("d7f10b274ba922f7cdc99c84a7f51fd9f85deaa634cbc3d5c25b497eb7bee224")
 	if err != nil {
 		return err
 	}
@@ -256,7 +256,7 @@ func InitializeBackend() error {
 		return errors.Wrap(err, "deploying controller contract")
 	}
 
-	ControllerContract.AddAdmin(ControllerOwner.TransactOpts(), ControllerAdmin.Address())
+	tx, err = ControllerContract.AddAdmin(ControllerOwner.TransactOpts(), ControllerAdmin.Address())
 	if err != nil {
 		return err
 	}

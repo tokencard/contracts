@@ -20,7 +20,7 @@ var _ = Describe("SetProperties", func() {
 		gasTokenParameters, err := GasProxy.GasTokenParameters(nil)
 		Expect(err).ToNot(HaveOccurred())
 		Expect(gasTokenParameters.FreeCallGasCost.String()).To(Equal("14154"))
-		Expect(gasTokenParameters.GasRefundPerUnit.String()).To(Equal("41130"))
+		Expect(gasTokenParameters.GasRefundPerUnit.String()).To(Equal("40000"))
 	})
 
 	When("the _gasToken and _gasTokenParameters are set to new values by the admin", func() {

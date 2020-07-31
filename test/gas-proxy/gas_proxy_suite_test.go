@@ -2,6 +2,7 @@ package gas_proxy_test
 
 import (
 	"context"
+	"fmt"
 	"math/big"
 	"os"
 	"testing"
@@ -76,7 +77,7 @@ var _ = BeforeEach(func() {
 
 	tx, err = GasProxy.SetGasToken(ControllerAdmin.TransactOpts(), GasTokenAddress, bindings.GasRefundableGasTokenParameters{
 		FreeCallGasCost:  big.NewInt(14154),
-		GasRefundPerUnit: big.NewInt(41130),
+		GasRefundPerUnit: big.NewInt(40000),
 	})
 	Expect(err).ToNot(HaveOccurred())
 	Backend.Commit()
@@ -87,10 +88,14 @@ var _ = BeforeEach(func() {
 	Backend.Commit()
 	Expect(isSuccessful(tx)).To(BeTrue())
 
-	tx, err = GasToken.Mint(BankAccount.TransactOpts(), big.NewInt(20))
+	tx, err = GasToken.Mint(BankAccount.TransactOpts(), big.NewInt(140))
 	Expect(err).ToNot(HaveOccurred())
 	Backend.Commit()
 	Expect(isSuccessful(tx)).To(BeTrue())
+	receipt, err := Backend.TransactionReceipt(context.Background(), tx.Hash())
+	Expect(err).ToNot(HaveOccurred())
+	fmt.Fprintf(GinkgoWriter, "Gas used by the gas token mint transaction: %d\n", receipt.GasUsed)
+	Expect(receipt.GasUsed > 5000000 && receipt.GasUsed < 6000000).To(BeTrue())
 
 	WalletAddress, tx, Wallet, err = mocks.DeployWallet(Owner.TransactOpts(), Backend, ENSRegistryAddress, ControllerName)
 	Expect(err).ToNot(HaveOccurred())
