@@ -140,7 +140,7 @@ var _ = Describe("metaTx refund", func() {
 					a, _ := abi.JSON(strings.NewReader(ERC20ABI))
 					d, _ := a.Pack("transfer", randomAddress, big.NewInt(290))
 					Expect(evt.Data).To(Equal(d))
-					Expect(evt.Returndata).To(Equal(common.Hex2Bytes("0000000000000000000000000000000000000000000000000000000000000001")))
+					Expect(evt.ReturnData).To(Equal(common.Hex2Bytes("0000000000000000000000000000000000000000000000000000000000000001")))
 					evt = it.Event
 					Expect(it.Next()).To(BeFalse())
 					Expect(evt.Destination).To(Equal(TKNBurnerAddress))
@@ -148,7 +148,7 @@ var _ = Describe("metaTx refund", func() {
 					a, _ = abi.JSON(strings.NewReader(ERC20ABI))
 					d, _ = a.Pack("transfer", tokenBank, big.NewInt(10))
 					Expect(evt.Data).To(Equal(d))
-					Expect(evt.Returndata).To(Equal(common.Hex2Bytes("0000000000000000000000000000000000000000000000000000000000000001")))
+					Expect(evt.ReturnData).To(Equal(common.Hex2Bytes("0000000000000000000000000000000000000000000000000000000000000001")))
 				})
 
 				It("should emit an ExecutedRelayedTransaction event", func() {
@@ -166,7 +166,7 @@ var _ = Describe("metaTx refund", func() {
 					a, err = abi.JSON(strings.NewReader(WALLET_ABI))
 					data, _ = a.Pack("batchExecuteTransaction", []byte(batch))
 					Expect(evt.Data).To(Equal(data))
-					Expect(evt.Returndata).To(Equal(common.Hex2Bytes("")))
+					Expect(evt.ReturnData).To(Equal(common.Hex2Bytes("")))
 				})
 			})
 

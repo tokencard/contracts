@@ -84,7 +84,7 @@ var _ = Describe("batchExecuteTransaction", func() {
 				Expect(evt.Destination).To(Equal(randomAddress))
 				Expect(evt.Value.String()).To(Equal(EthToWei(1).String()))
 				Expect(evt.Data).To(Equal([]uint8{}))
-				Expect(evt.Returndata).To(Equal(common.Hex2Bytes("")))
+				Expect(evt.ReturnData).To(Equal(common.Hex2Bytes("")))
 				evt = it.Event
 				Expect(it.Next()).To(BeFalse())
 				Expect(evt.Destination).To(Equal(TKNBurnerAddress))
@@ -92,7 +92,7 @@ var _ = Describe("batchExecuteTransaction", func() {
 				a, _ := abi.JSON(strings.NewReader(ERC20ABI))
 				d, _ := a.Pack("transfer", randomAddress, big.NewInt(300))
 				Expect(evt.Data).To(Equal(d))
-				Expect(evt.Returndata).To(Equal(common.Hex2Bytes("0000000000000000000000000000000000000000000000000000000000000001")))
+				Expect(evt.ReturnData).To(Equal(common.Hex2Bytes("0000000000000000000000000000000000000000000000000000000000000001")))
 			})
 		})
 

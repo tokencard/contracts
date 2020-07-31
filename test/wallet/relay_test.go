@@ -180,7 +180,7 @@ var _ = Describe("relay Tx", func() {
 				Expect(err).ToNot(HaveOccurred())
 				data, err := a.Pack("transfer", randomAddress, common.HexToAddress("0x0"), EthToWei(1))
 				Expect(evt.Data).To(Equal(data))
-				Expect(evt.Returndata).To(Equal([]byte{}))
+				Expect(evt.ReturnData).To(Equal([]byte{}))
 			})
 
 			It("should decrease the wallet's ETH balance ", func() {

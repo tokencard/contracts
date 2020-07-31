@@ -518,8 +518,8 @@ contract Wallet is ENSResolvable, AddressWhitelist, SpendLimit, GasTopUpLimit, L
     using SafeMath for uint256;
 
     event BulkTransferred(address _to, address[] _assets);
-    event ExecutedRelayedTransaction(bytes _data, bytes _returndata);
-    event ExecutedTransaction(address _destination, uint256 _value, bytes _data, bytes _returndata);
+    event ExecutedRelayedTransaction(bytes _data, bytes _returnData);
+    event ExecutedTransaction(address _destination, uint256 _value, bytes _data, bytes _returnData);
     event IncreasedRelayNonce(address _sender, uint256 _currentNonce);
     event LoadedTokenCard(address _asset, uint256 _amount);
     event ToppedUpGas(address _sender, address _owner, uint256 _amount);
@@ -611,10 +611,10 @@ contract Wallet is ENSResolvable, AddressWhitelist, SpendLimit, GasTopUpLimit, L
         _increaseRelayNonce();
 
         // invoke wallet function with an external call
-        (bool success, bytes memory returndata) = address(this).call(_data);
-        require(success, string(returndata));
+        (bool success, bytes memory returnData) = address(this).call(_data);
+        require(success, string(returnData));
 
-        emit ExecutedRelayedTransaction(_data, returndata);
+        emit ExecutedRelayedTransaction(_data, returnData);
     }
 
     /// @dev This returns the balance of the contract for any ERC20 token or ETH.
@@ -811,12 +811,12 @@ contract Wallet is ENSResolvable, AddressWhitelist, SpendLimit, GasTopUpLimit, L
             return b;
         }
 
-        (bool success, bytes memory returndata) = _destination.call.value(_value)(_data);
-        require(success, string(returndata));
+        (bool success, bytes memory returnData) = _destination.call.value(_value)(_data);
+        require(success, string(returnData));
 
-        emit ExecutedTransaction(_destination, _value, _data, returndata);
+        emit ExecutedTransaction(_destination, _value, _data, returnData);
         // returns all of the bytes returned by _destination contract
-        return returndata;
+        return returnData;
     }
 
     /// @dev Implements EIP-1654: receives the hashed message(bytes32)
