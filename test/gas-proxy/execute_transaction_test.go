@@ -59,10 +59,11 @@ var _ = Describe("ExecuteTransaction", func() {
 		})
 		When("a gas burn transaction is executed", func() {
 			var tx *types.Transaction
+			var data []byte
 			BeforeEach(func() {
 				gasBurnerABI, err := abi.JSON(strings.NewReader(mocks.GasBurnerABI))
 				Expect(err).ToNot(HaveOccurred())
-				data, err := gasBurnerABI.Pack("burnGas", big.NewInt(1000000))
+				data, err = gasBurnerABI.Pack("burnGas", big.NewInt(1000000))
 				Expect(err).ToNot(HaveOccurred())
 				tx, err = GasProxy.ExecuteTransaction(Controller.TransactOpts(), GasBurnerAddress, big.NewInt(0), data)
 				Expect(err).ToNot(HaveOccurred())
@@ -76,6 +77,17 @@ var _ = Describe("ExecuteTransaction", func() {
 				Expect(err).ToNot(HaveOccurred())
 				fmt.Fprintf(GinkgoWriter, "Gas used by burnGas execute transaction: %d\n", receipt.GasUsed)
 				Expect(receipt.GasUsed > 100000 && receipt.GasUsed < 1150000).To(BeTrue())
+			})
+
+			It("should emit an ExecutedTransaction event", func() {
+				it, err := GasProxy.FilterExecutedTransaction(nil)
+				Expect(err).ToNot(HaveOccurred())
+				Expect(it.Next()).To(BeTrue())
+				evt := it.Event
+				Expect(it.Next()).To(BeFalse())
+				Expect(evt.Destination).To(Equal(GasBurnerAddress))
+				Expect(evt.Value.String()).To(Equal("0"))
+				Expect(evt.Data).To(Equal(data))
 			})
 		})
 	})
