@@ -32,8 +32,8 @@ var _ = Describe("ExecuteTransaction", func() {
 			It("should use the expected amout of gas", func() {
 				receipt, err := Backend.TransactionReceipt(context.Background(), tx.Hash())
 				Expect(err).ToNot(HaveOccurred())
-				fmt.Fprintf(GinkgoWriter, "Gas used by no-op execute transaction: %d\n", receipt.GasUsed)
-				Expect(receipt.GasUsed > 45000 && receipt.GasUsed < 60000).To(BeTrue())
+				fmt.Fprintf(GinkgoWriter, "Gas used by no-op execute transaction: %d/%d\n", receipt.GasUsed, tx.Gas())
+				Expect(receipt.GasUsed > 45000 && receipt.GasUsed < 50000).To(BeTrue())
 			})
 		})
 		When("a wallet privileged operation is executed", func() {
@@ -53,8 +53,8 @@ var _ = Describe("ExecuteTransaction", func() {
 			It("should use the expected amout of gas", func() {
 				receipt, err := Backend.TransactionReceipt(context.Background(), tx.Hash())
 				Expect(err).ToNot(HaveOccurred())
-				fmt.Fprintf(GinkgoWriter, "Gas used by confirmOperation execute transaction: %d\n", receipt.GasUsed)
-				Expect(receipt.GasUsed > 60000 && receipt.GasUsed < 75000).To(BeTrue())
+				fmt.Fprintf(GinkgoWriter, "Gas used by confirmOperation execute transaction: %d/%d\n", receipt.GasUsed, tx.Gas())
+				Expect(receipt.GasUsed > 60000 && receipt.GasUsed < 65000).To(BeTrue())
 			})
 		})
 		When("a gas burn transaction is executed", func() {
@@ -63,7 +63,7 @@ var _ = Describe("ExecuteTransaction", func() {
 			BeforeEach(func() {
 				gasBurnerABI, err := abi.JSON(strings.NewReader(mocks.GasBurnerABI))
 				Expect(err).ToNot(HaveOccurred())
-				data, err = gasBurnerABI.Pack("burnGas", big.NewInt(1000000))
+				data, err = gasBurnerABI.Pack("burnGas", big.NewInt(100000))
 				Expect(err).ToNot(HaveOccurred())
 				tx, err = GasProxy.ExecuteTransaction(Controller.TransactOpts(), GasBurnerAddress, big.NewInt(0), data)
 				Expect(err).ToNot(HaveOccurred())
@@ -75,8 +75,8 @@ var _ = Describe("ExecuteTransaction", func() {
 			It("should use the expected amout of gas", func() {
 				receipt, err := Backend.TransactionReceipt(context.Background(), tx.Hash())
 				Expect(err).ToNot(HaveOccurred())
-				fmt.Fprintf(GinkgoWriter, "Gas used by burnGas execute transaction: %d\n", receipt.GasUsed)
-				Expect(receipt.GasUsed > 100000 && receipt.GasUsed < 1150000).To(BeTrue())
+				fmt.Fprintf(GinkgoWriter, "Gas used by burnGas execute transaction: %d/%d\n", receipt.GasUsed, tx.Gas())
+				Expect(receipt.GasUsed > 100000 && receipt.GasUsed < 150000).To(BeTrue())
 			})
 
 			It("should emit an ExecutedTransaction event", func() {
@@ -94,7 +94,16 @@ var _ = Describe("ExecuteTransaction", func() {
 
 	When("a controller transaction is executed in the context of the gas proxy with gas tokens deposited", func() {
 		BeforeEach(func() {
-			tx, err := GasToken.Transfer(BankAccount.TransactOpts(), GasProxyAddress, big.NewInt(140))
+			// We burn one gas token because the first one costs more to burn.
+			tx, err := GasToken.Free(BankAccount.TransactOpts(), big.NewInt(1))
+			Expect(err).ToNot(HaveOccurred())
+			Backend.Commit()
+			Expect(isSuccessful(tx)).To(BeTrue())
+			receipt, err := Backend.TransactionReceipt(context.Background(), tx.Hash())
+			Expect(err).ToNot(HaveOccurred())
+			fmt.Fprintf(GinkgoWriter, "Gas used by initial free transaction: %d/%d\n", receipt.GasUsed, tx.Gas())
+
+			tx, err = GasToken.Transfer(BankAccount.TransactOpts(), GasProxyAddress, big.NewInt(139))
 			Expect(err).ToNot(HaveOccurred())
 			Backend.Commit()
 			Expect(isSuccessful(tx)).To(BeTrue())
@@ -103,7 +112,7 @@ var _ = Describe("ExecuteTransaction", func() {
 			balance, err := GasToken.BalanceOf(nil, GasProxyAddress)
 			Expect(err).ToNot(HaveOccurred())
 			Backend.Commit()
-			Expect(balance.String()).To(Equal("140"))
+			Expect(balance.String()).To(Equal("139"))
 		})
 		When("a no-op transaction is executed", func() {
 			var tx *types.Transaction
@@ -122,8 +131,8 @@ var _ = Describe("ExecuteTransaction", func() {
 			It("should use less gas due to the gas refund", func() {
 				receipt, err := Backend.TransactionReceipt(context.Background(), tx.Hash())
 				Expect(err).ToNot(HaveOccurred())
-				fmt.Fprintf(GinkgoWriter, "Gas used by no-op execute transaction (with gas refund): %d\n", receipt.GasUsed)
-				Expect(receipt.GasUsed > 20000 && receipt.GasUsed < 60000).To(BeTrue())
+				fmt.Fprintf(GinkgoWriter, "Gas used by no-op execute transaction (with gas refund): %d/%d\n", receipt.GasUsed, tx.Gas())
+				Expect(receipt.GasUsed > 20000 && receipt.GasUsed < 42000).To(BeTrue())
 			})
 			It("should burn the expected amount of gas tokens", func() {
 				newTotalBurned, err := GasToken.TotalBurned(nil)
@@ -154,8 +163,8 @@ var _ = Describe("ExecuteTransaction", func() {
 			It("should use less gas due to the gas refund", func() {
 				receipt, err := Backend.TransactionReceipt(context.Background(), tx.Hash())
 				Expect(err).ToNot(HaveOccurred())
-				fmt.Fprintf(GinkgoWriter, "Gas used by confirmOperation execute transaction (with gas refund): %d\n", receipt.GasUsed)
-				Expect(receipt.GasUsed > 30000 && receipt.GasUsed < 75000).To(BeTrue())
+				fmt.Fprintf(GinkgoWriter, "Gas used by confirmOperation execute transaction (with gas refund): %d/%d\n", receipt.GasUsed, tx.Gas())
+				Expect(receipt.GasUsed > 30000 && receipt.GasUsed < 60000).To(BeTrue())
 			})
 			It("should burn the expected amount of gas tokens", func() {
 				newTotalBurned, err := GasToken.TotalBurned(nil)
@@ -174,7 +183,7 @@ var _ = Describe("ExecuteTransaction", func() {
 				Expect(err).ToNot(HaveOccurred())
 				gasBurnerABI, err := abi.JSON(strings.NewReader(mocks.GasBurnerABI))
 				Expect(err).ToNot(HaveOccurred())
-				data, err := gasBurnerABI.Pack("burnGas", big.NewInt(1000000))
+				data, err := gasBurnerABI.Pack("burnGas", big.NewInt(100000))
 				Expect(err).ToNot(HaveOccurred())
 				tx, err = GasProxy.ExecuteTransaction(Controller.TransactOpts(), GasBurnerAddress, big.NewInt(0), data)
 				Expect(err).ToNot(HaveOccurred())
@@ -186,15 +195,15 @@ var _ = Describe("ExecuteTransaction", func() {
 			It("should use less gas due to the gas refund", func() {
 				receipt, err := Backend.TransactionReceipt(context.Background(), tx.Hash())
 				Expect(err).ToNot(HaveOccurred())
-				fmt.Fprintf(GinkgoWriter, "Gas used by burnGas execute transaction (with gas refund): %d\n", receipt.GasUsed)
-				Expect(receipt.GasUsed > 100000 && receipt.GasUsed < 1150000).To(BeTrue())
+				fmt.Fprintf(GinkgoWriter, "Gas used by burnGas execute transaction (with gas refund): %d/%d\n", receipt.GasUsed, tx.Gas())
+				Expect(receipt.GasUsed > 50000 && receipt.GasUsed < 95000).To(BeTrue())
 			})
 			It("should burn the expected amount of gas tokens", func() {
 				newTotalBurned, err := GasToken.TotalBurned(nil)
 				Expect(err).ToNot(HaveOccurred())
 				amountBurned := new(big.Int).Sub(newTotalBurned, totalBurned)
 				fmt.Fprintf(GinkgoWriter, "Gas tokens burned by burnGas execute transaction: %s\n", amountBurned.String())
-				Expect(amountBurned.String()).To(Equal("26"))
+				Expect(amountBurned.String()).To(Equal("4"))
 			})
 		})
 	})

@@ -77,7 +77,7 @@ var _ = BeforeEach(func() {
 
 	tx, err = GasProxy.SetGasToken(ControllerAdmin.TransactOpts(), GasTokenAddress, bindings.GasRefundableGasTokenParameters{
 		FreeCallGasCost:  big.NewInt(14154),
-		GasRefundPerUnit: big.NewInt(40000),
+		GasRefundPerUnit: big.NewInt(35000),
 	})
 	Expect(err).ToNot(HaveOccurred())
 	Backend.Commit()
