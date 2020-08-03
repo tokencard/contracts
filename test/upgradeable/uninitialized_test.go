@@ -4,12 +4,12 @@ import (
 	"math/big"
 
 	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/i-stam/ethertest"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	"github.com/tokencard/contracts/v3/pkg/bindings"
 	"github.com/tokencard/contracts/v3/pkg/bindings/externals/upgradeability"
 	. "github.com/tokencard/contracts/v3/test/shared"
+	"github.com/tokencard/ethertest"
 )
 
 var _ = Describe("uninitialized", func() {

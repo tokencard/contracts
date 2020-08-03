@@ -14,26 +14,26 @@ import (
 
 var _ = Describe("fallback", func() {
 
-	var WalletMock *mocks.WalletMock
-	var WalletMockAddress common.Address
+	var Wallet *mocks.Wallet
+	var WalletAddress common.Address
 
 	When("trying transfer funds", func() {
 		var tx *types.Transaction
 		var err error
 		BeforeEach(func() {
-			WalletMockAddress, tx, WalletMock, err = mocks.DeployWalletMock(Owner.TransactOpts(), Backend)
+			WalletAddress, tx, Wallet, err = mocks.DeployWallet(Owner.TransactOpts(), Backend, ENSRegistryAddress, ControllerName)
 			Expect(err).ToNot(HaveOccurred())
 			Backend.Commit()
 			Expect(isSuccessful(tx)).To(BeTrue())
 			// deposit 1 wei
-			BankAccount.MustTransfer(Backend, WalletMockAddress, big.NewInt(1))
+			BankAccount.MustTransfer(Backend, WalletAddress, big.NewInt(1))
 		})
 
 		When("using sendValue() aka call()", func() {
 
 			BeforeEach(func() {
 				// transfer 1 wei to proxy
-				tx, err = WalletMock.SendValue(Owner.TransactOpts(), ProxyAddress, big.NewInt(1))
+				tx, err = Wallet.SendValue(Owner.TransactOpts(), ProxyAddress, big.NewInt(1))
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 				Expect(isSuccessful(tx)).To(BeTrue())
@@ -49,7 +49,7 @@ var _ = Describe("fallback", func() {
 		When("using tranfser()", func() {
 			BeforeEach(func() {
 				// transfer 1 wei to proxy
-				tx, err = WalletMock.Transfer(Owner.TransactOpts(), ProxyAddress, big.NewInt(1))
+				tx, err = Wallet.Transfer(Owner.TransactOpts(), ProxyAddress, big.NewInt(1))
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 				Expect(isSuccessful(tx)).To(BeTrue())
@@ -65,7 +65,7 @@ var _ = Describe("fallback", func() {
 				Expect(it.Next()).To(BeTrue())
 				evt := it.Event
 				Expect(it.Next()).To(BeFalse())
-				Expect(evt.From).To(Equal(WalletMockAddress))
+				Expect(evt.From).To(Equal(WalletAddress))
 				Expect(evt.Amount.String()).To(Equal("1"))
 			})
 		})

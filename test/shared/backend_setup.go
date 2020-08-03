@@ -139,6 +139,7 @@ var ControllerAdmin *ethertest.Account
 var RandomAccount *ethertest.Account
 var BankAccount *ethertest.Account
 var OraclizeConnectorOwner *ethertest.Account
+var VanityAccount *ethertest.Account
 
 var TestRig = ethertest.NewTestRig()
 var Backend ethertest.TestBackend
@@ -215,6 +216,11 @@ func InitializeBackend() error {
 	RandomAccount = ethertest.NewAccount()
 	BankAccount = ethertest.NewAccount()
 	OraclizeConnectorOwner = ethertest.NewAccount()
+	pk, err := crypto.HexToECDSA("d7f10b274ba922f7cdc99c84a7f51fd9f85deaa634cbc3d5c25b497eb7bee224")
+	if err != nil {
+		return err
+	}
+	VanityAccount = ethertest.NewAccountFromPrivKey(pk)
 
 	TestRig.AddGenesisAccountAllocation(ControllerOwner.Address(), EthToWei(1))
 	TestRig.AddGenesisAccountAllocation(ControllerAdmin.Address(), EthToWei(1))
@@ -223,10 +229,10 @@ func InitializeBackend() error {
 	TestRig.AddGenesisAccountAllocation(OraclizeConnectorOwner.Address(), EthToWei(1000))
 	TestRig.AddGenesisAccountAllocation(BankAccount.Address(), EthToWei(1000))
 	TestRig.AddGenesisAccountAllocation(Owner.Address(), EthToWei(1))
+	TestRig.AddGenesisAccountAllocation(VanityAccount.Address(), EthToWei(1))
 
 	Backend = TestRig.NewTestBackend(ethertest.WithBlockchainTime(time.Date(2018, 9, 13, 15, 10, 0, 0, time.Local)))
 
-	var err error
 	var tx *types.Transaction
 
 	// Deploy a stablecoin mock token.
@@ -250,7 +256,7 @@ func InitializeBackend() error {
 		return errors.Wrap(err, "deploying controller contract")
 	}
 
-	ControllerContract.AddAdmin(ControllerOwner.TransactOpts(), ControllerAdmin.Address())
+	tx, err = ControllerContract.AddAdmin(ControllerOwner.TransactOpts(), ControllerAdmin.Address())
 	if err != nil {
 		return err
 	}
