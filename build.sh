@@ -30,6 +30,7 @@ contracts_0_6=(
   'mocks/nonCompliantToken'
   'mocks/oraclize'
   'mocks/parseIntScientificExporter'
+  'mocks/token'
   'mocks/tokenWhitelistableExporter'
   'mocks/wallet'
 )
@@ -64,15 +65,14 @@ generate_binding() {
 
 contracts=(
   "controller/Controller controller.go Controller bindings"
+  "gasProxy/GasProxy gasProxy.go GasProxy bindings"
   "holder/Holder holder.go Holder bindings"
   "licence/Licence licence.go Licence bindings"
   "oracle/Oracle oracle.go Oracle bindings"
   "tokenWhitelist/TokenWhitelist tokenWhitelist.go TokenWhitelist bindings"
   "wallet/Wallet wallet.go Wallet bindings"
-  "walletDeployer/WalletDeployer walletDeployer.go WalletDeployer bindings"
   "walletCache/WalletCache walletCache.go WalletCache bindings"
-  "gasProxy/GasProxy gasProxy.go GasProxy bindings"
-  "mocks/token/Token mocks/token.go Token mocks"
+  "walletDeployer/WalletDeployer walletDeployer.go WalletDeployer bindings"
   "externals/ens/ENSRegistry/ENSRegistry externals/ens/ENSRegistry.go ENSRegistry ens"
   "externals/ens/PublicResolver/PublicResolver externals/ens/PublicResolver.go PublicResolver ens"
   "externals/upgradeability/UpgradeabilityProxy/UpgradeabilityProxy externals/upgradeability/UpgradeabilityProxy.go UpgradeabilityProxy upgradeability"
@@ -84,10 +84,9 @@ contracts=(
   "mocks/oraclize/OraclizeConnector mocks/oraclizeConnector.go OraclizeConnector mocks"
   "mocks/oraclize/OraclizeAddrResolver mocks/oraclizeAddrResolver.go OraclizeAddrResolver mocks"
   "mocks/parseIntScientificExporter/ParseIntScientificExporter mocks/parseIntScientificExporter.go ParseIntScientificExporter mocks"
+  "mocks/token/Token mocks/token.go Token mocks"
   "mocks/tokenWhitelistableExporter/TokenWhitelistableExporter mocks/tokenWhitelistableExporter.go TokenWhitelistableExporter mocks"
   "mocks/wallet/Wallet mocks/wallet.go Wallet mocks"
-  "mocks/gasToken/GasToken mocks/gasToken.go GasToken mocks"
-  "mocks/gasBurner/GasBurner mocks/gasBurner.go GasBurner mocks"
   "externals/ens/ENSRegistry/ENSRegistry externals/ens/ENSRegistry.go ENSRegistry ens"
   "externals/ens/PublicResolver/PublicResolver externals/ens/PublicResolver.go PublicResolver ens"
   "externals/upgradeability/UpgradeabilityProxy/UpgradeabilityProxy externals/upgradeability/UpgradeabilityProxy.go UpgradeabilityProxy upgradeability"
