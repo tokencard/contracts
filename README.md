@@ -1,4 +1,4 @@
-# The Consumer Contract Wallet - Version 3.3.1
+# The Consumer Contract Wallet - Version 3.4.1
 
 This repository contains the Smart Contracts needed to power the Monolith App, written in Solidity, for execution in the EVM.
 
@@ -88,6 +88,8 @@ It should be noted that this codebase makes heavy use of inheritance.
 [wallet.sol](/contracts/wallet.sol) is the library contract that defines the business logic of the *Consumer Contract Wallet*. This library is used to secure user funds. The Wallet communicates with the *TokenWhitelist*, the *Controller*, the *TKN licence*, and other ERC20 contracts. It should noted that the *Consumer Contract Wallet* only protects the ERC20 tokens supported by the *TokenWhitelist* in its Security Features, tokens not listed as `available` by the *TokenWhitelist* will not be secured by the *Consumer Contract Wallet*'s daily spend limit; see([wallet inheritance digram](/docs/wallet.inheritance.png)).
 
 [controller.sol](/contracts/controller.sol) the *Controller* is used to perform tasks on behalf of Token Group Ltd. These tasks range from operational tasks, such as updating the token exchange rates via the *Oracle*, adding/removing tokens from the *TokenWhitelist* to signing 2FA functions on behalf of our users. The *Controller* contract implements a key hierarchy of: `controllers` used for operational tasks, `admin` used for administrative tasks, and the `owner` which is used to change out the `admins`; see([controller inheritance diagram](/docs/controllers.inheritance.png)).
+
+[gasProxy.sol](/contracts/gasProxy.sol) the *GasProxy* can be used as a *Controller* to redeem gasTokens (e.g. GST2 or CHI) when executing *Controller* transactions. The depoloyed *GasProxy* contract should be added to the list of controllers in the *Controller* contract.
 
 [holder.sol](/contracts/holder.sol) is the *TKN Holder* contract, this is the `Asset Contract` as defined in the TokenCard whitepaper. This contract is used to hold 1% of all loads made onto TokenCards. The *TokenWhitelist* is used to define the set of tokens that are cash 'n' burnable (aka redeemable) by TKN holders who wish to burn their TKN. Users may burn their TKN on the TKN ERC20 contract which will call out to the `burn` method on the *TKN Holder* contract; see([holder inheritance diagram](/docs/holder.inheritance.png)).
 
