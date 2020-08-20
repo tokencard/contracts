@@ -16,19 +16,20 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-pragma solidity 0.5.17;
+// SPDX-License-Identifier: GPLv3
+
+pragma solidity ^0.6.11;
 
 import "./ensResolvable.sol";
-import "../tokenWhitelist.sol";
 import "../externals/initializable.sol";
-
+import "../interfaces/ITokenWhitelist.sol";
 
 /// @title TokenWhitelistable implements access to the TokenWhitelist located behind ENS.
 contract TokenWhitelistable is ENSResolvable {
     // token-whitelist.tokencard.eth
     bytes32 private constant _DEFAULT_TOKEN_WHITELIST_NODE = 0xe84f90570f13fe09f288f2411ff9cf50da611ed0c7db7f73d48053ffc974d396;
 
-    /// @notice This is the registered ENS node identifying the tokenWhitelist contract
+    /// @dev This is the registered ENS node identifying the tokenWhitelist contract
     bytes32 private _tokenWhitelistNode = _DEFAULT_TOKEN_WHITELIST_NODE;
 
     /// @notice This shows what TokenWhitelist is being used
@@ -51,7 +52,19 @@ contract TokenWhitelistable is ENSResolvable {
     /// @return bool whether the token is loadable to the TokenCard.
     /// @return bool whether the token is redeemable to the TKN Holder Contract.
     /// @return uint of the lastUpdated time of the token's exchange rate.
-    function _getStablecoinInfo() internal view returns (string memory, uint256, uint256, bool, bool, bool, uint256) {
+    function _getStablecoinInfo()
+        internal
+        view
+        returns (
+            string memory,
+            uint256,
+            uint256,
+            bool,
+            bool,
+            bool,
+            uint256
+        )
+    {
         return ITokenWhitelist(_ensResolve(_tokenWhitelistNode)).getStablecoinInfo();
     }
 
@@ -64,7 +77,19 @@ contract TokenWhitelistable is ENSResolvable {
     /// @return bool whether the token is loadable to the TokenCard.
     /// @return bool whether the token is redeemable to the TKN Holder Contract.
     /// @return uint of the lastUpdated time of the token's exchange rate.
-    function _getTokenInfo(address _a) internal view returns (string memory, uint256, uint256, bool, bool, bool, uint256) {
+    function _getTokenInfo(address _a)
+        internal
+        view
+        returns (
+            string memory,
+            uint256,
+            uint256,
+            bool,
+            bool,
+            bool,
+            uint256
+        )
+    {
         return ITokenWhitelist(_ensResolve(_tokenWhitelistNode)).getTokenInfo(_a);
     }
 
@@ -120,7 +145,11 @@ contract TokenWhitelistable is ENSResolvable {
     /// @param _token ERC20 token contract address.
     /// @param _rate ERC20 token exchange rate in wei.
     /// @param _updateDate date for the token updates. This will be compared to when oracle updates are received.
-    function _updateTokenRate(address _token, uint256 _rate, uint256 _updateDate) internal {
+    function _updateTokenRate(
+        address _token,
+        uint256 _rate,
+        uint256 _updateDate
+    ) internal {
         ITokenWhitelist(_ensResolve(_tokenWhitelistNode)).updateTokenRate(_token, _rate, _updateDate);
     }
 }

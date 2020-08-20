@@ -1,5 +1,6 @@
-pragma solidity 0.5.17;
+// SPDX-License-Identifier: GPLv3
 
+pragma solidity ^0.6.11;
 
 contract OraclizeConnector {
     address public cbAddress;
@@ -14,14 +15,23 @@ contract OraclizeConnector {
         return keccak256(bytes(_arg));
     }
 
-    function query(uint256 _timestamp, string calldata _datasource, string calldata _arg) external payable returns (bytes32) {
+    function query(
+        uint256 _timestamp,
+        string calldata _datasource,
+        string calldata _arg
+    ) external payable returns (bytes32) {
         if (_timestamp == 0 && bytes(_datasource).length == 0) {
             return query(_arg);
         }
         return keccak256(bytes(_arg));
     }
 
-    function query_withGasLimit(uint256 _timestamp, string calldata _datasource, string calldata _arg, uint256 _gaslimit) external payable returns (bytes32) {
+    function query_withGasLimit(
+        uint256 _timestamp,
+        string calldata _datasource,
+        string calldata _arg,
+        uint256 _gaslimit
+    ) external payable returns (bytes32) {
         if (_timestamp == 0 && bytes(_datasource).length == 0 && _gaslimit == 0) {
             return query(_arg);
         }
@@ -50,7 +60,6 @@ contract OraclizeConnector {
         gasPrice = _gasPrice;
     }
 }
-
 
 contract OraclizeAddrResolver {
     address private oraclizedAddress;

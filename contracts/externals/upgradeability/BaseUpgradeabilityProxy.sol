@@ -1,4 +1,6 @@
-pragma solidity ^0.5.0;
+// SPDX-License-Identifier: GPLv3
+
+pragma solidity >0.5.0;
 
 import './Proxy.sol';
 import '../Address.sol';
@@ -20,9 +22,9 @@ contract BaseUpgradeabilityProxy is Proxy {
 
   /**
    * @dev Returns the current implementation.
-   * @return Address of the current implementation
+   * @return impl Address of the current implementation
    */
-  function _implementation() internal view returns (address impl) {
+  function _implementation() internal override view returns (address impl) {
     bytes32 slot = IMPLEMENTATION_SLOT;
     assembly {
       impl := sload(slot)

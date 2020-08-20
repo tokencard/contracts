@@ -28,10 +28,10 @@ var (
 )
 
 // WalletABI is the input ABI used to generate the binding from.
-const WalletABI = "[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_ens_\",\"type\":\"address\"},{\"internalType\":\"bytes32\",\"name\":\"_controllerNode_\",\"type\":\"bytes32\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"bool\",\"name\":\"_status\",\"type\":\"bool\"}],\"name\":\"ConfirmedOperation\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"_ensRegistry\",\"type\":\"address\"}],\"name\":\"ENSSetRegistry\",\"type\":\"event\"},{\"payable\":true,\"stateMutability\":\"payable\",\"type\":\"fallback\"},{\"constant\":false,\"inputs\":[],\"name\":\"confirmOperation\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"controllerNode\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"ensRegistry\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"addresspayable\",\"name\":\"_to\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"sendValue\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"addresspayable\",\"name\":\"_to\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"transfer\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"}]"
+const WalletABI = "[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_ens_\",\"type\":\"address\"},{\"internalType\":\"bytes32\",\"name\":\"_controllerNode_\",\"type\":\"bytes32\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"bool\",\"name\":\"_status\",\"type\":\"bool\"}],\"name\":\"ConfirmedOperation\",\"type\":\"event\"},{\"inputs\":[],\"name\":\"confirmOperation\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"controllerNode\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"ensRegistry\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"addresspayable\",\"name\":\"_to\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"sendValue\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"addresspayable\",\"name\":\"_to\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"transfer\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"stateMutability\":\"payable\",\"type\":\"receive\"}]"
 
 // WalletBin is the compiled bytecode used for deploying new contracts.
-var WalletBin = "0x6080604052603380546001600160a01b0319166e0c2e074ec69a0dfb2997ba6c7d2e1e1790557f7f2ce995617d2816b426c5c8698c5ec2952f7a34bb10f38326f74933d589369760345534801561005557600080fd5b5060405161070a38038061070a8339818101604052604081101561007857600080fd5b508051602090910151610093826001600160e01b036100ac16565b6100a5816001600160e01b0361018316565b505061023f565b600054610100900460ff16806100ce57506100ce6001600160e01b0361023916565b806100dc575060005460ff16155b6101175760405162461bcd60e51b815260040180806020018281038252602e8152602001806106dc602e913960400191505060405180910390fd5b600054610100900460ff16158015610142576000805460ff1961ff0019909116610100171660011790555b6001600160a01b0382161561016d57603380546001600160a01b0319166001600160a01b0384161790555b801561017f576000805461ff00191690555b5050565b600054610100900460ff16806101a557506101a56001600160e01b0361023916565b806101b3575060005460ff16155b6101ee5760405162461bcd60e51b815260040180806020018281038252602e8152602001806106dc602e913960400191505060405180910390fd5b600054610100900460ff16158015610219576000805460ff1961ff0019909116610100171660011790555b811561016d576034829055801561017f576000805461ff00191690555050565b303b1590565b61048e8061024e6000396000f3fe60806040526004361061004a5760003560e01c806324a084df1461004c5780636945341f146100855780637d73b2311461009a578063a9059cbb146100cb578063e2b4ce9714610104575b005b34801561005857600080fd5b5061004a6004803603604081101561006f57600080fd5b506001600160a01b03813516906020013561012b565b34801561009157600080fd5b5061004a6101c9565b3480156100a657600080fd5b506100af610259565b604080516001600160a01b039092168252519081900360200190f35b3480156100d757600080fd5b5061004a600480360360408110156100ee57600080fd5b506001600160a01b038135169060200135610268565b34801561011057600080fd5b5061011961029e565b60408051918252519081900360200190f35b6040516000906001600160a01b0384169083908381818185875af1925050503d8060008114610176576040519150601f19603f3d011682016040523d82523d6000602084013e61017b565b606091505b50509050806101c4576040805162461bcd60e51b815260206004820152601060248201526f1cd95b9915985b1d594819985a5b195960821b604482015290519081900360640190fd5b505050565b6101d2336102a4565b610223576040805162461bcd60e51b815260206004820152601a60248201527f73656e646572206973206e6f74206120636f6e74726f6c6c6572000000000000604482015290519081900360640190fd5b604080516001815290517f0e8fe5b3baccd13c21d6a20906753a2bbcd86f70d69f4bde83f4e38cf3aae12b9181900360200190a1565b6033546001600160a01b031690565b6040516001600160a01b0383169082156108fc029083906000818181858888f193505050501580156101c4573d6000803e3d6000fd5b60345490565b60006102b1603454610338565b6001600160a01b031663b429afeb836040518263ffffffff1660e01b815260040180826001600160a01b03166001600160a01b0316815260200191505060206040518083038186803b15801561030657600080fd5b505afa15801561031a573d6000803e3d6000fd5b505050506040513d602081101561033057600080fd5b505192915050565b6033546000906001600160a01b0316610398576040805162461bcd60e51b815260206004820152601d60248201527f454e535265736f6c7661626c65206e6f7420696e697469616c697a6564000000604482015290519081900360640190fd5b60335460408051630178b8bf60e01b81526004810185905290516001600160a01b0390921691630178b8bf91602480820192602092909190829003018186803b1580156103e457600080fd5b505afa1580156103f8573d6000803e3d6000fd5b505050506040513d602081101561040e57600080fd5b505160408051631d9dabef60e11b81526004810185905290516001600160a01b0390921691633b3b57de91602480820192602092909190829003018186803b15801561030657600080fdfea265627a7a7231582065ee375aad8162b1833fbe40f7260e99ad49800022775f0d884a15f30683d75764736f6c63430005110032436f6e747261637420696e7374616e63652068617320616c7265616479206265656e20696e697469616c697a6564"
+var WalletBin = "0x6080604052603380546001600160a01b0319166e0c2e074ec69a0dfb2997ba6c7d2e1e1790557f7f2ce995617d2816b426c5c8698c5ec2952f7a34bb10f38326f74933d589369760345534801561005557600080fd5b506040516106ee3803806106ee8339818101604052604081101561007857600080fd5b50805160209091015161008a8261009a565b61009381610168565b505061021b565b600054610100900460ff16806100b357506100b3610215565b806100c1575060005460ff16155b6100fc5760405162461bcd60e51b815260040180806020018281038252602e8152602001806106c0602e913960400191505060405180910390fd5b600054610100900460ff16158015610127576000805460ff1961ff0019909116610100171660011790555b6001600160a01b0382161561015257603380546001600160a01b0319166001600160a01b0384161790555b8015610164576000805461ff00191690555b5050565b600054610100900460ff16806101815750610181610215565b8061018f575060005460ff16155b6101ca5760405162461bcd60e51b815260040180806020018281038252602e8152602001806106c0602e913960400191505060405180910390fd5b600054610100900460ff161580156101f5576000805460ff1961ff0019909116610100171660011790555b81156101525760348290558015610164576000805461ff00191690555050565b303b1590565b6104968061022a6000396000f3fe60806040526004361061004e5760003560e01c806324a084df1461005a5780636945341f146100955780637d73b231146100aa578063a9059cbb146100db578063e2b4ce971461011457610055565b3661005557005b600080fd5b34801561006657600080fd5b506100936004803603604081101561007d57600080fd5b506001600160a01b03813516906020013561013b565b005b3480156100a157600080fd5b506100936101d9565b3480156100b657600080fd5b506100bf610269565b604080516001600160a01b039092168252519081900360200190f35b3480156100e757600080fd5b50610093600480360360408110156100fe57600080fd5b506001600160a01b038135169060200135610278565b34801561012057600080fd5b506101296102ae565b60408051918252519081900360200190f35b6040516000906001600160a01b0384169083908381818185875af1925050503d8060008114610186576040519150601f19603f3d011682016040523d82523d6000602084013e61018b565b606091505b50509050806101d4576040805162461bcd60e51b815260206004820152601060248201526f1cd95b9915985b1d594819985a5b195960821b604482015290519081900360640190fd5b505050565b6101e2336102b4565b610233576040805162461bcd60e51b815260206004820152601a60248201527f73656e646572206973206e6f74206120636f6e74726f6c6c6572000000000000604482015290519081900360640190fd5b604080516001815290517f0e8fe5b3baccd13c21d6a20906753a2bbcd86f70d69f4bde83f4e38cf3aae12b9181900360200190a1565b6033546001600160a01b031690565b6040516001600160a01b0383169082156108fc029083906000818181858888f193505050501580156101d4573d6000803e3d6000fd5b60345490565b60006102c160345461033f565b6001600160a01b031663b429afeb836040518263ffffffff1660e01b815260040180826001600160a01b0316815260200191505060206040518083038186803b15801561030d57600080fd5b505afa158015610321573d6000803e3d6000fd5b505050506040513d602081101561033757600080fd5b505192915050565b6033546000906001600160a01b031661039f576040805162461bcd60e51b815260206004820152601d60248201527f454e535265736f6c7661626c65206e6f7420696e697469616c697a6564000000604482015290519081900360640190fd5b60335460408051630178b8bf60e01b81526004810185905290516001600160a01b0390921691630178b8bf91602480820192602092909190829003018186803b1580156103eb57600080fd5b505afa1580156103ff573d6000803e3d6000fd5b505050506040513d602081101561041557600080fd5b505160408051631d9dabef60e11b81526004810185905290516001600160a01b0390921691633b3b57de91602480820192602092909190829003018186803b15801561030d57600080fdfea26469706673582212200a07d028750f95f8874dfbf976f9e9d83697beb6de91cb141b151c4351dde1d064736f6c634300060c0033436f6e747261637420696e7374616e63652068617320616c7265616479206265656e20696e697469616c697a6564"
 
 // DeployWallet deploys a new Ethereum contract, binding an instance of Wallet to it.
 func DeployWallet(auth *bind.TransactOpts, backend bind.ContractBackend, _ens_ common.Address, _controllerNode_ [32]byte) (common.Address, *types.Transaction, *Wallet, error) {
@@ -432,139 +432,6 @@ func (_Wallet *WalletFilterer) WatchConfirmedOperation(opts *bind.WatchOpts, sin
 func (_Wallet *WalletFilterer) ParseConfirmedOperation(log types.Log) (*WalletConfirmedOperation, error) {
 	event := new(WalletConfirmedOperation)
 	if err := _Wallet.contract.UnpackLog(event, "ConfirmedOperation", log); err != nil {
-		return nil, err
-	}
-	return event, nil
-}
-
-// WalletENSSetRegistryIterator is returned from FilterENSSetRegistry and is used to iterate over the raw logs and unpacked data for ENSSetRegistry events raised by the Wallet contract.
-type WalletENSSetRegistryIterator struct {
-	Event *WalletENSSetRegistry // Event containing the contract specifics and raw log
-
-	contract *bind.BoundContract // Generic contract to use for unpacking event data
-	event    string              // Event name to use for unpacking event data
-
-	logs chan types.Log        // Log channel receiving the found contract events
-	sub  ethereum.Subscription // Subscription for errors, completion and termination
-	done bool                  // Whether the subscription completed delivering logs
-	fail error                 // Occurred error to stop iteration
-}
-
-// Next advances the iterator to the subsequent event, returning whether there
-// are any more events found. In case of a retrieval or parsing error, false is
-// returned and Error() can be queried for the exact failure.
-func (it *WalletENSSetRegistryIterator) Next() bool {
-	// If the iterator failed, stop iterating
-	if it.fail != nil {
-		return false
-	}
-	// If the iterator completed, deliver directly whatever's available
-	if it.done {
-		select {
-		case log := <-it.logs:
-			it.Event = new(WalletENSSetRegistry)
-			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
-				it.fail = err
-				return false
-			}
-			it.Event.Raw = log
-			return true
-
-		default:
-			return false
-		}
-	}
-	// Iterator still in progress, wait for either a data or an error event
-	select {
-	case log := <-it.logs:
-		it.Event = new(WalletENSSetRegistry)
-		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
-			it.fail = err
-			return false
-		}
-		it.Event.Raw = log
-		return true
-
-	case err := <-it.sub.Err():
-		it.done = true
-		it.fail = err
-		return it.Next()
-	}
-}
-
-// Error returns any retrieval or parsing error occurred during filtering.
-func (it *WalletENSSetRegistryIterator) Error() error {
-	return it.fail
-}
-
-// Close terminates the iteration process, releasing any pending underlying
-// resources.
-func (it *WalletENSSetRegistryIterator) Close() error {
-	it.sub.Unsubscribe()
-	return nil
-}
-
-// WalletENSSetRegistry represents a ENSSetRegistry event raised by the Wallet contract.
-type WalletENSSetRegistry struct {
-	EnsRegistry common.Address
-	Raw         types.Log // Blockchain specific contextual infos
-}
-
-// FilterENSSetRegistry is a free log retrieval operation binding the contract event 0x186a5507043ec82d7cac3080e4bf22b3f781d96b198adf165a2df507bda90773.
-//
-// Solidity: event ENSSetRegistry(address _ensRegistry)
-func (_Wallet *WalletFilterer) FilterENSSetRegistry(opts *bind.FilterOpts) (*WalletENSSetRegistryIterator, error) {
-
-	logs, sub, err := _Wallet.contract.FilterLogs(opts, "ENSSetRegistry")
-	if err != nil {
-		return nil, err
-	}
-	return &WalletENSSetRegistryIterator{contract: _Wallet.contract, event: "ENSSetRegistry", logs: logs, sub: sub}, nil
-}
-
-// WatchENSSetRegistry is a free log subscription operation binding the contract event 0x186a5507043ec82d7cac3080e4bf22b3f781d96b198adf165a2df507bda90773.
-//
-// Solidity: event ENSSetRegistry(address _ensRegistry)
-func (_Wallet *WalletFilterer) WatchENSSetRegistry(opts *bind.WatchOpts, sink chan<- *WalletENSSetRegistry) (event.Subscription, error) {
-
-	logs, sub, err := _Wallet.contract.WatchLogs(opts, "ENSSetRegistry")
-	if err != nil {
-		return nil, err
-	}
-	return event.NewSubscription(func(quit <-chan struct{}) error {
-		defer sub.Unsubscribe()
-		for {
-			select {
-			case log := <-logs:
-				// New log arrived, parse the event and forward to the user
-				event := new(WalletENSSetRegistry)
-				if err := _Wallet.contract.UnpackLog(event, "ENSSetRegistry", log); err != nil {
-					return err
-				}
-				event.Raw = log
-
-				select {
-				case sink <- event:
-				case err := <-sub.Err():
-					return err
-				case <-quit:
-					return nil
-				}
-			case err := <-sub.Err():
-				return err
-			case <-quit:
-				return nil
-			}
-		}
-	}), nil
-}
-
-// ParseENSSetRegistry is a log parse operation binding the contract event 0x186a5507043ec82d7cac3080e4bf22b3f781d96b198adf165a2df507bda90773.
-//
-// Solidity: event ENSSetRegistry(address _ensRegistry)
-func (_Wallet *WalletFilterer) ParseENSSetRegistry(log types.Log) (*WalletENSSetRegistry, error) {
-	event := new(WalletENSSetRegistry)
-	if err := _Wallet.contract.UnpackLog(event, "ENSSetRegistry", log); err != nil {
 		return nil, err
 	}
 	return event, nil

@@ -1,7 +1,8 @@
-pragma solidity 0.5.17;
+// SPDX-License-Identifier: GPLv3
+
+pragma solidity ^0.6.11;
 
 import "../internals/parseIntScientific.sol";
-
 
 contract ParseIntScientificExporter is ParseIntScientific {
     /// @dev exports _parseIntScientific(string) as an external function.

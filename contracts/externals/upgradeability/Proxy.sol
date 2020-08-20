@@ -1,4 +1,6 @@
-pragma solidity ^0.5.0;
+// SPDX-License-Identifier: GPLv3
+
+pragma solidity >0.5.0;
 
 /**
  * @title Proxy
@@ -7,26 +9,28 @@ pragma solidity ^0.5.0;
  * It defines a fallback function that delegates all calls to the address
  * returned by the abstract _implementation() internal function.
  */
-contract Proxy {
+abstract contract Proxy {
 
   event Received(address _from, uint256 _amount);
   
   /**
-   * @dev Fallback function.
-   * Implemented entirely in `_fallback`.
+   * @dev Receive function.
    */
-  function () payable external {
-    if (msg.data.length == 0) {
-      emit Received(msg.sender, msg.value);
-      return;
-    }
+  receive() external payable {
+    emit Received(msg.sender, msg.value);
+  }
+
+  /**
+   * @dev Fallback function.
+   */
+  fallback() external payable {
     _delegate(_implementation());
   }
 
   /**
    * @return The Address of the implementation.
    */
-  function _implementation() internal view returns (address);
+  function _implementation() internal virtual view returns (address);
 
   /**
    * @dev Delegates execution to an implementation contract.
@@ -39,19 +43,19 @@ contract Proxy {
       // Copy msg.data. We take full control of memory in this inline assembly
       // block because it will not return to Solidity code. We overwrite the
       // Solidity scratch pad at memory position 0.
-      calldatacopy(0, 0, calldatasize)
+      calldatacopy(0, 0, calldatasize())
 
       // Call the implementation.
       // out and outsize are 0 because we don't know the size yet.
-      let result := delegatecall(gas, implementation, 0, calldatasize, 0, 0)
+      let result := delegatecall(gas(), implementation, 0, calldatasize(), 0, 0)
 
       // Copy the returned data.
-      returndatacopy(0, 0, returndatasize)
+      returndatacopy(0, 0, returndatasize())
 
       switch result
       // delegatecall returns 0 on error.
-      case 0 { revert(0, returndatasize) }
-      default { return(0, returndatasize) }
+      case 0 { revert(0, returndatasize()) }
+      default { return(0, returndatasize()) }
     }
   }
 

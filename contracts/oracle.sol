@@ -16,21 +16,23 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-pragma solidity 0.5.17;
+// SPDX-License-Identifier: GPLv3
 
+pragma solidity ^0.6.11;
+
+import "./externals/base64.sol";
+import "./externals/provableAPI_0.6.sol";
+import "./externals/SafeMath.sol";
+import "./externals/strings.sol";
 import "./internals/controllable.sol";
-import "./internals/transferrable.sol";
-import "./internals/ensResolvable.sol";
 import "./internals/date.sol";
+import "./internals/ensResolvable.sol";
 import "./internals/parseIntScientific.sol";
 import "./internals/tokenWhitelistable.sol";
-import "./externals/SafeMath.sol";
-import "./externals/oraclizeAPI_0.5.sol";
-import "./externals/base64.sol";
-
+import "./internals/transferrable.sol";
 
 /// @title Oracle provides asset exchange rates and conversion functionality.
-contract Oracle is ENSResolvable, usingOraclize, Transferrable, Base64, Date, Controllable, ParseIntScientific, TokenWhitelistable {
+contract Oracle is ENSResolvable, usingProvable, Transferrable, Base64, Date, Controllable, ParseIntScientific, TokenWhitelistable {
     using strings for *;
     using SafeMath for uint256;
 
@@ -69,18 +71,23 @@ contract Oracle is ENSResolvable, usingOraclize, Transferrable, Base64, Date, Co
     mapping(bytes32 => address) private _queryToToken;
 
     /// @notice Construct the oracle with multiple controllers, address resolver and custom gas price.
-    /// @param _resolver_ is the address of the oraclize resolver
+    /// @param _resolver_ is the address of the Provable resolver
     /// @param _ens_ is the address of the ENS.
     /// @param _controllerNode_ is the ENS node corresponding to the Controller.
     /// @param _tokenWhitelistNode_ is the ENS corresponding to the Token Whitelist.
-    constructor(address _resolver_, address _ens_, bytes32 _controllerNode_, bytes32 _tokenWhitelistNode_) public {
+    constructor(
+        address _resolver_,
+        address _ens_,
+        bytes32 _controllerNode_,
+        bytes32 _tokenWhitelistNode_
+    ) public {
         _initializeENSResolvable(_ens_);
         _initializeControllable(_controllerNode_);
         _initializeTokenWhitelistable(_tokenWhitelistNode_);
         cryptoCompareAPIPublicKey = hex"a0f4f688350018ad1b9785991c0bde5f704b005dc79972b114dbed4a615a983710bfc647ebe5a320daa28771dce6a2d104f5efa2e4a85ba3760b76d46f8571ca";
-        OAR = OraclizeAddrResolverI(_resolver_);
-        oraclize_setCustomGasPrice(10000000000);
-        oraclize_setProof(proofType_Native);
+        OAR = OracleAddrResolverI(_resolver_);
+        provable_setCustomGasPrice(10000000000);
+        provable_setProof(proofType_Native);
     }
 
     /// @notice Updates the Crypto Compare public API key.
@@ -90,40 +97,48 @@ contract Oracle is ENSResolvable, usingOraclize, Transferrable, Base64, Date, Co
         emit SetCryptoComparePublicKey(msg.sender, _publicKey);
     }
 
-    /// @notice Sets the gas price used by Oraclize query.
-    /// @param _gasPrice in wei for Oraclize
+    /// @notice Sets the gas price used by Provable query.
+    /// @param _gasPrice in wei for Provable
     function setCustomGasPrice(uint256 _gasPrice) external onlyController {
-        oraclize_setCustomGasPrice(_gasPrice);
+        provable_setCustomGasPrice(_gasPrice);
         emit SetGasPrice(msg.sender, _gasPrice);
     }
 
     /// @notice Update ERC20 token exchange rates for all supported tokens.
-    /// @param _gasLimit the gas limit is passed, this is used for the Oraclize callback
+    /// @param _gasLimit the gas limit is passed, this is used for the Provable callback
     function updateTokenRates(uint256 _gasLimit) external payable onlyController {
         _updateTokenRates(_gasLimit);
     }
 
     /// @notice Update ERC20 token exchange rates for the list of tokens provided.
-    /// @param _gasLimit the gas limit is passed, this is used for the Oraclize callback
+    /// @param _gasLimit the gas limit is passed, this is used for the Provable callback
     /// @param _tokenList the list of tokens that need to be updated
     function updateTokenRatesList(uint256 _gasLimit, address[] calldata _tokenList) external payable onlyController {
         _updateTokenRatesList(_gasLimit, _tokenList);
     }
 
     /// @notice Withdraw tokens from the smart contract to the specified account.
-    function claim(address payable _to, address _asset, uint256 _amount) external onlyAdmin {
+    function claim(
+        address payable _to,
+        address _asset,
+        uint256 _amount
+    ) external onlyAdmin {
         _safeTransfer(_to, _asset, _amount);
         emit Claimed(_to, _asset, _amount);
     }
 
-    /// @notice Handle Oraclize query callback and verifiy the provided origin proof.
-    /// @param _queryID Oraclize query ID.
+    /// @notice Handle Provable query callback and verifiy the provided origin proof.
+    /// @param _queryID Provable query ID.
     /// @param _result query result in JSON format.
     /// @param _proof origin proof from crypto compare.
     // solium-disable-next-line mixedcase
-    function __callback(bytes32 _queryID, string memory _result, bytes memory _proof) public {
-        // Require that the caller is the Oraclize contract.
-        require(msg.sender == oraclize_cbAddress(), "sender is not oraclize");
+    function __callback(
+        bytes32 _queryID,
+        string memory _result,
+        bytes memory _proof
+    ) public override {
+        // Require that the caller is the Provable contract.
+        require(msg.sender == provable_cbAddress(), "sender is not provable");
         // Use the query ID to find the matching token address.
         address token = _queryToToken[_queryID];
         // Get the corresponding token object.
@@ -168,8 +183,8 @@ contract Oracle is ENSResolvable, usingOraclize, Transferrable, Base64, Date, Co
         return body.toString();
     }
 
-    /// @notice Re-usable helper function that performs the Oraclize Query.
-    /// @param _gasLimit the gas limit is passed, this is used for the Oraclize callback
+    /// @notice Re-usable helper function that performs the Provable Query.
+    /// @param _gasLimit the gas limit is passed, this is used for the Provable callback
     function _updateTokenRates(uint256 _gasLimit) private {
         address[] memory tokenAddresses = _tokenAddressArray();
         // Check if there are any existing tokens.
@@ -177,7 +192,7 @@ contract Oracle is ENSResolvable, usingOraclize, Transferrable, Base64, Date, Co
             // Emit a query failure event.
             emit FailedUpdateRequest("no tokens");
             // Check if the contract has enough Ether to pay for the query.
-        } else if (oraclize_getPrice("URL") * tokenAddresses.length > address(this).balance) {
+        } else if (provable_getPrice("URL") * tokenAddresses.length > address(this).balance) {
             // Emit a query failure event.
             emit FailedUpdateRequest("insufficient balance");
         } else {
@@ -185,14 +200,14 @@ contract Oracle is ENSResolvable, usingOraclize, Transferrable, Base64, Date, Co
             strings.slice memory apiPrefix = "https://min-api.cryptocompare.com/data/price?fsym=".toSlice();
             strings.slice memory apiSuffix = "&tsyms=ETH&sign=true".toSlice();
 
-            // Create a new oraclize query for each supported token.
+            // Create a new Provable query for each supported token.
             for (uint256 i = 0; i < tokenAddresses.length; i++) {
                 // Store the token symbol used in the query.
                 (string memory symbol, , , , , , ) = _getTokenInfo(tokenAddresses[i]);
 
                 strings.slice memory sym = symbol.toSlice();
-                // Create a new oraclize query from the component strings.
-                bytes32 queryID = oraclize_query("URL", apiPrefix.concat(sym).toSlice().concat(apiSuffix), _gasLimit);
+                // Create a new Provable query from the component strings.
+                bytes32 queryID = provable_query("URL", apiPrefix.concat(sym).toSlice().concat(apiSuffix), _gasLimit);
                 // Store the query ID together with the associated token address.
                 _queryToToken[queryID] = tokenAddresses[i];
                 // Emit the query success event.
@@ -201,8 +216,8 @@ contract Oracle is ENSResolvable, usingOraclize, Transferrable, Base64, Date, Co
         }
     }
 
-    /// @notice Re-usable helper function that performs the Oraclize Query for a specific list of tokens.
-    /// @param _gasLimit the gas limit is passed, this is used for the Oraclize callback.
+    /// @notice Re-usable helper function that performs the Provable Query for a specific list of tokens.
+    /// @param _gasLimit the gas limit is passed, this is used for the Provable callback.
     /// @param _tokenList the list of tokens that need to be updated.
     function _updateTokenRatesList(uint256 _gasLimit, address[] memory _tokenList) private {
         // Check if there are any existing tokens.
@@ -210,7 +225,7 @@ contract Oracle is ENSResolvable, usingOraclize, Transferrable, Base64, Date, Co
             // Emit a query failure event.
             emit FailedUpdateRequest("empty token list");
             // Check if the contract has enough Ether to pay for the query.
-        } else if (oraclize_getPrice("URL") * _tokenList.length > address(this).balance) {
+        } else if (provable_getPrice("URL") * _tokenList.length > address(this).balance) {
             // Emit a query failure event.
             emit FailedUpdateRequest("insufficient balance");
         } else {
@@ -218,15 +233,15 @@ contract Oracle is ENSResolvable, usingOraclize, Transferrable, Base64, Date, Co
             strings.slice memory apiPrefix = "https://min-api.cryptocompare.com/data/price?fsym=".toSlice();
             strings.slice memory apiSuffix = "&tsyms=ETH&sign=true".toSlice();
 
-            // Create a new oraclize query for each supported token.
+            // Create a new Provable query for each supported token.
             for (uint256 i = 0; i < _tokenList.length; i++) {
                 //token must exist, revert if it doesn't
                 (string memory tokenSymbol, , , bool available, , , ) = _getTokenInfo(_tokenList[i]);
                 require(available, "token must be available");
                 // Store the token symbol used in the query.
                 strings.slice memory symbol = tokenSymbol.toSlice();
-                // Create a new oraclize query from the component strings.
-                bytes32 queryID = oraclize_query("URL", apiPrefix.concat(symbol).toSlice().concat(apiSuffix), _gasLimit);
+                // Create a new Provable query from the component strings.
+                bytes32 queryID = provable_query("URL", apiPrefix.concat(symbol).toSlice().concat(apiSuffix), _gasLimit);
                 // Store the query ID together with the associated token address.
                 _queryToToken[queryID] = _tokenList[i];
                 // Emit the query success event.
@@ -240,7 +255,12 @@ contract Oracle is ENSResolvable, usingOraclize, Transferrable, Base64, Date, Co
     /// @param _proof origin proof from cryptocompare.
     /// @param _publicKey cryptocompare public key.
     /// @param _lastUpdate timestamp of the last time the requested token was updated.
-    function _verifyProof(string memory _result, bytes memory _proof, bytes memory _publicKey, uint256 _lastUpdate) private returns (bool, uint256) {
+    function _verifyProof(
+        string memory _result,
+        bytes memory _proof,
+        bytes memory _publicKey,
+        uint256 _lastUpdate
+    ) private returns (bool, uint256) {
         // expecting fixed length proofs
         if (_proof.length != _PROOF_LEN) {
             revert("invalid proof length");
@@ -301,7 +321,11 @@ contract Oracle is ENSResolvable, usingOraclize, Transferrable, Base64, Date, Co
     /// @param _headers HTTP headers provided by the cryptocompare api
     /// @param _signature signature provided by the cryptocompare api
     /// @param _publicKey cryptocompare public key.
-    function _verifySignature(bytes memory _headers, bytes memory _signature, bytes memory _publicKey) private returns (bool) {
+    function _verifySignature(
+        bytes memory _headers,
+        bytes memory _signature,
+        bytes memory _publicKey
+    ) private returns (bool) {
         address signer;
         bool signatureOK;
 

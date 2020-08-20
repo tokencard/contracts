@@ -16,23 +16,24 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-pragma solidity 0.5.17;
+// SPDX-License-Identifier: GPLv3
 
-import "./licence.sol";
-import "./internals/ownable.sol";
-import "./internals/controllable.sol";
-import "./internals/balanceable.sol";
-import "./internals/transferrable.sol";
-import "./internals/ensResolvable.sol";
-import "./internals/tokenWhitelistable.sol";
-import "./externals/SafeMath.sol";
+pragma solidity ^0.6.11;
+
 import "./externals/Address.sol";
 import "./externals/ECDSA.sol";
-import "./externals/ERC20.sol";
 import "./externals/initializable.sol";
+import "./externals/SafeMath.sol";
 import "./externals/SafeERC20.sol";
-import "./externals/ERC165.sol";
-
+import "./interfaces/IERC20.sol";
+import "./interfaces/IERC165.sol";
+import "./interfaces/ILicence.sol";
+import "./internals/balanceable.sol";
+import "./internals/controllable.sol";
+import "./internals/ensResolvable.sol";
+import "./internals/ownable.sol";
+import "./internals/tokenWhitelistable.sol";
+import "./internals/transferrable.sol";
 
 /// @title ControllableOwnable combines Controllable and Ownable
 /// @dev providing an additional modifier to check if Owner or Controller
@@ -44,7 +45,6 @@ contract ControllableOwnable is Controllable, Ownable {
     }
 }
 
-
 /// @title SelfCallableOwnable allows either owner or the contract itself to call its functions
 /// @dev providing an additional modifier to check if Owner or self is calling
 /// @dev the "self" here is used for the meta transactions
@@ -55,7 +55,6 @@ contract SelfCallableOwnable is Ownable {
         _;
     }
 }
-
 
 /// @title AddressWhitelist provides payee-whitelist functionality.
 /// @dev This contract will allow the user to maintain a whitelist of addresses
@@ -164,7 +163,7 @@ contract AddressWhitelist is ControllableOwnable, SelfCallableOwnable {
                         break;
                     }
                 }
-                whitelistArray.length--;
+                whitelistArray.pop();
             }
         }
         // Emit the removal event.
@@ -240,7 +239,6 @@ contract AddressWhitelist is ControllableOwnable, SelfCallableOwnable {
         return keccak256(abi.encodePacked(_addresses));
     }
 }
-
 
 /// @title DailyLimitTrait This trait allows for daily limits to be included in other contracts.
 /// This contract will allow for a DailyLimit object to be instantiated and used.
@@ -328,7 +326,6 @@ library DailyLimitTrait {
     }
 }
 
-
 /// @title  it provides daily spend limit functionality.
 contract SpendLimit is ControllableOwnable, SelfCallableOwnable {
     event SetSpendLimit(address _sender, uint256 _amount);
@@ -383,7 +380,6 @@ contract SpendLimit is ControllableOwnable, SelfCallableOwnable {
         _spendLimit = DailyLimitTrait.DailyLimit(_limit, _limit, now, 0, false);
     }
 }
-
 
 /// @title GasTopUpLimit provides daily limit functionality.
 contract GasTopUpLimit is ControllableOwnable, SelfCallableOwnable {
@@ -444,7 +440,6 @@ contract GasTopUpLimit is ControllableOwnable, SelfCallableOwnable {
         _gasTopUpLimit = DailyLimitTrait.DailyLimit(_MAXIMUM_GAS_TOPUP_LIMIT, _MAXIMUM_GAS_TOPUP_LIMIT, now, 0, false);
     }
 }
-
 
 /// @title LoadLimit provides daily load limit functionality.
 contract LoadLimit is ControllableOwnable, SelfCallableOwnable, TokenWhitelistable {
@@ -509,15 +504,13 @@ contract LoadLimit is ControllableOwnable, SelfCallableOwnable, TokenWhitelistab
     }
 }
 
-
 /// @title Asset wallet with extra security features, gas top up management and card integration.
-contract Wallet is ENSResolvable, AddressWhitelist, SpendLimit, GasTopUpLimit, LoadLimit, ERC165, Transferrable, Balanceable {
+contract Wallet is ENSResolvable, AddressWhitelist, SpendLimit, GasTopUpLimit, LoadLimit, IERC165, Transferrable, Balanceable {
     using Address for address;
     using ECDSA for bytes32;
-    using SafeERC20 for ERC20;
+    using SafeERC20 for IERC20;
     using SafeMath for uint256;
 
-    event BulkTransferred(address _to, address[] _assets);
     event ExecutedRelayedTransaction(bytes _data, bytes _returnData);
     event ExecutedTransaction(address _destination, uint256 _value, bytes _data, bytes _returnData);
     event IncreasedRelayNonce(address _sender, uint256 _currentNonce);
@@ -574,29 +567,16 @@ contract Wallet is ENSResolvable, AddressWhitelist, SpendLimit, GasTopUpLimit, L
         _;
     }
 
-    /// @dev This is a bulk transfer convenience function, used to migrate contracts.
-    /// @notice If any of the transfers fail, this will revert.
-    /// @param _to is the recipient's address, can't be the zero (0x0) address: transfer() will revert.
-    /// @param _assets is an array of addresses of ERC20 tokens or 0x0 for ether.
-    function bulkTransfer(address payable _to, address[] calldata _assets) external onlyOwnerOrSelf {
-        // check to make sure that _assets isn't empty
-        require(_assets.length != 0, "asset array is empty");
-        // This loops through all of the transfers to be made
-        for (uint256 i = 0; i < _assets.length; i++) {
-            uint256 amount = _balance(_assets[i]);
-            // use our safe, daily limit protected transfer
-            transfer(_to, _assets[i], amount);
-        }
-
-        emit BulkTransferred(_to, _assets);
-    }
-
     /// @dev This function allows for the controller to relay transactions on the owner's behalf,
     /// the relayed message has to be signed by the owner.
     /// @param _nonce only used for relayed transactions, must match the wallet's relayNonce.
     /// @param _data abi encoded data payload.
     /// @param _signature signed prefix + data.
-    function executeRelayedTransaction(uint256 _nonce, bytes calldata _data, bytes calldata _signature) external onlyController {
+    function executeRelayedTransaction(
+        uint256 _nonce,
+        bytes calldata _data,
+        bytes calldata _signature
+    ) external onlyController {
         // Expecting prefixed data ("monolith:") indicating relayed transaction...
         // ...and an Ethereum Signed Message to protect user from signing an actual Tx
         uint256 id;
@@ -665,17 +645,17 @@ contract Wallet is ENSResolvable, AddressWhitelist, SpendLimit, GasTopUpLimit, L
         // Get the TKN licenceAddress from ENS
         address licenceAddress = _ensResolve(_licenceNode);
         if (_asset != address(0)) {
-            ERC20(_asset).safeApprove(licenceAddress, _amount);
+            IERC20(_asset).safeApprove(licenceAddress, _amount);
             ILicence(licenceAddress).load(_asset, _amount);
         } else {
-            ILicence(licenceAddress).load.value(_amount)(_asset, _amount);
+            ILicence(licenceAddress).load{value: _amount}(_asset, _amount);
         }
 
         emit LoadedTokenCard(_asset, _amount);
     }
 
     /// @dev Checks for interface support based on ERC165.
-    function supportsInterface(bytes4 _interfaceID) external view returns (bool) {
+    function supportsInterface(bytes4 _interfaceID) external override view returns (bool) {
         return _interfaceID == _ERC165_INTERFACE_ID;
     }
 
@@ -781,7 +761,11 @@ contract Wallet is ENSResolvable, AddressWhitelist, SpendLimit, GasTopUpLimit, L
     /// @param _destination address of the transaction
     /// @param _value ETH amount in wei
     /// @param _data transaction payload binary
-    function executeTransaction(address _destination, uint256 _value, bytes memory _data) public onlyOwnerOrSelf returns (bytes memory) {
+    function executeTransaction(
+        address _destination,
+        uint256 _value,
+        bytes memory _data
+    ) public onlyOwnerOrSelf returns (bytes memory) {
         // If value is send across as a part of this executeTransaction, this will be sent to any payable
         // destination. As a result enforceLimit if destination is not whitelisted.
         if (!whitelistMap[_destination]) {
@@ -801,7 +785,7 @@ contract Wallet is ENSResolvable, AddressWhitelist, SpendLimit, GasTopUpLimit, L
             }
             // use callOptionalReturn provided in SafeERC20 in case the ERC20 method
             // returns false instead of reverting!
-            ERC20(_destination).callOptionalReturn(_data);
+            IERC20(_destination)._callOptionalReturn(_data);
 
             // if ERC20 call completes, return a boolean "true" as bytes emulating ERC20
             bytes memory b = new bytes(32);
@@ -811,7 +795,7 @@ contract Wallet is ENSResolvable, AddressWhitelist, SpendLimit, GasTopUpLimit, L
             return b;
         }
 
-        (bool success, bytes memory returnData) = _destination.call.value(_value)(_data);
+        (bool success, bytes memory returnData) = _destination.call{value: _value}(_data);
         require(success, string(returnData));
 
         emit ExecutedTransaction(_destination, _value, _data, returnData);
@@ -833,7 +817,11 @@ contract Wallet is ENSResolvable, AddressWhitelist, SpendLimit, GasTopUpLimit, L
     /// @param _to is the recipient's address.
     /// @param _asset is the address of an ERC20 token or 0x0 for ether.
     /// @param _amount is the amount of assets to be transferred in base units.
-    function transfer(address payable _to, address _asset, uint256 _amount) public onlyOwnerOrSelf isNotZero(_amount) {
+    function transfer(
+        address payable _to,
+        address _asset,
+        uint256 _amount
+    ) public onlyOwnerOrSelf isNotZero(_amount) {
         // Checks if the _to address is not the zero-address
         require(_to != address(0), "destination=0");
 

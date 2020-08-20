@@ -50,7 +50,9 @@
  *      corresponding to the left and right parts of the string.
  */
 
-pragma solidity ^0.5.0;
+// SPDX-License-Identifier: ApacheV2
+
+pragma solidity >=0.5.0;
 
 library strings {
     struct slice {

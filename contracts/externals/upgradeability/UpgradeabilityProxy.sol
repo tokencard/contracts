@@ -1,4 +1,6 @@
-pragma solidity ^0.5.0;
+// SPDX-License-Identifier: GPLv3
+
+pragma solidity >0.5.0;
 
 import './BaseUpgradeabilityProxy.sol';
 

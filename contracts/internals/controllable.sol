@@ -16,12 +16,13 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-pragma solidity 0.5.17;
+// SPDX-License-Identifier: GPLv3
+
+pragma solidity ^0.6.11;
 
 import "./ensResolvable.sol";
 import "../controller.sol";
 import "../externals/initializable.sol";
-
 
 /// @title Controllable implements access control functionality of the Controller found via ENS.
 contract Controllable is ENSResolvable {

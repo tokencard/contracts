@@ -44,7 +44,7 @@ var _ = Describe("wallet load eth", func() {
 				Backend.Commit()
 				Expect(isGasExhausted(tx, 1000000)).To(BeFalse())
 				Expect(isSuccessful(tx)).To(BeFalse())
-				Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*load.value\(_amount\)\(_asset, _amount\);`))
+				Expect(TestRig.LastExecuted()).To(MatchRegexp(`.*load\{value: _amount\}\(_asset, _amount\);`))
 			})
 		})
 

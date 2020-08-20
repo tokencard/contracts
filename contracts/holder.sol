@@ -16,16 +16,17 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-pragma solidity 0.5.17;
+// SPDX-License-Identifier: GPLv3
 
-import "./externals/ERC20.sol";
+pragma solidity ^0.6.11;
+
 import "./externals/SafeMath.sol";
-import "./internals/transferrable.sol";
+import "./interfaces/IERC20.sol";
+import "./interfaces/IBurner.sol";
 import "./internals/balanceable.sol";
-import "./internals/burner.sol";
 import "./internals/controllable.sol";
 import "./internals/tokenWhitelistable.sol";
-
+import "./internals/transferrable.sol";
 
 /// @title Holder - The TKN Asset Contract
 /// @notice When the TKN contract calls the burn method, a share of the tokens held by this contract are disbursed to the burner.
@@ -50,7 +51,12 @@ contract Holder is Balanceable, ENSResolvable, Controllable, Transferrable, Toke
     /// @param _ens_ is the address of the ENS registry.
     /// @param _tokenWhitelistNode_ is the ENS node of the Token whitelist.
     /// @param _controllerNode_ is the ENS node of the Controller
-    constructor(address _burnerContract_, address _ens_, bytes32 _tokenWhitelistNode_, bytes32 _controllerNode_) public {
+    constructor(
+        address _burnerContract_,
+        address _ens_,
+        bytes32 _tokenWhitelistNode_,
+        bytes32 _controllerNode_
+    ) public {
         _initializeENSResolvable(_ens_);
         _initializeControllable(_controllerNode_);
         _initializeTokenWhitelistable(_tokenWhitelistNode_);
@@ -58,7 +64,7 @@ contract Holder is Balanceable, ENSResolvable, Controllable, Transferrable, Toke
     }
 
     /// @notice Ether may be sent from anywhere.
-    function() external payable {
+    receive() external payable {
         emit Received(msg.sender, msg.value);
     }
 

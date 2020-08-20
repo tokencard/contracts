@@ -1,7 +1,8 @@
-pragma solidity ^0.5.17;
+// SPDX-License-Identifier: GPLv3
+
+pragma solidity ^0.6.11;
 
 import "../externals/SafeMath.sol";
-
 
 contract GasToken {
     using SafeMath for uint256;

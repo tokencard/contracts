@@ -16,10 +16,11 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-pragma solidity 0.5.17;
+// SPDX-License-Identifier: GPLv3
+
+pragma solidity ^0.6.11;
 
 import "../externals/initializable.sol";
-
 
 /// @title Ownable has an owner address and provides basic authorization control functions.
 /// This contract is modified version of the MIT OpenZepplin Ownable contract
