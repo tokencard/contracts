@@ -321,7 +321,7 @@ contract TokenWhitelist is ENSResolvable, Controllable, Transferrable {
 
         emit UpdatedTokenRedeemable(msg.sender, _token, _redeemable);
     }
-    
+
     /// @notice This returns an array of all whitelisted token addresses.
     /// @return address[] of whitelisted tokens.
     function tokenAddressArray() external view returns (address[] memory) {
