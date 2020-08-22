@@ -55,7 +55,7 @@ var _ = Describe("ownable", func() {
 			Expect(isSuccessful(tx)).To(BeTrue())
 
 			RandomProxy, err = bindings.NewWallet(RandomProxyAddress, Backend)
-			tx, err = RandomProxy.InitializeWallet(BankAccount.TransactOpts(), Owner.Address(), false, ENSRegistryAddress, TokenWhitelistName, ControllerName, LicenceName, EthToWei(100))
+			tx, err = RandomProxy.InitializeWallet(BankAccount.TransactOpts(), Owner.Address(), false, ENSRegistryAddress, TokenWhitelistNode, ControllerNode, LicenceNode, EthToWei(100))
 			Expect(err).ToNot(HaveOccurred())
 			Backend.Commit()
 			Expect(isSuccessful(tx)).To(BeTrue())

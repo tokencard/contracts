@@ -33,7 +33,7 @@ func deployInitProxy(owner common.Address, spendLimit *big.Int) common.Address {
 	Expect(isSuccessful(tx)).To(BeTrue())
 
 	RandomProxy, err := bindings.NewWallet(RandomProxyAddress, Backend)
-	tx, err = RandomProxy.InitializeWallet(BankAccount.TransactOpts(), owner, false, ENSRegistryAddress, TokenWhitelistName, ControllerName, LicenceName, spendLimit)
+	tx, err = RandomProxy.InitializeWallet(BankAccount.TransactOpts(), owner, false, ENSRegistryAddress, TokenWhitelistNode, ControllerNode, LicenceNode, spendLimit)
 	Expect(err).ToNot(HaveOccurred())
 	Backend.Commit()
 	Expect(isSuccessful(tx)).To(BeTrue())
