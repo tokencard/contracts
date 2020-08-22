@@ -20,6 +20,7 @@
 
 pragma solidity ^0.6.11;
 
+import "./interfaces/IChainlink.sol";
 import "./internals/bytesUtils.sol";
 import "./internals/controllable.sol";
 import "./internals/transferrable.sol";
@@ -32,20 +33,13 @@ contract TokenWhitelist is ENSResolvable, Controllable, Transferrable {
     using SafeMath for uint256;
     using BytesUtils for bytes;
 
-    event UpdatedTokenRate(address _sender, address _token, uint256 _rate);
-
-    event UpdatedTokenLoadable(address _sender, address _token, bool _loadable);
-    event UpdatedTokenRedeemable(address _sender, address _token, bool _redeemable);
-
     event AddedToken(address _sender, address _token, string _symbol, uint256 _magnitude, bool _loadable, bool _redeemable);
-    event RemovedToken(address _sender, address _token);
-
-    event AddedMethodId(bytes4 _methodId);
-    event RemovedMethodId(bytes4 _methodId);
-    event AddedExclusiveMethod(address _token, bytes4 _methodId);
-    event RemovedExclusiveMethod(address _token, bytes4 _methodId);
-
     event Claimed(address _to, address _asset, uint256 _amount);
+    event RemovedToken(address _sender, address _token);
+    event UpdatedChainlinkFeed(address _token, address _previousContract, address _newContract);
+    event UpdatedTokenLoadable(address _sender, address _token, bool _loadable);
+    event UpdatedTokenRate(address _sender, address _token, uint256 _rate);
+    event UpdatedTokenRedeemable(address _sender, address _token, bool _redeemable);
 
     /// @dev these are the methods whitelisted by default in executeTransaction() for protected tokens
     bytes4 private constant _APPROVE = 0x095ea7b3; // keccak256(approve(address,uint256)) => 0x095ea7b3
@@ -63,10 +57,13 @@ contract TokenWhitelist is ENSResolvable, Controllable, Transferrable {
         uint256 lastUpdate; // Time of the last rate update
     }
 
-    mapping(address => Token) private _tokenInfoMap;
+    /// @notice This is a mapping of supported tokens to Chainlink reference data contracts, if there is no entry then rate stored in _tokenInfoMap is used instead.
+    mapping(address => address) private _chainlinkContracts;
 
     // @notice specifies whitelisted methodIds for protected tokens in wallet's excuteTranaction() e.g. keccak256(transfer(address,uint256)) => 0xa9059cbb
     mapping(bytes4 => bool) private _methodIdWhitelist;
+
+    mapping(address => Token) private _tokenInfoMap;
 
     address[] private _tokenAddressArray;
 
@@ -157,34 +154,6 @@ contract TokenWhitelist is ENSResolvable, Controllable, Transferrable {
         }
     }
 
-    /// @notice Remove ERC20 tokens from the whitelist of tokens.
-    /// @param _tokens ERC20 token contract addresses.
-    function removeTokens(address[] calldata _tokens) external onlyAdmin {
-        // Delete each token object from the list of supported tokens based on the addresses provided.
-        for (uint256 i = 0; i < _tokens.length; i++) {
-            // Store the token address.
-            address token = _tokens[i];
-            //token must be available, reverts on duplicates as well
-            require(_tokenInfoMap[token].available, "token is not available");
-            //if the token is redeemable decrease the redeemableCounter
-            if (_tokenInfoMap[token].redeemable) {
-                _redeemableCounter = _redeemableCounter.sub(1);
-            }
-            // Delete the token object.
-            delete _tokenInfoMap[token];
-            // Remove the token address from the address list.
-            for (uint256 j = 0; j < _tokenAddressArray.length.sub(1); j++) {
-                if (_tokenAddressArray[j] == token) {
-                    _tokenAddressArray[j] = _tokenAddressArray[_tokenAddressArray.length.sub(1)];
-                    break;
-                }
-            }
-            _tokenAddressArray.pop();
-            // Emit token removal event.
-            emit RemovedToken(msg.sender, token);
-        }
-    }
-
     /// @notice based on the method it returns the recipient address and amount/value, ERC20 specific.
     /// @param _token ERC20 token contract address.
     /// @param _data is the transaction payload.
@@ -210,57 +179,6 @@ contract TokenWhitelist is ENSResolvable, Controllable, Transferrable {
             require(_data.length >= 4 + 32 + 32, "not enough data for transfer/appprove");
             return (_data._bytesToAddress(4 + 12), _data._bytesToUint256(4 + 32));
         }
-    }
-
-    /// @notice Toggles whether or not a token is loadable.
-    /// @param _token ERC20 token contract address.
-    /// @param _loadable bool that toggles the corresponding parameter.
-    function setTokenLoadable(address _token, bool _loadable) external onlyAdmin {
-        // Require that the token exists.
-        require(_tokenInfoMap[_token].available, "loadable: token is not available");
-
-        // this sets the loadable flag to the value passed in
-        _tokenInfoMap[_token].loadable = _loadable;
-
-        emit UpdatedTokenLoadable(msg.sender, _token, _loadable);
-    }
-
-    /// @notice Toggles whether or not a token is redeemable.
-    /// @param _token ERC20 token contract address.
-    /// @param _redeemable bool that toggles the corresponding parameter
-    function setTokenRedeemable(address _token, bool _redeemable) external onlyAdmin {
-        // Require that the token exists.
-        require(_tokenInfoMap[_token].available, "redeemable: token not available");
-        // If it does not change the current state i.e. _tokenInfoMap[_token].redeemable == _redeemable, revert!
-        require(_tokenInfoMap[_token].redeemable != _redeemable, "redeemable: no state change");
-        if (_redeemable) {
-            _redeemableCounter = _redeemableCounter.add(1);
-        } else {
-            _redeemableCounter = _redeemableCounter.sub(1);
-        }
-        // This sets the redeemable flag to the value passed in
-        _tokenInfoMap[_token].redeemable = _redeemable;
-
-        emit UpdatedTokenRedeemable(msg.sender, _token, _redeemable);
-    }
-
-    /// @notice Update ERC20 token exchange rate.
-    /// @param _token ERC20 token contract address.
-    /// @param _rate ERC20 token exchange rate in wei.
-    /// @param _updateDate date for the token updates. This will be compared to when oracle updates are received.
-    function updateTokenRate(
-        address _token,
-        uint256 _rate,
-        uint256 _updateDate
-    ) external onlyAdminOrOracle {
-        // Require that the token exists.
-        require(_tokenInfoMap[_token].available, "token is not available");
-        // Update the token's rate.
-        _tokenInfoMap[_token].rate = _rate;
-        // Update the token's last update timestamp.
-        _tokenInfoMap[_token].lastUpdate = _updateDate;
-        // Emit the rate update event.
-        emit UpdatedTokenRate(msg.sender, _token, _rate);
     }
 
     //// @notice Withdraw tokens from the smart contract to the specified account.
@@ -296,7 +214,20 @@ contract TokenWhitelist is ENSResolvable, Controllable, Transferrable {
         )
     {
         Token storage tokenInfo = _tokenInfoMap[_a];
-        return (tokenInfo.symbol, tokenInfo.magnitude, tokenInfo.rate, tokenInfo.available, tokenInfo.loadable, tokenInfo.redeemable, tokenInfo.lastUpdate);
+        // Get the chainlink reference contract if any!
+        address chainlink = _chainlinkContracts[_a];
+        uint256 rate;
+        if (chainlink != address(0)) {
+            // If Chainlink is used as the price feed, access the corresponding contract and fetch the rate.
+            int256 chainlinkRate = IChainlink(chainlink).latestAnswer();
+            if (chainlinkRate >= 0) {
+                rate = uint256(chainlinkRate);
+            }
+        } else {
+            // Otherwise, get the rate already stored in this contract.
+            rate = tokenInfo.rate;
+        }
+        return (tokenInfo.symbol, tokenInfo.magnitude, rate, tokenInfo.available, tokenInfo.loadable, tokenInfo.redeemable, tokenInfo.lastUpdate);
     }
 
     /// @notice This returns all of the fields for our StableCoin.
@@ -321,21 +252,27 @@ contract TokenWhitelist is ENSResolvable, Controllable, Transferrable {
         )
     {
         Token storage stablecoinInfo = _tokenInfoMap[_stablecoin];
+        uint256 stablecoinRate;
+        address chainlink = _chainlinkContracts[_stablecoin];
+        if (chainlink != address(0)) {
+            // If Chainlink is used as the price feed, access the corresponding contract and fetch the rate.
+            int256 chainlinkRate = IChainlink(chainlink).latestAnswer();
+            if (chainlinkRate >= 0) {
+                stablecoinRate = uint256(chainlinkRate);
+            }
+        } else {
+            // Otherwise, get the rate already stored in this contract.
+            stablecoinRate = stablecoinInfo.rate;
+        }
         return (
             stablecoinInfo.symbol,
             stablecoinInfo.magnitude,
-            stablecoinInfo.rate,
+            stablecoinRate,
             stablecoinInfo.available,
             stablecoinInfo.loadable,
             stablecoinInfo.redeemable,
             stablecoinInfo.lastUpdate
         );
-    }
-
-    /// @notice This returns an array of all whitelisted token addresses.
-    /// @return address[] of whitelisted tokens.
-    function tokenAddressArray() external view returns (address[] memory) {
-        return _tokenAddressArray;
     }
 
     /// @notice This returns an array of all redeemable token addresses.
@@ -353,13 +290,51 @@ contract TokenWhitelist is ENSResolvable, Controllable, Transferrable {
         return redeemableAddresses;
     }
 
+    /// @notice Toggles whether or not a token is loadable.
+    /// @param _token ERC20 token contract address.
+    /// @param _loadable bool that toggles the corresponding parameter.
+    function setTokenLoadable(address _token, bool _loadable) external onlyAdmin {
+        // Require that the token exists.
+        require(_tokenInfoMap[_token].available, "loadable: token is not available");
+
+        // this sets the loadable flag to the value passed in
+        _tokenInfoMap[_token].loadable = _loadable;
+
+        emit UpdatedTokenLoadable(msg.sender, _token, _loadable);
+    }
+
+    /// @notice Toggles whether or not a token is redeemable.
+    /// @param _token ERC20 token contract address.
+    /// @param _redeemable bool that toggles the corresponding parameter
+    function setTokenRedeemable(address _token, bool _redeemable) external onlyAdmin {
+        // Require that the token exists.
+        require(_tokenInfoMap[_token].available, "redeemable: token not available");
+        // If it does not change the current state i.e. _tokenInfoMap[_token].redeemable == _redeemable, revert!
+        require(_tokenInfoMap[_token].redeemable != _redeemable, "redeemable: no state change");
+        if (_redeemable) {
+            _redeemableCounter = _redeemableCounter.add(1);
+        } else {
+            _redeemableCounter = _redeemableCounter.sub(1);
+        }
+        // This sets the redeemable flag to the value passed in
+        _tokenInfoMap[_token].redeemable = _redeemable;
+
+        emit UpdatedTokenRedeemable(msg.sender, _token, _redeemable);
+    }
+    
+    /// @notice This returns an array of all whitelisted token addresses.
+    /// @return address[] of whitelisted tokens.
+    function tokenAddressArray() external view returns (address[] memory) {
+        return _tokenAddressArray;
+    }
+
     /// @notice This returns true if a method Id is supported for the specific token.
     /// @param _token ERC20 token contract address.
     /// @param _methodId The first four bytes of the Keccak256 hash of the function signature...
     /// ...i.e the canonical expression of the basic prototype without data location specifier.
     /// @return True if _methodId is supported in general or just for the specific token.
     function isERC20MethodSupported(address _token, bytes4 _methodId) public view returns (bool) {
-        require(_tokenInfoMap[_token].available, "non-existing token");
+        require(_tokenInfoMap[_token].available, "unsupported token");
         return (_methodIdWhitelist[_methodId]);
     }
 
@@ -369,10 +344,44 @@ contract TokenWhitelist is ENSResolvable, Controllable, Transferrable {
         return (_methodIdWhitelist[_methodId]);
     }
 
+    /// @notice this returns the node hash of our Oracle.
+    /// @return the oracle node registered in ENS.
+    function oracleNode() external view returns (bytes32) {
+        return _oracleNode;
+    }
+
     /// @notice This returns the number of redeemable tokens.
     /// @return current # of redeemables.
     function redeemableCounter() external view returns (uint256) {
         return _redeemableCounter;
+    }
+
+    /// @notice Remove ERC20 tokens from the whitelist of tokens.
+    /// @param _tokens ERC20 token contract addresses.
+    function removeTokens(address[] calldata _tokens) external onlyAdmin {
+        // Delete each token object from the list of supported tokens based on the addresses provided.
+        for (uint256 i = 0; i < _tokens.length; i++) {
+            // Store the token address.
+            address token = _tokens[i];
+            //token must be available, reverts on duplicates as well
+            require(_tokenInfoMap[token].available, "token is not available");
+            //if the token is redeemable decrease the redeemableCounter
+            if (_tokenInfoMap[token].redeemable) {
+                _redeemableCounter = _redeemableCounter.sub(1);
+            }
+            // Delete the token object.
+            delete _tokenInfoMap[token];
+            // Remove the token address from the address list.
+            for (uint256 j = 0; j < _tokenAddressArray.length.sub(1); j++) {
+                if (_tokenAddressArray[j] == token) {
+                    _tokenAddressArray[j] = _tokenAddressArray[_tokenAddressArray.length.sub(1)];
+                    break;
+                }
+            }
+            _tokenAddressArray.pop();
+            // Emit token removal event.
+            emit RemovedToken(msg.sender, token);
+        }
     }
 
     /// @notice This returns the address of our stablecoin of choice.
@@ -381,9 +390,39 @@ contract TokenWhitelist is ENSResolvable, Controllable, Transferrable {
         return _stablecoin;
     }
 
-    /// @notice this returns the node hash of our Oracle.
-    /// @return the oracle node registered in ENS.
-    function oracleNode() external view returns (bytes32) {
-        return _oracleNode;
+    /// @notice It add or updates the Chainlink reference contracts.
+    /// @dev If the entry does not exist, it creates a new one, otherwise it overwrites it.
+    /// @param _tokens ERC20 token contract addresses.
+    /// @param _refContracts The Chainlink feed contract addresses, it can be 0 in case we want to deactivate it.
+    function updateChainlinkFeeds(address[] calldata _tokens, address[] calldata _refContracts) external onlyAdmin {
+        // Require that the two parameters have the same length.
+        require(_tokens.length == _refContracts.length, "Parameter length mismatch");
+        // Update the mapping for each token.
+        for (uint256 i = 0; i < _tokens.length; i++) {
+            // Require that the token is available on the list.
+            require(_tokenInfoMap[_tokens[i]].available, "Token not available");
+            address newRefContract = _refContracts[i];
+            emit UpdatedChainlinkFeed(_tokens[i], _chainlinkContracts[_tokens[i]], newRefContract);
+            _chainlinkContracts[_tokens[i]] = newRefContract;
+        }
+    }
+
+    /// @notice Update ERC20 token exchange rate.
+    /// @param _token ERC20 token contract address.
+    /// @param _rate ERC20 token exchange rate in wei.
+    /// @param _updateDate date for the token updates. This will be compared to when oracle updates are received.
+    function updateTokenRate(
+        address _token,
+        uint256 _rate,
+        uint256 _updateDate
+    ) external onlyAdminOrOracle {
+        // Require that the token exists.
+        require(_tokenInfoMap[_token].available, "token is not available");
+        // Update the token's rate.
+        _tokenInfoMap[_token].rate = _rate;
+        // Update the token's last update timestamp.
+        _tokenInfoMap[_token].lastUpdate = _updateDate;
+        // Emit the rate update event.
+        emit UpdatedTokenRate(msg.sender, _token, _rate);
     }
 }
