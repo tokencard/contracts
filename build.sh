@@ -29,7 +29,6 @@ contracts_0_6=(
   'mocks/gasToken'
   'mocks/isValidSignatureExporter'
   'mocks/nonCompliantToken'
-  'mocks/oraclize'
   'mocks/parseIntScientificExporter'
   'mocks/token'
   'mocks/tokenWhitelistableExporter'
@@ -81,10 +80,10 @@ contracts=(
   "mocks/burnerToken/BurnerToken mocks/burnerToken.go BurnerToken mocks"
   "mocks/bytesUtilsExporter/BytesUtilsExporter mocks/bytesUtilsExporter.go BytesUtilsExporter mocks"
   "mocks/chainlinkMock/ChainlinkMock mocks/chainlinkMock.go ChainlinkMock mocks"
+  "mocks/gasToken/GasToken mocks/gasToken.go GasToken mocks"
+  "mocks/gasBurner/GasBurner mocks/gasBurner.go GasBurner mocks"
   "mocks/isValidSignatureExporter/IsValidSignatureExporter mocks/isValidSignatureExporter.go IsValidSignatureExporter mocks"
   "mocks/nonCompliantToken/NonCompliantToken mocks/nonCompliantToken.go NonCompliantToken mocks"
-  "mocks/oraclize/OraclizeConnector mocks/oraclizeConnector.go OraclizeConnector mocks"
-  "mocks/oraclize/OraclizeAddrResolver mocks/oraclizeAddrResolver.go OraclizeAddrResolver mocks"
   "mocks/parseIntScientificExporter/ParseIntScientificExporter mocks/parseIntScientificExporter.go ParseIntScientificExporter mocks"
   "mocks/token/Token mocks/token.go Token mocks"
   "mocks/tokenWhitelistableExporter/TokenWhitelistableExporter mocks/tokenWhitelistableExporter.go TokenWhitelistableExporter mocks"

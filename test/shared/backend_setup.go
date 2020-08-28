@@ -92,12 +92,6 @@ var ControllerContractAddress common.Address
 var TokenWhitelist *bindings.TokenWhitelist
 var TokenWhitelistAddress common.Address
 
-var OraclizeResolver *mocks.OraclizeAddrResolver
-var OraclizeResolverAddress common.Address
-
-var OraclizeConnector *mocks.OraclizeConnector
-var OraclizeConnectorAddress common.Address
-
 var Oracle *bindings.Oracle
 var OracleAddress common.Address
 
@@ -138,7 +132,6 @@ var ControllerOwner *ethertest.Account
 var ControllerAdmin *ethertest.Account
 var RandomAccount *ethertest.Account
 var BankAccount *ethertest.Account
-var OraclizeConnectorOwner *ethertest.Account
 var VanityAccount *ethertest.Account
 
 var TestRig = ethertest.NewTestRig()
@@ -215,7 +208,7 @@ func InitializeBackend() error {
 	Controller = ethertest.NewAccount()
 	RandomAccount = ethertest.NewAccount()
 	BankAccount = ethertest.NewAccount()
-	OraclizeConnectorOwner = ethertest.NewAccount()
+
 	pk, err := crypto.HexToECDSA("d7f10b274ba922f7cdc99c84a7f51fd9f85deaa634cbc3d5c25b497eb7bee224")
 	if err != nil {
 		return err
@@ -226,7 +219,6 @@ func InitializeBackend() error {
 	TestRig.AddGenesisAccountAllocation(ControllerAdmin.Address(), EthToWei(1))
 	TestRig.AddGenesisAccountAllocation(Controller.Address(), EthToWei(1000))
 	TestRig.AddGenesisAccountAllocation(RandomAccount.Address(), EthToWei(1000))
-	TestRig.AddGenesisAccountAllocation(OraclizeConnectorOwner.Address(), EthToWei(1000))
 	TestRig.AddGenesisAccountAllocation(BankAccount.Address(), EthToWei(1000))
 	TestRig.AddGenesisAccountAllocation(Owner.Address(), EthToWei(1))
 	TestRig.AddGenesisAccountAllocation(VanityAccount.Address(), EthToWei(1))
@@ -380,26 +372,6 @@ func InitializeBackend() error {
 		if err != nil {
 			return errors.Wrap(err, "setting controller ENS node resolver's target address")
 		}
-	}
-
-	OraclizeConnectorAddress, tx, OraclizeConnector, err = mocks.DeployOraclizeConnector(BankAccount.TransactOpts(), Backend, OraclizeConnectorOwner.Address())
-	if err != nil {
-		return err
-	}
-	Backend.Commit()
-	err = verifyTransaction(tx)
-	if err != nil {
-		return errors.Wrap(err, "deploying Oraclize connector")
-	}
-
-	OraclizeResolverAddress, tx, OraclizeResolver, err = mocks.DeployOraclizeAddrResolver(BankAccount.TransactOpts(), Backend, OraclizeConnectorAddress)
-	if err != nil {
-		return err
-	}
-	Backend.Commit()
-	err = verifyTransaction(tx)
-	if err != nil {
-		return errors.Wrap(err, "deploying Oraclize address resolver")
 	}
 
 	TokenWhitelistAddress, tx, TokenWhitelist, err = bindings.DeployTokenWhitelist(BankAccount.TransactOpts(), Backend, ENSRegistryAddress, OracleNode, ControllerNode, StablecoinAddress)
