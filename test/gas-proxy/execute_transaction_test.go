@@ -78,7 +78,6 @@ var _ = Describe("ExecuteTransaction", func() {
 				fmt.Fprintf(GinkgoWriter, "Gas used by burnGas execute transaction: %d/%d\n", receipt.GasUsed, tx.Gas())
 				Expect(receipt.GasUsed > 100000 && receipt.GasUsed < 150000).To(BeTrue())
 			})
-
 			It("should emit an ExecutedTransaction event", func() {
 				it, err := GasProxy.FilterExecutedTransaction(nil)
 				Expect(err).ToNot(HaveOccurred())
@@ -88,6 +87,20 @@ var _ = Describe("ExecuteTransaction", func() {
 				Expect(evt.Destination).To(Equal(GasBurnerAddress))
 				Expect(evt.Value.String()).To(Equal("0"))
 				Expect(evt.Data).To(Equal(data))
+			})
+		})
+		When("ETH is sent together with the executed transaction", func() {
+			var tx *types.Transaction
+			BeforeEach(func() {
+				err := error(nil)
+				opts := Controller.TransactOpts()
+				opts.Value = big.NewInt(100)
+				tx, err = GasProxy.ExecuteTransaction(opts, common.Address{}, big.NewInt(100), []byte{})
+				Expect(err).ToNot(HaveOccurred())
+				Backend.Commit()
+			})
+			It("should be a successful transaction", func() {
+				Expect(isSuccessful(tx)).To(BeTrue())
 			})
 		})
 	})
