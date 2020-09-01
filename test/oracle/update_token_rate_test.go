@@ -325,7 +325,7 @@ var _ = Describe("UpdateTokenRate", func() {
 							timestamp = lastUpdate
 						})
 						BeforeEach(func() {
-							//year set to Dec,2000 (could be set by oraclize), the date in the proof is different
+							//year set to Dec,2000, the date in the proof is different
 							proof := common.Hex2Bytes("0041ed930d0cf64c73b82c3a04b958f2d27572c09ef7faacb14f062b2ce63eb78331a885fda74e113383ead579337b7e02cc414a214c3bd210142628087dcf5ded781c0060646174653a205765642c2030332044656320323030302031373a30303a323220474d540a6469676573743a205348412d3235363d36514d48744c664e677576362b63795a6133376d68513962776f394449482f6451672f54715a34467454393d")
 							tx, err := Oracle.UpdateTokenRate(RandomAccount.TransactOpts(ethertest.WithGasLimit(300000)), common.HexToAddress("0xfe209bdE5CA32fa20E6728A005F26D651FFF5982"), "{\"ETH\":0.001702}", proof)
 							Expect(err).ToNot(HaveOccurred())
