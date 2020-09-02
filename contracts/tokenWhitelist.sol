@@ -57,7 +57,7 @@ contract TokenWhitelist is ENSResolvable, Controllable, Transferrable {
         uint256 lastUpdate; // Time of the last rate update
     }
 
-    /// @notice This is a mapping of supported tokens to Chainlink reference data contracts, if there is no entry then rate stored in _tokenInfoMap is used instead.
+    /// @dev This is a mapping of supported tokens to Chainlink reference data contracts, if there is no entry then rate stored in _tokenInfoMap is used instead.
     mapping(address => address) private _chainlinkContracts;
 
     // @notice specifies whitelisted methodIds for protected tokens in wallet's excuteTranaction() e.g. keccak256(transfer(address,uint256)) => 0xa9059cbb
