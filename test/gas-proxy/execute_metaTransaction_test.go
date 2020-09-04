@@ -57,7 +57,7 @@ var _ = Describe("ExecuteMetaTransaction", func() {
 			Expect(isSuccessful(tx)).To(BeTrue())
 
 			ProxyWallet, err = bindings.NewWallet(ProxyAddress, Backend)
-			tx, err = ProxyWallet.InitializeWallet(Owner.TransactOpts(), Owner.Address(), true, ENSRegistryAddress, TokenWhitelistName, ControllerName, LicenceName, EthToWei(1))
+			tx, err = ProxyWallet.InitializeWallet(Owner.TransactOpts(), Owner.Address(), true, ENSRegistryAddress, TokenWhitelistNode, ControllerNode, LicenceNode, EthToWei(1))
 			Expect(err).ToNot(HaveOccurred())
 			Backend.Commit()
 			Expect(isSuccessful(tx)).To(BeTrue())

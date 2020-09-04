@@ -70,7 +70,7 @@ var _ = BeforeEach(func() {
 	Backend.Commit()
 	Expect(isSuccessful(tx)).To(BeTrue())
 
-	GasProxyAddress, tx, GasProxy, err = bindings.DeployGasProxy(BankAccount.TransactOpts(), Backend, ENSRegistryAddress, ControllerName)
+	GasProxyAddress, tx, GasProxy, err = bindings.DeployGasProxy(BankAccount.TransactOpts(), Backend, ENSRegistryAddress, ControllerNode)
 	Expect(err).ToNot(HaveOccurred())
 	Backend.Commit()
 	Expect(isSuccessful(tx)).To(BeTrue())
@@ -97,7 +97,7 @@ var _ = BeforeEach(func() {
 	fmt.Fprintf(GinkgoWriter, "Gas used by the gas token mint transaction: %d\n", receipt.GasUsed)
 	Expect(receipt.GasUsed > 5000000 && receipt.GasUsed < 6000000).To(BeTrue())
 
-	WalletAddress, tx, Wallet, err = mocks.DeployWallet(Owner.TransactOpts(), Backend, ENSRegistryAddress, ControllerName)
+	WalletAddress, tx, Wallet, err = mocks.DeployWallet(Owner.TransactOpts(), Backend, ENSRegistryAddress, ControllerNode)
 	Expect(err).ToNot(HaveOccurred())
 	Backend.Commit()
 	Expect(isSuccessful(tx)).To(BeTrue())

@@ -56,7 +56,7 @@ var _ = BeforeEach(func() {
 
 	var tx *types.Transaction
 
-	OracleAddress, tx, Oracle, err = bindings.DeployOracle(BankAccount.TransactOpts(), Backend, OraclizeResolverAddress, ENSRegistryAddress, ControllerName, TokenWhitelistName)
+	OracleAddress, tx, Oracle, err = bindings.DeployOracle(BankAccount.TransactOpts(), Backend, ENSRegistryAddress, ControllerNode, TokenWhitelistNode)
 	Expect(err).ToNot(HaveOccurred())
 	Backend.Commit()
 	Expect(isSuccessful(tx)).To(BeTrue())
@@ -64,34 +64,34 @@ var _ = BeforeEach(func() {
 	{
 		// Register oracle with ENS
 
-		tx, err = ENSRegistry.SetResolver(BankAccount.TransactOpts(), OracleName, ENSResolverAddress)
+		tx, err = ENSRegistry.SetResolver(BankAccount.TransactOpts(), OracleNode, ENSResolverAddress)
 		Expect(err).ToNot(HaveOccurred())
 		Backend.Commit()
 		Expect(isSuccessful(tx)).To(BeTrue())
-		tx, err = ENSResolver.SetAddr(BankAccount.TransactOpts(), OracleName, OracleAddress)
+		tx, err = ENSResolver.SetAddr(BankAccount.TransactOpts(), OracleNode, OracleAddress)
 		Expect(err).ToNot(HaveOccurred())
 		Backend.Commit()
 		Expect(isSuccessful(tx)).To(BeTrue())
 	}
 
-	TokenWhitelistAddress, tx, TokenWhitelist, err = bindings.DeployTokenWhitelist(BankAccount.TransactOpts(), Backend, ENSRegistryAddress, OracleName, ControllerName, StablecoinAddress)
+	TokenWhitelistAddress, tx, TokenWhitelist, err = bindings.DeployTokenWhitelist(BankAccount.TransactOpts(), Backend, ENSRegistryAddress, OracleNode, ControllerNode, StablecoinAddress)
 	Expect(err).ToNot(HaveOccurred())
 	Backend.Commit()
 	Expect(isSuccessful(tx)).To(BeTrue())
 
 	{
 		// Register tokenWhitelist with ENS
-		tx, err = ENSRegistry.SetResolver(BankAccount.TransactOpts(), TokenWhitelistName, ENSResolverAddress)
+		tx, err = ENSRegistry.SetResolver(BankAccount.TransactOpts(), TokenWhitelistNode, ENSResolverAddress)
 		Expect(err).ToNot(HaveOccurred())
 		Backend.Commit()
 		Expect(isSuccessful(tx)).To(BeTrue())
-		tx, err = ENSResolver.SetAddr(BankAccount.TransactOpts(), TokenWhitelistName, TokenWhitelistAddress)
+		tx, err = ENSResolver.SetAddr(BankAccount.TransactOpts(), TokenWhitelistNode, TokenWhitelistAddress)
 		Expect(err).ToNot(HaveOccurred())
 		Backend.Commit()
 		Expect(isSuccessful(tx)).To(BeTrue())
 	}
 
-	TokenWhitelistableExporterAddress, tx, TokenWhitelistableExporter, err = mocks.DeployTokenWhitelistableExporter(BankAccount.TransactOpts(), Backend, ENSRegistryAddress, TokenWhitelistName)
+	TokenWhitelistableExporterAddress, tx, TokenWhitelistableExporter, err = mocks.DeployTokenWhitelistableExporter(BankAccount.TransactOpts(), Backend, ENSRegistryAddress, TokenWhitelistNode)
 	Expect(err).ToNot(HaveOccurred())
 	Backend.Commit()
 	Expect(isSuccessful(tx)).To(BeTrue())
