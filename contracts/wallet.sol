@@ -662,6 +662,8 @@ contract Wallet is ENSResolvable, AddressWhitelist, SpendLimit, GasTopUpLimit, L
     /// @dev Refill owner's gas balance, revert if the transaction amount is too large
     /// @param _amount is the amount of ether to transfer to the owner account in wei.
     function topUpGas(uint256 _amount) external isNotZero(_amount) onlyOwnerOrController {
+        // Check contract balance is sufficient for the operation
+        require(address(this).balance > _amount, "balance not sufficient");
         // Check against the daily spent limit and update accordingly, require that the value is under remaining limit.
         _gasTopUpLimit._enforceLimit(_amount);
         // Then perform the transfer

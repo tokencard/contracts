@@ -272,4 +272,46 @@ var _ = Describe("topUpGas", func() {
 
 	})
 
+	Context("when the wallet has not enough ETH", func() {
+		BeforeEach(func() {
+			BankAccount.MustTransfer(Backend, WalletProxyAddress, GweiToWei(1))
+		})
+
+		var tx *types.Transaction
+		var err error
+		var caller *ethertest.Account
+		var ownerBalance *big.Int
+
+		BeforeEach(func() {
+			caller = Controller
+			BankAccount.MustTransfer(Backend, Controller.Address(), GweiToWei(20))
+			ownerBalance, err = Backend.BalanceAt(context.Background(), Owner.Address(), nil)
+			Expect(err).ToNot(HaveOccurred())
+		})
+
+		Context("When called by the wallet controller and is lower than top up limit", func() {
+
+			BeforeEach(func() {
+				tx, err = WalletProxy.TopUpGas(caller.TransactOpts(ethertest.WithGasLimit(81000)), FinneyToWei(1))
+				Backend.Commit()
+				Expect(isSuccessful(tx)).To(BeFalse())
+			})
+
+			It("Should not return error", func() {
+				Expect(err).ToNot(HaveOccurred())
+			})
+
+			It("should fail", func() {
+				Expect(isSuccessful(tx)).To(BeFalse())
+			})
+
+			It("should NOT top up the gas", func() {
+				b, e := Backend.BalanceAt(context.Background(), WalletProxyAddress, nil)
+				Expect(e).ToNot(HaveOccurred())
+				Expect(b.String()).To(Equal(GweiToWei(1).String())) // Wallet address has initially 1 Gwei
+				Expect(Owner.Balance(Backend).String()).To(Equal(ownerBalance.String()))
+			})
+		})
+	})
+
 })
