@@ -17,7 +17,7 @@ var _ = Describe("wallet load eth", func() {
 	It("Should return the licence ENS-registered node", func() {
 		sa, err := WalletProxy.LicenceNode(nil)
 		Expect(err).ToNot(HaveOccurred())
-		Expect(sa).To(Equal([32]byte(LicenceName)))
+		Expect(sa).To(Equal([32]byte(LicenceNode)))
 	})
 
 	When("the contract has no balance", func() {

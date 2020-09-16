@@ -92,12 +92,6 @@ var ControllerContractAddress common.Address
 var TokenWhitelist *bindings.TokenWhitelist
 var TokenWhitelistAddress common.Address
 
-var OraclizeResolver *mocks.OraclizeAddrResolver
-var OraclizeResolverAddress common.Address
-
-var OraclizeConnector *mocks.OraclizeConnector
-var OraclizeConnectorAddress common.Address
-
 var Oracle *bindings.Oracle
 var OracleAddress common.Address
 
@@ -127,10 +121,10 @@ var ERC20Contract2Address common.Address
 var NonCompliantERC20 *mocks.NonCompliantToken
 var NonCompliantERC20Address common.Address
 
-var OracleName = EnsNode("oracle.tokencard.eth")
-var ControllerName = EnsNode("controller.tokencard.eth")
-var LicenceName = EnsNode("licence.tokencard.eth")
-var TokenWhitelistName = EnsNode("token-whitelist.tokencard.eth")
+var OracleNode = EnsNode("oracle.tokencard.eth")
+var ControllerNode = EnsNode("controller.tokencard.eth")
+var LicenceNode = EnsNode("licence.tokencard.eth")
+var TokenWhitelistNode = EnsNode("token-whitelist.tokencard.eth")
 
 var Owner *ethertest.Account
 var Controller *ethertest.Account
@@ -138,7 +132,6 @@ var ControllerOwner *ethertest.Account
 var ControllerAdmin *ethertest.Account
 var RandomAccount *ethertest.Account
 var BankAccount *ethertest.Account
-var OraclizeConnectorOwner *ethertest.Account
 var VanityAccount *ethertest.Account
 
 var TestRig = ethertest.NewTestRig()
@@ -215,7 +208,6 @@ func InitializeBackend() error {
 	Controller = ethertest.NewAccount()
 	RandomAccount = ethertest.NewAccount()
 	BankAccount = ethertest.NewAccount()
-	OraclizeConnectorOwner = ethertest.NewAccount()
 	pk, err := crypto.HexToECDSA("d7f10b274ba922f7cdc99c84a7f51fd9f85deaa634cbc3d5c25b497eb7bee224")
 	if err != nil {
 		return err
@@ -226,7 +218,6 @@ func InitializeBackend() error {
 	TestRig.AddGenesisAccountAllocation(ControllerAdmin.Address(), EthToWei(1))
 	TestRig.AddGenesisAccountAllocation(Controller.Address(), EthToWei(1000))
 	TestRig.AddGenesisAccountAllocation(RandomAccount.Address(), EthToWei(1000))
-	TestRig.AddGenesisAccountAllocation(OraclizeConnectorOwner.Address(), EthToWei(1000))
 	TestRig.AddGenesisAccountAllocation(BankAccount.Address(), EthToWei(1000))
 	TestRig.AddGenesisAccountAllocation(Owner.Address(), EthToWei(1))
 	TestRig.AddGenesisAccountAllocation(VanityAccount.Address(), EthToWei(1))
@@ -361,7 +352,7 @@ func InitializeBackend() error {
 
 	{
 		// Register controller with ENS
-		tx, err = ENSRegistry.SetResolver(BankAccount.TransactOpts(), ControllerName, ENSResolverAddress)
+		tx, err = ENSRegistry.SetResolver(BankAccount.TransactOpts(), ControllerNode, ENSResolverAddress)
 		if err != nil {
 			return err
 		}
@@ -371,7 +362,7 @@ func InitializeBackend() error {
 			return errors.Wrap(err, "setting controller ENS node resolver")
 		}
 
-		tx, err = ENSResolver.SetAddr(BankAccount.TransactOpts(), ControllerName, ControllerContractAddress)
+		tx, err = ENSResolver.SetAddr(BankAccount.TransactOpts(), ControllerNode, ControllerContractAddress)
 		if err != nil {
 			return err
 		}
@@ -382,27 +373,7 @@ func InitializeBackend() error {
 		}
 	}
 
-	OraclizeConnectorAddress, tx, OraclizeConnector, err = mocks.DeployOraclizeConnector(BankAccount.TransactOpts(), Backend, OraclizeConnectorOwner.Address())
-	if err != nil {
-		return err
-	}
-	Backend.Commit()
-	err = verifyTransaction(tx)
-	if err != nil {
-		return errors.Wrap(err, "deploying Oraclize connector")
-	}
-
-	OraclizeResolverAddress, tx, OraclizeResolver, err = mocks.DeployOraclizeAddrResolver(BankAccount.TransactOpts(), Backend, OraclizeConnectorAddress)
-	if err != nil {
-		return err
-	}
-	Backend.Commit()
-	err = verifyTransaction(tx)
-	if err != nil {
-		return errors.Wrap(err, "deploying Oraclize address resolver")
-	}
-
-	TokenWhitelistAddress, tx, TokenWhitelist, err = bindings.DeployTokenWhitelist(BankAccount.TransactOpts(), Backend, ENSRegistryAddress, OracleName, ControllerName, StablecoinAddress)
+	TokenWhitelistAddress, tx, TokenWhitelist, err = bindings.DeployTokenWhitelist(BankAccount.TransactOpts(), Backend, ENSRegistryAddress, OracleNode, ControllerNode, StablecoinAddress)
 	if err != nil {
 		return err
 	}
@@ -414,7 +385,7 @@ func InitializeBackend() error {
 
 	{
 		// Register tokenWhitelist with ENS
-		tx, err = ENSRegistry.SetResolver(BankAccount.TransactOpts(), TokenWhitelistName, ENSResolverAddress)
+		tx, err = ENSRegistry.SetResolver(BankAccount.TransactOpts(), TokenWhitelistNode, ENSResolverAddress)
 		if err != nil {
 			return err
 		}
@@ -424,7 +395,7 @@ func InitializeBackend() error {
 			return errors.Wrap(err, "setting tokenWhitelist ENS node resolver")
 		}
 
-		tx, err = ENSResolver.SetAddr(BankAccount.TransactOpts(), TokenWhitelistName, TokenWhitelistAddress)
+		tx, err = ENSResolver.SetAddr(BankAccount.TransactOpts(), TokenWhitelistNode, TokenWhitelistAddress)
 		if err != nil {
 			return err
 		}
@@ -436,7 +407,7 @@ func InitializeBackend() error {
 	}
 
 	// Deploy the Token oracle contract.
-	OracleAddress, tx, Oracle, err = bindings.DeployOracle(BankAccount.TransactOpts(), Backend, OraclizeResolverAddress, ENSRegistryAddress, ControllerName, TokenWhitelistName)
+	OracleAddress, tx, Oracle, err = bindings.DeployOracle(BankAccount.TransactOpts(), Backend, ENSRegistryAddress, ControllerNode, TokenWhitelistNode)
 	if err != nil {
 		return err
 	}
@@ -449,7 +420,7 @@ func InitializeBackend() error {
 	{
 		// Register oracle with ENS
 
-		tx, err = ENSRegistry.SetResolver(BankAccount.TransactOpts(), OracleName, ENSResolverAddress)
+		tx, err = ENSRegistry.SetResolver(BankAccount.TransactOpts(), OracleNode, ENSResolverAddress)
 		if err != nil {
 			return err
 		}
@@ -459,7 +430,7 @@ func InitializeBackend() error {
 			return errors.Wrap(err, "setting oracle ENS node resolver")
 		}
 
-		tx, err = ENSResolver.SetAddr(BankAccount.TransactOpts(), OracleName, OracleAddress)
+		tx, err = ENSResolver.SetAddr(BankAccount.TransactOpts(), OracleNode, OracleAddress)
 		if err != nil {
 			return err
 		}
@@ -482,7 +453,7 @@ func InitializeBackend() error {
 	}
 
 	// Deploy the Token holder contract.
-	TokenHolderAddress, tx, TokenHolder, err = bindings.DeployHolder(Controller.TransactOpts(), Backend, TKNBurnerAddress, ENSRegistryAddress, TokenWhitelistName, ControllerName)
+	TokenHolderAddress, tx, TokenHolder, err = bindings.DeployHolder(Controller.TransactOpts(), Backend, TKNBurnerAddress, ENSRegistryAddress, TokenWhitelistNode, ControllerNode)
 	if err != nil {
 		return err
 	}
@@ -494,7 +465,7 @@ func InitializeBackend() error {
 
 	// Deploy the Token licence contract.
 	CryptoFloatAddress = common.HexToAddress(stringToHashString("CryptoFloatAddress"))
-	LicenceAddress, tx, Licence, err = bindings.DeployLicence(BankAccount.TransactOpts(), Backend, big.NewInt(10), CryptoFloatAddress, TokenHolderAddress, common.HexToAddress("0x0"), ENSRegistryAddress, ControllerName)
+	LicenceAddress, tx, Licence, err = bindings.DeployLicence(BankAccount.TransactOpts(), Backend, big.NewInt(10), CryptoFloatAddress, TokenHolderAddress, common.HexToAddress("0x0"), ENSRegistryAddress, ControllerNode)
 	if err != nil {
 		return err
 	}
@@ -508,7 +479,7 @@ func InitializeBackend() error {
 	{
 		// Register licence with ENS
 
-		tx, err = ENSRegistry.SetResolver(BankAccount.TransactOpts(), LicenceName, ENSResolverAddress)
+		tx, err = ENSRegistry.SetResolver(BankAccount.TransactOpts(), LicenceNode, ENSResolverAddress)
 		if err != nil {
 			return err
 		}
@@ -519,7 +490,7 @@ func InitializeBackend() error {
 			return errors.Wrap(err, "setting licence ENS node resolver")
 		}
 
-		tx, err = ENSResolver.SetAddr(BankAccount.TransactOpts(), LicenceName, LicenceAddress)
+		tx, err = ENSResolver.SetAddr(BankAccount.TransactOpts(), LicenceNode, LicenceAddress)
 		if err != nil {
 			return err
 		}

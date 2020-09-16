@@ -107,7 +107,7 @@ var _ = BeforeEach(func() {
 	Expect(isSuccessful(tx)).To(BeTrue())
 
 	WalletProxy, err = bindings.NewWallet(WalletProxyAddress, Backend)
-	tx, err = WalletProxy.InitializeWallet(Owner.TransactOpts(), Owner.Address(), true, ENSRegistryAddress, TokenWhitelistName, ControllerName, LicenceName, EthToWei(100))
+	tx, err = WalletProxy.InitializeWallet(Owner.TransactOpts(), Owner.Address(), true, ENSRegistryAddress, TokenWhitelistNode, ControllerNode, LicenceNode, EthToWei(100))
 	Expect(err).ToNot(HaveOccurred())
 	Backend.Commit()
 	Expect(isSuccessful(tx)).To(BeTrue())

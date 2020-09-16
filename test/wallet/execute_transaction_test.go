@@ -517,7 +517,7 @@ var _ = Describe("executeTransaction", func() {
 					Expect(isSuccessful(tx)).To(BeTrue())
 
 					RandomWalletProxy, err = bindings.NewWallet(RandomWalletProxyAddress, Backend)
-					tx, err = RandomWalletProxy.InitializeWallet(BankAccount.TransactOpts(), RandomAccount.Address(), false, ENSRegistryAddress, TokenWhitelistName, ControllerName, LicenceName, EthToWei(1))
+					tx, err = RandomWalletProxy.InitializeWallet(BankAccount.TransactOpts(), RandomAccount.Address(), false, ENSRegistryAddress, TokenWhitelistNode, ControllerNode, LicenceNode, EthToWei(1))
 					Expect(err).ToNot(HaveOccurred())
 					Backend.Commit()
 					Expect(isSuccessful(tx)).To(BeTrue())
