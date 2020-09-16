@@ -284,7 +284,6 @@ var _ = Describe("topUpGas", func() {
 
 		BeforeEach(func() {
 			caller = Controller
-			BankAccount.MustTransfer(Backend, Controller.Address(), GweiToWei(20))
 			ownerBalance, err = Backend.BalanceAt(context.Background(), Owner.Address(), nil)
 			Expect(err).ToNot(HaveOccurred())
 		})
@@ -299,10 +298,6 @@ var _ = Describe("topUpGas", func() {
 
 			It("Should not return error", func() {
 				Expect(err).ToNot(HaveOccurred())
-			})
-
-			It("should fail", func() {
-				Expect(isSuccessful(tx)).To(BeFalse())
 			})
 
 			It("should NOT top up the gas", func() {
