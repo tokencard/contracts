@@ -50,6 +50,7 @@ contract TokenWhitelist is ENSResolvable, Controllable, Transferrable {
     /// @dev these are the methods whitelisted by default in executeTransaction() for protected tokens
     bytes4 private constant _APPROVE = 0x095ea7b3; // keccak256(approve(address,uint256)) => 0x095ea7b3
     bytes4 private constant _BURN = 0x42966c68; // keccak256(burn(uint256)) => 0x42966c68
+    bytes4 private constant _REDEEM = 0xdb006a75; // keccak256(redeem(uint256)) => 0xdb006a75
     bytes4 private constant _TRANSFER = 0xa9059cbb; // keccak256(transfer(address,uint256)) => 0xa9059cbb
     bytes4 private constant _TRANSFER_FROM = 0x23b872dd; // keccak256(transferFrom(address,address,uint256)) => 0x23b872dd
 
@@ -97,6 +98,7 @@ contract TokenWhitelist is ENSResolvable, Controllable, Transferrable {
         //a priori ERC20 whitelisted methods
         _methodIdWhitelist[_APPROVE] = true;
         _methodIdWhitelist[_BURN] = true;
+        _methodIdWhitelist[_REDEEM] = true;
         _methodIdWhitelist[_TRANSFER] = true;
         _methodIdWhitelist[_TRANSFER_FROM] = true;
     }
@@ -197,7 +199,7 @@ contract TokenWhitelist is ENSResolvable, Controllable, Transferrable {
         // Check if method Id is supported
         require(isERC20MethodSupported(_token, signature), "unsupported method");
         // returns the recipient's address and amount is the value to be transferred
-        if (signature == _BURN) {
+        if (signature == _BURN || signature == _REDEEM) {
             // 4 (signature) + 32(uint256)
             return (_token, _data._bytesToUint256(4));
         } else if (signature == _TRANSFER_FROM) {
