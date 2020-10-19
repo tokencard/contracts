@@ -40,7 +40,6 @@ contract Oracle is ENSResolvable, Base64, Date, Controllable, ParseIntScientific
     /*     Events     */
     /*****************/
 
-    event Claimed(address _to, address _asset, uint256 _amount);
     event SetCryptoComparePublicKey(address _sender, bytes _publicKey);
     event VerifiedProof(bytes _publicKey, string _result);
 
