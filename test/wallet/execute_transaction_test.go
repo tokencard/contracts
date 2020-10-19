@@ -19,9 +19,19 @@ import (
 
 var _ = Describe("executeTransaction", func() {
 
-	Context("when the wallet has enough ETH", func() {
+	Context("when the wallet has enough ETH, the daily limit is 100$ and the rate is 1", func() {
 		BeforeEach(func() {
-			BankAccount.MustTransfer(Backend, WalletProxyAddress, EthToWei(101))
+			BankAccount.MustTransfer(Backend, WalletAddress, EthToWei(101))
+
+            tx, err := TokenWhitelist.UpdateTokenRate(ControllerAdmin.TransactOpts(), StablecoinAddress, EthToWei(1),big.NewInt(20180913153211))
+            Expect(err).ToNot(HaveOccurred())
+            Backend.Commit()
+            Expect(isSuccessful(tx)).To(BeTrue())
+
+            tx, err = Wallet.SetDailyLimit(Owner.TransactOpts(), EthToWei(100))
+			Expect(err).ToNot(HaveOccurred())
+			Backend.Commit()
+			Expect(isSuccessful(tx)).To(BeTrue())
 		})
 
 		var tx *types.Transaction
@@ -262,7 +272,7 @@ var _ = Describe("executeTransaction", func() {
 				It("should reduce the available daily balance", func() {
 					av, err := Wallet.DailyLimitAvailable(nil)
 					Expect(err).ToNot(HaveOccurred())
-					eth, err := WalletProxy.ConvertToEther(nil, TKNBurnerAddress, big.NewInt(300))
+					eth, err := Wallet.ConvertToStablecoin(nil, TKNBurnerAddress, big.NewInt(300))
 					Expect(err).ToNot(HaveOccurred())
 					av.Sub(av, eth) //subtract converted eth from dailySppendLimit
 					Expect(av.String()).To(Equal(av.String()))
@@ -312,7 +322,7 @@ var _ = Describe("executeTransaction", func() {
 				It("should reduce the available daily balance", func() {
 					av, err := Wallet.DailyLimitAvailable(nil)
 					Expect(err).ToNot(HaveOccurred())
-					eth, err := WalletProxy.ConvertToEther(nil, TKNBurnerAddress, big.NewInt(300))
+					eth, err := Wallet.ConvertToStablecoin(nil, TKNBurnerAddress, big.NewInt(300))
 					Expect(err).ToNot(HaveOccurred())
 					av.Sub(av, eth) //subtract converted eth from dailySppendLimit
 					Expect(av.String()).To(Equal(av.String()))
@@ -510,14 +520,7 @@ var _ = Describe("executeTransaction", func() {
 				BeforeEach(func() {
 					var tx *types.Transaction
 					var err error
-
-					RandomWalletProxyAddress, tx, _, err = upgradeability.DeployUpgradeabilityProxy(BankAccount.TransactOpts(), Backend, WalletImplementationAddress, nil)
-					Expect(err).ToNot(HaveOccurred())
-					Backend.Commit()
-					Expect(isSuccessful(tx)).To(BeTrue())
-
-					RandomWalletProxy, err = bindings.NewWallet(RandomWalletProxyAddress, Backend)
-					tx, err = RandomWalletProxy.InitializeWallet(BankAccount.TransactOpts(), RandomAccount.Address(), false, ENSRegistryAddress, TokenWhitelistNode, ControllerNode, LicenceNode, EthToWei(1))
+					RandomWalletAddress, tx, RandomWallet, err = bindings.DeployWallet(BankAccount.TransactOpts(), Backend, RandomAccount.Address(), false, ENSRegistryAddress, TokenWhitelistName, ControllerName, LicenceName, big.NewInt(1000))
 					Expect(err).ToNot(HaveOccurred())
 					Backend.Commit()
 					Expect(isSuccessful(tx)).To(BeTrue())
@@ -551,7 +554,7 @@ var _ = Describe("executeTransaction", func() {
 					av, err := Wallet.DailyLimitAvailable(nil)
 					Expect(err).ToNot(HaveOccurred())
 					sl, _ := Wallet.DailyLimitValue(nil)
-					eth, err := Wallet.ConvertToEther(nil, TKNBurnerAddress, big.NewInt(300))
+					eth, err := Wallet.ConvertToStablecoin(nil, TKNBurnerAddress, big.NewInt(300))
 					Expect(err).ToNot(HaveOccurred())
 					sl.Sub(sl, eth) //subtract converted eth from dailySppendLimit
 					Expect(av.String()).To(Equal(sl.String()))
@@ -593,7 +596,7 @@ var _ = Describe("executeTransaction", func() {
 					It("should NOT reduce the available daily balance", func() {
 						av, err := RandomWallet.DailyLimitAvailable(nil)
 						Expect(err).ToNot(HaveOccurred())
-						Expect(av.String()).To(Equal(EthToWei(1).String()))
+						Expect(av.String()).To(Equal(EthToWei(1000).String()))
 					})
 				})
 
@@ -626,7 +629,7 @@ var _ = Describe("executeTransaction", func() {
 						av, err := RandomWallet.DailyLimitAvailable(nil)
 						Expect(err).ToNot(HaveOccurred())
 						sl, _ := RandomWallet.DailyLimitValue(nil)
-						eth, err := RandomWallet.ConvertToEther(nil, TKNBurnerAddress, big.NewInt(300))
+						eth, err := RandomWallet.ConvertToStablecoin(nil, TKNBurnerAddress, big.NewInt(300))
 						Expect(err).ToNot(HaveOccurred())
 						sl.Sub(sl, eth) //subtract converted eth from dailySppendLimit
 						Expect(av.String()).To(Equal(sl.String()))

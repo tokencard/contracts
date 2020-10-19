@@ -6,6 +6,7 @@ import (
 	"math/big"
 	"os"
 	"testing"
+    "math/big"
 
 	"github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/common"
@@ -118,12 +119,16 @@ var _ = BeforeEach(func() {
 	err := InitializeBackend()
 	Expect(err).ToNot(HaveOccurred())
 	var tx *types.Transaction
+<<<<<<< HEAD
 	// deploy wallet implementation
 	WalletImplementationAddress, tx, WalletImplementation, err = bindings.DeployWallet(BankAccount.TransactOpts(), Backend)
 	Expect(err).ToNot(HaveOccurred())
 	Backend.Commit()
 	Expect(isSuccessful(tx)).To(BeTrue())
 	WalletCacheAddress, tx, WalletCache, err = bindings.DeployWalletCache(BankAccount.TransactOpts(), Backend, WalletImplementationAddress, ENSRegistryAddress, EthToWei(1), [32]byte{}, [32]byte{}, [32]byte{}, [32]byte{})
+=======
+	WalletCacheAddress, tx, WalletCache, err = bindings.DeployWalletCache(BankAccount.TransactOpts(), Backend, ENSRegistryAddress, big.NewInt(10000), [32]byte{}, [32]byte{}, [32]byte{}, [32]byte{})
+>>>>>>> 511d3647... Use stablecoin as daily limit
 	Expect(err).ToNot(HaveOccurred())
 	WalletDeployerAddress, tx, WalletDeployer, err = bindings.DeployWalletDeployer(BankAccount.TransactOpts(), Backend, ENSRegistryAddress, [32]byte{}, [32]byte{})
 	Expect(err).ToNot(HaveOccurred())

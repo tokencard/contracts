@@ -95,6 +95,7 @@ var _ = BeforeEach(func() {
 	Expect(err).ToNot(HaveOccurred())
 	// Deploy the Token wallet contract.
 	var tx *types.Transaction
+<<<<<<< HEAD
 	// deploy wallet implementation
 	WalletImplementationAddress, tx, _, err = bindings.DeployWallet(BankAccount.TransactOpts(), Backend)
 	Expect(err).ToNot(HaveOccurred())
@@ -108,6 +109,9 @@ var _ = BeforeEach(func() {
 
 	WalletProxy, err = bindings.NewWallet(WalletProxyAddress, Backend)
 	tx, err = WalletProxy.InitializeWallet(Owner.TransactOpts(), Owner.Address(), true, ENSRegistryAddress, TokenWhitelistNode, ControllerNode, LicenceNode, EthToWei(100))
+=======
+	WalletAddress, tx, Wallet, err = bindings.DeployWallet(BankAccount.TransactOpts(), Backend, Owner.Address(), true, ENSRegistryAddress, TokenWhitelistName, ControllerName, LicenceName, big.NewInt(10000))
+>>>>>>> 511d3647... Use stablecoin as daily limit
 	Expect(err).ToNot(HaveOccurred())
 	Backend.Commit()
 	Expect(isSuccessful(tx)).To(BeTrue())

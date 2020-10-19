@@ -108,11 +108,19 @@ var _ = Describe("convertToStablecoin", func() {
 		})
 	})
 
+<<<<<<< HEAD
 	When("the token is not available", func() {
 		It("Should revert", func() {
 			_, err := WalletProxy.ConvertToStablecoin(nil, common.HexToAddress("0x1"), big.NewInt(100))
 			Expect(err).To(HaveOccurred())
 			Expect(err.Error()).To(ContainSubstring("token not available"))
+=======
+    Context("When the token is not available", func() {
+		It("Should return 0", func() {
+			value, err := Wallet.ConvertToStablecoin(nil, common.HexToAddress("0x1"), big.NewInt(100))
+			Expect(err).ToNot(HaveOccurred())
+			Expect(value.String()).To(Equal("0"))
+>>>>>>> 511d3647... Use stablecoin as daily limit
 		})
 	})
 

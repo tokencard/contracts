@@ -54,10 +54,14 @@ contract WalletCache is ENSResolvable, Controllable {
     Wallet[] public cachedWallets;
 
     address public ens;
+<<<<<<< HEAD
     uint public defaultDailyLimit;
 >>>>>>> ea2874b0... Remove 'spendLimit' references from wallet and deployer/cache
 
     address payable[] public cachedWallets;
+=======
+    uint public defaultDailyLimit; //in stablecoin absolute value (NOT base units!) e.g. 10K USD
+>>>>>>> 511d3647... Use stablecoin as daily limit
 
     /// @notice parameters are passed in so that they can be used to construct new instances of the wallet
     /// @dev pass in bytes32 to use the default, production node labels for ENS
