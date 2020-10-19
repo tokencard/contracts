@@ -26,7 +26,7 @@ var _ = Describe("DailyLimit", func() {
 			Expect(ll.String()).To(Equal(EthToWei(10000).String()))
 		})
 
-        FIt("should emit a daily limit set event", func() {
+        It("should emit a daily limit set event", func() {
             it, err := Wallet.FilterInitializedDailyLimit(nil)
             Expect(err).ToNot(HaveOccurred())
             Expect(it.Next()).To(BeTrue())
