@@ -58,6 +58,7 @@ github.com/edsrzf/mmap-go v0.0.0-20160512033002-935e0e8a636c/go.mod h1:YO35OhQPt
 github.com/edsrzf/mmap-go v0.0.0-20170320065105-0bce6a688712 h1:aaQcKT9WumO6JEJcRyTqFVq4XUZiUcKR2/GI31TOcz8=
 github.com/edsrzf/mmap-go v0.0.0-20170320065105-0bce6a688712/go.mod h1:YO35OhQPt3KJa3ryjFM5Bs14WD66h8eGKpfaBNrHW5M=
 github.com/elastic/gosigar v0.8.1-0.20180330100440-37f05ff46ffa/go.mod h1:cdorVVzy1fhmEqmtgqkoE3bYtCfSCkVyjTyCIo22xvs=
+github.com/elastic/gosigar v0.10.4 h1:6jfw75dsoflhBMRdO6QPzQUgLqUYTsQQQRkkcsHsuPo=
 github.com/elastic/gosigar v0.10.4/go.mod h1:cdorVVzy1fhmEqmtgqkoE3bYtCfSCkVyjTyCIo22xvs=
 github.com/elastic/gosigar v0.10.5 h1:GzPQ+78RaAb4J63unidA/JavQRKrB6s8IOzN6Ib59jo=
 github.com/elastic/gosigar v0.10.5/go.mod h1:cdorVVzy1fhmEqmtgqkoE3bYtCfSCkVyjTyCIo22xvs=
@@ -95,6 +96,7 @@ github.com/google/go-cmp v0.3.1/go.mod h1:8QqcDgzrUqlUb/G2PQTWiueGozuR1884gddMyw
 github.com/google/uuid v1.0.0 h1:b4Gk+7WdP/d3HZH8EJsZpvV7EtDOgaZLtnaNGIu1adA=
 github.com/google/uuid v1.0.0/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
 github.com/gorilla/websocket v1.4.0/go.mod h1:E7qHFY5m1UJ88s3WnNqhKjPHQ0heANvMoAMk2YaljkQ=
+github.com/gorilla/websocket v1.4.1-0.20190629185528-ae1634f6a989 h1:giknQ4mEuDFmmHSrGcbargOuLHQGtywqo4mheITex54=
 github.com/gorilla/websocket v1.4.1-0.20190629185528-ae1634f6a989/go.mod h1:E7qHFY5m1UJ88s3WnNqhKjPHQ0heANvMoAMk2YaljkQ=
 github.com/gorilla/websocket v1.4.1 h1:q7AeDBpnBk8AogcD4DSag/Ukw/KV+YhzLj2bP5HvKCM=
 github.com/gorilla/websocket v1.4.1/go.mod h1:YR8l580nyteQvAITg2hZ9XVh4b55+EU/adAjf1fMHhE=
@@ -207,8 +209,13 @@ github.com/tokencard/contracts/v2 v2.3.1 h1:OSYOBbvaY98MOz17L72ah0gF1II/jsHf/LI5
 github.com/tokencard/contracts/v2 v2.3.1/go.mod h1:bRCoTwF0y2MHBr/OuXRKf3s66sMxxzzV8dNx2pZiwSM=
 github.com/tokencard/ethertest v0.7.0/go.mod h1:c+qKrL1Tg3Dg0/lEOnmX/WB9Rv/mitm6ueAn9Ge8UKQ=
 github.com/tokencard/ethertest v0.8.1/go.mod h1:1GTnshKUCoZACOuj+ak3oc5L6DIfxM+P8Nefml8eA3I=
+<<<<<<< HEAD
 github.com/tokencard/ethertest v0.9.1-0.20200731114835-9cf371a9ab63 h1:5tNtJj5yBOiuCcbnhzpb+0MLlYeTQHerZ6+vSr3+fzg=
 github.com/tokencard/ethertest v0.9.1-0.20200731114835-9cf371a9ab63/go.mod h1:NGTJ8DcKF7l+b+mU7YykHhv/pckChUW6zrogmx78pSo=
+=======
+github.com/tokencard/ethertest v0.8.2 h1:u7FXOAeXNXHcaSJCIiTyBx4Yzq/Dd4xVH0/E6zUSlZg=
+github.com/tokencard/ethertest v0.8.2/go.mod h1:1GTnshKUCoZACOuj+ak3oc5L6DIfxM+P8Nefml8eA3I=
+>>>>>>> cf03a2e7... Upgrade to ethertest 0.8.2
 github.com/tyler-smith/go-bip39 v1.0.1-0.20181017060643-dbb3b84ba2ef/go.mod h1:sJ5fKU0s6JVwZjjcUEX2zFOnvq0ASQ2K9Zr6cf67kNs=
 github.com/tyler-smith/go-bip39 v1.0.2 h1:+t3w+KwLXO6154GNJY+qUtIxLTmFjfUmpguQT1OlOT8=
 github.com/tyler-smith/go-bip39 v1.0.2/go.mod h1:sJ5fKU0s6JVwZjjcUEX2zFOnvq0ASQ2K9Zr6cf67kNs=
