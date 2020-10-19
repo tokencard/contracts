@@ -20,14 +20,21 @@ contracts_0_6=(
   'controller'
   'holder'
   'licence'
+<<<<<<< HEAD
 >>>>>>> f6d9eb58... Move more contracts(controller, holder, licence) to solc 0.6
+=======
+  'oracle'
+>>>>>>> f9e39260... Use solc 0.6.4 for oracle contract and remove the oraclize service
   'wallet'
   'walletCache'
   'walletDeployer'
+  'mocks/base64Exporter'
   'mocks/isValidSignatureExporter'
+  'mocks/parseIntScientificExporter'
 )
 
 contracts_0_5=(
+<<<<<<< HEAD
 <<<<<<< HEAD
   'controller'
 >>>>>>> 139655b1... Upgrade to solc 0.6.4 for Wallet
@@ -58,11 +65,12 @@ contracts_0_5=(
 contracts_0_5=(
 =======
   'mocks/base64Exporter'
+=======
+  'tokenWhitelist'
+>>>>>>> f9e39260... Use solc 0.6.4 for oracle contract and remove the oraclize service
   'mocks/burnerToken'
   'mocks/bytesUtilsExporter'
   'mocks/nonCompliantToken'
-  'mocks/oraclize'
-  'mocks/parseIntScientificExporter'
   'mocks/token'
   'mocks/tokenWhitelistableExporter'
 >>>>>>> 139655b1... Upgrade to solc 0.6.4 for Wallet
@@ -118,10 +126,13 @@ contracts=(
   "mocks/isValidSignatureExporter/IsValidSignatureExporter mocks/isValidSignatureExporter.go IsValidSignatureExporter mocks"
   "mocks/nonCompliantToken/NonCompliantToken mocks/nonCompliantToken.go NonCompliantToken mocks"
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
   "mocks/oraclize/OraclizeAddrResolver mocks/oraclizeAddrResolver.go OraclizeAddrResolver mocks"
   "mocks/oraclize/OraclizeConnector mocks/oraclizeConnector.go OraclizeConnector mocks"
 >>>>>>> 139655b1... Upgrade to solc 0.6.4 for Wallet
+=======
+>>>>>>> f9e39260... Use solc 0.6.4 for oracle contract and remove the oraclize service
   "mocks/parseIntScientificExporter/ParseIntScientificExporter mocks/parseIntScientificExporter.go ParseIntScientificExporter mocks"
   "mocks/token/Token mocks/token.go Token mocks"
   "mocks/tokenWhitelistableExporter/TokenWhitelistableExporter mocks/tokenWhitelistableExporter.go TokenWhitelistableExporter mocks"

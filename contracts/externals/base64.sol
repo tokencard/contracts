@@ -1,5 +1,8 @@
+<<<<<<< HEAD
 // SPDX-License-Identifier: GPLv3
 
+=======
+>>>>>>> f9e39260... Use solc 0.6.4 for oracle contract and remove the oraclize service
 pragma solidity ^0.6.0;
 
 /**
