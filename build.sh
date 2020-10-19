@@ -24,16 +24,23 @@ contracts_0_6=(
 >>>>>>> f6d9eb58... Move more contracts(controller, holder, licence) to solc 0.6
 =======
   'oracle'
+<<<<<<< HEAD
 >>>>>>> f9e39260... Use solc 0.6.4 for oracle contract and remove the oraclize service
+=======
+  'tokenWhitelist'
+>>>>>>> d923f3c2... Bump TokenWhitelist's solc version to 0.6.4
   'wallet'
   'walletCache'
   'walletDeployer'
   'mocks/base64Exporter'
+  'mocks/bytesUtilsExporter'
   'mocks/isValidSignatureExporter'
   'mocks/parseIntScientificExporter'
+  'mocks/tokenWhitelistableExporter'
 )
 
 contracts_0_5=(
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
   'controller'
@@ -55,9 +62,13 @@ contracts_0_5=(
   'mocks/gasBurner'
   'mocks/gasToken'
   'mocks/isValidSignatureExporter'
+=======
+  'mocks/burnerToken'
+>>>>>>> d923f3c2... Bump TokenWhitelist's solc version to 0.6.4
   'mocks/nonCompliantToken'
   'mocks/parseIntScientificExporter'
   'mocks/token'
+<<<<<<< HEAD
   'mocks/tokenWhitelistableExporter'
   'mocks/wallet'
 )
@@ -74,6 +85,8 @@ contracts_0_5=(
   'mocks/token'
   'mocks/tokenWhitelistableExporter'
 >>>>>>> 139655b1... Upgrade to solc 0.6.4 for Wallet
+=======
+>>>>>>> d923f3c2... Bump TokenWhitelist's solc version to 0.6.4
   'externals/ens/ENSRegistry'
   'externals/ens/PublicResolver'
 )
