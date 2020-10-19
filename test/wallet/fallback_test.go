@@ -34,7 +34,23 @@ var _ = Describe("fallback", func() {
 		})
 	})
 
-	When(" a random person calls a wallet method that doesn't exist", func() {
+	When(" a random person calls a wallet method that doesn't exist i.e. fallback", func() {
+		It("should fail", func() {
+			privateKey, err := crypto.GenerateKey()
+			randomAddress := crypto.PubkeyToAddress(privateKey.PublicKey)
+			Expect(err).ToNot(HaveOccurred())
+			BankAccount.MustTransfer(Backend, randomAddress, EthToWei(1))
+			unsignedTx := types.NewTransaction(0, WalletAddress, FinneyToWei(1), 30000, GweiToWei(20), []byte{0xf8, 0xa8, 0xfd, 0xd6})
+			signedTx, err := types.SignTx(unsignedTx, types.HomesteadSigner{}, privateKey)
+			Expect(err).ToNot(HaveOccurred())
+			err = Backend.SendTransaction(context.Background(), signedTx)
+			Expect(err).ToNot(HaveOccurred())
+			Backend.Commit()
+			Expect(isSuccessful(signedTx)).To(BeFalse())
+		})
+	})
+
+	When("a random person calls the receive() function", func() {
 		var randomAddress common.Address
 		BeforeEach(func() {
 			privateKey, err := crypto.GenerateKey()

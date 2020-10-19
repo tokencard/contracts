@@ -189,6 +189,188 @@ func (_Controller *ControllerTransactorRaw) Transact(opts *bind.TransactOpts, me
 	return _Controller.Contract.contract.Transact(opts, method, params...)
 }
 
+// AdminCount is a free data retrieval call binding the contract method 0x2b7832b3.
+//
+// Solidity: function adminCount() constant returns(uint256)
+func (_Controller *ControllerCaller) AdminCount(opts *bind.CallOpts) (*big.Int, error) {
+	var (
+		ret0 = new(*big.Int)
+	)
+	out := ret0
+	err := _Controller.contract.Call(opts, out, "adminCount")
+	return *ret0, err
+}
+
+// AdminCount is a free data retrieval call binding the contract method 0x2b7832b3.
+//
+// Solidity: function adminCount() constant returns(uint256)
+func (_Controller *ControllerSession) AdminCount() (*big.Int, error) {
+	return _Controller.Contract.AdminCount(&_Controller.CallOpts)
+}
+
+// AdminCount is a free data retrieval call binding the contract method 0x2b7832b3.
+//
+// Solidity: function adminCount() constant returns(uint256)
+func (_Controller *ControllerCallerSession) AdminCount() (*big.Int, error) {
+	return _Controller.Contract.AdminCount(&_Controller.CallOpts)
+}
+
+// ControllerCount is a free data retrieval call binding the contract method 0x15b9a8b8.
+//
+// Solidity: function controllerCount() constant returns(uint256)
+func (_Controller *ControllerCaller) ControllerCount(opts *bind.CallOpts) (*big.Int, error) {
+	var (
+		ret0 = new(*big.Int)
+	)
+	out := ret0
+	err := _Controller.contract.Call(opts, out, "controllerCount")
+	return *ret0, err
+}
+
+// ControllerCount is a free data retrieval call binding the contract method 0x15b9a8b8.
+//
+// Solidity: function controllerCount() constant returns(uint256)
+func (_Controller *ControllerSession) ControllerCount() (*big.Int, error) {
+	return _Controller.Contract.ControllerCount(&_Controller.CallOpts)
+}
+
+// ControllerCount is a free data retrieval call binding the contract method 0x15b9a8b8.
+//
+// Solidity: function controllerCount() constant returns(uint256)
+func (_Controller *ControllerCallerSession) ControllerCount() (*big.Int, error) {
+	return _Controller.Contract.ControllerCount(&_Controller.CallOpts)
+}
+
+// IsAdmin is a free data retrieval call binding the contract method 0x24d7806c.
+//
+// Solidity: function isAdmin(address _account) constant returns(bool)
+func (_Controller *ControllerCaller) IsAdmin(opts *bind.CallOpts, _account common.Address) (bool, error) {
+	var (
+		ret0 = new(bool)
+	)
+	out := ret0
+	err := _Controller.contract.Call(opts, out, "isAdmin", _account)
+	return *ret0, err
+}
+
+// IsAdmin is a free data retrieval call binding the contract method 0x24d7806c.
+//
+// Solidity: function isAdmin(address _account) constant returns(bool)
+func (_Controller *ControllerSession) IsAdmin(_account common.Address) (bool, error) {
+	return _Controller.Contract.IsAdmin(&_Controller.CallOpts, _account)
+}
+
+// IsAdmin is a free data retrieval call binding the contract method 0x24d7806c.
+//
+// Solidity: function isAdmin(address _account) constant returns(bool)
+func (_Controller *ControllerCallerSession) IsAdmin(_account common.Address) (bool, error) {
+	return _Controller.Contract.IsAdmin(&_Controller.CallOpts, _account)
+}
+
+// IsController is a free data retrieval call binding the contract method 0xb429afeb.
+//
+// Solidity: function isController(address _account) constant returns(bool)
+func (_Controller *ControllerCaller) IsController(opts *bind.CallOpts, _account common.Address) (bool, error) {
+	var (
+		ret0 = new(bool)
+	)
+	out := ret0
+	err := _Controller.contract.Call(opts, out, "isController", _account)
+	return *ret0, err
+}
+
+// IsController is a free data retrieval call binding the contract method 0xb429afeb.
+//
+// Solidity: function isController(address _account) constant returns(bool)
+func (_Controller *ControllerSession) IsController(_account common.Address) (bool, error) {
+	return _Controller.Contract.IsController(&_Controller.CallOpts, _account)
+}
+
+// IsController is a free data retrieval call binding the contract method 0xb429afeb.
+//
+// Solidity: function isController(address _account) constant returns(bool)
+func (_Controller *ControllerCallerSession) IsController(_account common.Address) (bool, error) {
+	return _Controller.Contract.IsController(&_Controller.CallOpts, _account)
+}
+
+// IsStopped is a free data retrieval call binding the contract method 0x3f683b6a.
+//
+// Solidity: function isStopped() constant returns(bool)
+func (_Controller *ControllerCaller) IsStopped(opts *bind.CallOpts) (bool, error) {
+	var (
+		ret0 = new(bool)
+	)
+	out := ret0
+	err := _Controller.contract.Call(opts, out, "isStopped")
+	return *ret0, err
+}
+
+// IsStopped is a free data retrieval call binding the contract method 0x3f683b6a.
+//
+// Solidity: function isStopped() constant returns(bool)
+func (_Controller *ControllerSession) IsStopped() (bool, error) {
+	return _Controller.Contract.IsStopped(&_Controller.CallOpts)
+}
+
+// IsStopped is a free data retrieval call binding the contract method 0x3f683b6a.
+//
+// Solidity: function isStopped() constant returns(bool)
+func (_Controller *ControllerCallerSession) IsStopped() (bool, error) {
+	return _Controller.Contract.IsStopped(&_Controller.CallOpts)
+}
+
+// IsTransferable is a free data retrieval call binding the contract method 0x2121dc75.
+//
+// Solidity: function isTransferable() constant returns(bool)
+func (_Controller *ControllerCaller) IsTransferable(opts *bind.CallOpts) (bool, error) {
+	var (
+		ret0 = new(bool)
+	)
+	out := ret0
+	err := _Controller.contract.Call(opts, out, "isTransferable")
+	return *ret0, err
+}
+
+// IsTransferable is a free data retrieval call binding the contract method 0x2121dc75.
+//
+// Solidity: function isTransferable() constant returns(bool)
+func (_Controller *ControllerSession) IsTransferable() (bool, error) {
+	return _Controller.Contract.IsTransferable(&_Controller.CallOpts)
+}
+
+// IsTransferable is a free data retrieval call binding the contract method 0x2121dc75.
+//
+// Solidity: function isTransferable() constant returns(bool)
+func (_Controller *ControllerCallerSession) IsTransferable() (bool, error) {
+	return _Controller.Contract.IsTransferable(&_Controller.CallOpts)
+}
+
+// Owner is a free data retrieval call binding the contract method 0x8da5cb5b.
+//
+// Solidity: function owner() constant returns(address)
+func (_Controller *ControllerCaller) Owner(opts *bind.CallOpts) (common.Address, error) {
+	var (
+		ret0 = new(common.Address)
+	)
+	out := ret0
+	err := _Controller.contract.Call(opts, out, "owner")
+	return *ret0, err
+}
+
+// Owner is a free data retrieval call binding the contract method 0x8da5cb5b.
+//
+// Solidity: function owner() constant returns(address)
+func (_Controller *ControllerSession) Owner() (common.Address, error) {
+	return _Controller.Contract.Owner(&_Controller.CallOpts)
+}
+
+// Owner is a free data retrieval call binding the contract method 0x8da5cb5b.
+//
+// Solidity: function owner() constant returns(address)
+func (_Controller *ControllerCallerSession) Owner() (common.Address, error) {
+	return _Controller.Contract.Owner(&_Controller.CallOpts)
+}
+
 // AddAdmin is a paid mutator transaction binding the contract method 0x70480275.
 //
 // Solidity: function addAdmin(address _account) returns()
@@ -231,27 +413,6 @@ func (_Controller *ControllerTransactorSession) AddController(_account common.Ad
 	return _Controller.Contract.AddController(&_Controller.TransactOpts, _account)
 }
 
-// AdminCount is a paid mutator transaction binding the contract method 0x2b7832b3.
-//
-// Solidity: function adminCount() returns(uint256)
-func (_Controller *ControllerTransactor) AdminCount(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return _Controller.contract.Transact(opts, "adminCount")
-}
-
-// AdminCount is a paid mutator transaction binding the contract method 0x2b7832b3.
-//
-// Solidity: function adminCount() returns(uint256)
-func (_Controller *ControllerSession) AdminCount() (*types.Transaction, error) {
-	return _Controller.Contract.AdminCount(&_Controller.TransactOpts)
-}
-
-// AdminCount is a paid mutator transaction binding the contract method 0x2b7832b3.
-//
-// Solidity: function adminCount() returns(uint256)
-func (_Controller *ControllerTransactorSession) AdminCount() (*types.Transaction, error) {
-	return _Controller.Contract.AdminCount(&_Controller.TransactOpts)
-}
-
 // Claim is a paid mutator transaction binding the contract method 0x996cba68.
 //
 // Solidity: function claim(address _to, address _asset, uint256 _amount) returns()
@@ -271,132 +432,6 @@ func (_Controller *ControllerSession) Claim(_to common.Address, _asset common.Ad
 // Solidity: function claim(address _to, address _asset, uint256 _amount) returns()
 func (_Controller *ControllerTransactorSession) Claim(_to common.Address, _asset common.Address, _amount *big.Int) (*types.Transaction, error) {
 	return _Controller.Contract.Claim(&_Controller.TransactOpts, _to, _asset, _amount)
-}
-
-// ControllerCount is a paid mutator transaction binding the contract method 0x15b9a8b8.
-//
-// Solidity: function controllerCount() returns(uint256)
-func (_Controller *ControllerTransactor) ControllerCount(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return _Controller.contract.Transact(opts, "controllerCount")
-}
-
-// ControllerCount is a paid mutator transaction binding the contract method 0x15b9a8b8.
-//
-// Solidity: function controllerCount() returns(uint256)
-func (_Controller *ControllerSession) ControllerCount() (*types.Transaction, error) {
-	return _Controller.Contract.ControllerCount(&_Controller.TransactOpts)
-}
-
-// ControllerCount is a paid mutator transaction binding the contract method 0x15b9a8b8.
-//
-// Solidity: function controllerCount() returns(uint256)
-func (_Controller *ControllerTransactorSession) ControllerCount() (*types.Transaction, error) {
-	return _Controller.Contract.ControllerCount(&_Controller.TransactOpts)
-}
-
-// IsAdmin is a paid mutator transaction binding the contract method 0x24d7806c.
-//
-// Solidity: function isAdmin(address _account) returns(bool)
-func (_Controller *ControllerTransactor) IsAdmin(opts *bind.TransactOpts, _account common.Address) (*types.Transaction, error) {
-	return _Controller.contract.Transact(opts, "isAdmin", _account)
-}
-
-// IsAdmin is a paid mutator transaction binding the contract method 0x24d7806c.
-//
-// Solidity: function isAdmin(address _account) returns(bool)
-func (_Controller *ControllerSession) IsAdmin(_account common.Address) (*types.Transaction, error) {
-	return _Controller.Contract.IsAdmin(&_Controller.TransactOpts, _account)
-}
-
-// IsAdmin is a paid mutator transaction binding the contract method 0x24d7806c.
-//
-// Solidity: function isAdmin(address _account) returns(bool)
-func (_Controller *ControllerTransactorSession) IsAdmin(_account common.Address) (*types.Transaction, error) {
-	return _Controller.Contract.IsAdmin(&_Controller.TransactOpts, _account)
-}
-
-// IsController is a paid mutator transaction binding the contract method 0xb429afeb.
-//
-// Solidity: function isController(address _account) returns(bool)
-func (_Controller *ControllerTransactor) IsController(opts *bind.TransactOpts, _account common.Address) (*types.Transaction, error) {
-	return _Controller.contract.Transact(opts, "isController", _account)
-}
-
-// IsController is a paid mutator transaction binding the contract method 0xb429afeb.
-//
-// Solidity: function isController(address _account) returns(bool)
-func (_Controller *ControllerSession) IsController(_account common.Address) (*types.Transaction, error) {
-	return _Controller.Contract.IsController(&_Controller.TransactOpts, _account)
-}
-
-// IsController is a paid mutator transaction binding the contract method 0xb429afeb.
-//
-// Solidity: function isController(address _account) returns(bool)
-func (_Controller *ControllerTransactorSession) IsController(_account common.Address) (*types.Transaction, error) {
-	return _Controller.Contract.IsController(&_Controller.TransactOpts, _account)
-}
-
-// IsStopped is a paid mutator transaction binding the contract method 0x3f683b6a.
-//
-// Solidity: function isStopped() returns(bool)
-func (_Controller *ControllerTransactor) IsStopped(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return _Controller.contract.Transact(opts, "isStopped")
-}
-
-// IsStopped is a paid mutator transaction binding the contract method 0x3f683b6a.
-//
-// Solidity: function isStopped() returns(bool)
-func (_Controller *ControllerSession) IsStopped() (*types.Transaction, error) {
-	return _Controller.Contract.IsStopped(&_Controller.TransactOpts)
-}
-
-// IsStopped is a paid mutator transaction binding the contract method 0x3f683b6a.
-//
-// Solidity: function isStopped() returns(bool)
-func (_Controller *ControllerTransactorSession) IsStopped() (*types.Transaction, error) {
-	return _Controller.Contract.IsStopped(&_Controller.TransactOpts)
-}
-
-// IsTransferable is a paid mutator transaction binding the contract method 0x2121dc75.
-//
-// Solidity: function isTransferable() returns(bool)
-func (_Controller *ControllerTransactor) IsTransferable(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return _Controller.contract.Transact(opts, "isTransferable")
-}
-
-// IsTransferable is a paid mutator transaction binding the contract method 0x2121dc75.
-//
-// Solidity: function isTransferable() returns(bool)
-func (_Controller *ControllerSession) IsTransferable() (*types.Transaction, error) {
-	return _Controller.Contract.IsTransferable(&_Controller.TransactOpts)
-}
-
-// IsTransferable is a paid mutator transaction binding the contract method 0x2121dc75.
-//
-// Solidity: function isTransferable() returns(bool)
-func (_Controller *ControllerTransactorSession) IsTransferable() (*types.Transaction, error) {
-	return _Controller.Contract.IsTransferable(&_Controller.TransactOpts)
-}
-
-// Owner is a paid mutator transaction binding the contract method 0x8da5cb5b.
-//
-// Solidity: function owner() returns(address)
-func (_Controller *ControllerTransactor) Owner(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return _Controller.contract.Transact(opts, "owner")
-}
-
-// Owner is a paid mutator transaction binding the contract method 0x8da5cb5b.
-//
-// Solidity: function owner() returns(address)
-func (_Controller *ControllerSession) Owner() (*types.Transaction, error) {
-	return _Controller.Contract.Owner(&_Controller.TransactOpts)
-}
-
-// Owner is a paid mutator transaction binding the contract method 0x8da5cb5b.
-//
-// Solidity: function owner() returns(address)
-func (_Controller *ControllerTransactorSession) Owner() (*types.Transaction, error) {
-	return _Controller.Contract.Owner(&_Controller.TransactOpts)
 }
 
 // RemoveAdmin is a paid mutator transaction binding the contract method 0x1785f53c.

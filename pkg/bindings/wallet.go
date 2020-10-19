@@ -189,25 +189,680 @@ func (_Wallet *WalletTransactorRaw) Transact(opts *bind.TransactOpts, method str
 	return _Wallet.Contract.contract.Transact(opts, method, params...)
 }
 
-// WALLETVERSION is a paid mutator transaction binding the contract method 0x1127b57e.
+// WALLETVERSION is a free data retrieval call binding the contract method 0x1127b57e.
 //
-// Solidity: function WALLET_VERSION() returns(string)
-func (_Wallet *WalletTransactor) WALLETVERSION(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return _Wallet.contract.Transact(opts, "WALLET_VERSION")
+// Solidity: function WALLET_VERSION() constant returns(string)
+func (_Wallet *WalletCaller) WALLETVERSION(opts *bind.CallOpts) (string, error) {
+	var (
+		ret0 = new(string)
+	)
+	out := ret0
+	err := _Wallet.contract.Call(opts, out, "WALLET_VERSION")
+	return *ret0, err
 }
 
-// WALLETVERSION is a paid mutator transaction binding the contract method 0x1127b57e.
+// WALLETVERSION is a free data retrieval call binding the contract method 0x1127b57e.
 //
-// Solidity: function WALLET_VERSION() returns(string)
-func (_Wallet *WalletSession) WALLETVERSION() (*types.Transaction, error) {
-	return _Wallet.Contract.WALLETVERSION(&_Wallet.TransactOpts)
+// Solidity: function WALLET_VERSION() constant returns(string)
+func (_Wallet *WalletSession) WALLETVERSION() (string, error) {
+	return _Wallet.Contract.WALLETVERSION(&_Wallet.CallOpts)
 }
 
-// WALLETVERSION is a paid mutator transaction binding the contract method 0x1127b57e.
+// WALLETVERSION is a free data retrieval call binding the contract method 0x1127b57e.
 //
-// Solidity: function WALLET_VERSION() returns(string)
-func (_Wallet *WalletTransactorSession) WALLETVERSION() (*types.Transaction, error) {
-	return _Wallet.Contract.WALLETVERSION(&_Wallet.TransactOpts)
+// Solidity: function WALLET_VERSION() constant returns(string)
+func (_Wallet *WalletCallerSession) WALLETVERSION() (string, error) {
+	return _Wallet.Contract.WALLETVERSION(&_Wallet.CallOpts)
+}
+
+// CalculateHash is a free data retrieval call binding the contract method 0xcd7958dd.
+//
+// Solidity: function calculateHash(address[] _addresses) constant returns(bytes32)
+func (_Wallet *WalletCaller) CalculateHash(opts *bind.CallOpts, _addresses []common.Address) ([32]byte, error) {
+	var (
+		ret0 = new([32]byte)
+	)
+	out := ret0
+	err := _Wallet.contract.Call(opts, out, "calculateHash", _addresses)
+	return *ret0, err
+}
+
+// CalculateHash is a free data retrieval call binding the contract method 0xcd7958dd.
+//
+// Solidity: function calculateHash(address[] _addresses) constant returns(bytes32)
+func (_Wallet *WalletSession) CalculateHash(_addresses []common.Address) ([32]byte, error) {
+	return _Wallet.Contract.CalculateHash(&_Wallet.CallOpts, _addresses)
+}
+
+// CalculateHash is a free data retrieval call binding the contract method 0xcd7958dd.
+//
+// Solidity: function calculateHash(address[] _addresses) constant returns(bytes32)
+func (_Wallet *WalletCallerSession) CalculateHash(_addresses []common.Address) ([32]byte, error) {
+	return _Wallet.Contract.CalculateHash(&_Wallet.CallOpts, _addresses)
+}
+
+// ControllerNode is a free data retrieval call binding the contract method 0xe2b4ce97.
+//
+// Solidity: function controllerNode() constant returns(bytes32)
+func (_Wallet *WalletCaller) ControllerNode(opts *bind.CallOpts) ([32]byte, error) {
+	var (
+		ret0 = new([32]byte)
+	)
+	out := ret0
+	err := _Wallet.contract.Call(opts, out, "controllerNode")
+	return *ret0, err
+}
+
+// ControllerNode is a free data retrieval call binding the contract method 0xe2b4ce97.
+//
+// Solidity: function controllerNode() constant returns(bytes32)
+func (_Wallet *WalletSession) ControllerNode() ([32]byte, error) {
+	return _Wallet.Contract.ControllerNode(&_Wallet.CallOpts)
+}
+
+// ControllerNode is a free data retrieval call binding the contract method 0xe2b4ce97.
+//
+// Solidity: function controllerNode() constant returns(bytes32)
+func (_Wallet *WalletCallerSession) ControllerNode() ([32]byte, error) {
+	return _Wallet.Contract.ControllerNode(&_Wallet.CallOpts)
+}
+
+// ConvertToStablecoin is a free data retrieval call binding the contract method 0xf36febda.
+//
+// Solidity: function convertToStablecoin(address _token, uint256 _amount) constant returns(uint256)
+func (_Wallet *WalletCaller) ConvertToStablecoin(opts *bind.CallOpts, _token common.Address, _amount *big.Int) (*big.Int, error) {
+	var (
+		ret0 = new(*big.Int)
+	)
+	out := ret0
+	err := _Wallet.contract.Call(opts, out, "convertToStablecoin", _token, _amount)
+	return *ret0, err
+}
+
+// ConvertToStablecoin is a free data retrieval call binding the contract method 0xf36febda.
+//
+// Solidity: function convertToStablecoin(address _token, uint256 _amount) constant returns(uint256)
+func (_Wallet *WalletSession) ConvertToStablecoin(_token common.Address, _amount *big.Int) (*big.Int, error) {
+	return _Wallet.Contract.ConvertToStablecoin(&_Wallet.CallOpts, _token, _amount)
+}
+
+// ConvertToStablecoin is a free data retrieval call binding the contract method 0xf36febda.
+//
+// Solidity: function convertToStablecoin(address _token, uint256 _amount) constant returns(uint256)
+func (_Wallet *WalletCallerSession) ConvertToStablecoin(_token common.Address, _amount *big.Int) (*big.Int, error) {
+	return _Wallet.Contract.ConvertToStablecoin(&_Wallet.CallOpts, _token, _amount)
+}
+
+// DailyLimitAvailable is a free data retrieval call binding the contract method 0x45b12efc.
+//
+// Solidity: function dailyLimitAvailable() constant returns(uint256)
+func (_Wallet *WalletCaller) DailyLimitAvailable(opts *bind.CallOpts) (*big.Int, error) {
+	var (
+		ret0 = new(*big.Int)
+	)
+	out := ret0
+	err := _Wallet.contract.Call(opts, out, "dailyLimitAvailable")
+	return *ret0, err
+}
+
+// DailyLimitAvailable is a free data retrieval call binding the contract method 0x45b12efc.
+//
+// Solidity: function dailyLimitAvailable() constant returns(uint256)
+func (_Wallet *WalletSession) DailyLimitAvailable() (*big.Int, error) {
+	return _Wallet.Contract.DailyLimitAvailable(&_Wallet.CallOpts)
+}
+
+// DailyLimitAvailable is a free data retrieval call binding the contract method 0x45b12efc.
+//
+// Solidity: function dailyLimitAvailable() constant returns(uint256)
+func (_Wallet *WalletCallerSession) DailyLimitAvailable() (*big.Int, error) {
+	return _Wallet.Contract.DailyLimitAvailable(&_Wallet.CallOpts)
+}
+
+// DailyLimitPending is a free data retrieval call binding the contract method 0x3b8252fa.
+//
+// Solidity: function dailyLimitPending() constant returns(uint256)
+func (_Wallet *WalletCaller) DailyLimitPending(opts *bind.CallOpts) (*big.Int, error) {
+	var (
+		ret0 = new(*big.Int)
+	)
+	out := ret0
+	err := _Wallet.contract.Call(opts, out, "dailyLimitPending")
+	return *ret0, err
+}
+
+// DailyLimitPending is a free data retrieval call binding the contract method 0x3b8252fa.
+//
+// Solidity: function dailyLimitPending() constant returns(uint256)
+func (_Wallet *WalletSession) DailyLimitPending() (*big.Int, error) {
+	return _Wallet.Contract.DailyLimitPending(&_Wallet.CallOpts)
+}
+
+// DailyLimitPending is a free data retrieval call binding the contract method 0x3b8252fa.
+//
+// Solidity: function dailyLimitPending() constant returns(uint256)
+func (_Wallet *WalletCallerSession) DailyLimitPending() (*big.Int, error) {
+	return _Wallet.Contract.DailyLimitPending(&_Wallet.CallOpts)
+}
+
+// DailyLimitValue is a free data retrieval call binding the contract method 0x4d9aa248.
+//
+// Solidity: function dailyLimitValue() constant returns(uint256)
+func (_Wallet *WalletCaller) DailyLimitValue(opts *bind.CallOpts) (*big.Int, error) {
+	var (
+		ret0 = new(*big.Int)
+	)
+	out := ret0
+	err := _Wallet.contract.Call(opts, out, "dailyLimitValue")
+	return *ret0, err
+}
+
+// DailyLimitValue is a free data retrieval call binding the contract method 0x4d9aa248.
+//
+// Solidity: function dailyLimitValue() constant returns(uint256)
+func (_Wallet *WalletSession) DailyLimitValue() (*big.Int, error) {
+	return _Wallet.Contract.DailyLimitValue(&_Wallet.CallOpts)
+}
+
+// DailyLimitValue is a free data retrieval call binding the contract method 0x4d9aa248.
+//
+// Solidity: function dailyLimitValue() constant returns(uint256)
+func (_Wallet *WalletCallerSession) DailyLimitValue() (*big.Int, error) {
+	return _Wallet.Contract.DailyLimitValue(&_Wallet.CallOpts)
+}
+
+// EnsRegistry is a free data retrieval call binding the contract method 0x7d73b231.
+//
+// Solidity: function ensRegistry() constant returns(address)
+func (_Wallet *WalletCaller) EnsRegistry(opts *bind.CallOpts) (common.Address, error) {
+	var (
+		ret0 = new(common.Address)
+	)
+	out := ret0
+	err := _Wallet.contract.Call(opts, out, "ensRegistry")
+	return *ret0, err
+}
+
+// EnsRegistry is a free data retrieval call binding the contract method 0x7d73b231.
+//
+// Solidity: function ensRegistry() constant returns(address)
+func (_Wallet *WalletSession) EnsRegistry() (common.Address, error) {
+	return _Wallet.Contract.EnsRegistry(&_Wallet.CallOpts)
+}
+
+// EnsRegistry is a free data retrieval call binding the contract method 0x7d73b231.
+//
+// Solidity: function ensRegistry() constant returns(address)
+func (_Wallet *WalletCallerSession) EnsRegistry() (common.Address, error) {
+	return _Wallet.Contract.EnsRegistry(&_Wallet.CallOpts)
+}
+
+// IsSetWhitelist is a free data retrieval call binding the contract method 0xbe40ba79.
+//
+// Solidity: function isSetWhitelist() constant returns(bool)
+func (_Wallet *WalletCaller) IsSetWhitelist(opts *bind.CallOpts) (bool, error) {
+	var (
+		ret0 = new(bool)
+	)
+	out := ret0
+	err := _Wallet.contract.Call(opts, out, "isSetWhitelist")
+	return *ret0, err
+}
+
+// IsSetWhitelist is a free data retrieval call binding the contract method 0xbe40ba79.
+//
+// Solidity: function isSetWhitelist() constant returns(bool)
+func (_Wallet *WalletSession) IsSetWhitelist() (bool, error) {
+	return _Wallet.Contract.IsSetWhitelist(&_Wallet.CallOpts)
+}
+
+// IsSetWhitelist is a free data retrieval call binding the contract method 0xbe40ba79.
+//
+// Solidity: function isSetWhitelist() constant returns(bool)
+func (_Wallet *WalletCallerSession) IsSetWhitelist() (bool, error) {
+	return _Wallet.Contract.IsSetWhitelist(&_Wallet.CallOpts)
+}
+
+// IsTransferable is a free data retrieval call binding the contract method 0x2121dc75.
+//
+// Solidity: function isTransferable() constant returns(bool)
+func (_Wallet *WalletCaller) IsTransferable(opts *bind.CallOpts) (bool, error) {
+	var (
+		ret0 = new(bool)
+	)
+	out := ret0
+	err := _Wallet.contract.Call(opts, out, "isTransferable")
+	return *ret0, err
+}
+
+// IsTransferable is a free data retrieval call binding the contract method 0x2121dc75.
+//
+// Solidity: function isTransferable() constant returns(bool)
+func (_Wallet *WalletSession) IsTransferable() (bool, error) {
+	return _Wallet.Contract.IsTransferable(&_Wallet.CallOpts)
+}
+
+// IsTransferable is a free data retrieval call binding the contract method 0x2121dc75.
+//
+// Solidity: function isTransferable() constant returns(bool)
+func (_Wallet *WalletCallerSession) IsTransferable() (bool, error) {
+	return _Wallet.Contract.IsTransferable(&_Wallet.CallOpts)
+}
+
+// IsValidSignature is a free data retrieval call binding the contract method 0x1626ba7e.
+//
+// Solidity: function isValidSignature(bytes32 _hashedData, bytes _signature) constant returns(bytes4)
+func (_Wallet *WalletCaller) IsValidSignature(opts *bind.CallOpts, _hashedData [32]byte, _signature []byte) ([4]byte, error) {
+	var (
+		ret0 = new([4]byte)
+	)
+	out := ret0
+	err := _Wallet.contract.Call(opts, out, "isValidSignature", _hashedData, _signature)
+	return *ret0, err
+}
+
+// IsValidSignature is a free data retrieval call binding the contract method 0x1626ba7e.
+//
+// Solidity: function isValidSignature(bytes32 _hashedData, bytes _signature) constant returns(bytes4)
+func (_Wallet *WalletSession) IsValidSignature(_hashedData [32]byte, _signature []byte) ([4]byte, error) {
+	return _Wallet.Contract.IsValidSignature(&_Wallet.CallOpts, _hashedData, _signature)
+}
+
+// IsValidSignature is a free data retrieval call binding the contract method 0x1626ba7e.
+//
+// Solidity: function isValidSignature(bytes32 _hashedData, bytes _signature) constant returns(bytes4)
+func (_Wallet *WalletCallerSession) IsValidSignature(_hashedData [32]byte, _signature []byte) ([4]byte, error) {
+	return _Wallet.Contract.IsValidSignature(&_Wallet.CallOpts, _hashedData, _signature)
+}
+
+// IsValidSignature0 is a free data retrieval call binding the contract method 0x20c13b0b.
+//
+// Solidity: function isValidSignature(bytes _data, bytes _signature) constant returns(bytes4)
+func (_Wallet *WalletCaller) IsValidSignature0(opts *bind.CallOpts, _data []byte, _signature []byte) ([4]byte, error) {
+	var (
+		ret0 = new([4]byte)
+	)
+	out := ret0
+	err := _Wallet.contract.Call(opts, out, "isValidSignature0", _data, _signature)
+	return *ret0, err
+}
+
+// IsValidSignature0 is a free data retrieval call binding the contract method 0x20c13b0b.
+//
+// Solidity: function isValidSignature(bytes _data, bytes _signature) constant returns(bytes4)
+func (_Wallet *WalletSession) IsValidSignature0(_data []byte, _signature []byte) ([4]byte, error) {
+	return _Wallet.Contract.IsValidSignature0(&_Wallet.CallOpts, _data, _signature)
+}
+
+// IsValidSignature0 is a free data retrieval call binding the contract method 0x20c13b0b.
+//
+// Solidity: function isValidSignature(bytes _data, bytes _signature) constant returns(bytes4)
+func (_Wallet *WalletCallerSession) IsValidSignature0(_data []byte, _signature []byte) ([4]byte, error) {
+	return _Wallet.Contract.IsValidSignature0(&_Wallet.CallOpts, _data, _signature)
+}
+
+// LicenceNode is a free data retrieval call binding the contract method 0x747c31d6.
+//
+// Solidity: function licenceNode() constant returns(bytes32)
+func (_Wallet *WalletCaller) LicenceNode(opts *bind.CallOpts) ([32]byte, error) {
+	var (
+		ret0 = new([32]byte)
+	)
+	out := ret0
+	err := _Wallet.contract.Call(opts, out, "licenceNode")
+	return *ret0, err
+}
+
+// LicenceNode is a free data retrieval call binding the contract method 0x747c31d6.
+//
+// Solidity: function licenceNode() constant returns(bytes32)
+func (_Wallet *WalletSession) LicenceNode() ([32]byte, error) {
+	return _Wallet.Contract.LicenceNode(&_Wallet.CallOpts)
+}
+
+// LicenceNode is a free data retrieval call binding the contract method 0x747c31d6.
+//
+// Solidity: function licenceNode() constant returns(bytes32)
+func (_Wallet *WalletCallerSession) LicenceNode() ([32]byte, error) {
+	return _Wallet.Contract.LicenceNode(&_Wallet.CallOpts)
+}
+
+// Monolith2FA is a free data retrieval call binding the contract method 0xcf0a866b.
+//
+// Solidity: function monolith2FA() constant returns(bool)
+func (_Wallet *WalletCaller) Monolith2FA(opts *bind.CallOpts) (bool, error) {
+	var (
+		ret0 = new(bool)
+	)
+	out := ret0
+	err := _Wallet.contract.Call(opts, out, "monolith2FA")
+	return *ret0, err
+}
+
+// Monolith2FA is a free data retrieval call binding the contract method 0xcf0a866b.
+//
+// Solidity: function monolith2FA() constant returns(bool)
+func (_Wallet *WalletSession) Monolith2FA() (bool, error) {
+	return _Wallet.Contract.Monolith2FA(&_Wallet.CallOpts)
+}
+
+// Monolith2FA is a free data retrieval call binding the contract method 0xcf0a866b.
+//
+// Solidity: function monolith2FA() constant returns(bool)
+func (_Wallet *WalletCallerSession) Monolith2FA() (bool, error) {
+	return _Wallet.Contract.Monolith2FA(&_Wallet.CallOpts)
+}
+
+// Owner is a free data retrieval call binding the contract method 0x8da5cb5b.
+//
+// Solidity: function owner() constant returns(address)
+func (_Wallet *WalletCaller) Owner(opts *bind.CallOpts) (common.Address, error) {
+	var (
+		ret0 = new(common.Address)
+	)
+	out := ret0
+	err := _Wallet.contract.Call(opts, out, "owner")
+	return *ret0, err
+}
+
+// Owner is a free data retrieval call binding the contract method 0x8da5cb5b.
+//
+// Solidity: function owner() constant returns(address)
+func (_Wallet *WalletSession) Owner() (common.Address, error) {
+	return _Wallet.Contract.Owner(&_Wallet.CallOpts)
+}
+
+// Owner is a free data retrieval call binding the contract method 0x8da5cb5b.
+//
+// Solidity: function owner() constant returns(address)
+func (_Wallet *WalletCallerSession) Owner() (common.Address, error) {
+	return _Wallet.Contract.Owner(&_Wallet.CallOpts)
+}
+
+// PendingWhitelistAddition is a free data retrieval call binding the contract method 0x47b55a9d.
+//
+// Solidity: function pendingWhitelistAddition() constant returns(address[])
+func (_Wallet *WalletCaller) PendingWhitelistAddition(opts *bind.CallOpts) ([]common.Address, error) {
+	var (
+		ret0 = new([]common.Address)
+	)
+	out := ret0
+	err := _Wallet.contract.Call(opts, out, "pendingWhitelistAddition")
+	return *ret0, err
+}
+
+// PendingWhitelistAddition is a free data retrieval call binding the contract method 0x47b55a9d.
+//
+// Solidity: function pendingWhitelistAddition() constant returns(address[])
+func (_Wallet *WalletSession) PendingWhitelistAddition() ([]common.Address, error) {
+	return _Wallet.Contract.PendingWhitelistAddition(&_Wallet.CallOpts)
+}
+
+// PendingWhitelistAddition is a free data retrieval call binding the contract method 0x47b55a9d.
+//
+// Solidity: function pendingWhitelistAddition() constant returns(address[])
+func (_Wallet *WalletCallerSession) PendingWhitelistAddition() ([]common.Address, error) {
+	return _Wallet.Contract.PendingWhitelistAddition(&_Wallet.CallOpts)
+}
+
+// PendingWhitelistRemoval is a free data retrieval call binding the contract method 0x294f4025.
+//
+// Solidity: function pendingWhitelistRemoval() constant returns(address[])
+func (_Wallet *WalletCaller) PendingWhitelistRemoval(opts *bind.CallOpts) ([]common.Address, error) {
+	var (
+		ret0 = new([]common.Address)
+	)
+	out := ret0
+	err := _Wallet.contract.Call(opts, out, "pendingWhitelistRemoval")
+	return *ret0, err
+}
+
+// PendingWhitelistRemoval is a free data retrieval call binding the contract method 0x294f4025.
+//
+// Solidity: function pendingWhitelistRemoval() constant returns(address[])
+func (_Wallet *WalletSession) PendingWhitelistRemoval() ([]common.Address, error) {
+	return _Wallet.Contract.PendingWhitelistRemoval(&_Wallet.CallOpts)
+}
+
+// PendingWhitelistRemoval is a free data retrieval call binding the contract method 0x294f4025.
+//
+// Solidity: function pendingWhitelistRemoval() constant returns(address[])
+func (_Wallet *WalletCallerSession) PendingWhitelistRemoval() ([]common.Address, error) {
+	return _Wallet.Contract.PendingWhitelistRemoval(&_Wallet.CallOpts)
+}
+
+// Personal2FA is a free data retrieval call binding the contract method 0x47d125af.
+//
+// Solidity: function personal2FA() constant returns(address)
+func (_Wallet *WalletCaller) Personal2FA(opts *bind.CallOpts) (common.Address, error) {
+	var (
+		ret0 = new(common.Address)
+	)
+	out := ret0
+	err := _Wallet.contract.Call(opts, out, "personal2FA")
+	return *ret0, err
+}
+
+// Personal2FA is a free data retrieval call binding the contract method 0x47d125af.
+//
+// Solidity: function personal2FA() constant returns(address)
+func (_Wallet *WalletSession) Personal2FA() (common.Address, error) {
+	return _Wallet.Contract.Personal2FA(&_Wallet.CallOpts)
+}
+
+// Personal2FA is a free data retrieval call binding the contract method 0x47d125af.
+//
+// Solidity: function personal2FA() constant returns(address)
+func (_Wallet *WalletCallerSession) Personal2FA() (common.Address, error) {
+	return _Wallet.Contract.Personal2FA(&_Wallet.CallOpts)
+}
+
+// Privileged is a free data retrieval call binding the contract method 0xced99cce.
+//
+// Solidity: function privileged() constant returns(bool)
+func (_Wallet *WalletCaller) Privileged(opts *bind.CallOpts) (bool, error) {
+	var (
+		ret0 = new(bool)
+	)
+	out := ret0
+	err := _Wallet.contract.Call(opts, out, "privileged")
+	return *ret0, err
+}
+
+// Privileged is a free data retrieval call binding the contract method 0xced99cce.
+//
+// Solidity: function privileged() constant returns(bool)
+func (_Wallet *WalletSession) Privileged() (bool, error) {
+	return _Wallet.Contract.Privileged(&_Wallet.CallOpts)
+}
+
+// Privileged is a free data retrieval call binding the contract method 0xced99cce.
+//
+// Solidity: function privileged() constant returns(bool)
+func (_Wallet *WalletCallerSession) Privileged() (bool, error) {
+	return _Wallet.Contract.Privileged(&_Wallet.CallOpts)
+}
+
+// RelayNonce is a free data retrieval call binding the contract method 0xcccdc556.
+//
+// Solidity: function relayNonce() constant returns(uint256)
+func (_Wallet *WalletCaller) RelayNonce(opts *bind.CallOpts) (*big.Int, error) {
+	var (
+		ret0 = new(*big.Int)
+	)
+	out := ret0
+	err := _Wallet.contract.Call(opts, out, "relayNonce")
+	return *ret0, err
+}
+
+// RelayNonce is a free data retrieval call binding the contract method 0xcccdc556.
+//
+// Solidity: function relayNonce() constant returns(uint256)
+func (_Wallet *WalletSession) RelayNonce() (*big.Int, error) {
+	return _Wallet.Contract.RelayNonce(&_Wallet.CallOpts)
+}
+
+// RelayNonce is a free data retrieval call binding the contract method 0xcccdc556.
+//
+// Solidity: function relayNonce() constant returns(uint256)
+func (_Wallet *WalletCallerSession) RelayNonce() (*big.Int, error) {
+	return _Wallet.Contract.RelayNonce(&_Wallet.CallOpts)
+}
+
+// SubmittedWhitelistAddition is a free data retrieval call binding the contract method 0x26d05ab2.
+//
+// Solidity: function submittedWhitelistAddition() constant returns(bool)
+func (_Wallet *WalletCaller) SubmittedWhitelistAddition(opts *bind.CallOpts) (bool, error) {
+	var (
+		ret0 = new(bool)
+	)
+	out := ret0
+	err := _Wallet.contract.Call(opts, out, "submittedWhitelistAddition")
+	return *ret0, err
+}
+
+// SubmittedWhitelistAddition is a free data retrieval call binding the contract method 0x26d05ab2.
+//
+// Solidity: function submittedWhitelistAddition() constant returns(bool)
+func (_Wallet *WalletSession) SubmittedWhitelistAddition() (bool, error) {
+	return _Wallet.Contract.SubmittedWhitelistAddition(&_Wallet.CallOpts)
+}
+
+// SubmittedWhitelistAddition is a free data retrieval call binding the contract method 0x26d05ab2.
+//
+// Solidity: function submittedWhitelistAddition() constant returns(bool)
+func (_Wallet *WalletCallerSession) SubmittedWhitelistAddition() (bool, error) {
+	return _Wallet.Contract.SubmittedWhitelistAddition(&_Wallet.CallOpts)
+}
+
+// SubmittedWhitelistRemoval is a free data retrieval call binding the contract method 0xde212bf3.
+//
+// Solidity: function submittedWhitelistRemoval() constant returns(bool)
+func (_Wallet *WalletCaller) SubmittedWhitelistRemoval(opts *bind.CallOpts) (bool, error) {
+	var (
+		ret0 = new(bool)
+	)
+	out := ret0
+	err := _Wallet.contract.Call(opts, out, "submittedWhitelistRemoval")
+	return *ret0, err
+}
+
+// SubmittedWhitelistRemoval is a free data retrieval call binding the contract method 0xde212bf3.
+//
+// Solidity: function submittedWhitelistRemoval() constant returns(bool)
+func (_Wallet *WalletSession) SubmittedWhitelistRemoval() (bool, error) {
+	return _Wallet.Contract.SubmittedWhitelistRemoval(&_Wallet.CallOpts)
+}
+
+// SubmittedWhitelistRemoval is a free data retrieval call binding the contract method 0xde212bf3.
+//
+// Solidity: function submittedWhitelistRemoval() constant returns(bool)
+func (_Wallet *WalletCallerSession) SubmittedWhitelistRemoval() (bool, error) {
+	return _Wallet.Contract.SubmittedWhitelistRemoval(&_Wallet.CallOpts)
+}
+
+// SupportsInterface is a free data retrieval call binding the contract method 0x01ffc9a7.
+//
+// Solidity: function supportsInterface(bytes4 _interfaceID) constant returns(bool)
+func (_Wallet *WalletCaller) SupportsInterface(opts *bind.CallOpts, _interfaceID [4]byte) (bool, error) {
+	var (
+		ret0 = new(bool)
+	)
+	out := ret0
+	err := _Wallet.contract.Call(opts, out, "supportsInterface", _interfaceID)
+	return *ret0, err
+}
+
+// SupportsInterface is a free data retrieval call binding the contract method 0x01ffc9a7.
+//
+// Solidity: function supportsInterface(bytes4 _interfaceID) constant returns(bool)
+func (_Wallet *WalletSession) SupportsInterface(_interfaceID [4]byte) (bool, error) {
+	return _Wallet.Contract.SupportsInterface(&_Wallet.CallOpts, _interfaceID)
+}
+
+// SupportsInterface is a free data retrieval call binding the contract method 0x01ffc9a7.
+//
+// Solidity: function supportsInterface(bytes4 _interfaceID) constant returns(bool)
+func (_Wallet *WalletCallerSession) SupportsInterface(_interfaceID [4]byte) (bool, error) {
+	return _Wallet.Contract.SupportsInterface(&_Wallet.CallOpts, _interfaceID)
+}
+
+// TokenWhitelistNode is a free data retrieval call binding the contract method 0x877337b0.
+//
+// Solidity: function tokenWhitelistNode() constant returns(bytes32)
+func (_Wallet *WalletCaller) TokenWhitelistNode(opts *bind.CallOpts) ([32]byte, error) {
+	var (
+		ret0 = new([32]byte)
+	)
+	out := ret0
+	err := _Wallet.contract.Call(opts, out, "tokenWhitelistNode")
+	return *ret0, err
+}
+
+// TokenWhitelistNode is a free data retrieval call binding the contract method 0x877337b0.
+//
+// Solidity: function tokenWhitelistNode() constant returns(bytes32)
+func (_Wallet *WalletSession) TokenWhitelistNode() ([32]byte, error) {
+	return _Wallet.Contract.TokenWhitelistNode(&_Wallet.CallOpts)
+}
+
+// TokenWhitelistNode is a free data retrieval call binding the contract method 0x877337b0.
+//
+// Solidity: function tokenWhitelistNode() constant returns(bytes32)
+func (_Wallet *WalletCallerSession) TokenWhitelistNode() ([32]byte, error) {
+	return _Wallet.Contract.TokenWhitelistNode(&_Wallet.CallOpts)
+}
+
+// WhitelistArray is a free data retrieval call binding the contract method 0xd251fefc.
+//
+// Solidity: function whitelistArray(uint256 ) constant returns(address)
+func (_Wallet *WalletCaller) WhitelistArray(opts *bind.CallOpts, arg0 *big.Int) (common.Address, error) {
+	var (
+		ret0 = new(common.Address)
+	)
+	out := ret0
+	err := _Wallet.contract.Call(opts, out, "whitelistArray", arg0)
+	return *ret0, err
+}
+
+// WhitelistArray is a free data retrieval call binding the contract method 0xd251fefc.
+//
+// Solidity: function whitelistArray(uint256 ) constant returns(address)
+func (_Wallet *WalletSession) WhitelistArray(arg0 *big.Int) (common.Address, error) {
+	return _Wallet.Contract.WhitelistArray(&_Wallet.CallOpts, arg0)
+}
+
+// WhitelistArray is a free data retrieval call binding the contract method 0xd251fefc.
+//
+// Solidity: function whitelistArray(uint256 ) constant returns(address)
+func (_Wallet *WalletCallerSession) WhitelistArray(arg0 *big.Int) (common.Address, error) {
+	return _Wallet.Contract.WhitelistArray(&_Wallet.CallOpts, arg0)
+}
+
+// WhitelistMap is a free data retrieval call binding the contract method 0x32531c3c.
+//
+// Solidity: function whitelistMap(address ) constant returns(bool)
+func (_Wallet *WalletCaller) WhitelistMap(opts *bind.CallOpts, arg0 common.Address) (bool, error) {
+	var (
+		ret0 = new(bool)
+	)
+	out := ret0
+	err := _Wallet.contract.Call(opts, out, "whitelistMap", arg0)
+	return *ret0, err
+}
+
+// WhitelistMap is a free data retrieval call binding the contract method 0x32531c3c.
+//
+// Solidity: function whitelistMap(address ) constant returns(bool)
+func (_Wallet *WalletSession) WhitelistMap(arg0 common.Address) (bool, error) {
+	return _Wallet.Contract.WhitelistMap(&_Wallet.CallOpts, arg0)
+}
+
+// WhitelistMap is a free data retrieval call binding the contract method 0x32531c3c.
+//
+// Solidity: function whitelistMap(address ) constant returns(bool)
+func (_Wallet *WalletCallerSession) WhitelistMap(arg0 common.Address) (bool, error) {
+	return _Wallet.Contract.WhitelistMap(&_Wallet.CallOpts, arg0)
 }
 
 // BulkTransfer is a paid mutator transaction binding the contract method 0x1aa21fba.
@@ -229,27 +884,6 @@ func (_Wallet *WalletSession) BulkTransfer(_to common.Address, _assets []common.
 // Solidity: function bulkTransfer(address _to, address[] _assets) returns()
 func (_Wallet *WalletTransactorSession) BulkTransfer(_to common.Address, _assets []common.Address) (*types.Transaction, error) {
 	return _Wallet.Contract.BulkTransfer(&_Wallet.TransactOpts, _to, _assets)
-}
-
-// CalculateHash is a paid mutator transaction binding the contract method 0xcd7958dd.
-//
-// Solidity: function calculateHash(address[] _addresses) returns(bytes32)
-func (_Wallet *WalletTransactor) CalculateHash(opts *bind.TransactOpts, _addresses []common.Address) (*types.Transaction, error) {
-	return _Wallet.contract.Transact(opts, "calculateHash", _addresses)
-}
-
-// CalculateHash is a paid mutator transaction binding the contract method 0xcd7958dd.
-//
-// Solidity: function calculateHash(address[] _addresses) returns(bytes32)
-func (_Wallet *WalletSession) CalculateHash(_addresses []common.Address) (*types.Transaction, error) {
-	return _Wallet.Contract.CalculateHash(&_Wallet.TransactOpts, _addresses)
-}
-
-// CalculateHash is a paid mutator transaction binding the contract method 0xcd7958dd.
-//
-// Solidity: function calculateHash(address[] _addresses) returns(bytes32)
-func (_Wallet *WalletTransactorSession) CalculateHash(_addresses []common.Address) (*types.Transaction, error) {
-	return _Wallet.Contract.CalculateHash(&_Wallet.TransactOpts, _addresses)
 }
 
 // CancelWhitelistAddition is a paid mutator transaction binding the contract method 0x100f23fd.
@@ -357,132 +991,6 @@ func (_Wallet *WalletTransactorSession) ConfirmWhitelistRemoval(_hash [32]byte) 
 	return _Wallet.Contract.ConfirmWhitelistRemoval(&_Wallet.TransactOpts, _hash)
 }
 
-// ControllerNode is a paid mutator transaction binding the contract method 0xe2b4ce97.
-//
-// Solidity: function controllerNode() returns(bytes32)
-func (_Wallet *WalletTransactor) ControllerNode(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return _Wallet.contract.Transact(opts, "controllerNode")
-}
-
-// ControllerNode is a paid mutator transaction binding the contract method 0xe2b4ce97.
-//
-// Solidity: function controllerNode() returns(bytes32)
-func (_Wallet *WalletSession) ControllerNode() (*types.Transaction, error) {
-	return _Wallet.Contract.ControllerNode(&_Wallet.TransactOpts)
-}
-
-// ControllerNode is a paid mutator transaction binding the contract method 0xe2b4ce97.
-//
-// Solidity: function controllerNode() returns(bytes32)
-func (_Wallet *WalletTransactorSession) ControllerNode() (*types.Transaction, error) {
-	return _Wallet.Contract.ControllerNode(&_Wallet.TransactOpts)
-}
-
-// ConvertToStablecoin is a paid mutator transaction binding the contract method 0xf36febda.
-//
-// Solidity: function convertToStablecoin(address _token, uint256 _amount) returns(uint256)
-func (_Wallet *WalletTransactor) ConvertToStablecoin(opts *bind.TransactOpts, _token common.Address, _amount *big.Int) (*types.Transaction, error) {
-	return _Wallet.contract.Transact(opts, "convertToStablecoin", _token, _amount)
-}
-
-// ConvertToStablecoin is a paid mutator transaction binding the contract method 0xf36febda.
-//
-// Solidity: function convertToStablecoin(address _token, uint256 _amount) returns(uint256)
-func (_Wallet *WalletSession) ConvertToStablecoin(_token common.Address, _amount *big.Int) (*types.Transaction, error) {
-	return _Wallet.Contract.ConvertToStablecoin(&_Wallet.TransactOpts, _token, _amount)
-}
-
-// ConvertToStablecoin is a paid mutator transaction binding the contract method 0xf36febda.
-//
-// Solidity: function convertToStablecoin(address _token, uint256 _amount) returns(uint256)
-func (_Wallet *WalletTransactorSession) ConvertToStablecoin(_token common.Address, _amount *big.Int) (*types.Transaction, error) {
-	return _Wallet.Contract.ConvertToStablecoin(&_Wallet.TransactOpts, _token, _amount)
-}
-
-// DailyLimitAvailable is a paid mutator transaction binding the contract method 0x45b12efc.
-//
-// Solidity: function dailyLimitAvailable() returns(uint256)
-func (_Wallet *WalletTransactor) DailyLimitAvailable(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return _Wallet.contract.Transact(opts, "dailyLimitAvailable")
-}
-
-// DailyLimitAvailable is a paid mutator transaction binding the contract method 0x45b12efc.
-//
-// Solidity: function dailyLimitAvailable() returns(uint256)
-func (_Wallet *WalletSession) DailyLimitAvailable() (*types.Transaction, error) {
-	return _Wallet.Contract.DailyLimitAvailable(&_Wallet.TransactOpts)
-}
-
-// DailyLimitAvailable is a paid mutator transaction binding the contract method 0x45b12efc.
-//
-// Solidity: function dailyLimitAvailable() returns(uint256)
-func (_Wallet *WalletTransactorSession) DailyLimitAvailable() (*types.Transaction, error) {
-	return _Wallet.Contract.DailyLimitAvailable(&_Wallet.TransactOpts)
-}
-
-// DailyLimitPending is a paid mutator transaction binding the contract method 0x3b8252fa.
-//
-// Solidity: function dailyLimitPending() returns(uint256)
-func (_Wallet *WalletTransactor) DailyLimitPending(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return _Wallet.contract.Transact(opts, "dailyLimitPending")
-}
-
-// DailyLimitPending is a paid mutator transaction binding the contract method 0x3b8252fa.
-//
-// Solidity: function dailyLimitPending() returns(uint256)
-func (_Wallet *WalletSession) DailyLimitPending() (*types.Transaction, error) {
-	return _Wallet.Contract.DailyLimitPending(&_Wallet.TransactOpts)
-}
-
-// DailyLimitPending is a paid mutator transaction binding the contract method 0x3b8252fa.
-//
-// Solidity: function dailyLimitPending() returns(uint256)
-func (_Wallet *WalletTransactorSession) DailyLimitPending() (*types.Transaction, error) {
-	return _Wallet.Contract.DailyLimitPending(&_Wallet.TransactOpts)
-}
-
-// DailyLimitValue is a paid mutator transaction binding the contract method 0x4d9aa248.
-//
-// Solidity: function dailyLimitValue() returns(uint256)
-func (_Wallet *WalletTransactor) DailyLimitValue(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return _Wallet.contract.Transact(opts, "dailyLimitValue")
-}
-
-// DailyLimitValue is a paid mutator transaction binding the contract method 0x4d9aa248.
-//
-// Solidity: function dailyLimitValue() returns(uint256)
-func (_Wallet *WalletSession) DailyLimitValue() (*types.Transaction, error) {
-	return _Wallet.Contract.DailyLimitValue(&_Wallet.TransactOpts)
-}
-
-// DailyLimitValue is a paid mutator transaction binding the contract method 0x4d9aa248.
-//
-// Solidity: function dailyLimitValue() returns(uint256)
-func (_Wallet *WalletTransactorSession) DailyLimitValue() (*types.Transaction, error) {
-	return _Wallet.Contract.DailyLimitValue(&_Wallet.TransactOpts)
-}
-
-// EnsRegistry is a paid mutator transaction binding the contract method 0x7d73b231.
-//
-// Solidity: function ensRegistry() returns(address)
-func (_Wallet *WalletTransactor) EnsRegistry(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return _Wallet.contract.Transact(opts, "ensRegistry")
-}
-
-// EnsRegistry is a paid mutator transaction binding the contract method 0x7d73b231.
-//
-// Solidity: function ensRegistry() returns(address)
-func (_Wallet *WalletSession) EnsRegistry() (*types.Transaction, error) {
-	return _Wallet.Contract.EnsRegistry(&_Wallet.TransactOpts)
-}
-
-// EnsRegistry is a paid mutator transaction binding the contract method 0x7d73b231.
-//
-// Solidity: function ensRegistry() returns(address)
-func (_Wallet *WalletTransactorSession) EnsRegistry() (*types.Transaction, error) {
-	return _Wallet.Contract.EnsRegistry(&_Wallet.TransactOpts)
-}
-
 // ExecutePrivilegedRelayedTransaction is a paid mutator transaction binding the contract method 0xc1e559a3.
 //
 // Solidity: function executePrivilegedRelayedTransaction(uint256 _nonce, bytes _data, bytes _signature) returns()
@@ -567,111 +1075,6 @@ func (_Wallet *WalletTransactorSession) IncreaseRelayNonce() (*types.Transaction
 	return _Wallet.Contract.IncreaseRelayNonce(&_Wallet.TransactOpts)
 }
 
-// IsSetWhitelist is a paid mutator transaction binding the contract method 0xbe40ba79.
-//
-// Solidity: function isSetWhitelist() returns(bool)
-func (_Wallet *WalletTransactor) IsSetWhitelist(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return _Wallet.contract.Transact(opts, "isSetWhitelist")
-}
-
-// IsSetWhitelist is a paid mutator transaction binding the contract method 0xbe40ba79.
-//
-// Solidity: function isSetWhitelist() returns(bool)
-func (_Wallet *WalletSession) IsSetWhitelist() (*types.Transaction, error) {
-	return _Wallet.Contract.IsSetWhitelist(&_Wallet.TransactOpts)
-}
-
-// IsSetWhitelist is a paid mutator transaction binding the contract method 0xbe40ba79.
-//
-// Solidity: function isSetWhitelist() returns(bool)
-func (_Wallet *WalletTransactorSession) IsSetWhitelist() (*types.Transaction, error) {
-	return _Wallet.Contract.IsSetWhitelist(&_Wallet.TransactOpts)
-}
-
-// IsTransferable is a paid mutator transaction binding the contract method 0x2121dc75.
-//
-// Solidity: function isTransferable() returns(bool)
-func (_Wallet *WalletTransactor) IsTransferable(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return _Wallet.contract.Transact(opts, "isTransferable")
-}
-
-// IsTransferable is a paid mutator transaction binding the contract method 0x2121dc75.
-//
-// Solidity: function isTransferable() returns(bool)
-func (_Wallet *WalletSession) IsTransferable() (*types.Transaction, error) {
-	return _Wallet.Contract.IsTransferable(&_Wallet.TransactOpts)
-}
-
-// IsTransferable is a paid mutator transaction binding the contract method 0x2121dc75.
-//
-// Solidity: function isTransferable() returns(bool)
-func (_Wallet *WalletTransactorSession) IsTransferable() (*types.Transaction, error) {
-	return _Wallet.Contract.IsTransferable(&_Wallet.TransactOpts)
-}
-
-// IsValidSignature is a paid mutator transaction binding the contract method 0x1626ba7e.
-//
-// Solidity: function isValidSignature(bytes32 _hashedData, bytes _signature) returns(bytes4)
-func (_Wallet *WalletTransactor) IsValidSignature(opts *bind.TransactOpts, _hashedData [32]byte, _signature []byte) (*types.Transaction, error) {
-	return _Wallet.contract.Transact(opts, "isValidSignature", _hashedData, _signature)
-}
-
-// IsValidSignature is a paid mutator transaction binding the contract method 0x1626ba7e.
-//
-// Solidity: function isValidSignature(bytes32 _hashedData, bytes _signature) returns(bytes4)
-func (_Wallet *WalletSession) IsValidSignature(_hashedData [32]byte, _signature []byte) (*types.Transaction, error) {
-	return _Wallet.Contract.IsValidSignature(&_Wallet.TransactOpts, _hashedData, _signature)
-}
-
-// IsValidSignature is a paid mutator transaction binding the contract method 0x1626ba7e.
-//
-// Solidity: function isValidSignature(bytes32 _hashedData, bytes _signature) returns(bytes4)
-func (_Wallet *WalletTransactorSession) IsValidSignature(_hashedData [32]byte, _signature []byte) (*types.Transaction, error) {
-	return _Wallet.Contract.IsValidSignature(&_Wallet.TransactOpts, _hashedData, _signature)
-}
-
-// IsValidSignature0 is a paid mutator transaction binding the contract method 0x20c13b0b.
-//
-// Solidity: function isValidSignature(bytes _data, bytes _signature) returns(bytes4)
-func (_Wallet *WalletTransactor) IsValidSignature0(opts *bind.TransactOpts, _data []byte, _signature []byte) (*types.Transaction, error) {
-	return _Wallet.contract.Transact(opts, "isValidSignature0", _data, _signature)
-}
-
-// IsValidSignature0 is a paid mutator transaction binding the contract method 0x20c13b0b.
-//
-// Solidity: function isValidSignature(bytes _data, bytes _signature) returns(bytes4)
-func (_Wallet *WalletSession) IsValidSignature0(_data []byte, _signature []byte) (*types.Transaction, error) {
-	return _Wallet.Contract.IsValidSignature0(&_Wallet.TransactOpts, _data, _signature)
-}
-
-// IsValidSignature0 is a paid mutator transaction binding the contract method 0x20c13b0b.
-//
-// Solidity: function isValidSignature(bytes _data, bytes _signature) returns(bytes4)
-func (_Wallet *WalletTransactorSession) IsValidSignature0(_data []byte, _signature []byte) (*types.Transaction, error) {
-	return _Wallet.Contract.IsValidSignature0(&_Wallet.TransactOpts, _data, _signature)
-}
-
-// LicenceNode is a paid mutator transaction binding the contract method 0x747c31d6.
-//
-// Solidity: function licenceNode() returns(bytes32)
-func (_Wallet *WalletTransactor) LicenceNode(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return _Wallet.contract.Transact(opts, "licenceNode")
-}
-
-// LicenceNode is a paid mutator transaction binding the contract method 0x747c31d6.
-//
-// Solidity: function licenceNode() returns(bytes32)
-func (_Wallet *WalletSession) LicenceNode() (*types.Transaction, error) {
-	return _Wallet.Contract.LicenceNode(&_Wallet.TransactOpts)
-}
-
-// LicenceNode is a paid mutator transaction binding the contract method 0x747c31d6.
-//
-// Solidity: function licenceNode() returns(bytes32)
-func (_Wallet *WalletTransactorSession) LicenceNode() (*types.Transaction, error) {
-	return _Wallet.Contract.LicenceNode(&_Wallet.TransactOpts)
-}
-
 // LoadTokenCard is a paid mutator transaction binding the contract method 0x3a43199f.
 //
 // Solidity: function loadTokenCard(address _asset, uint256 _amount) returns()
@@ -691,153 +1094,6 @@ func (_Wallet *WalletSession) LoadTokenCard(_asset common.Address, _amount *big.
 // Solidity: function loadTokenCard(address _asset, uint256 _amount) returns()
 func (_Wallet *WalletTransactorSession) LoadTokenCard(_asset common.Address, _amount *big.Int) (*types.Transaction, error) {
 	return _Wallet.Contract.LoadTokenCard(&_Wallet.TransactOpts, _asset, _amount)
-}
-
-// Monolith2FA is a paid mutator transaction binding the contract method 0xcf0a866b.
-//
-// Solidity: function monolith2FA() returns(bool)
-func (_Wallet *WalletTransactor) Monolith2FA(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return _Wallet.contract.Transact(opts, "monolith2FA")
-}
-
-// Monolith2FA is a paid mutator transaction binding the contract method 0xcf0a866b.
-//
-// Solidity: function monolith2FA() returns(bool)
-func (_Wallet *WalletSession) Monolith2FA() (*types.Transaction, error) {
-	return _Wallet.Contract.Monolith2FA(&_Wallet.TransactOpts)
-}
-
-// Monolith2FA is a paid mutator transaction binding the contract method 0xcf0a866b.
-//
-// Solidity: function monolith2FA() returns(bool)
-func (_Wallet *WalletTransactorSession) Monolith2FA() (*types.Transaction, error) {
-	return _Wallet.Contract.Monolith2FA(&_Wallet.TransactOpts)
-}
-
-// Owner is a paid mutator transaction binding the contract method 0x8da5cb5b.
-//
-// Solidity: function owner() returns(address)
-func (_Wallet *WalletTransactor) Owner(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return _Wallet.contract.Transact(opts, "owner")
-}
-
-// Owner is a paid mutator transaction binding the contract method 0x8da5cb5b.
-//
-// Solidity: function owner() returns(address)
-func (_Wallet *WalletSession) Owner() (*types.Transaction, error) {
-	return _Wallet.Contract.Owner(&_Wallet.TransactOpts)
-}
-
-// Owner is a paid mutator transaction binding the contract method 0x8da5cb5b.
-//
-// Solidity: function owner() returns(address)
-func (_Wallet *WalletTransactorSession) Owner() (*types.Transaction, error) {
-	return _Wallet.Contract.Owner(&_Wallet.TransactOpts)
-}
-
-// PendingWhitelistAddition is a paid mutator transaction binding the contract method 0x47b55a9d.
-//
-// Solidity: function pendingWhitelistAddition() returns(address[])
-func (_Wallet *WalletTransactor) PendingWhitelistAddition(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return _Wallet.contract.Transact(opts, "pendingWhitelistAddition")
-}
-
-// PendingWhitelistAddition is a paid mutator transaction binding the contract method 0x47b55a9d.
-//
-// Solidity: function pendingWhitelistAddition() returns(address[])
-func (_Wallet *WalletSession) PendingWhitelistAddition() (*types.Transaction, error) {
-	return _Wallet.Contract.PendingWhitelistAddition(&_Wallet.TransactOpts)
-}
-
-// PendingWhitelistAddition is a paid mutator transaction binding the contract method 0x47b55a9d.
-//
-// Solidity: function pendingWhitelistAddition() returns(address[])
-func (_Wallet *WalletTransactorSession) PendingWhitelistAddition() (*types.Transaction, error) {
-	return _Wallet.Contract.PendingWhitelistAddition(&_Wallet.TransactOpts)
-}
-
-// PendingWhitelistRemoval is a paid mutator transaction binding the contract method 0x294f4025.
-//
-// Solidity: function pendingWhitelistRemoval() returns(address[])
-func (_Wallet *WalletTransactor) PendingWhitelistRemoval(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return _Wallet.contract.Transact(opts, "pendingWhitelistRemoval")
-}
-
-// PendingWhitelistRemoval is a paid mutator transaction binding the contract method 0x294f4025.
-//
-// Solidity: function pendingWhitelistRemoval() returns(address[])
-func (_Wallet *WalletSession) PendingWhitelistRemoval() (*types.Transaction, error) {
-	return _Wallet.Contract.PendingWhitelistRemoval(&_Wallet.TransactOpts)
-}
-
-// PendingWhitelistRemoval is a paid mutator transaction binding the contract method 0x294f4025.
-//
-// Solidity: function pendingWhitelistRemoval() returns(address[])
-func (_Wallet *WalletTransactorSession) PendingWhitelistRemoval() (*types.Transaction, error) {
-	return _Wallet.Contract.PendingWhitelistRemoval(&_Wallet.TransactOpts)
-}
-
-// Personal2FA is a paid mutator transaction binding the contract method 0x47d125af.
-//
-// Solidity: function personal2FA() returns(address)
-func (_Wallet *WalletTransactor) Personal2FA(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return _Wallet.contract.Transact(opts, "personal2FA")
-}
-
-// Personal2FA is a paid mutator transaction binding the contract method 0x47d125af.
-//
-// Solidity: function personal2FA() returns(address)
-func (_Wallet *WalletSession) Personal2FA() (*types.Transaction, error) {
-	return _Wallet.Contract.Personal2FA(&_Wallet.TransactOpts)
-}
-
-// Personal2FA is a paid mutator transaction binding the contract method 0x47d125af.
-//
-// Solidity: function personal2FA() returns(address)
-func (_Wallet *WalletTransactorSession) Personal2FA() (*types.Transaction, error) {
-	return _Wallet.Contract.Personal2FA(&_Wallet.TransactOpts)
-}
-
-// Privileged is a paid mutator transaction binding the contract method 0xced99cce.
-//
-// Solidity: function privileged() returns(bool)
-func (_Wallet *WalletTransactor) Privileged(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return _Wallet.contract.Transact(opts, "privileged")
-}
-
-// Privileged is a paid mutator transaction binding the contract method 0xced99cce.
-//
-// Solidity: function privileged() returns(bool)
-func (_Wallet *WalletSession) Privileged() (*types.Transaction, error) {
-	return _Wallet.Contract.Privileged(&_Wallet.TransactOpts)
-}
-
-// Privileged is a paid mutator transaction binding the contract method 0xced99cce.
-//
-// Solidity: function privileged() returns(bool)
-func (_Wallet *WalletTransactorSession) Privileged() (*types.Transaction, error) {
-	return _Wallet.Contract.Privileged(&_Wallet.TransactOpts)
-}
-
-// RelayNonce is a paid mutator transaction binding the contract method 0xcccdc556.
-//
-// Solidity: function relayNonce() returns(uint256)
-func (_Wallet *WalletTransactor) RelayNonce(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return _Wallet.contract.Transact(opts, "relayNonce")
-}
-
-// RelayNonce is a paid mutator transaction binding the contract method 0xcccdc556.
-//
-// Solidity: function relayNonce() returns(uint256)
-func (_Wallet *WalletSession) RelayNonce() (*types.Transaction, error) {
-	return _Wallet.Contract.RelayNonce(&_Wallet.TransactOpts)
-}
-
-// RelayNonce is a paid mutator transaction binding the contract method 0xcccdc556.
-//
-// Solidity: function relayNonce() returns(uint256)
-func (_Wallet *WalletTransactorSession) RelayNonce() (*types.Transaction, error) {
-	return _Wallet.Contract.RelayNonce(&_Wallet.TransactOpts)
 }
 
 // RenounceOwnership is a paid mutator transaction binding the contract method 0x715018a6.
@@ -987,90 +1243,6 @@ func (_Wallet *WalletTransactorSession) SubmitWhitelistRemoval(_addresses []comm
 	return _Wallet.Contract.SubmitWhitelistRemoval(&_Wallet.TransactOpts, _addresses)
 }
 
-// SubmittedWhitelistAddition is a paid mutator transaction binding the contract method 0x26d05ab2.
-//
-// Solidity: function submittedWhitelistAddition() returns(bool)
-func (_Wallet *WalletTransactor) SubmittedWhitelistAddition(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return _Wallet.contract.Transact(opts, "submittedWhitelistAddition")
-}
-
-// SubmittedWhitelistAddition is a paid mutator transaction binding the contract method 0x26d05ab2.
-//
-// Solidity: function submittedWhitelistAddition() returns(bool)
-func (_Wallet *WalletSession) SubmittedWhitelistAddition() (*types.Transaction, error) {
-	return _Wallet.Contract.SubmittedWhitelistAddition(&_Wallet.TransactOpts)
-}
-
-// SubmittedWhitelistAddition is a paid mutator transaction binding the contract method 0x26d05ab2.
-//
-// Solidity: function submittedWhitelistAddition() returns(bool)
-func (_Wallet *WalletTransactorSession) SubmittedWhitelistAddition() (*types.Transaction, error) {
-	return _Wallet.Contract.SubmittedWhitelistAddition(&_Wallet.TransactOpts)
-}
-
-// SubmittedWhitelistRemoval is a paid mutator transaction binding the contract method 0xde212bf3.
-//
-// Solidity: function submittedWhitelistRemoval() returns(bool)
-func (_Wallet *WalletTransactor) SubmittedWhitelistRemoval(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return _Wallet.contract.Transact(opts, "submittedWhitelistRemoval")
-}
-
-// SubmittedWhitelistRemoval is a paid mutator transaction binding the contract method 0xde212bf3.
-//
-// Solidity: function submittedWhitelistRemoval() returns(bool)
-func (_Wallet *WalletSession) SubmittedWhitelistRemoval() (*types.Transaction, error) {
-	return _Wallet.Contract.SubmittedWhitelistRemoval(&_Wallet.TransactOpts)
-}
-
-// SubmittedWhitelistRemoval is a paid mutator transaction binding the contract method 0xde212bf3.
-//
-// Solidity: function submittedWhitelistRemoval() returns(bool)
-func (_Wallet *WalletTransactorSession) SubmittedWhitelistRemoval() (*types.Transaction, error) {
-	return _Wallet.Contract.SubmittedWhitelistRemoval(&_Wallet.TransactOpts)
-}
-
-// SupportsInterface is a paid mutator transaction binding the contract method 0x01ffc9a7.
-//
-// Solidity: function supportsInterface(bytes4 _interfaceID) returns(bool)
-func (_Wallet *WalletTransactor) SupportsInterface(opts *bind.TransactOpts, _interfaceID [4]byte) (*types.Transaction, error) {
-	return _Wallet.contract.Transact(opts, "supportsInterface", _interfaceID)
-}
-
-// SupportsInterface is a paid mutator transaction binding the contract method 0x01ffc9a7.
-//
-// Solidity: function supportsInterface(bytes4 _interfaceID) returns(bool)
-func (_Wallet *WalletSession) SupportsInterface(_interfaceID [4]byte) (*types.Transaction, error) {
-	return _Wallet.Contract.SupportsInterface(&_Wallet.TransactOpts, _interfaceID)
-}
-
-// SupportsInterface is a paid mutator transaction binding the contract method 0x01ffc9a7.
-//
-// Solidity: function supportsInterface(bytes4 _interfaceID) returns(bool)
-func (_Wallet *WalletTransactorSession) SupportsInterface(_interfaceID [4]byte) (*types.Transaction, error) {
-	return _Wallet.Contract.SupportsInterface(&_Wallet.TransactOpts, _interfaceID)
-}
-
-// TokenWhitelistNode is a paid mutator transaction binding the contract method 0x877337b0.
-//
-// Solidity: function tokenWhitelistNode() returns(bytes32)
-func (_Wallet *WalletTransactor) TokenWhitelistNode(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return _Wallet.contract.Transact(opts, "tokenWhitelistNode")
-}
-
-// TokenWhitelistNode is a paid mutator transaction binding the contract method 0x877337b0.
-//
-// Solidity: function tokenWhitelistNode() returns(bytes32)
-func (_Wallet *WalletSession) TokenWhitelistNode() (*types.Transaction, error) {
-	return _Wallet.Contract.TokenWhitelistNode(&_Wallet.TransactOpts)
-}
-
-// TokenWhitelistNode is a paid mutator transaction binding the contract method 0x877337b0.
-//
-// Solidity: function tokenWhitelistNode() returns(bytes32)
-func (_Wallet *WalletTransactorSession) TokenWhitelistNode() (*types.Transaction, error) {
-	return _Wallet.Contract.TokenWhitelistNode(&_Wallet.TransactOpts)
-}
-
 // Transfer is a paid mutator transaction binding the contract method 0xbeabacc8.
 //
 // Solidity: function transfer(address _to, address _asset, uint256 _amount) returns()
@@ -1111,48 +1283,6 @@ func (_Wallet *WalletSession) TransferOwnership(_account common.Address, _transf
 // Solidity: function transferOwnership(address _account, bool _transferable) returns()
 func (_Wallet *WalletTransactorSession) TransferOwnership(_account common.Address, _transferable bool) (*types.Transaction, error) {
 	return _Wallet.Contract.TransferOwnership(&_Wallet.TransactOpts, _account, _transferable)
-}
-
-// WhitelistArray is a paid mutator transaction binding the contract method 0xd251fefc.
-//
-// Solidity: function whitelistArray(uint256 ) returns(address)
-func (_Wallet *WalletTransactor) WhitelistArray(opts *bind.TransactOpts, arg0 *big.Int) (*types.Transaction, error) {
-	return _Wallet.contract.Transact(opts, "whitelistArray", arg0)
-}
-
-// WhitelistArray is a paid mutator transaction binding the contract method 0xd251fefc.
-//
-// Solidity: function whitelistArray(uint256 ) returns(address)
-func (_Wallet *WalletSession) WhitelistArray(arg0 *big.Int) (*types.Transaction, error) {
-	return _Wallet.Contract.WhitelistArray(&_Wallet.TransactOpts, arg0)
-}
-
-// WhitelistArray is a paid mutator transaction binding the contract method 0xd251fefc.
-//
-// Solidity: function whitelistArray(uint256 ) returns(address)
-func (_Wallet *WalletTransactorSession) WhitelistArray(arg0 *big.Int) (*types.Transaction, error) {
-	return _Wallet.Contract.WhitelistArray(&_Wallet.TransactOpts, arg0)
-}
-
-// WhitelistMap is a paid mutator transaction binding the contract method 0x32531c3c.
-//
-// Solidity: function whitelistMap(address ) returns(bool)
-func (_Wallet *WalletTransactor) WhitelistMap(opts *bind.TransactOpts, arg0 common.Address) (*types.Transaction, error) {
-	return _Wallet.contract.Transact(opts, "whitelistMap", arg0)
-}
-
-// WhitelistMap is a paid mutator transaction binding the contract method 0x32531c3c.
-//
-// Solidity: function whitelistMap(address ) returns(bool)
-func (_Wallet *WalletSession) WhitelistMap(arg0 common.Address) (*types.Transaction, error) {
-	return _Wallet.Contract.WhitelistMap(&_Wallet.TransactOpts, arg0)
-}
-
-// WhitelistMap is a paid mutator transaction binding the contract method 0x32531c3c.
-//
-// Solidity: function whitelistMap(address ) returns(bool)
-func (_Wallet *WalletTransactorSession) WhitelistMap(arg0 common.Address) (*types.Transaction, error) {
-	return _Wallet.Contract.WhitelistMap(&_Wallet.TransactOpts, arg0)
 }
 
 // WalletAddedToWhitelistIterator is returned from FilterAddedToWhitelist and is used to iterate over the raw logs and unpacked data for AddedToWhitelist events raised by the Wallet contract.
