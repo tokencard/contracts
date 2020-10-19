@@ -6,7 +6,6 @@ import (
 	"math/big"
 	"os"
 	"testing"
-    "math/big"
 
 	"github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/common"

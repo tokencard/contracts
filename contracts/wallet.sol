@@ -35,32 +35,7 @@ import "./internals/ownable.sol";
 import "./internals/tokenWhitelistable.sol";
 import "./internals/transferrable.sol";
 
-<<<<<<< HEAD
-/// @title ControllableOwnable combines Controllable and Ownable
-/// @dev providing an additional modifier to check if Owner or Controller
-contract ControllableOwnable is Controllable, Ownable {
-    /// @dev Check if the sender is the Owner or one of the Controllers
-    modifier onlyOwnerOrController() {
-        require(_isOwner(msg.sender) || _isController(msg.sender), "only owner||controller");
-        _;
-    }
-}
 
-/// @title SelfCallableOwnable allows either owner or the contract itself to call its functions
-/// @dev providing an additional modifier to check if Owner or self is calling
-/// @dev the "self" here is used for the meta transactions
-contract SelfCallableOwnable is Ownable {
-    /// @dev Check if the sender is the Owner or self
-    modifier onlyOwnerOrSelf() {
-        require(_isOwner(msg.sender) || msg.sender == address(this), "only owner||self");
-        _;
-    }
-}
-=======
->>>>>>> 2e32c93f... Modify ControllableOwnable to use 2FA
-
-<<<<<<< HEAD
-=======
 contract NonCustodial2FA is Controllable, Ownable {
 
     event SetOptOption(address _sender, bool _optOption);
@@ -123,7 +98,6 @@ contract SelfCallableOwnable is Ownable {
     }
 }
 
->>>>>>> 157df800... Add generic/opt-out 2FA support
 /// @title AddressWhitelist provides payee-whitelist functionality.
 /// @dev This contract will allow the user to maintain a whitelist of addresses.
 /// @dev These addresses will live outside of the daily limit.
@@ -495,17 +469,8 @@ contract Wallet is ENSResolvable, AddressWhitelist, DailyLimit, ERC165, Transfer
     /// @param _nonce only used for relayed transactions, must match the wallet's relayNonce.
     /// @param _data abi encoded data payload.
     /// @param _signature signed prefix + data.
-<<<<<<< HEAD
-    function executeRelayedTransaction(
-        uint256 _nonce,
-        bytes calldata _data,
-        bytes calldata _signature
-    ) external onlyController {
-        // Expecting prefixed data ("monolith:") indicating relayed transaction...
-=======
     function executeRelayedTransaction(uint _nonce, bytes calldata _data, bytes calldata _signature) external only2FA {
         // expecting prefixed data ("rlx:") indicating relayed transaction...
->>>>>>> 157df800... Add generic/opt-out 2FA support
         // ...and an Ethereum Signed Message to protect user from signing an actual Tx
         uint256 id;
         assembly {

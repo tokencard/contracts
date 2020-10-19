@@ -11,7 +11,6 @@ import (
 	"testing"
 
 	"github.com/Masterminds/semver"
-	"github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
@@ -28,6 +27,7 @@ var Proxy *upgradeability.UpgradeabilityProxy
 var WalletProxyAddress common.Address
 var WalletImplementationAddress common.Address
 
+<<<<<<< HEAD
 func ethCall(tx *types.Transaction) ([]byte, error) {
 	msg, _ := tx.AsMessage(types.HomesteadSigner{})
 
@@ -45,6 +45,10 @@ func ethCall(tx *types.Transaction) ([]byte, error) {
 
 func SignData(chainId *big.Int, address common.Address, nonce *big.Int, data []byte, prv *ecdsa.PrivateKey) ([]byte, error) {
 	relayMessage := fmt.Sprintf("monolith:%s%s%s%s", abi.U256(chainId), address, abi.U256(nonce), data)
+=======
+func SignData(nonce *big.Int, data []byte, prv *ecdsa.PrivateKey) ([]byte, error) {
+	relayMessage := fmt.Sprintf("rlx:%s%s", abi.U256(nonce), data)
+>>>>>>> c4388bec... Fix controller tests
 	hash := crypto.Keccak256([]byte(relayMessage))
 	ethMessage := fmt.Sprintf("\x19Ethereum Signed Message:\n%d%s", len(hash), hash)
 	hash = crypto.Keccak256([]byte(ethMessage))

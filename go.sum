@@ -209,13 +209,8 @@ github.com/tokencard/contracts/v2 v2.3.1 h1:OSYOBbvaY98MOz17L72ah0gF1II/jsHf/LI5
 github.com/tokencard/contracts/v2 v2.3.1/go.mod h1:bRCoTwF0y2MHBr/OuXRKf3s66sMxxzzV8dNx2pZiwSM=
 github.com/tokencard/ethertest v0.7.0/go.mod h1:c+qKrL1Tg3Dg0/lEOnmX/WB9Rv/mitm6ueAn9Ge8UKQ=
 github.com/tokencard/ethertest v0.8.1/go.mod h1:1GTnshKUCoZACOuj+ak3oc5L6DIfxM+P8Nefml8eA3I=
-<<<<<<< HEAD
 github.com/tokencard/ethertest v0.9.1-0.20200731114835-9cf371a9ab63 h1:5tNtJj5yBOiuCcbnhzpb+0MLlYeTQHerZ6+vSr3+fzg=
 github.com/tokencard/ethertest v0.9.1-0.20200731114835-9cf371a9ab63/go.mod h1:NGTJ8DcKF7l+b+mU7YykHhv/pckChUW6zrogmx78pSo=
-=======
-github.com/tokencard/ethertest v0.8.2 h1:u7FXOAeXNXHcaSJCIiTyBx4Yzq/Dd4xVH0/E6zUSlZg=
-github.com/tokencard/ethertest v0.8.2/go.mod h1:1GTnshKUCoZACOuj+ak3oc5L6DIfxM+P8Nefml8eA3I=
->>>>>>> cf03a2e7... Upgrade to ethertest 0.8.2
 github.com/tyler-smith/go-bip39 v1.0.1-0.20181017060643-dbb3b84ba2ef/go.mod h1:sJ5fKU0s6JVwZjjcUEX2zFOnvq0ASQ2K9Zr6cf67kNs=
 github.com/tyler-smith/go-bip39 v1.0.2 h1:+t3w+KwLXO6154GNJY+qUtIxLTmFjfUmpguQT1OlOT8=
 github.com/tyler-smith/go-bip39 v1.0.2/go.mod h1:sJ5fKU0s6JVwZjjcUEX2zFOnvq0ASQ2K9Zr6cf67kNs=
