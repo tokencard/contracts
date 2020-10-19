@@ -10,6 +10,7 @@ import (
 	"strings"
 	"testing"
 
+    "github.com/ethereum/go-ethereum"
 	"github.com/Masterminds/semver"
 	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/common"
@@ -43,9 +44,27 @@ func ethCall(tx *types.Transaction) ([]byte, error) {
 	return Backend.CallContract(context.Background(), calMsg, nil)
 }
 
+<<<<<<< HEAD
 func SignData(chainId *big.Int, address common.Address, nonce *big.Int, data []byte, prv *ecdsa.PrivateKey) ([]byte, error) {
 	relayMessage := fmt.Sprintf("monolith:%s%s%s%s", abi.U256(chainId), address, abi.U256(nonce), data)
 =======
+=======
+func ethCall(tx *types.Transaction) ([]byte, error) {
+	msg, _ := tx.AsMessage(types.HomesteadSigner{})
+
+	calMsg := ethereum.CallMsg{
+		From:     msg.From(),
+		To:       msg.To(),
+		Gas:      msg.Gas(),
+		GasPrice: msg.GasPrice(),
+		Value:    msg.Value(),
+		Data:     msg.Data(),
+	}
+
+	return Backend.CallContract(context.Background(), calMsg, nil)
+}
+
+>>>>>>> 5e23dbf0... Remove focus and add missing ethCall definition
 func SignData(nonce *big.Int, data []byte, prv *ecdsa.PrivateKey) ([]byte, error) {
 	relayMessage := fmt.Sprintf("rlx:%s%s", abi.U256(nonce), data)
 >>>>>>> c4388bec... Fix controller tests

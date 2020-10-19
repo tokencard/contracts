@@ -81,7 +81,7 @@ var _ = Describe("2FA", func() {
 
     })
 
-    FWhen("the owner submits a daily limit of 12K $USD", func() {
+    When("the owner submits a daily limit of 12K $USD", func() {
         BeforeEach(func() {
             tx, err := Wallet.SubmitDailyLimitUpdate(Owner.TransactOpts(), EthToWei(12000))
             Expect(err).ToNot(HaveOccurred())
