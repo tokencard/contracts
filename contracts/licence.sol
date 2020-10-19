@@ -26,6 +26,10 @@ import "./internals/controllable.sol";
 import "./internals/ensResolvable.sol";
 import "./internals/transferrable.sol";
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 139655b1... Upgrade to solc 0.6.4 for Wallet
 /// @title Licence loads the TokenCard and transfers the licence amout to the TKN Holder Contract.
 /// @dev the rest of the amount gets sent to the CryptoFloat
 contract Licence is Transferrable, ENSResolvable, Controllable {

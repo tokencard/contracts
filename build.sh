@@ -2,7 +2,11 @@
 
 set -e -o pipefail
 
+<<<<<<< HEAD
 SOLC_0_6="docker run --rm -u `id -u` -v $PWD:/solidity --workdir /solidity/contracts ethereum/solc:0.6.12 --optimize /=/"
+=======
+SOLC_0_6="docker run --rm -u `id -u` -v $PWD:/solidity --workdir /solidity/contracts ethereum/solc:0.6.4 --optimize /=/"
+>>>>>>> 139655b1... Upgrade to solc 0.6.4 for Wallet
 SOLC_0_5="docker run --rm -u `id -u` -v $PWD:/solidity --workdir /solidity/contracts ethereum/solc:0.5.17 --optimize /=/"
 
 compile_solidity() {
@@ -11,12 +15,24 @@ compile_solidity() {
 }
 
 contracts_0_6=(
+<<<<<<< HEAD
   'controller'
   'gasProxy'
+=======
+  'wallet'
+  'walletCache'
+  'walletDeployer'
+  'mocks/isValidSignatureExporter'
+)
+
+contracts_0_5=(
+  'controller'
+>>>>>>> 139655b1... Upgrade to solc 0.6.4 for Wallet
   'holder'
   'licence'
   'oracle'
   'tokenWhitelist'
+<<<<<<< HEAD
   'wallet'
   'walletCache'
   'walletDeployer'
@@ -35,6 +51,16 @@ contracts_0_6=(
 )
 
 contracts_0_5=(
+=======
+  'mocks/base64Exporter'
+  'mocks/burnerToken'
+  'mocks/bytesUtilsExporter'
+  'mocks/nonCompliantToken'
+  'mocks/oraclize'
+  'mocks/parseIntScientificExporter'
+  'mocks/token'
+  'mocks/tokenWhitelistableExporter'
+>>>>>>> 139655b1... Upgrade to solc 0.6.4 for Wallet
   'externals/ens/ENSRegistry'
   'externals/ens/PublicResolver'
 )
@@ -64,7 +90,10 @@ generate_binding() {
 
 contracts=(
   "controller/Controller controller.go Controller bindings"
+<<<<<<< HEAD
   "gasProxy/GasProxy gasProxy.go GasProxy bindings"
+=======
+>>>>>>> 139655b1... Upgrade to solc 0.6.4 for Wallet
   "holder/Holder holder.go Holder bindings"
   "licence/Licence licence.go Licence bindings"
   "oracle/Oracle oracle.go Oracle bindings"
@@ -72,14 +101,22 @@ contracts=(
   "wallet/Wallet wallet.go Wallet bindings"
   "walletCache/WalletCache walletCache.go WalletCache bindings"
   "walletDeployer/WalletDeployer walletDeployer.go WalletDeployer bindings"
+<<<<<<< HEAD
   "externals/ens/ENSRegistry/ENSRegistry externals/ens/ENSRegistry.go ENSRegistry ens"
   "externals/ens/PublicResolver/PublicResolver externals/ens/PublicResolver.go PublicResolver ens"
   "externals/upgradeability/UpgradeabilityProxy/UpgradeabilityProxy externals/upgradeability/UpgradeabilityProxy.go UpgradeabilityProxy upgradeability"
+=======
+>>>>>>> 139655b1... Upgrade to solc 0.6.4 for Wallet
   "mocks/base64Exporter/Base64Exporter mocks/base64Exporter.go Base64Exporter mocks"
   "mocks/burnerToken/BurnerToken mocks/burnerToken.go BurnerToken mocks"
   "mocks/bytesUtilsExporter/BytesUtilsExporter mocks/bytesUtilsExporter.go BytesUtilsExporter mocks"
   "mocks/isValidSignatureExporter/IsValidSignatureExporter mocks/isValidSignatureExporter.go IsValidSignatureExporter mocks"
   "mocks/nonCompliantToken/NonCompliantToken mocks/nonCompliantToken.go NonCompliantToken mocks"
+<<<<<<< HEAD
+=======
+  "mocks/oraclize/OraclizeAddrResolver mocks/oraclizeAddrResolver.go OraclizeAddrResolver mocks"
+  "mocks/oraclize/OraclizeConnector mocks/oraclizeConnector.go OraclizeConnector mocks"
+>>>>>>> 139655b1... Upgrade to solc 0.6.4 for Wallet
   "mocks/parseIntScientificExporter/ParseIntScientificExporter mocks/parseIntScientificExporter.go ParseIntScientificExporter mocks"
   "mocks/token/Token mocks/token.go Token mocks"
   "mocks/tokenWhitelistableExporter/TokenWhitelistableExporter mocks/tokenWhitelistableExporter.go TokenWhitelistableExporter mocks"

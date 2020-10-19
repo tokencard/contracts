@@ -1,5 +1,8 @@
+<<<<<<< HEAD
 // SPDX-License-Identifier: MIT
 
+=======
+>>>>>>> 139655b1... Upgrade to solc 0.6.4 for Wallet
 pragma solidity ^0.6.0;
 
 /**
@@ -65,6 +68,7 @@ library ECDSA {
         require(signer != address(0), "ECDSA: invalid signature");
 
         return signer;
+<<<<<<< HEAD
     }
 
     function recoverNonMalleable(bytes32 hash, bytes memory signature) internal pure returns (address) {
@@ -96,6 +100,8 @@ library ECDSA {
         require(signer != address(0), "ECDSA: invalid signature");
 
         return signer;
+=======
+>>>>>>> 139655b1... Upgrade to solc 0.6.4 for Wallet
     }
 
     /**

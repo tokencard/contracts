@@ -16,13 +16,17 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+<<<<<<< HEAD
 // SPDX-License-Identifier: GPLv3
 
 pragma solidity ^0.6.11;
+=======
+pragma solidity ^0.6.0;
+>>>>>>> 139655b1... Upgrade to solc 0.6.4 for Wallet
 
 import "./wallet.sol";
 import "./walletCache.sol";
-import "./internals/controllable.sol";
+import "./tmp_0_6/controllable.sol";
 
 //// @title Wallet deployer with pre-caching if wallets functionality.
 contract WalletDeployer is ENSResolvable, Controllable {

@@ -16,9 +16,17 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+<<<<<<< HEAD
 // SPDX-License-Identifier: GPLv3
 
 pragma solidity ^0.6.11;
+=======
+pragma solidity ^0.6.0;
+
+import "./wallet.sol";
+import "./tmp_0_6/ensResolvable.sol";
+import "./tmp_0_6/controllable.sol";
+>>>>>>> 139655b1... Upgrade to solc 0.6.4 for Wallet
 
 import "./externals/upgradeability/UpgradeabilityProxy.sol";
 import "./interfaces/IWallet.sol";

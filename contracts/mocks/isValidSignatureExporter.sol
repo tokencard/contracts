@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 // SPDX-License-Identifier: GPLv3
+=======
+pragma solidity ^0.6.0;
+>>>>>>> 139655b1... Upgrade to solc 0.6.4 for Wallet
 
 pragma solidity ^0.6.11;
 

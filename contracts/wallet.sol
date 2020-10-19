@@ -487,7 +487,7 @@ contract Wallet is ENSResolvable, AddressWhitelist, DailyLimit, ERC165, Transfer
     }
 
     /// @dev Ether can be deposited from any source, so this contract must be payable by anyone.
-    function() external payable {
+    receive() external payable {
         emit Received(msg.sender, msg.value);
     }
 
@@ -689,35 +689,18 @@ contract Wallet is ENSResolvable, AddressWhitelist, DailyLimit, ERC165, Transfer
     /// @param _destination address of the transaction
     /// @param _value ETH amount in wei
     /// @param _data transaction payload binary
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-    function executeTransaction(
+    function _executeTransaction(
         address _destination,
         uint256 _value,
         bytes memory _data
-    ) public onlyOwnerOrSelf returns (bytes memory) {
-=======
-<<<<<<< HEAD
-    function executeTransaction(address _destination, uint256 _value, bytes memory _data) public onlyOwnerOrSelf returns (bytes memory) {
-||||||| constructed merge base
-    function executeTransaction(address _destination, uint _value, bytes memory _data) public onlyOwnerOrSelf returns (bytes memory) {
-=======
-    function _executeTransaction(address _destination, uint _value, bytes memory _data, bool bypass) internal (bytes memory) {
->>>>>>> This is an idea for yannis ...
->>>>>>> e12e77a6... This is an idea for yannis ...
-=======
-    function _executeTransaction(address _destination, uint _value, bytes memory _data, bool _bypass) private returns (bytes memory) {
->>>>>>> c34120e3... Implement changes and compile code
-=======
-    function _executeTransaction(address _destination, uint _value, bytes memory _data) private returns (bytes memory) {
->>>>>>> 505a546c... Remove _bypass param from executeTransaction
+    ) private returns (bytes memory) {
         // If value is send across as a part of this executeTransaction, this will be sent to any payable
         // destination. As a result enforceLimit if destination is not whitelisted.
 
-
         if (!whitelistMap[_destination] && !privileged) {
-            _enforceDailyLimit(_value);
+            // Convert ETH value to stablecoin, 0x0 denotes ETH.
+            uint256 stablecoinValue = convertToStablecoin(address(0), _value);
+            _enforceDailyLimit(stablecoinValue);
         }
         // Check if the destination is a Contract and it is one of our supported tokens
         if (address(_destination).isContract() && _isTokenAvailable(_destination)) {
@@ -729,7 +712,7 @@ contract Wallet is ENSResolvable, AddressWhitelist, DailyLimit, ERC165, Transfer
                 // Convert token amount to stablecoin value.
                 // If the address (of the token contract) is not in the TokenWhitelist used by the convert method...
                 // ...then stablecoinValue will be zero
-                uint stablecoinValue = convertToStablecoin(_destination, amount);
+                uint256 stablecoinValue = convertToStablecoin(_destination, amount);
                 _enforceDailyLimit(stablecoinValue);
             }
             // use callOptionalReturn provided in SafeERC20 in case the ERC20 method
@@ -744,26 +727,12 @@ contract Wallet is ENSResolvable, AddressWhitelist, DailyLimit, ERC165, Transfer
             return b;
         }
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-        (bool success, bytes memory returnData) = _destination.call{value: _value}(_data);
-        require(success, string(returnData));
-=======
-        // set storage (global) bypass in case transfer() or loadTokenCard() is called
-        bypass = _bypass;
-        (bool success, bytes memory returndata) = _destination.call.value(_value)(_data);
+        (bool success, bytes memory returndata) = _destination.call{value: _value}(_data);
         require(success, string(returndata));
-        //reset storage (global) bypass
-        bypass = false;
->>>>>>> 1292d500... Add global bypass to be able to enforce it in transfer and loadTokenCard
-=======
-        (bool success, bytes memory returndata) = _destination.call.value(_value)(_data);
-        require(success, string(returndata));
->>>>>>> 505a546c... Remove _bypass param from executeTransaction
 
-        emit ExecutedTransaction(_destination, _value, _data, returnData);
+        emit ExecutedTransaction(_destination, _value, _data, returndata);
         // returns all of the bytes returned by _destination contract
-        return returnData;
+        return returndata;
     }
 
     /// @dev Implements EIP-1654: receives the hashed message(bytes32)
