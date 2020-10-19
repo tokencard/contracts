@@ -444,7 +444,10 @@ contract Wallet is ENSResolvable, AddressWhitelist, DailyLimit, ERC165, Transfer
     /// @dev Is the registered ENS node identifying the licence contract.
     bytes32 private _licenceNode;
 
-    /// @dev Initializes the wallet top up limit and the vault contract.
+    /// @dev denotes whether the daily limit should be enforced or not
+    bool public bypass;
+
+    /// @dev Constructor initializes the vault with an owner address and daily limit. It also sets up the controllable and tokenWhitelist contracts with the right name registered in ENS.
     /// @param _owner_ is the owner account of the wallet contract.
     /// @param _transferable_ indicates whether the contract ownership can be transferred.
     /// @param _ens_ is the address of the ENS registry.
@@ -525,7 +528,7 @@ contract Wallet is ENSResolvable, AddressWhitelist, DailyLimit, ERC165, Transfer
         // Verify and increase relayNonce to prevent replay attacks from the relayer
         require(_nonce == relayNonce, "tx replay");
         _increaseRelayNonce();
- 
+
         _batchExecuteTransaction(_data, _bypass);
         emit ExecutedRelayedTransaction(_data, _bypass);
     }
@@ -565,10 +568,14 @@ contract Wallet is ENSResolvable, AddressWhitelist, DailyLimit, ERC165, Transfer
     function loadTokenCard(address _asset, uint256 _amount) external payable onlyOwnerOrSelf {
         // check if token is allowed to be used for loading the card
         require(_isTokenLoadable(_asset), "token not loadable");
-        // Convert token amount to stablecoin value.
-        uint256 stablecoinValue = convertToStablecoin(_asset, _amount);
-        // Check against the daily spent limit and update accordingly, require that the value is under remaining limit.
-        _enforceDailyLimit(stablecoinValue);
+         // if global bypass is set
+        if (!bypass){
+            // Convert token amount to stablecoin value.
+            // If the asset is not available (2nd return value) then revertstablecoinValue will be zero
+            uint stablecoinValue = convertToStablecoin(_asset, _amount);
+            // Check against the daily spent limit and update accordingly, require that the value is under remaining limit.
+            _enforceDailyLimit(stablecoinValue);
+        }
         // Get the TKN licenceAddress from ENS
         address licenceAddress = _ensResolve(_licenceNode);
         if (_asset != address(0)) {
@@ -590,7 +597,7 @@ contract Wallet is ENSResolvable, AddressWhitelist, DailyLimit, ERC165, Transfer
     /// it calls executeTransaction() so that the daily limit is enforced.
     /// @param _transactionBatch data encoding the transactions to be sent,
     /// following executeTransaction's format i.e. (destination, value, data)
-    function _batchExecuteTransaction(bytes memory _transactionBatch, bool bypass) private {
+    function _batchExecuteTransaction(bytes memory _transactionBatch, bool _bypass) private {
         uint256 batchLength = _transactionBatch.length + 32; // because the pos starts from 32
         uint256 remainingBytesLength = _transactionBatch.length; // remaining bytes to be processed
         uint256 pos = 32; //the first 32 bytes denote the byte array length, start from actual data
@@ -623,7 +630,7 @@ contract Wallet is ENSResolvable, AddressWhitelist, DailyLimit, ERC165, Transfer
                 data = bytes("");
             }
             // call executeTransaction(), if one of them reverts then the whole batch reverts.
-            if (bypass) {
+            if (_bypass) {
                 _executeTransaction(destination, value, data, true);
             } else {
                 _executeTransaction(destination, value, data, false);
@@ -701,7 +708,7 @@ contract Wallet is ENSResolvable, AddressWhitelist, DailyLimit, ERC165, Transfer
 
         // TODO Need to figure this out 
         //if bypass == false then DO NOT ALLOW calls to executeTransactionBypass
-        //no problem the other calls are external
+        //no problem the other calls are external and they should be only2FA
 
 
         if (!whitelistMap[_destination] && !_bypass) {
@@ -732,8 +739,17 @@ contract Wallet is ENSResolvable, AddressWhitelist, DailyLimit, ERC165, Transfer
             return b;
         }
 
+<<<<<<< HEAD
         (bool success, bytes memory returnData) = _destination.call{value: _value}(_data);
         require(success, string(returnData));
+=======
+        // set storage (global) bypass in case transfer() or loadTokenCard() is called
+        bypass = _bypass;
+        (bool success, bytes memory returndata) = _destination.call.value(_value)(_data);
+        require(success, string(returndata));
+        //reset storage (global) bypass
+        bypass = false;
+>>>>>>> 1292d500... Add global bypass to be able to enforce it in transfer and loadTokenCard
 
         emit ExecutedTransaction(_destination, _value, _data, returnData);
         // returns all of the bytes returned by _destination contract
@@ -763,7 +779,7 @@ contract Wallet is ENSResolvable, AddressWhitelist, DailyLimit, ERC165, Transfer
         require(_to != address(0), "destination=0");
 
         // If address is not whitelisted, take daily limit into account.
-        if (!whitelistMap[_to]) {
+        if (!whitelistMap[_to] && !bypass) {
             // Convert token amount to stablecoin value.
             // If the address (of the token contract) is not in the TokenWhitelist used by the convert method...
             // ...then stablecoinValue will be zero
