@@ -56,10 +56,43 @@ contract SelfCallableOwnable is Ownable {
     }
 }
 
+<<<<<<< HEAD
+=======
+contract NonCustodial2FA is Controllable, Ownable {
+
+    event SetOptOption(address _sender, bool _optOption);
+    event SetPersonal2FA(address _sender, address _p2FA);
+
+    bool optOut;
+    address personal2FA;
+
+    modifier only2FA() {
+        if (optOut){
+            require(msg.sender == personal2FA, "sender is not personal 2FA");
+        }
+        require(_isController(msg.sender), "sender is not a controller");
+        _;
+    }
+
+    function setPersonal2FA(address _p2FA) external onlyOwner {
+        require(_p2FA != address(0), "2FA cannot be set to zero");
+        personal2FA = _p2FA;
+        emit SetPersonal2FA(msg.sender, _p2FA);
+    }
+
+    function setOptOption(bool _optOption) external onlyOwner {
+        require(optOut != _optOption, "no change in opt options");
+        optOut = _optOption;
+        emit SetOptOption(msg.sender, _optOption);
+    }
+
+}
+
+>>>>>>> 157df800... Add generic/opt-out 2FA support
 /// @title AddressWhitelist provides payee-whitelist functionality.
 /// @dev This contract will allow the user to maintain a whitelist of addresses.
 /// @dev These addresses will live outside of the daily limit.
-contract AddressWhitelist is ControllableOwnable, SelfCallableOwnable {
+contract AddressWhitelist is NonCustodial2FA, ControllableOwnable, SelfCallableOwnable {
     using SafeMath for uint256;
 
     event AddedToWhitelist(address _sender, address[] _addresses);
@@ -124,7 +157,7 @@ contract AddressWhitelist is ControllableOwnable, SelfCallableOwnable {
     /// @dev Confirm pending whitelist addition.
     /// @dev This will only ever be applied post 2FA, by one of the Controllers
     /// @param _hash is the hash of the pending whitelist array, a form of lamport lock
-    function confirmWhitelistAddition(bytes32 _hash) external onlyController {
+    function confirmWhitelistAddition(bytes32 _hash) external only2FA {
         // Require that the whitelist addition has been submitted.
         require(submittedWhitelistAddition, "no pending submission");
         // Require that confirmation hash and the hash of the pending whitelist addition match
@@ -147,7 +180,7 @@ contract AddressWhitelist is ControllableOwnable, SelfCallableOwnable {
     }
 
     /// @dev Confirm pending removal of whitelisted addresses.
-    function confirmWhitelistRemoval(bytes32 _hash) external onlyController {
+    function confirmWhitelistRemoval(bytes32 _hash) external only2FA {
         // Require that the pending whitelist is not empty and the operation has been submitted.
         require(submittedWhitelistRemoval, "no pending submission");
         // Require that confirmation hash and the hash of the pending whitelist removal match
@@ -241,7 +274,7 @@ contract AddressWhitelist is ControllableOwnable, SelfCallableOwnable {
 }
 
 /// @title DailyLimit provides daily spend limit functionality.
-contract DailyLimit is ControllableOwnable, SelfCallableOwnable, TokenWhitelistable {
+contract DailyLimit is NonCustodial2FA, ControllableOwnable, SelfCallableOwnable, TokenWhitelistable {
     using SafeMath for uint256;
 
     event InitializedDailyLimit(uint _amount, uint _nextReset);
@@ -252,7 +285,7 @@ contract DailyLimit is ControllableOwnable, SelfCallableOwnable, TokenWhitelista
     uint private _dailyLimit; // The daily limit amount.
     uint private _available; // The remaining amount available for spending in the current 24-hour window.
     uint private _pendingLimit; // The pending new limit value requested in the latest limit update submission.
-    uint private _resetTimestamp; // Denotes the future timestamp when the available daily limit is due to reset again.
+    uint private _resetTimestamp; // Denotes the future timestamp when the available daily limit is due to reset.
 
     /// @dev Constructor initializes the daily limit in wei.
     constructor(uint _limit, bytes32 _tokenWhitelistNode) internal TokenWhitelistable(_tokenWhitelistNode) {
@@ -267,7 +300,7 @@ contract DailyLimit is ControllableOwnable, SelfCallableOwnable, TokenWhitelista
     }
 
     /// @dev Confirm pending set daily limit operation.
-    function confirmDailyLimitUpdate(uint _amount) external onlyController {
+    function confirmDailyLimitUpdate(uint _amount) external only2FA {
         // Require that pending and confirmed limits are the same
         require(_pendingLimit == _amount, "confirmed/submitted limit mismatch");
         // The new limit should be always higher then the current one otherwise no 2FA would be needed
@@ -427,12 +460,17 @@ contract Wallet is ENSResolvable, AddressWhitelist, DailyLimit, ERC165, Transfer
     /// @param _nonce only used for relayed transactions, must match the wallet's relayNonce.
     /// @param _data abi encoded data payload.
     /// @param _signature signed prefix + data.
+<<<<<<< HEAD
     function executeRelayedTransaction(
         uint256 _nonce,
         bytes calldata _data,
         bytes calldata _signature
     ) external onlyController {
         // Expecting prefixed data ("monolith:") indicating relayed transaction...
+=======
+    function executeRelayedTransaction(uint _nonce, bytes calldata _data, bytes calldata _signature) external only2FA {
+        // expecting prefixed data ("rlx:") indicating relayed transaction...
+>>>>>>> 157df800... Add generic/opt-out 2FA support
         // ...and an Ethereum Signed Message to protect user from signing an actual Tx
         uint256 id;
         assembly {
