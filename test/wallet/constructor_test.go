@@ -1,13 +1,11 @@
 package wallet_test
 
 import (
-	"github.com/ethereum/go-ethereum/common"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	"github.com/tokencard/contracts/v3/pkg/bindings"
 	"github.com/tokencard/contracts/v3/pkg/bindings/externals/upgradeability"
 	. "github.com/tokencard/contracts/v3/test/shared"
-	"github.com/tokencard/ethertest"
 )
 
 var _ = Describe("wallet initialization", func() {
@@ -46,6 +44,21 @@ var _ = Describe("wallet initialization", func() {
 			Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("no stablecoin"))
 		})
 
+	It("Should deploy a new wallet", func() {
+		_, tx, _, err := bindings.DeployWallet(
+			BankAccount.TransactOpts(),
+			Backend,
+			Owner.Address(),
+			true,
+			ENSRegistryAddress,
+			TokenWhitelistName,
+			ControllerName,
+			LicenceName,
+			EthToWei(100),
+		)
+		Expect(err).ToNot(HaveOccurred())
+		Backend.Commit()
+		Expect(isSuccessful(tx)).To(BeTrue())
 	})
 
 })
