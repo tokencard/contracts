@@ -249,13 +249,17 @@ var _ = Describe("whitelistAddition", func() {
 			})
 		})
 
-		When("the controller confirms the adding to the whitelist", func() {
+		When("the controller confirms the addition to the whitelist", func() {
 			BeforeEach(func() {
 				pwl, err := WalletProxy.PendingWhitelistAddition(nil)
 				Expect(err).ToNot(HaveOccurred())
 				hash, err := WalletProxy.CalculateHash(nil, pwl)
 				Expect(err).ToNot(HaveOccurred())
+<<<<<<< HEAD
 				tx, err := WalletProxy.ConfirmWhitelistAddition(Controller.TransactOpts(ethertest.WithGasLimit(500000)), hash)
+=======
+				tx, err := Wallet.ConfirmWhitelistAddition(Controller.TransactOpts(), hash)
+>>>>>>> 49bb9917... Add 2FA tests
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 				Expect(isSuccessful(tx)).To(BeTrue())
