@@ -79,7 +79,7 @@ contract WalletDeployer is ENSResolvable, Controllable {
 
         // Sets up the security settings as per the _oldWallet
         if (_initializedSpendLimit) {
-            Wallet(wallet).setSpendLimit(_spendLimit);
+            wallet.setDailyLimit(_spendLimit);
         }
         if (_initializedWhitelist) {
             Wallet(wallet).setWhitelist(_whitelistedAddresses);
