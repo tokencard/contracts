@@ -247,12 +247,12 @@ contract DailyLimit is ControllableOwnable, SelfCallableOwnable, TokenWhitelista
     event InitializedDailyLimit(uint _amount, uint _nextReset);
     event SetDailyLimit(address _sender, uint _amount);
     event SubmittedDailyLimitUpdate(uint _amount);
-    event UpdatedAvailableDailyLimit();
+    event UpdatedAvailableDailyLimit(uint _amount, uint _nextReset);
 
     uint private _value; // The daily limit amount.
     uint private _available; // The remaining amount available in the current 24-hour window.
     uint private _pending; // The pending new limit value requested in the latest limit update submission.
-    uint private _updateTimestamp; // Denotes the time that the available daily limit was last updated.
+    uint private _resetTimestamp; // Denotes the future timestamp when the available daily limit is due to reset again.
 
     /// @dev Constructor initializes the daily limit in wei.
     constructor(uint _limit, bytes32 _tokenWhitelistNode) internal TokenWhitelistable(_tokenWhitelistNode) {
@@ -262,8 +262,8 @@ contract DailyLimit is ControllableOwnable, SelfCallableOwnable, TokenWhitelista
         _value = limitBaseUnits;
         _available = limitBaseUnits;
         _pending = limitBaseUnits;
-        _updateTimestamp = now;
-        emit InitializedDailyLimit(limitBaseUnits, _updateTimestamp.add(24 hours));
+        _resetTimestamp = now.add(24 hours);
+        emit UpdatedAvailableDailyLimit(limitBaseUnits, _resetTimestamp);
     }
 
     /// @dev Confirm pending set daily limit operation.
@@ -287,7 +287,7 @@ contract DailyLimit is ControllableOwnable, SelfCallableOwnable, TokenWhitelista
     /// @dev Returns the available daily limit/balance, accounts for daily limit reset.
     /// @return amount of available to spend within the current day in base units.
     function dailyLimitAvailable() external view returns (uint) {
-        if (now > _updateTimestamp.add(24 hours)) {
+        if (now > _resetTimestamp) {
             return _value;
         } else {
             return _available;
@@ -317,6 +317,7 @@ contract DailyLimit is ControllableOwnable, SelfCallableOwnable, TokenWhitelista
         _updateAvailableDailyLimit();
         require(_available >= _amount, "available<amount");
         _available = _available.sub(_amount);
+        emit UpdatedAvailableDailyLimit(_available, _resetTimestamp);
     }
 
     /// @dev Modify the daily limit and spend available based on the provided value.
@@ -327,18 +328,18 @@ contract DailyLimit is ControllableOwnable, SelfCallableOwnable, TokenWhitelista
         // Lower the available limit if it's higher than the new daily limit.
         if (_available > _value) {
             _available = _value;
+            emit UpdatedAvailableDailyLimit(_available, _resetTimestamp);
         }
         emit SetDailyLimit(msg.sender, _amount);
     }
 
     /// @dev Update available limit based on the daily reset.
     function _updateAvailableDailyLimit() private {
-        if (now > _updateTimestamp.add(24 hours)) {
+        if (now > _resetTimestamp) {
             // Update the current timestamp.
-            _updateTimestamp = now;
+            _resetTimestamp = now.add(24 hours);
             // Set the available limit to the current daily limit.
             _available = _value;
-            emit UpdatedAvailableDailyLimit();
         }
     }
 
