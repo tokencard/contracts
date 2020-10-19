@@ -47,8 +47,15 @@ contract WalletCache is ENSResolvable, Controllable {
     bytes32 public tokenWhitelistNode = _DEFAULT_TOKEN_WHITELIST_NODE;
     bytes32 public walletDeployerNode = _DEFAULT_WALLET_DEPLOYER_NODE;
 
+<<<<<<< HEAD
     address public walletImplementation;
     uint256 public defaultSpendLimit;
+=======
+    Wallet[] public cachedWallets;
+
+    address public ens;
+    uint public defaultDailyLimit;
+>>>>>>> ea2874b0... Remove 'spendLimit' references from wallet and deployer/cache
 
     address payable[] public cachedWallets;
 
@@ -57,16 +64,23 @@ contract WalletCache is ENSResolvable, Controllable {
     constructor(
         address _walletImplementation_,
         address _ens_,
-        uint256 _defaultSpendLimit_,
+        uint256 _defaultDailyLimit_,
         bytes32 _controllerNode_,
         bytes32 _licenceNode_,
         bytes32 _tokenWhitelistNode_,
         bytes32 _walletDeployerNode_
+<<<<<<< HEAD
     ) public {
         _initializeENSResolvable(_ens_);
         _initializeControllable(_controllerNode_);
         walletImplementation = _walletImplementation_;
         defaultSpendLimit = _defaultSpendLimit_;
+=======
+    ) public ENSResolvable(_ens_) Controllable(_controllerNode_) {
+
+        ens = _ens_;
+        defaultDailyLimit = _defaultDailyLimit_;
+>>>>>>> ea2874b0... Remove 'spendLimit' references from wallet and deployer/cache
 
         // Set licenceNode or use default
         if (_licenceNode_ != bytes32(0)) {
@@ -87,9 +101,28 @@ contract WalletCache is ENSResolvable, Controllable {
         _;
     }
 
+<<<<<<< HEAD
     /// @notice returns the number of pre-cached wallets.
     function cachedWalletsCount() external view returns (uint256) {
         return cachedWallets.length;
+=======
+    /// @notice This public method allows anyone to pre-cache wallets
+    function cacheWallet() public {
+        // the address(uint160()) cast is done as the Wallet owner (1st argument) needs to be payable
+        Wallet wallet = new Wallet(
+            address(uint160(_ensResolve(walletDeployerNode))),
+            true,
+            ens,
+            tokenWhitelistNode,
+            controllerNode(),
+            licenceNode,
+            defaultDailyLimit
+        );
+
+        cachedWallets.push(wallet);
+
+        emit CachedWallet(wallet);
+>>>>>>> ea2874b0... Remove 'spendLimit' references from wallet and deployer/cache
     }
 
     /// @notice This public method allows only the wallet deployer to pop pre-cached wallets or create a new one in case there aren't any
