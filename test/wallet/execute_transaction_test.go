@@ -28,7 +28,7 @@ var _ = Describe("executeTransaction", func() {
             Backend.Commit()
             Expect(isSuccessful(tx)).To(BeTrue())
 
-            tx, err = Wallet.SetDailyLimit(Owner.TransactOpts(), EthToWei(100))
+            tx, err = Wallet.SubmitDailyLimitUpdate(Owner.TransactOpts(), EthToWei(100))
 			Expect(err).ToNot(HaveOccurred())
 			Backend.Commit()
 			Expect(isSuccessful(tx)).To(BeTrue())

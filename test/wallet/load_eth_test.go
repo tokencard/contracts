@@ -92,7 +92,7 @@ var _ = Describe("wallet load eth", func() {
 	When("the wallet has 102 ETH and the daily limit is set to 101 ETH", func() {
 
 		BeforeEach(func() {
-			tx, err := Wallet.SetDailyLimit(Owner.TransactOpts(), EthToWei(101))
+			tx, err := Wallet.SubmitDailyLimitUpdate(Owner.TransactOpts(), EthToWei(101))
 			Expect(err).ToNot(HaveOccurred())
 			Backend.Commit()
 			Expect(isSuccessful(tx)).To(BeTrue())

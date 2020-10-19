@@ -14,7 +14,7 @@ import (
 
 var _ = Describe("bulk_transfer", func() {
 
-	When("the wallet has enough ETH and a DailyLimit of 1000$", func() {
+	When("the wallet has enough ETH and a DailyLimit of 2000$", func() {
 		BeforeEach(func() {
 			BankAccount.MustTransfer(Backend, WalletAddress, EthToWei(1))
 			BankAccount.MustTransfer(Backend, Controller.Address(), EthToWei(1))
@@ -35,7 +35,7 @@ var _ = Describe("bulk_transfer", func() {
 		})
 
 		BeforeEach(func() {
-			tx, err := Wallet.SetDailyLimit(Owner.TransactOpts(), EthToWei(2000))
+			tx, err := Wallet.SubmitDailyLimitUpdate(Owner.TransactOpts(), EthToWei(2000))
 			Expect(err).ToNot(HaveOccurred())
 			Backend.Commit()
 			Expect(isSuccessful(tx)).To(BeTrue())

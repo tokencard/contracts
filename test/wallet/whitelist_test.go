@@ -13,7 +13,7 @@ import (
 var _ = Describe("initializeWhitelist", func() {
 
 	BeforeEach(func() {
-		tx, err := Wallet.SetDailyLimit(Owner.TransactOpts(), EthToWei(1))
+		tx, err := Wallet.SubmitDailyLimitUpdate(Owner.TransactOpts(), EthToWei(1))
 		Expect(err).ToNot(HaveOccurred())
 		Backend.Commit()
 		Expect(isSuccessful(tx)).To(BeTrue())
