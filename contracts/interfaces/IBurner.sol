@@ -16,8 +16,11 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+<<<<<<< HEAD:contracts/interfaces/IBurner.sol
 // SPDX-License-Identifier: GPLv3
 
+=======
+>>>>>>> f6d9eb58... Move more contracts(controller, holder, licence) to solc 0.6:contracts/internals/burner.sol
 pragma solidity ^0.6.0;
 
 

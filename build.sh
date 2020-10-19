@@ -2,11 +2,7 @@
 
 set -e -o pipefail
 
-<<<<<<< HEAD
 SOLC_0_6="docker run --rm -u `id -u` -v $PWD:/solidity --workdir /solidity/contracts ethereum/solc:0.6.12 --optimize /=/"
-=======
-SOLC_0_6="docker run --rm -u `id -u` -v $PWD:/solidity --workdir /solidity/contracts ethereum/solc:0.6.4 --optimize /=/"
->>>>>>> 139655b1... Upgrade to solc 0.6.4 for Wallet
 SOLC_0_5="docker run --rm -u `id -u` -v $PWD:/solidity --workdir /solidity/contracts ethereum/solc:0.5.17 --optimize /=/"
 
 compile_solidity() {
@@ -16,9 +12,15 @@ compile_solidity() {
 
 contracts_0_6=(
 <<<<<<< HEAD
+<<<<<<< HEAD
   'controller'
   'gasProxy'
 =======
+=======
+  'controller'
+  'holder'
+  'licence'
+>>>>>>> f6d9eb58... Move more contracts(controller, holder, licence) to solc 0.6
   'wallet'
   'walletCache'
   'walletDeployer'
@@ -26,10 +28,13 @@ contracts_0_6=(
 )
 
 contracts_0_5=(
+<<<<<<< HEAD
   'controller'
 >>>>>>> 139655b1... Upgrade to solc 0.6.4 for Wallet
   'holder'
   'licence'
+=======
+>>>>>>> f6d9eb58... Move more contracts(controller, holder, licence) to solc 0.6
   'oracle'
   'tokenWhitelist'
 <<<<<<< HEAD

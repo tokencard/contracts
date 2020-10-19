@@ -16,6 +16,7 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+<<<<<<< HEAD
 // SPDX-License-Identifier: GPLv3
 
 pragma solidity ^0.6.11;
@@ -28,6 +29,15 @@ import "./internals/transferrable.sol";
 
 <<<<<<< HEAD
 =======
+=======
+pragma solidity ^0.6.0;
+
+import "./tmp_0_6/controllable.sol";
+import "./tmp_0_6/ensResolvable.sol";
+import "./tmp_0_6/SafeERC20.sol";
+import "./tmp_0_6/SafeMath.sol";
+import "./tmp_0_6/transferrable.sol";
+>>>>>>> f6d9eb58... Move more contracts(controller, holder, licence) to solc 0.6
 
 >>>>>>> 139655b1... Upgrade to solc 0.6.4 for Wallet
 /// @title Licence loads the TokenCard and transfers the licence amout to the TKN Holder Contract.
@@ -102,7 +112,11 @@ contract Licence is Transferrable, ENSResolvable, Controllable {
         }
     }
 
+<<<<<<< HEAD
     /// @dev Ether can be deposited from any source, so this contract should be payable by anyone.
+=======
+    /// @notice Ether can be received from any source, so this contract should be payable by anyone.
+>>>>>>> f6d9eb58... Move more contracts(controller, holder, licence) to solc 0.6
     receive() external payable {}
 
     /// @dev this allows for people to see the scaled licence amount

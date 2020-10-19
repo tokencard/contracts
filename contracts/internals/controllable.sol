@@ -18,7 +18,12 @@
 
 // SPDX-License-Identifier: GPLv3
 
+<<<<<<< HEAD
 pragma solidity ^0.6.11;
+=======
+import "../interfaces/IController.sol";
+import "./ensResolvable.sol";
+>>>>>>> f6d9eb58... Move more contracts(controller, holder, licence) to solc 0.6
 
 import "./ensResolvable.sol";
 import "../controller.sol";
