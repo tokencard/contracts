@@ -52,7 +52,7 @@
 
 // SPDX-License-Identifier: ApacheV2
 
-pragma solidity >=0.5.0;
+pragma solidity ^0.6.0;
 
 library strings {
     struct slice {

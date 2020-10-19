@@ -18,19 +18,15 @@
 
 // SPDX-License-Identifier: GPLv3
 
-<<<<<<< HEAD
 pragma solidity ^0.6.11;
-=======
-import "../interfaces/IController.sol";
-import "./ensResolvable.sol";
->>>>>>> f6d9eb58... Move more contracts(controller, holder, licence) to solc 0.6
 
+import "../interfaces/IController.sol";
 import "./ensResolvable.sol";
 import "../controller.sol";
 import "../externals/initializable.sol";
 
 /// @title Controllable implements access control functionality of the Controller found via ENS.
-contract Controllable is ENSResolvable {
+abstract contract Controllable is ENSResolvable {
     // Default values for mainnet ENS
     // controller.tokencard.eth
     bytes32 private constant _DEFAULT_CONTROLLER_NODE = 0x7f2ce995617d2816b426c5c8698c5ec2952f7a34bb10f38326f74933d5893697;

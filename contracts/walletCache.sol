@@ -16,18 +16,13 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-<<<<<<< HEAD
 // SPDX-License-Identifier: GPLv3
 
 pragma solidity ^0.6.11;
-=======
-pragma solidity ^0.6.0;
 
+import "./internals/controllable.sol";
+import "./internals/ensResolvable.sol";
 import "./wallet.sol";
-import "./tmp_0_6/ensResolvable.sol";
-import "./tmp_0_6/controllable.sol";
->>>>>>> 139655b1... Upgrade to solc 0.6.4 for Wallet
-
 import "./externals/upgradeability/UpgradeabilityProxy.sol";
 import "./interfaces/IWallet.sol";
 import "./internals/controllable.sol";
@@ -55,21 +50,11 @@ contract WalletCache is ENSResolvable, Controllable {
     bytes32 public tokenWhitelistNode = _DEFAULT_TOKEN_WHITELIST_NODE;
     bytes32 public walletDeployerNode = _DEFAULT_WALLET_DEPLOYER_NODE;
 
-<<<<<<< HEAD
     address public walletImplementation;
-    uint256 public defaultSpendLimit;
-=======
-    Wallet[] public cachedWallets;
-
     address public ens;
-<<<<<<< HEAD
-    uint public defaultDailyLimit;
->>>>>>> ea2874b0... Remove 'spendLimit' references from wallet and deployer/cache
-
+    //Wallet[] public cachedWallets;
     address payable[] public cachedWallets;
-=======
     uint public defaultDailyLimit; //in stablecoin absolute value (NOT base units!) e.g. 10K USD
->>>>>>> 511d3647... Use stablecoin as daily limit
 
     /// @notice parameters are passed in so that they can be used to construct new instances of the wallet
     /// @dev pass in bytes32 to use the default, production node labels for ENS

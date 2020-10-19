@@ -34,12 +34,16 @@ contracts_0_6=(
   'walletDeployer'
   'mocks/base64Exporter'
   'mocks/bytesUtilsExporter'
+  'mocks/burnerToken'
   'mocks/isValidSignatureExporter'
+  'mocks/nonCompliantToken'
   'mocks/parseIntScientificExporter'
+  'mocks/token'
   'mocks/tokenWhitelistableExporter'
 )
 
 contracts_0_5=(
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -87,6 +91,8 @@ contracts_0_5=(
 >>>>>>> 139655b1... Upgrade to solc 0.6.4 for Wallet
 =======
 >>>>>>> d923f3c2... Bump TokenWhitelist's solc version to 0.6.4
+=======
+>>>>>>> f88ddeae... Use 0.6 version for all files except for ENS
   'externals/ens/ENSRegistry'
   'externals/ens/PublicResolver'
 )

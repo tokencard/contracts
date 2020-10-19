@@ -32,12 +32,20 @@ import "./internals/transferrable.sol";
 =======
 pragma solidity ^0.6.0;
 
+<<<<<<< HEAD
 import "./tmp_0_6/controllable.sol";
 import "./tmp_0_6/ensResolvable.sol";
 import "./tmp_0_6/SafeERC20.sol";
 import "./tmp_0_6/SafeMath.sol";
 import "./tmp_0_6/transferrable.sol";
 >>>>>>> f6d9eb58... Move more contracts(controller, holder, licence) to solc 0.6
+=======
+import "./externals/SafeERC20.sol";
+import "./externals/SafeMath.sol";
+import "./internals/controllable.sol";
+import "./internals/ensResolvable.sol";
+import "./internals/transferrable.sol";
+>>>>>>> f88ddeae... Use 0.6 version for all files except for ENS
 
 >>>>>>> 139655b1... Upgrade to solc 0.6.4 for Wallet
 /// @title Licence loads the TokenCard and transfers the licence amout to the TKN Holder Contract.
