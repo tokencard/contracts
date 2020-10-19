@@ -24,7 +24,7 @@ var _ = Describe("Migrate Wallet", func() {
 
 			RandomProxyAddress := deployInitProxy(Owner.Address(), EthToWei(2))
 
-			tx, err := WalletDeployer.MigrateWallet(Controller.TransactOpts(), Owner.Address(), RandomProxyAddress, false, false, false, false, EthToWei(2), FinneyToWei(1), EthToWei(1), []common.Address{common.HexToAddress("0x1"), common.HexToAddress("0x2")})
+			tx, err = WalletDeployer.MigrateWallet(Controller.TransactOpts(), Owner.Address(), RandomWalletAddress, false, false, EthToWei(2), []common.Address{common.HexToAddress("0x1"), common.HexToAddress("0x2")})
 			Expect(err).ToNot(HaveOccurred())
 			Backend.Commit()
 			Expect(isSuccessful(tx)).To(BeTrue())
@@ -40,20 +40,8 @@ var _ = Describe("Migrate Wallet", func() {
 			Expect(initialized).To(BeFalse())
 		})
 
-		It("should NOT make the GasTopUpLimit updateable", func() {
-			initialized, err := MigratedWallet.GasTopUpLimitControllerConfirmationRequired(nil)
-			Expect(err).ToNot(HaveOccurred())
-			Expect(initialized).To(BeFalse())
-		})
-
-		It("should NOT make SpendLimit updateable", func() {
+		It("should NOT set the spendLimitControllerConfirmationRequired flag", func() {
 			initialized, err := MigratedWallet.SpendLimitControllerConfirmationRequired(nil)
-			Expect(err).ToNot(HaveOccurred())
-			Expect(initialized).To(BeFalse())
-		})
-
-		It("should NOT make LoadLimit updateable", func() {
-			initialized, err := MigratedWallet.LoadLimitControllerConfirmationRequired(nil)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(initialized).To(BeFalse())
 		})
@@ -74,18 +62,6 @@ var _ = Describe("Migrate Wallet", func() {
 			Expect(sl.String()).To(Equal(EthToWei(1).String()))
 		})
 
-		It("should NOT update the  gasTopUp limit to 1 finney", func() {
-			sl, err := MigratedWallet.GasTopUpLimitValue(nil)
-			Expect(err).ToNot(HaveOccurred())
-			Expect(sl.String()).To(Equal(FinneyToWei(500).String()))
-		})
-
-		It("should NOT increase the loadLimit", func() {
-			sl, err := MigratedWallet.LoadLimitValue(nil)
-			Expect(err).ToNot(HaveOccurred())
-			Expect(sl.String()).To(Equal(GweiToWei(10).String()))
-		})
-
 	})
 
 	When("no wallets are cached and a controller migrates a Wallet and send 1000 wei", func() {
@@ -99,9 +75,7 @@ var _ = Describe("Migrate Wallet", func() {
 			privateKey, _ := crypto.GenerateKey()
 			RandomOwner = crypto.PubkeyToAddress(privateKey.PublicKey)
 
-			RandomProxyAddress = deployInitProxy(RandomOwner, EthToWei(2))
-
-			tx, err = WalletDeployer.MigrateWallet(Controller.TransactOpts(ethertest.WithValue(big.NewInt(1000))), RandomOwner, RandomProxyAddress, true, true, true, true, EthToWei(2), FinneyToWei(1), GweiToWei(1), []common.Address{common.HexToAddress("0x1"), common.HexToAddress("0x2")})
+			tx, err := WalletDeployer.MigrateWallet(Controller.TransactOpts(ethertest.WithValue(big.NewInt(1000))), RandomOwner, RandomWalletAddress, true, true, EthToWei(2), []common.Address{common.HexToAddress("0x1"), common.HexToAddress("0x2")})
 			Expect(err).ToNot(HaveOccurred())
 			Backend.Commit()
 			Expect(isSuccessful(tx)).To(BeTrue())
@@ -140,7 +114,7 @@ var _ = Describe("Migrate Wallet", func() {
 		})
 
 		It("should fail if a wallet is already deployed/migrated for this owner", func() {
-			tx, err = WalletDeployer.MigrateWallet(Controller.TransactOpts(ethertest.WithGasLimit(5000000)), RandomOwner, RandomProxyAddress, true, true, true, true, EthToWei(2), FinneyToWei(1), EthToWei(1000), []common.Address{common.HexToAddress("0x1"), common.HexToAddress("0x2")})
+			tx, err = WalletDeployer.MigrateWallet(Controller.TransactOpts(ethertest.WithGasLimit(5000000)), RandomOwner, RandomWalletAddress, true, true, EthToWei(2), []common.Address{common.HexToAddress("0x1"), common.HexToAddress("0x2")})
 			Expect(err).ToNot(HaveOccurred())
 			Backend.Commit()
 			Expect(isSuccessful(tx)).To(BeFalse())
@@ -189,76 +163,14 @@ var _ = Describe("Migrate Wallet", func() {
 				Expect(sl.String()).To(Equal(EthToWei(2).String()))
 			})
 
-			It("should make SpendLimit updateable", func() {
+			It("should update the spendLimitControllerConfirmationRequired flag", func() {
 				initialized, err := MigratedWallet.SpendLimitControllerConfirmationRequired(nil)
 				Expect(err).ToNot(HaveOccurred())
 				Expect(initialized).To(BeTrue())
 			})
 
-			It("should update the gasTopUp limit to 1 finney", func() {
-				sl, err := MigratedWallet.GasTopUpLimitValue(nil)
-				Expect(err).ToNot(HaveOccurred())
-				Expect(sl.String()).To(Equal(FinneyToWei(1).String()))
-			})
-
-			It("should decrease the available  gasTopUpLimit  to 1 Finney", func() {
-				av, err := MigratedWallet.GasTopUpLimitAvailable(nil)
-				Expect(err).ToNot(HaveOccurred())
-				Expect(av.String()).To(Equal(FinneyToWei(1).String()))
-			})
-
-			It("should make GasToUpLimit updateable", func() {
-				initialized, err := MigratedWallet.GasTopUpLimitControllerConfirmationRequired(nil)
-				Expect(err).ToNot(HaveOccurred())
-				Expect(initialized).To(BeTrue())
-			})
-
-			It("should emit a setGasTopUpLimit event", func() {
-				it, err := MigratedWallet.FilterSetGasTopUpLimit(nil)
-				Expect(err).ToNot(HaveOccurred())
-				Expect(it.Next()).To(BeTrue())
-				evt := it.Event
-				Expect(it.Next()).To(BeFalse())
-				Expect(evt.Sender).To(Equal(WalletDeployerAddress))
-				Expect(evt.Amount).To(Equal(FinneyToWei(1)))
-			})
-
-			It("should make LoadLimit updateable", func() {
-				initialized, err := MigratedWallet.LoadLimitControllerConfirmationRequired(nil)
-				Expect(err).ToNot(HaveOccurred())
-				Expect(initialized).To(BeTrue())
-			})
-
-			It("should emit a setLoadLimit set event", func() {
-				it, err := MigratedWallet.FilterSetLoadLimit(nil)
-				Expect(err).ToNot(HaveOccurred())
-				Expect(it.Next()).To(BeTrue())
-				evt := it.Event
-				Expect(it.Next()).To(BeFalse())
-				Expect(evt.Sender).To(Equal(WalletDeployerAddress))
-				Expect(evt.Amount).To(Equal(GweiToWei(1)))
-			})
-
-			It("should decrease the available loadLimit to 1000 USD", func() {
-				av, err := MigratedWallet.LoadLimitAvailable(nil)
-				Expect(err).ToNot(HaveOccurred())
-				Expect(av.String()).To(Equal(GweiToWei(1).String()))
-			})
-
-			It("should decrease the loadLimit to 1000 USD", func() {
-				sl, err := MigratedWallet.LoadLimitValue(nil)
-				Expect(err).ToNot(HaveOccurred())
-				Expect(sl.String()).To(Equal(GweiToWei(1).String()))
-			})
-
 			It("should update the Whitelist initializedWhitelist flag", func() {
 				initialized, err := MigratedWallet.IsSetWhitelist(nil)
-				Expect(err).ToNot(HaveOccurred())
-				Expect(initialized).To(BeTrue())
-			})
-
-			It("should update the TopUpLimit initializedTopup flag", func() {
-				initialized, err := MigratedWallet.GasTopUpLimitControllerConfirmationRequired(nil)
 				Expect(err).ToNot(HaveOccurred())
 				Expect(initialized).To(BeTrue())
 			})
@@ -290,7 +202,7 @@ var _ = Describe("Migrate Wallet", func() {
 		It("should fail", func() {
 			RandomProxyAddress := deployInitProxy(Owner.Address(), EthToWei(2))
 
-			tx, err := WalletDeployer.MigrateWallet(Controller.TransactOpts(ethertest.WithGasLimit(5000000)), Controller.Address(), RandomProxyAddress, false, false, false, false, EthToWei(2), FinneyToWei(1), EthToWei(1000), []common.Address{common.HexToAddress("0x1"), common.HexToAddress("0x2")})
+			tx, err = WalletDeployer.MigrateWallet(Controller.TransactOpts(ethertest.WithGasLimit(5000000)), Controller.Address(), RandomWalletAddress, false, false, EthToWei(2), []common.Address{common.HexToAddress("0x1"), common.HexToAddress("0x2")})
 			Expect(err).ToNot(HaveOccurred())
 			Backend.Commit()
 			Expect(isSuccessful(tx)).To(BeFalse())
@@ -301,7 +213,7 @@ var _ = Describe("Migrate Wallet", func() {
 
 	When("a random account tries to migrate a Wallet", func() {
 		It("should fail", func() {
-			tx, err := WalletDeployer.MigrateWallet(RandomAccount.TransactOpts(ethertest.WithGasLimit(5000000)), Owner.Address(), RandomAccount.Address(), false, false, false, false, EthToWei(1), FinneyToWei(2), EthToWei(1000), []common.Address{common.HexToAddress("0x1"), common.HexToAddress("0x2")})
+			tx, err := WalletDeployer.MigrateWallet(RandomAccount.TransactOpts(ethertest.WithGasLimit(5000000)), Owner.Address(), RandomAccount.Address(), false, false, EthToWei(1), []common.Address{common.HexToAddress("0x1"), common.HexToAddress("0x2")})
 			Expect(err).ToNot(HaveOccurred())
 			Backend.Commit()
 			Expect(isSuccessful(tx)).To(BeFalse())
@@ -326,7 +238,7 @@ var _ = Describe("Migrate Wallet", func() {
 
 				RandomProxyAddress = deployInitProxy(Owner.Address(), EthToWei(2))
 
-				tx, err = WalletDeployer.MigrateWallet(Controller.TransactOpts(), Owner.Address(), RandomProxyAddress, false, false, false, false, EthToWei(1), FinneyToWei(2), EthToWei(1000), []common.Address{common.HexToAddress("0x1"), common.HexToAddress("0x2")})
+				tx, err := WalletDeployer.MigrateWallet(Controller.TransactOpts(), Owner.Address(), RandomWalletAddress, false, false, EthToWei(1), []common.Address{common.HexToAddress("0x1"), common.HexToAddress("0x2")})
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 				Expect(isSuccessful(tx)).To(BeTrue())

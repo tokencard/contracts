@@ -192,6 +192,7 @@ github.com/stretchr/testify v1.4.0 h1:2E4SXV/wtOkTonXsotYi4li6zVWxYlZuYNCXe9XRJy
 github.com/stretchr/testify v1.4.0/go.mod h1:j7eGeouHqKxXV5pUuKE4zz7dFj8WfuZ+81PSLYec5m4=
 github.com/syndtr/goleveldb v1.0.1-0.20190923125748-758128399b1d h1:gZZadD8H+fF+n9CmNhYL1Y0dJB+kLOmKd7FbPJLeGHs=
 github.com/syndtr/goleveldb v1.0.1-0.20190923125748-758128399b1d/go.mod h1:9OrXJhf154huy1nPWmuSrkgjPUtUNhA+Zmy+6AESzuA=
+github.com/tokencard/contracts v1.5.8 h1:hUlZFRCEQiGMFS9NP6ze1BMXOLOJT4tKc58iRIXSRFQ=
 github.com/tokencard/ethertest v0.9.1-0.20200731114835-9cf371a9ab63 h1:5tNtJj5yBOiuCcbnhzpb+0MLlYeTQHerZ6+vSr3+fzg=
 github.com/tokencard/ethertest v0.9.1-0.20200731114835-9cf371a9ab63/go.mod h1:NGTJ8DcKF7l+b+mU7YykHhv/pckChUW6zrogmx78pSo=
 github.com/tyler-smith/go-bip39 v1.0.1-0.20181017060643-dbb3b84ba2ef/go.mod h1:sJ5fKU0s6JVwZjjcUEX2zFOnvq0ASQ2K9Zr6cf67kNs=
