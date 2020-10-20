@@ -178,7 +178,11 @@ var _ = AfterEach(func() {
 
 var _ = AfterSuite(func() {
 	if allPassed {
+<<<<<<< HEAD
 		TestRig.ExpectMinimumCoverage("wallet.sol", 95.00)
+=======
+		TestRig.ExpectMinimumCoverage("wallet.sol", 96.00)
+>>>>>>> 8e3e859d... Upgrade solc version in tooling and build script
 		TestRig.PrintGasUsage(os.Stdout)
 	}
 })
