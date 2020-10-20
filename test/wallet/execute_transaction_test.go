@@ -12,7 +12,6 @@ import (
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	"github.com/tokencard/contracts/v3/pkg/bindings"
-	"github.com/tokencard/contracts/v3/pkg/bindings/externals/upgradeability"
 	. "github.com/tokencard/contracts/v3/test/shared"
 	"github.com/tokencard/ethertest"
 )
@@ -23,12 +22,12 @@ var _ = Describe("executeTransaction", func() {
 		BeforeEach(func() {
 			BankAccount.MustTransfer(Backend, WalletAddress, EthToWei(101))
 
-            tx, err := TokenWhitelist.UpdateTokenRate(ControllerAdmin.TransactOpts(), StablecoinAddress, EthToWei(1),big.NewInt(20180913153211))
-            Expect(err).ToNot(HaveOccurred())
-            Backend.Commit()
-            Expect(isSuccessful(tx)).To(BeTrue())
+			tx, err := TokenWhitelist.UpdateTokenRate(ControllerAdmin.TransactOpts(), StablecoinAddress, EthToWei(1), big.NewInt(20180913153211))
+			Expect(err).ToNot(HaveOccurred())
+			Backend.Commit()
+			Expect(isSuccessful(tx)).To(BeTrue())
 
-            tx, err = Wallet.SubmitDailyLimitUpdate(Owner.TransactOpts(), EthToWei(100))
+			tx, err = Wallet.SubmitDailyLimitUpdate(Owner.TransactOpts(), EthToWei(100))
 			Expect(err).ToNot(HaveOccurred())
 			Backend.Commit()
 			Expect(isSuccessful(tx)).To(BeTrue())
