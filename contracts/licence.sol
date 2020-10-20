@@ -48,10 +48,13 @@ import "./internals/transferrable.sol";
 >>>>>>> f88ddeae... Use 0.6 version for all files except for ENS
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> 139655b1... Upgrade to solc 0.6.4 for Wallet
 =======
 
 >>>>>>> 6ec79955... Upgrade security tools to solc 0.6
+=======
+>>>>>>> 68763a47... Upgrade prettier and remove wallet.sol from ingore list
 /// @title Licence loads the TokenCard and transfers the licence amout to the TKN Holder Contract.
 /// @dev the rest of the amount gets sent to the CryptoFloat
 contract Licence is Transferrable, ENSResolvable, Controllable {

@@ -2,8 +2,11 @@
 
 pragma solidity ^0.6.11;
 
+<<<<<<< HEAD
 import "../externals/SafeMath.sol";
 
+=======
+>>>>>>> 68763a47... Upgrade prettier and remove wallet.sol from ingore list
 /// @title NonCompliantToken is a mock ERC20 token that is not compatible with the ERC20 interface.
 contract NonCompliantToken {
     using SafeMath for uint256;

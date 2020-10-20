@@ -2,7 +2,6 @@ pragma solidity ^0.6.0;
 
 import "../interfaces/IChainlink.sol";
 
-
 contract ChainlinkMock is IChainlink {
     int256 public rate;
 

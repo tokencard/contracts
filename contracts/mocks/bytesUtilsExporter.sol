@@ -2,8 +2,11 @@
 
 pragma solidity ^0.6.11;
 
+<<<<<<< HEAD
 import "../internals/bytesUtils.sol";
 
+=======
+>>>>>>> 68763a47... Upgrade prettier and remove wallet.sol from ingore list
 contract BytesUtilsExporter {
     using BytesUtils for bytes;
 

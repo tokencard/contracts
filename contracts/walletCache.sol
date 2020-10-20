@@ -23,10 +23,13 @@ pragma solidity ^0.6.11;
 import "./internals/controllable.sol";
 import "./internals/ensResolvable.sol";
 import "./wallet.sol";
+<<<<<<< HEAD
 import "./externals/upgradeability/UpgradeabilityProxy.sol";
 import "./interfaces/IWallet.sol";
 import "./internals/controllable.sol";
 import "./internals/ensResolvable.sol";
+=======
+>>>>>>> 68763a47... Upgrade prettier and remove wallet.sol from ingore list
 
 /// @title IWalletCache interface describes a method for poping an already cached wallet
 interface IWalletCache {

@@ -2,8 +2,11 @@
 
 pragma solidity ^0.6.11;
 
+<<<<<<< HEAD
 import "../externals/SafeMath.sol";
 
+=======
+>>>>>>> 68763a47... Upgrade prettier and remove wallet.sol from ingore list
 /// @title Token is a mock ERC20 token used for testing.
 contract Token {
     using SafeMath for uint256;

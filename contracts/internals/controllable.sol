@@ -20,11 +20,14 @@
 
 pragma solidity ^0.6.11;
 
+<<<<<<< HEAD
 import "../interfaces/IController.sol";
 import "./ensResolvable.sol";
 import "../controller.sol";
 import "../externals/initializable.sol";
 
+=======
+>>>>>>> 68763a47... Upgrade prettier and remove wallet.sol from ingore list
 /// @title Controllable implements access control functionality of the Controller found via ENS.
 abstract contract Controllable is ENSResolvable {
     // Default values for mainnet ENS

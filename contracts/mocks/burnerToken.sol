@@ -2,8 +2,11 @@
 
 pragma solidity ^0.6.11;
 
+<<<<<<< HEAD
 import "../externals/SafeMath.sol";
 
+=======
+>>>>>>> 68763a47... Upgrade prettier and remove wallet.sol from ingore list
 interface TokenHolder {
     function burn(address, uint256) external returns (bool);
 }

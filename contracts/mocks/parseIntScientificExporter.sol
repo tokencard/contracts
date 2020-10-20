@@ -2,8 +2,11 @@
 
 pragma solidity ^0.6.11;
 
+<<<<<<< HEAD
 import "../internals/parseIntScientific.sol";
 
+=======
+>>>>>>> 68763a47... Upgrade prettier and remove wallet.sol from ingore list
 contract ParseIntScientificExporter is ParseIntScientific {
     /// @dev exports _parseIntScientific(string) as an external function.
     function parseIntScientific(string calldata _a) external pure returns (uint256) {

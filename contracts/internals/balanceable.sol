@@ -20,8 +20,11 @@
 
 pragma solidity ^0.6.11;
 
+<<<<<<< HEAD
 import "../interfaces/IERC20.sol";
 
+=======
+>>>>>>> 68763a47... Upgrade prettier and remove wallet.sol from ingore list
 /// @title Balanceable - This is a contract used to get a balance
 contract Balanceable {
     /// @dev This function is used to get a balance.

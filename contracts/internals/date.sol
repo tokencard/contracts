@@ -18,8 +18,11 @@
 
 // SPDX-License-Identifier: GPLv3
 
+<<<<<<< HEAD
 pragma solidity ^0.6.11;
 
+=======
+>>>>>>> 68763a47... Upgrade prettier and remove wallet.sol from ingore list
 /// @title Date provides redimentary date parsing functionality.
 /// @notice This method parses months found in an ISO date to a number
 contract Date {

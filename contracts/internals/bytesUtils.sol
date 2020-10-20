@@ -20,8 +20,11 @@
 
 pragma solidity ^0.6.11;
 
+<<<<<<< HEAD
 import "../externals/SafeMath.sol";
 
+=======
+>>>>>>> 68763a47... Upgrade prettier and remove wallet.sol from ingore list
 /// @title BytesUtils provides basic byte slicing and casting functionality.
 library BytesUtils {
     using SafeMath for uint256;

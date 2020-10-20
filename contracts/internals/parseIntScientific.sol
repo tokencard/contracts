@@ -20,8 +20,11 @@
 
 pragma solidity ^0.6.11;
 
+<<<<<<< HEAD
 import "../externals/SafeMath.sol";
 
+=======
+>>>>>>> 68763a47... Upgrade prettier and remove wallet.sol from ingore list
 /// @title ParseIntScientific provides floating point in scientific notation (e.g. e-5) parsing functionality.
 contract ParseIntScientific {
     using SafeMath for uint256;

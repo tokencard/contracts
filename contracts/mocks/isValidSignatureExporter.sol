@@ -6,8 +6,11 @@ pragma solidity ^0.6.0;
 
 pragma solidity ^0.6.11;
 
+<<<<<<< HEAD
 import "../wallet.sol";
 
+=======
+>>>>>>> 68763a47... Upgrade prettier and remove wallet.sol from ingore list
 interface IWallet {
     function isValidSignature(bytes calldata, bytes calldata) external view returns (bytes4);
 }
