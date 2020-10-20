@@ -37,7 +37,6 @@ contract ENSResolvable is Initializable {
         _;
 =======
 contract ENSResolvable {
-
     /// @notice _ensRegistry points to the ENS registry smart contract.
     address private _ensRegistry;
 

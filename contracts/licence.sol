@@ -47,7 +47,11 @@ import "./internals/ensResolvable.sol";
 import "./internals/transferrable.sol";
 >>>>>>> f88ddeae... Use 0.6 version for all files except for ENS
 
+<<<<<<< HEAD
 >>>>>>> 139655b1... Upgrade to solc 0.6.4 for Wallet
+=======
+
+>>>>>>> 6ec79955... Upgrade security tools to solc 0.6
 /// @title Licence loads the TokenCard and transfers the licence amout to the TKN Holder Contract.
 /// @dev the rest of the amount gets sent to the CryptoFloat
 contract Licence is Transferrable, ENSResolvable, Controllable {
@@ -108,7 +112,11 @@ contract Licence is Transferrable, ENSResolvable, Controllable {
         address _tknAddress_,
         address _ens_,
         bytes32 _controllerNode_
+<<<<<<< HEAD
     ) public {
+=======
+    ) public ENSResolvable(_ens_) Controllable(_controllerNode_) {
+>>>>>>> 6ec79955... Upgrade security tools to solc 0.6
         require(MIN_AMOUNT_SCALE <= _licence_ && _licence_ <= MAX_AMOUNT_SCALE, "licence amount out of range");
         _initializeENSResolvable(_ens_);
         _initializeControllable(_controllerNode_);
@@ -248,7 +256,11 @@ contract Licence is Transferrable, ENSResolvable, Controllable {
         emit TransferredToCryptoFloat(msg.sender, _cryptoFloat, _asset, loadAmount);
     }
 
+<<<<<<< HEAD
     //// @dev Withdraw tokens from the smart contract to the specified account.
+=======
+    //// @notice Withdraw tokens from the smart contract to the specified account.
+>>>>>>> 6ec79955... Upgrade security tools to solc 0.6
     function claim(
         address payable _to,
         address _asset,

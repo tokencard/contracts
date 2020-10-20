@@ -52,7 +52,11 @@ contract TokenWhitelistable is ENSResolvable {
     /// @return bool whether the token is loadable to the TokenCard.
     /// @return bool whether the token is redeemable to the TKN Holder Contract.
     /// @return uint of the lastUpdated time of the token's exchange rate.
+<<<<<<< HEAD
     function _getStablecoinInfo()
+=======
+    function _getTokenInfo(address _a)
+>>>>>>> 6ec79955... Upgrade security tools to solc 0.6
         internal
         view
         returns (
@@ -65,7 +69,11 @@ contract TokenWhitelistable is ENSResolvable {
             uint256
         )
     {
+<<<<<<< HEAD
         return ITokenWhitelist(_ensResolve(_tokenWhitelistNode)).getStablecoinInfo();
+=======
+        return ITokenWhitelist(_ensResolve(_tokenWhitelistNode)).getTokenInfo(_a);
+>>>>>>> 6ec79955... Upgrade security tools to solc 0.6
     }
 
     /// @notice This returns all of the fields for a given token.
@@ -77,7 +85,11 @@ contract TokenWhitelistable is ENSResolvable {
     /// @return bool whether the token is loadable to the TokenCard.
     /// @return bool whether the token is redeemable to the TKN Holder Contract.
     /// @return uint of the lastUpdated time of the token's exchange rate.
+<<<<<<< HEAD
     function _getTokenInfo(address _a)
+=======
+    function _getStablecoinInfo()
+>>>>>>> 6ec79955... Upgrade security tools to solc 0.6
         internal
         view
         returns (
@@ -90,7 +102,35 @@ contract TokenWhitelistable is ENSResolvable {
             uint256
         )
     {
+<<<<<<< HEAD
         return ITokenWhitelist(_ensResolve(_tokenWhitelistNode)).getTokenInfo(_a);
+=======
+        return ITokenWhitelist(_ensResolve(_tokenWhitelistNode)).getStablecoinInfo();
+    }
+
+    /// @notice This returns an array of our whitelisted addresses.
+    /// @return address[] of our whitelisted tokens.
+    function _tokenAddressArray() internal view returns (address[] memory) {
+        return ITokenWhitelist(_ensResolve(_tokenWhitelistNode)).tokenAddressArray();
+    }
+
+    /// @notice This returns an array of all redeemable token addresses.
+    /// @return address[] of redeemable tokens.
+    function _redeemableTokens() internal view returns (address[] memory) {
+        return ITokenWhitelist(_ensResolve(_tokenWhitelistNode)).redeemableTokens();
+    }
+
+    /// @notice Update ERC20 token exchange rate.
+    /// @param _token ERC20 token contract address.
+    /// @param _rate ERC20 token exchange rate in wei.
+    /// @param _updateDate date for the token updates. This will be compared to when oracle updates are received.
+    function _updateTokenRate(
+        address _token,
+        uint256 _rate,
+        uint256 _updateDate
+    ) internal {
+        ITokenWhitelist(_ensResolve(_tokenWhitelistNode)).updateTokenRate(_token, _rate, _updateDate);
+>>>>>>> 6ec79955... Upgrade security tools to solc 0.6
     }
 
     /// @notice Initializes the TokenWhitelistable object.

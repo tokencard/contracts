@@ -25,7 +25,6 @@ import (
 
 var ErrFailedTransaction = errors.New("transaction failed")
 
-
 func EthToWei(amount int) *big.Int {
 	r := big.NewInt(1000000000000000000)
 	return r.Mul(r, big.NewInt(int64(amount)))
@@ -133,10 +132,7 @@ var ControllerOwner *ethertest.Account
 var ControllerAdmin *ethertest.Account
 var RandomAccount *ethertest.Account
 var BankAccount *ethertest.Account
-<<<<<<< HEAD
 var VanityAccount *ethertest.Account
-=======
->>>>>>> 3556dcf4... Fix oracle tets
 
 var TestRig = ethertest.NewTestRig()
 var Backend ethertest.TestBackend
@@ -212,14 +208,11 @@ func InitializeBackend() error {
 	Controller = ethertest.NewAccount()
 	RandomAccount = ethertest.NewAccount()
 	BankAccount = ethertest.NewAccount()
-<<<<<<< HEAD
 	pk, err := crypto.HexToECDSA("d7f10b274ba922f7cdc99c84a7f51fd9f85deaa634cbc3d5c25b497eb7bee224")
 	if err != nil {
 		return err
 	}
 	VanityAccount = ethertest.NewAccountFromPrivKey(pk)
-=======
->>>>>>> 3556dcf4... Fix oracle tets
 
 	TestRig.AddGenesisAccountAllocation(ControllerOwner.Address(), EthToWei(1))
 	TestRig.AddGenesisAccountAllocation(ControllerAdmin.Address(), EthToWei(1))
@@ -380,11 +373,7 @@ func InitializeBackend() error {
 		}
 	}
 
-<<<<<<< HEAD
 	TokenWhitelistAddress, tx, TokenWhitelist, err = bindings.DeployTokenWhitelist(BankAccount.TransactOpts(), Backend, ENSRegistryAddress, OracleNode, ControllerNode, StablecoinAddress)
-=======
-	TokenWhitelistAddress, tx, TokenWhitelist, err = bindings.DeployTokenWhitelist(BankAccount.TransactOpts(), Backend, ENSRegistryAddress, OracleName, ControllerName, StablecoinAddress)
->>>>>>> 3556dcf4... Fix oracle tets
 	if err != nil {
 		return err
 	}
@@ -418,11 +407,7 @@ func InitializeBackend() error {
 	}
 
 	// Deploy the Token oracle contract.
-<<<<<<< HEAD
 	OracleAddress, tx, Oracle, err = bindings.DeployOracle(BankAccount.TransactOpts(), Backend, ENSRegistryAddress, ControllerNode, TokenWhitelistNode)
-=======
-	OracleAddress, tx, Oracle, err = bindings.DeployOracle(BankAccount.TransactOpts(), Backend, ENSRegistryAddress, ControllerName, TokenWhitelistName)
->>>>>>> 3556dcf4... Fix oracle tets
 	if err != nil {
 		return err
 	}
