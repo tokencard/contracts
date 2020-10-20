@@ -302,6 +302,20 @@ const WALLET_ABI = `[
         "payable": false,
         "stateMutability": "nonpayable",
         "type": "function"
+	},
+	{
+        "constant": false,
+        "inputs": [
+            {
+                "name": "_addresses",
+                "type": "address[]"
+            }
+        ],
+        "name": "removeFromWhitelist",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
     },
     {
         "constant": false,

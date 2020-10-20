@@ -1,9 +1,11 @@
 package wallet_test
 
-<<<<<<< HEAD
 import (
+	"fmt"
 	"math/big"
+	"strings"
 
+	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/common"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -217,6 +219,7 @@ var _ = Describe("whitelistAddition", func() {
 			Expect(it.Next()).To(BeTrue())
 			evt := it.Event
 			Expect(it.Next()).To(BeFalse())
+<<<<<<< HEAD
 			Expect(evt.Addresses).To(Equal([]common.Address{RandomAccount.Address()}))
 			hash, err := WalletProxy.CalculateHash(nil, []common.Address{RandomAccount.Address()})
 			Expect(it.Next()).To(BeFalse())
@@ -338,11 +341,39 @@ var _ = Describe("whitelistAddition", func() {
 				hash, err = WalletProxy.CalculateHash(nil, pwl)
 				Expect(err).ToNot(HaveOccurred())
 				tx, err := WalletProxy.CancelWhitelistAddition(Controller.TransactOpts(), hash)
+=======
+			Expect(evt.Sender).To(Equal(WalletAddress))
+			Expect(evt.Addresses).To(Equal([]common.Address{RandomAccount.Address()}))
+		})
+
+		It("should add an entry to the Whitelist Array", func() {
+			a, err := Wallet.WhitelistArray(nil, big.NewInt(0))
+			Expect(err).ToNot(HaveOccurred())
+			Expect(a).To(Equal(RandomAccount.Address()))
+		})
+
+		When("I add more addresses to the whitelist", func() {
+
+			BeforeEach(func() {
+				a, err := abi.JSON(strings.NewReader(WALLET_ABI))
+				Expect(err).ToNot(HaveOccurred())
+				data, err := a.Pack("addToWhitelist", []common.Address{common.HexToAddress("0x1"), common.HexToAddress("0x2")})
+				Expect(err).ToNot(HaveOccurred())
+
+				batch := []byte(fmt.Sprintf("%s%s%s%s", WalletAddress, abi.U256(EthToWei(0)), abi.U256(big.NewInt(int64(len(data)))), data))
+
+				nonce := big.NewInt(1)
+				signature, err := SignData(nonce, batch, Owner.PrivKey())
+				Expect(err).ToNot(HaveOccurred())
+
+				tx, err := Wallet.ExecutePrivilegedRelayedTransaction(Controller.TransactOpts(), nonce, batch, signature)
+>>>>>>> 4e12e399... Fix dailyLimit and whitelist tests
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 				Expect(isSuccessful(tx)).To(BeTrue())
 			})
 
+<<<<<<< HEAD
 			It("should emit CancelWhitelistAddition event", func() {
 				it, err := WalletProxy.FilterCancelledWhitelistAddition(nil)
 				Expect(err).ToNot(HaveOccurred())
@@ -626,10 +657,91 @@ var _ = Describe("whitelistRemoval", func() {
 
 				It("should emit CancelWhitelistRemoval event", func() {
 					it, err := WalletProxy.FilterCancelledWhitelistRemoval(nil)
+=======
+			When("I try remove a non-existent address", func() {
+				It("should fail", func() {
+					a, err := abi.JSON(strings.NewReader(WALLET_ABI))
+					Expect(err).ToNot(HaveOccurred())
+					data, err := a.Pack("removeFromWhitelist", []common.Address{common.HexToAddress("0x0")})
+					Expect(err).ToNot(HaveOccurred())
+
+					batch := []byte(fmt.Sprintf("%s%s%s%s", WalletAddress, abi.U256(EthToWei(0)), abi.U256(big.NewInt(int64(len(data)))), data))
+
+					nonce := big.NewInt(2)
+					signature, err := SignData(nonce, batch, Owner.PrivKey())
+					Expect(err).ToNot(HaveOccurred())
+
+					tx, err := Wallet.ExecutePrivilegedRelayedTransaction(Controller.TransactOpts(ethertest.WithGasLimit(100000)), nonce, batch, signature)
+					Expect(err).ToNot(HaveOccurred())
+					Backend.Commit()
+					Expect(isSuccessful(tx)).To(BeFalse())
+					returnData, _ := ethCall(tx)
+					Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("Address not whitelisted"))
+				})
+			})
+
+			When("I try to remove from the whitelist and provide duplicate entries", func() {
+				BeforeEach(func() {
+					a, err := abi.JSON(strings.NewReader(WALLET_ABI))
+					Expect(err).ToNot(HaveOccurred())
+					data, err := a.Pack("removeFromWhitelist", []common.Address{common.HexToAddress("0x1"), common.HexToAddress("0x1")})
+					Expect(err).ToNot(HaveOccurred())
+
+					batch := []byte(fmt.Sprintf("%s%s%s%s", WalletAddress, abi.U256(EthToWei(0)), abi.U256(big.NewInt(int64(len(data)))), data))
+
+					nonce := big.NewInt(2)
+					signature, err := SignData(nonce, batch, Owner.PrivKey())
+					Expect(err).ToNot(HaveOccurred())
+
+					tx, err := Wallet.ExecutePrivilegedRelayedTransaction(Controller.TransactOpts(ethertest.WithGasLimit(100000)), nonce, batch, signature)
+					Expect(err).ToNot(HaveOccurred())
+					Backend.Commit()
+					Expect(isSuccessful(tx)).To(BeFalse())
+					returnData, _ := ethCall(tx)
+					Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("Address not whitelisted"))
+				})
+			})
+
+			When("I remove 2 addressses from the whitelist", func() {
+
+				BeforeEach(func() {
+					a, err := abi.JSON(strings.NewReader(WALLET_ABI))
+					Expect(err).ToNot(HaveOccurred())
+					data, err := a.Pack("removeFromWhitelist", []common.Address{common.HexToAddress("0x2"), RandomAccount.Address()})
+					Expect(err).ToNot(HaveOccurred())
+
+					batch := []byte(fmt.Sprintf("%s%s%s%s", WalletAddress, abi.U256(EthToWei(0)), abi.U256(big.NewInt(int64(len(data)))), data))
+
+					nonce := big.NewInt(2)
+					signature, err := SignData(nonce, batch, Owner.PrivKey())
+					Expect(err).ToNot(HaveOccurred())
+
+					tx, err := Wallet.ExecutePrivilegedRelayedTransaction(Controller.TransactOpts(), nonce, batch, signature)
+					Expect(err).ToNot(HaveOccurred())
+					Backend.Commit()
+					Expect(isSuccessful(tx)).To(BeTrue())
+				})
+
+				It("should leave 0x1 in the whitelist", func() {
+					isWhitelisted, err := Wallet.WhitelistMap(nil, common.HexToAddress("0x1"))
+					Expect(err).ToNot(HaveOccurred())
+					Expect(isWhitelisted).To(BeTrue())
+				})
+
+				It("should keep 0x1 in the Whitelist Array", func() {
+					ra, err := Wallet.WhitelistArray(nil, big.NewInt(0))
+					Expect(err).ToNot(HaveOccurred())
+					Expect(ra).To(Equal(common.HexToAddress("0x1")))
+				})
+
+				It("should emit a WhitelistRemoval event", func() {
+					it, err := Wallet.FilterRemovedFromWhitelist(nil)
+>>>>>>> 4e12e399... Fix dailyLimit and whitelist tests
 					Expect(err).ToNot(HaveOccurred())
 					Expect(it.Next()).To(BeTrue())
 					evt := it.Event
 					Expect(it.Next()).To(BeFalse())
+<<<<<<< HEAD
 					Expect(evt.Sender).To(Equal(Controller.Address()))
 					Expect(evt.Hash).To(Equal(hash))
 
@@ -662,6 +774,28 @@ var _ = Describe("whitelistRemoval", func() {
 						Expect(isSuccessful(tx)).To(BeTrue())
 					})
 
+=======
+					Expect(evt.Sender).To(Equal(WalletAddress))
+					Expect(evt.Addresses).To(Equal([]common.Address{common.HexToAddress("0x2"), RandomAccount.Address()}))
+				})
+
+				It("should remove 0x2 address from the whitelist", func() {
+					isWhitelisted, err := Wallet.WhitelistMap(nil, common.HexToAddress("0x2"))
+					Expect(err).ToNot(HaveOccurred())
+					Expect(isWhitelisted).To(BeFalse())
+				})
+
+				It("should remove the random account from the whitelist", func() {
+					isWhitelisted, err := Wallet.WhitelistMap(nil, RandomAccount.Address())
+					Expect(err).ToNot(HaveOccurred())
+					Expect(isWhitelisted).To(BeFalse())
+				})
+
+				It("should reduce the array size", func() {
+					_, err := Wallet.WhitelistArray(nil, big.NewInt(1))
+					Expect(err).To(HaveOccurred())
+					Expect(err.Error()).To(ContainSubstring("abi: attempting to unmarshall"))
+>>>>>>> 4e12e399... Fix dailyLimit and whitelist tests
 				})
 
 			})
@@ -670,6 +804,7 @@ var _ = Describe("whitelistRemoval", func() {
 
 	})
 
+<<<<<<< HEAD
 	When("I submit 20 addresses for removal from whitelist", func() {
 
 		When("The Whitelist has been initialised", func() {
@@ -1421,3 +1556,6 @@ var _ = Describe("whitelistRemoval", func() {
 
 // })
 >>>>>>> 6c455f0a... Fix tests (except dailyLimit and addToWhitelist)
+=======
+})
+>>>>>>> 4e12e399... Fix dailyLimit and whitelist tests

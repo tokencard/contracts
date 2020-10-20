@@ -121,7 +121,7 @@ abstract contract WalletDeployable is ENSResolvable {
 
     /// @dev Check if the sender is the wallet-deployer
     modifier onlyWalletDeployer() {
-        require(msg.sender == _ensResolve(walletDeployerNode), "Only wallet-deployer");
+        require(msg.sender == _ensResolve(walletDeployerNode), "Only walletDeployer");
         _;
     }
 }
@@ -143,8 +143,8 @@ abstract contract AddressWhitelist is WalletDeployable, SelfCallableOwnable, Opt
     /// @dev Check if the provided addresses contain the owner or the zero-address address.
     modifier hasNoOwnerOrZeroAddress(address[] memory _addresses) {
         for (uint256 i = 0; i < _addresses.length; i++) {
-            require(!_isOwner(_addresses[i]), "contains owner address");
-            require(_addresses[i] != address(0), "contains 0 address");
+            require(!_isOwner(_addresses[i]), "Contains owner address");
+            require(_addresses[i] != address(0), "Contains 0 address");
         }
         _;
     }
@@ -168,12 +168,14 @@ abstract contract AddressWhitelist is WalletDeployable, SelfCallableOwnable, Opt
     /// @param _addresses The addresses to be removed from the whitelist.
     function removeFromWhitelist(address[] calldata _addresses) external onlySelf {
         require(privileged, "Removing from whitelist requires privileged mode");
-        // Require that the list is not empty.
-        require(_addresses.length != 0, "AddressWhitelist: empty list to be removed");
+         // Require that the input list is not empty.
+        require(_addresses.length != 0, "Empty list to be removed from whitelist");
+        // Require that the whiteList is not empty.
+        require(whitelistArray.length != 0, "Whitelist is empty");
         // Remove provided addresses.
         for (uint256 i = 0; i < _addresses.length; i++) {
             // Require addresses to have been already whitelisted.
-            require(!whitelistMap[_addresses[i]], "address not whitelisted");
+            require(whitelistMap[_addresses[i]], "Address not whitelisted");
             whitelistMap[_addresses[i]] = false;
             for (uint256 j = 0; j < whitelistArray.length.sub(1); j++) {
                 if (whitelistArray[j] == _addresses[i]) {
@@ -191,11 +193,11 @@ abstract contract AddressWhitelist is WalletDeployable, SelfCallableOwnable, Opt
     /// @param _addresses The addresses to be whitelisted.
     function _addToWhitelist(address[] memory _addresses) private hasNoOwnerOrZeroAddress(_addresses) {
          // Require that the list is not empty.
-        require(_addresses.length != 0, "AddressWhitelist: empty list to be added");
+        require(_addresses.length != 0, "Empty list to be added to whitelist");
         // Add each of the provided addresses to the whitelist.
         for (uint256 i = 0; i < _addresses.length; i++) {
             // Require addresses not be already whitelisted.
-            require(!whitelistMap[_addresses[i]], "address already whitelisted");
+            require(!whitelistMap[_addresses[i]], "Address already whitelisted");
             // adds to the whitelist mapping
             whitelistMap[_addresses[i]] = true;
             // adds to the whitelist array
