@@ -13,7 +13,7 @@ import (
 	"github.com/tokencard/ethertest"
 )
 
-var _ = FDescribe("2FA", func() {
+var _ = Describe("2FA", func() {
 
 	It("should be true", func() {
 		oo, err := Wallet.Monolith2FA(nil)
@@ -154,7 +154,7 @@ var _ = FDescribe("2FA", func() {
 
 	})
 
-	FWhen("the owner submits a daily limit of 12K $USD", func() {
+	When("the owner submits a daily limit of 12K $USD", func() {
 		BeforeEach(func() {
 			tx, err := Wallet.SubmitDailyLimitUpdate(Owner.TransactOpts(), MweiToWei(12000))
 			Expect(err).ToNot(HaveOccurred())

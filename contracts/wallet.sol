@@ -307,7 +307,6 @@ abstract contract AddressWhitelist is SelfCallableOwnable, OptOutableMonolith2FA
 abstract contract DailyLimit is SelfCallableOwnable, OptOutableMonolith2FA, TokenWhitelistable {
     using SafeMath for uint256;
 
-    event InitializedDailyLimit(uint _amount, uint _nextReset);
     event SetDailyLimit(address _sender, uint _amount);
     event SubmittedDailyLimitUpdate(uint _amount);
     event UpdatedAvailableDailyLimit(uint _amount, uint _nextReset);
@@ -333,7 +332,8 @@ abstract contract DailyLimit is SelfCallableOwnable, OptOutableMonolith2FA, Toke
     function confirmDailyLimitUpdate(uint _amount) external only2FA {
         // Require that pending and confirmed limits are the same
         require(_pendingLimit == _amount, "confirmed/submitted limit mismatch");
-        // The new limit should be always higher then the current one otherwise no 2FA would be needed
+        // The new limit should be always higher then the current one otherwise no 2FA would be needed,
+        // this is done to avoid abuse e.g. resetting the current daily limit and thus resetting the available amount
         require(_amount > _dailyLimit, "limit should be greater than current one");
         // Increase the available amount...
         _available = _amount;

@@ -35,7 +35,7 @@ var _ = Describe("bulk_transfer", func() {
 		})
 
 		BeforeEach(func() {
-			tx, err := Wallet.SubmitDailyLimitUpdate(Owner.TransactOpts(), EthToWei(2000))
+			tx, err := Wallet.SubmitDailyLimitUpdate(Owner.TransactOpts(), MweiToWei(2000))
 			Expect(err).ToNot(HaveOccurred())
 			Backend.Commit()
 			Expect(isSuccessful(tx)).To(BeTrue())
@@ -44,7 +44,7 @@ var _ = Describe("bulk_transfer", func() {
 		It("should have a DailyLimit of 2000$", func() {
 			av, err := Wallet.DailyLimitAvailable(nil)
 			Expect(err).ToNot(HaveOccurred())
-			Expect(av.String()).To(Equal(EthToWei(2000).String()))
+			Expect(av.String()).To(Equal(MweiToWei(2000).String()))
 		})
 
 		It("the balance of the wallet should be 1 eth", func() {
@@ -197,8 +197,8 @@ var _ = Describe("bulk_transfer", func() {
 								Expect(err).ToNot(HaveOccurred())
 								Backend.Commit()
 								Expect(isSuccessful(tx)).To(BeFalse())
-                                returnData, _ := ethCall(tx)
-                				Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("rate=0"))
+								returnData, _ := ethCall(tx)
+								Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("rate=0"))
 							})
 						})
 						When("rates are updated with valid rates", func() {
@@ -279,8 +279,8 @@ var _ = Describe("bulk_transfer", func() {
 									Expect(err).ToNot(HaveOccurred())
 									Backend.Commit()
 									Expect(isSuccessful(tx)).To(BeFalse())
-                                    returnData, _ := ethCall(tx)
-                    				Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("available<amount"))
+									returnData, _ := ethCall(tx)
+									Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("available<amount"))
 								})
 							})
 
