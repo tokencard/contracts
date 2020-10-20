@@ -51,10 +51,11 @@ var _ = Describe("wallet initialization", func() {
 			Owner.Address(),
 			true,
 			ENSRegistryAddress,
-			TokenWhitelistName,
-			ControllerName,
-			LicenceName,
-			EthToWei(100),
+			TokenWhitelistNode,
+			ControllerNode,
+			LicenceNode,
+			WalletDeployerNode,
+			GweiToWei(15),
 		)
 		Expect(err).ToNot(HaveOccurred())
 		Backend.Commit()

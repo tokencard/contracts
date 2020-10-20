@@ -43,13 +43,13 @@ abstract contract SelfCallableOwnable is Ownable {
 
     /// @dev Check if the sender is the Owner or self
     modifier onlySelf() {
-        require (_isOwner(msg.sender) || msg.sender == address(this), "not self");
+        require (msg.sender == address(this), "Only self");
         _;
     }
 
     /// @dev Check if the sender is the Owner or self
     modifier onlyOwnerOrSelf() {
-        require (_isOwner(msg.sender) || msg.sender == address(this), "Not owner or self");
+        require (_isOwner(msg.sender) || msg.sender == address(this), "Only owner or self");
         _;
     }
 }
@@ -74,22 +74,16 @@ abstract contract OptOutableMonolith2FA is Controllable, SelfCallableOwnable {
     // @dev This modifier ensures that a method is only accessible to 2nd factor
     modifier only2FA() {
         if (monolith2FA) {
-            require(_isController(msg.sender), "sender is not a Monolith 2FA");
+            require(_isController(msg.sender), "Only Monolith 2FA");
         } else {
-            require(msg.sender == personal2FA, "sender is not personal 2FA");
+            require(msg.sender == personal2FA, "Only personal 2FA");
         }
-        _;
-    }
-
-    /// @dev Check if the sender is the Owner or 2FA
-    modifier onlyOwnerOr2FA() {
-        require (_isOwner(msg.sender) || _is2FA(msg.sender), "only owner or 2FA");
         _;
     }
 
     /// @dev set Monolith to be the 2FA
     function setMonolith2FA() external onlyOwner {
-        require(!monolith2FA, "monolith2FA already enabled");
+        require(!monolith2FA, "Monolith 2FA already enabled");
 
         monolith2FA = true;
         personal2FA = address(0);
@@ -99,7 +93,7 @@ abstract contract OptOutableMonolith2FA is Controllable, SelfCallableOwnable {
 
     /// @dev set personal 2FA to the address the user provided, needs to be called by a privileged relayed Tx
     function setPersonal2FA(address _p2FA) external onlySelf {
-        require(privileged, "Set 2FA needs privileged mode");
+        require(privileged, "Setting a personal 2FA requires privileged mode");
         require(_p2FA != address(0), "2FA cannot be the 0 address");
         require(_p2FA != address(this), "2FA cannot be the wallet address");
 
@@ -109,14 +103,6 @@ abstract contract OptOutableMonolith2FA is Controllable, SelfCallableOwnable {
         emit SetPersonal2FA(msg.sender, _p2FA);
     }
 
-    /// @dev utiliy function to check whether or not an address is valid 2FA'er
-    function _is2FA(address _sender) private view returns (bool) {
-        if (monolith2FA) {
-            return _isController(_sender);
-        } else {
-            return (_sender == personal2FA);
-        }
-    }
 }
 
 abstract contract WalletDeployable is ENSResolvable {
@@ -135,7 +121,7 @@ abstract contract WalletDeployable is ENSResolvable {
 
     /// @dev Check if the sender is the wallet-deployer
     modifier onlyWalletDeployer() {
-        require(msg.sender == _ensResolve(walletDeployerNode), "not called by wallet-deployer");
+        require(msg.sender == _ensResolve(walletDeployerNode), "Only wallet-deployer");
         _;
     }
 }
@@ -166,6 +152,7 @@ abstract contract AddressWhitelist is WalletDeployable, SelfCallableOwnable, Opt
     /// @dev Adds addresses to AddressWhitelist.
     /// @param _addresses The addresses to be whitelisted.
     function addToWhitelist(address[] calldata _addresses) external onlySelf {
+        require(privileged, "Adding to whitelist requires privileged mode");
         _addToWhitelist(_addresses);
     }
 
@@ -180,6 +167,7 @@ abstract contract AddressWhitelist is WalletDeployable, SelfCallableOwnable, Opt
     /// @dev Removes addresses from AddressWhitelist.
     /// @param _addresses The addresses to be removed from the whitelist.
     function removeFromWhitelist(address[] calldata _addresses) external onlySelf {
+        require(privileged, "Removing from whitelist requires privileged mode");
         // Require that the list is not empty.
         require(_addresses.length != 0, "AddressWhitelist: empty list to be removed");
         // Remove provided addresses.
@@ -199,7 +187,7 @@ abstract contract AddressWhitelist is WalletDeployable, SelfCallableOwnable, Opt
         emit RemovedFromWhitelist(msg.sender, _addresses);
     }
 
-    /// @dev Adds addresses to AddressWhitelist, called by addToWhitelist() and setWhitelist().
+    /// @dev Adds addresses to AddressWhitelist, called by addToWhitelist() and migrateWhitelist().
     /// @param _addresses The addresses to be whitelisted.
     function _addToWhitelist(address[] memory _addresses) private hasNoOwnerOrZeroAddress(_addresses) {
          // Require that the list is not empty.
@@ -235,7 +223,7 @@ abstract contract DailyLimit is WalletDeployable, SelfCallableOwnable, OptOutabl
     /// @dev Constructor initializes the daily limit in wei.
     constructor(uint _limit, bytes32 _tokenWhitelistNode) internal TokenWhitelistable(_tokenWhitelistNode) {
         (, uint256 stablecoinMagnitude, , , , , ) = _getStablecoinInfo();
-        require(stablecoinMagnitude > 0, "no stablecoin");
+        require(stablecoinMagnitude > 0, "Stablecoin not set");
         uint limitBaseUnits = _limit * stablecoinMagnitude;
         _dailyLimit = limitBaseUnits;
         _available = limitBaseUnits;
@@ -270,6 +258,7 @@ abstract contract DailyLimit is WalletDeployable, SelfCallableOwnable, OptOutabl
     /// @dev Set daily limit operation.
     /// @param _amount the new limit amount.
     function setDailyLimit(uint _amount) external onlySelf {
+        require(privileged, "Setting the daily limit requires privileged mode");
         _setDailyLimit(_amount);
     }
 
@@ -282,7 +271,7 @@ abstract contract DailyLimit is WalletDeployable, SelfCallableOwnable, OptOutabl
             // Update the current timestamp.
             _resetTimestamp = now.add(24 hours);
         }
-        require(_available >= _amount, "spend amount exceeds available limit");
+        require(_available >= _amount, "Spend amount exceeds available limit");
         _available = _available.sub(_amount);
         emit UpdatedAvailableDailyLimit(_available, _resetTimestamp);
     }
@@ -491,6 +480,7 @@ contract Wallet is ENSResolvable, WalletDeployable, AddressWhitelist, DailyLimit
             IERC20(_asset).safeApprove(licenceAddress, _amount);
             ILicence(licenceAddress).load(_asset, _amount);
         } else {
+            require(address(this).balance >= _amount, "Load: not sufficient balance");
             ILicence(licenceAddress).load{value: _amount}(_asset, _amount);
         }
 

@@ -2,6 +2,7 @@ package wallet_test
 
 import (
 	"context"
+	"fmt"
 	"math/big"
 	"strings"
 
@@ -27,7 +28,18 @@ var _ = Describe("executeTransaction", func() {
 			Backend.Commit()
 			Expect(isSuccessful(tx)).To(BeTrue())
 
-			tx, err = Wallet.SubmitDailyLimitUpdate(Owner.TransactOpts(), MweiToWei(100))
+			a, err := abi.JSON(strings.NewReader(WALLET_ABI))
+			Expect(err).ToNot(HaveOccurred())
+			data, err := a.Pack("setDailyLimit", MweiToWei(100))
+			Expect(err).ToNot(HaveOccurred())
+
+			batch := []byte(fmt.Sprintf("%s%s%s%s", WalletAddress, abi.U256(EthToWei(0)), abi.U256(big.NewInt(int64(len(data)))), data))
+
+			nonce := big.NewInt(0)
+			signature, err := SignData(nonce, batch, Owner.PrivKey())
+			Expect(err).ToNot(HaveOccurred())
+
+			tx, err = Wallet.ExecutePrivilegedRelayedTransaction(Controller.TransactOpts(), nonce, batch, signature)
 			Expect(err).ToNot(HaveOccurred())
 			Backend.Commit()
 			Expect(isSuccessful(tx)).To(BeTrue())
@@ -72,6 +84,7 @@ var _ = Describe("executeTransaction", func() {
 					it, err := WalletProxy.FilterExecutedTransaction(nil)
 					Expect(err).ToNot(HaveOccurred())
 					Expect(it.Next()).To(BeTrue())
+					Expect(it.Next()).To(BeTrue())
 					evt := it.Event
 					Expect(it.Next()).To(BeFalse())
 					Expect(evt.Destination).To(Equal(randomAddress))
@@ -115,6 +128,7 @@ var _ = Describe("executeTransaction", func() {
 					it, err := WalletProxy.FilterExecutedTransaction(nil)
 					Expect(err).ToNot(HaveOccurred())
 					Expect(it.Next()).To(BeTrue())
+					Expect(it.Next()).To(BeTrue())
 					evt := it.Event
 					Expect(it.Next()).To(BeFalse())
 					Expect(evt.Destination).To(Equal(randomAddress))
@@ -136,7 +150,7 @@ var _ = Describe("executeTransaction", func() {
 					Backend.Commit()
 					Expect(isSuccessful(tx)).To(BeFalse())
 					returnData, _ := ethCall(tx)
-					Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("available<amount"))
+					Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("Spend amount exceeds available limit"))
 				})
 			})
 
@@ -172,6 +186,7 @@ var _ = Describe("executeTransaction", func() {
 					it, err := WalletProxy.FilterExecutedTransaction(nil)
 					Expect(err).ToNot(HaveOccurred())
 					Expect(it.Next()).To(BeTrue())
+					Expect(it.Next()).To(BeTrue())
 					evt := it.Event
 					Expect(it.Next()).To(BeFalse())
 					Expect(evt.Destination).To(Equal(randomAddress))
@@ -188,6 +203,19 @@ var _ = Describe("executeTransaction", func() {
 
 				BeforeEach(func() {
 					tx, err := WalletProxy.SetWhitelist(Owner.TransactOpts(), []common.Address{randomAddress})
+					/*a, err := abi.JSON(strings.NewReader(WALLET_ABI))
+					Expect(err).ToNot(HaveOccurred())
+					data, err := a.Pack("addToWhitelist", []common.Address{randomAddress})
+					Expect(err).ToNot(HaveOccurred())
+
+					batch := []byte(fmt.Sprintf("%s%s%s%s", WalletAddress, abi.U256(EthToWei(0)), abi.U256(big.NewInt(int64(len(data)))), data))
+
+					nonce := big.NewInt(1)
+					signature, err := SignData(nonce, batch, Owner.PrivKey())
+					Expect(err).ToNot(HaveOccurred())
+
+					tx, err := Wallet.ExecutePrivilegedRelayedTransaction(Controller.TransactOpts(), nonce, batch, signature)
+					*/
 					Expect(err).ToNot(HaveOccurred())
 					Backend.Commit()
 					Expect(isSuccessful(tx)).To(BeTrue())
@@ -217,6 +245,8 @@ var _ = Describe("executeTransaction", func() {
 				It("should emit an ExecutedTransaction event", func() {
 					it, err := WalletProxy.FilterExecutedTransaction(nil)
 					Expect(err).ToNot(HaveOccurred())
+					Expect(it.Next()).To(BeTrue())
+					Expect(it.Next()).To(BeTrue())
 					Expect(it.Next()).To(BeTrue())
 					evt := it.Event
 					Expect(it.Next()).To(BeFalse())
@@ -285,6 +315,7 @@ var _ = Describe("executeTransaction", func() {
 					it, err := WalletProxy.FilterExecutedTransaction(nil)
 					Expect(err).ToNot(HaveOccurred())
 					Expect(it.Next()).To(BeTrue())
+					Expect(it.Next()).To(BeTrue())
 					evt := it.Event
 					Expect(it.Next()).To(BeFalse())
 					Expect(evt.Destination).To(Equal(TKNBurnerAddress))
@@ -334,6 +365,7 @@ var _ = Describe("executeTransaction", func() {
 				It("should emit an ExecutedTransaction event", func() {
 					it, err := WalletProxy.FilterExecutedTransaction(nil)
 					Expect(err).ToNot(HaveOccurred())
+					Expect(it.Next()).To(BeTrue())
 					Expect(it.Next()).To(BeTrue())
 					evt := it.Event
 					Expect(it.Next()).To(BeFalse())
@@ -412,6 +444,20 @@ var _ = Describe("executeTransaction", func() {
 			When("the destination addresses are whitelisted", func() {
 				BeforeEach(func() {
 					tx, err := WalletProxy.SetWhitelist(Owner.TransactOpts(), []common.Address{RandomAccount.Address(), TKNBurnerAddress})
+                    /*
+					a, err := abi.JSON(strings.NewReader(WALLET_ABI))
+					Expect(err).ToNot(HaveOccurred())
+					data, err := a.Pack("addToWhitelist", []common.Address{RandomAccount.Address(), TKNBurnerAddress})
+					Expect(err).ToNot(HaveOccurred())
+
+					batch := []byte(fmt.Sprintf("%s%s%s%s", WalletAddress, abi.U256(EthToWei(0)), abi.U256(big.NewInt(int64(len(data)))), data))
+
+					nonce := big.NewInt(1)
+					signature, err := SignData(nonce, batch, Owner.PrivKey())
+					Expect(err).ToNot(HaveOccurred())
+
+					tx, err := Wallet.ExecutePrivilegedRelayedTransaction(Controller.TransactOpts(), nonce, batch, signature)
+*/
 					Expect(err).ToNot(HaveOccurred())
 					Backend.Commit()
 					Expect(isSuccessful(tx)).To(BeTrue())
@@ -531,7 +577,7 @@ var _ = Describe("executeTransaction", func() {
 				BeforeEach(func() {
 					var tx *types.Transaction
 					var err error
-					RandomWalletAddress, tx, RandomWallet, err = bindings.DeployWallet(BankAccount.TransactOpts(), Backend, RandomAccount.Address(), false, ENSRegistryAddress, TokenWhitelistName, ControllerName, LicenceName, big.NewInt(1000))
+					RandomWalletAddress, tx, RandomWallet, err = bindings.DeployWallet(BankAccount.TransactOpts(), Backend, RandomAccount.Address(), false, ENSRegistryAddress, TokenWhitelistNode, ControllerNode, LicenceNode, WalletDeployerNode, big.NewInt(1000))
 					Expect(err).ToNot(HaveOccurred())
 					Backend.Commit()
 					Expect(isSuccessful(tx)).To(BeTrue())
@@ -575,9 +621,23 @@ var _ = Describe("executeTransaction", func() {
 
 					BeforeEach(func() {
 						tx, err := RandomWalletProxy.SetWhitelist(RandomAccount.TransactOpts(), []common.Address{Owner.Address()})
+						/*a, err := abi.JSON(strings.NewReader(WALLET_ABI))
+						Expect(err).ToNot(HaveOccurred())
+						data, err := a.Pack("addToWhitelist", []common.Address{Owner.Address()})
+						Expect(err).ToNot(HaveOccurred())
+
+						batch := []byte(fmt.Sprintf("%s%s%s%s", RandomWalletAddress, abi.U256(EthToWei(0)), abi.U256(big.NewInt(int64(len(data)))), data))
+
+						nonce := big.NewInt(0)
+						signature, err := SignData(nonce, batch, RandomAccount.PrivKey())
+						Expect(err).ToNot(HaveOccurred())
+
+						tx, err := RandomWallet.ExecutePrivilegedRelayedTransaction(Controller.TransactOpts(), nonce, batch, signature)
+						*/
 						Expect(err).ToNot(HaveOccurred())
 						Backend.Commit()
 						Expect(isSuccessful(tx)).To(BeTrue())
+
 					})
 
 					BeforeEach(func() {
@@ -709,6 +769,7 @@ var _ = Describe("executeTransaction", func() {
 				It("should emit an ExecutedTransaction event", func() {
 					it, err := WalletProxy.FilterExecutedTransaction(nil)
 					Expect(err).ToNot(HaveOccurred())
+					Expect(it.Next()).To(BeTrue())
 					Expect(it.Next()).To(BeTrue())
 					evt := it.Event
 					Expect(it.Next()).To(BeFalse())

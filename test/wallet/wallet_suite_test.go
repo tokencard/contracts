@@ -119,6 +119,7 @@ var _ = BeforeEach(func() {
 	// Deploy the Token wallet contract.
 	var tx *types.Transaction
 <<<<<<< HEAD
+<<<<<<< HEAD
 	// deploy wallet implementation
 	WalletImplementationAddress, tx, _, err = bindings.DeployWallet(BankAccount.TransactOpts(), Backend)
 	Expect(err).ToNot(HaveOccurred())
@@ -135,6 +136,9 @@ var _ = BeforeEach(func() {
 =======
 	WalletAddress, tx, Wallet, err = bindings.DeployWallet(BankAccount.TransactOpts(), Backend, Owner.Address(), true, ENSRegistryAddress, TokenWhitelistName, ControllerName, LicenceName, big.NewInt(10000))
 >>>>>>> 511d3647... Use stablecoin as daily limit
+=======
+	WalletAddress, tx, Wallet, err = bindings.DeployWallet(BankAccount.TransactOpts(), Backend, Owner.Address(), true, ENSRegistryAddress, TokenWhitelistNode, ControllerNode, LicenceNode, WalletDeployerNode, big.NewInt(10000))
+>>>>>>> 6c455f0a... Fix tests (except dailyLimit and addToWhitelist)
 	Expect(err).ToNot(HaveOccurred())
 	Backend.Commit()
 	Expect(isSuccessful(tx)).To(BeTrue())

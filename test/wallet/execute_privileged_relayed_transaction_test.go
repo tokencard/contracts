@@ -39,7 +39,7 @@ var _ = Describe("executePrivilegedRelayedTransaction", func() {
 			Backend.Commit()
 			Expect(isSuccessful(tx)).To(BeFalse())
 			returnData, _ := ethCall(tx)
-			Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("sender is not a Monolith 2FA"))
+			Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("Only Monolith 2FA"))
 		})
 	})
 
@@ -91,7 +91,18 @@ var _ = Describe("executePrivilegedRelayedTransaction", func() {
 			Backend.Commit()
 			Expect(isSuccessful(tx)).To(BeTrue())
 			// Reduce the daily limit to 100$
-			tx, err = Wallet.SubmitDailyLimitUpdate(Owner.TransactOpts(), MweiToWei(100))
+			a, err := abi.JSON(strings.NewReader(WALLET_ABI))
+			Expect(err).ToNot(HaveOccurred())
+			data, err := a.Pack("setDailyLimit", MweiToWei(100))
+			Expect(err).ToNot(HaveOccurred())
+
+			batch := []byte(fmt.Sprintf("%s%s%s%s", WalletAddress, abi.U256(EthToWei(0)), abi.U256(big.NewInt(int64(len(data)))), data))
+
+			nonce := big.NewInt(0)
+			signature, err := SignData(nonce, batch, Owner.PrivKey())
+			Expect(err).ToNot(HaveOccurred())
+
+			tx, err = Wallet.ExecutePrivilegedRelayedTransaction(Controller.TransactOpts(), nonce, batch, signature)
 			Expect(err).ToNot(HaveOccurred())
 			Backend.Commit()
 			Expect(isSuccessful(tx)).To(BeTrue())
@@ -120,7 +131,7 @@ var _ = Describe("executePrivilegedRelayedTransaction", func() {
 
 				batch := []byte(fmt.Sprintf("%s%s%s%s%s", data1, WalletAddress, abi.U256(EthToWei(0)), abi.U256(big.NewInt(int64(len(data2)))), data2))
 
-				nonce := big.NewInt(0)
+				nonce := big.NewInt(1)
 				signature, err := SignData(nonce, batch, Owner.PrivKey())
 				Expect(err).ToNot(HaveOccurred())
 
@@ -133,6 +144,7 @@ var _ = Describe("executePrivilegedRelayedTransaction", func() {
 			It("should emit an ExecutedRelayedTransaction event", func() {
 				it, err := Wallet.FilterExecutedRelayedTransaction(nil)
 				Expect(err).ToNot(HaveOccurred())
+				Expect(it.Next()).To(BeTrue())
 				Expect(it.Next()).To(BeTrue())
 				evt := it.Event
 				Expect(it.Next()).To(BeFalse())
@@ -148,6 +160,7 @@ var _ = Describe("executePrivilegedRelayedTransaction", func() {
 			It("should emit 2 ExecutedTransaction events", func() {
 				it, err := Wallet.FilterExecutedTransaction(nil)
 				Expect(err).ToNot(HaveOccurred())
+				Expect(it.Next()).To(BeTrue())
 				Expect(it.Next()).To(BeTrue())
 				evt := it.Event
 				Expect(it.Next()).To(BeTrue())
@@ -192,7 +205,7 @@ var _ = Describe("executePrivilegedRelayedTransaction", func() {
 
 				batch := []byte(fmt.Sprintf("%s%s%s%s", WalletAddress, abi.U256(EthToWei(0)), abi.U256(big.NewInt(int64(len(data)))), data))
 
-				nonce := big.NewInt(0)
+				nonce := big.NewInt(1)
 				signature, err := SignData(nonce, batch, Owner.PrivKey())
 				Expect(err).ToNot(HaveOccurred())
 
@@ -212,7 +225,7 @@ var _ = Describe("executePrivilegedRelayedTransaction", func() {
 
 				batch := []byte(fmt.Sprintf("%s%s%s%s", WalletAddress, abi.U256(EthToWei(0)), abi.U256(big.NewInt(int64(len(data)))), data))
 
-				nonce := big.NewInt(1)
+				nonce := big.NewInt(2)
 				signature, err := SignData(nonce, batch, Owner.PrivKey())
 				Expect(err).ToNot(HaveOccurred())
 
@@ -228,7 +241,7 @@ var _ = Describe("executePrivilegedRelayedTransaction", func() {
 				// send value (1 ETH) > 100$
 				data := []byte(fmt.Sprintf("%s%s%s", RandomAccount.Address(), abi.U256(EthToWei(1)), abi.U256(big.NewInt(0))))
 
-				nonce := big.NewInt(0)
+				nonce := big.NewInt(1)
 				signature, err := SignData(nonce, data, Owner.PrivKey())
 				Expect(err).ToNot(HaveOccurred())
 
@@ -237,7 +250,7 @@ var _ = Describe("executePrivilegedRelayedTransaction", func() {
 				Backend.Commit()
 				Expect(isSuccessful(tx)).To(BeFalse())
 				returnData, _ := ethCall(tx)
-				Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("available<amount"))
+				Expect(string(returnData[len(returnData)-94:])).To(ContainSubstring("Spend amount exceeds available limit"))
 			})
 
 			It("should fail when transfering 1 token (>100$)", func() {
@@ -248,7 +261,7 @@ var _ = Describe("executePrivilegedRelayedTransaction", func() {
 				Expect(err).ToNot(HaveOccurred())
 				data = []byte(fmt.Sprintf("%s%s%s%s", WalletAddress, abi.U256(EthToWei(0)), abi.U256(big.NewInt(int64(len(data)))), data))
 
-				nonce := big.NewInt(0)
+				nonce := big.NewInt(1)
 				signature, err := SignData(nonce, data, Owner.PrivKey())
 				Expect(err).ToNot(HaveOccurred())
 
@@ -257,7 +270,7 @@ var _ = Describe("executePrivilegedRelayedTransaction", func() {
 				Backend.Commit()
 				Expect(isSuccessful(tx)).To(BeFalse())
 				returnData, _ := ethCall(tx)
-				Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("available<amount"))
+				Expect(string(returnData[len(returnData)-94:])).To(ContainSubstring("Spend amount exceeds available limit"))
 
 			})
 

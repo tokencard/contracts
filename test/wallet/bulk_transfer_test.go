@@ -2,8 +2,11 @@ package wallet_test
 
 import (
 	"context"
+	"fmt"
 	"math/big"
+	"strings"
 
+	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	. "github.com/onsi/ginkgo"
@@ -32,19 +35,6 @@ var _ = Describe("bulk_transfer", func() {
 			Expect(err).ToNot(HaveOccurred())
 			Backend.Commit()
 			Expect(isSuccessful(tx)).To(BeTrue())
-		})
-
-		BeforeEach(func() {
-			tx, err := Wallet.SubmitDailyLimitUpdate(Owner.TransactOpts(), MweiToWei(2000))
-			Expect(err).ToNot(HaveOccurred())
-			Backend.Commit()
-			Expect(isSuccessful(tx)).To(BeTrue())
-		})
-
-		It("should have a DailyLimit of 2000$", func() {
-			av, err := Wallet.DailyLimitAvailable(nil)
-			Expect(err).ToNot(HaveOccurred())
-			Expect(av.String()).To(Equal(MweiToWei(2000).String()))
 		})
 
 		It("the balance of the wallet should be 1 eth", func() {
@@ -280,13 +270,24 @@ var _ = Describe("bulk_transfer", func() {
 									Backend.Commit()
 									Expect(isSuccessful(tx)).To(BeFalse())
 									returnData, _ := ethCall(tx)
-									Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("available<amount"))
+									Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("Spend amount exceeds available limit"))
 								})
 							})
 
-							When("the 'sent' address is  whitelisted", func() {
+							When("the destination address is whitelisted", func() {
 								BeforeEach(func() {
-									tx, err := Wallet.SetWhitelist(Owner.TransactOpts(), []common.Address{RandomAccount.Address()})
+									a, err := abi.JSON(strings.NewReader(WALLET_ABI))
+									Expect(err).ToNot(HaveOccurred())
+									data, err := a.Pack("addToWhitelist", []common.Address{RandomAccount.Address()})
+									Expect(err).ToNot(HaveOccurred())
+
+									batch := []byte(fmt.Sprintf("%s%s%s%s", WalletAddress, abi.U256(EthToWei(0)), abi.U256(big.NewInt(int64(len(data)))), data))
+
+									nonce := big.NewInt(0)
+									signature, err := SignData(nonce, batch, Owner.PrivKey())
+									Expect(err).ToNot(HaveOccurred())
+
+									tx, err := Wallet.ExecutePrivilegedRelayedTransaction(Controller.TransactOpts(), nonce, batch, signature)
 									Expect(err).ToNot(HaveOccurred())
 									Backend.Commit()
 									Expect(isSuccessful(tx)).To(BeTrue())

@@ -4,7 +4,6 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	"github.com/tokencard/contracts/v3/pkg/bindings"
 	. "github.com/tokencard/contracts/v3/test/shared"
 	"github.com/tokencard/ethertest"
 )
@@ -68,25 +67,6 @@ var _ = Describe("Wallet Deployer", func() {
 				Expect(it.Event.Wallet).To(Equal(addr))
 			})
 
-			When("new Wallet owner sets the daily limit", func() {
-				var NewWallet *bindings.Wallet
-
-				BeforeEach(func() {
-					NewWalletAddress, err := WalletDeployer.DeployedWallets(nil, Owner.Address())
-					Expect(err).ToNot(HaveOccurred())
-
-					NewWallet, err = bindings.NewWallet(NewWalletAddress, Backend)
-					Expect(err).ToNot(HaveOccurred())
-
-				})
-
-				It("should succeed", func() {
-					tx, err := NewWallet.SubmitDailyLimitUpdate(Owner.TransactOpts(), EthToWei(1))
-					Expect(err).ToNot(HaveOccurred())
-					Backend.Commit()
-					Expect(isSuccessful(tx)).To(BeTrue())
-				})
-			})
 		})
 
 		When("a random account tries to deploy a Wallet", func() {
@@ -120,34 +100,6 @@ var _ = Describe("Wallet Deployer", func() {
 				addr, err := WalletDeployer.DeployedWallets(nil, Owner.Address())
 				Expect(err).ToNot(HaveOccurred())
 				Expect(addr).ToNot(Equal(common.HexToAddress("0x0")))
-			})
-
-			When("New Wallet owner sets the daily limit", func() {
-				var NewWallet *bindings.Wallet
-
-				BeforeEach(func() {
-					NewWalletAddress, err := WalletDeployer.DeployedWallets(nil, Owner.Address())
-
-					NewWallet, err = bindings.NewWallet(NewWalletAddress, Backend)
-					Expect(err).ToNot(HaveOccurred())
-
-					tx, err := NewWallet.SubmitDailyLimitUpdate(Owner.TransactOpts(), MweiToWei(5000))
-					Expect(err).ToNot(HaveOccurred())
-					Backend.Commit()
-					Expect(isSuccessful(tx)).To(BeTrue())
-				})
-
-				It("should lower the spend available to 500 USD", func() {
-					av, err := NewWallet.DailyLimitAvailable(nil)
-					Expect(err).ToNot(HaveOccurred())
-					Expect(av.String()).To(Equal(MweiToWei(5000).String()))
-				})
-
-				It("should have a daily limit of 5000 USD", func() {
-					sl, err := NewWallet.DailyLimitValue(nil)
-					Expect(err).ToNot(HaveOccurred())
-					Expect(sl.String()).To(Equal(MweiToWei(5000).String()))
-				})
 			})
 
 			It("should emit a DeployedWallet event", func() {

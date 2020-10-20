@@ -34,12 +34,6 @@ var _ = Describe("Migrate Wallet", func() {
 			Expect(err).ToNot(HaveOccurred())
 		})
 
-		It("should NOT set the whitelist flag", func() {
-			initialized, err := MigratedWallet.IsSetWhitelist(nil)
-			Expect(err).ToNot(HaveOccurred())
-			Expect(initialized).To(BeFalse())
-		})
-
 		It("should NOT add the whitelisted addresses to the whitelist", func() {
 			isWhitelisted, err := MigratedWallet.WhitelistMap(nil, common.HexToAddress("0x1"))
 			Expect(err).ToNot(HaveOccurred())
@@ -95,7 +89,7 @@ var _ = Describe("Migrate Wallet", func() {
 			Expect(it.Event.Paid.String()).To(Equal("1000"))
 		})
 
-		It("should have cached Wallet count 0", func() {
+		It("should have a cached Wallet count of 0", func() {
 			ccc, err := WalletCache.CachedWalletsCount(nil)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(ccc.String()).To(Equal("0"))
@@ -127,7 +121,7 @@ var _ = Describe("Migrate Wallet", func() {
 			Expect(it.Event.Wallet).To(Equal(addr))
 		})
 
-		When("a new Wallet is migrated", func() {
+		When("the new Wallet has been migrated", func() {
 
 			BeforeEach(func() {
 				MigratedWalletAddress, err := WalletDeployer.DeployedWallets(nil, RandomOwner)
@@ -151,16 +145,10 @@ var _ = Describe("Migrate Wallet", func() {
 				Expect(av.String()).To(Equal(MweiToWei(5000).String()))
 			})
 
-			It("should decre the daily limit to 5K USD", func() {
+			It("should decrease the daily limit to 5K USD", func() {
 				sl, err := MigratedWallet.DailyLimitValue(nil)
 				Expect(err).ToNot(HaveOccurred())
 				Expect(sl.String()).To(Equal(MweiToWei(5000).String()))
-			})
-
-			It("should update the Whitelist initializedWhitelist flag", func() {
-				initialized, err := MigratedWallet.IsSetWhitelist(nil)
-				Expect(err).ToNot(HaveOccurred())
-				Expect(initialized).To(BeTrue())
 			})
 
 			It("should add the whitelisted addresses to the whitelist", func() {
@@ -181,6 +169,34 @@ var _ = Describe("Migrate Wallet", func() {
 				Expect(it.Next()).To(BeFalse())
 				Expect(evt.Sender).To(Equal(WalletDeployerAddress))
 				Expect(evt.Addresses).To(Equal([]common.Address{common.HexToAddress("0x1"), common.HexToAddress("0x2")}))
+			})
+
+			When("a malicious walletDeployer is used (switched via ENS", func() {
+				BeforeEach(func() {
+					tx, err = ENSResolver.SetAddr(BankAccount.TransactOpts(), WalletDeployerNode, RandomAccount.Address())
+					Expect(err).ToNot(HaveOccurred())
+					Backend.Commit()
+					Expect(isSuccessful(tx)).To(BeTrue())
+				})
+
+				It("should fail if the new Wallet deployer tries to re-migrate the dailyLimit", func() {
+					tx, err = MigratedWallet.MigrateDailyLimit(RandomAccount.TransactOpts(ethertest.WithGasLimit(5000000)), GweiToWei(1))
+					Expect(err).ToNot(HaveOccurred())
+					Backend.Commit()
+					Expect(isSuccessful(tx)).To(BeFalse())
+					returnData, _ := ethCall(tx)
+					Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("DailyLimit already migrated"))
+				})
+
+				It("should fail if the new Wallet deployer tries to re-migrate the addressWhitelist", func() {
+					tx, err = MigratedWallet.MigrateWhitelist(RandomAccount.TransactOpts(ethertest.WithGasLimit(5000000)), []common.Address{common.HexToAddress("0x1"), common.HexToAddress("0x2")})
+					Expect(err).ToNot(HaveOccurred())
+					Backend.Commit()
+					Expect(isSuccessful(tx)).To(BeFalse())
+					returnData, _ := ethCall(tx)
+					Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("Whitelist already migrated"))
+				})
+
 			})
 		})
 
@@ -205,6 +221,8 @@ var _ = Describe("Migrate Wallet", func() {
 			Expect(err).ToNot(HaveOccurred())
 			Backend.Commit()
 			Expect(isSuccessful(tx)).To(BeFalse())
+			returnData, _ := ethCall(tx)
+			Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("sender is not a controller"))
 		})
 	})
 
@@ -214,6 +232,12 @@ var _ = Describe("Migrate Wallet", func() {
 			Expect(err).ToNot(HaveOccurred())
 			Backend.Commit()
 			Expect(isSuccessful(tx)).To(BeTrue())
+		})
+
+		It("should have a cached Wallet count of 1", func() {
+			ccc, err := WalletCache.CachedWalletsCount(nil)
+			Expect(err).ToNot(HaveOccurred())
+			Expect(ccc.String()).To(Equal("1"))
 		})
 
 		When("a controller migrates a Wallet", func() {
@@ -226,10 +250,16 @@ var _ = Describe("Migrate Wallet", func() {
 
 				RandomProxyAddress = deployInitProxy(Owner.Address(), EthToWei(2))
 
-				tx, err := WalletDeployer.MigrateWallet(Controller.TransactOpts(), Owner.Address(), RandomWalletAddress, false, false, EthToWei(1), []common.Address{common.HexToAddress("0x1"), common.HexToAddress("0x2")})
+				tx, err := WalletDeployer.MigrateWallet(Controller.TransactOpts(), Owner.Address(), RandomWalletAddress, true, false, GweiToWei(15), []common.Address{common.HexToAddress("0x1"), common.HexToAddress("0x2")})
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 				Expect(isSuccessful(tx)).To(BeTrue())
+			})
+
+			It("should have a cached Wallet count of 0", func() {
+				ccc, err := WalletCache.CachedWalletsCount(nil)
+				Expect(err).ToNot(HaveOccurred())
+				Expect(ccc.String()).To(Equal("0"))
 			})
 
 			It("should emit MigratedWallet event", func() {
@@ -243,12 +273,7 @@ var _ = Describe("Migrate Wallet", func() {
 				Expect(it.Event.Wallet).To(Equal(addr))
 				Expect(it.Event.OldWallet).To(Equal(RandomProxyAddress))
 				Expect(it.Event.Owner).To(Equal(Owner.Address()))
-			})
-
-			It("should have cached Wallet count 0", func() {
-				ccc, err := WalletCache.CachedWalletsCount(nil)
-				Expect(err).ToNot(HaveOccurred())
-				Expect(ccc.String()).To(Equal("0"))
+				Expect(it.Next()).To(BeFalse())
 			})
 
 			It("should emit CachedWallet event", func() {
@@ -260,6 +285,53 @@ var _ = Describe("Migrate Wallet", func() {
 				Expect(err).ToNot(HaveOccurred())
 				Expect(it.Next()).To(BeTrue())
 				Expect(it.Event.Wallet).To(Equal(addr))
+			})
+
+			When("the new Wallet has been migrated", func() {
+
+				BeforeEach(func() {
+					MigratedWalletAddress, err := WalletDeployer.DeployedWallets(nil, Owner.Address())
+					MigratedWallet, err = bindings.NewWallet(MigratedWalletAddress, Backend)
+					Expect(err).ToNot(HaveOccurred())
+				})
+
+				It("should emit a daily limit set event", func() {
+					it, err := MigratedWallet.FilterSetDailyLimit(nil)
+					Expect(err).ToNot(HaveOccurred())
+					Expect(it.Next()).To(BeTrue())
+					evt := it.Event
+					Expect(it.Next()).To(BeFalse())
+					Expect(evt.Sender).To(Equal(WalletDeployerAddress))
+					Expect(evt.Amount.String()).To(Equal(GweiToWei(15).String()))
+				})
+
+				It("should increase the available amount to 15K USD", func() {
+					av, err := MigratedWallet.DailyLimitAvailable(nil)
+					Expect(err).ToNot(HaveOccurred())
+					Expect(av.String()).To(Equal(GweiToWei(15).String()))
+				})
+
+				It("should increase the daily limit to 15K USD", func() {
+					sl, err := MigratedWallet.DailyLimitValue(nil)
+					Expect(err).ToNot(HaveOccurred())
+					Expect(sl.String()).To(Equal(GweiToWei(15).String()))
+				})
+
+				It("should NOT add the passed addresses to the whitelist", func() {
+					isWhitelisted, err := MigratedWallet.WhitelistMap(nil, common.HexToAddress("0x1"))
+					Expect(err).ToNot(HaveOccurred())
+					Expect(isWhitelisted).To(BeFalse())
+
+					isWhitelisted, err = MigratedWallet.WhitelistMap(nil, common.HexToAddress("0x2"))
+					Expect(err).ToNot(HaveOccurred())
+					Expect(isWhitelisted).To(BeFalse())
+				})
+
+				It("should NOT emit an AddedToWhitelist event", func() {
+					it, err := MigratedWallet.FilterAddedToWhitelist(nil)
+					Expect(err).ToNot(HaveOccurred())
+					Expect(it.Next()).To(BeFalse())
+				})
 			})
 
 		})

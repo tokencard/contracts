@@ -219,7 +219,7 @@ var _ = Describe("wallet load non-compliant ERC20", func() {
 					Backend.Commit()
 					Expect(isSuccessful(tx)).To(BeFalse())
 					returnData, _ := ethCall(tx)
-					Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("available<amount"))
+					Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("Spend amount exceeds available limit"))
 				})
 
 			}) //more than daily limit
