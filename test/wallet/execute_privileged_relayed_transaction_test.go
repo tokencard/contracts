@@ -178,6 +178,12 @@ var _ = Describe("executePrivilegedRelayedTransaction", func() {
 				Expect(b.String()).To(Equal("0"))
 			})
 
+			It("should reset privileged back to false", func() {
+				p, err := Wallet.Privileged(nil)
+				Expect(err).ToNot(HaveOccurred())
+				Expect(p).To(BeFalse())
+			})
+
 			It("should fail when trying to replay", func() {
 				a, err := abi.JSON(strings.NewReader(WALLET_ABI))
 				Expect(err).ToNot(HaveOccurred())
