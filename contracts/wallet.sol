@@ -100,8 +100,8 @@ abstract contract OptOutableMonolith2FA is Controllable, SelfCallableOwnable {
     /// @dev set personal 2FA to the address the user provided, needs to be called by a privileged relayed Tx
     function setPersonal2FA(address _p2FA) external onlySelf {
         require(privileged, "Set 2FA needs privileged mode");
-        require(_p2FA != address(0), "2FA cannot be set to zero");
-        require(_p2FA != address(this), "2FA cannot be the contract address");
+        require(_p2FA != address(0), "2FA cannot be the 0 address");
+        require(_p2FA != address(this), "2FA cannot be the wallet address");
 
         personal2FA = _p2FA;
         monolith2FA = false;
