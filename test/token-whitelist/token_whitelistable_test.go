@@ -122,7 +122,6 @@ var _ = Describe("tokenWhitelistable", func() {
 				)
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
-				Expect(isGasExhausted(tx, 100000)).To(BeFalse())
 				Expect(isSuccessful(tx)).To(BeFalse())
 			})
 		})

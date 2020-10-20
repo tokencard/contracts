@@ -4,7 +4,11 @@ import (
 	"context"
 	"os"
 	"testing"
+<<<<<<< HEAD:test/token-whitelist/token_whitelist_suite_test.go
 
+=======
+	
+>>>>>>> fc811831... Add chainlink unit tests:test/token_whitelist/token_whitelist_suite_test.go
 	"github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
@@ -17,6 +21,21 @@ import (
 
 var TokenWhitelistableExporter *mocks.TokenWhitelistableExporter
 var TokenWhitelistableExporterAddress common.Address
+
+func ethCall(tx *types.Transaction) ([]byte, error) {
+	msg, _ := tx.AsMessage(types.HomesteadSigner{})
+
+	calMsg := ethereum.CallMsg{
+		From:     msg.From(),
+		To:       msg.To(),
+		Gas:      msg.Gas(),
+		GasPrice: msg.GasPrice(),
+		Value:    msg.Value(),
+		Data:     msg.Data(),
+	}
+
+	return Backend.CallContract(context.Background(), calMsg, nil)
+}
 
 func init() {
 	TestRig.AddCoverageForContracts(
@@ -114,13 +133,4 @@ func isSuccessful(tx *types.Transaction) bool {
 	r, err := Backend.TransactionReceipt(context.Background(), tx.Hash())
 	Expect(err).ToNot(HaveOccurred())
 	return r.Status == types.ReceiptStatusSuccessful
-}
-
-func isGasExhausted(tx *types.Transaction, gasLimit uint64) bool {
-	r, err := Backend.TransactionReceipt(context.Background(), tx.Hash())
-	Expect(err).ToNot(HaveOccurred())
-	if r.Status == types.ReceiptStatusSuccessful {
-		return false
-	}
-	return r.GasUsed == gasLimit
 }
