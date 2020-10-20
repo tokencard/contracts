@@ -35,6 +35,7 @@ contracts_0_6=(
   'mocks/base64Exporter'
   'mocks/bytesUtilsExporter'
   'mocks/burnerToken'
+  'mocks/chainlinkMock'
   'mocks/isValidSignatureExporter'
   'mocks/nonCompliantToken'
   'mocks/parseIntScientificExporter'
@@ -142,6 +143,7 @@ contracts=(
   "mocks/base64Exporter/Base64Exporter mocks/base64Exporter.go Base64Exporter mocks"
   "mocks/burnerToken/BurnerToken mocks/burnerToken.go BurnerToken mocks"
   "mocks/bytesUtilsExporter/BytesUtilsExporter mocks/bytesUtilsExporter.go BytesUtilsExporter mocks"
+  "mocks/chainlinkMock/ChainlinkMock mocks/chainlinkMock.go ChainlinkMock mocks"
   "mocks/isValidSignatureExporter/IsValidSignatureExporter mocks/isValidSignatureExporter.go IsValidSignatureExporter mocks"
   "mocks/nonCompliantToken/NonCompliantToken mocks/nonCompliantToken.go NonCompliantToken mocks"
 <<<<<<< HEAD

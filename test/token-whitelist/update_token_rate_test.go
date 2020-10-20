@@ -11,9 +11,9 @@ import (
 	"github.com/tokencard/ethertest"
 )
 
-var _ = Describe("updateTokenRate", func() {
+var _ = Describe("Chainlink", func() {
 
-	Context("When the token is already supported", func() {
+	When("the token is already supported", func() {
 		BeforeEach(func() {
 			tx, err := TokenWhitelist.AddTokens(
 				ControllerAdmin.TransactOpts(),
@@ -28,7 +28,7 @@ var _ = Describe("updateTokenRate", func() {
 			Backend.Commit()
 			Expect(isSuccessful(tx)).To(BeTrue())
 		})
-		Context("When called by the controller admin", func() {
+		When("called by the controller admin", func() {
 			var tx *types.Transaction
 
 			BeforeEach(func() {
@@ -68,7 +68,7 @@ var _ = Describe("updateTokenRate", func() {
 				Expect(evt.Rate.String()).To(Equal(big.NewInt(555).String()))
 			})
 		})
-		Context("When not called by the controller", func() {
+		When("not called by the controller", func() {
 			It("Should fail", func() {
 				tx, err := TokenWhitelist.UpdateTokenRate(
 					RandomAccount.TransactOpts(ethertest.WithGasLimit(100000)),
@@ -84,8 +84,8 @@ var _ = Describe("updateTokenRate", func() {
 		})
 	})
 
-	Context("When the token is not supported", func() {
-		Context("When called by the controller admin", func() {
+	When("the token is not supported", func() {
+		When("called by the controller admin", func() {
 			It("Should fail", func() {
 				tx, err := TokenWhitelist.UpdateTokenRate(
 					ControllerAdmin.TransactOpts(ethertest.WithGasLimit(100000)),
@@ -99,7 +99,7 @@ var _ = Describe("updateTokenRate", func() {
 				Expect(isSuccessful(tx)).To(BeFalse())
 			})
 		})
-		Context("When not called by the controller", func() {
+		When("not called by the controller", func() {
 			It("Should fail", func() {
 				tx, err := TokenWhitelist.UpdateTokenRate(
 					RandomAccount.TransactOpts(ethertest.WithGasLimit(100000)),
