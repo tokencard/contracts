@@ -45,18 +45,6 @@ contract Ownable is Initializable {
         return _isTransferable;
     }
 
-    /// @notice Allows the current owner to relinquish control of the contract.
-    /// @dev Renouncing to ownership will leave the contract without an owner and unusable.
-    /// @dev It will not be possible to call the functions with the `onlyOwner` modifier anymore.
-    function renounceOwnership() external onlyOwner {
-        // Require that the ownership is transferable.
-        require(_isTransferable, "ownership is not transferable");
-        // note that this could be terminal
-        _owner = address(0);
-
-        emit TransferredOwnership(_owner, address(0));
-    }
-
     /// @notice Find out owner address
     /// @return address of the owner.
     function owner() public view returns (address payable) {
@@ -80,10 +68,22 @@ contract Ownable is Initializable {
         return _address == _owner;
     }
 
+     /// @notice Allows for relinquishing control of the contract.
+    /// @dev Renouncing to ownership will leave the contract without an owner and unusable.
+    /// @dev It will not be possible to call the functions with the `onlyOwner` modifier anymore.
+    function _renounceOwnership() internal {
+        // Require that the ownership is transferable.
+        require(_isTransferable, "ownership is not transferable");
+        // note that this could be terminal
+        _owner = address(0);
+
+        emit TransferredOwnership(_owner, address(0));
+    }
+    
     /// @notice Allows the current owner to transfer control of the contract to a new address.
     /// @param _account address to transfer ownership to.
     /// @param _transferable indicates whether to keep the ownership transferable.
-    function _transferOwnership(address payable _account, bool _transferable) internal onlyOwner {
+    function _transferOwnership(address payable _account, bool _transferable) internal {
         // Require that the ownership is transferable.
         require(_isTransferable, "ownership is not transferable");
         // Require that the new owner is not the zero address.

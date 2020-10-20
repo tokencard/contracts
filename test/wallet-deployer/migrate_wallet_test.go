@@ -202,7 +202,7 @@ var _ = Describe("Migrate Wallet", func() {
 
 	}) //no wallets chached
 
-	When("the worng owner is passed in", func() {
+	When("the wrong owner is passed in", func() {
 		It("should fail", func() {
 			RandomProxyAddress := deployInitProxy(Owner.Address(), EthToWei(2))
 

@@ -79,4 +79,5 @@ var _ = Describe("ownable", func() {
 			Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("ownership is not transferable"))
 		})
 	})
+
 })

@@ -424,7 +424,7 @@ contract Wallet is ENSResolvable, WalletDeployable, AddressWhitelist, DailyLimit
         return _executeRelayedTransaction(_nonce, _data, _signature, true);
     }
 
-     /// @dev Recovers wallet by transfering ownership to a new address, needs privileged access.
+     /// @dev Enables the wallet-deployer to transfer ownership to the new owner, can be used only once.
     /// @param _newOwner address to transfer ownership to.
     /// @param _transferable indicates whether to keep the ownership transferable or not.
     function transferOwnership(address payable  _newOwner, bool _transferable) external onlyWalletDeployer {
