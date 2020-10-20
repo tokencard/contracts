@@ -277,8 +277,8 @@ var _ = Describe("batchExecuteTransaction", func() {
 			})
 		})
 
-	})
-})
+// 	})
+// })
 
 const WALLET_ABI = `[
     {
