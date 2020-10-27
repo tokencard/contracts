@@ -66,19 +66,14 @@ contract WalletDeployer is ENSResolvable, Controllable {
 
     /// @notice This function is used to migrate an owner's security settings from a previous version of the wallet
     /// @param _owner is the owner address for the new Wallet to be
-    /// @param _spendLimit is the user's set daily spend limit
-    /// @param _gasTopUpLimit is the user's set daily gas top-up limit
+    /// @param _dailyLimit is the user's set daily limit
     /// @param _whitelistedAddresses is the set of the user's whitelisted addresses
     function migrateWallet(
         address payable _owner,
         address payable _oldWallet,
-        bool _initializedSpendLimit,
-        bool _initializedGasTopUpLimit,
-        bool _initializedLoadLimit,
+        bool _initializedDailyLimit,
         bool _initializedWhitelist,
-        uint256 _spendLimit,
-        uint256 _gasTopUpLimit,
-        uint256 _loadLimit,
+        uint256 _dailyLimit,
         address[] calldata _whitelistedAddresses
     ) external payable onlyController {
         require(deployedWallets[_owner] == address(0), "wallet already deployed for owner");
@@ -90,14 +85,8 @@ contract WalletDeployer is ENSResolvable, Controllable {
         deployedWallets[_owner] = wallet;
 
         // Sets up the security settings as per the _oldWallet
-        if (_initializedSpendLimit) {
-            Wallet(wallet).setSpendLimit(_spendLimit);
-        }
-        if (_initializedGasTopUpLimit) {
-            Wallet(wallet).setGasTopUpLimit(_gasTopUpLimit);
-        }
-        if (_initializedLoadLimit) {
-            Wallet(wallet).setLoadLimit(_loadLimit);
+        if (_initializedDailyLimit) {
+            Wallet(wallet).setDailyLimit(_dailyLimit);
         }
         if (_initializedWhitelist) {
             Wallet(wallet).setWhitelist(_whitelistedAddresses);
