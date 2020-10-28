@@ -68,7 +68,7 @@ var _ = Describe("Wallet Deployer", func() {
 				Expect(it.Event.Wallet).To(Equal(addr))
 			})
 
-			When("new Wallet owner sets the spend limit", func() {
+			When("new Wallet owner sets the daily limit", func() {
 				var NewWallet *bindings.Wallet
 
 				BeforeEach(func() {
@@ -81,7 +81,7 @@ var _ = Describe("Wallet Deployer", func() {
 				})
 
 				It("should succeed", func() {
-					tx, err := NewWallet.SetSpendLimit(Owner.TransactOpts(), EthToWei(1))
+					tx, err := NewWallet.SetDailyLimit(Owner.TransactOpts(), EthToWei(1))
 					Expect(err).ToNot(HaveOccurred())
 					Backend.Commit()
 					Expect(isSuccessful(tx)).To(BeTrue())
@@ -122,7 +122,7 @@ var _ = Describe("Wallet Deployer", func() {
 				Expect(addr).ToNot(Equal(common.HexToAddress("0x0")))
 			})
 
-			When("New Wallet owner sets the spend limit", func() {
+			When("New Wallet owner sets the daily limit", func() {
 				var NewWallet *bindings.Wallet
 
 				BeforeEach(func() {
@@ -131,20 +131,20 @@ var _ = Describe("Wallet Deployer", func() {
 					NewWallet, err = bindings.NewWallet(NewWalletAddress, Backend)
 					Expect(err).ToNot(HaveOccurred())
 
-					tx, err := NewWallet.SetSpendLimit(Owner.TransactOpts(), FinneyToWei(500))
+					tx, err := NewWallet.SetDailyLimit(Owner.TransactOpts(), FinneyToWei(500))
 					Expect(err).ToNot(HaveOccurred())
 					Backend.Commit()
 					Expect(isSuccessful(tx)).To(BeTrue())
 				})
 
-				It("should lower the spend available to 500 Finney", func() {
-					av, err := NewWallet.SpendLimitAvailable(nil)
+				It("should lower the daily available to 500 Finney", func() {
+					av, err := NewWallet.DailyLimitAvailable(nil)
 					Expect(err).ToNot(HaveOccurred())
 					Expect(av.String()).To(Equal(FinneyToWei(500).String()))
 				})
 
-				It("should have a spend limit of 500 Finney", func() {
-					sl, err := NewWallet.SpendLimitValue(nil)
+				It("should have a daily limit of 500 Finney", func() {
+					sl, err := NewWallet.DailyLimitValue(nil)
 					Expect(err).ToNot(HaveOccurred())
 					Expect(sl.String()).To(Equal(FinneyToWei(500).String()))
 				})

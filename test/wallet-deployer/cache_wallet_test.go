@@ -14,8 +14,8 @@ var _ = Describe("Cache Wallet", func() {
 
 	When("no Wallets are cached", func() {
 
-		It("should have a default spend limit of 1 ETH", func() {
-			sl, err := WalletCache.DefaultSpendLimit(nil)
+		It("should have a default daily limit of 1 ETH", func() {
+			sl, err := WalletCache.DefaultDailyLimit(nil)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(sl.String()).To(Equal(EthToWei(1).String()))
 		})
