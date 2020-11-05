@@ -255,8 +255,11 @@ contract DailyLimit is ControllableOwnable, SelfCallableOwnable, TokenWhitelista
     bool private _controllerConfirmationRequired; // Indicates whether the limit is set requires 2FA to be updated.
 
     function _initializeDailyLimit(uint256 _limit, bytes32 _tokenWhitelistNode) internal initializer {
-        _value = _limit;
-        _available = _limit;
+        (, uint256 stablecoinMagnitude, , , , , ) = _getStablecoinInfo();
+        require(stablecoinMagnitude > 0, "no stablecoin");
+        uint limitBaseUnits = _limit * stablecoinMagnitude;
+        _value = limitBaseUnits;
+        _available = limitBaseUnits;
         _updateTimestamp = now;
         _pending = 0;
         _controllerConfirmationRequired = false;
@@ -559,40 +562,30 @@ contract Wallet is ENSResolvable, AddressWhitelist, DailyLimit, IERC165, Transfe
         }
     }
 
-    /// @dev Convert ERC20 token amount to the corresponding ether amount.
-    /// @param _token ERC20 token contract address.
-    /// @param _amount amount of token in base units.
-    function convertToEther(address _token, uint256 _amount) public view returns (uint256) {
-        // Store the token in memory to save map entry lookup gas.
-        (, uint256 magnitude, uint256 rate, bool available, , , ) = _getTokenInfo(_token);
-        // If the token exists require that its rate is not zero.
-        if (available) {
-            require(rate != 0, "rate=0");
-            // Safely convert the token amount to ether based on the exchange rate.
-            return _amount.mul(rate).div(magnitude);
-        }
-        return 0;
-    }
-
     /// @dev Convert ether or ERC20 token amount to the corresponding stablecoin amount.
     /// @param _token ERC20 token contract address.
     /// @param _amount amount of token in base units.
-    function convertToStablecoin(address _token, uint256 _amount) public view returns (uint256) {
+    /// @return the equivalent amount in stablecoin base units & 0 if the token is not available.
+    function convertToStablecoin(address _token, uint _amount) public view returns (uint) {
         // avoid the unnecessary calculations if the token to be loaded is the stablecoin itself
         if (_token == _stablecoin()) {
             return _amount;
         }
-        uint256 amountToSend = _amount;
 
-        // 0x0 represents ether
+        uint amountToSend = _amount;
+
+        // convert token amount to ETH first (0x0 represents ether)
         if (_token != address(0)) {
-            // convert to eth first, same as convertToEther()
             // Store the token in memory to save map entry lookup gas.
             (, uint256 magnitude, uint256 rate, bool available, , , ) = _getTokenInfo(_token);
-            // require that token both exists in the whitelist and its rate is not zero.
-            require(available, "token not available");
+
+            // if the token does NOT exist in the whitelist then return 0
+            if(!available){
+                return 0;
+            }
+            // if it exists then require that its rate is not zero.
             require(rate != 0, "rate=0");
-            // Safely convert the token amount to ether based on the exchangeonly rate.
+            // Safely convert the token amount to ether based on the exchange rate.
             amountToSend = _amount.mul(rate).div(magnitude);
         }
         // _amountToSend now is in ether
@@ -626,10 +619,11 @@ contract Wallet is ENSResolvable, AddressWhitelist, DailyLimit, IERC165, Transfe
             uint256 amount;
             (to, amount) = _getERC20RecipientAndAmount(_destination, _data);
             if (!whitelistMap[to]) {
+                // Convert token amount to stablecoin value.
                 // If the address (of the token contract, e.g) is not in the TokenWhitelist used by the convert method
-                // then etherValue will be zero
-                uint256 etherValue = convertToEther(_destination, amount);
-                _enforceDailyLimit(etherValue);
+                // ...then stablecoinValue will be zero
+                uint stablecoinValue = convertToStablecoin(_destination, amount);
+                _enforceDailyLimit(stablecoinValue);
             }
             // use callOptionalReturn provided in SafeERC20 in case the ERC20 method
             // returns false instead of reverting!
@@ -675,15 +669,12 @@ contract Wallet is ENSResolvable, AddressWhitelist, DailyLimit, IERC165, Transfe
 
         // If address is not whitelisted, take daily limit into account.
         if (!whitelistMap[_to]) {
-            // initialize ether value in case the asset is ETH
-            uint256 etherValue = _amount;
-            // Convert token amount to ether value if asset is an ERC20 token.
-            if (_asset != address(0)) {
-                etherValue = convertToEther(_asset, _amount);
-            }
-            // Check against the daily spent limit and update accordingly
+            // Convert token amount to stablecoin value.
+            // If the address (of the token contract) is not in the TokenWhitelist used by the convert method...
+            // ...then stablecoinValue will be zero
+            uint256 stablecoinValue = convertToStablecoin(_asset, _amount);
             // Check against the daily spent limit and update accordingly, require that the value is under remaining limit.
-            _enforceDailyLimit(etherValue);
+            _enforceDailyLimit(stablecoinValue);
         }
         // Transfer token or ether based on the provided address.
         _safeTransfer(_to, _asset, _amount);
