@@ -48,7 +48,7 @@ contract WalletCache is ENSResolvable, Controllable {
     bytes32 public walletDeployerNode = _DEFAULT_WALLET_DEPLOYER_NODE;
 
     address public walletImplementation;
-    uint256 public defaultDailyLimit;
+    uint256 public defaultDailyLimit; // in stablecoin absolute value, not base units. (Example: 10k USD)
 
     address payable[] public cachedWallets;
 
