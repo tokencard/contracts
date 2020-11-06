@@ -255,6 +255,7 @@ contract DailyLimit is ControllableOwnable, SelfCallableOwnable, TokenWhitelista
     bool private _controllerConfirmationRequired; // Indicates whether the limit is set requires 2FA to be updated.
 
     function _initializeDailyLimit(uint256 _limit, bytes32 _tokenWhitelistNode) internal initializer {
+        _initializeTokenWhitelistable(_tokenWhitelistNode);
         (, uint256 stablecoinMagnitude, , , , , ) = _getStablecoinInfo();
         require(stablecoinMagnitude > 0, "no stablecoin");
         uint limitBaseUnits = _limit * stablecoinMagnitude;
@@ -263,7 +264,6 @@ contract DailyLimit is ControllableOwnable, SelfCallableOwnable, TokenWhitelista
         _updateTimestamp = now;
         _pending = 0;
         _controllerConfirmationRequired = false;
-        _initializeTokenWhitelistable(_tokenWhitelistNode);
     }
 
     /// @dev Confirm pending set daily limit operation.
