@@ -17,7 +17,7 @@ var _ = Describe("topUpGas", func() {
 	Context("when the wallet has enough ETH", func() {
 		BeforeEach(func() {
 			BankAccount.MustTransfer(Backend, WalletProxyAddress, EthToWei(10))
-			tx, err := WalletProxy.SetDailyLimit(Owner.TransactOpts(), FinneyToWei(500))
+			tx, err := WalletProxy.SubmitDailyLimitUpdate(Owner.TransactOpts(), FinneyToWei(500))
 			Expect(err).ToNot(HaveOccurred())
 			Backend.Commit()
 			Expect(isSuccessful(tx)).To(BeTrue())

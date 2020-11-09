@@ -181,10 +181,16 @@ var _ = Describe("wallet load non-compliant ERC20", func() {
 
 			}) //more than owned (and hence can be approved)
 
-			When("a bigger amount than MAX daily Load limit is loaded", func() {
+			When("a bigger amount than daily limit is loaded", func() {
 
 				BeforeEach(func() {
 					//rate is 1 token  => 1 ETH
+
+					limPlusOneWei, err := WalletProxy.DailyLimitValue(nil)
+					Expect(err).ToNot(HaveOccurred())
+
+					limPlusOneWei.Add(limPlusOneWei, big.NewInt(1))
+
 					tx, err := TokenWhitelist.UpdateTokenRate(
 						ControllerAdmin.TransactOpts(),
 						NonCompliantERC20Address,
@@ -213,10 +219,10 @@ var _ = Describe("wallet load non-compliant ERC20", func() {
 					Backend.Commit()
 					Expect(isSuccessful(tx)).To(BeFalse())
 					returnData, _ := ethCall(tx)
-					Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("available<amount"))
+					Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("available smaller than amount"))
 				})
 
-			}) //more than daily Load limit
+			}) //more than daily limit
 
 		}) //tokens are loadable and rates have been updated
 
