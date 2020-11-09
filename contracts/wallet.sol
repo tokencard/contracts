@@ -40,7 +40,7 @@ import "./internals/transferrable.sol";
 contract ControllableOwnable is Controllable, Ownable {
     /// @dev Check if the sender is the Owner or one of the Controllers
     modifier onlyOwnerOrController() {
-        require(_isOwner(msg.sender) || _isController(msg.sender), "only owner||controller");
+        require(_isOwner(msg.sender) || _isController(msg.sender), "Only owner or controller");
         _;
     }
 }
@@ -51,7 +51,7 @@ contract ControllableOwnable is Controllable, Ownable {
 contract SelfCallableOwnable is Ownable {
     /// @dev Check if the sender is the Owner or self
     modifier onlyOwnerOrSelf() {
-        require(_isOwner(msg.sender) || msg.sender == address(this), "only owner||self");
+        require(_isOwner(msg.sender) || msg.sender == address(this), "Only owner or self");
         _;
     }
 }
@@ -244,10 +244,10 @@ contract AddressWhitelist is ControllableOwnable, SelfCallableOwnable {
 contract DailyLimit is ControllableOwnable, SelfCallableOwnable, TokenWhitelistable {
     using SafeMath for uint256;
 
-    event InitializedDailyLimit(uint _amount, uint _nextReset);
+    event InitializedDailyLimit(uint256 _amount, uint256 _nextReset);
     event SetDailyLimit(address _sender, uint256 _amount);
     event SubmittedDailyLimitUpdate(uint256 _amount);
-    event UpdatedAvailableDailyLimit(uint _amount, uint _nextReset);
+    event UpdatedAvailableDailyLimit(uint256 _amount, uint256 _nextReset);
 
     uint256 private _dailyLimit; // The daily limit amount.
     uint256 private _available; // The remaining amount available for spending in the current 24-hour window.
@@ -258,7 +258,7 @@ contract DailyLimit is ControllableOwnable, SelfCallableOwnable, TokenWhitelista
         _initializeTokenWhitelistable(_tokenWhitelistNode);
         (, uint256 stablecoinMagnitude, , , , , ) = _getStablecoinInfo();
         require(stablecoinMagnitude > 0, "no stablecoin");
-        uint limitBaseUnits = _limit * stablecoinMagnitude;
+        uint256 limitBaseUnits = _limit * stablecoinMagnitude;
         _dailyLimit = limitBaseUnits;
         _available = limitBaseUnits;
         _pendingLimit = limitBaseUnits;
@@ -271,6 +271,7 @@ contract DailyLimit is ControllableOwnable, SelfCallableOwnable, TokenWhitelista
         // Require that pending and confirmed limits are the same.
         require(_pendingLimit == _amount, "confirmed or submitted limit mismatch");
         // The new limit should be always higher then the current one otherwise no 2FA would be needed
+        // this is done to avoid abuse e.g. resetting the current daily limit and thus resetting the available amount
         require(_amount > _dailyLimit, "limit should be greater than current one");
         // Increase the available amount...
         _available = _amount;
@@ -306,16 +307,16 @@ contract DailyLimit is ControllableOwnable, SelfCallableOwnable, TokenWhitelista
     function submitDailyLimitUpdate(uint256 _amount) external onlyOwnerOrSelf {
         // Assign the provided amount to pending daily limit.
         _pendingLimit = _amount;
-         // If the new limit is lower, then there is no need for 2FA.
-        if (_amount <= _dailyLimit){
+        // If the new limit is lower, then there is no need for 2FA.
+        if (_amount <= _dailyLimit) {
             // Decrease the available amount if the new limit is lower than it
             if (_amount < _available) {
                 _available = _amount;
                 emit UpdatedAvailableDailyLimit(_available, _resetTimestamp);
             }
-            _setLimit(_amount);        
+            _setLimit(_amount);
         } else {
-          emit SubmittedDailyLimitUpdate(_amount);
+            emit SubmittedDailyLimitUpdate(_amount);
         }
     }
 
@@ -330,7 +331,7 @@ contract DailyLimit is ControllableOwnable, SelfCallableOwnable, TokenWhitelista
 
     /// @dev Modify the daily and available limits based on the provided value.
     /// @dev _amount is the daily limit amount in stablecoin base units.
-    function _setLimit(uint _amount) private {
+    function _setLimit(uint256 _amount) private {
         // Set the daily limit to the provided amount.
         _dailyLimit = _amount;
         emit SetDailyLimit(msg.sender, _dailyLimit);
@@ -559,13 +560,13 @@ contract Wallet is ENSResolvable, AddressWhitelist, DailyLimit, IERC165, Transfe
     /// @param _token ERC20 token contract address.
     /// @param _amount amount of token in base units.
     /// @return the equivalent amount in stablecoin base units & 0 if the token is not available.
-    function convertToStablecoin(address _token, uint _amount) public view returns (uint) {
+    function convertToStablecoin(address _token, uint256 _amount) public view returns (uint256) {
         // avoid the unnecessary calculations if the token to be loaded is the stablecoin itself
         if (_token == _stablecoin()) {
             return _amount;
         }
 
-        uint amountToSend = _amount;
+        uint256 amountToSend = _amount;
 
         // convert token amount to ETH first (0x0 represents ether)
         if (_token != address(0)) {
@@ -573,7 +574,7 @@ contract Wallet is ENSResolvable, AddressWhitelist, DailyLimit, IERC165, Transfe
             (, uint256 magnitude, uint256 rate, bool available, , , ) = _getTokenInfo(_token);
 
             // if the token does NOT exist in the whitelist then return 0
-            if(!available){
+            if (!available) {
                 return 0;
             }
             // if it exists then require that its rate is not zero.
@@ -603,7 +604,9 @@ contract Wallet is ENSResolvable, AddressWhitelist, DailyLimit, IERC165, Transfe
         // If value is send across as a part of this executeTransaction, this will be sent to any payable
         // destination. As a result enforceLimit if destination is not whitelisted.
         if (!whitelistMap[_destination]) {
-            _enforceDailyLimit(_value);
+            // Convert ETH value to stablecoin, 0x0 denotes ETH.
+            uint256 stablecoinValue = convertToStablecoin(address(0), _value);
+            _enforceDailyLimit(stablecoinValue);
         }
         // Check if the destination is a Contract and it is one of our supported tokens
         if (address(_destination).isContract() && _isTokenAvailable(_destination)) {
@@ -615,7 +618,7 @@ contract Wallet is ENSResolvable, AddressWhitelist, DailyLimit, IERC165, Transfe
                 // Convert token amount to stablecoin value.
                 // If the address (of the token contract, e.g) is not in the TokenWhitelist used by the convert method
                 // ...then stablecoinValue will be zero
-                uint stablecoinValue = convertToStablecoin(_destination, amount);
+                uint256 stablecoinValue = convertToStablecoin(_destination, amount);
                 _enforceDailyLimit(stablecoinValue);
             }
             // use callOptionalReturn provided in SafeERC20 in case the ERC20 method
