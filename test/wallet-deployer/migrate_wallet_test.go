@@ -53,7 +53,7 @@ var _ = Describe("Migrate Wallet", func() {
 		It("should NOT update the daily limit", func() {
 			sl, err := MigratedWallet.DailyLimitValue(nil)
 			Expect(err).ToNot(HaveOccurred())
-			Expect(sl.String()).To(Equal(MweiToWei(10000).String()))
+			Expect(sl.String()).To(Equal(EthToWei(10000).String()))
 		})
 	})
 
