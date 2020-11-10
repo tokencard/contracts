@@ -40,7 +40,7 @@ var _ = Describe("uninitialized", func() {
 			Backend.Commit()
 			Expect(isSuccessful(tx)).To(BeFalse())
 			returnData, _ := ethCall(tx)
-			Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("only owner or self"))
+			Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("Only owner or self"))
 		})
 
 		It("Should fail it when there's onlyController()", func() {
