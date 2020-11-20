@@ -106,7 +106,7 @@ It should be noted that this codebase makes heavy use of inheritance.
 ### Solidity code in the `/contracts/internals/` folder
 [balanceable.sol](/contracts/internals/balanceable.sol) is an inheritable contract that checks the ETH or ERC20 balance of an address.
 
-[burner.sol](/contracts/internals/burner.sol) defines the Burner interface used for burning TKN for the cash n' burn functionality. 
+[burner.sol](/contracts/internals/burner.sol) defines the Burner interface used for burning TKN for the cash n' burn functionality.
 
 [bytesUtils.sol](/contracts/internals/bytesUtils.sol) includes a set of utils for parsing bytes to things like ints and addresses.
 
@@ -134,9 +134,7 @@ It should be noted that this codebase makes heavy use of inheritance.
 
 [isValidSignatureExporter.sol](/contracts/mocks/isValidSignatureExporter.sol) used to export valid signatures for meta transaction testing.
 
-[nonCompliantToken.sol](/contracts/mocks/nonCompliantToken.sol) a version of a non-compliant ERC20 token, used to test the SafeERC20 stuff. 
-
-[oraclize.sol](/contracts/mocks/oraclize.sol) is a mocked out version of the oraclize, this is for testing purposes only.
+[nonCompliantToken.sol](/contracts/mocks/nonCompliantToken.sol) a version of a non-compliant ERC20 token, used to test the SafeERC20 stuff.
 
 [parseIntScientific-exporter.sol](/contracts/mocks/parseIntScientificExporter.sol) is a mocked out version of a contract that pulls in the parseIntScientific contract used to parse floating points that include scientific notation out of JSON.
 
@@ -161,7 +159,6 @@ All of the third-party code we rely on can be found in this folder. The below ta
 | [ENS Pubic Resolver](https://raw.githubusercontent.com/ensdomains/resolvers/797c8b63617d1bfe4d046274b58c05e991fbae76/contracts/PublicResolver.sol)             | [BSD2](https://github.com/ensdomains/ens/blob/master/LICENSE) |
 | [ENS Registry](https://raw.githubusercontent.com/ensdomains/ens/aa30b7eae4efdb2089893b7a461c76dbbc011783/contracts/ENSRegistry.sol)            | [BSD2](https://github.com/ensdomains/ens/blob/master/LICENSE) |
 | [strings.sol](https://github.com/Arachnid/solidity-stringutils/pull/37)     | [Apache v2](https://github.com/Arachnid/solidity-stringutils/blob/master/LICENSE) |
-| [oraclizeAPI](https://raw.githubusercontent.com/provable-things/ethereum-api/d02497b4d84e02a8649af3822950873d305f7659/oraclizeAPI_0.5.sol)     | [MIT](https://github.com/oraclize/ethereum-api/blob/master/LICENSE) |
 | [gnosis MultiSig](https://github.com/gnosis/MultiSigWallet) | [GPLv3](https://github.com/gnosis/MultiSigWallet/blob/master/LICENSE) |
 | [zOS Upgradeability](https://github.com/OpenZeppelin/openzeppelin-sdk/blob/9baca3afb5649b6defc3a75eeb69f4930852180f/packages/lib/contracts/upgradeability/Proxy.sol) | [MIT](https://github.com/OpenZeppelin/openzeppelin-sdk/blob/9baca3afb5649b6defc3a75eeb69f4930852180f/LICENSE) |
 
@@ -234,4 +231,4 @@ dot contracts.dot -Tpng -o ./wallet.inheritance.png
 ## Resources
 
 [🎮 Discord](https://discord.gg/GN6gGEP) | [🗞️Blog](https://medium.com/@Monolith) | [👽 Reddit](https://www.reddit.com/r/Monolith_Web3/) | [🕸️ Website ](https://monolith.xyz/) | [🐦 Twitter](https://twitter.com/monolith_web3) |
-|---|---|---|---|---| 
+|---|---|---|---|---|
