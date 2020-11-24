@@ -254,6 +254,9 @@ contract DailyLimit is ControllableOwnable, SelfCallableOwnable, TokenWhitelista
     uint256 private _pendingLimit; // The pending new limit value requested in the latest limit update submission.
     uint256 private _resetTimestamp; // Denotes the future timestamp when the available daily limit is due to reset again.
 
+    // @dev This initializes the daily spend limit using the stablecoin defined in the tokenWhitelist
+    // @param _limit is base units of the stablecoin defined in the tokenWhitelist
+    // @param _tokenWhitelistNode is the node that points to our tokenWhitelist
     function _initializeDailyLimit(uint256 _limit, bytes32 _tokenWhitelistNode) internal initializer {
         _initializeTokenWhitelistable(_tokenWhitelistNode);
         (, uint256 stablecoinMagnitude, , , , , ) = _getStablecoinInfo();
@@ -507,8 +510,10 @@ contract Wallet is ENSResolvable, AddressWhitelist, DailyLimit, IERC165, Transfe
     function topUpGas(uint256 _amount) external isNotZero(_amount) onlyOwnerOrController {
         // Check contract balance is sufficient for the operation
         require(address(this).balance > _amount, "balance not sufficient");
+        // Convert ETH amount to stablecoin value.
+        uint256 stablecoinValue = convertToStablecoin(address(0), _amount);
         // Check against the daily spent limit and update accordingly, require that the value is under remaining limit.
-        _enforceDailyLimit(_amount);
+        _enforceDailyLimit(stablecoinValue);
         // Then perform the transfer
         owner().transfer(_amount);
         // Emit the gas top up event.
@@ -608,6 +613,7 @@ contract Wallet is ENSResolvable, AddressWhitelist, DailyLimit, IERC165, Transfe
             uint256 stablecoinValue = convertToStablecoin(address(0), _value);
             _enforceDailyLimit(stablecoinValue);
         }
+
         // Check if the destination is a Contract and it is one of our supported tokens
         if (address(_destination).isContract() && _isTokenAvailable(_destination)) {
             // to is the recipient's address and amount is the value to be transferred
