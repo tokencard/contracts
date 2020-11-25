@@ -145,7 +145,7 @@ var _ = Describe("transfer", func() {
 				Backend.Commit()
 				Expect(isSuccessful(tx)).To(BeFalse())
 				returnData, _ := ethCall(tx)
-				Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("Only owner or self"))
+				Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("Not owner or self"))
 			})
 
 		})
@@ -157,7 +157,7 @@ var _ = Describe("transfer", func() {
 				Backend.Commit()
 				Expect(isSuccessful(tx)).To(BeFalse())
 				returnData, _ := ethCall(tx)
-				Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("Only owner or self"))
+				Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("Not owner or self"))
 			})
 		})
 
@@ -204,7 +204,7 @@ var _ = Describe("transfer", func() {
 					Backend.Commit()
 					Expect(isSuccessful(tx)).To(BeFalse())
 					returnData, _ := ethCall(tx)
-					Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("Only owner or self"))
+					Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("Not owner or self"))
 				})
 			})
 
@@ -215,7 +215,7 @@ var _ = Describe("transfer", func() {
 					Backend.Commit()
 					Expect(isSuccessful(tx)).To(BeFalse())
 					returnData, _ := ethCall(tx)
-					Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("Only owner or self"))
+					Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("Not owner or self"))
 				})
 			})
 
