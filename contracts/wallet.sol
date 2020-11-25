@@ -35,13 +35,60 @@ import "./internals/ownable.sol";
 import "./internals/tokenWhitelistable.sol";
 import "./internals/transferrable.sol";
 
-/// @title ControllableOwnable combines Controllable and Ownable
-/// @dev providing an additional modifier to check if Owner or Controller
-contract ControllableOwnable is Controllable, Ownable {
-    /// @dev Check if the sender is the Owner or one of the Controllers
-    modifier onlyOwnerOrController() {
-        require(_isOwner(msg.sender) || _isController(msg.sender), "Only owner or controller");
+/// @title OptOutableMonolith2FA is used a configurable 2FA.
+/// @dev This provides the various modifiers and utility functions needed for 2FA.
+/// @dev 2FA is needed to confirm changes to the security settings in the wallet.
+contract OptOutableMonolith2FA is Controllable, Ownable {
+    event SetPersonal2FA(address _sender, address _p2FA);
+    event SetMonolith2FA(address _sender);
+
+    bool public monolith2FA;
+    address public personal2FA;
+
+    function _initialize2FA() internal initializer {
+        monolith2FA = true;
+    }
+
+    // @dev This modifier ensures that a method is only accessible to 2nd factor
+    modifier only2FA() {
+        if (monolith2FA) {
+            require(_isController(msg.sender), "sender is not controller");
+        } else {
+            require(msg.sender == personal2FA, "sender is not personal 2FA account");
+        }
         _;
+    }
+
+     /// @dev Check if the sender is the Owner or 2FA	
+    modifier onlyOwnerOr2FA() {	
+        require (_isOwner(msg.sender) || _is2FA(msg.sender), "only owner or 2FA");	
+        _;	
+    }
+
+    /// @dev set Monolith to be the 2FA
+    function setMonolith2FA() external onlyOwner {
+        require(!monolith2FA, "monolith2FA already enabled");
+        monolith2FA = true;
+        personal2FA = address(0);
+        emit SetMonolith2FA(msg.sender);
+    }
+
+    function setPersonal2FA(address _p2FA) external onlyOwner {
+        require(_p2FA != address(0), "2FA cannot be set to zero");
+        require(_p2FA != personal2FA, "address already set");
+        require(_p2FA != address(this), "2FA cannot be the wallet address");
+        personal2FA = _p2FA;
+        monolith2FA = false;
+        emit SetPersonal2FA(msg.sender, _p2FA);
+    }
+
+    /// @dev utiliy function to check whether or not an address is valid 2FA'er	
+    function _is2FA(address _sender) private view returns (bool) {	
+        if (monolith2FA) {	
+            return _isController(_sender);	
+        } else {	
+            return (_sender == personal2FA);	
+        }	
     }
 }
 
@@ -50,8 +97,14 @@ contract ControllableOwnable is Controllable, Ownable {
 /// @dev the "self" here is used for the meta transactions
 contract SelfCallableOwnable is Ownable {
     /// @dev Check if the sender is the Owner or self
+    modifier onlySelf() {
+        require (msg.sender == address(this), "not self");
+        _;
+    }
+
+    /// @dev Check if the sender is the Owner or self
     modifier onlyOwnerOrSelf() {
-        require(_isOwner(msg.sender) || msg.sender == address(this), "Only owner or self");
+        require (_isOwner(msg.sender) || msg.sender == address(this), "Not owner or self");
         _;
     }
 }
@@ -59,7 +112,7 @@ contract SelfCallableOwnable is Ownable {
 /// @title AddressWhitelist provides payee-whitelist functionality.
 /// @dev This contract will allow the user to maintain a whitelist of addresses
 /// @dev These addresses will live outside of the daily limit
-contract AddressWhitelist is ControllableOwnable, SelfCallableOwnable {
+contract AddressWhitelist is OptOutableMonolith2FA, SelfCallableOwnable {
     using SafeMath for uint256;
 
     event AddedToWhitelist(address _sender, address[] _addresses);
@@ -94,7 +147,7 @@ contract AddressWhitelist is ControllableOwnable, SelfCallableOwnable {
     }
 
     /// @dev Cancel pending whitelist addition.
-    function cancelWhitelistAddition(bytes32 _hash) external onlyOwnerOrController {
+    function cancelWhitelistAddition(bytes32 _hash) external onlyOwnerOr2FA {
         // Check if operation has been submitted.
         require(submittedWhitelistAddition, "no pending submission");
         // Require that confirmation hash and the hash of the pending whitelist addition match
@@ -108,7 +161,7 @@ contract AddressWhitelist is ControllableOwnable, SelfCallableOwnable {
     }
 
     /// @dev Cancel pending removal of whitelisted addresses.
-    function cancelWhitelistRemoval(bytes32 _hash) external onlyOwnerOrController {
+    function cancelWhitelistRemoval(bytes32 _hash) external onlyOwnerOr2FA {
         // Check if operation has been submitted.
         require(submittedWhitelistRemoval, "no pending submission");
         // Require that confirmation hash and the hash of the pending whitelist removal match
@@ -124,7 +177,7 @@ contract AddressWhitelist is ControllableOwnable, SelfCallableOwnable {
     /// @dev Confirm pending whitelist addition.
     /// @dev This will only ever be applied post 2FA, by one of the Controllers
     /// @param _hash is the hash of the pending whitelist array, a form of lamport lock
-    function confirmWhitelistAddition(bytes32 _hash) external onlyController {
+    function confirmWhitelistAddition(bytes32 _hash) external only2FA {
         // Require that the whitelist addition has been submitted.
         require(submittedWhitelistAddition, "no pending submission");
         // Require that confirmation hash and the hash of the pending whitelist addition match
@@ -147,7 +200,7 @@ contract AddressWhitelist is ControllableOwnable, SelfCallableOwnable {
     }
 
     /// @dev Confirm pending removal of whitelisted addresses.
-    function confirmWhitelistRemoval(bytes32 _hash) external onlyController {
+    function confirmWhitelistRemoval(bytes32 _hash) external only2FA {
         // Require that the pending whitelist is not empty and the operation has been submitted.
         require(submittedWhitelistRemoval, "no pending submission");
         // Require that confirmation hash and the hash of the pending whitelist removal match
@@ -241,7 +294,7 @@ contract AddressWhitelist is ControllableOwnable, SelfCallableOwnable {
 }
 
 /// @title DailyLimit provides daily limit functionality
-contract DailyLimit is ControllableOwnable, SelfCallableOwnable, TokenWhitelistable {
+contract DailyLimit is  OptOutableMonolith2FA, SelfCallableOwnable, TokenWhitelistable {
     using SafeMath for uint256;
 
     event InitializedDailyLimit(uint256 _amount, uint256 _nextReset);
@@ -267,7 +320,7 @@ contract DailyLimit is ControllableOwnable, SelfCallableOwnable, TokenWhitelista
     }
 
     /// @dev Confirm pending set daily limit operation.
-    function confirmDailyLimitUpdate(uint256 _amount) external onlyController {
+    function confirmDailyLimitUpdate(uint256 _amount) external only2FA {
         // Require that pending and confirmed limits are the same.
         require(_pendingLimit == _amount, "confirmed or submitted limit mismatch");
         // The new limit should be always higher then the current one otherwise no 2FA would be needed
@@ -397,6 +450,7 @@ contract Wallet is ENSResolvable, AddressWhitelist, DailyLimit, IERC165, Transfe
         bytes32 _licenceNode_,
         uint256 _dailyLimit_
     ) external initializer {
+        _initialize2FA();
         _initializeENSResolvable(_ens_);
         _initializeControllable(_controllerNode_);
         _initializeOwnable(_owner_, _transferable_);
@@ -419,7 +473,7 @@ contract Wallet is ENSResolvable, AddressWhitelist, DailyLimit, IERC165, Transfe
         uint256 _nonce,
         bytes calldata _data,
         bytes calldata _signature
-    ) external onlyController {
+    ) external only2FA {
         // Expecting prefixed data ("monolith:") indicating relayed transaction...
         // ...and an Ethereum Signed Message to protect user from signing an actual Tx
         uint256 id;
@@ -504,7 +558,7 @@ contract Wallet is ENSResolvable, AddressWhitelist, DailyLimit, IERC165, Transfe
 
     /// @dev Refill owner's gas balance, revert if the transaction amount is too large
     /// @param _amount is the amount of ether to transfer to the owner account in wei.
-    function topUpGas(uint256 _amount) external isNotZero(_amount) onlyOwnerOrController {
+    function topUpGas(uint256 _amount) external isNotZero(_amount) onlyOwnerOr2FA {
         // Check contract balance is sufficient for the operation
         require(address(this).balance > _amount, "balance not sufficient");
         // Check against the daily spent limit and update accordingly, require that the value is under remaining limit.
