@@ -67,7 +67,7 @@ var _ = Describe("removeAdmin", func() {
 			Backend.Commit()
 			Expect(isSuccessful(tx)).To(BeFalse())
 			returnData, _ := ethCall(tx)
-			Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("sender is not an owner"))
+			Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("sender is not owner"))
 		})
 
 		It("should NOT decrease number of admins", func() {
