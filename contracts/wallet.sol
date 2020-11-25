@@ -59,10 +59,10 @@ contract OptOutableMonolith2FA is Controllable, Ownable {
         _;
     }
 
-     /// @dev Check if the sender is the Owner or 2FA	
-    modifier onlyOwnerOr2FA() {	
-        require (_isOwner(msg.sender) || _is2FA(msg.sender), "only owner or 2FA");	
-        _;	
+    /// @dev Check if the sender is the Owner or 2FA
+    modifier onlyOwnerOr2FA() {
+        require(_isOwner(msg.sender) || _is2FA(msg.sender), "only owner or 2FA");
+        _;
     }
 
     /// @dev set Monolith to be the 2FA
@@ -82,13 +82,13 @@ contract OptOutableMonolith2FA is Controllable, Ownable {
         emit SetPersonal2FA(msg.sender, _p2FA);
     }
 
-    /// @dev utiliy function to check whether or not an address is valid 2FA'er	
-    function _is2FA(address _sender) private view returns (bool) {	
-        if (monolith2FA) {	
-            return _isController(_sender);	
-        } else {	
-            return (_sender == personal2FA);	
-        }	
+    /// @dev utiliy function to check whether or not an address is valid 2FA'er
+    function _is2FA(address _sender) private view returns (bool) {
+        if (monolith2FA) {
+            return _isController(_sender);
+        } else {
+            return (_sender == personal2FA);
+        }
     }
 }
 
@@ -98,13 +98,13 @@ contract OptOutableMonolith2FA is Controllable, Ownable {
 contract SelfCallableOwnable is Ownable {
     /// @dev Check if the sender is the Owner or self
     modifier onlySelf() {
-        require (msg.sender == address(this), "not self");
+        require(msg.sender == address(this), "not self");
         _;
     }
 
     /// @dev Check if the sender is the Owner or self
     modifier onlyOwnerOrSelf() {
-        require (_isOwner(msg.sender) || msg.sender == address(this), "Not owner or self");
+        require(_isOwner(msg.sender) || msg.sender == address(this), "Not owner or self");
         _;
     }
 }
@@ -294,7 +294,7 @@ contract AddressWhitelist is OptOutableMonolith2FA, SelfCallableOwnable {
 }
 
 /// @title DailyLimit provides daily limit functionality
-contract DailyLimit is  OptOutableMonolith2FA, SelfCallableOwnable, TokenWhitelistable {
+contract DailyLimit is OptOutableMonolith2FA, SelfCallableOwnable, TokenWhitelistable {
     using SafeMath for uint256;
 
     event InitializedDailyLimit(uint256 _amount, uint256 _nextReset);
