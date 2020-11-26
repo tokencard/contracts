@@ -16,8 +16,16 @@ var _ = Describe("topUpGas", func() {
 
 	Context("when the wallet has enough ETH", func() {
 		BeforeEach(func() {
-			BankAccount.MustTransfer(Backend, WalletProxyAddress, EthToWei(10))
-			tx, err := WalletProxy.SubmitDailyLimitUpdate(Owner.TransactOpts(), FinneyToWei(500))
+			BankAccount.MustTransfer(Backend, WalletProxyAddress, EthToWei(200))
+			BankAccount.MustTransfer(Backend, ControllerAdmin.Address(), EthToWei(1))
+
+			// exchange rate of 1 DAI for 1 ETH configured here
+			tx, err := TokenWhitelist.UpdateTokenRate(ControllerAdmin.TransactOpts(), StablecoinAddress, EthToWei(1), big.NewInt(20180913153211))
+			Expect(err).ToNot(HaveOccurred())
+			Backend.Commit()
+			Expect(isSuccessful(tx)).To(BeTrue())
+
+			tx, err = WalletProxy.SubmitDailyLimitUpdate(Owner.TransactOpts(), EthToWei(100))
 			Expect(err).ToNot(HaveOccurred())
 			Backend.Commit()
 			Expect(isSuccessful(tx)).To(BeTrue())
@@ -38,7 +46,7 @@ var _ = Describe("topUpGas", func() {
 		Context("When called by the wallet controller and is lower than top up limit", func() {
 
 			BeforeEach(func() {
-				tx, err = WalletProxy.TopUpGas(caller.TransactOpts(ethertest.WithGasLimit(81000)), FinneyToWei(1))
+				tx, err = WalletProxy.TopUpGas(caller.TransactOpts(), FinneyToWei(1))
 				Backend.Commit()
 			})
 
@@ -53,7 +61,7 @@ var _ = Describe("topUpGas", func() {
 			It("should top up the gas succesfully", func() {
 				b, e := Backend.BalanceAt(context.Background(), WalletProxyAddress, nil)
 				Expect(e).ToNot(HaveOccurred())
-				newBalance := new(big.Int).Sub(EthToWei(10), FinneyToWei(1))
+				newBalance := new(big.Int).Sub(EthToWei(200), FinneyToWei(1))
 				Expect(b.String()).To(Equal(newBalance.String()))
 				ownerBalance.Add(ownerBalance, FinneyToWei(1))
 				Expect(Owner.Balance(Backend).String()).To(Equal(ownerBalance.String()))
@@ -80,20 +88,20 @@ var _ = Describe("topUpGas", func() {
 			It("should NOT top up the gas", func() {
 				b, e := Backend.BalanceAt(context.Background(), WalletProxyAddress, nil)
 				Expect(e).ToNot(HaveOccurred())
-				Expect(b.String()).To(Equal(EthToWei(10).String())) //Wallet address has initially 10 ETH
+				Expect(b.String()).To(Equal(EthToWei(200).String())) //Wallet address has initially 200 ETH
 				Expect(Owner.Balance(Backend).String()).To(Equal(ownerBalance.String()))
 			})
 
 		})
 
-		Context("When daily limit has been exausted", func() {
+		Context("When daily limit has been exhausted", func() {
 			BeforeEach(func() {
 				caller = Controller
 				BankAccount.MustTransfer(Backend, Controller.Address(), EthToWei(1))
 			})
 
 			BeforeEach(func() {
-				tx, err = WalletProxy.TopUpGas(caller.TransactOpts(ethertest.WithGasLimit(81000)), FinneyToWei(500))
+				tx, err = WalletProxy.TopUpGas(caller.TransactOpts(), FinneyToWei(500))
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 				Expect(isSuccessful(tx)).To(BeTrue())
@@ -133,7 +141,7 @@ var _ = Describe("topUpGas", func() {
 
 					b, e := Backend.BalanceAt(context.Background(), WalletProxyAddress, nil)
 					Expect(e).ToNot(HaveOccurred())
-					newBalance := new(big.Int).Sub(EthToWei(10), FinneyToWei(501)) //Wallet address has initially 10 ETH
+					newBalance := new(big.Int).Sub(EthToWei(200), FinneyToWei(501)) //Wallet address has initially 200 ETH
 					Expect(b.String()).To(Equal(newBalance.String()))
 					ownerBalance.Add(ownerBalance, FinneyToWei(501))
 					Expect(Owner.Balance(Backend).String()).To(Equal(ownerBalance.String()))
@@ -163,10 +171,10 @@ var _ = Describe("topUpGas", func() {
 					txCost = new(big.Int).Mul(tx.GasPrice(), big.NewInt(int64(r.GasUsed)))
 				})
 
-				It("should top up succesfully", func() {
+				It("should top up successfully", func() {
 					b, e := Backend.BalanceAt(context.Background(), WalletProxyAddress, nil)
 					Expect(e).ToNot(HaveOccurred())
-					newBalance := new(big.Int).Sub(EthToWei(10), FinneyToWei(500)) //Wallet address has initially 10 ETH
+					newBalance := new(big.Int).Sub(EthToWei(200), FinneyToWei(500)) //Wallet address has initially 200 ETH
 					Expect(b.String()).To(Equal(newBalance.String()))
 					ownerBalance.Add(ownerBalance, FinneyToWei(500))
 					ownerBalance.Sub(ownerBalance, txCost) //subtract the tx cost
@@ -178,7 +186,7 @@ var _ = Describe("topUpGas", func() {
 			Context("When the value is above top up limit", func() {
 
 				BeforeEach(func() {
-					tx, err = WalletProxy.TopUpGas(caller.TransactOpts(ethertest.WithGasLimit(81000)), FinneyToWei(800))
+					tx, err = WalletProxy.TopUpGas(caller.TransactOpts(ethertest.WithGasLimit(81000)), EthToWei(800))
 					Expect(err).ToNot(HaveOccurred())
 					Backend.Commit()
 					Expect(isSuccessful(tx)).To(BeFalse())
@@ -190,26 +198,27 @@ var _ = Describe("topUpGas", func() {
 				It("should NOT top up", func() {
 					b, e := Backend.BalanceAt(context.Background(), WalletProxyAddress, nil)
 					Expect(e).ToNot(HaveOccurred())
-					Expect(b.String()).To(Equal(EthToWei(10).String())) //Wallet address has initially 10 ETH
-					ownerBalance.Sub(ownerBalance, txCost)              //subtract the tx cost
+					Expect(b.String()).To(Equal(EthToWei(200).String())) //Wallet address has initially 200 ETH
+					ownerBalance.Sub(ownerBalance, txCost)               //subtract the tx cost
 					Expect(Owner.Balance(Backend).String()).To(Equal(ownerBalance.String()))
 				})
 
 			})
 
-			Context("When daily limit has been exausted", func() {
+			Context("When daily limit has been exhausted", func() {
 
 				BeforeEach(func() {
-					tx, err = WalletProxy.TopUpGas(caller.TransactOpts(ethertest.WithGasLimit(81000)), FinneyToWei(500))
+					tx, err = WalletProxy.TopUpGas(caller.TransactOpts(), EthToWei(100))
 					Expect(err).ToNot(HaveOccurred())
 					Backend.Commit()
+					Expect(isSuccessful(tx)).To(BeTrue())
 					r, err := Backend.TransactionReceipt(context.Background(), tx.Hash())
 					Expect(err).ToNot(HaveOccurred())
 					txCost = new(big.Int).Mul(tx.GasPrice(), big.NewInt(int64(r.GasUsed)))
 				})
 
 				BeforeEach(func() {
-					tx, err = WalletProxy.TopUpGas(caller.TransactOpts(ethertest.WithGasLimit(165000)), FinneyToWei(1))
+					tx, err = WalletProxy.TopUpGas(caller.TransactOpts(ethertest.WithGasLimit(1000000)), EthToWei(1))
 					Expect(err).ToNot(HaveOccurred())
 					Backend.Commit()
 					Expect(isSuccessful(tx)).To(BeFalse())
@@ -226,7 +235,7 @@ var _ = Describe("topUpGas", func() {
 					})
 
 					BeforeEach(func() {
-						tx, err = WalletProxy.TopUpGas(caller.TransactOpts(ethertest.WithGasLimit(165000)), FinneyToWei(1))
+						tx, err = WalletProxy.TopUpGas(caller.TransactOpts(), EthToWei(1))
 						Expect(err).ToNot(HaveOccurred())
 						Backend.Commit()
 						Expect(isSuccessful(tx)).To(BeTrue())
@@ -239,9 +248,9 @@ var _ = Describe("topUpGas", func() {
 					It("should top up only the top up limit of the gas", func() {
 						b, e := Backend.BalanceAt(context.Background(), WalletProxyAddress, nil)
 						Expect(e).ToNot(HaveOccurred())
-						newBalance := new(big.Int).Sub(EthToWei(10), FinneyToWei(501)) //Wallet address has initially 10 ETH
+						newBalance := new(big.Int).Sub(EthToWei(100), EthToWei(1)) //Wallet address has initially 10 ETH
 						Expect(b.String()).To(Equal(newBalance.String()))
-						ownerBalance.Add(ownerBalance, FinneyToWei(501))
+						ownerBalance.Add(ownerBalance, EthToWei(101))
 						ownerBalance.Sub(ownerBalance, txCost) //subtract the tx cost
 						Expect(Owner.Balance(Backend).String()).To(Equal(ownerBalance.String()))
 					})
