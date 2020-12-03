@@ -42,6 +42,8 @@ contract OptOutableMonolith2FA is Controllable, Ownable {
     event SetPersonal2FA(address _sender, address _p2FA);
     event SetMonolith2FA(address _sender);
 
+    /// @dev for accessing wallet in privileged mode.
+    bool public privileged;
     bool public monolith2FA;
     address public personal2FA;
 
@@ -52,7 +54,7 @@ contract OptOutableMonolith2FA is Controllable, Ownable {
     // @dev This modifier ensures that a method is only accessible to 2nd factor
     modifier only2FA() {
         if (monolith2FA) {
-            require(_isController(msg.sender), "sender is not controller");
+            require(_isController(msg.sender), "sender is not a Monolith 2FA");
         } else {
             require(msg.sender == personal2FA, "sender is not personal 2FA account");
         }
@@ -73,7 +75,9 @@ contract OptOutableMonolith2FA is Controllable, Ownable {
         emit SetMonolith2FA(msg.sender);
     }
 
+    /// @dev set personal 2FA to the address the user provided, needs to be called by a privileged relayed Tx
     function setPersonal2FA(address _p2FA) external onlyOwner {
+        require(privileged, "Setting a personal 2FA requires privileged mode");
         require(_p2FA != address(0), "2FA cannot be set to zero");
         require(_p2FA != personal2FA, "address already set");
         require(_p2FA != address(this), "2FA cannot be the wallet address");
@@ -409,7 +413,7 @@ contract Wallet is ENSResolvable, AddressWhitelist, DailyLimit, IERC165, Transfe
     using SafeERC20 for IERC20;
     using SafeMath for uint256;
 
-    event ExecutedRelayedTransaction(bytes _data, bytes _returnData);
+    event ExecutedRelayedTransaction(bytes _data, bytes _returnData, bool _privileged);
     event ExecutedTransaction(address _destination, uint256 _value, bytes _data, bytes _returnData);
     event IncreasedRelayNonce(address _sender, uint256 _currentNonce);
     event LoadedTokenCard(address _asset, uint256 _amount);
@@ -464,16 +468,27 @@ contract Wallet is ENSResolvable, AddressWhitelist, DailyLimit, IERC165, Transfe
         _;
     }
 
+    /// Meta-transaction
+    function executeRelayedTransaction (uint _nonce, bytes calldata _data, bytes calldata _signature) external onlyController {
+        return _executeRelayedTransaction(_nonce, _data, _signature, false);
+    }
+
+    /// Privileged functionality
+    function executePrivilegedRelayedTransaction (uint _nonce, bytes calldata _data, bytes calldata _signature) external only2FA {
+        return _executeRelayedTransaction(_nonce, _data, _signature, true);
+    }
+
     /// @dev This function allows for the controller to relay transactions on the owner's behalf,
     /// the relayed message has to be signed by the owner.
     /// @param _nonce only used for relayed transactions, must match the wallet's relayNonce.
     /// @param _data abi encoded data payload.
     /// @param _signature signed prefix + data.
-    function executeRelayedTransaction(
+    function _executeRelayedTransaction(
         uint256 _nonce,
         bytes calldata _data,
-        bytes calldata _signature
-    ) external only2FA {
+        bytes calldata _signature,
+        bool _privileged
+    ) private {
         // Expecting prefixed data ("monolith:") indicating relayed transaction...
         // ...and an Ethereum Signed Message to protect user from signing an actual Tx
         uint256 id;
@@ -487,11 +502,16 @@ contract Wallet is ENSResolvable, AddressWhitelist, DailyLimit, IERC165, Transfe
         require(_nonce == relayNonce, "tx replay");
         _increaseRelayNonce();
 
+        // TO DO: an "if(_privileged) {privileged = _privileged}  should be less expensive
+        privileged = _privileged;
+        batchExecuteTransaction(_data);
+        privileged = false;
+
         // invoke wallet function with an external call
         (bool success, bytes memory returnData) = address(this).call(_data);
         require(success, string(returnData));
 
-        emit ExecutedRelayedTransaction(_data, returnData);
+        emit ExecutedRelayedTransaction(_data, returnData, _privileged);
     }
 
     /// @dev This returns the balance of the contract for any ERC20 token or ETH.
@@ -573,7 +593,7 @@ contract Wallet is ENSResolvable, AddressWhitelist, DailyLimit, IERC165, Transfe
     /// it calls executeTransaction() so that the daily limit is enforced.
     /// @param _transactionBatch data encoding the transactions to be sent,
     /// following executeTransaction's format i.e. (destination, value, data)
-    function batchExecuteTransaction(bytes memory _transactionBatch) public onlyOwnerOrSelf {
+    function batchExecuteTransaction(bytes memory _transactionBatch) public onlyOwnerOr2FA {
         uint256 batchLength = _transactionBatch.length + 32; // because the pos starts from 32
         uint256 remainingBytesLength = _transactionBatch.length; // remaining bytes to be processed
         uint256 pos = 32; //the first 32 bytes denote the byte array length, start from actual data
@@ -654,10 +674,10 @@ contract Wallet is ENSResolvable, AddressWhitelist, DailyLimit, IERC165, Transfe
         address _destination,
         uint256 _value,
         bytes memory _data
-    ) public onlyOwnerOrSelf returns (bytes memory) {
+    ) public onlyOwnerOr2FA returns (bytes memory) {
         // If value is send across as a part of this executeTransaction, this will be sent to any payable
         // destination. As a result enforceLimit if destination is not whitelisted.
-        if (!whitelistMap[_destination]) {
+        if (!whitelistMap[_destination] && !privileged) {
             // Convert ETH value to stablecoin, 0x0 denotes ETH.
             uint256 stablecoinValue = convertToStablecoin(address(0), _value);
             _enforceDailyLimit(stablecoinValue);
@@ -668,7 +688,7 @@ contract Wallet is ENSResolvable, AddressWhitelist, DailyLimit, IERC165, Transfe
             address to;
             uint256 amount;
             (to, amount) = _getERC20RecipientAndAmount(_destination, _data);
-            if (!whitelistMap[to]) {
+            if (!whitelistMap[to] && !privileged) {
                 // Convert token amount to stablecoin value.
                 // If the address (of the token contract, e.g) is not in the TokenWhitelist used by the convert method
                 // ...then stablecoinValue will be zero
@@ -718,7 +738,7 @@ contract Wallet is ENSResolvable, AddressWhitelist, DailyLimit, IERC165, Transfe
         require(_to != address(0), "destination=0");
 
         // If address is not whitelisted, take daily limit into account.
-        if (!whitelistMap[_to]) {
+        if (!whitelistMap[_to] && !privileged) {
             // Convert token amount to stablecoin value.
             // If the address (of the token contract) is not in the TokenWhitelist used by the convert method...
             // ...then stablecoinValue will be zero
