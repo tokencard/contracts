@@ -234,6 +234,7 @@ var _ = Describe("executePrivilegedRelayedTransaction", func() {
 				a, err := abi.JSON(strings.NewReader(WALLET_ABI))
 				Expect(err).ToNot(HaveOccurred())
 				data, err := a.Pack("transfer", RandomAccount.Address(), common.HexToAddress("0x0"), EthToWei(1))
+				Expect(err).ToNot(HaveOccurred())
 
 				batch := []byte(fmt.Sprintf("%s%s%s%s", WalletProxyAddress, abi.U256(EthToWei(1)), abi.U256(big.NewInt(int64(len(data)))), data))
 
