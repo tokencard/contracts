@@ -13,6 +13,7 @@ import (
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	. "github.com/tokencard/contracts/v3/test/shared"
+	"github.com/tokencard/ethertest"
 )
 
 var _ = Describe("metaTx refund", func() {
@@ -50,20 +51,14 @@ var _ = Describe("metaTx refund", func() {
 			When("controller relays an ETH transfer and a refund", func() {
 
 				BeforeEach(func() {
-					batch := fmt.Sprintf("%s%s%s%s%s%s", randomAddress, abi.U256(EthToWei(1)), abi.U256(big.NewInt(0)),
-						tokenBank, abi.U256(big.NewInt(1000)), abi.U256(big.NewInt(0)))
-
-					a, err := abi.JSON(strings.NewReader(WALLET_ABI))
-					Expect(err).ToNot(HaveOccurred())
-					data, err := a.Pack("batchExecuteTransaction", []byte(batch))
-					Expect(err).ToNot(HaveOccurred())
+					batch := []byte(fmt.Sprintf("%s%s%s%s%s%s", randomAddress, abi.U256(EthToWei(1)), abi.U256(big.NewInt(0)), tokenBank, abi.U256(EthToWei(1)), abi.U256(big.NewInt(0))))
 
 					nonce := big.NewInt(0)
 					chainId := big.NewInt(1337)
-					signature, err := SignData(chainId, WalletProxyAddress, nonce, data, privateKey)
+					signature, err := SignData(chainId, WalletProxyAddress, nonce, batch, privateKey)
 					Expect(err).ToNot(HaveOccurred())
 
-					tx, err := WalletProxy.ExecuteRelayedTransaction(Controller.TransactOpts(), nonce, data, signature)
+					tx, err := WalletProxy.ExecuteRelayedTransaction(Controller.TransactOpts(ethertest.WithGasLimit(500000)), nonce, batch, signature)
 					Expect(err).ToNot(HaveOccurred())
 					Backend.Commit()
 					Expect(isSuccessful(tx)).To(BeTrue())
@@ -78,7 +73,7 @@ var _ = Describe("metaTx refund", func() {
 				It("should increase the Controller's balance by 1000 wei", func() {
 					b, e := Backend.BalanceAt(context.Background(), tokenBank, nil)
 					Expect(e).ToNot(HaveOccurred())
-					Expect(b.String()).To(Equal("1000"))
+					Expect(b.String()).To(Equal(EthToWei(1).String()))
 				})
 			})
 
@@ -93,19 +88,18 @@ var _ = Describe("metaTx refund", func() {
 
 					data, err = a.Pack("transfer", tokenBank, big.NewInt(10))
 					Expect(err).ToNot(HaveOccurred())
-					batch = fmt.Sprintf("%s%s%s%s%s", batch, TKNBurnerAddress, abi.U256(big.NewInt(0)), abi.U256(big.NewInt(int64(len(data)))), data)
+					batch2 := []byte(fmt.Sprintf("%s%s%s%s%s", batch, TKNBurnerAddress, abi.U256(big.NewInt(0)), abi.U256(big.NewInt(int64(len(data)))), data))
 
 					a, err = abi.JSON(strings.NewReader(WALLET_ABI))
-					Expect(err).ToNot(HaveOccurred())
-					data, err = a.Pack("batchExecuteTransaction", []byte(batch))
 					Expect(err).ToNot(HaveOccurred())
 
 					nonce := big.NewInt(0)
 					chainId := big.NewInt(1337)
-					signature, err := SignData(chainId, WalletProxyAddress, nonce, data, privateKey)
+					signature, err := SignData(chainId, WalletProxyAddress, nonce, batch2, privateKey)
+
 					Expect(err).ToNot(HaveOccurred())
 
-					tx, err := WalletProxy.ExecuteRelayedTransaction(Controller.TransactOpts(), nonce, data, signature)
+					tx, err := WalletProxy.ExecuteRelayedTransaction(Controller.TransactOpts(ethertest.WithGasLimit(1000000)), nonce, batch2, signature)
 					Expect(err).ToNot(HaveOccurred())
 					Backend.Commit()
 					Expect(isSuccessful(tx)).To(BeTrue())
@@ -162,10 +156,9 @@ var _ = Describe("metaTx refund", func() {
 					data, _ := a.Pack("transfer", randomAddress, big.NewInt(290))
 					batch := fmt.Sprintf("%s%s%s%s", TKNBurnerAddress, abi.U256(big.NewInt(0)), abi.U256(big.NewInt(int64(len(data)))), data)
 					data, _ = a.Pack("transfer", tokenBank, big.NewInt(10))
-					batch = fmt.Sprintf("%s%s%s%s%s", batch, TKNBurnerAddress, abi.U256(big.NewInt(0)), abi.U256(big.NewInt(int64(len(data)))), data)
+					batchData := []byte(fmt.Sprintf("%s%s%s%s%s", batch, TKNBurnerAddress, abi.U256(big.NewInt(0)), abi.U256(big.NewInt(int64(len(data)))), data))
 					a, err = abi.JSON(strings.NewReader(WALLET_ABI))
-					data, _ = a.Pack("batchExecuteTransaction", []byte(batch))
-					Expect(evt.Data).To(Equal(data))
+					Expect(evt.Data).To(Equal(batchData))
 					Expect(evt.ReturnData).To(Equal(common.Hex2Bytes("")))
 				})
 			})

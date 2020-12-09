@@ -149,7 +149,7 @@ var _ = Describe("2FA", func() {
 				Backend.Commit()
 				Expect(isSuccessful(tx)).To(BeFalse())
 				returnData, _ := ethCall(tx)
-				Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("sender is not controller"))
+				Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("sender is not a Monolith 2FA"))
 			})
 		})
 
@@ -233,7 +233,7 @@ var _ = Describe("2FA", func() {
 					Backend.Commit()
 					Expect(isSuccessful(tx)).To(BeFalse())
 					returnData, _ := ethCall(tx)
-					Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("sender is not controller"))
+					Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("sender is not a Monolith 2FA"))
 				})
 			})
 
