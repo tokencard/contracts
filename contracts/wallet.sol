@@ -67,6 +67,8 @@ contract OptOutableMonolith2FA is Controllable, Ownable {
         _;
     }
 
+
+
     /// @dev set Monolith to be the 2FA
     function setMonolith2FA() external onlyOwner {
         require(!monolith2FA, "monolith2FA already enabled");
@@ -77,7 +79,7 @@ contract OptOutableMonolith2FA is Controllable, Ownable {
 
     /// @dev set personal 2FA to the address the user provided, needs to be called by a privileged relayed Tx
     function setPersonal2FA(address _p2FA) external onlyOwner {
-        require(privileged, "Setting a personal 2FA requires privileged mode");
+        //require(privileged, "Setting a personal 2FA requires privileged mode");
         require(_p2FA != address(0), "2FA cannot be set to zero");
         require(_p2FA != personal2FA, "address already set");
         require(_p2FA != address(this), "2FA cannot be the wallet address");
@@ -507,11 +509,7 @@ contract Wallet is ENSResolvable, AddressWhitelist, DailyLimit, IERC165, Transfe
         batchExecuteTransaction(_data);
         privileged = false;
 
-        // invoke wallet function with an external call
-        (bool success, bytes memory returnData) = address(this).call(_data);
-        require(success, string(returnData));
-
-        emit ExecutedRelayedTransaction(_data, returnData, _privileged);
+        emit ExecutedRelayedTransaction(_data, "", _privileged);
     }
 
     /// @dev This returns the balance of the contract for any ERC20 token or ETH.
