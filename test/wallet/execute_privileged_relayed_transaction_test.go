@@ -64,7 +64,7 @@ var _ = Describe("executePrivilegedRelayedTransaction", func() {
 			Backend.Commit()
 			Expect(isSuccessful(tx)).To(BeFalse())
 			returnData, _ := ethCall(tx)
-			Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("only owner"))
+			Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("invalid signature"))
 		})
 	})
 
@@ -231,19 +231,23 @@ var _ = Describe("executePrivilegedRelayedTransaction", func() {
 		When("the the non-privileged mode is used each one of them fails separately due to having exceeded the limit ", func() {
 			It("should fail when transfering 1 ETH (>100$)", func() {
 				// send value (1 ETH) > 100$
-				data := []byte(fmt.Sprintf("%s%s%s", RandomAccount.Address(), abi.U256(EthToWei(1)), abi.U256(big.NewInt(0))))
+				a, err := abi.JSON(strings.NewReader(WALLET_ABI))
+				Expect(err).ToNot(HaveOccurred())
+				data, err := a.Pack("transfer", RandomAccount.Address(), common.HexToAddress("0x0"), EthToWei(1))
+
+				batch := []byte(fmt.Sprintf("%s%s%s%s", WalletProxyAddress, abi.U256(EthToWei(1)), abi.U256(big.NewInt(int64(len(data)))), data))
 
 				nonce := big.NewInt(0)
 				chainId := big.NewInt(1337)
-				signature, err := SignData(chainId, WalletProxyAddress, nonce, data, Owner.PrivKey())
+				signature, err := SignData(chainId, WalletProxyAddress, nonce, batch, Owner.PrivKey())
 				Expect(err).ToNot(HaveOccurred())
 
-				tx, err := WalletProxy.ExecuteRelayedTransaction(Controller.TransactOpts(ethertest.WithGasLimit(200000)), nonce, data, signature)
+				tx, err := WalletProxy.ExecuteRelayedTransaction(Controller.TransactOpts(ethertest.WithGasLimit(200000)), nonce, batch, signature)
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 				Expect(isSuccessful(tx)).To(BeFalse())
 				returnData, _ := ethCall(tx)
-				Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("available<amount"))
+				Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("available smaller than amount"))
 			})
 
 			It("should fail when transfering 1 token (>100$)", func() {
@@ -252,19 +256,19 @@ var _ = Describe("executePrivilegedRelayedTransaction", func() {
 				Expect(err).ToNot(HaveOccurred())
 				data, err := a.Pack("transfer", RandomAccount.Address(), ERC20Contract1Address, EthToWei(1))
 				Expect(err).ToNot(HaveOccurred())
-				data = []byte(fmt.Sprintf("%s%s%s%s", WalletProxyAddress, abi.U256(EthToWei(0)), abi.U256(big.NewInt(int64(len(data)))), data))
+				batch := []byte(fmt.Sprintf("%s%s%s%s", WalletProxyAddress, abi.U256(EthToWei(1)), abi.U256(big.NewInt(int64(len(data)))), data))
 
 				nonce := big.NewInt(0)
 				chainId := big.NewInt(1337)
-				signature, err := SignData(chainId, WalletProxyAddress, nonce, data, Owner.PrivKey())
+				signature, err := SignData(chainId, WalletProxyAddress, nonce, batch, Owner.PrivKey())
 				Expect(err).ToNot(HaveOccurred())
 
-				tx, err := WalletProxy.ExecuteRelayedTransaction(Controller.TransactOpts(ethertest.WithGasLimit(200000)), nonce, data, signature)
+				tx, err := WalletProxy.ExecuteRelayedTransaction(Controller.TransactOpts(ethertest.WithGasLimit(200000)), nonce, batch, signature)
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
 				Expect(isSuccessful(tx)).To(BeFalse())
 				returnData, _ := ethCall(tx)
-				Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("available<amount"))
+				Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("available smaller than amount"))
 
 			})
 
