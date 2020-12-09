@@ -15,7 +15,7 @@ import (
 	"github.com/tokencard/ethertest"
 )
 
-var _ = FDescribe("executeRelayedTransaction", func() {
+var _ = Describe("executeRelayedTransaction", func() {
 
 	BeforeEach(func() {
 		BankAccount.MustTransfer(Backend, WalletProxyAddress, EthToWei(4))
@@ -70,7 +70,7 @@ var _ = FDescribe("executeRelayedTransaction", func() {
 			signature, err := SignData(chainId, WalletProxyAddress, nonce, batch, privateKey)
 			Expect(err).ToNot(HaveOccurred())
 
-			tx, err := WalletProxy.ExecuteRelayedTransaction(Controller.TransactOpts(ethertest.WithGasLimit(500000)), nonce, batch, signature)
+			tx, err := WalletProxy.ExecuteRelayedTransaction(Controller.TransactOpts(ethertest.WithGasLimit(1000000)), nonce, batch, signature)
 			Expect(err).ToNot(HaveOccurred())
 			Backend.Commit()
 			Expect(isSuccessful(tx)).To(BeFalse())
@@ -99,18 +99,13 @@ var _ = FDescribe("executeRelayedTransaction", func() {
 				signature, err := SignData(chainId, WalletProxyAddress, nonce, batch, Owner.PrivKey())
 				Expect(err).ToNot(HaveOccurred())
 
-				tx, err := WalletProxy.ExecuteRelayedTransaction(Owner.TransactOpts(ethertest.WithGasLimit(1000000)), nonce, batch, signature)
+				tx, err := WalletProxy.ExecuteRelayedTransaction(Controller.TransactOpts(ethertest.WithGasLimit(1000000)), nonce, batch, signature)
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
-				fmt.Println("here")
-				//returnData, _ := ethCall(tx)
-				//Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("invalid signature"))
-
 				Expect(isSuccessful(tx)).To(BeTrue())
-				fmt.Println("here 2")
 			})
 
-			FIt("should emit an IncreasedRelayNonce event", func() {
+			It("should emit an IncreasedRelayNonce event", func() {
 				it, err := WalletProxy.FilterIncreasedRelayNonce(nil)
 				Expect(err).ToNot(HaveOccurred())
 				Expect(it.Next()).To(BeTrue())
