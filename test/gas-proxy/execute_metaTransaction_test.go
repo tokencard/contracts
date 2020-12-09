@@ -17,6 +17,7 @@ import (
 	"github.com/tokencard/contracts/v3/pkg/bindings"
 	"github.com/tokencard/contracts/v3/pkg/bindings/externals/upgradeability"
 	. "github.com/tokencard/contracts/v3/test/shared"
+	"github.com/tokencard/ethertest"
 )
 
 var WalletImplementationAddress common.Address
@@ -72,18 +73,24 @@ var _ = Describe("ExecuteMetaTransaction", func() {
 				Expect(err).ToNot(HaveOccurred())
 				data, err := walletABI.Pack("transfer", RandomAccount.Address(), common.HexToAddress("0x0"), EthToWei(1))
 				Expect(err).ToNot(HaveOccurred())
+
+				batch := []byte(fmt.Sprintf("%s%s%s%s", Owner.Address(), abi.U256(EthToWei(1)), abi.U256(big.NewInt(int64(len(data)))), data))
+
 				nonce := big.NewInt(0)
 				chainId := big.NewInt(1337)
-				signature, err := SignData(chainId, ProxyAddress, nonce, data, Owner.PrivKey())
+				signature, err := SignData(chainId, ProxyAddress, nonce, batch, Owner.PrivKey())
 				Expect(err).ToNot(HaveOccurred())
 				// create relayed transaction data
-				data, err = walletABI.Pack("executeRelayedTransaction", nonce, data, signature)
+				data, err = walletABI.Pack("executeRelayedTransaction", nonce, batch, signature)
 				Expect(err).ToNot(HaveOccurred())
 
-				tx, err := GasProxy.ExecuteTransaction(Controller.TransactOpts(), ProxyAddress, big.NewInt(0), data)
+				tx, err := GasProxy.ExecuteTransaction(Controller.TransactOpts(ethertest.WithGasLimit(6000000)), ProxyAddress, big.NewInt(0), data)
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
+				//returnData, _ := ethCall(tx)
+				//Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("available smaller than amount"))
 				Expect(isSuccessful(tx)).To(BeTrue())
+
 			})
 
 			It("should decrease the wallet's ETH balance ", func() {
