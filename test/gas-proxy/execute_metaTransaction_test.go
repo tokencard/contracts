@@ -87,10 +87,7 @@ var _ = Describe("ExecuteMetaTransaction", func() {
 				tx, err := GasProxy.ExecuteTransaction(Controller.TransactOpts(ethertest.WithGasLimit(6000000)), ProxyAddress, big.NewInt(0), data)
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
-				//returnData, _ := ethCall(tx)
-				//Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("available smaller than amount"))
 				Expect(isSuccessful(tx)).To(BeTrue())
-
 			})
 
 			It("should decrease the wallet's ETH balance ", func() {

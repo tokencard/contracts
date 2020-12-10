@@ -22,6 +22,14 @@ var _ = Describe("relay Tx", func() {
 		BankAccount.MustTransfer(Backend, WalletProxyAddress, EthToWei(2))
 	})
 
+	When("relayNonce variable initialized to 0", func() {
+		It("should succeed", func() {
+			nonce, err := WalletProxy.RelayNonce(nil)
+			Expect(err).ToNot(HaveOccurred())
+			Expect(nonce.String()).To(Equal("0"))
+		})
+	})
+
 	When("a non-owner account tries to increase the nonce", func() {
 		It("should fail", func() {
 			tx, err := WalletProxy.IncreaseRelayNonce(Controller.TransactOpts(ethertest.WithGasLimit(60000)))
