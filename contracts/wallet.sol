@@ -67,8 +67,6 @@ contract OptOutableMonolith2FA is Controllable, Ownable {
         _;
     }
 
-
-
     /// @dev set Monolith to be the 2FA
     function setMonolith2FA() external onlyOwner {
         require(!monolith2FA, "monolith2FA already enabled");
@@ -471,12 +469,20 @@ contract Wallet is ENSResolvable, AddressWhitelist, DailyLimit, IERC165, Transfe
     }
 
     /// Meta-transaction
-    function executeRelayedTransaction (uint _nonce, bytes calldata _data, bytes calldata _signature) external onlyController {
+    function executeRelayedTransaction(
+        uint256 _nonce,
+        bytes calldata _data,
+        bytes calldata _signature
+    ) external onlyController {
         return _executeRelayedTransaction(_nonce, _data, _signature, false);
     }
 
     /// Privileged functionality
-    function executePrivilegedRelayedTransaction (uint _nonce, bytes calldata _data, bytes calldata _signature) external only2FA {
+    function executePrivilegedRelayedTransaction(
+        uint256 _nonce,
+        bytes calldata _data,
+        bytes calldata _signature
+    ) external only2FA {
         return _executeRelayedTransaction(_nonce, _data, _signature, true);
     }
 
