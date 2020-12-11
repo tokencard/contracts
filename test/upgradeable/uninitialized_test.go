@@ -35,16 +35,16 @@ var _ = Describe("uninitialized", func() {
 		})
 
 		It("Should fail it when there's onlyOwnerOrSelf()", func() {
-			tx, err = ProxyWallet.SetSpendLimit(Owner.TransactOpts(ethertest.WithGasLimit(100000)), big.NewInt(1000))
+			tx, err = ProxyWallet.SubmitDailyLimitUpdate(Owner.TransactOpts(ethertest.WithGasLimit(100000)), big.NewInt(1000))
 			Expect(err).ToNot(HaveOccurred())
 			Backend.Commit()
 			Expect(isSuccessful(tx)).To(BeFalse())
 			returnData, _ := ethCall(tx)
-			Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("only owner||self"))
+			Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("Only owner or self"))
 		})
 
 		It("Should fail it when there's onlyController()", func() {
-			tx, err = ProxyWallet.ConfirmSpendLimitUpdate(Owner.TransactOpts(ethertest.WithGasLimit(100000)), big.NewInt(1000))
+			tx, err = ProxyWallet.ConfirmDailyLimitUpdate(Owner.TransactOpts(ethertest.WithGasLimit(100000)), big.NewInt(1000))
 			Expect(err).ToNot(HaveOccurred())
 			Backend.Commit()
 			Expect(isSuccessful(tx)).To(BeFalse())

@@ -4,6 +4,7 @@ import (
 	"context"
 	"math"
 	"math/big"
+	"time"
 
 	"github.com/ethereum/go-ethereum/common"
 	. "github.com/onsi/ginkgo"
@@ -88,7 +89,17 @@ var _ = Describe("wallet load eth", func() {
 		Expect(b.String()).To(Equal("0"))
 	})
 
-	When("the wallet has 102 ETH", func() {
+	When("the daily limit is set to 101 USD", func() {
+
+		BeforeEach(func() {
+			tx, err := WalletProxy.SubmitDailyLimitUpdate(Owner.TransactOpts(), EthToWei(101))
+			Expect(err).ToNot(HaveOccurred())
+			Backend.Commit()
+			Expect(isSuccessful(tx)).To(BeTrue())
+			//increase the timestam by one day so the new (higher) limit takes effect
+			Backend.AdjustTime(time.Hour*24 + time.Second)
+			Backend.Commit()
+		})
 
 		BeforeEach(func() {
 			RandomAccount.MustTransfer(Backend, WalletProxyAddress, EthToWei(102))
@@ -203,26 +214,26 @@ var _ = Describe("wallet load eth", func() {
 					Expect(isSuccessful(tx)).To(BeTrue())
 				})
 
-				When("a bigger amount than daily Load limit is loaded", func() {
+				When("a bigger amount than daily limit is loaded", func() {
 
 					It("Should revert", func() {
-						limPlusOneWei := EthToWei(10)
-						limPlusOneWei.Add(limPlusOneWei, GweiToWei(1)) // 10 ETH * 1000 + 1= 10,001 stablecoins
+						limPlusOneWei := EthToWei(101)
+						limPlusOneWei.Add(limPlusOneWei, GweiToWei(1)) // 101 ETH * 1000 + 1= 100,001 stablecoins
 						tx, err := WalletProxy.LoadTokenCard(Owner.TransactOpts(ethertest.WithGasLimit(200000)), common.HexToAddress("0x0"), limPlusOneWei)
 						Expect(err).ToNot(HaveOccurred())
 						Backend.Commit()
 						Expect(isSuccessful(tx)).To(BeFalse())
 						returnData, _ := ethCall(tx)
-						Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("available<amount"))
+						Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("available smaller than amount"))
 					})
 				}) //more daily Load limit
 
-				When("the MAX amount of the daily Load limit is loaded", func() {
+				When("the precise amount of the daily limit is loaded", func() {
 
 					It("Should return 10K USD", func() {
 						value, err := WalletProxy.ConvertToStablecoin(nil, common.HexToAddress("0x0"), EthToWei(10))
 						Expect(err).ToNot(HaveOccurred())
-						finalAmount := MweiToWei(10)
+						finalAmount := EthToWei(10)
 						finalAmount.Mul(finalAmount, big.NewInt(1000))
 						Expect(value.String()).To(Equal(finalAmount.String()))
 					})

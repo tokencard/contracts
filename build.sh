@@ -84,6 +84,8 @@ contracts=(
   "mocks/token/Token mocks/token.go Token mocks"
   "mocks/tokenWhitelistableExporter/TokenWhitelistableExporter mocks/tokenWhitelistableExporter.go TokenWhitelistableExporter mocks"
   "mocks/wallet/Wallet mocks/wallet.go Wallet mocks"
+  "mocks/gasToken/GasToken mocks/gasToken.go GasToken mocks"
+  "mocks/gasBurner/GasBurner mocks/gasBurner.go GasBurner mocks"
   "externals/ens/ENSRegistry/ENSRegistry externals/ens/ENSRegistry.go ENSRegistry ens"
   "externals/ens/PublicResolver/PublicResolver externals/ens/PublicResolver.go PublicResolver ens"
   "externals/upgradeability/UpgradeabilityProxy/UpgradeabilityProxy externals/upgradeability/UpgradeabilityProxy.go UpgradeabilityProxy upgradeability"

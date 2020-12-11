@@ -9,11 +9,11 @@
 
  *  This program is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  *  GNU General Public License for more details.
 
  *  You should have received a copy of the GNU General Public License
- *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ *  along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 // SPDX-License-Identifier: GPLv3
@@ -40,7 +40,7 @@ import "./internals/transferrable.sol";
 contract ControllableOwnable is Controllable, Ownable {
     /// @dev Check if the sender is the Owner or one of the Controllers
     modifier onlyOwnerOrController() {
-        require(_isOwner(msg.sender) || _isController(msg.sender), "only owner||controller");
+        require(_isOwner(msg.sender) || _isController(msg.sender), "Only owner or controller");
         _;
     }
 }
@@ -51,14 +51,14 @@ contract ControllableOwnable is Controllable, Ownable {
 contract SelfCallableOwnable is Ownable {
     /// @dev Check if the sender is the Owner or self
     modifier onlyOwnerOrSelf() {
-        require(_isOwner(msg.sender) || msg.sender == address(this), "only owner||self");
+        require(_isOwner(msg.sender) || msg.sender == address(this), "Only owner or self");
         _;
     }
 }
 
 /// @title AddressWhitelist provides payee-whitelist functionality.
 /// @dev This contract will allow the user to maintain a whitelist of addresses
-/// @dev These addresses will live outside of the various spend limits
+/// @dev These addresses will live outside of the daily limit
 contract AddressWhitelist is ControllableOwnable, SelfCallableOwnable {
     using SafeMath for uint256;
 
@@ -240,272 +240,159 @@ contract AddressWhitelist is ControllableOwnable, SelfCallableOwnable {
     }
 }
 
-/// @title DailyLimitTrait This trait allows for daily limits to be included in other contracts.
-/// This contract will allow for a DailyLimit object to be instantiated and used.
-library DailyLimitTrait {
+/// @title DailyLimit provides daily limit functionality
+contract DailyLimit is ControllableOwnable, SelfCallableOwnable, TokenWhitelistable {
     using SafeMath for uint256;
 
-    event UpdatedAvailableLimit();
+    event InitializedDailyLimit(uint256 _amount, uint256 _nextReset);
+    event SetDailyLimit(address _sender, uint256 _amount);
+    event SubmittedDailyLimitUpdate(uint256 _amount);
+    event UpdatedAvailableDailyLimit(uint256 _amount, uint256 _nextReset);
 
-    struct DailyLimit {
-        uint256 value;
-        uint256 available;
-        uint256 limitTimestamp;
-        uint256 pending;
-        bool controllerConfirmationRequired;
-    }
+    uint256 private _dailyLimit; // The daily limit amount.
+    uint256 private _available; // The remaining amount available for spending in the current 24-hour window.
+    uint256 private _pendingLimit; // The pending new limit value requested in the latest limit update submission.
+    uint256 private _resetTimestamp; // Denotes the future timestamp when the available daily limit is due to reset again.
 
-    /// @dev Confirm pending set daily limit operation.
-    function _confirmLimitUpdate(DailyLimit storage self, uint256 _amount) internal {
-        // Require that pending and confirmed spend limit are the same
-        require(self.pending == _amount, "confirmed/submitted limit mismatch");
-        // Modify spend limit based on the pending value.
-        _modifyLimit(self, self.pending);
-    }
-
-    /// @dev Use up amount within the daily limit. Will fail if amount is larger than daily limit.
-    function _enforceLimit(DailyLimit storage self, uint256 _amount) internal {
-        // Account for the spend limit daily reset.
-        _updateAvailableLimit(self);
-        require(self.available >= _amount, "available<amount");
-        self.available = self.available.sub(_amount);
-    }
-
-    /// @dev Returns the available daily balance - accounts for daily limit reset.
-    /// @return amount of available to spend within the current day in base units.
-    function _getAvailableLimit(DailyLimit storage self) internal view returns (uint256) {
-        if (now > self.limitTimestamp.add(24 hours)) {
-            return self.value;
-        } else {
-            return self.available;
-        }
-    }
-
-    /// @dev Modify the spend limit and spend available based on the provided value.
-    /// @dev _amount is the daily limit amount in wei.
-    function _modifyLimit(DailyLimit storage self, uint256 _amount) private {
-        // Account for the spend limit daily reset.
-        _updateAvailableLimit(self);
-        // Set the daily limit to the provided amount.
-        self.value = _amount;
-        // Lower the available limit if it's higher than the new daily limit.
-        if (self.available > self.value) {
-            self.available = self.value;
-        }
-    }
-
-    /// @dev Set the daily limit.
-    /// @param _amount is the daily limit amount in base units.
-    function _setLimit(DailyLimit storage self, uint256 _amount) internal {
-        // Require that the spend limit has not been set yet.
-        require(!self.controllerConfirmationRequired, "limit already set");
-        // Modify spend limit based on the provided value.
-        _modifyLimit(self, _amount);
-        // Flag the operation as set.
-        self.controllerConfirmationRequired = true;
-    }
-
-    /// @dev Submit a daily limit update, needs to be confirmed.
-    /// @param _amount is the daily limit amount in base units.
-    function _submitLimitUpdate(DailyLimit storage self, uint256 _amount) internal {
-        // Require that the spend limit has been set.
-        require(self.controllerConfirmationRequired, "limit hasn't been set yet");
-        // Assign the provided amount to pending daily limit.
-        self.pending = _amount;
-    }
-
-    /// @dev Update available spend limit based on the daily reset.
-    function _updateAvailableLimit(DailyLimit storage self) private {
-        if (now > self.limitTimestamp.add(24 hours)) {
-            // Update the current timestamp.
-            self.limitTimestamp = now;
-            // Set the available limit to the current spend limit.
-            self.available = self.value;
-            emit UpdatedAvailableLimit();
-        }
-    }
-}
-
-/// @title  it provides daily spend limit functionality.
-contract SpendLimit is ControllableOwnable, SelfCallableOwnable {
-    event SetSpendLimit(address _sender, uint256 _amount);
-    event SubmittedSpendLimitUpdate(uint256 _amount);
-
-    using DailyLimitTrait for DailyLimitTrait.DailyLimit;
-
-    DailyLimitTrait.DailyLimit internal _spendLimit;
-
-    /// @dev Confirm pending set daily limit operation.
-    function confirmSpendLimitUpdate(uint256 _amount) external onlyController {
-        _spendLimit._confirmLimitUpdate(_amount);
-        emit SetSpendLimit(msg.sender, _amount);
-    }
-
-    /// @dev Sets the initial daily spend (aka transfer) limit for non-whitelisted addresses.
-    /// @param _amount is the daily limit amount in wei.
-    function setSpendLimit(uint256 _amount) external onlyOwnerOrSelf {
-        _spendLimit._setLimit(_amount);
-        emit SetSpendLimit(msg.sender, _amount);
-    }
-
-    /// @dev View your available limit
-    function spendLimitAvailable() external view returns (uint256) {
-        return _spendLimit._getAvailableLimit();
-    }
-
-    /// @dev Is there an active spend limit change
-    function spendLimitPending() external view returns (uint256) {
-        return _spendLimit.pending;
-    }
-
-    /// @dev Has the spend limit been initialised
-    function spendLimitControllerConfirmationRequired() external view returns (bool) {
-        return _spendLimit.controllerConfirmationRequired;
-    }
-
-    /// @dev View how much has been spent already
-    function spendLimitValue() external view returns (uint256) {
-        return _spendLimit.value;
-    }
-
-    /// @dev Submit a daily transfer limit update for non-whitelisted addresses.
-    /// @param _amount is the daily limit amount in wei.
-    function submitSpendLimitUpdate(uint256 _amount) external onlyOwnerOrSelf {
-        _spendLimit._submitLimitUpdate(_amount);
-        emit SubmittedSpendLimitUpdate(_amount);
-    }
-
-    /// @dev Initializes the daily spend limit in wei.
-    function _initializeSpendLimit(uint256 _limit) internal initializer {
-        _spendLimit = DailyLimitTrait.DailyLimit(_limit, _limit, now, 0, false);
-    }
-}
-
-/// @title GasTopUpLimit provides daily limit functionality.
-contract GasTopUpLimit is ControllableOwnable, SelfCallableOwnable {
-    event SetGasTopUpLimit(address _sender, uint256 _amount);
-    event SubmittedGasTopUpLimitUpdate(uint256 _amount);
-
-    uint256 private constant _MAXIMUM_GAS_TOPUP_LIMIT = 500 finney;
-    uint256 private constant _MINIMUM_GAS_TOPUP_LIMIT = 1 finney;
-
-    using DailyLimitTrait for DailyLimitTrait.DailyLimit;
-
-    DailyLimitTrait.DailyLimit internal _gasTopUpLimit;
-
-    /// @dev Confirm pending set top up gas limit operation.
-    function confirmGasTopUpLimitUpdate(uint256 _amount) external onlyController {
-        _gasTopUpLimit._confirmLimitUpdate(_amount);
-        emit SetGasTopUpLimit(msg.sender, _amount);
-    }
-
-    /// @dev View your available gas top-up limit
-    function gasTopUpLimitAvailable() external view returns (uint256) {
-        return _gasTopUpLimit._getAvailableLimit();
-    }
-
-    /// @dev Is there an active gas top-up limit change
-    function gasTopUpLimitPending() external view returns (uint256) {
-        return _gasTopUpLimit.pending;
-    }
-
-    /// @dev Has the gas top-up limit been initialised
-    function gasTopUpLimitControllerConfirmationRequired() external view returns (bool) {
-        return _gasTopUpLimit.controllerConfirmationRequired;
-    }
-
-    /// @dev View how much gas top-up has been spent already
-    function gasTopUpLimitValue() external view returns (uint256) {
-        return _gasTopUpLimit.value;
-    }
-
-    /// @dev Sets the daily gas top up limit.
-    /// @param _amount is the gas top up amount in wei.
-    function setGasTopUpLimit(uint256 _amount) external onlyOwnerOrSelf {
-        require(_MINIMUM_GAS_TOPUP_LIMIT <= _amount && _amount <= _MAXIMUM_GAS_TOPUP_LIMIT, "out of range top-up");
-        _gasTopUpLimit._setLimit(_amount);
-        emit SetGasTopUpLimit(msg.sender, _amount);
-    }
-
-    /// @dev Submit a daily gas top up limit update.
-    /// @param _amount is the daily top up gas limit amount in wei.
-    function submitGasTopUpLimitUpdate(uint256 _amount) external onlyOwnerOrSelf {
-        require(_MINIMUM_GAS_TOPUP_LIMIT <= _amount && _amount <= _MAXIMUM_GAS_TOPUP_LIMIT, "out of range top-up");
-        _gasTopUpLimit._submitLimitUpdate(_amount);
-        emit SubmittedGasTopUpLimitUpdate(_amount);
-    }
-
-    /// @dev Initializes the daily gas topup limit in wei.
-    function _initializeGasTopUpLimit() internal initializer {
-        _gasTopUpLimit = DailyLimitTrait.DailyLimit(_MAXIMUM_GAS_TOPUP_LIMIT, _MAXIMUM_GAS_TOPUP_LIMIT, now, 0, false);
-    }
-}
-
-/// @title LoadLimit provides daily load limit functionality.
-contract LoadLimit is ControllableOwnable, SelfCallableOwnable, TokenWhitelistable {
-    event SetLoadLimit(address _sender, uint256 _amount);
-    event SubmittedLoadLimitUpdate(uint256 _amount);
-
-    uint256 private constant _MAXIMUM_STABLECOIN_LOAD_LIMIT = 10000; // USD
-    uint256 private _maximumLoadLimit;
-
-    using DailyLimitTrait for DailyLimitTrait.DailyLimit;
-
-    DailyLimitTrait.DailyLimit internal _loadLimit;
-
-    /// @dev Sets a daily card load limit.
-    /// @param _amount is the card load amount in current stablecoin base units.
-    function setLoadLimit(uint256 _amount) external onlyOwnerOrSelf {
-        require(_amount <= _maximumLoadLimit, "out of range load amount");
-        _loadLimit._setLimit(_amount);
-        emit SetLoadLimit(msg.sender, _amount);
-    }
-
-    /// @dev Submit a daily load limit update.
-    /// @param _amount is the daily load limit amount in wei.
-    function submitLoadLimitUpdate(uint256 _amount) external onlyOwnerOrSelf {
-        require(_amount <= _maximumLoadLimit, "out of range load amount");
-        _loadLimit._submitLimitUpdate(_amount);
-        emit SubmittedLoadLimitUpdate(_amount);
-    }
-
-    /// @dev Confirm pending set load limit operation.
-    function confirmLoadLimitUpdate(uint256 _amount) external onlyController {
-        _loadLimit._confirmLimitUpdate(_amount);
-        emit SetLoadLimit(msg.sender, _amount);
-    }
-
-    /// @dev View your available load limit
-    function loadLimitAvailable() external view returns (uint256) {
-        return _loadLimit._getAvailableLimit();
-    }
-
-    /// @dev Is there an active load limit change
-    function loadLimitPending() external view returns (uint256) {
-        return _loadLimit.pending;
-    }
-
-    /// @dev Has the load limit been initialised
-    function loadLimitControllerConfirmationRequired() external view returns (bool) {
-        return _loadLimit.controllerConfirmationRequired;
-    }
-
-    /// @dev View how much laod limit has been spent already
-    function loadLimitValue() external view returns (uint256) {
-        return _loadLimit.value;
-    }
-
-    function _initializeLoadLimit(bytes32 _tokenWhitelistNode) internal initializer {
+    // @dev This initializes the daily spend limit using the stablecoin defined in the tokenWhitelist
+    // @param _limit is base units of the stablecoin defined in the tokenWhitelist
+    // @param _tokenWhitelistNode is the node that points to our tokenWhitelist
+    function _initializeDailyLimit(uint256 _limit, bytes32 _tokenWhitelistNode) internal initializer {
         _initializeTokenWhitelistable(_tokenWhitelistNode);
         (, uint256 stablecoinMagnitude, , , , , ) = _getStablecoinInfo();
         require(stablecoinMagnitude > 0, "no stablecoin");
-        _maximumLoadLimit = _MAXIMUM_STABLECOIN_LOAD_LIMIT * stablecoinMagnitude;
-        _loadLimit = DailyLimitTrait.DailyLimit(_maximumLoadLimit, _maximumLoadLimit, now, 0, false);
+        uint256 limitBaseUnits = _limit * stablecoinMagnitude;
+        _dailyLimit = limitBaseUnits;
+        _available = limitBaseUnits;
+        _pendingLimit = limitBaseUnits;
+        _resetTimestamp = now.add(24 hours);
+        emit InitializedDailyLimit(limitBaseUnits, _resetTimestamp);
+    }
+
+    /// @dev Confirm pending set daily limit operation.
+    function confirmDailyLimitUpdate(uint256 _amount) external onlyController {
+        // Require that pending and confirmed limits are the same.
+        require(_pendingLimit == _amount, "confirmed or submitted limit mismatch");
+        // The new limit should be always higher then the current one otherwise no 2FA would be needed
+        // this is done to avoid abuse e.g. resetting the current daily limit and thus resetting the available amount
+        require(_amount > _dailyLimit, "limit should be greater than current one");
+        // Increase the available amount...
+        _available = _amount;
+        // ...and reset the 24-hour window
+        _resetTimestamp = now.add(24 hours);
+        emit UpdatedAvailableDailyLimit(_available, _resetTimestamp);
+        // Set daily limit based on the pending value.
+        _setLimit(_pendingLimit);
+    }
+
+    /// @dev Returns the active daily limit change.
+    function dailyLimitPending() external view returns (uint256) {
+        return _pendingLimit;
+    }
+
+    /// @dev Get the daily limit value.
+    function dailyLimitValue() external view returns (uint256) {
+        return _dailyLimit;
+    }
+
+    /// @dev Returns the available daily limit/balance, accounts for daily limit reset.
+    /// @return amount of available to spend within the current day in base units.
+    function dailyLimitAvailable() external view returns (uint256) {
+        if (now > _resetTimestamp) {
+            return _dailyLimit;
+        } else {
+            return _available;
+        }
+    }
+
+    /// @dev Submit a daily transfer limit update for non-whitelisted addresses.
+    /// @param _amount is the daily limit amount in stablecoin base units.
+    function submitDailyLimitUpdate(uint256 _amount) external onlyOwnerOrSelf {
+        // Assign the provided amount to pending daily limit.
+        _pendingLimit = _amount;
+        // If the new limit is lower, then there is no need for 2FA.
+        if (_amount <= _dailyLimit) {
+            // Decrease the available amount if the new limit is lower than it
+            if (_amount < _available) {
+                _available = _amount;
+                emit UpdatedAvailableDailyLimit(_available, _resetTimestamp);
+            }
+            _setLimit(_amount);
+        } else {
+            emit SubmittedDailyLimitUpdate(_amount);
+        }
+    }
+
+    /// @dev Use up amount within the daily limit. Will fail if amount is larger than available limit.
+    function _enforceDailyLimit(address _asset, uint256 _amount) internal {
+        // Convert token amount to stablecoin value.
+        uint256 stablecoinValue = convertToStablecoin(_asset, _amount);
+
+        // Account for the limit daily reset.
+        _updateAvailableDailyLimit();
+        require(_available >= stablecoinValue, "available smaller than amount");
+        _available = _available.sub(stablecoinValue);
+        emit UpdatedAvailableDailyLimit(_available, _resetTimestamp);
+    }
+
+    /// @dev Modify the daily and available limits based on the provided value.
+    /// @dev _amount is the daily limit amount in stablecoin base units.
+    function _setLimit(uint256 _amount) private {
+        // Set the daily limit to the provided amount.
+        _dailyLimit = _amount;
+        emit SetDailyLimit(msg.sender, _dailyLimit);
+    }
+
+    /// @dev Update available limit based on the daily reset.
+    function _updateAvailableDailyLimit() private {
+        if (now > _resetTimestamp) {
+            // Update the current timestamp.
+            _resetTimestamp = now.add(24 hours);
+            // Set the available limit to the current daily limit.
+            _available = _dailyLimit;
+            emit UpdatedAvailableDailyLimit(_available, _resetTimestamp);
+        }
+    }
+
+    /// @dev Convert ether or ERC20 token amount to the corresponding stablecoin amount.
+    /// @param _token ERC20 token contract address.
+    /// @param _amount amount of token in base units.
+    /// @return the equivalent amount in stablecoin base units & 0 if the token is not available.
+    function convertToStablecoin(address _token, uint256 _amount) public view returns (uint256) {
+        // avoid the unnecessary calculations if the token to be loaded is the stablecoin itself
+        if (_token == _stablecoin()) {
+            return _amount;
+        }
+
+        uint256 amountToSend = _amount;
+
+        // convert token amount to ETH first (0x0 represents ether)
+        if (_token != address(0)) {
+            // Store the token in memory to save map entry lookup gas.
+            (, uint256 magnitude, uint256 rate, bool available, , , ) = _getTokenInfo(_token);
+
+            // if the token does NOT exist in the whitelist then return 0
+            if (!available) {
+                return 0;
+            }
+            // if it exists then require that its rate is not zero.
+            require(rate != 0, "rate=0");
+            // Safely convert the token amount to ether based on the exchange rate.
+            amountToSend = _amount.mul(rate).div(magnitude);
+        }
+        // _amountToSend now is in ether
+        // Get the stablecoin's magnitude and its current rate.
+        (, uint256 stablecoinMagnitude, uint256 stablecoinRate, bool stablecoinAvailable, , , ) = _getStablecoinInfo();
+        // Check if the stablecoin rate is set.
+        require(stablecoinAvailable, "token not available");
+        require(stablecoinRate != 0, "stablecoin rate=0");
+        // Safely convert the token amount to stablecoin based on its exchange rate and the stablecoin exchange rate.
+        return amountToSend.mul(stablecoinMagnitude).div(stablecoinRate);
     }
 }
 
 /// @title Asset wallet with extra security features, gas top up management and card integration.
-contract Wallet is ENSResolvable, AddressWhitelist, SpendLimit, GasTopUpLimit, LoadLimit, IERC165, Transferrable, Balanceable {
+contract Wallet is ENSResolvable, AddressWhitelist, DailyLimit, IERC165, Transferrable, Balanceable {
     using Address for address;
     using ECDSA for bytes32;
     using SafeERC20 for IERC20;
@@ -542,7 +429,7 @@ contract Wallet is ENSResolvable, AddressWhitelist, SpendLimit, GasTopUpLimit, L
     /// @param _tokenWhitelistNode_ is the ENS name node of the Token whitelist.
     /// @param _controllerNode_ is the ENS name node of the Controller contract.
     /// @param _licenceNode_ is the ENS name node of the Licence contract.
-    /// @param _spendLimit_ is the initial spend limit.
+    /// @param _dailyLimit_ is the initial daily limit.
     function initializeWallet(
         address payable _owner_,
         bool _transferable_,
@@ -550,14 +437,12 @@ contract Wallet is ENSResolvable, AddressWhitelist, SpendLimit, GasTopUpLimit, L
         bytes32 _tokenWhitelistNode_,
         bytes32 _controllerNode_,
         bytes32 _licenceNode_,
-        uint256 _spendLimit_
+        uint256 _dailyLimit_
     ) external initializer {
         _initializeENSResolvable(_ens_);
         _initializeControllable(_controllerNode_);
         _initializeOwnable(_owner_, _transferable_);
-        _initializeSpendLimit(_spendLimit_);
-        _initializeGasTopUpLimit();
-        _initializeLoadLimit(_tokenWhitelistNode_);
+        _initializeDailyLimit(_dailyLimit_, _tokenWhitelistNode_);
         _licenceNode = _licenceNode_;
     }
 
@@ -638,10 +523,8 @@ contract Wallet is ENSResolvable, AddressWhitelist, SpendLimit, GasTopUpLimit, L
     function loadTokenCard(address _asset, uint256 _amount) external payable onlyOwnerOrSelf {
         // check if token is allowed to be used for loading the card
         require(_isTokenLoadable(_asset), "token not loadable");
-        // Convert token amount to stablecoin value.
-        uint256 stablecoinValue = convertToStablecoin(_asset, _amount);
         // Check against the daily spent limit and update accordingly, require that the value is under remaining limit.
-        _loadLimit._enforceLimit(stablecoinValue);
+        _enforceDailyLimit(_asset, _amount);
         // Get the TKN licenceAddress from ENS
         address licenceAddress = _ensResolve(_licenceNode);
         if (_asset != address(0)) {
@@ -665,7 +548,7 @@ contract Wallet is ENSResolvable, AddressWhitelist, SpendLimit, GasTopUpLimit, L
         // Check contract balance is sufficient for the operation
         require(address(this).balance > _amount, "balance not sufficient");
         // Check against the daily spent limit and update accordingly, require that the value is under remaining limit.
-        _gasTopUpLimit._enforceLimit(_amount);
+        _enforceDailyLimit(address(0), _amount);
         // Then perform the transfer
         owner().transfer(_amount);
         // Emit the gas top up event.
@@ -694,7 +577,7 @@ contract Wallet is ENSResolvable, AddressWhitelist, SpendLimit, GasTopUpLimit, L
                 destination := shr(96, mload(add(_transactionBatch, pos)))
                 // get value: pos + 20 bytes (destinnation address)
                 value := mload(add(_transactionBatch, add(pos, 20)))
-                // get data: pos  + 20 (destination address) + 32 (value) bytes
+                // get data: pos + 20 (destination address) + 32 (value) bytes
                 // the first 32 bytes denote the byte array length
                 dataLength := mload(add(_transactionBatch, add(pos, 52)))
                 data := add(_transactionBatch, add(pos, 52))
@@ -713,52 +596,6 @@ contract Wallet is ENSResolvable, AddressWhitelist, SpendLimit, GasTopUpLimit, L
         }
     }
 
-    /// @dev Convert ERC20 token amount to the corresponding ether amount.
-    /// @param _token ERC20 token contract address.
-    /// @param _amount amount of token in base units.
-    function convertToEther(address _token, uint256 _amount) public view returns (uint256) {
-        // Store the token in memory to save map entry lookup gas.
-        (, uint256 magnitude, uint256 rate, bool available, , , ) = _getTokenInfo(_token);
-        // If the token exists require that its rate is not zero.
-        if (available) {
-            require(rate != 0, "rate=0");
-            // Safely convert the token amount to ether based on the exchange rate.
-            return _amount.mul(rate).div(magnitude);
-        }
-        return 0;
-    }
-
-    /// @dev Convert ether or ERC20 token amount to the corresponding stablecoin amount.
-    /// @param _token ERC20 token contract address.
-    /// @param _amount amount of token in base units.
-    function convertToStablecoin(address _token, uint256 _amount) public view returns (uint256) {
-        // avoid the unnecessary calculations if the token to be loaded is the stablecoin itself
-        if (_token == _stablecoin()) {
-            return _amount;
-        }
-        uint256 amountToSend = _amount;
-
-        // 0x0 represents ether
-        if (_token != address(0)) {
-            // convert to eth first, same as convertToEther()
-            // Store the token in memory to save map entry lookup gas.
-            (, uint256 magnitude, uint256 rate, bool available, , , ) = _getTokenInfo(_token);
-            // require that token both exists in the whitelist and its rate is not zero.
-            require(available, "token not available");
-            require(rate != 0, "rate=0");
-            // Safely convert the token amount to ether based on the exchangeonly rate.
-            amountToSend = _amount.mul(rate).div(magnitude);
-        }
-        // _amountToSend now is in ether
-        // Get the stablecoin's magnitude and its current rate.
-        (, uint256 stablecoinMagnitude, uint256 stablecoinRate, bool stablecoinAvailable, , , ) = _getStablecoinInfo();
-        // Check if the stablecoin rate is set.
-        require(stablecoinAvailable, "token not available");
-        require(stablecoinRate != 0, "stablecoin rate=0");
-        // Safely convert the token amount to stablecoin based on its exchange rate and the stablecoin exchange rate.
-        return amountToSend.mul(stablecoinMagnitude).div(stablecoinRate);
-    }
-
     /// @dev This function allows for the owner to send any transaction from the Wallet to arbitrary addresses
     /// @param _destination address of the transaction
     /// @param _value ETH amount in wei
@@ -771,8 +608,10 @@ contract Wallet is ENSResolvable, AddressWhitelist, SpendLimit, GasTopUpLimit, L
         // If value is send across as a part of this executeTransaction, this will be sent to any payable
         // destination. As a result enforceLimit if destination is not whitelisted.
         if (!whitelistMap[_destination]) {
-            _spendLimit._enforceLimit(_value);
+            // enforce daily limit, 0x0 denotes ETH.
+            _enforceDailyLimit(address(0), _value);
         }
+
         // Check if the destination is a Contract and it is one of our supported tokens
         if (address(_destination).isContract() && _isTokenAvailable(_destination)) {
             // to is the recipient's address and amount is the value to be transferred
@@ -781,9 +620,8 @@ contract Wallet is ENSResolvable, AddressWhitelist, SpendLimit, GasTopUpLimit, L
             (to, amount) = _getERC20RecipientAndAmount(_destination, _data);
             if (!whitelistMap[to]) {
                 // If the address (of the token contract, e.g) is not in the TokenWhitelist used by the convert method
-                // then etherValue will be zero
-                uint256 etherValue = convertToEther(_destination, amount);
-                _spendLimit._enforceLimit(etherValue);
+                // ...then stablecoinValue will be zero
+                _enforceDailyLimit(_destination, amount);
             }
             // use callOptionalReturn provided in SafeERC20 in case the ERC20 method
             // returns false instead of reverting!
@@ -829,15 +667,10 @@ contract Wallet is ENSResolvable, AddressWhitelist, SpendLimit, GasTopUpLimit, L
 
         // If address is not whitelisted, take daily limit into account.
         if (!whitelistMap[_to]) {
-            // initialize ether value in case the asset is ETH
-            uint256 etherValue = _amount;
-            // Convert token amount to ether value if asset is an ERC20 token.
-            if (_asset != address(0)) {
-                etherValue = convertToEther(_asset, _amount);
-            }
-            // Check against the daily spent limit and update accordingly
-            // Check against the daily spent limit and update accordingly, require that the value is under remaining limit.
-            _spendLimit._enforceLimit(etherValue);
+            // Convert token amount to stablecoin value.
+            // If the address (of the token contract) is not in the TokenWhitelist used by the convert method...
+            // ...then stablecoinValue will be zero
+            _enforceDailyLimit(_asset, _amount);
         }
         // Transfer token or ether based on the provided address.
         _safeTransfer(_to, _asset, _amount);

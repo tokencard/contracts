@@ -123,7 +123,7 @@ var _ = BeforeEach(func() {
 	Expect(err).ToNot(HaveOccurred())
 	Backend.Commit()
 	Expect(isSuccessful(tx)).To(BeTrue())
-	WalletCacheAddress, tx, WalletCache, err = bindings.DeployWalletCache(BankAccount.TransactOpts(), Backend, WalletImplementationAddress, ENSRegistryAddress, EthToWei(1), [32]byte{}, [32]byte{}, [32]byte{}, [32]byte{})
+	WalletCacheAddress, tx, WalletCache, err = bindings.DeployWalletCache(BankAccount.TransactOpts(), Backend, WalletImplementationAddress, ENSRegistryAddress, big.NewInt(10000), [32]byte{}, [32]byte{}, [32]byte{}, [32]byte{})
 	Expect(err).ToNot(HaveOccurred())
 	WalletDeployerAddress, tx, WalletDeployer, err = bindings.DeployWalletDeployer(BankAccount.TransactOpts(), Backend, ENSRegistryAddress, [32]byte{}, [32]byte{})
 	Expect(err).ToNot(HaveOccurred())
