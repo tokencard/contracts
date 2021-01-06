@@ -101,7 +101,7 @@ var _ = Describe("wallet load ERC20", func() {
 				Expect(isSuccessful(tx)).To(BeTrue())
 			})
 
-			When("a valid amount is transfered ", func() {
+			When("a valid amount is transferred ", func() {
 
 				BeforeEach(func() {
 					tx, err := WalletProxy.LoadTokenCard(Owner.TransactOpts(), ERC20Contract1Address, big.NewInt(101))
@@ -267,7 +267,7 @@ var _ = Describe("wallet load ERC20", func() {
 
 			}) //equal to approval
 
-			When("a bigger amount than the one owned is tried to be transfered ", func() {
+			When("a bigger amount than the one owned is tried to be transferred ", func() {
 
 				It("Should revert", func() {
 					tx, err := WalletProxy.LoadTokenCard(Owner.TransactOpts(ethertest.WithGasLimit(300000)), ERC20Contract1Address, big.NewInt(1001))

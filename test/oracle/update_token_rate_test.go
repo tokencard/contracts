@@ -124,10 +124,10 @@ var _ = Describe("UpdateTokenRate", func() {
 						})
 					})
 
-					Context("When the result is is misformated", func() {
+					Context("When the result is is misformatted", func() {
 
 						BeforeEach(func() {
-							//update the public key, needed because we sign our own (misformated) results for the proof in the rate update
+							//update the public key, needed because we sign our own (misformatted) results for the proof in the rate update
 							tx, err := Oracle.UpdateCryptoCompareAPIPublicKey(ControllerAdmin.TransactOpts(), common.Hex2Bytes("717580b4c7577ebe0a7c3c21213ffbfa1221d2c1fe455d4897800d86eb65d91f8fb6c2304a54d89ab5c13a690f03dce25f7d46af90f79908d6be8bcdcdf74c22"))
 							Expect(err).ToNot(HaveOccurred())
 							Backend.Commit()
@@ -175,10 +175,10 @@ var _ = Describe("UpdateTokenRate", func() {
 						})
 					})
 
-					Context("When the date is is misformated", func() {
+					Context("When the date is is misformatted", func() {
 
 						BeforeEach(func() {
-							//update the public key, needed because we sign our own (misformated) results for the proof
+							//update the public key, needed because we sign our own (misformatted) results for the proof
 							tx, err := Oracle.UpdateCryptoCompareAPIPublicKey(ControllerAdmin.TransactOpts(), common.Hex2Bytes("717580b4c7577ebe0a7c3c21213ffbfa1221d2c1fe455d4897800d86eb65d91f8fb6c2304a54d89ab5c13a690f03dce25f7d46af90f79908d6be8bcdcdf74c22"))
 							Expect(err).ToNot(HaveOccurred())
 							Backend.Commit()
@@ -256,7 +256,7 @@ var _ = Describe("UpdateTokenRate", func() {
 						})
 
 						It("It should Fail", func() {
-							//wrong delimiters, - instead of ' ', interpretes the whole string as the day
+							//wrong delimiters, - instead of ' ', interprets the whole string as the day
 							proof := common.Hex2Bytes("0041f1bcafadb5a8cb52218f0dade45bade9024a2cef4d5aae363e57e41ef765c5b86980d0fb5ff62fec6b529352b92025fbb595f29b9441759b8932483d9f7b40061c0060646174653a204672692c2031362d4e6f762d323031382d31363a32323a363020474d540a6469676573743a205348412d3235363d4459452b675a6c4147756c5630562f67774a4347452f78423171484b66516c42476a37586c3441496649383d")
 							tx, err := Oracle.UpdateTokenRate(RandomAccount.TransactOpts(ethertest.WithGasLimit(300000)), common.HexToAddress("0xfe209bdE5CA32fa20E6728A005F26D651FFF5982"), "{\"ETH\":0.003637}", proof)
 							Expect(err).ToNot(HaveOccurred())
@@ -350,7 +350,7 @@ var _ = Describe("UpdateTokenRate", func() {
 						It("Should fail", func() {
 							//date has been tampered with (year 2019 instead of 2018)
 							//result has changed (bytes[-3]-bytes[-2])
-							//the signature verfication should fail, code does not reach the hash verification
+							//the signature verification should fail, code does not reach the hash verification
 							proof := common.Hex2Bytes("0041ed930d0cf64c73b82c3a04b958f2d27572c09ef7faacb14f062b2ce63eb78331a885fda74e113383ead579337b7e02cc414a214c3bd210142628087dcf5ded781c0060646174653a205765642c203033204f637420323031392031373a30303a323220474d540a6469676573743a205348412d3235363d36514d48744c664e677576362b63795a6133376d68513962776f394449482f6451672f54715a34467454393d")
 							tx, err := Oracle.UpdateTokenRate(RandomAccount.TransactOpts(ethertest.WithGasLimit(200000)), common.HexToAddress("0xfe209bdE5CA32fa20E6728A005F26D651FFF5982"), "{\"ETH\":0.001702}", proof)
 							Expect(err).ToNot(HaveOccurred())

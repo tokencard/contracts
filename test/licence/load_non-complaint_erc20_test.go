@@ -65,7 +65,7 @@ var _ = Describe("load ERC20", func() {
 				Expect(evt.Value.String()).To(Equal("101"))
 			})
 
-			When("the exact approved amount is transfered ", func() {
+			When("the exact approved amount is transferred ", func() {
 
 				BeforeEach(func() {
 					tx, err := Licence.Load(RandomAccount.TransactOpts(), NonCompliantERC20Address, big.NewInt(101))
@@ -136,7 +136,7 @@ var _ = Describe("load ERC20", func() {
 
 			}) //equal to approval
 
-			When("a bigger amount than the approved one is tried to be transfered ", func() {
+			When("a bigger amount than the approved one is tried to be transferred ", func() {
 
 				It("Should revert", func() {
 					tx, err := Licence.Load(RandomAccount.TransactOpts(ethertest.WithGasLimit(100000)), NonCompliantERC20Address, big.NewInt(102))

@@ -29,7 +29,7 @@ var _ = Describe("metaTx refund", func() {
 			Expect(isSuccessful(tx)).To(BeTrue())
 		})
 
-		When("ownership is transfered to a newly generated address", func() {
+		When("ownership is transferred to a newly generated address", func() {
 
 			var randomAddress common.Address
 			var tokenBank common.Address

@@ -646,7 +646,7 @@ var _ = Describe("executeTransaction", func() {
 					})
 				})
 
-				When("the approved random wallet tries to 'transferFrom' more than the approved ammount to itself using 'executeTransaction'", func() {
+				When("the approved random wallet tries to 'transferFrom' more than the approved amount to itself using 'executeTransaction'", func() {
 					It("should fail", func() {
 						a, err := abi.JSON(strings.NewReader(ERC20ABI))
 						Expect(err).ToNot(HaveOccurred())

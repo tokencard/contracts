@@ -110,7 +110,7 @@ var _ = Describe("updateFloat", func() {
 
 	}) //called by the owner
 
-	Context("When not called by the Ower", func() {
+	Context("When not called by the Owner", func() {
 		It("Should fail", func() {
 			tx, err := Licence.UpdateHolder(BankAccount.TransactOpts(ethertest.WithGasLimit(100000)), CryptoFloatAddress)
 			Expect(err).ToNot(HaveOccurred())

@@ -81,7 +81,7 @@ var _ = Describe("load TKN", func() {
 				Expect(evt.Value.String()).To(Equal("444"))
 			})
 
-			When("all the approved tokens are transfered ", func() {
+			When("all the approved tokens are transferred ", func() {
 
 				BeforeEach(func() {
 					tx, err := Licence.Load(RandomAccount.TransactOpts(), TKNBurnerAddress, big.NewInt(444))
@@ -141,7 +141,7 @@ var _ = Describe("load TKN", func() {
 
 			}) //equal to approval
 
-			When("more tokens than approved are being transfered ", func() {
+			When("more tokens than approved are being transferred ", func() {
 
 				It("Should revert", func() {
 					tx, err := Licence.Load(RandomAccount.TransactOpts(ethertest.WithGasLimit(100000)), TKNBurnerAddress, big.NewInt(555))

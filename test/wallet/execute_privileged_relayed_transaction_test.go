@@ -68,7 +68,7 @@ var _ = Describe("executePrivilegedRelayedTransaction", func() {
 		})
 	})
 
-	When("2FA tries to relay two owner-signed transactions: send value(no data) + transfer() with a value above the daily limiy", func() {
+	When("2FA tries to relay two owner-signed transactions: send value(no data) + transfer() with a value above the daily limit", func() {
 
 		BeforeEach(func() {
 			// Add  ERC20 token to tokenWhitelist and update token rate to be equal to 1 (1 token = 1 ETH)

@@ -194,7 +194,7 @@ var _ = Describe("Migrate Wallet", func() {
 			})
 		})
 
-	}) //no wallets chached
+	}) //no wallets cached
 
 	When("the wrong owner is passed in", func() {
 		It("should fail", func() {
