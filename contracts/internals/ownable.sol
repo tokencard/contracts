@@ -23,7 +23,7 @@ pragma solidity ^0.6.11;
 import "../externals/initializable.sol";
 
 /// @title Ownable has an owner address and provides basic authorization control functions.
-/// This contract is modified version of the MIT OpenZepplin Ownable contract
+/// This contract is modified version of the MIT OpenZeppelin Ownable contract
 /// This contract allows for the transferOwnership operation to be made impossible
 /// https://github.com/OpenZeppelin/openzeppelin-solidity/blob/master/contracts/ownership/Ownable.sol
 contract Ownable is Initializable {

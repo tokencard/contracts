@@ -20,7 +20,7 @@
 
 pragma solidity ^0.6.11;
 
-/// @title Date provides redimentary date parsing functionality.
+/// @title Date provides rudimentary date parsing functionality.
 /// @notice This method parses months found in an ISO date to a number
 contract Date {
     bytes32 private constant _JANUARY = keccak256("Jan");

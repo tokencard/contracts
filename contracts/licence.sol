@@ -26,7 +26,7 @@ import "./internals/controllable.sol";
 import "./internals/ensResolvable.sol";
 import "./internals/transferrable.sol";
 
-/// @title Licence loads the TokenCard and transfers the licence amout to the TKN Holder Contract.
+/// @title Licence loads the TokenCard and transfers the licence amount to the TKN Holder Contract.
 /// @dev the rest of the amount gets sent to the CryptoFloat
 contract Licence is Transferrable, ENSResolvable, Controllable {
     using SafeMath for uint256;
@@ -155,7 +155,7 @@ contract Licence is Transferrable, ENSResolvable, Controllable {
         _lockedTKNContractAddress = true;
     }
 
-    /// @dev Updates the address of the cyptoFloat.
+    /// @dev Updates the address of the cryptoFloat.
     /// @param _newFloat This is the new address for the CryptoFloat
     function updateFloat(address payable _newFloat) external onlyAdmin {
         require(!floatLocked(), "float is locked");

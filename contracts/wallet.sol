@@ -86,7 +86,7 @@ contract OptOutableMonolith2FA is Controllable, Ownable {
         emit SetPersonal2FA(msg.sender, _p2FA);
     }
 
-    /// @dev utiliy function to check whether or not an address is valid 2FA'er
+    /// @dev utility function to check whether or not an address is valid 2FA'er
     function _is2FA(address _sender) private view returns (bool) {
         if (monolith2FA) {
             return _isController(_sender);
@@ -146,7 +146,7 @@ contract AddressWhitelist is OptOutableMonolith2FA, SelfCallableOwnable {
 
     /// @dev Check that neither addition nor removal operations have already been submitted.
     modifier noActiveSubmission() {
-        require(!submittedWhitelistAddition && !submittedWhitelistRemoval, "whitelist sumbission pending");
+        require(!submittedWhitelistAddition && !submittedWhitelistRemoval, "whitelist submission pending");
         _;
     }
 
@@ -180,7 +180,7 @@ contract AddressWhitelist is OptOutableMonolith2FA, SelfCallableOwnable {
 
     /// @dev Confirm pending whitelist addition.
     /// @dev This will only ever be applied post 2FA, by one of the Controllers
-    /// @param _hash is the hash of the pending whitelist array, a form of lamport lock
+    /// @param _hash is the hash of the pending whitelist array, a form of Lamport's lock
     function confirmWhitelistAddition(bytes32 _hash) external only2FA {
         // Require that the whitelist addition has been submitted.
         require(submittedWhitelistAddition, "no pending submission");
@@ -603,17 +603,17 @@ contract Wallet is ENSResolvable, AddressWhitelist, DailyLimit, IERC165, Transfe
         uint256 pos = 32; //the first 32 bytes denote the byte array length, start from actual data
 
         address destination; // destination address
-        uint256 value; // trasanction value
-        uint256 dataLength; // externall call data length
+        uint256 value; // transaction value
+        uint256 dataLength; // external call data length
         bytes memory data; // call data
 
         while (pos < batchLength) {
-            // there should always be at least 84 bytes remaining: the minimun #bytes required to encode a Tx
+            // there should always be at least 84 bytes remaining: the minimum #bytes required to encode a Tx
             remainingBytesLength = remainingBytesLength.sub(84);
             assembly {
                 // shift right by 96 bits (256 - 160) to get the destination address (and zero the excessive bytes)
                 destination := shr(96, mload(add(_transactionBatch, pos)))
-                // get value: pos + 20 bytes (destinnation address)
+                // get value: pos + 20 bytes (destination address)
                 value := mload(add(_transactionBatch, add(pos, 20)))
                 // get data: pos + 20 (destination address) + 32 (value) bytes
                 // the first 32 bytes denote the byte array length
@@ -661,7 +661,7 @@ contract Wallet is ENSResolvable, AddressWhitelist, DailyLimit, IERC165, Transfe
             amountToSend = _amount.mul(rate).div(magnitude);
         }
         // _amountToSend now is in ether
-        // Get the stablecoin's magnitude and its current rate.
+        // Get the stablecoin magnitude and its current rate.
         (, uint256 stablecoinMagnitude, uint256 stablecoinRate, bool stablecoinAvailable, , , ) = _getStablecoinInfo();
         // Check if the stablecoin rate is set.
         require(stablecoinAvailable, "token not available");

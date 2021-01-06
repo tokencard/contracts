@@ -60,7 +60,7 @@ contract Controller is IController, Ownable, Transferrable {
         require(_isAdmin[msg.sender], "sender is not admin");
         _;
     }
-    
+
     /// @notice Check if Owner or Admin
     modifier onlyAdminOrOwner() {
         require(_isOwner(msg.sender) || _isAdmin[msg.sender], "sender is not admin or owner");

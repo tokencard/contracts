@@ -65,7 +65,7 @@ contract TokenWhitelist is ENSResolvable, Controllable, Transferrable {
 
     mapping(address => Token) private _tokenInfoMap;
 
-    // @notice specifies whitelisted methodIds for protected tokens in wallet's excuteTranaction() e.g. keccak256(transfer(address,uint256)) => 0xa9059cbb
+    // @notice specifies whitelisted methodIds for protected tokens in wallet's executeTransaction() e.g. keccak256(transfer(address,uint256)) => 0xa9059cbb
     mapping(bytes4 => bool) private _methodIdWhitelist;
 
     address[] private _tokenAddressArray;
@@ -83,7 +83,7 @@ contract TokenWhitelist is ENSResolvable, Controllable, Transferrable {
     /// @param _ens_ is the ENS registry address.
     /// @param _oracleNode_ is the ENS node of the Oracle.
     /// @param _controllerNode_ is our Controllers node.
-    /// @param _stablecoinAddress_ is the address of the stablecoint used by the wallet for the card load limit.
+    /// @param _stablecoinAddress_ is the address of the stablecoin used by the wallet for the card load limit.
     constructor(
         address _ens_,
         bytes32 _oracleNode_,
@@ -207,7 +207,7 @@ contract TokenWhitelist is ENSResolvable, Controllable, Transferrable {
         } else {
             //transfer or approve
             // 4 (signature) + 32(address) + 32(uint)
-            require(_data.length >= 4 + 32 + 32, "not enough data for transfer/appprove");
+            require(_data.length >= 4 + 32 + 32, "not enough data for transfer/approve");
             return (_data._bytesToAddress(4 + 12), _data._bytesToUint256(4 + 32));
         }
     }
