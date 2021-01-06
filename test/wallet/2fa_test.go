@@ -11,7 +11,7 @@ import (
 
 var _ = Describe("2FA", func() {
 
-	It("should be true", func() {
+	It("should be true when checking monolith 2FA variable value", func() {
 		oo, err := WalletProxy.Monolith2FA(nil)
 		Expect(err).ToNot(HaveOccurred())
 		Expect(oo).To(BeTrue())
@@ -26,7 +26,7 @@ var _ = Describe("2FA", func() {
 		Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("sender is not owner"))
 	})
 
-	It("should fail if Monolith 2FA is already enabled", func() {
+	It("should fail to set Monolith 2FA if Monolith 2FA is already enabled", func() {
 		tx, err := WalletProxy.SetMonolith2FA(Owner.TransactOpts(ethertest.WithGasLimit(60000)))
 		Expect(err).ToNot(HaveOccurred())
 		Backend.Commit()
@@ -53,7 +53,7 @@ var _ = Describe("2FA", func() {
 		Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("sender is not owner"))
 	})
 
-	It("should NOT allow to set the personal 2FA to address 0x0", func() {
+	It("should NOT allow an owner to set the personal 2FA to address 0x0", func() {
 		tx, err := WalletProxy.SetPersonal2FA(Owner.TransactOpts(ethertest.WithGasLimit(60000)), common.HexToAddress(("0x0")))
 		Expect(err).ToNot(HaveOccurred())
 		Backend.Commit()
@@ -62,7 +62,7 @@ var _ = Describe("2FA", func() {
 		Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("2FA cannot be set to zero"))
 	})
 
-	It("should NOT allow to set the personal 2FA to the same address", func() {
+	It("should NOT allow an owner to set the personal 2FA to the same address", func() {
 		tx, err := WalletProxy.SetPersonal2FA(Owner.TransactOpts(ethertest.WithGasLimit(60000)), Owner.Address())
 		Expect(err).ToNot(HaveOccurred())
 		Backend.Commit()
@@ -76,16 +76,9 @@ var _ = Describe("2FA", func() {
 		Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("address already set"))
 	})
 
-	It("should fail if monolith 2FA is already enabled", func() {
-		tx, err := WalletProxy.SetMonolith2FA(Owner.TransactOpts(ethertest.WithGasLimit(60000)))
-		Expect(err).ToNot(HaveOccurred())
-		Backend.Commit()
-		Expect(isSuccessful(tx)).To(BeFalse())
-		returnData, _ := ethCall(tx)
-		Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("monolith2FA already enabled"))
-	})
+	//TODO add privileged test
 
-	When("the owner submits a whitelist addition", func() {
+	When("the owner submits an account whitelist addition", func() {
 		BeforeEach(func() {
 			tx, err := WalletProxy.SetWhitelist(Owner.TransactOpts(), []common.Address{common.HexToAddress("0x1")})
 			Expect(err).ToNot(HaveOccurred())
@@ -98,7 +91,7 @@ var _ = Describe("2FA", func() {
 			Expect(isSuccessful(tx)).To(BeTrue())
 		})
 
-		When("the a random account tries to confirm the addition to the whitelist", func() {
+		When("a random account tries to confirm the account addition to the whitelist", func() {
 			It("should fail", func() {
 				pwl, err := WalletProxy.PendingWhitelistAddition(nil)
 				Expect(err).ToNot(HaveOccurred())
@@ -113,7 +106,7 @@ var _ = Describe("2FA", func() {
 			})
 		})
 
-		When("the controller tries to confirm the addition to the whitelist", func() {
+		When("the controller (Monolith 2FA) tries to confirm the account addition to the whitelist", func() {
 			It("should succeed", func() {
 				pwl, err := WalletProxy.PendingWhitelistAddition(nil)
 				Expect(err).ToNot(HaveOccurred())
@@ -127,7 +120,7 @@ var _ = Describe("2FA", func() {
 		})
 	})
 
-	When("the owner submits a daily limit of 12K $USD", func() {
+	When("the owner submits a daily limit of 12k USD", func() {
 		BeforeEach(func() {
 			tx, err := WalletProxy.SubmitDailyLimitUpdate(Owner.TransactOpts(), EthToWei(12000))
 			Expect(err).ToNot(HaveOccurred())
@@ -161,19 +154,19 @@ var _ = Describe("2FA", func() {
 				Expect(isSuccessful(tx)).To(BeTrue())
 			})
 
-			It("should be false", func() {
+			It("should return false when checking monolith2FA variable value", func() {
 				m2fa, err := WalletProxy.Monolith2FA(nil)
 				Expect(err).ToNot(HaveOccurred())
 				Expect(m2fa).To(BeFalse())
 			})
 
-			It("should set the 2FA address", func() {
+			It("should set the random account address as personal 2FA", func() {
 				p2fa, err := WalletProxy.Personal2FA(nil)
 				Expect(err).ToNot(HaveOccurred())
 				Expect(p2fa).To(Equal(RandomAccount.Address()))
 			})
 
-			It("Should emit a SetPersonal2Fa event", func() {
+			It("should emit a SetPersonal2Fa event", func() {
 				it, err := WalletProxy.FilterSetPersonal2FA(nil)
 				Expect(err).ToNot(HaveOccurred())
 				Expect(it.Next()).To(BeTrue())
@@ -183,7 +176,7 @@ var _ = Describe("2FA", func() {
 				Expect(evt.P2FA).To(Equal(RandomAccount.Address()))
 			})
 
-			It("should fail when controller tries to confirm", func() {
+			It("should fail when controller (ex Monolith 2FA) tries to confirm the limit update", func() {
 				tx, err := WalletProxy.ConfirmDailyLimitUpdate(Controller.TransactOpts(ethertest.WithGasLimit(80000)), EthToWei(12000))
 				Expect(err).ToNot(HaveOccurred())
 				Backend.Commit()
@@ -200,17 +193,18 @@ var _ = Describe("2FA", func() {
 					Expect(isSuccessful(tx)).To(BeTrue())
 				})
 
-				It("should be true", func() {
+				It("should be true when checking monolith 2FA variable value", func() {
 					m2fa, err := WalletProxy.Monolith2FA(nil)
 					Expect(err).ToNot(HaveOccurred())
 					Expect(m2fa).To(BeTrue())
 				})
 
-				It("should set the 2FA address to 0", func() {
+				It("should set the 2FA address to 0x0 (setting to 0x0 can be done only when calling SetMonolith2FA)", func() {
 					p2fa, err := WalletProxy.Personal2FA(nil)
 					Expect(err).ToNot(HaveOccurred())
 					Expect(p2fa).To(Equal(common.HexToAddress("0x0")))
 				})
+
 				It("Should emit a SetMonolith2FA event", func() {
 					it, err := WalletProxy.FilterSetMonolith2FA(nil)
 					Expect(err).ToNot(HaveOccurred())
@@ -220,14 +214,14 @@ var _ = Describe("2FA", func() {
 					Expect(evt.Sender).To(Equal(Owner.Address()))
 				})
 
-				It("should succeed when the controller confirms the limit update", func() {
+				It("should succeed when the controller (Monolith 2FA) confirms the limit update", func() {
 					tx, err := WalletProxy.ConfirmDailyLimitUpdate(Controller.TransactOpts(), EthToWei(12000))
 					Expect(err).ToNot(HaveOccurred())
 					Backend.Commit()
 					Expect(isSuccessful(tx)).To(BeTrue())
 				})
 
-				It("should fail when a random account tries to confirm", func() {
+				It("should fail when a random account tries to confirm the daily limit update", func() {
 					tx, err := WalletProxy.ConfirmDailyLimitUpdate(RandomAccount.TransactOpts(ethertest.WithGasLimit(80000)), EthToWei(12000))
 					Expect(err).ToNot(HaveOccurred())
 					Backend.Commit()
@@ -237,26 +231,21 @@ var _ = Describe("2FA", func() {
 				})
 			})
 
-			When("the random account confirms the new limit", func() {
+			When("the random account confirms the new limit update", func() {
 				BeforeEach(func() {
-					//tx, err := WalletProxy.SetPersonal2FA(Owner.TransactOpts(), RandomAccount.Address())
-					//Expect(err).ToNot(HaveOccurred())
-					//Backend.Commit()
-					//Expect(isSuccessful(tx)).To(BeTrue())
-
 					tx, err := WalletProxy.ConfirmDailyLimitUpdate(RandomAccount.TransactOpts(), EthToWei(12000))
 					Expect(err).ToNot(HaveOccurred())
 					Backend.Commit()
 					Expect(isSuccessful(tx)).To(BeTrue())
 				})
 
-				It("should have 12K $USD available for spending", func() {
+				It("should have 12k USD available for spending", func() {
 					tl, err := WalletProxy.DailyLimitAvailable(nil)
 					Expect(err).ToNot(HaveOccurred())
 					Expect(tl.String()).To(Equal(EthToWei(12000).String()))
 				})
 
-				It("Should emit a SetPersonal2FA event", func() {
+				It("should emit a SetPersonal2FA event", func() {
 					it, err := WalletProxy.FilterSetPersonal2FA(nil)
 					Expect(err).ToNot(HaveOccurred())
 					Expect(it.Next()).To(BeTrue())
@@ -279,7 +268,7 @@ var _ = Describe("2FA", func() {
 						Expect(isSuccessful(tx)).To(BeTrue())
 					})
 
-					When("the controller tries to confirm the addition to the whitelist", func() {
+					When("the controller tries to cancel the account addition to the whitelist", func() {
 						It("should fail", func() {
 							pwl, err := WalletProxy.PendingWhitelistAddition(nil)
 							Expect(err).ToNot(HaveOccurred())
@@ -294,7 +283,7 @@ var _ = Describe("2FA", func() {
 						})
 					})
 
-					When("the random account (set now as 2FA) tries to confirm the addition to the whitelist", func() {
+					When("the random account (set now as 2FA) tries to cancel the account addition to the whitelist", func() {
 						It("should succeed", func() {
 							pwl, err := WalletProxy.PendingWhitelistAddition(nil)
 							Expect(err).ToNot(HaveOccurred())
