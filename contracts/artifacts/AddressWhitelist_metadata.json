@@ -1,0 +1,825 @@
+{
+	"compiler": {
+		"version": "0.5.17+commit.d19bba13"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "address",
+						"name": "_sender",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "address[]",
+						"name": "_addresses",
+						"type": "address[]"
+					}
+				],
+				"name": "AddedToWhitelist",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "address",
+						"name": "_sender",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "bytes32",
+						"name": "_hash",
+						"type": "bytes32"
+					}
+				],
+				"name": "CancelledWhitelistAddition",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "address",
+						"name": "_sender",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "bytes32",
+						"name": "_hash",
+						"type": "bytes32"
+					}
+				],
+				"name": "CancelledWhitelistRemoval",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "address",
+						"name": "_ensRegistry",
+						"type": "address"
+					}
+				],
+				"name": "ENSSetRegistry",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "address",
+						"name": "_locked",
+						"type": "address"
+					}
+				],
+				"name": "LockedOwnership",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "address",
+						"name": "_sender",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "address[]",
+						"name": "_addresses",
+						"type": "address[]"
+					}
+				],
+				"name": "RemovedFromWhitelist",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "address[]",
+						"name": "_addresses",
+						"type": "address[]"
+					},
+					{
+						"indexed": false,
+						"internalType": "bytes32",
+						"name": "_hash",
+						"type": "bytes32"
+					}
+				],
+				"name": "SubmittedWhitelistAddition",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "address[]",
+						"name": "_addresses",
+						"type": "address[]"
+					},
+					{
+						"indexed": false,
+						"internalType": "bytes32",
+						"name": "_hash",
+						"type": "bytes32"
+					}
+				],
+				"name": "SubmittedWhitelistRemoval",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "address",
+						"name": "_from",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "address",
+						"name": "_to",
+						"type": "address"
+					}
+				],
+				"name": "TransferredOwnership",
+				"type": "event"
+			},
+			{
+				"constant": true,
+				"inputs": [
+					{
+						"internalType": "address[]",
+						"name": "_addresses",
+						"type": "address[]"
+					}
+				],
+				"name": "calculateHash",
+				"outputs": [
+					{
+						"internalType": "bytes32",
+						"name": "",
+						"type": "bytes32"
+					}
+				],
+				"payable": false,
+				"stateMutability": "pure",
+				"type": "function"
+			},
+			{
+				"constant": false,
+				"inputs": [
+					{
+						"internalType": "bytes32",
+						"name": "_hash",
+						"type": "bytes32"
+					}
+				],
+				"name": "cancelWhitelistAddition",
+				"outputs": [],
+				"payable": false,
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"constant": false,
+				"inputs": [
+					{
+						"internalType": "bytes32",
+						"name": "_hash",
+						"type": "bytes32"
+					}
+				],
+				"name": "cancelWhitelistRemoval",
+				"outputs": [],
+				"payable": false,
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"constant": false,
+				"inputs": [
+					{
+						"internalType": "bytes32",
+						"name": "_hash",
+						"type": "bytes32"
+					}
+				],
+				"name": "confirmWhitelistAddition",
+				"outputs": [],
+				"payable": false,
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"constant": false,
+				"inputs": [
+					{
+						"internalType": "bytes32",
+						"name": "_hash",
+						"type": "bytes32"
+					}
+				],
+				"name": "confirmWhitelistRemoval",
+				"outputs": [],
+				"payable": false,
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"constant": true,
+				"inputs": [],
+				"name": "controllerNode",
+				"outputs": [
+					{
+						"internalType": "bytes32",
+						"name": "",
+						"type": "bytes32"
+					}
+				],
+				"payable": false,
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"constant": true,
+				"inputs": [],
+				"name": "ensRegistry",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"payable": false,
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"constant": true,
+				"inputs": [],
+				"name": "isSetWhitelist",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"payable": false,
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"constant": true,
+				"inputs": [],
+				"name": "isTransferable",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"payable": false,
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"constant": true,
+				"inputs": [],
+				"name": "owner",
+				"outputs": [
+					{
+						"internalType": "address payable",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"payable": false,
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"constant": true,
+				"inputs": [],
+				"name": "pendingWhitelistAddition",
+				"outputs": [
+					{
+						"internalType": "address[]",
+						"name": "",
+						"type": "address[]"
+					}
+				],
+				"payable": false,
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"constant": true,
+				"inputs": [],
+				"name": "pendingWhitelistRemoval",
+				"outputs": [
+					{
+						"internalType": "address[]",
+						"name": "",
+						"type": "address[]"
+					}
+				],
+				"payable": false,
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"constant": false,
+				"inputs": [],
+				"name": "renounceOwnership",
+				"outputs": [],
+				"payable": false,
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"constant": false,
+				"inputs": [
+					{
+						"internalType": "address[]",
+						"name": "_addresses",
+						"type": "address[]"
+					}
+				],
+				"name": "setWhitelist",
+				"outputs": [],
+				"payable": false,
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"constant": false,
+				"inputs": [
+					{
+						"internalType": "address[]",
+						"name": "_addresses",
+						"type": "address[]"
+					}
+				],
+				"name": "submitWhitelistAddition",
+				"outputs": [],
+				"payable": false,
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"constant": false,
+				"inputs": [
+					{
+						"internalType": "address[]",
+						"name": "_addresses",
+						"type": "address[]"
+					}
+				],
+				"name": "submitWhitelistRemoval",
+				"outputs": [],
+				"payable": false,
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"constant": true,
+				"inputs": [],
+				"name": "submittedWhitelistAddition",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"payable": false,
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"constant": true,
+				"inputs": [],
+				"name": "submittedWhitelistRemoval",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"payable": false,
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"constant": false,
+				"inputs": [
+					{
+						"internalType": "address payable",
+						"name": "_account",
+						"type": "address"
+					},
+					{
+						"internalType": "bool",
+						"name": "_transferable",
+						"type": "bool"
+					}
+				],
+				"name": "transferOwnership",
+				"outputs": [],
+				"payable": false,
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"constant": true,
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"name": "whitelistArray",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"payable": false,
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"constant": true,
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"name": "whitelistMap",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"payable": false,
+				"stateMutability": "view",
+				"type": "function"
+			}
+		],
+		"devdoc": {
+			"details": "This contract will allow the user to maintain a whitelist of addressesThese addresses will live outside of the various spend limits",
+			"methods": {
+				"calculateHash(address[])": {
+					"details": "Method used to hash our whitelist address arrays."
+				},
+				"cancelWhitelistAddition(bytes32)": {
+					"details": "Cancel pending whitelist addition."
+				},
+				"cancelWhitelistRemoval(bytes32)": {
+					"details": "Cancel pending removal of whitelisted addresses."
+				},
+				"confirmWhitelistAddition(bytes32)": {
+					"details": "Confirm pending whitelist addition.This will only ever be applied post 2FA, by one of the Controllers",
+					"params": {
+						"_hash": "is the hash of the pending whitelist array, a form of lamport lock"
+					}
+				},
+				"confirmWhitelistRemoval(bytes32)": {
+					"details": "Confirm pending removal of whitelisted addresses."
+				},
+				"controllerNode()": {
+					"return": "the controller node registered in ENS."
+				},
+				"ensRegistry()": {
+					"return": "Current address of the ENS registry contract."
+				},
+				"isTransferable()": {
+					"return": "true if the ownership is transferable."
+				},
+				"owner()": {
+					"return": "address of the owner."
+				},
+				"pendingWhitelistAddition()": {
+					"details": "Getter for pending addition array."
+				},
+				"pendingWhitelistRemoval()": {
+					"details": "Getter for pending removal array."
+				},
+				"renounceOwnership()": {
+					"details": "Renouncing to ownership will leave the contract without an owner and unusable.It will not be possible to call the functions with the `onlyOwner` modifier anymore."
+				},
+				"setWhitelist(address[])": {
+					"details": "Add initial addresses to the whitelist.",
+					"params": {
+						"_addresses": "are the Ethereum addresses to be whitelisted."
+					}
+				},
+				"submitWhitelistAddition(address[])": {
+					"details": "Add addresses to the whitelist.",
+					"params": {
+						"_addresses": "are the Ethereum addresses to be whitelisted."
+					}
+				},
+				"submitWhitelistRemoval(address[])": {
+					"details": "Remove addresses from the whitelist.",
+					"params": {
+						"_addresses": "are the Ethereum addresses to be removed."
+					}
+				},
+				"transferOwnership(address,bool)": {
+					"params": {
+						"_account": "address to transfer ownership to.",
+						"_transferable": "indicates whether to keep the ownership transferable."
+					}
+				}
+			},
+			"title": "AddressWhitelist provides payee-whitelist functionality."
+		},
+		"userdoc": {
+			"methods": {
+				"isTransferable()": {
+					"notice": "check if the ownership is transferable."
+				},
+				"owner()": {
+					"notice": "Find out owner address"
+				},
+				"renounceOwnership()": {
+					"notice": "Allows the current owner to relinquish control of the contract."
+				},
+				"transferOwnership(address,bool)": {
+					"notice": "Allows the current owner to transfer control of the contract to a new address."
+				}
+			}
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"localhost/../../../../../System/Volumes/Data/Users/riccardopersiani/Monolith/workspace/contracts/contracts/wallet.sol": "AddressWhitelist"
+		},
+		"evmVersion": "istanbul",
+		"libraries": {},
+		"optimizer": {
+			"enabled": true,
+			"runs": 200
+		},
+		"remappings": []
+	},
+	"sources": {
+		"localhost/../../../../../System/Volumes/Data/Users/riccardopersiani/Monolith/workspace/contracts/contracts/controller.sol": {
+			"keccak256": "0xb68e6d7092e8e9b3a914aea22172dce9c26dfa9805ba819958b5b8dde7dfd50f",
+			"urls": [
+				"bzz-raw://a1cdba6a1bfc923815b2c1116327c1951ecf40ea8c67ae2456e1c4c50217eb61",
+				"dweb:/ipfs/QmX4rCEuMEBg6X3cpKdjTtxgNYBrCJyyA51KRR8vbE6sDF"
+			]
+		},
+		"localhost/../../../../../System/Volumes/Data/Users/riccardopersiani/Monolith/workspace/contracts/contracts/externals/Address.sol": {
+			"keccak256": "0xf3358e5819ca73357abd6c90bdfffd0474af54364897f6b3e3234c4b71fbe9a1",
+			"urls": [
+				"bzz-raw://75ae8d04454d1511a2ed986cc8585736f05c5c25280683b3d24712a9f414a4bf",
+				"dweb:/ipfs/Qmb3kNCoBUZdah1AgBBD4zMk898j5Qw8ahT1w5cCMYp5Y3"
+			]
+		},
+		"localhost/../../../../../System/Volumes/Data/Users/riccardopersiani/Monolith/workspace/contracts/contracts/externals/ECDSA.sol": {
+			"keccak256": "0xfc3dde0661847b56e4ff8926be7e4cde9d960cbe18480e01ee648cfbf5d4055a",
+			"urls": [
+				"bzz-raw://d8747b09cbf2ee6d96d21a990fcf326f08084c79fcfad5ed331d64b5705487d9",
+				"dweb:/ipfs/QmPsy6pKdNtGndw5PMRAXEQ8pVKEMuLvAbgxffZ9cXL4T1"
+			]
+		},
+		"localhost/../../../../../System/Volumes/Data/Users/riccardopersiani/Monolith/workspace/contracts/contracts/externals/ERC165.sol": {
+			"keccak256": "0xaca91baae00478feaafaedff2fc8ebd3d6738c7877ad78d9565ef328f683f4e8",
+			"urls": [
+				"bzz-raw://c55b05166c731d830498a2dd576c6b19ba114e73eb5011dc684f368cb84c5216",
+				"dweb:/ipfs/QmVyYr64yP1aqFvhBSZeJtzMaPdLyF9w8pytudogFWKtur"
+			]
+		},
+		"localhost/../../../../../System/Volumes/Data/Users/riccardopersiani/Monolith/workspace/contracts/contracts/externals/ERC20.sol": {
+			"keccak256": "0x54628c1175e0e40ff56df85e92bd9b4e5ee1614600713379ff885bd07f6ef010",
+			"urls": [
+				"bzz-raw://2a0a4531eb59752b7c3315f3c796d2ce2befb0d21eca1908eb94f44873e458de",
+				"dweb:/ipfs/QmbrqZGUQZaSpYndb9eQ9WVEeboRBHaomma91tpD4ESWeE"
+			]
+		},
+		"localhost/../../../../../System/Volumes/Data/Users/riccardopersiani/Monolith/workspace/contracts/contracts/externals/SafeERC20.sol": {
+			"keccak256": "0xa654c1247c418db9eb3034e5b795760d2048864625f509a0e81632351e4199c0",
+			"urls": [
+				"bzz-raw://3798f03a8e74dcf0c90072c3f88ccc8be887b9fd9707b063e4c47df0a610478b",
+				"dweb:/ipfs/QmSaY9ZKzihx5GC3h9XiUmBpQbwhRQw93yasRqxp45cXBJ"
+			]
+		},
+		"localhost/../../../../../System/Volumes/Data/Users/riccardopersiani/Monolith/workspace/contracts/contracts/externals/SafeMath.sol": {
+			"keccak256": "0x4ccf2d7b51873db1ccfd54ca2adae5eac3b184f9699911ed4490438419f1c690",
+			"urls": [
+				"bzz-raw://d62d769b2219d5de39013093412623e624fa887f871826ea3bae6052ee893610",
+				"dweb:/ipfs/QmV3yVktya1s617QmuzQR2CfuJgUi3dR2xEZY9ecmqZ2G1"
+			]
+		},
+		"localhost/../../../../../System/Volumes/Data/Users/riccardopersiani/Monolith/workspace/contracts/contracts/externals/ens/ENS.sol": {
+			"keccak256": "0x5d115f126a237cfccc6c687301f87bf3210b7f68594ef780d796caa6e72d6060",
+			"urls": [
+				"bzz-raw://6ca3f8dbd17933dd487c532fcfddc42ec7b46f7ccc84cfcb266cbf8bf453758c",
+				"dweb:/ipfs/QmcrckQwvrffFdSgrC5txQw5xNruAVtkDQ2aj9V1MtVwKD"
+			]
+		},
+		"localhost/../../../../../System/Volumes/Data/Users/riccardopersiani/Monolith/workspace/contracts/contracts/externals/ens/ENSBytesUtils.sol": {
+			"keccak256": "0xe9599418173f34cc89c737059f398ba9a9f5e8a44c67af218bb3373c589f3499",
+			"urls": [
+				"bzz-raw://b20acd1d67c676364e862f4cecdcfc4ade3efc22445fb6fda4a801f6d865bde1",
+				"dweb:/ipfs/QmW2EP3T1y6kLtfB2rZFhqFBFWzUthvC1DZWzTfVLehPsy"
+			]
+		},
+		"localhost/../../../../../System/Volumes/Data/Users/riccardopersiani/Monolith/workspace/contracts/contracts/externals/ens/PublicResolver.sol": {
+			"keccak256": "0xdc5767dd5f4c192c3085e89bcc3ab791ab4e3e082f03bfdca1e48f75a0ce72aa",
+			"urls": [
+				"bzz-raw://d4cd247165490f08c6903e99dd86f8a6d279763b0a79660e544a7b8ae0e071dd",
+				"dweb:/ipfs/QmRyepaRuSLF8QNkV5QSwoTtc6BjX3Kr7KP8GQuCtWp1MH"
+			]
+		},
+		"localhost/../../../../../System/Volumes/Data/Users/riccardopersiani/Monolith/workspace/contracts/contracts/externals/ens/RRUtils.sol": {
+			"keccak256": "0x7be2b14a352eda9d632f2969e8ae00e6e2bf8cb286a0e1d9c3fb2af0b9d2d799",
+			"urls": [
+				"bzz-raw://df3a4d1fb8e19407921d1dfe3a1b8029eb4dd7321f8dc66e16bb97590ce6ff3b",
+				"dweb:/ipfs/QmV2UTNqJAhiAGBYjUMZYuvvWpj43WC3VpZivmW3LSpfdc"
+			]
+		},
+		"localhost/../../../../../System/Volumes/Data/Users/riccardopersiani/Monolith/workspace/contracts/contracts/externals/ens/ResolverBase.sol": {
+			"keccak256": "0xfc7d550960829127576d6fc3080513d74ef18a6d7057d0d9262ce071890053e8",
+			"urls": [
+				"bzz-raw://dc477afd53175b96112bb0e2e25ce85b1f7c0e3fe0da4a2e8539d86712583b00",
+				"dweb:/ipfs/QmQdwwHEcNMxTWtkrNpkbxtokwiFDdQ5xwPYcuZPRbJQKp"
+			]
+		},
+		"localhost/../../../../../System/Volumes/Data/Users/riccardopersiani/Monolith/workspace/contracts/contracts/externals/ens/profiles/ABIResolver.sol": {
+			"keccak256": "0x794514d39c469bab511822ca7a1a7a7838dca338499889896c7dac4303c30c1f",
+			"urls": [
+				"bzz-raw://3668c3ec6be58cf6bbbe2cfcb8e286927fa5ab028d501c8b26d2eeb816ce7303",
+				"dweb:/ipfs/Qme7RMhhcFxa1xzhJz24s3rdW2VePsPdJhFgQbAiieMjKz"
+			]
+		},
+		"localhost/../../../../../System/Volumes/Data/Users/riccardopersiani/Monolith/workspace/contracts/contracts/externals/ens/profiles/AddrResolver.sol": {
+			"keccak256": "0x4d6a95626f02bfc6e5ee75cde2a38e67e9eb9aada78473e05b7003ebd60d8ffb",
+			"urls": [
+				"bzz-raw://45407b2f99a29d0cc3df3636ecc5316414d6eb855860e382dffa57329886d74a",
+				"dweb:/ipfs/QmaKTuaHdy7ADgPY718fsiwjn2Hd6dqxPtgRcwjNxtdunG"
+			]
+		},
+		"localhost/../../../../../System/Volumes/Data/Users/riccardopersiani/Monolith/workspace/contracts/contracts/externals/ens/profiles/ContentHashResolver.sol": {
+			"keccak256": "0xaa3d9b9baae36fbf831b8297832b54ffd1023b9ac508f2c5068b92ce0c30edfc",
+			"urls": [
+				"bzz-raw://a30f83bbf8d55051bdc0b151131e5dca4966fe87f36648f9bf3e580d81d85fa2",
+				"dweb:/ipfs/QmbWeakvTkEJTRxqFL6wZPDdN6Wqq1tSgCJiu861UbH3yH"
+			]
+		},
+		"localhost/../../../../../System/Volumes/Data/Users/riccardopersiani/Monolith/workspace/contracts/contracts/externals/ens/profiles/DNSResolver.sol": {
+			"keccak256": "0x348116b6a303561102f057b89ce14b1bdc5a254c701380cdb1c682adf7e0f749",
+			"urls": [
+				"bzz-raw://8cc58072164c74bf520a061918c422554097134f74854f0b3e1093ba36798f24",
+				"dweb:/ipfs/QmSsDaHZSjjNZVzbmkxhAKNkjpWMKtMKEVh9cLbskW4NJn"
+			]
+		},
+		"localhost/../../../../../System/Volumes/Data/Users/riccardopersiani/Monolith/workspace/contracts/contracts/externals/ens/profiles/InterfaceResolver.sol": {
+			"keccak256": "0x6398dc59dd38501acd6a716173793e84aa1c454c3e21c190e10ddbe54dd8be41",
+			"urls": [
+				"bzz-raw://7b3af5c29db8d4c13631b3ec427e5dc6dee1a5df0560d36b32deda2451e4bc11",
+				"dweb:/ipfs/QmXe2sWt31kEELa4VPU84QUUK6UDw6mQANc9gMVezoqioP"
+			]
+		},
+		"localhost/../../../../../System/Volumes/Data/Users/riccardopersiani/Monolith/workspace/contracts/contracts/externals/ens/profiles/NameResolver.sol": {
+			"keccak256": "0xcff06da8901397164ca9bea36361ac518fb62cd5283d2e2e835e006980ba4d16",
+			"urls": [
+				"bzz-raw://ab5b2748d4297385b92a83aafdc79fc343842ee71e9537fa9c8cf4d2fbd4aeb0",
+				"dweb:/ipfs/QmZzZYyiRxZU271QDKhL4F4VdCfx5dZq4fT9Ud786XtiZz"
+			]
+		},
+		"localhost/../../../../../System/Volumes/Data/Users/riccardopersiani/Monolith/workspace/contracts/contracts/externals/ens/profiles/PubkeyResolver.sol": {
+			"keccak256": "0xaa10a8a7e1579987b6781657153ae3f16806f240b3ffaa54ea1f303f7cb7a74a",
+			"urls": [
+				"bzz-raw://3ee3cbb2cca361819cea208485c718a3288cf9dc22762bb08c3dc445b60dc862",
+				"dweb:/ipfs/QmeXyPzZHyPMSHvQPDsCtjdC3rMCTzZNWeYXaWqiDbdmSt"
+			]
+		},
+		"localhost/../../../../../System/Volumes/Data/Users/riccardopersiani/Monolith/workspace/contracts/contracts/externals/ens/profiles/TextResolver.sol": {
+			"keccak256": "0xdfb11cd7e9aef793d88c517195a6d3ac4736aa2aa7f27baafc2541bb2c639774",
+			"urls": [
+				"bzz-raw://84b3d3a186a91c242a729be0da2ad1b705a332472cea0c81d81d4b8e309f3440",
+				"dweb:/ipfs/QmQTKAyoS6DEUUNVKb5aECk3GBGb7AZNGSV4untv1ZNngi"
+			]
+		},
+		"localhost/../../../../../System/Volumes/Data/Users/riccardopersiani/Monolith/workspace/contracts/contracts/externals/initializable.sol": {
+			"keccak256": "0x9bfec92e36234ecc99b5d37230acb6cd1f99560233753162204104a4897e8721",
+			"urls": [
+				"bzz-raw://5cf7c208583d4d046d75bd99f5507412ab01cce9dd9f802ce9768a416d93ea2f",
+				"dweb:/ipfs/QmcQS1BBMPpVEkXP3qzwSjxHNrqDek8YeR7xbVWDC9ApC7"
+			]
+		},
+		"localhost/../../../../../System/Volumes/Data/Users/riccardopersiani/Monolith/workspace/contracts/contracts/externals/strings.sol": {
+			"keccak256": "0xd7c99d0733e73dc27cba285890b254d36d070807da9e60a573dcc4b5ec3c6f3d",
+			"urls": [
+				"bzz-raw://95845b2178b081aa0ad872f04694fd87f9553d0f78b8e079ce98773dbafc9033",
+				"dweb:/ipfs/QmPsNebBo51KzdM7ewAPJ5weCL7J5Piy2y1Hgcto2TmvDP"
+			]
+		},
+		"localhost/../../../../../System/Volumes/Data/Users/riccardopersiani/Monolith/workspace/contracts/contracts/internals/balanceable.sol": {
+			"keccak256": "0x5a1c23a4b3afdad849f0639bac47e8c08c1949f0aa531113e06883f9a7ab6662",
+			"urls": [
+				"bzz-raw://a9e6c391948533011c757d89a67cdcc6a741afa7e1c242138c591594d3a3238c",
+				"dweb:/ipfs/QmfPoN9Dv2AuPBcY1nAdByMAuW1Z7Wj4CnRW3KnRLtiuQM"
+			]
+		},
+		"localhost/../../../../../System/Volumes/Data/Users/riccardopersiani/Monolith/workspace/contracts/contracts/internals/bytesUtils.sol": {
+			"keccak256": "0x4ea4f266580ca57be6ec7b0d2fe6adb0bf51f978648c3aa65e8d02fe91351522",
+			"urls": [
+				"bzz-raw://b3badb0e0c1dd6b21249852eb2b8fcdd2adffb2aa663926b51241d8eb06d2857",
+				"dweb:/ipfs/QmRvKPafRARyjdq5duZwx55cxUL4Vi8qvXo5HmQDt5Sq3s"
+			]
+		},
+		"localhost/../../../../../System/Volumes/Data/Users/riccardopersiani/Monolith/workspace/contracts/contracts/internals/controllable.sol": {
+			"keccak256": "0x8245bddc77a7c5b44dc7f285404193e47b951e9cbba12a765828cb3023f64336",
+			"urls": [
+				"bzz-raw://df426810c455bccd40f5976a2906382e35800fe47e45a1991b4c3684827dd5ad",
+				"dweb:/ipfs/QmfMrmV9xYTy6NfFnWR4Y29qRzgU8wmiNjkbnYoFUw8YK6"
+			]
+		},
+		"localhost/../../../../../System/Volumes/Data/Users/riccardopersiani/Monolith/workspace/contracts/contracts/internals/ensResolvable.sol": {
+			"keccak256": "0xddb1c7898472491906ebfa73b4c83f8bc946ff3e94e5c8814fe6ea063f3fb665",
+			"urls": [
+				"bzz-raw://7911bc8eb24a89b0eb0e088de4399083af7b2761cce12cd622db715e46994897",
+				"dweb:/ipfs/QmTz3SyAoGFDopiJuFRES7x155hNFWLF6d9yctJhdNx9m5"
+			]
+		},
+		"localhost/../../../../../System/Volumes/Data/Users/riccardopersiani/Monolith/workspace/contracts/contracts/internals/ownable.sol": {
+			"keccak256": "0x42429c64258acf6e8018aca4fb048760aba8c26e8256d7b7b93be6d542ad8726",
+			"urls": [
+				"bzz-raw://d617ddff648eaffe0b13519b85c1405ed4b57c3a5329d2c950f06485b0f730a3",
+				"dweb:/ipfs/QmdgX3w1b5psWWEQzRRQ1j2Ej7NNQC1bWxc95YJJFay9f1"
+			]
+		},
+		"localhost/../../../../../System/Volumes/Data/Users/riccardopersiani/Monolith/workspace/contracts/contracts/internals/tokenWhitelistable.sol": {
+			"keccak256": "0x6f0e7922c0be342960f7d3ff610ea3e6e46aa76e1f73f1ff6a529e352532f0a8",
+			"urls": [
+				"bzz-raw://024bf0b3b2df1c5af6cfcd2aa6f281b98b48408b32ac400246a629e539e81ffe",
+				"dweb:/ipfs/QmNMb6C7a9pzcU7Gu48RBMcV3L3CitpjPiGC3zvNe9wnMj"
+			]
+		},
+		"localhost/../../../../../System/Volumes/Data/Users/riccardopersiani/Monolith/workspace/contracts/contracts/internals/transferrable.sol": {
+			"keccak256": "0x5f215d0f4f446f068e3948a7b5cf4dd621f4e9c4ba45047b95c4b7ad4c02765d",
+			"urls": [
+				"bzz-raw://cda044581d476790ed11a5f8fb7ccc978e30b8649efa0132f0c701cdf30c2cb0",
+				"dweb:/ipfs/QmR4oKPAQyfV3wCtsuqT5V2D3BZvsgxV5Wufn5vtAH5ZkJ"
+			]
+		},
+		"localhost/../../../../../System/Volumes/Data/Users/riccardopersiani/Monolith/workspace/contracts/contracts/licence.sol": {
+			"keccak256": "0x6adf2a5bc0e6bb1b53ce1a7085b7e10573d8ca6297f5f34e606ccaa4b3079a1c",
+			"urls": [
+				"bzz-raw://d90d7cd882d355a1aec7d88c1bfe8eed85ee30b8ff7f101f7ef1fb4501e700c1",
+				"dweb:/ipfs/Qmdz8Fzpj9cE8msmcBUEP18KLfrjnvSdFjDf9yxAcCt1KY"
+			]
+		},
+		"localhost/../../../../../System/Volumes/Data/Users/riccardopersiani/Monolith/workspace/contracts/contracts/tokenWhitelist.sol": {
+			"keccak256": "0x560b9284f40382c95ab64856a7acfd53eb416593053a40cf9f6fe229e08372a0",
+			"urls": [
+				"bzz-raw://e2a217afa376bcb0d901937b52995a33f3ea16dff7e76691b20e761802e4a14b",
+				"dweb:/ipfs/QmZJhPn8zTtBBE2RQvWLA7FzGLsdbxDcRkMCKiyCw6ypQr"
+			]
+		},
+		"localhost/../../../../../System/Volumes/Data/Users/riccardopersiani/Monolith/workspace/contracts/contracts/wallet.sol": {
+			"keccak256": "0xdb84a948b1cd2f957eb445c541bf7689209c34dbab08ebce9faa0ddfb4aeb47b",
+			"urls": [
+				"bzz-raw://bda80e1f7779ce8582edf170ec8b4d568e1a1f9ab0e171708f39afc0c272e1b3",
+				"dweb:/ipfs/QmNyeVpgs7ii3bGNbrM1B1yCz1Xs4DwcWKp8DgUm9vz241"
+			]
+		}
+	},
+	"version": 1
+}
