@@ -111,7 +111,7 @@ var _ = Describe("updateDao", func() {
 
 	}) //called by the owner
 
-	Context("When not called by the Ower", func() {
+	Context("When not called by the Owner", func() {
 		It("Should fail", func() {
 			tx, err := Licence.UpdateLicenceDAO(BankAccount.TransactOpts(ethertest.WithGasLimit(100000)), DAO.Address())
 			Expect(err).ToNot(HaveOccurred())

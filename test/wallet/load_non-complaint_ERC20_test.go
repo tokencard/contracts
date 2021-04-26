@@ -74,7 +74,7 @@ var _ = Describe("wallet load non-compliant ERC20", func() {
 				Expect(isSuccessful(tx)).To(BeTrue())
 			})
 
-			When("a valid amount is transfered ", func() {
+			When("a valid amount is transferred ", func() {
 
 				BeforeEach(func() {
 					tx, err := WalletProxy.LoadTokenCard(Owner.TransactOpts(), NonCompliantERC20Address, EthToWei(101))

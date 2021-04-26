@@ -33,7 +33,7 @@ contract GasRefundable {
 
     /// @dev Address of the gas token used to refund gas (default: CHI).
     IGasToken private _gasToken = IGasToken(0x0000000000004946c0e9F43F4Dee607b0eF1fA1c);
-    /// @dev Gas token parameters parameters used in the gas refund calcualtion (default: CHI).
+    /// @dev Gas token parameters parameters used in the gas refund calculation (default: CHI).
     GasTokenParameters private _gasTokenParameters = GasTokenParameters({freeCallGasCost: 14154, gasRefundPerUnit: 41130});
 
     /// @notice Refunds gas based on the amount of gas spent in the transaction and the gas token parameters.

@@ -35,13 +35,64 @@ import "./internals/ownable.sol";
 import "./internals/tokenWhitelistable.sol";
 import "./internals/transferrable.sol";
 
-/// @title ControllableOwnable combines Controllable and Ownable
-/// @dev providing an additional modifier to check if Owner or Controller
-contract ControllableOwnable is Controllable, Ownable {
-    /// @dev Check if the sender is the Owner or one of the Controllers
-    modifier onlyOwnerOrController() {
-        require(_isOwner(msg.sender) || _isController(msg.sender), "Only owner or controller");
+/// @title OptOutableMonolith2FA is used a configurable 2FA.
+/// @dev This provides the various modifiers and utility functions needed for 2FA.
+/// @dev 2FA is needed to confirm changes to the security settings in the wallet.
+contract OptOutableMonolith2FA is Controllable, Ownable {
+    event SetPersonal2FA(address _sender, address _p2FA);
+    event SetMonolith2FA(address _sender);
+
+    /// @dev for accessing wallet in privileged mode.
+    bool public privileged;
+    bool public monolith2FA;
+    address public personal2FA;
+
+    function _initialize2FA() internal initializer {
+        monolith2FA = true;
+    }
+
+    // @dev This modifier ensures that a method is only accessible to 2nd factor
+    modifier only2FA() {
+        if (monolith2FA) {
+            require(_isController(msg.sender), "sender is not a Monolith 2FA");
+        } else {
+            require(msg.sender == personal2FA, "sender is not personal 2FA account");
+        }
         _;
+    }
+
+    /// @dev Check if the sender is the Owner or 2FA
+    modifier onlyOwnerOr2FA() {
+        require(_isOwner(msg.sender) || _is2FA(msg.sender), "only owner or 2FA");
+        _;
+    }
+
+    /// @dev set Monolith to be the 2FA
+    function setMonolith2FA() external onlyOwner {
+        require(!monolith2FA, "monolith2FA already enabled");
+        monolith2FA = true;
+        personal2FA = address(0);
+        emit SetMonolith2FA(msg.sender);
+    }
+
+    /// @dev set personal 2FA to the address the user provided, needs to be called by a privileged relayed Tx
+    function setPersonal2FA(address _p2FA) external onlyOwner {
+        //require(privileged, "Setting a personal 2FA requires privileged mode");
+        require(_p2FA != address(0), "2FA cannot be set to zero");
+        require(_p2FA != personal2FA, "address already set");
+        require(_p2FA != address(this), "2FA cannot be the wallet address");
+        personal2FA = _p2FA;
+        monolith2FA = false;
+        emit SetPersonal2FA(msg.sender, _p2FA);
+    }
+
+    /// @dev utility function to check whether or not an address is valid 2FA'er
+    function _is2FA(address _sender) private view returns (bool) {
+        if (monolith2FA) {
+            return _isController(_sender);
+        } else {
+            return (_sender == personal2FA);
+        }
     }
 }
 
@@ -50,8 +101,14 @@ contract ControllableOwnable is Controllable, Ownable {
 /// @dev the "self" here is used for the meta transactions
 contract SelfCallableOwnable is Ownable {
     /// @dev Check if the sender is the Owner or self
+    modifier onlySelf() {
+        require(msg.sender == address(this), "not self");
+        _;
+    }
+
+    /// @dev Check if the sender is the Owner or self
     modifier onlyOwnerOrSelf() {
-        require(_isOwner(msg.sender) || msg.sender == address(this), "Only owner or self");
+        require(_isOwner(msg.sender) || msg.sender == address(this), "Not owner or self");
         _;
     }
 }
@@ -59,7 +116,7 @@ contract SelfCallableOwnable is Ownable {
 /// @title AddressWhitelist provides payee-whitelist functionality.
 /// @dev This contract will allow the user to maintain a whitelist of addresses
 /// @dev These addresses will live outside of the daily limit
-contract AddressWhitelist is ControllableOwnable, SelfCallableOwnable {
+contract AddressWhitelist is OptOutableMonolith2FA, SelfCallableOwnable {
     using SafeMath for uint256;
 
     event AddedToWhitelist(address _sender, address[] _addresses);
@@ -89,12 +146,12 @@ contract AddressWhitelist is ControllableOwnable, SelfCallableOwnable {
 
     /// @dev Check that neither addition nor removal operations have already been submitted.
     modifier noActiveSubmission() {
-        require(!submittedWhitelistAddition && !submittedWhitelistRemoval, "whitelist sumbission pending");
+        require(!submittedWhitelistAddition && !submittedWhitelistRemoval, "whitelist submission pending");
         _;
     }
 
     /// @dev Cancel pending whitelist addition.
-    function cancelWhitelistAddition(bytes32 _hash) external onlyOwnerOrController {
+    function cancelWhitelistAddition(bytes32 _hash) external onlyOwnerOr2FA {
         // Check if operation has been submitted.
         require(submittedWhitelistAddition, "no pending submission");
         // Require that confirmation hash and the hash of the pending whitelist addition match
@@ -108,7 +165,7 @@ contract AddressWhitelist is ControllableOwnable, SelfCallableOwnable {
     }
 
     /// @dev Cancel pending removal of whitelisted addresses.
-    function cancelWhitelistRemoval(bytes32 _hash) external onlyOwnerOrController {
+    function cancelWhitelistRemoval(bytes32 _hash) external onlyOwnerOr2FA {
         // Check if operation has been submitted.
         require(submittedWhitelistRemoval, "no pending submission");
         // Require that confirmation hash and the hash of the pending whitelist removal match
@@ -123,8 +180,8 @@ contract AddressWhitelist is ControllableOwnable, SelfCallableOwnable {
 
     /// @dev Confirm pending whitelist addition.
     /// @dev This will only ever be applied post 2FA, by one of the Controllers
-    /// @param _hash is the hash of the pending whitelist array, a form of lamport lock
-    function confirmWhitelistAddition(bytes32 _hash) external onlyController {
+    /// @param _hash is the hash of the pending whitelist array, a form of Lamport's lock
+    function confirmWhitelistAddition(bytes32 _hash) external only2FA {
         // Require that the whitelist addition has been submitted.
         require(submittedWhitelistAddition, "no pending submission");
         // Require that confirmation hash and the hash of the pending whitelist addition match
@@ -147,7 +204,7 @@ contract AddressWhitelist is ControllableOwnable, SelfCallableOwnable {
     }
 
     /// @dev Confirm pending removal of whitelisted addresses.
-    function confirmWhitelistRemoval(bytes32 _hash) external onlyController {
+    function confirmWhitelistRemoval(bytes32 _hash) external only2FA {
         // Require that the pending whitelist is not empty and the operation has been submitted.
         require(submittedWhitelistRemoval, "no pending submission");
         // Require that confirmation hash and the hash of the pending whitelist removal match
@@ -241,7 +298,7 @@ contract AddressWhitelist is ControllableOwnable, SelfCallableOwnable {
 }
 
 /// @title DailyLimit provides daily limit functionality
-contract DailyLimit is ControllableOwnable, SelfCallableOwnable, TokenWhitelistable {
+contract DailyLimit is OptOutableMonolith2FA, SelfCallableOwnable, TokenWhitelistable {
     using SafeMath for uint256;
 
     event InitializedDailyLimit(uint256 _amount, uint256 _nextReset);
@@ -270,7 +327,7 @@ contract DailyLimit is ControllableOwnable, SelfCallableOwnable, TokenWhitelista
     }
 
     /// @dev Confirm pending set daily limit operation.
-    function confirmDailyLimitUpdate(uint256 _amount) external onlyController {
+    function confirmDailyLimitUpdate(uint256 _amount) external only2FA {
         // Require that pending and confirmed limits are the same.
         require(_pendingLimit == _amount, "confirmed or submitted limit mismatch");
         // The new limit should be always higher then the current one otherwise no 2FA would be needed
@@ -398,7 +455,7 @@ contract Wallet is ENSResolvable, AddressWhitelist, DailyLimit, IERC165, Transfe
     using SafeERC20 for IERC20;
     using SafeMath for uint256;
 
-    event ExecutedRelayedTransaction(bytes _data, bytes _returnData);
+    event ExecutedRelayedTransaction(bytes _data, bytes _returnData, bool _privileged);
     event ExecutedTransaction(address _destination, uint256 _value, bytes _data, bytes _returnData);
     event IncreasedRelayNonce(address _sender, uint256 _currentNonce);
     event LoadedTokenCard(address _asset, uint256 _amount);
@@ -439,6 +496,7 @@ contract Wallet is ENSResolvable, AddressWhitelist, DailyLimit, IERC165, Transfe
         bytes32 _licenceNode_,
         uint256 _dailyLimit_
     ) external initializer {
+        _initialize2FA();
         _initializeENSResolvable(_ens_);
         _initializeControllable(_controllerNode_);
         _initializeOwnable(_owner_, _transferable_);
@@ -452,16 +510,35 @@ contract Wallet is ENSResolvable, AddressWhitelist, DailyLimit, IERC165, Transfe
         _;
     }
 
-    /// @dev This function allows for the controller to relay transactions on the owner's behalf,
-    /// the relayed message has to be signed by the owner.
-    /// @param _nonce only used for relayed transactions, must match the wallet's relayNonce.
-    /// @param _data abi encoded data payload.
-    /// @param _signature signed prefix + data.
+    /// Meta-transaction
     function executeRelayedTransaction(
         uint256 _nonce,
         bytes calldata _data,
         bytes calldata _signature
     ) external onlyController {
+        return _executeRelayedTransaction(_nonce, _data, _signature, false);
+    }
+
+    /// Privileged functionality
+    function executePrivilegedRelayedTransaction(
+        uint256 _nonce,
+        bytes calldata _data,
+        bytes calldata _signature
+    ) external only2FA {
+        return _executeRelayedTransaction(_nonce, _data, _signature, true);
+    }
+
+    /// @dev This function allows for the controller to relay transactions on the owner's behalf,
+    /// the relayed message has to be signed by the owner.
+    /// @param _nonce only used for relayed transactions, must match the wallet's relayNonce.
+    /// @param _data abi encoded data payload.
+    /// @param _signature signed prefix + data.
+    function _executeRelayedTransaction(
+        uint256 _nonce,
+        bytes calldata _data,
+        bytes calldata _signature,
+        bool _privileged
+    ) private {
         // Expecting prefixed data ("monolith:") indicating relayed transaction...
         // ...and an Ethereum Signed Message to protect user from signing an actual Tx
         uint256 id;
@@ -475,11 +552,12 @@ contract Wallet is ENSResolvable, AddressWhitelist, DailyLimit, IERC165, Transfe
         require(_nonce == relayNonce, "tx replay");
         _increaseRelayNonce();
 
-        // invoke wallet function with an external call
-        (bool success, bytes memory returnData) = address(this).call(_data);
-        require(success, string(returnData));
+        // TO DO: an "if(_privileged) {privileged = _privileged}  should be less expensive
+        privileged = _privileged;
+        batchExecuteTransaction(_data);
+        privileged = false;
 
-        emit ExecutedRelayedTransaction(_data, returnData);
+        emit ExecutedRelayedTransaction(_data, "", _privileged);
     }
 
     /// @dev This returns the balance of the contract for any ERC20 token or ETH.
@@ -544,7 +622,7 @@ contract Wallet is ENSResolvable, AddressWhitelist, DailyLimit, IERC165, Transfe
 
     /// @dev Refill owner's gas balance, revert if the transaction amount is too large
     /// @param _amount is the amount of ether to transfer to the owner account in wei.
-    function topUpGas(uint256 _amount) external isNotZero(_amount) onlyOwnerOrController {
+    function topUpGas(uint256 _amount) external isNotZero(_amount) onlyOwnerOr2FA {
         // Check contract balance is sufficient for the operation
         require(address(this).balance > _amount, "balance not sufficient");
         // Check against the daily spent limit and update accordingly, require that the value is under remaining limit.
@@ -559,23 +637,23 @@ contract Wallet is ENSResolvable, AddressWhitelist, DailyLimit, IERC165, Transfe
     /// it calls executeTransaction() so that the daily limit is enforced.
     /// @param _transactionBatch data encoding the transactions to be sent,
     /// following executeTransaction's format i.e. (destination, value, data)
-    function batchExecuteTransaction(bytes memory _transactionBatch) public onlyOwnerOrSelf {
+    function batchExecuteTransaction(bytes memory _transactionBatch) public onlyOwnerOr2FA {
         uint256 batchLength = _transactionBatch.length + 32; // because the pos starts from 32
         uint256 remainingBytesLength = _transactionBatch.length; // remaining bytes to be processed
         uint256 pos = 32; //the first 32 bytes denote the byte array length, start from actual data
 
         address destination; // destination address
-        uint256 value; // trasanction value
-        uint256 dataLength; // externall call data length
+        uint256 value; // transaction value
+        uint256 dataLength; // external call data length
         bytes memory data; // call data
 
         while (pos < batchLength) {
-            // there should always be at least 84 bytes remaining: the minimun #bytes required to encode a Tx
+            // there should always be at least 84 bytes remaining: the minimum #bytes required to encode a Tx
             remainingBytesLength = remainingBytesLength.sub(84);
             assembly {
                 // shift right by 96 bits (256 - 160) to get the destination address (and zero the excessive bytes)
                 destination := shr(96, mload(add(_transactionBatch, pos)))
-                // get value: pos + 20 bytes (destinnation address)
+                // get value: pos + 20 bytes (destination address)
                 value := mload(add(_transactionBatch, add(pos, 20)))
                 // get data: pos + 20 (destination address) + 32 (value) bytes
                 // the first 32 bytes denote the byte array length
@@ -604,10 +682,10 @@ contract Wallet is ENSResolvable, AddressWhitelist, DailyLimit, IERC165, Transfe
         address _destination,
         uint256 _value,
         bytes memory _data
-    ) public onlyOwnerOrSelf returns (bytes memory) {
+    ) public onlyOwnerOr2FA returns (bytes memory) {
         // If value is send across as a part of this executeTransaction, this will be sent to any payable
         // destination. As a result enforceLimit if destination is not whitelisted.
-        if (!whitelistMap[_destination]) {
+        if (!whitelistMap[_destination] && !privileged) {
             // enforce daily limit, 0x0 denotes ETH.
             _enforceDailyLimit(address(0), _value);
         }
@@ -618,7 +696,8 @@ contract Wallet is ENSResolvable, AddressWhitelist, DailyLimit, IERC165, Transfe
             address to;
             uint256 amount;
             (to, amount) = _getERC20RecipientAndAmount(_destination, _data);
-            if (!whitelistMap[to]) {
+            if (!whitelistMap[to] && !privileged) {
+                // Convert token amount to stablecoin value.
                 // If the address (of the token contract, e.g) is not in the TokenWhitelist used by the convert method
                 // ...then stablecoinValue will be zero
                 _enforceDailyLimit(_destination, amount);
@@ -666,7 +745,7 @@ contract Wallet is ENSResolvable, AddressWhitelist, DailyLimit, IERC165, Transfe
         require(_to != address(0), "destination=0");
 
         // If address is not whitelisted, take daily limit into account.
-        if (!whitelistMap[_to]) {
+        if (!whitelistMap[_to] && !privileged) {
             // Convert token amount to stablecoin value.
             // If the address (of the token contract) is not in the TokenWhitelist used by the convert method...
             // ...then stablecoinValue will be zero

@@ -83,7 +83,7 @@ contract Oracle is ENSResolvable, Base64, Date, Controllable, ParseIntScientific
         emit SetCryptoComparePublicKey(msg.sender, _publicKey);
     }
 
-    /// @dev Verifiy the provided origin proof and update token's rate.
+    /// @dev Verify the provided origin proof and update token's rate.
     /// @param _token the address of the token to be updated.
     /// @param _result query result in JSON format.
     /// @param _proof origin proof from CryptoCompare.

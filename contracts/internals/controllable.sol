@@ -35,13 +35,13 @@ contract Controllable is ENSResolvable {
 
     /// @notice Checks if message sender is a controller.
     modifier onlyController() {
-        require(_isController(msg.sender), "sender is not a controller");
+        require(_isController(msg.sender), "sender is not controller");
         _;
     }
 
     /// @notice Checks if message sender is an admin.
     modifier onlyAdmin() {
-        require(_isAdmin(msg.sender), "sender is not an admin");
+        require(_isAdmin(msg.sender), "sender is not admin");
         _;
     }
 

@@ -58,7 +58,7 @@ var _ = Describe("topUpGas", func() {
 				Expect(isSuccessful(tx)).To(BeTrue())
 			})
 
-			It("should top up the gas succesfully", func() {
+			It("should top up the gas successfully", func() {
 				b, e := Backend.BalanceAt(context.Background(), WalletProxyAddress, nil)
 				Expect(e).ToNot(HaveOccurred())
 				newBalance := new(big.Int).Sub(EthToWei(200), FinneyToWei(1))
