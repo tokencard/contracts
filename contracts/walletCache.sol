@@ -25,7 +25,7 @@ import "./interfaces/IWallet.sol";
 import "./internals/controllable.sol";
 import "./internals/ensResolvable.sol";
 
-/// @title IWalletCache interface describes a method for poping an already cached wallet
+/// @title IWalletCache interface describes a method for popping an already cached wallet
 interface IWalletCache {
     function walletCachePop() external returns (address payable);
 }
@@ -48,7 +48,7 @@ contract WalletCache is ENSResolvable, Controllable {
     bytes32 public walletDeployerNode = _DEFAULT_WALLET_DEPLOYER_NODE;
 
     address public walletImplementation;
-    uint256 public defaultSpendLimit;
+    uint256 public defaultDailyLimit; // in stablecoin absolute value, not base units. (Example: 10k USD)
 
     address payable[] public cachedWallets;
 
@@ -57,7 +57,7 @@ contract WalletCache is ENSResolvable, Controllable {
     constructor(
         address _walletImplementation_,
         address _ens_,
-        uint256 _defaultSpendLimit_,
+        uint256 _defaultDailyLimit_,
         bytes32 _controllerNode_,
         bytes32 _licenceNode_,
         bytes32 _tokenWhitelistNode_,
@@ -66,7 +66,7 @@ contract WalletCache is ENSResolvable, Controllable {
         _initializeENSResolvable(_ens_);
         _initializeControllable(_controllerNode_);
         walletImplementation = _walletImplementation_;
-        defaultSpendLimit = _defaultSpendLimit_;
+        defaultDailyLimit = _defaultDailyLimit_;
 
         // Set licenceNode or use default
         if (_licenceNode_ != bytes32(0)) {
@@ -115,7 +115,7 @@ contract WalletCache is ENSResolvable, Controllable {
             tokenWhitelistNode,
             controllerNode(),
             licenceNode,
-            defaultSpendLimit
+            defaultDailyLimit
         );
         cachedWallets.push(wallet);
 

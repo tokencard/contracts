@@ -30,7 +30,7 @@ contract ENSResolvable is Initializable {
     /// @dev Address of the ENS registry contract set to the default ENS registry address.
     address private _ensRegistry = address(0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e);
 
-    /// @notice Checks if the contract has been initialized succesfully i.e. the ENS registry has been set.
+    /// @notice Checks if the contract has been initialized successfully i.e. the ENS registry has been set.
     modifier initialized() {
         require(_ensRegistry != address(0), "ENSResolvable not initialized");
         _;

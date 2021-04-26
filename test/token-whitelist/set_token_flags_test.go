@@ -208,7 +208,7 @@ var _ = Describe("setTokenRedeemable", func() {
 				Backend.Commit()
 				Expect(isSuccessful(tx)).To(BeFalse())
 				returnData, _ := ethCall(tx)
-				Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("sender is not an admin"))
+				Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("sender is not admin"))
 			})
 		})
 	})

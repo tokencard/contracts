@@ -46,7 +46,7 @@ var _ = Describe("fallback", func() {
 			})
 		})
 
-		When("using tranfser()", func() {
+		When("using transfer()", func() {
 			BeforeEach(func() {
 				// transfer 1 wei to proxy
 				tx, err = Wallet.Transfer(Owner.TransactOpts(), ProxyAddress, big.NewInt(1))

@@ -29,7 +29,7 @@ var _ = Describe("ExecuteTransaction", func() {
 			It("should be a successful transaction", func() {
 				Expect(isSuccessful(tx)).To(BeTrue())
 			})
-			It("should use the expected amout of gas", func() {
+			It("should use the expected amount of gas", func() {
 				receipt, err := Backend.TransactionReceipt(context.Background(), tx.Hash())
 				Expect(err).ToNot(HaveOccurred())
 				fmt.Fprintf(GinkgoWriter, "Gas used by no-op execute transaction: %d/%d\n", receipt.GasUsed, tx.Gas())
@@ -50,7 +50,7 @@ var _ = Describe("ExecuteTransaction", func() {
 			It("should be a successful transaction", func() {
 				Expect(isSuccessful(tx)).To(BeTrue())
 			})
-			It("should use the expected amout of gas", func() {
+			It("should use the expected amount of gas", func() {
 				receipt, err := Backend.TransactionReceipt(context.Background(), tx.Hash())
 				Expect(err).ToNot(HaveOccurred())
 				fmt.Fprintf(GinkgoWriter, "Gas used by confirmOperation execute transaction: %d/%d\n", receipt.GasUsed, tx.Gas())
@@ -72,7 +72,7 @@ var _ = Describe("ExecuteTransaction", func() {
 			It("should be a successful transaction", func() {
 				Expect(isSuccessful(tx)).To(BeTrue())
 			})
-			It("should use the expected amout of gas", func() {
+			It("should use the expected amount of gas", func() {
 				receipt, err := Backend.TransactionReceipt(context.Background(), tx.Hash())
 				Expect(err).ToNot(HaveOccurred())
 				fmt.Fprintf(GinkgoWriter, "Gas used by burnGas execute transaction: %d/%d\n", receipt.GasUsed, tx.Gas())

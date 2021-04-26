@@ -25,31 +25,31 @@ var _ = Describe("uninitialized", func() {
 			ProxyWallet, err = bindings.NewWallet(ProxyAddress, Backend)
 		})
 
-		It("Should fail when there's onlyOwnerOrController()", func() {
-			tx, err = ProxyWallet.TopUpGas(Owner.TransactOpts(ethertest.WithGasLimit(100000)), big.NewInt(1000))
+		It("Should fail when there's onlyOwnerOr2FA()", func() {
+			tx, err = ProxyWallet.TopUpGas(Owner.TransactOpts(ethertest.WithGasLimit(100000)), EthToWei(100))
 			Expect(err).ToNot(HaveOccurred())
 			Backend.Commit()
 			Expect(isSuccessful(tx)).To(BeFalse())
 			returnData, _ := ethCall(tx)
-			Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("ENSResolvable not initialized"))
+			Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("only owner or 2FA"))
 		})
 
 		It("Should fail it when there's onlyOwnerOrSelf()", func() {
-			tx, err = ProxyWallet.SetSpendLimit(Owner.TransactOpts(ethertest.WithGasLimit(100000)), big.NewInt(1000))
+			tx, err = ProxyWallet.SubmitDailyLimitUpdate(Owner.TransactOpts(ethertest.WithGasLimit(100000)), EthToWei(1000))
 			Expect(err).ToNot(HaveOccurred())
 			Backend.Commit()
 			Expect(isSuccessful(tx)).To(BeFalse())
 			returnData, _ := ethCall(tx)
-			Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("only owner||self"))
+			Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("Not owner or self"))
 		})
 
-		It("Should fail it when there's onlyController()", func() {
-			tx, err = ProxyWallet.ConfirmSpendLimitUpdate(Owner.TransactOpts(ethertest.WithGasLimit(100000)), big.NewInt(1000))
+		It("Should fail it when there's only2FA()", func() {
+			tx, err = ProxyWallet.ConfirmDailyLimitUpdate(Owner.TransactOpts(ethertest.WithGasLimit(100000)), big.NewInt(1000))
 			Expect(err).ToNot(HaveOccurred())
 			Backend.Commit()
 			Expect(isSuccessful(tx)).To(BeFalse())
 			returnData, _ := ethCall(tx)
-			Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("ENSResolvable not initialized"))
+			Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("sender is not personal 2FA account"))
 		})
 
 		It("Should fail it when there's onlyOwner()", func() {
@@ -58,7 +58,7 @@ var _ = Describe("uninitialized", func() {
 			Backend.Commit()
 			Expect(isSuccessful(tx)).To(BeFalse())
 			returnData, _ := ethCall(tx)
-			Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("sender is not an owner"))
+			Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("sender is not owner"))
 		})
 
 	})

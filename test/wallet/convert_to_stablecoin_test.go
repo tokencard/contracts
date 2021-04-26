@@ -72,11 +72,11 @@ var _ = Describe("convertToStablecoin", func() {
 				})
 
 				When("overflow does not occur", func() {
-					It("Should return 0.1(amount)*0.1(rate)/0.1(stablecoin rate)*10^6(in Mwei)", func() {
+					It("Should return 0.1(amount)*0.1(rate)/0.1(stablecoin rate)*10^18(in Eth)", func() {
 						value, err := WalletProxy.ConvertToStablecoin(nil, common.HexToAddress("0xfe209bdE5CA32fa20E6728A005F26D651FFF5982"), big.NewInt(int64(0.1*math.Pow10(8))))
 						Expect(err).ToNot(HaveOccurred())
-						finalAmount := MweiToWei(1)
-						finalAmount.Div(finalAmount, big.NewInt(10)) //the final amount should be 0.1*0.1*10*1USDC => 1/10 MweiToWei , USDC decimals = 6
+						finalAmount := EthToWei(1)
+						finalAmount.Div(finalAmount, big.NewInt(10)) //the final amount should be 0.1*0.1*10*1DAI => 1/10 EthToWei , DAI decimals = 18
 						Expect(value.String()).To(Equal(finalAmount.String()))
 					})
 				})
@@ -98,7 +98,7 @@ var _ = Describe("convertToStablecoin", func() {
 				It("Should return 0.1(amount)*5.09(rate)/0.1(stablecoin rate)*10^6(in Mwei)", func() {
 					value, err := WalletProxy.ConvertToStablecoin(nil, common.HexToAddress("0xfe209bdE5CA32fa20E6728A005F26D651FFF5982"), big.NewInt(int64(0.1*math.Pow10(8))))
 					Expect(err).ToNot(HaveOccurred())
-					finalAmount := MweiToWei(509)
+					finalAmount := EthToWei(509)
 					finalAmount.Div(finalAmount, big.NewInt(100)) //the final amount should be 0.1*5.09*10*1ETH => 5.09 ETH => 509/100
 					Expect(value.String()).To(Equal(finalAmount.String()))
 				})
@@ -108,11 +108,11 @@ var _ = Describe("convertToStablecoin", func() {
 		})
 	})
 
-	When("the token is not available", func() {
-		It("Should revert", func() {
-			_, err := WalletProxy.ConvertToStablecoin(nil, common.HexToAddress("0x1"), big.NewInt(100))
-			Expect(err).To(HaveOccurred())
-			Expect(err.Error()).To(ContainSubstring("token not available"))
+	Context("When the token is not available", func() {
+		It("Should return 0", func() {
+			value, err := WalletProxy.ConvertToStablecoin(nil, common.HexToAddress("0x1"), big.NewInt(100))
+			Expect(err).ToNot(HaveOccurred())
+			Expect(value.String()).To(Equal("0"))
 		})
 	})
 
@@ -158,10 +158,10 @@ var _ = Describe("convertToStablecoin", func() {
 				Expect(isSuccessful(tx)).To(BeTrue())
 			})
 
-			It("Should return 0.1(amount)/0.001(stablecoin rate)*10^6(in Mwei)", func() {
+			It("Should return 0.1(amount)/0.001(stablecoin rate)*10^18(in Eth)", func() {
 				value, err := WalletProxy.ConvertToStablecoin(nil, common.HexToAddress("0x0"), big.NewInt(int64(0.1*math.Pow10(18))))
 				Expect(err).ToNot(HaveOccurred())
-				finalAmount := MweiToWei(1)
+				finalAmount := EthToWei(1)
 				finalAmount.Mul(finalAmount, big.NewInt(100)) //the final amount should be 0.1*1000*1ETH => 1*100 ETH
 				Expect(value.String()).To(Equal(finalAmount.String()))
 			})

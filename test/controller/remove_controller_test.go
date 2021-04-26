@@ -28,7 +28,7 @@ var _ = Describe("removeController", func() {
 			Expect(count.String()).To(Equal("1"))
 		})
 
-		It("should NOT emit RemovdeController event", func() {
+		It("should NOT emit RemoveController event", func() {
 			it, err := ControllerContract.FilterRemovedController(nil)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(it.Next()).To(BeFalse())

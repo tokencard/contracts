@@ -47,7 +47,7 @@ var _ = Describe("wallet load ERC20", func() {
 			Expect(b.String()).To(Equal("1000"))
 		})
 
-		It("should increase the ERC20 type-2 balance of the Wallet by 2", func() {
+		It("should increase the ERC20 type-2 balance of the Wallet by 500", func() {
 			b, err := ERC20Contract2.BalanceOf(nil, WalletProxyAddress)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(b.String()).To(Equal("500"))
@@ -101,7 +101,7 @@ var _ = Describe("wallet load ERC20", func() {
 				Expect(isSuccessful(tx)).To(BeTrue())
 			})
 
-			When("a valid amount is transfered ", func() {
+			When("a valid amount is transferred ", func() {
 
 				BeforeEach(func() {
 					tx, err := WalletProxy.LoadTokenCard(Owner.TransactOpts(), ERC20Contract1Address, big.NewInt(101))
@@ -117,7 +117,7 @@ var _ = Describe("wallet load ERC20", func() {
 					Expect(isSuccessful(tx)).To(BeTrue())
 				})
 
-				It("Should emit 1 ERC20Contract1 Approval event", func() {
+				It("Should emit one ERC20Contract1 Approval event", func() {
 					owner := []common.Address{WalletProxyAddress}
 					spender := []common.Address{LicenceAddress}
 					it, err := ERC20Contract1.FilterApproval(nil, owner, spender)
@@ -130,7 +130,7 @@ var _ = Describe("wallet load ERC20", func() {
 					Expect(evt.Value.String()).To(Equal("101"))
 				})
 
-				It("Should emit 1 ERC20Contract2 Approval event", func() {
+				It("Should emit one ERC20Contract2 Approval event", func() {
 					owner := []common.Address{WalletProxyAddress}
 					spender := []common.Address{LicenceAddress}
 					it, err := ERC20Contract2.FilterApproval(nil, owner, spender)
@@ -143,7 +143,7 @@ var _ = Describe("wallet load ERC20", func() {
 					Expect(evt.Value.String()).To(Equal("2"))
 				})
 
-				It("Should emit 2 TransferredToTokenHolder events", func() {
+				It("Should emit two TransferredToTokenHolder events", func() {
 					it, err := Licence.FilterTransferredToTokenHolder(nil)
 					Expect(err).ToNot(HaveOccurred())
 					Expect(it.Next()).To(BeTrue())
@@ -161,7 +161,7 @@ var _ = Describe("wallet load ERC20", func() {
 					Expect(evt.Amount.String()).To(Equal("1"))
 				})
 
-				It("Should emit 2 TransferredToCryptoFloat events", func() {
+				It("Should emit two TransferredToCryptoFloat events", func() {
 					it, err := Licence.FilterTransferredToCryptoFloat(nil)
 					Expect(err).ToNot(HaveOccurred())
 					Expect(it.Next()).To(BeTrue())
@@ -179,7 +179,7 @@ var _ = Describe("wallet load ERC20", func() {
 					Expect(evt.Amount.String()).To(Equal("1"))
 				})
 
-				It("Should emit 2 ERC20Contract1 Transfer events", func() {
+				It("Should emit two ERC20Contract1 Transfer events", func() {
 					from := []common.Address{WalletProxyAddress}
 					var to []common.Address
 					it, err := ERC20Contract1.FilterTransfer(nil, from, to)
@@ -197,7 +197,7 @@ var _ = Describe("wallet load ERC20", func() {
 					Expect(evt.Amount.String()).To(Equal("100"))
 				})
 
-				It("Should emit 2 ERC20Contract2 Transfer events", func() {
+				It("Should emit two ERC20Contract2 Transfer events", func() {
 					from := []common.Address{WalletProxyAddress}
 					var to []common.Address
 					it, err := ERC20Contract2.FilterTransfer(nil, from, to)
@@ -215,7 +215,7 @@ var _ = Describe("wallet load ERC20", func() {
 					Expect(evt.Amount.String()).To(Equal("1"))
 				})
 
-				It("Should emit 2 LoadedTokenCard events", func() {
+				It("Should emit two LoadedTokenCard events", func() {
 					it, err := WalletProxy.FilterLoadedTokenCard(nil)
 					Expect(err).ToNot(HaveOccurred())
 					Expect(it.Next()).To(BeTrue())
@@ -267,7 +267,7 @@ var _ = Describe("wallet load ERC20", func() {
 
 			}) //equal to approval
 
-			When("a bigger amount than the one owned is tried to be transfered ", func() {
+			When("a bigger amount than the one owned is tried to be transferred ", func() {
 
 				It("Should revert", func() {
 					tx, err := WalletProxy.LoadTokenCard(Owner.TransactOpts(ethertest.WithGasLimit(300000)), ERC20Contract1Address, big.NewInt(1001))
@@ -287,25 +287,13 @@ var _ = Describe("wallet load ERC20", func() {
 
 			}) //more than owned (and hence can be approved)
 
-			When("a bigger amount than daily Load limit is loaded", func() {
+			When("a bigger amount than daily load limit is loaded", func() {
 
 				BeforeEach(func() {
-					//rate is 1 token  => 1 ETH
 					tx, err := TokenWhitelist.UpdateTokenRate(
 						ControllerAdmin.TransactOpts(),
 						ERC20Contract1Address,
 						big.NewInt(int64(math.Pow10(18))),
-						big.NewInt(20180913153211),
-					)
-					Expect(err).ToNot(HaveOccurred())
-					Backend.Commit()
-					Expect(isSuccessful(tx)).To(BeTrue())
-
-					// stablecoin rate is 10-6
-					tx, err = TokenWhitelist.UpdateTokenRate(
-						ControllerAdmin.TransactOpts(),
-						StablecoinAddress,
-						big.NewInt(int64(0.001*math.Pow10(18))),
 						big.NewInt(20180913153211),
 					)
 					Expect(err).ToNot(HaveOccurred())
@@ -319,7 +307,7 @@ var _ = Describe("wallet load ERC20", func() {
 					Backend.Commit()
 					Expect(isSuccessful(tx)).To(BeFalse())
 					returnData, _ := ethCall(tx)
-					Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("available<amount"))
+					Expect(string(returnData[len(returnData)-64:])).To(ContainSubstring("available smaller than amount"))
 				})
 
 			}) //more than daily Load limit

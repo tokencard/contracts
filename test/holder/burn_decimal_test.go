@@ -54,7 +54,7 @@ var _ = Describe("TokenHolder", func() {
 				Expect(evt.Value.String()).To(Equal("583"))
 			})
 
-			When("187 TKN are transfered to a random address", func() {
+			When("187 TKN are transferred to a random address", func() {
 
 				BeforeEach(func() {
 					tx, err := TKNBurner.Transfer(BankAccount.TransactOpts(), RandomAccount.Address(), big.NewInt(187))
@@ -212,13 +212,13 @@ var _ = Describe("TokenHolder", func() {
 								Expect(b.String()).To(Equal("98"))
 							})
 
-							It("should decrease the ERC20 type-1 balance of the holder contract by 60", func() { //token1  sypply: 396 - 60 = 336
+							It("should decrease the ERC20 type-1 balance of the holder contract by 60", func() { //token1  supply: 396 - 60 = 336
 								b, err := ERC20Contract1.BalanceOf(nil, TokenHolderAddress)
 								Expect(err).ToNot(HaveOccurred())
 								Expect(b.String()).To(Equal("336"))
 							})
 
-							It("should decrease the ERC20 type-2 balance of the holder contract by 100", func() { //token2  sypply: 765 - 116 = 649
+							It("should decrease the ERC20 type-2 balance of the holder contract by 100", func() { //token2  supply: 765 - 116 = 649
 								b, err := ERC20Contract2.BalanceOf(nil, TokenHolderAddress)
 								Expect(err).ToNot(HaveOccurred())
 								Expect(b.String()).To(Equal("649"))
@@ -262,7 +262,7 @@ var _ = Describe("TokenHolder", func() {
 
 					})
 				}) //When("The holder contract has two types of ERC20 tokens"
-			}) //When TKN are transfered to a random address
+			}) //When TKN are transferred to a random address
 		})
 
 	})

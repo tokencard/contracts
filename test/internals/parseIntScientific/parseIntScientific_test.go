@@ -303,7 +303,7 @@ var _ = Describe("ParseIntScientific", func() {
 			It("Should return 999999999999999900000", func() {
 				res, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "999999999999999900000", big.NewInt(0))
 				Expect(err).ToNot(HaveOccurred())
-                Expect(res.String()).To(Equal("999999999999999900000"))
+				Expect(res.String()).To(Equal("999999999999999900000"))
 			})
 		})
 
@@ -323,7 +323,7 @@ var _ = Describe("ParseIntScientific", func() {
 			})
 		})
 
-        When("the integral part is 2^256-1 (max_uint256_value)", func() {
+		When("the integral part is 2^256-1 (max_uint256_value)", func() {
 			It("Should succeed", func() {
 				//input = 2^256, 0 <= uint <=2^256-1
 				res, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "115792089237316195423570985008687907853269984665640564039457584007913129639935", big.NewInt(0))
@@ -420,7 +420,7 @@ var _ = Describe("ParseIntScientific", func() {
 			})
 		})
 
-		When("there is a '.' a negatiive exponent", func() {
+		When("there is a '.' a negative exponent", func() {
 			It("Should revert", func() {
 				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "1e-3.", big.NewInt(0))
 				Expect(err).To(HaveOccurred())
@@ -594,7 +594,7 @@ var _ = Describe("ParseIntScientific", func() {
 			})
 		})
 
-		When("there is an '+' after a negatie exponent", func() {
+		When("there is an '+' after a negative exponent", func() {
 			It("Should revert", func() {
 				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "1.0123e-3+", big.NewInt(2))
 				Expect(err).To(HaveOccurred())
@@ -607,7 +607,7 @@ var _ = Describe("ParseIntScientific", func() {
 			It("Should revert", func() {
 				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "1.0123e", big.NewInt(2))
 				Expect(err).To(HaveOccurred())
-                Expect(err.Error()).To(ContainSubstring("abi: attempting to unmarshall"))
+				Expect(err.Error()).To(ContainSubstring("abi: attempting to unmarshall"))
 			})
 		})
 
@@ -673,7 +673,7 @@ var _ = Describe("ParseIntScientific", func() {
 			})
 		})
 
-		When("there is no integral part before a positive eponent", func() {
+		When("there is no integral part before a positive exponent", func() {
 			It("Should revert", func() {
 				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "e+1", big.NewInt(0))
 				Expect(err).To(HaveOccurred())
@@ -681,7 +681,7 @@ var _ = Describe("ParseIntScientific", func() {
 			})
 		})
 
-		When("there is no integral part before a negative eponent", func() {
+		When("there is no integral part before a negative exponent", func() {
 			It("Should revert", func() {
 				_, err := ParseIntScientificExporter.ParseIntScientificDecimals(nil, "e-1", big.NewInt(0))
 				Expect(err).To(HaveOccurred())
@@ -712,7 +712,6 @@ var _ = Describe("ParseIntScientific", func() {
 				Expect(err.Error()).To(ContainSubstring("missing integral part"))
 			})
 		})
-
 
 		When("the integral part is 2^256 and an overflow occurs (max_uint256_value) = 2^256-1)", func() {
 			It("Should revert", func() {

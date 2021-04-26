@@ -106,8 +106,9 @@ var _ = BeforeEach(func() {
 	Backend.Commit()
 	Expect(isSuccessful(tx)).To(BeTrue())
 
+	// Initialize wallet with 10000$ daily limit
 	WalletProxy, err = bindings.NewWallet(WalletProxyAddress, Backend)
-	tx, err = WalletProxy.InitializeWallet(Owner.TransactOpts(), Owner.Address(), true, ENSRegistryAddress, TokenWhitelistNode, ControllerNode, LicenceNode, EthToWei(100))
+	tx, err = WalletProxy.InitializeWallet(Owner.TransactOpts(), Owner.Address(), true, ENSRegistryAddress, TokenWhitelistNode, ControllerNode, LicenceNode, big.NewInt(10000))
 	Expect(err).ToNot(HaveOccurred())
 	Backend.Commit()
 	Expect(isSuccessful(tx)).To(BeTrue())
@@ -147,7 +148,7 @@ var _ = AfterEach(func() {
 
 var _ = AfterSuite(func() {
 	if allPassed {
-		TestRig.ExpectMinimumCoverage("wallet.sol", 95.00)
+		TestRig.ExpectMinimumCoverage("wallet.sol", 99.00)
 		TestRig.PrintGasUsage(os.Stdout)
 	}
 })

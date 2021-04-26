@@ -550,7 +550,7 @@ func InitializeBackend() error {
 	}
 
 	// Add the Stablecoin token to the oracle list.
-	tx, err = TokenWhitelist.AddTokens(ControllerAdmin.TransactOpts(), []common.Address{StablecoinAddress}, StringsToByte32("USDC"), []*big.Int{ExponentiateDecimals(6)}, []bool{true}, []bool{true}, big.NewInt(20180913153211))
+	tx, err = TokenWhitelist.AddTokens(ControllerAdmin.TransactOpts(), []common.Address{StablecoinAddress}, StringsToByte32("DAI"), []*big.Int{ExponentiateDecimals(18)}, []bool{true}, []bool{true}, big.NewInt(20180913153211))
 	if err != nil {
 		return err
 	}
