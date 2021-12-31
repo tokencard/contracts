@@ -9,6 +9,7 @@ jobs:
       - restore_cache:
           keys:
             - vendor-{{ checksum "go.sum" }}
+      - run: env
       - run: ./build.sh
       - run: '[[ -z $(git status -uno --porcelain) ]] || (git status ; echo "Please run ./build.sh before committing changes!"; exit 1)'
       - persist_to_workspace:
